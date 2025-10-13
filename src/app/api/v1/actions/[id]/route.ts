@@ -30,7 +30,10 @@ export async function GET(
     const { id } = params;
 
     const action = await prisma.actions.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only show non-deleted records
+      },
       include: {
         user: {
           select: {
@@ -48,6 +51,9 @@ export async function GET(
             status: true,
             priority: true,
           },
+          where: {
+            deletedAt: null // Only show non-deleted companies
+          }
         },
         person: {
           select: {
@@ -60,6 +66,9 @@ export async function GET(
             status: true,
             priority: true,
           },
+          where: {
+            deletedAt: null // Only show non-deleted people
+          }
         },
       },
     });
@@ -105,7 +114,10 @@ export async function PUT(
 
     // Check if action exists
     const existingAction = await prisma.actions.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only update non-deleted records
+      },
     });
 
     if (!existingAction) {
@@ -189,7 +201,10 @@ export async function PATCH(
 
     // Check if action exists
     const existingAction = await prisma.actions.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only update non-deleted records
+      },
     });
 
     if (!existingAction) {
@@ -269,10 +284,15 @@ export async function DELETE(
     }
 
     const { id } = params;
+    const { searchParams } = new URL(request.url);
+    const mode = searchParams.get('mode') || 'soft'; // Default to soft delete
 
     // Check if action exists
     const existingAction = await prisma.actions.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only delete non-deleted records
+      },
     });
 
     if (!existingAction) {
@@ -282,16 +302,28 @@ export async function DELETE(
       );
     }
 
-    // Delete action
-    await prisma.actions.delete({
-      where: { id },
-    });
+    if (mode === 'hard') {
+      // Hard delete - permanently remove from database
+      await prisma.actions.delete({
+        where: { id },
+      });
+    } else {
+      // Soft delete - set deletedAt timestamp
+      await prisma.actions.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    }
 
     return NextResponse.json({
       success: true,
       data: null,
       meta: {
-        message: 'Action deleted successfully',
+        message: `Action ${mode === 'hard' ? 'permanently deleted' : 'deleted'} successfully`,
+        mode,
       },
     });
 

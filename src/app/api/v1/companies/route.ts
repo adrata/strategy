@@ -141,7 +141,13 @@ export async function GET(request: NextRequest) {
             nextActionDate: true,
             industry: true,
             size: true,
-            revenue: true
+            revenue: true,
+            notes: true,
+            opportunityStage: true,
+            opportunityAmount: true,
+            opportunityProbability: true,
+            expectedCloseDate: true,
+            actualCloseDate: true
           }
         }),
         prisma.companies.count({ where }),
@@ -230,6 +236,12 @@ export async function POST(request: NextRequest) {
           priority: body.priority || 'MEDIUM',
           workspaceId: context.workspaceId,
           mainSellerId: body.mainSellerId,
+          notes: body.notes,
+          opportunityStage: body.opportunityStage,
+          opportunityAmount: body.opportunityAmount,
+          opportunityProbability: body.opportunityProbability,
+          expectedCloseDate: body.expectedCloseDate ? new Date(body.expectedCloseDate) : null,
+          actualCloseDate: body.actualCloseDate ? new Date(body.actualCloseDate) : null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },

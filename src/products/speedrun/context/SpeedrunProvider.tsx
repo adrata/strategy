@@ -14,6 +14,7 @@ import {
 import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
+import { dailyResetService } from "../services/daily-reset-service";
 
 export interface SpeedrunPerson {
   id: number;
@@ -321,6 +322,43 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
 
     return () => {
       window.removeEventListener('speedrunSettingsChanged', handleSpeedrunSettingsChange);
+    };
+  }, []);
+
+  // Daily reset integration
+  React.useEffect(() => {
+    const { user } = useUnifiedAuth();
+    
+    if (user?.timezone) {
+      // Set user timezone in the daily reset service
+      dailyResetService.setUserTimezone(user.timezone);
+    }
+
+    // Store user context in localStorage for daily reset service
+    if (user?.id) {
+      localStorage.setItem('user-id', user.id);
+    }
+    if (user?.activeWorkspaceId) {
+      localStorage.setItem('workspace-id', user.activeWorkspaceId);
+    }
+
+    // Listen for daily reset events
+    const handleDailyReset = () => {
+      console.log('🔄 [Speedrun Context] Daily reset triggered - clearing state and refreshing data');
+      // Clear completed people and reset state
+      setCompletedPeople([]);
+      setSkippedPeople([]);
+      setIsDataLoaded(false);
+      // Force data refresh
+      window.location.reload();
+    };
+
+    window.addEventListener('speedrun-daily-reset', handleDailyReset);
+
+    return () => {
+      window.removeEventListener('speedrun-daily-reset', handleDailyReset);
+      // Cleanup daily reset service on unmount
+      dailyResetService.destroy();
     };
   }, []);
 

@@ -183,6 +183,8 @@ export async function GET(request: NextRequest) {
             nextActionDate: true,
             companyId: true,
             mainSellerId: true,
+            vertical: true,
+            notes: true,
             company: {
               select: {
                 id: true,
@@ -367,6 +369,7 @@ export async function POST(request: NextRequest) {
           tags: body.tags || [],
           customFields: body.customFields,
           notes: body.notes,
+          vertical: body.vertical,
           preferredLanguage: body.preferredLanguage,
           timezone: body.timezone,
           emailVerified: body.emailVerified || false,

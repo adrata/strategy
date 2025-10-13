@@ -7,7 +7,7 @@ import { IntegrationProvider, IntegrationOperation } from '../types/integration'
  */
 export class NangoService {
   private static instance: NangoService;
-  private readonly baseUrl = '/api/grand-central/nango';
+  private readonly baseUrl = '/api/v1/integrations/nango';
   private nango: Nango;
 
   private constructor() {
@@ -182,10 +182,20 @@ export class NangoService {
     data?: any
   ): Promise<any> {
     try {
+      // Map operation to actual API endpoint and method
+      const operationConfig = this.getOperationConfig(operation);
+      
       const response = await fetch(`${this.baseUrl}/execute`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ connectionId, operation, data }),
+        body: JSON.stringify({ 
+          connectionId, 
+          operation, 
+          data,
+          endpoint: operationConfig.endpoint,
+          method: operationConfig.method,
+          provider: operationConfig.provider
+        }),
       });
       if (!response.ok) throw new Error('Operation failed');
       return await response.json();
@@ -193,6 +203,149 @@ export class NangoService {
       console.error('Error executing operation:', error);
       throw error;
     }
+  }
+
+  /**
+   * Get operation configuration mapping
+   */
+  private getOperationConfig(operation: string): {
+    provider: string;
+    endpoint: string;
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  } {
+    const operationMap: Record<string, { provider: string; endpoint: string; method: 'GET' | 'POST' | 'PUT' | 'DELETE' }> = {
+      // Gmail Operations
+      'send_email': {
+        provider: 'google-mail',
+        endpoint: '/gmail/v1/users/me/messages/send',
+        method: 'POST'
+      },
+      'read_emails': {
+        provider: 'google-mail',
+        endpoint: '/gmail/v1/users/me/messages',
+        method: 'GET'
+      },
+      'search_emails': {
+        provider: 'google-mail',
+        endpoint: '/gmail/v1/users/me/messages',
+        method: 'GET'
+      },
+      'get_email': {
+        provider: 'google-mail',
+        endpoint: '/gmail/v1/users/me/messages/{messageId}',
+        method: 'GET'
+      },
+      'create_draft': {
+        provider: 'google-mail',
+        endpoint: '/gmail/v1/users/me/drafts',
+        method: 'POST'
+      },
+      'create_calendar_event': {
+        provider: 'google-calendar',
+        endpoint: '/calendar/v3/calendars/primary/events',
+        method: 'POST'
+      },
+      'list_calendar_events': {
+        provider: 'google-calendar',
+        endpoint: '/calendar/v3/calendars/primary/events',
+        method: 'GET'
+      },
+      'update_calendar_event': {
+        provider: 'google-calendar',
+        endpoint: '/calendar/v3/calendars/primary/events/{eventId}',
+        method: 'PUT'
+      },
+
+      // Outlook Operations
+      'outlook_send_email': {
+        provider: 'microsoft-outlook',
+        endpoint: '/v1.0/me/sendMail',
+        method: 'POST'
+      },
+      'outlook_read_emails': {
+        provider: 'microsoft-outlook',
+        endpoint: '/v1.0/me/mailFolders/{folder}/messages',
+        method: 'GET'
+      },
+      'outlook_search_emails': {
+        provider: 'microsoft-outlook',
+        endpoint: '/v1.0/me/messages',
+        method: 'GET'
+      },
+      'outlook_get_email': {
+        provider: 'microsoft-outlook',
+        endpoint: '/v1.0/me/messages/{messageId}',
+        method: 'GET'
+      },
+      'outlook_create_draft': {
+        provider: 'microsoft-outlook',
+        endpoint: '/v1.0/me/messages',
+        method: 'POST'
+      },
+      'outlook_create_calendar_event': {
+        provider: 'microsoft-calendar',
+        endpoint: '/v1.0/me/events',
+        method: 'POST'
+      },
+      'outlook_list_calendar_events': {
+        provider: 'microsoft-calendar',
+        endpoint: '/v1.0/me/events',
+        method: 'GET'
+      },
+      'outlook_update_calendar_event': {
+        provider: 'microsoft-calendar',
+        endpoint: '/v1.0/me/events/{eventId}',
+        method: 'PATCH'
+      },
+
+      // Zoom Operations
+      'create_meeting': {
+        provider: 'zoom',
+        endpoint: '/v2/users/me/meetings',
+        method: 'POST'
+      },
+      'list_meetings': {
+        provider: 'zoom',
+        endpoint: '/v2/users/me/meetings',
+        method: 'GET'
+      },
+      'get_meeting': {
+        provider: 'zoom',
+        endpoint: '/v2/meetings/{meetingId}',
+        method: 'GET'
+      },
+      'update_meeting': {
+        provider: 'zoom',
+        endpoint: '/v2/meetings/{meetingId}',
+        method: 'PATCH'
+      },
+      'delete_meeting': {
+        provider: 'zoom',
+        endpoint: '/v2/meetings/{meetingId}',
+        method: 'DELETE'
+      },
+      'get_recording': {
+        provider: 'zoom',
+        endpoint: '/v2/meetings/{meetingId}/recordings',
+        method: 'GET'
+      },
+      'list_recordings': {
+        provider: 'zoom',
+        endpoint: '/v2/users/me/recordings',
+        method: 'GET'
+      },
+      'download_recording': {
+        provider: 'zoom',
+        endpoint: '/v2/meetings/{meetingId}/recordings/{recordingId}',
+        method: 'GET'
+      }
+    };
+
+    return operationMap[operation] || {
+      provider: 'unknown',
+      endpoint: '/',
+      method: 'GET'
+    };
   }
 
   /**

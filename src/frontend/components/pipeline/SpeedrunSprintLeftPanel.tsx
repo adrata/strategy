@@ -158,7 +158,7 @@ export function SpeedrunSprintLeftPanel({
   const currentSprintNumber = currentSprintIndex + 1;
 
   return (
-    <div className="w-[13.335rem] min-w-[13.335rem] max-w-[13.335rem] h-full flex flex-col bg-[var(--background)] border-r border-gray-100">
+    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] h-full flex flex-col bg-[var(--background)] border-r border-gray-100">
       {/* Header */}
       <div className="p-4 border-b border-gray-100 bg-[var(--background)]">
         <div className="flex flex-col space-y-2">
@@ -170,6 +170,9 @@ export function SpeedrunSprintLeftPanel({
           </div>
           <div className="text-xs text-[var(--muted)]">
             {currentSprintNumber} of {totalSprints} sprints • {TOTAL_PEOPLE} total people in speedrun
+          </div>
+          <div className="text-xs text-blue-600 font-medium">
+            Batch {Math.floor(completedRecords.length / 50) + 1} • {completedRecords.length} completed today
           </div>
         </div>
       </div>
@@ -202,7 +205,7 @@ export function SpeedrunSprintLeftPanel({
             <div
               key={record.id || index}
               onClick={() => onRecordSelect(record)}
-              className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border ${
+              className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border relative ${
                 isCompleted
                   ? 'bg-[var(--panel-background)] text-[var(--muted)] border-[var(--border)] opacity-60'
                   : isSelected 
@@ -210,6 +213,16 @@ export function SpeedrunSprintLeftPanel({
                     : 'bg-[var(--background)] hover:bg-[var(--panel-background)] border-gray-100 hover:border-[var(--border)] hover:shadow-sm'
               }`}
             >
+              {/* Completion overlay */}
+              {isCompleted && (
+                <div className="absolute inset-0 bg-green-50 bg-opacity-80 rounded-lg flex items-center justify-center">
+                  <div className="bg-green-500 text-white rounded-full p-2 shadow-lg animate-pulse">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
+              )}
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">

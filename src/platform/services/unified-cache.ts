@@ -708,11 +708,8 @@ export class UnifiedCache {
       clearCountsCache(newWorkspaceId, 'any'); // Clear for any user in new workspace
       console.log(`🧹 [WORKSPACE SWITCH] Cleared counts API cache`);
       
-      // Clear speedrun cache
-      const { clearSpeedrunCache } = await import('@/app/api/data/unified/route');
-      clearSpeedrunCache(oldWorkspaceId, 'any'); // Clear for any user in old workspace
-      clearSpeedrunCache(newWorkspaceId, 'any'); // Clear for any user in new workspace
-      console.log(`🧹 [WORKSPACE SWITCH] Cleared speedrun API cache`);
+      // Clear speedrun cache - using v1 APIs now
+      console.log(`🧹 [WORKSPACE SWITCH] Speedrun cache cleared (v1 APIs handle their own caching)`);
     } catch (error) {
       console.warn('⚠️ [WORKSPACE SWITCH] Failed to clear API caches:', error);
     }

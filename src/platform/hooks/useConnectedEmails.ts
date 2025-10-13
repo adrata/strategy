@@ -13,7 +13,7 @@ export function useConnectedEmails() {
   return useQuery<Email[]>({
     queryKey: ["connected-emails"],
     queryFn: async () => {
-      const response = await safeApiFetch("/api/emails/connected");
+      const response = await safeApiFetch("/api/v1/communications/email/connected");
       return response;
     },
   });

@@ -28,6 +28,9 @@ import {
   UniversalBusinessTab,
   UniversalSuccessTab,
   UniversalPartnershipTab,
+  NotesTab,
+} from '../UniversalRecordTemplate';
+import {
   UniversalCollaborationTab,
   UniversalPerformanceTab,
   UniversalIndustryTab,
@@ -45,6 +48,7 @@ import {
 import { UniversalNewsTab } from '../tabs/UniversalNewsTab';
 import { UniversalRoleTab } from '../tabs/UniversalRoleTab';
 import { UniversalEnablersTab } from '../tabs/UniversalEnablersTab';
+import { ValueTab } from '../tabs/ValueTab';
 import { ProspectOverviewTab } from '../tabs/ProspectOverviewTab';
 import { PersonOverviewTab } from '../tabs/PersonOverviewTab';
 import { UniversalInsightsTab as ComprehensiveInsightsTab } from '../tabs/UniversalInsightsTab';
@@ -121,8 +125,11 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
   
   // Information and content tabs
   'news': UniversalNewsTab,
-  'notes': UniversalTimelineTab, // Notes are typically rendered in timeline
+  'notes': NotesTab, // Simple notes textarea
   'timeline': UniversalTimelineTab,
+  
+  // Value and reporting tabs
+  'value': ValueTab,
   'documents': UniversalDocumentsTab,
   'contacts': UniversalContactsTab,
   
@@ -141,6 +148,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   leads: [
     { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
     { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'value', label: 'Value', component: ValueTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
     { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
@@ -149,6 +157,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   prospects: [
     { id: 'overview', label: 'Overview', component: ProspectOverviewTab },
     { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'value', label: 'Value', component: ValueTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
     { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
@@ -169,6 +178,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
     { id: 'overview', label: 'Overview', component: UniversalCompanyTab },
     { id: 'news', label: 'News', component: UniversalNewsTab },
     { id: 'intelligence', label: 'Intelligence', component: UniversalCompanyIntelTab },
+    { id: 'value', label: 'Value', component: ValueTab },
     { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
     { id: 'competitors', label: 'Competitors', component: UniversalCompetitorsTab },
     { id: 'opportunities', label: 'Opportunities', component: UniversalOpportunitiesTab },
@@ -179,6 +189,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   people: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
     { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
+    { id: 'value', label: 'Value', component: ValueTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
     { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }

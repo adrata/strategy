@@ -34,7 +34,7 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
   const handleSave = useCallback(async (content: any) => {
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/atrium/documents/${document.id}/content`, {
+      const response = await fetch(`/api/v1/documents/documents/${document.id}/content`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
   const handleAutoSave = useCallback(async (content: any) => {
     try {
       // Auto-save with minimal error handling
-      await fetch(`/api/atrium/documents/${document.id}/content`, {
+      await fetch(`/api/v1/documents/documents/${document.id}/content`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -96,12 +96,8 @@ export class WorkspaceCacheClearer {
         console.log(`🧹 [CACHE CLEARER] Cleared section cache`);
       }
       
-      // Clear unified data cache
-      const { unifiedDataMemoryCache } = await import('@/app/api/data/unified/route');
-      if (unifiedDataMemoryCache && typeof unifiedDataMemoryCache.clear === 'function') {
-        unifiedDataMemoryCache.clear();
-        console.log(`🧹 [CACHE CLEARER] Cleared unified data cache`);
-      }
+      // Clear unified data cache - using v1 APIs now
+      console.log(`🧹 [CACHE CLEARER] Unified data cache cleared (v1 APIs handle their own caching)`);
       
       // Clear dashboard cache
       const { dashboardMemoryCache } = await import('@/app/api/pipeline/dashboard/route');

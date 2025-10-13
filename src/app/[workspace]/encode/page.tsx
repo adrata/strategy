@@ -88,7 +88,7 @@ export default function EncodePage() {
     if (!newProjectName.trim()) return;
     
     try {
-      const response = await fetch('/api/encode/projects', {
+      const response = await fetch('/api/v1/files/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

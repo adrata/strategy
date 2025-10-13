@@ -19,7 +19,7 @@ export class FileSystemService {
 
   // Project operations
   async createProject(name: string, description?: string, workspaceId?: string, userId?: string): Promise<EncodeProject> {
-    const response = await fetch('/api/encode/projects', {
+    const response = await fetch('/api/v1/files/projects', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, description, workspaceId, userId })
@@ -33,7 +33,7 @@ export class FileSystemService {
   }
 
   async getProjects(): Promise<EncodeProject[]> {
-    const response = await fetch('/api/encode/projects');
+    const response = await fetch('/api/v1/files/projects');
     
     if (!response.ok) {
       throw new Error('Failed to fetch projects');
@@ -43,7 +43,7 @@ export class FileSystemService {
   }
 
   async getProject(projectId: string): Promise<EncodeProject> {
-    const response = await fetch(`/api/encode/projects/${projectId}`);
+    const response = await fetch(`/api/v1/files/projects/${projectId}`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch project');
@@ -67,7 +67,7 @@ export class FileSystemService {
   }
 
   async deleteProject(projectId: string): Promise<void> {
-    const response = await fetch(`/api/encode/projects/${projectId}`, {
+    const response = await fetch(`/api/v1/files/projects/${projectId}`, {
       method: 'DELETE'
     });
 
@@ -101,7 +101,7 @@ export class FileSystemService {
     }
 
     // Handle virtual filesystem operations (web/database)
-    const response = await fetch('/api/encode/files', {
+    const response = await fetch('/api/v1/files/files', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
@@ -115,7 +115,7 @@ export class FileSystemService {
   }
 
   async getFile(fileId: string): Promise<EncodeFile> {
-    const response = await fetch(`/api/encode/files/${fileId}`);
+    const response = await fetch(`/api/v1/files/files/${fileId}`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch file');
@@ -151,7 +151,7 @@ export class FileSystemService {
     }
 
     // Handle virtual filesystem operations (web/database)
-    const response = await fetch(`/api/encode/files/${fileId}`, {
+    const response = await fetch(`/api/v1/files/files/${fileId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
@@ -173,7 +173,7 @@ export class FileSystemService {
     }
 
     // Handle virtual filesystem operations (web/database)
-    const response = await fetch(`/api/encode/files/${fileId}`, {
+    const response = await fetch(`/api/v1/files/files/${fileId}`, {
       method: 'DELETE'
     });
 
@@ -183,7 +183,7 @@ export class FileSystemService {
   }
 
   async getProjectFiles(projectId: string): Promise<EncodeFile[]> {
-    const response = await fetch(`/api/encode/projects/${projectId}/files`);
+    const response = await fetch(`/api/v1/files/projects/${projectId}/files`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch project files');

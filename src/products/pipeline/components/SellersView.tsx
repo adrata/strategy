@@ -53,8 +53,8 @@ export function SellersView() {
         console.log('🔍 [SELLERS VIEW] Starting to load sellers...');
         setLoading(true);
         
-        // Use unified API for production data
-        const response = await authFetch(`/api/data/unified?type=sellers&action=get`);
+        // Use v1 users API for sellers data
+        const response = await authFetch(`/api/v1/users`);
         console.log('🔍 [SELLERS VIEW] Fetch response status:', response.status);
         const sellersData = await response.json();
         

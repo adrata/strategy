@@ -18,6 +18,10 @@ import { getCategoryColors } from '@/platform/config/color-palette';
 import { useInlineEdit } from '@/platform/hooks/useInlineEdit';
 import { ProfileImageUploadModal } from './ProfileImageUploadModal';
 import { PipelineProgress } from './PipelineProgress';
+import { NotesEditor } from '@/platform/ui/components/NotesEditor';
+import { ValueTab } from './tabs/ValueTab';
+import { DeepValueReportView } from '@/platform/ui/components/reports/DeepValueReportView';
+import { DeepValueReport } from '@/platform/services/deep-value-report-service';
 
 // Import universal tab components
 import {
@@ -115,92 +119,92 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         case 'leads':
           return [
             { id: 'overview', label: 'Overview' },
+            { id: 'timeline', label: 'Actions' },
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
-            { id: 'notes', label: 'Notes' },
-            { id: 'timeline', label: 'Timeline' }
+            { id: 'notes', label: 'Notes' }
           ];
     case 'prospects':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
-        { id: 'notes', label: 'Notes' },
-        { id: 'timeline', label: 'Timeline' }
+        { id: 'notes', label: 'Notes' }
       ];
     case 'opportunities':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'deal-intel', label: 'Deal Intel' },
         { id: 'stakeholders', label: 'Stakeholders' },
         { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'close-plan', label: 'Close Plan' },
-        { id: 'timeline', label: 'Timeline' },
         { id: 'notes', label: 'Notes' }
       ];
     case 'companies':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'news', label: 'News' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'competitors', label: 'Competitors' },
-        { id: 'notes', label: 'Notes' },
-        { id: 'timeline', label: 'Timeline' }
+        { id: 'notes', label: 'Notes' }
       ];
     case 'people':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
-        { id: 'notes', label: 'Notes' },
-        { id: 'timeline', label: 'Timeline' }
+        { id: 'notes', label: 'Notes' }
       ];
     case 'speedrun':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
-        { id: 'notes', label: 'Notes' },
-        { id: 'timeline', label: 'Timeline' }
+        { id: 'notes', label: 'Notes' }
       ];
     case 'clients':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'relationship', label: 'Relationship' },
         { id: 'business', label: 'Business' },
         { id: 'personal', label: 'Personal' },
         { id: 'success', label: 'Success' },
-        { id: 'timeline', label: 'Timeline' },
         { id: 'notes', label: 'Notes' }
       ];
     case 'partners':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'partnership', label: 'Partnership' },
         { id: 'collaboration', label: 'Collaboration' },
         { id: 'performance', label: 'Performance' },
         { id: 'opportunities', label: 'Opportunities' },
-        { id: 'timeline', label: 'Timeline' },
         { id: 'notes', label: 'Notes' }
       ];
     case 'sellers':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'companies', label: 'Companies' },
         { id: 'performance', label: 'Performance' },
         { id: 'profile', label: 'Profile' },
-        { id: 'timeline', label: 'Timeline' },
         { id: 'notes', label: 'Notes' }
       ];
     default:
       return [
         { id: 'overview', label: 'Home' },
+        { id: 'timeline', label: 'Actions' },
         { id: 'company', label: companyName },
         { id: 'industry', label: 'Industry' },
         { id: 'career', label: 'Career' },
         { id: 'landmines', label: 'Landmines' },
-        { id: 'timeline', label: 'Timeline' },
         { id: 'notes', label: 'Notes' }
       ];
   }
@@ -233,6 +237,7 @@ export function UniversalRecordTemplate({
   const { setCurrentRecord, clearCurrentRecord } = useRecordContext();
   const [activeTab, setActiveTab] = useState((customTabs || DEFAULT_TABS)[0]?.id || 'overview');
   const [loading, setLoading] = useState(false);
+  const [activeReport, setActiveReport] = useState<DeepValueReport | null>(null);
   
   // Ref for content container to reset scroll position
   const contentRef = useRef<HTMLDivElement>(null);
@@ -556,7 +561,7 @@ export function UniversalRecordTemplate({
       // Prepare update data with proper field mapping
       const updatePayload: Record<string, any> = {};
       
-      // Map common fields - using bracket notation for TypeScript strict mode
+      // Map common fields to streamlined schema - using bracket notation for TypeScript strict mode
       if (updatedData['name']) {
         const nameParts = updatedData['name'].trim().split(' ');
         updatePayload['firstName'] = nameParts[0] || '';
@@ -567,40 +572,30 @@ export function UniversalRecordTemplate({
       if (updatedData['lastName']) updatePayload['lastName'] = updatedData['lastName'];
       if (updatedData['fullName']) updatePayload['fullName'] = updatedData['fullName'];
       if (updatedData['email']) updatePayload['email'] = updatedData['email'];
+      if (updatedData['workEmail']) updatePayload['workEmail'] = updatedData['workEmail'];
       if (updatedData['phone']) updatePayload['phone'] = updatedData['phone'];
+      if (updatedData['mobilePhone']) updatePayload['mobilePhone'] = updatedData['mobilePhone'];
       if (updatedData['title']) updatePayload['jobTitle'] = updatedData['title'];
       if (updatedData['jobTitle']) updatePayload['jobTitle'] = updatedData['jobTitle'];
-      if (updatedData['company']) updatePayload['company'] = updatedData['company'];
       if (updatedData['status']) updatePayload['status'] = updatedData['status'];
       if (updatedData['priority']) updatePayload['priority'] = updatedData['priority'];
       if (updatedData['notes']) updatePayload['notes'] = updatedData['notes'];
       if (updatedData['industry']) updatePayload['industry'] = updatedData['industry'];
-      if (updatedData['linkedin']) updatePayload['linkedin'] = updatedData['linkedin'];
       if (updatedData['linkedinUrl']) updatePayload['linkedinUrl'] = updatedData['linkedinUrl'];
-      if (updatedData['companyDomain']) updatePayload['companyDomain'] = updatedData['companyDomain'];
-      if (updatedData['companySize']) updatePayload['companySize'] = updatedData['companySize'];
       if (updatedData['department']) updatePayload['department'] = updatedData['department'];
+      if (updatedData['seniority']) updatePayload['seniority'] = updatedData['seniority'];
       if (updatedData['city']) updatePayload['city'] = updatedData['city'];
       if (updatedData['state']) updatePayload['state'] = updatedData['state'];
       if (updatedData['country']) updatePayload['country'] = updatedData['country'];
       if (updatedData['postalCode']) updatePayload['postalCode'] = updatedData['postalCode'];
-      if (updatedData['relationship']) updatePayload['relationship'] = updatedData['relationship'];
       if (updatedData['source']) updatePayload['source'] = updatedData['source'];
-      if (updatedData['estimatedValue']) updatePayload['estimatedValue'] = updatedData['estimatedValue'];
-      if (updatedData['currency']) updatePayload['currency'] = updatedData['currency'];
-      if (updatedData['expectedCloseDate']) updatePayload['expectedCloseDate'] = updatedData['expectedCloseDate'];
-      if (updatedData['stage']) updatePayload['stage'] = updatedData['stage'];
-      if (updatedData['probability']) updatePayload['probability'] = updatedData['probability'];
       if (updatedData['nextAction']) updatePayload['nextAction'] = updatedData['nextAction'];
       if (updatedData['nextActionDate']) updatePayload['nextActionDate'] = updatedData['nextActionDate'];
       if (updatedData['lastActionDate']) updatePayload['lastActionDate'] = updatedData['lastActionDate'];
       if (updatedData['tags']) updatePayload['tags'] = updatedData['tags'];
-      if (updatedData['painPoint1']) updatePayload['painPoint1'] = updatedData['painPoint1'];
-      if (updatedData['painPoint2']) updatePayload['painPoint2'] = updatedData['painPoint2'];
-      if (updatedData['valueProp1']) updatePayload['valueProp1'] = updatedData['valueProp1'];
-      if (updatedData['valueProp2']) updatePayload['valueProp2'] = updatedData['valueProp2'];
-      if (updatedData['openingLine']) updatePayload['openingLine'] = updatedData['openingLine'];
-      if (updatedData['bestContactMethod']) updatePayload['bestContactMethod'] = updatedData['bestContactMethod'];
+      if (updatedData['engagementScore']) updatePayload['engagementScore'] = updatedData['engagementScore'];
+      if (updatedData['globalRank']) updatePayload['globalRank'] = updatedData['globalRank'];
+      if (updatedData['companyRank']) updatePayload['companyRank'] = updatedData['companyRank'];
       
       // Make API call to update the record using v1 APIs
       let response: Response;
@@ -789,13 +784,9 @@ export function UniversalRecordTemplate({
           },
         });
       } else {
-        // Fallback to legacy unified API for other types
-        response = await authFetch(`/api/data/unified?type=${recordType}&id=${recordId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        // For other record types, try to use appropriate v1 API or throw error
+        console.log('🔍 [DEBUG] Unsupported record type for v1 migration:', recordType);
+        throw new Error(`Record type '${recordType}' is not yet supported in v1 APIs. Please use companies or people records.`);
       }
       
       if (!response.ok) {
@@ -926,26 +917,34 @@ export function UniversalRecordTemplate({
       console.log(`🔄 [UNIVERSAL] Original record:`, record);
       console.log(`🔄 [UNIVERSAL] Target model: ${targetModel}, Target ID: ${targetId}`);
       
-      // Make API call to save the change using unified API
-      const requestPayload = {
-        type: apiRecordType,
-        action: 'update',
-        id: targetId,
-        data: updateData,
-        workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
-        userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
-      };
+      // Make API call to save the change using v1 APIs
+      let response: Response;
       
-      console.log(`🔄 [UNIVERSAL] Making API call to update ${apiField} for ${apiRecordType} ${targetId}`);
-      console.log(`🔄 [UNIVERSAL] Request payload:`, JSON.stringify(requestPayload, null, 2));
-      
-      const response = await fetch('/api/data/unified', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestPayload),
-      });
+      if (targetModel === 'people' || targetModel === 'leads' || targetModel === 'prospects' || targetModel === 'opportunities' || targetModel === 'speedrun') {
+        // All people-related records use v1 people API
+        console.log(`🔄 [UNIVERSAL] Using v1 people API for ${targetModel} ${targetId}`);
+        response = await authFetch(`/api/v1/people/${targetId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updateData),
+        });
+      } else if (targetModel === 'companies') {
+        // Use v1 companies API
+        console.log(`🔄 [UNIVERSAL] Using v1 companies API for ${targetId}`);
+        response = await authFetch(`/api/v1/companies/${targetId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updateData),
+        });
+      } else {
+        // For other record types, try to use appropriate v1 API or throw error
+        console.log('🔍 [DEBUG] Unsupported record type for v1 migration:', apiRecordType);
+        throw new Error(`Record type '${apiRecordType}' is not yet supported in v1 APIs. Please use companies or people records.`);
+      }
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -1033,7 +1032,7 @@ export function UniversalRecordTemplate({
           action: 'soft_delete',
           entityType: recordType === 'companies' ? 'companies' : 
                      recordType === 'people' ? 'people' : 
-                     recordType === 'actions' ? 'actions' : 'people',
+                     recordType === 'timeline' ? 'actions' : 'people',
           entityId: record.id,
         }),
       });
@@ -1330,10 +1329,11 @@ export function UniversalRecordTemplate({
       }
 
       const formData = {
-        // Basic info (Overview tab)
-        name: (modalElement.querySelector('input[defaultValue*="' + (record?.name || record?.fullName || '') + '"]') as HTMLInputElement)?.value || record?.name,
-        title: (modalElement.querySelector('input[defaultValue*="' + (record?.title || record?.jobTitle || '') + '"]') as HTMLInputElement)?.value || record?.title,
-        company: (modalElement.querySelector('input[defaultValue*="' + (record?.company || record?.companyName || '') + '"]') as HTMLInputElement)?.value || record?.company,
+        // Basic info (Overview tab) - mapped to streamlined schema fields
+        firstName: (modalElement.querySelector('input[defaultValue*="' + (record?.firstName || '') + '"]') as HTMLInputElement)?.value || record?.firstName,
+        lastName: (modalElement.querySelector('input[defaultValue*="' + (record?.lastName || '') + '"]') as HTMLInputElement)?.value || record?.lastName,
+        fullName: (modalElement.querySelector('input[defaultValue*="' + (record?.name || record?.fullName || '') + '"]') as HTMLInputElement)?.value || record?.fullName,
+        jobTitle: (modalElement.querySelector('input[defaultValue*="' + (record?.title || record?.jobTitle || '') + '"]') as HTMLInputElement)?.value || record?.jobTitle,
         department: (modalElement.querySelector('input[defaultValue*="' + (record?.department || '') + '"]') as HTMLInputElement)?.value || record?.department,
         
         // Speedrun Summary (Overview tab)
@@ -1361,11 +1361,13 @@ export function UniversalRecordTemplate({
         skills: (modalElement.querySelector('input[placeholder*="Comma-separated skills"]') as HTMLInputElement)?.value || record?.skills,
         certifications: (modalElement.querySelector('input[placeholder*="Comma-separated certifications"]') as HTMLInputElement)?.value || record?.certifications,
         
-        // Activity tab (Contact info)
+        // Activity tab (Contact info) - mapped to streamlined schema fields
         email: (modalElement.querySelector('input[type="email"]') as HTMLInputElement)?.value || record?.email,
+        workEmail: (modalElement.querySelector('input[type="email"]') as HTMLInputElement)?.value || record?.workEmail,
         phone: (modalElement.querySelector('input[type="tel"]') as HTMLInputElement)?.value || record?.phone,
+        mobilePhone: (modalElement.querySelector('input[type="tel"]') as HTMLInputElement)?.value || record?.mobilePhone,
         linkedinUrl: (modalElement.querySelector('input[type="url"]') as HTMLInputElement)?.value || record?.linkedinUrl,
-        location: (modalElement.querySelector('input[defaultValue*="' + (record?.location || record?.city || '') + '"]') as HTMLInputElement)?.value || record?.location,
+        city: (modalElement.querySelector('input[defaultValue*="' + (record?.location || record?.city || '') + '"]') as HTMLInputElement)?.value || record?.city,
         lastContactDate: (modalElement.querySelector('input[type="date"]') as HTMLInputElement)?.value || record?.lastContactDate,
         nextActionDate: (modalElement.querySelectorAll('input[type="date"]')[1] as HTMLInputElement)?.value || record?.nextActionDate,
         nextAction: (modalElement.querySelector('input[defaultValue*="' + (record?.nextAction || '') + '"]') as HTMLInputElement)?.value || record?.nextAction,
@@ -1377,25 +1379,34 @@ export function UniversalRecordTemplate({
         valueDriver: (modalElement.querySelector('input[placeholder*="What drives value"]') as HTMLInputElement)?.value || record?.valueDriver,
       };
       
-      // Make API call to update the record using unified API
-      const requestPayload = {
-        type: recordType,
-        action: 'update',
-        id: record?.id,
-        data: formData,
-        workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
-        userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
-      };
+      // Make API call to update the record using v1 APIs
+      let response: Response;
       
-      console.log('🔍 [DEBUG] API Request Payload:', requestPayload);
-      
-      const response = await authFetch('/api/data/unified', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestPayload),
-      });
+      if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
+        // All people-related records use v1 people API
+        console.log('🔍 [DEBUG] Using v1 people API for record type:', recordType);
+        response = await authFetch(`/api/v1/people/${record.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+      } else if (recordType === 'companies') {
+        // Use v1 companies API
+        console.log('🔍 [DEBUG] Using v1 companies API');
+        response = await authFetch(`/api/v1/companies/${record.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+      } else {
+        // For other record types, try to use appropriate v1 API or throw error
+        console.log('🔍 [DEBUG] Unsupported record type for v1 migration:', recordType);
+        throw new Error(`Record type '${recordType}' is not yet supported in v1 APIs. Please use companies or people records.`);
+      }
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -1457,7 +1468,7 @@ export function UniversalRecordTemplate({
           action: 'soft_delete',
           entityType: recordType === 'companies' ? 'companies' : 
                      recordType === 'people' ? 'people' : 
-                     recordType === 'actions' ? 'actions' : 'people',
+                     recordType === 'timeline' ? 'actions' : 'people',
           entityId: record.id,
         }),
       });
@@ -1484,6 +1495,47 @@ export function UniversalRecordTemplate({
       showMessage('Failed to delete record. Please try again.', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Report handlers
+  const handleReportClick = (report: DeepValueReport) => {
+    console.log('📊 [UNIVERSAL] Opening report:', report.title);
+    setActiveReport(report);
+  };
+
+  const handleReportBack = () => {
+    setActiveReport(null);
+  };
+
+  const handleReportSave = async (content: string) => {
+    if (!activeReport) return;
+    
+    try {
+      // Save report content to Atrium
+      const response = await authFetch('/api/atrium/reports', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: activeReport.title,
+          content,
+          type: 'PAPER',
+          reportType: activeReport.type,
+          sourceRecordId: activeReport.sourceRecordId,
+          sourceRecordType: activeReport.sourceRecordType,
+          generatedByAI: true,
+          workspaceId: activeReport.workspaceId,
+          userId: activeReport.userId
+        })
+      });
+
+      if (response.ok) {
+        console.log('✅ [UNIVERSAL] Report saved to Atrium');
+      }
+    } catch (error) {
+      console.error('❌ [UNIVERSAL] Failed to save report:', error);
     }
   };
 
@@ -1737,6 +1789,11 @@ export function UniversalRecordTemplate({
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} /> :
                 <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
           );
+        case 'value':
+          console.log(`📊 [UNIVERSAL] Rendering value tab for ${recordType}`);
+          return renderTabWithErrorBoundary(
+            <ValueTab key={activeTab} record={record} recordType={recordType} onReportClick={handleReportClick} />
+          );
         case 'news':
           console.log(`📰 [UNIVERSAL] Rendering news tab for ${recordType}`);
           return renderTabWithErrorBoundary(
@@ -1891,6 +1948,19 @@ export function UniversalRecordTemplate({
       );
     }
   };
+
+  // If a report is active, show the report view
+  if (activeReport) {
+    return (
+      <DeepValueReportView
+        report={activeReport}
+        record={record}
+        recordType={recordType}
+        onBack={handleReportBack}
+        onSave={handleReportSave}
+      />
+    );
+  }
 
   return (
     <div className="h-full flex flex-col bg-[var(--background)]">
@@ -2676,10 +2746,10 @@ export function UniversalRecordTemplate({
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
                     <textarea
-                      rows={6}
+                      rows={8}
                       defaultValue={record?.notes || ''}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Add any additional notes..."
+                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      placeholder="Add your notes here..."
                     />
                   </div>
 
@@ -3355,168 +3425,131 @@ function CompanyTab({ record, recordType }: { record: any; recordType: string })
 
 
 
-function NotesTab({ record, recordType }: { record: any; recordType: string }) {
-  const [notes, setNotes] = React.useState<any[]>([]);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [newNote, setNewNote] = React.useState('');
+export function NotesTab({ record, recordType }: { record: any; recordType: string }) {
+  // Initialize notes instantly from record prop
+  const getInitialNotes = () => {
+    if (record?.notes) {
+      if (typeof record.notes === 'string') {
+        return record.notes;
+      } else if (typeof record.notes === 'object' && record.notes !== null) {
+        return record.notes.content || record.notes.text || '';
+      }
+    }
+    return '';
+  };
 
-  // Load existing notes
+  const [notes, setNotes] = React.useState<string>(getInitialNotes);
+  const [saveStatus, setSaveStatus] = React.useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [lastSavedAt, setLastSavedAt] = React.useState<Date | null>(null);
+
+  // Silently refresh notes from API in background (no loading state)
   React.useEffect(() => {
-    const loadNotes = async () => {
+    const refreshNotes = async () => {
       if (!record?.id) return;
-      
+
       try {
-        setIsLoading(true);
-        const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
-        
-        const response = await fetch(`/api/notes?recordId=${record.id}&recordType=${recordType}&workspaceId=${workspaceId}`);
+        console.log('🔄 [NOTES] Silently refreshing notes for:', { recordId: record.id, recordType });
+
+        // Map record types to v1 API endpoints
+        const apiEndpoint = recordType === 'companies' 
+          ? `/api/v1/companies/${record.id}`
+          : `/api/v1/people/${record.id}`;
+
+        const response = await fetch(apiEndpoint, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
         if (response.ok) {
           const result = await response.json();
-          if (result.success) {
-            setNotes(result.notes || []);
+          if (result.success && result.data?.notes) {
+            const freshNotes = typeof result.data.notes === 'string' 
+              ? result.data.notes 
+              : result.data.notes.content || result.data.notes.text || '';
+            
+            // Only update if the notes are different (to avoid overwriting user changes)
+            if (freshNotes !== notes) {
+              setNotes(freshNotes);
+              console.log('✅ [NOTES] Silently updated notes:', { length: freshNotes.length });
+            }
           }
         }
       } catch (error) {
-        console.error('Error loading notes:', error);
-      } finally {
-        setIsLoading(false);
+        console.error('❌ [NOTES] Error refreshing notes:', error);
+        // Silently fail - user already has notes from record prop
       }
     };
 
-    loadNotes();
-  }, [record?.id, recordType]);
+    refreshNotes();
+  }, [record?.id, recordType]); // Only depend on record ID and type, not the full record
 
-  const handleAddNote = async () => {
-    if (!newNote.trim() || !record?.id) return;
+  // Auto-save function using v1 APIs
+  const saveNotes = React.useCallback(async (notesContent: string) => {
+    if (!record?.id) {
+      console.log('❌ [NOTES] No record ID, skipping save');
+      return;
+    }
 
     try {
-      setIsLoading(true);
-      const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
-      const userId = '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID
+      console.log('💾 [NOTES] Starting save for:', { recordId: record.id, recordType, contentLength: notesContent.length });
+      setSaveStatus('saving');
 
-      // Prepare note data with appropriate record linking
-      const noteData: any = {
-        content: newNote.trim(),
-        title: `Note for ${record.name || record.fullName || 'Record'}`,
-        workspaceId,
-        userId
-      };
+      // Map record types to v1 API endpoints
+      const apiEndpoint = recordType === 'companies' 
+        ? `/api/v1/companies/${record.id}`
+        : `/api/v1/people/${record.id}`;
 
-      // Link to the appropriate record based on type
-      switch (recordType) {
-        case 'leads':
-          noteData.leadId = record.id;
-          break;
-        case 'opportunities':
-          noteData.opportunityId = record.id;
-          break;
-        case 'companies':
-          noteData.accountId = record.id;
-          noteData.companyId = record.id; // Also link to companyId for companies
-          break;
-        case 'people':
-          noteData.contactId = record.id;
-          break;
-        case 'prospects':
-          noteData.personId = record.id;
-          break;
-        default:
-          noteData.accountId = record.id; // Default fallback
-      }
-
-      const response = await fetch('/api/notes', {
-        method: 'POST',
+      const response = await fetch(apiEndpoint, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(noteData),
+        body: JSON.stringify({ notes: notesContent }),
       });
 
+      console.log('📡 [NOTES] API response:', { status: response.status, ok: response.ok, endpoint: apiEndpoint });
+
       if (!response.ok) {
-        throw new Error(`Failed to create note: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('❌ [NOTES] API error response:', errorText);
+        throw new Error(`Failed to save notes: ${response.statusText}`);
       }
 
       const result = await response.json();
+      console.log('✅ [NOTES] Save result:', result);
+      
       if (!result.success) {
-        throw new Error(result.error || 'Failed to create note');
+        throw new Error(result.error || 'Failed to save notes');
       }
 
-      console.log(`✅ [NOTES-TAB] Successfully created note for ${recordType}:`, result);
-      
-      // Add the new note to the list
-      setNotes(prev => [result.note, ...prev]);
-      setNewNote(''); // Clear the input
+      setSaveStatus('saved');
+      setLastSavedAt(new Date());
+      // Clear saved status after 2 seconds
+      setTimeout(() => setSaveStatus('idle'), 2000);
       
     } catch (error) {
-      console.error(`❌ [NOTES-TAB] Error creating note:`, error);
-      alert('Failed to save note. Please try again.');
-    } finally {
-      setIsLoading(false);
+      console.error('❌ [NOTES] Error saving notes:', error);
+      setSaveStatus('error');
+      // Clear error status after 3 seconds
+      setTimeout(() => setSaveStatus('idle'), 3000);
     }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      handleAddNote();
-    }
-  };
+  }, [record?.id, recordType]);
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Notes</h3>
-        
-        {/* Add new note */}
-        <div className="space-y-3">
-          <label className="block text-sm font-medium text-[var(--muted)] mb-1">Add Note</label>
-          <div className="space-y-2">
-            <textarea
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-              onKeyDown={handleKeyPress}
-              placeholder="Add notes about this record... (Cmd/Ctrl + Enter to save)"
-              className="w-full h-24 px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-              disabled={isLoading}
-            />
-            <div className="flex justify-end">
-              <button
-                onClick={handleAddNote}
-                disabled={!newNote.trim() || isLoading}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isLoading ? 'Saving...' : 'Add Note'}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Existing notes */}
-        <div className="space-y-3">
-          <label className="block text-sm font-medium text-[var(--muted)] mb-1">Recent Notes</label>
-          {isLoading && notes.length === 0 ? (
-            <div className="text-center py-4 text-[var(--muted)]">Loading notes...</div>
-          ) : notes.length === 0 ? (
-            <div className="text-center py-4 text-[var(--muted)]">No notes yet. Add your first note above.</div>
-          ) : (
-            <div className="space-y-3">
-              {notes.map((note) => (
-                <div key={note.id} className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-sm font-medium text-[var(--foreground)]">
-                      {note.title || 'Note'}
-                    </h4>
-                    <span className="text-xs text-[var(--muted)]">
-                      {new Date(note.createdAt).toLocaleDateString()} at {new Date(note.createdAt).toLocaleTimeString()}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{note.content}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+    <div className="h-full">
+      <NotesEditor
+        value={notes}
+        onChange={setNotes}
+        placeholder="Add your notes here..."
+        autoSave={true}
+        saveStatus={saveStatus}
+        onSave={saveNotes}
+        debounceMs={500}
+        lastSavedAt={lastSavedAt}
+        className="h-full"
+      />
     </div>
   );
 }

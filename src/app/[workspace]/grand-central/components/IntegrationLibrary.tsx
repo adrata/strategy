@@ -48,7 +48,7 @@ export function IntegrationLibrary({ isOpen, onClose }: IntegrationLibraryProps)
     const fetchProviders = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/grand-central/nango/providers');
+        const response = await fetch('/api/v1/integrations/nango/providers');
         
         if (response.ok) {
           const data = await response.json();

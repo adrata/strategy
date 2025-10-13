@@ -18,6 +18,7 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { CompleteActionModal, ActionLogData } from "./components/CompleteActionModal";
 import { TodayActivityTracker } from "./TodayActivityTracker";
 import { getCommonShortcut, COMMON_SHORTCUTS } from '@/platform/utils/keyboard-shortcuts';
+import { CongratulationsModal } from "./components/CongratulationsModal";
 
 // EmailData will be imported from EmailService, removing duplicate type definition
 
@@ -182,6 +183,12 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
   const [showPowerDialer, setShowPowerDialer] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
+  const [showCongratulationsModal, setShowCongratulationsModal] = useState(false);
+  const [batchInfo, setBatchInfo] = useState<{
+    batchNumber: number;
+    completedCount: number;
+    message?: string;
+  } | null>(null);
 
   // Track completed IDs for potential future use
   const [completedIds, setCompletedIds] = useState<Set<number>>(new Set());
@@ -259,6 +266,21 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
     // Also check for both to handle edge cases
     return event.metaKey || event.ctrlKey;
   };
+
+  // Listen for batch completion events
+  useEffect(() => {
+    const handleBatchComplete = (event: CustomEvent) => {
+      const { batchNumber, completedCount, message } = event.detail;
+      setBatchInfo({ batchNumber, completedCount, message });
+      setShowCongratulationsModal(true);
+    };
+
+    window.addEventListener('speedrun-batch-complete', handleBatchComplete as EventListener);
+
+    return () => {
+      window.removeEventListener('speedrun-batch-complete', handleBatchComplete as EventListener);
+    };
+  }, []);
 
 
   // Generate random success messages
@@ -676,6 +698,14 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           personName={selectedPerson.name}
           isLoading={isSubmittingAction}
           initialData={lastCompletedAction?.actionData}
+        />
+
+        <CongratulationsModal
+          isOpen={showCongratulationsModal}
+          onClose={() => setShowCongratulationsModal(false)}
+          batchNumber={batchInfo?.batchNumber || 1}
+          completedCount={batchInfo?.completedCount || 50}
+          message={batchInfo?.message}
         />
       </>
     );

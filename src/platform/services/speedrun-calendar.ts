@@ -106,7 +106,7 @@ export class SpeedrunCalendarService {
     // 2. Try API route
     if (workspaceId) {
       try {
-        const response = await fetch(`/api/calendar/events?date=${date.toISOString()}&workspaceId=${workspaceId}`);
+        const response = await fetch(`/api/v1/communications/calendar/events?date=${date.toISOString()}&workspaceId=${workspaceId}`);
         if (response.ok) {
           const data = await response.json();
           console.log('📅 Using API calendar data:', data.events?.length || 0, 'events');

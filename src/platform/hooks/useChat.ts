@@ -136,43 +136,11 @@ export function useChat(): UseChatReturn {
     }
   }, [chatSessions]);
 
-  // Save message to database
+  // Save message to database - now handled by RightPanel's hybrid persistence
   const saveMessageToDatabase = async (message: ChatMessage, appType: string) => {
-    if (!authUser) return;
-    
-    // Get user and workspace IDs - NO HARDCODED FALLBACKS
-    const workspaceId = authUser.activeWorkspaceId || authUser.workspaces?.[0]?.id;
-    const userId = authUser.id;
-    
-    if (!workspaceId || !userId) {
-      console.error("[SAVE CHAT] User not authenticated or no workspace access");
-      return;
-    }
-    
-    try {
-      const response = await fetch('/api/chat-sessions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          workspaceId,
-          userId,
-          appType,
-          message,
-          type: message.type
-        })
-      });
-      
-      const result = await response.json();
-      if (!result.success) {
-        console.warn('Failed to save message to database:', result.error, result.details);
-      } else {
-        debug("MESSAGE_SAVED", { messageId: result.messageId, appType });
-      }
-    } catch (error) {
-      console.warn('Failed to save message to database:', error);
-    }
+    // This function is now deprecated - message persistence is handled by RightPanel
+    // with hybrid localStorage + API persistence
+    debug("MESSAGE_SAVE_DEPRECATED", { messageId: message.id, appType, note: "Handled by RightPanel" });
   };
 
   // Add user message to chat

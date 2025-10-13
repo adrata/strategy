@@ -56,11 +56,8 @@ export function LeadDetailsTabContent({
         return (
           <NotesTab
             person={person}
-            notes={notes}
-            newNote={newNote}
-            setNewNote={onSetNewNote}
-            addNote={onAddNote}
-            formatTimestamp={formatTimestamp}
+            notes={newNote}
+            setNotes={onSetNewNote}
           />
         );
 

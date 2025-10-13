@@ -34,6 +34,8 @@ import { SettingsModal } from "./SettingsModal";
 import { RossWelcomeToast } from "@/platform/ui/components/RossWelcomeToast";
 import { ConditionalSpeedrunProvider } from "./ConditionalSpeedrunProvider";
 import { SpeedrunEngineModal } from "./SpeedrunEngineModal";
+import { SettingsPopup } from "@/frontend/components/pipeline/SettingsPopup";
+import { SettingsPopupProvider, useSettingsPopup } from "./SettingsPopupContext";
 import type { ActionPlatformApp } from "../../types";
 
 interface AcquisitionOSLayoutProps {
@@ -60,6 +62,7 @@ function AcquisitionOSLayoutInner({
 }: AcquisitionOSLayoutProps) {
   const router = useRouter();
   const { zoom } = useZoom();
+  const { isSettingsOpen, setIsSettingsOpen } = useSettingsPopup();
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
   const [appPreferences, setAppPreferences] = useState<AppPreference[]>([]);
@@ -581,12 +584,18 @@ function AcquisitionOSLayoutInner({
           isOpen={isSpeedrunEngineModalOpen}
           onClose={() => setIsSpeedrunEngineModalOpen(false)}
         />
+
+        {/* Settings Popup */}
+        <SettingsPopup
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+        />
       </div>
     </ConditionalSpeedrunProvider>
   );
 }
 
-// Main exported component with ProfilePopupProvider
+// Main exported component with ProfilePopupProvider and SettingsPopupProvider
 export function AcquisitionOSLayout({
   leftPanel,
   middlePanel,
@@ -596,13 +605,15 @@ export function AcquisitionOSLayout({
 }: AcquisitionOSLayoutProps) {
   return (
     <ProfilePopupProvider>
-      <AcquisitionOSLayoutInner
-        leftPanel={leftPanel}
-        middlePanel={middlePanel}
-        rightPanel={rightPanel}
-        shouldShowLeftPanel={shouldShowLeftPanel}
-        shouldShowThinLeftPanel={shouldShowThinLeftPanel}
-      />
+      <SettingsPopupProvider>
+        <AcquisitionOSLayoutInner
+          leftPanel={leftPanel}
+          middlePanel={middlePanel}
+          rightPanel={rightPanel}
+          shouldShowLeftPanel={shouldShowLeftPanel}
+          shouldShowThinLeftPanel={shouldShowThinLeftPanel}
+        />
+      </SettingsPopupProvider>
     </ProfilePopupProvider>
   );
 }

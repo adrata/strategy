@@ -1333,20 +1333,12 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
                   throw new Error('No authenticated user found. Please refresh the page and try again.');
                 }
                 
-                const requestBody = {
-                  type: 'companies',
-                  action: 'create',
-                  data: companyData,
-                  workspaceId: workspaceId,
-                  userId: userId
-                };
+                console.log('🔍 [FRONTEND] Creating company with v1 API:', companyData);
                 
-                console.log('🔍 [FRONTEND] Request body:', requestBody);
-                
-                const response = await authFetch('/api/data/unified', {
+                const response = await authFetch('/api/v1/companies', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(requestBody)
+                  body: JSON.stringify(companyData)
                 });
 
                 console.log('Company creation response status:', response.status);

@@ -34,12 +34,159 @@ jest.mock('@/platform/database/prisma-client', () => ({
       update: jest.fn(),
       delete: jest.fn(),
     },
+    companies: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      count: jest.fn(),
+      groupBy: jest.fn(),
+    },
+    people: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      count: jest.fn(),
+      groupBy: jest.fn(),
+    },
+    actions: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      count: jest.fn(),
+      groupBy: jest.fn(),
+    },
+    $transaction: jest.fn(),
   },
+}));
+
+// Mock Prisma client from @prisma/client
+jest.mock('@prisma/client', () => ({
+  PrismaClient: jest.fn().mockImplementation(() => ({
+    users: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    },
+    workspaces: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    },
+    companies: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      count: jest.fn(),
+      groupBy: jest.fn(),
+    },
+    people: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      count: jest.fn(),
+      groupBy: jest.fn(),
+    },
+    actions: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      count: jest.fn(),
+      groupBy: jest.fn(),
+    },
+    $transaction: jest.fn(),
+  })),
 }));
 
 // Mock environment variables for tests
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
 process.env.NEXTAUTH_SECRET = 'test-secret';
+
+// Mock Web APIs for Node.js environment
+global.Request = class MockRequest {
+  constructor(public url: string, public init?: RequestInit) {}
+  async json() {
+    return JSON.parse(this.init?.body as string || '{}');
+  }
+  async text() {
+    return this.init?.body as string || '';
+  }
+} as any;
+
+global.Response = class MockResponse {
+  constructor(public body?: any, public init?: ResponseInit) {}
+  async json() {
+    return this.body;
+  }
+  async text() {
+    return typeof this.body === 'string' ? this.body : JSON.stringify(this.body);
+  }
+  get ok() {
+    return (this.init?.status || 200) >= 200 && (this.init?.status || 200) < 300;
+  }
+  get status() {
+    return this.init?.status || 200;
+  }
+} as any;
+
+global.Headers = class MockHeaders {
+  private headers = new Map<string, string>();
+  
+  constructor(init?: HeadersInit) {
+    if (init) {
+      if (Array.isArray(init)) {
+        init.forEach(([key, value]) => this.headers.set(key, value));
+      } else if (init instanceof Headers) {
+        init.forEach((value, key) => this.headers.set(key, value));
+      } else {
+        Object.entries(init).forEach(([key, value]) => this.headers.set(key, value));
+      }
+    }
+  }
+  
+  get(name: string) {
+    return this.headers.get(name) || null;
+  }
+  
+  set(name: string, value: string) {
+    this.headers.set(name, value);
+  }
+  
+  has(name: string) {
+    return this.headers.has(name);
+  }
+  
+  delete(name: string) {
+    this.headers.delete(name);
+  }
+  
+  forEach(callback: (value: string, key: string) => void) {
+    this.headers.forEach(callback);
+  }
+} as any;
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
@@ -72,16 +219,19 @@ jest.mock('next/link', () => {
 });
 
 // Mock window.location (simplified)
-if (typeof window !== 'undefined') {
-  (window as any).location = {
-    href: 'http://localhost:3000/sign-in',
-    hostname: 'localhost',
-    search: '',
-    pathname: '/sign-in',
-    assign: jest.fn(),
-    replace: jest.fn(),
-    reload: jest.fn(),
-  };
+if (typeof window !== 'undefined' && !window.location) {
+  Object.defineProperty(window, 'location', {
+    value: {
+      href: 'http://localhost:3000/sign-in',
+      hostname: 'localhost',
+      search: '',
+      pathname: '/sign-in',
+      assign: jest.fn(),
+      replace: jest.fn(),
+      reload: jest.fn(),
+    },
+    writable: true,
+  });
 }
 
 // Mock localStorage

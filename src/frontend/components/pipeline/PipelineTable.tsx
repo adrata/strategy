@@ -9,6 +9,7 @@ import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-t
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
 import { usePipelineActions } from '@/platform/hooks/usePipelineActions';
 import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
+import { getLeadsNextAction } from '@/platform/utils/actionUtils';
 import { TableHeader } from './table/TableHeader';
 import { TableRow } from './table/TableRow';
 import { Pagination } from './table/Pagination';
@@ -448,10 +449,16 @@ export function PipelineTable({
                         cellContent = record['status'] || '-';
                         break;
                       case 'last action':
-                        cellContent = record['lastActionDescription'] || record['lastAction'] || record['lastContactType'] || 'No action';
+                        // Format last action with timing badge and description
+                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
+                        const lastTiming = getRealtimeActionTiming(lastActionDate);
+                        const lastActionText = record['lastActionDescription'] || record['lastAction'] || record['lastContactType'] || '-';
+                        cellContent = `${lastTiming.text} | ${lastActionText}`;
                         break;
                       case 'next action':
-                        cellContent = record['nextAction'] || record['nextActionDescription'] || 'No action planned';
+                        // Format next action with timing badge and description
+                        const nextAction = getLeadsNextAction(record, index);
+                        cellContent = `${nextAction.timing} | ${nextAction.action}`;
                         break;
                       case 'owner':
                       case 'main-seller':

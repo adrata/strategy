@@ -241,6 +241,27 @@ export function SpeedrunSprintView() {
     }
   }, [data]); // Remove selectedRecord from dependencies to prevent infinite loop
 
+  // Generate slug for a record
+  const generateRecordSlug = (record: any) => {
+    const name = record.name || record.fullName || 'unknown';
+    const cleanName = name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+    return `${cleanName}-${record.id}`;
+  };
+
+  // Navigate to individual record URL when record is selected
+  const handleRecordSelect = (record: any) => {
+    const slug = generateRecordSlug(record);
+    const currentPath = window.location.pathname;
+    const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+    
+    if (workspaceMatch) {
+      const workspaceSlug = workspaceMatch[1];
+      router.push(`/${workspaceSlug}/speedrun/${slug}`);
+    } else {
+      router.push(`/speedrun/${slug}`);
+    }
+  };
+
   // Keyboard shortcuts for Command+Enter
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -298,10 +319,6 @@ export function SpeedrunSprintView() {
     return () => document.removeEventListener("keydown", handleKeyDown, true);
   }, [selectedRecord]);
 
-  // Handle record selection
-  const handleRecordSelect = (record: any) => {
-    setSelectedRecord(record);
-  };
 
   // Handle navigation between records
   const handleNavigateNext = () => {
@@ -546,7 +563,8 @@ export function SpeedrunSprintView() {
             previousRecord: currentIndex > 0 ? data[currentIndex - 1] : null
           });
           if (currentIndex > 0) {
-            setSelectedRecord(data[currentIndex - 1]);
+            const previousRecord = data[currentIndex - 1];
+            handleRecordSelect(previousRecord);
           }
         }}
         onNavigateNext={() => {
@@ -562,7 +580,7 @@ export function SpeedrunSprintView() {
             totalSprints: totalSprints
           });
           if (nextRecord) {
-            setSelectedRecord(nextRecord);
+            handleRecordSelect(nextRecord);
           } else if (hasNextSprint) {
             // Current sprint done, move to next sprint
             setCurrentSprintIndex(currentSprintIndex + 1);

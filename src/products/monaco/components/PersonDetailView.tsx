@@ -763,18 +763,13 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
     try {
       console.log(`🔄 [MONACO PERSON] Saving ${field} = ${value} for ${recordType} ${recordId}`);
       
-      // Use the unified API for updates
-      const response = await fetch('/api/data/unified', {
-        method: 'PUT',
+      // Use v1 people API for updates
+      const response = await fetch(`/api/v1/people/${recordId}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          type: 'people',
-          action: 'update',
-          id: recordId,
-          data: { [field]: value }
-        }),
+        body: JSON.stringify({ [field]: value }),
       });
 
       if (response.ok) {

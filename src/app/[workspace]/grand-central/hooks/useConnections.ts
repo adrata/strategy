@@ -40,7 +40,7 @@ export function useConnections(): UseConnectionsReturn {
 
     try {
       setError(null);
-      const response = await fetch(`/api/grand-central/nango/connections?workspaceId=${workspaceId}`);
+      const response = await fetch(`/api/v1/integrations/nango/connections?workspaceId=${workspaceId}`);
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -69,7 +69,7 @@ export function useConnections(): UseConnectionsReturn {
     }
 
     try {
-      const response = await fetch('/api/grand-central/nango/disconnect', {
+      const response = await fetch('/api/v1/integrations/nango/disconnect', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

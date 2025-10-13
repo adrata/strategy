@@ -88,7 +88,7 @@ export class PowerDialerCallService {
       }
 
       // Step 2: Get Twilio access token for WebRTC
-      const tokenResponse = await fetch("/api/twilio/access-token", {
+      const tokenResponse = await fetch("/api/v1/communications/phone/access-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

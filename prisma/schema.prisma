@@ -95,6 +95,9 @@ model workspaces {
   user_roles                user_roles[]
   users                     users[]
   workspace_users           workspace_users[]
+  ai_conversations          ai_conversations[]
+  atrium_documents          AtriumDocument[]
+  atrium_folders            AtriumFolder[]
 
   @@index([slug])
   @@index([isActive])
@@ -116,6 +119,8 @@ model users {
   isActive                  Boolean                     @default(true)
   activeWorkspaceId         String?                     @db.VarChar(30)
   username                  String?                     @unique @db.VarChar(50)
+  lastSpeedrunBatchReset    DateTime?
+  speedrunBatchNumber       Int                         @default(1)
   oasis_channel_members     OasisChannelMember[]
   oasis_dm_participants     OasisDMParticipant[]
   oasis_messages            OasisMessage[]
@@ -134,9 +139,17 @@ model users {
   user_roles                user_roles[]
   workspaces                workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
   workspace_users           workspace_users[]
+  ai_conversations          ai_conversations[]
+  atrium_documents          AtriumDocument[]
+  atrium_folders            AtriumFolder[]
+  atrium_versions           AtriumVersion[]
+  atrium_shares             AtriumShare[]
+  atrium_comments           AtriumComment[]
+  atrium_activities         AtriumActivity[]
 
   @@index([activeWorkspaceId])
   @@index([username])
+  @@index([lastSpeedrunBatchReset])
 }
 
 /// Workspace membership and basic roles
@@ -788,4 +801,229 @@ enum BuyerGroupRole {
 enum ChronicleReportType {
   MONDAY_PREP
   FRIDAY_RECAP
+}
+
+enum MessageType {
+  USER
+  ASSISTANT
+}
+
+/// AI Chat Persistence Models
+model ai_conversations {
+  id              String        @id @default(ulid())
+  workspaceId     String        @db.VarChar(30)
+  userId          String        @db.VarChar(30)
+  title           String        @db.VarChar(200)
+  lastActivity    DateTime      @updatedAt
+  isActive        Boolean       @default(true)
+  welcomeMessage  String?
+  metadata        Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+  
+  user            users         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace       workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  messages        ai_messages[]
+  
+  @@index([workspaceId, userId, deletedAt])
+  @@index([lastActivity])
+  @@index([workspaceId, userId, isActive])
+}
+
+model ai_messages {
+  id              String           @id @default(ulid())
+  conversationId  String
+  type            MessageType
+  content         String
+  metadata        Json?            // sources, todos, routing, costs, etc.
+  createdAt       DateTime         @default(now())
+  
+  conversation    ai_conversations @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@index([conversationId, createdAt])
+  @@index([conversationId, type])
+}
+
+/// Atrium Document Management System
+model AtriumDocument {
+  id                String            @id @default(ulid())
+  title             String
+  content           String?           @db.Text
+  type              AtriumDocumentType @default(PAPER)
+  workspaceId       String
+  createdById       String
+  folderId          String?
+  isPublic          Boolean           @default(false)
+  isEncrypted       Boolean           @default(false)
+  encryptionKey     String?           @db.VarChar(255)
+  metadata          Json?
+  
+  // Report-specific fields
+  reportType        String?           @db.VarChar(50)
+  sourceRecordId    String?           @db.VarChar(50)
+  sourceRecordType  String?           @db.VarChar(50)
+  generatedByAI     Boolean           @default(false)
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  deletedAt         DateTime?
+  
+  // Relations
+  workspace         workspaces        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdBy         users             @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  folder            AtriumFolder?     @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  versions          AtriumVersion[]
+  shares            AtriumShare[]
+  comments          AtriumComment[]
+  activities        AtriumActivity[]
+  
+  @@index([workspaceId])
+  @@index([createdById])
+  @@index([folderId])
+  @@index([type])
+  @@index([reportType])
+  @@index([sourceRecordId, sourceRecordType])
+  @@index([generatedByAI])
+  @@index([createdAt])
+  @@index([deletedAt])
+}
+
+model AtriumFolder {
+  id                String            @id @default(ulid())
+  name              String
+  description       String?
+  parentId          String?
+  workspaceId       String
+  createdById       String
+  color             String?           @db.VarChar(7)
+  icon              String?           @db.VarChar(50)
+  isSystem          Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  deletedAt         DateTime?
+  
+  // Relations
+  workspace         workspaces        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdBy         users             @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  parent            AtriumFolder?     @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children          AtriumFolder[]    @relation("FolderHierarchy")
+  documents         AtriumDocument[]
+  
+  @@index([workspaceId])
+  @@index([createdById])
+  @@index([parentId])
+  @@index([isSystem])
+  @@index([deletedAt])
+}
+
+model AtriumVersion {
+  id                String            @id @default(ulid())
+  documentId        String
+  versionNumber     Int
+  content           String            @db.Text
+  contentHash       String            @db.VarChar(64)
+  changeDescription String?
+  createdById       String
+  createdAt         DateTime          @default(now())
+  
+  // Relations
+  document          AtriumDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy         users             @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  
+  @@unique([documentId, versionNumber])
+  @@index([documentId])
+  @@index([createdById])
+  @@index([createdAt])
+}
+
+model AtriumShare {
+  id                String            @id @default(ulid())
+  documentId        String
+  shareToken        String            @unique @db.VarChar(64)
+  permissions       AtriumSharePermission[]
+  expiresAt         DateTime?
+  password          String?           @db.VarChar(255)
+  allowedEmails     String[]
+  viewCount         Int               @default(0)
+  createdById       String
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  // Relations
+  document          AtriumDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy         users             @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  
+  @@index([shareToken])
+  @@index([documentId])
+  @@index([createdById])
+  @@index([expiresAt])
+}
+
+model AtriumComment {
+  id                String            @id @default(ulid())
+  documentId        String
+  content           String            @db.Text
+  parentId          String?
+  createdById       String
+  isResolved        Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  deletedAt         DateTime?
+  
+  // Relations
+  document          AtriumDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy         users             @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  parent            AtriumComment?    @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies           AtriumComment[]   @relation("CommentReplies")
+  
+  @@index([documentId])
+  @@index([createdById])
+  @@index([parentId])
+  @@index([isResolved])
+  @@index([deletedAt])
+}
+
+model AtriumActivity {
+  id                String            @id @default(ulid())
+  documentId        String
+  activityType      AtriumActivityType
+  description       String            @db.VarChar(500)
+  metadata          Json?
+  performedById     String
+  createdAt         DateTime          @default(now())
+  
+  // Relations
+  document          AtriumDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  performedBy       users             @relation(fields: [performedById], references: [id], onDelete: Cascade)
+  
+  @@index([documentId])
+  @@index([performedById])
+  @@index([activityType])
+  @@index([createdAt])
+}
+
+enum AtriumDocumentType {
+  PAPER
+  PITCH
+  GRID
+  CODE
+}
+
+enum AtriumSharePermission {
+  VIEW
+  COMMENT
+  EDIT
+  SHARE
+}
+
+enum AtriumActivityType {
+  CREATED
+  UPDATED
+  SHARED
+  VIEWED
+  COMMENTED
+  VERSIONED
+  DELETED
+  RESTORED
 }

@@ -46,18 +46,36 @@ export interface APIEndpoint {
 // ============================================================================
 
 export const API_ENDPOINTS: Record<string, APIEndpoint> = {
-  // Data endpoints
-  UNIFIED_DATA: {
-    path: '/api/data/unified',
+  // Data endpoints - migrated to v1
+  PEOPLE_DATA: {
+    path: '/api/v1/people',
     method: 'GET',
     cache: true,
     cacheTTL: 300000, // 5 minutes
     priority: 'high',
-    tags: ['data', 'unified']
+    tags: ['data', 'people']
+  },
+  
+  COMPANIES_DATA: {
+    path: '/api/v1/companies',
+    method: 'GET',
+    cache: true,
+    cacheTTL: 300000, // 5 minutes
+    priority: 'high',
+    tags: ['data', 'companies']
+  },
+  
+  ACTIONS_DATA: {
+    path: '/api/v1/actions',
+    method: 'GET',
+    cache: true,
+    cacheTTL: 300000, // 5 minutes
+    priority: 'high',
+    tags: ['data', 'actions']
   },
   
   RECORD_DETAIL: {
-    path: '/api/data/records',
+    path: '/api/v1/records',
     method: 'GET',
     cache: true,
     cacheTTL: 600000, // 10 minutes
@@ -66,7 +84,7 @@ export const API_ENDPOINTS: Record<string, APIEndpoint> = {
   },
   
   PIPELINE_COUNTS: {
-    path: '/api/data/unified',
+    path: '/api/v1/counts',
     method: 'GET',
     cache: true,
     cacheTTL: 60000, // 1 minute

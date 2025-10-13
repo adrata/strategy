@@ -183,6 +183,63 @@ export default function RootLayout({
         {/* Basic privacy protection */}
         <meta name="robots" content="noindex, nofollow" />
         
+        {/* Blocking theme script to prevent flash of wrong theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  // Get theme settings from localStorage
+                  const themeSettings = localStorage.getItem('theme-settings');
+                  const zoom = localStorage.getItem('zoom');
+                  
+                  // Default theme settings
+                  let themeMode = 'light';
+                  let lightTheme = 'ghost';
+                  let darkTheme = 'dark-matter';
+                  
+                  // Parse stored settings
+                  if (themeSettings) {
+                    const parsed = JSON.parse(themeSettings);
+                    if (parsed.themeMode) themeMode = parsed.themeMode;
+                    if (parsed.lightTheme) lightTheme = parsed.lightTheme;
+                    if (parsed.darkTheme) darkTheme = parsed.darkTheme;
+                  }
+                  
+                  // Determine if dark mode should be active
+                  const isDarkMode = themeMode === 'dark' || 
+                    (themeMode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                  
+                  // Set dark mode class immediately
+                  if (isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                  
+                  // Apply zoom if available
+                  if (zoom) {
+                    const zoomValue = parseInt(zoom, 10);
+                    if (!isNaN(zoomValue) && zoomValue >= 50 && zoomValue <= 200) {
+                      document.documentElement.style.fontSize = zoomValue + '%';
+                    }
+                  }
+                  
+                  // Set theme data attribute for React to read
+                  document.documentElement.setAttribute('data-theme-mode', themeMode);
+                  document.documentElement.setAttribute('data-light-theme', lightTheme);
+                  document.documentElement.setAttribute('data-dark-theme', darkTheme);
+                  
+                } catch (error) {
+                  // Silent fail - fallback to light mode
+                  document.documentElement.classList.remove('dark');
+                  document.documentElement.setAttribute('data-theme-mode', 'light');
+                }
+              })();
+            `,
+          }}
+        />
+        
         {/* Twilio Voice SDK for computer-to-phone calling */}
         <Script src="/twilio-voice.min.js" strategy="beforeInteractive" />
         

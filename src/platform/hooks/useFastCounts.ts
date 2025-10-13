@@ -37,16 +37,16 @@ interface UseFastCountsReturn {
 export function useFastCounts(): UseFastCountsReturn {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const [counts, setCounts] = useState<FastCounts>({
-    leads: '—',
-    prospects: '—',
-    opportunities: '—',
-    companies: '—',
-    people: '—',
-    clients: '—',
-    sellers: '—',
-    speedrun: '—',
-    metrics: '—',
-    chronicle: '—'
+    leads: 0,
+    prospects: 0,
+    opportunities: 0,
+    companies: 0,
+    people: 0,
+    clients: 0,
+    sellers: 0,
+    speedrun: 0,
+    metrics: 0,
+    chronicle: 0
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,24 +98,24 @@ export function useFastCounts(): UseFastCountsReturn {
 
       const newCounts: FastCounts = {
         // Pipeline stages (using counts API data)
-        leads: counts.leads || '—',
-        prospects: counts.prospects || '—',
-        opportunities: counts.opportunities || '—',
-        clients: counts.clients || '—',
+        leads: counts.leads ?? 0,
+        prospects: counts.prospects ?? 0,
+        opportunities: counts.opportunities ?? 0,
+        clients: counts.clients ?? 0,
         
         // Core entities
-        companies: counts.companies || '—',
-        people: counts.people || '—',
+        companies: counts.companies ?? 0,
+        people: counts.people ?? 0,
         
         // Speedrun: Use the speedrun count directly from counts API
-        speedrun: counts.speedrun || '—',
+        speedrun: counts.speedrun ?? 0,
         
         // Sellers: Use the sellers count from counts API
-        sellers: counts.sellers || '—',
+        sellers: counts.sellers ?? 0,
         
         // New sections
-        metrics: counts.metrics || '—',
-        chronicle: counts.chronicle || '—'
+        metrics: counts.metrics ?? 0,
+        chronicle: counts.chronicle ?? 0
       };
 
       setCounts(newCounts);

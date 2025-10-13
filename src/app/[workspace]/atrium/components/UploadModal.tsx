@@ -90,7 +90,7 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
         setUploadProgress(progress);
         
         // TODO: Replace with actual API call
-        // await fetch('/api/atrium/upload', {
+        // await fetch('/api/v1/documents/upload', {
         //   method: 'POST',
         //   body: formData,
         // });

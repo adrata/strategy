@@ -142,7 +142,7 @@ export class EmailSyncMonitor {
 
       // Test sync manually
       console.log(`📧 Testing manual sync for ${account.email}...`);
-      const syncResponse = await fetch('http://localhost:3000/api/email/sync', {
+      const syncResponse = await fetch('http://localhost:3000/api/v1/communications/email/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

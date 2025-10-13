@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
  * GET /api/v1/companies/[id] - Get a specific company
  * PUT /api/v1/companies/[id] - Update a company (full replacement)
  * PATCH /api/v1/companies/[id] - Partially update a company
- * DELETE /api/v1/companies/[id] - Delete a company
+ * DELETE /api/v1/companies/[id] - Delete a company (soft delete by default, hard delete with ?mode=hard)
  */
 
 // GET /api/v1/companies/[id] - Get a specific company
@@ -30,7 +30,10 @@ export async function GET(
     const { id } = params;
 
     const company = await prisma.companies.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only show non-deleted records
+      },
       include: {
         mainSeller: {
           select: {
@@ -49,6 +52,9 @@ export async function GET(
             email: true,
             status: true,
           },
+          where: {
+            deletedAt: null // Only show non-deleted people
+          },
           take: 10,
         },
         actions: {
@@ -61,13 +67,24 @@ export async function GET(
             scheduledAt: true,
             completedAt: true,
           },
+          where: {
+            deletedAt: null // Only show non-deleted actions
+          },
           take: 10,
           orderBy: { createdAt: 'desc' },
         },
         _count: {
           select: {
-            people: true,
-            actions: true,
+            people: {
+              where: {
+                deletedAt: null
+              }
+            },
+            actions: {
+              where: {
+                deletedAt: null
+              }
+            },
           },
         },
       },
@@ -99,50 +116,39 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const requestId = getRequestId(request);
-  
   try {
-    // TODO: Add authentication check
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-
-    // Validate company ID
-    const idValidation = CompanyIdSchema.safeParse({ id: params.id });
-    if (!idValidation.success) {
-      return createValidationErrorResponse(
-        'Invalid company ID',
-        idValidation.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const { id } = idValidation.data;
+    const { id } = params;
     const body = await request.json();
-    
-    // Validate input (PUT requires all fields)
-    const validationResult = UpdateCompanySchema.safeParse(body);
-    if (!validationResult.success) {
-      return createValidationErrorResponse(
-        'Invalid company data',
-        validationResult.error.flatten().fieldErrors
-      );
-    }
 
-    const companyData: UpdateCompanyInput = validationResult.data;
-    
     // Check if company exists
     const existingCompany = await prisma.companies.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only update non-deleted records
+      },
     });
 
     if (!existingCompany) {
-      return createNotFoundErrorResponse('Company not found');
+      return NextResponse.json(
+        { success: false, error: 'Company not found' },
+        { status: 404 }
+      );
     }
 
     // Update company (full replacement)
     const updatedCompany = await prisma.companies.update({
       where: { id },
       data: {
-        ...companyData,
+        ...body,
         updatedAt: new Date(),
       },
       include: {
@@ -155,24 +161,44 @@ export async function PUT(
         },
         _count: {
           select: {
-            people: true,
-            actions: true,
+            people: {
+              where: {
+                deletedAt: null
+              }
+            },
+            actions: {
+              where: {
+                deletedAt: null
+              }
+            },
           },
         },
       },
     });
 
-    return createSuccessResponse(updatedCompany);
+    return NextResponse.json({
+      success: true,
+      data: updatedCompany,
+      meta: {
+        message: 'Company updated successfully',
+      },
+    });
 
   } catch (error) {
     console.error('Error updating company:', error);
     
     // Handle unique constraint violations
-    if (error instanceof Error && error.message.includes('Unique constraint')) {
-      return createErrorResponse('Company with this information already exists', 409);
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+      return NextResponse.json(
+        { success: false, error: 'Company with this information already exists' },
+        { status: 400 }
+      );
     }
     
-    return createErrorResponse('Failed to update company', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to update company' },
+      { status: 500 }
+    );
   }
 }
 
@@ -181,50 +207,39 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const requestId = getRequestId(request);
-  
   try {
-    // TODO: Add authentication check
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-
-    // Validate company ID
-    const idValidation = CompanyIdSchema.safeParse({ id: params.id });
-    if (!idValidation.success) {
-      return createValidationErrorResponse(
-        'Invalid company ID',
-        idValidation.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const { id } = idValidation.data;
+    const { id } = params;
     const body = await request.json();
-    
-    // Validate input (PATCH allows partial updates)
-    const validationResult = UpdateCompanySchema.safeParse(body);
-    if (!validationResult.success) {
-      return createValidationErrorResponse(
-        'Invalid company data',
-        validationResult.error.flatten().fieldErrors
-      );
-    }
 
-    const companyData: UpdateCompanyInput = validationResult.data;
-    
     // Check if company exists
     const existingCompany = await prisma.companies.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only update non-deleted records
+      },
     });
 
     if (!existingCompany) {
-      return createNotFoundErrorResponse('Company not found');
+      return NextResponse.json(
+        { success: false, error: 'Company not found' },
+        { status: 404 }
+      );
     }
 
     // Update company (partial update)
     const updatedCompany = await prisma.companies.update({
       where: { id },
       data: {
-        ...companyData,
+        ...body,
         updatedAt: new Date(),
       },
       include: {
@@ -237,87 +252,135 @@ export async function PATCH(
         },
         _count: {
           select: {
-            people: true,
-            actions: true,
+            people: {
+              where: {
+                deletedAt: null
+              }
+            },
+            actions: {
+              where: {
+                deletedAt: null
+              }
+            },
           },
         },
       },
     });
 
-    return createSuccessResponse(updatedCompany);
+    return NextResponse.json({
+      success: true,
+      data: updatedCompany,
+      meta: {
+        message: 'Company updated successfully',
+      },
+    });
 
   } catch (error) {
     console.error('Error updating company:', error);
     
     // Handle unique constraint violations
-    if (error instanceof Error && error.message.includes('Unique constraint')) {
-      return createErrorResponse('Company with this information already exists', 409);
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+      return NextResponse.json(
+        { success: false, error: 'Company with this information already exists' },
+        { status: 400 }
+      );
     }
     
-    return createErrorResponse('Failed to update company', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to update company' },
+      { status: 500 }
+    );
   }
 }
 
-// DELETE /api/v1/companies/[id] - Delete a company
+// DELETE /api/v1/companies/[id] - Delete a company (soft delete by default, hard delete with ?mode=hard)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const requestId = getRequestId(request);
-  
   try {
-    // TODO: Add authentication check
-    // const user = await authenticateUser(request);
-    // if (!user) return createAuthErrorResponse();
-
-    // Validate company ID
-    const idValidation = CompanyIdSchema.safeParse({ id: params.id });
-    if (!idValidation.success) {
-      return createValidationErrorResponse(
-        'Invalid company ID',
-        idValidation.error.flatten().fieldErrors
+    // Simple authentication check
+    const authUser = await getV1AuthUser(request);
+    if (!authUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
       );
     }
 
-    const { id } = idValidation.data;
+    const { id } = params;
+    const { searchParams } = new URL(request.url);
+    const mode = searchParams.get('mode') || 'soft'; // Default to soft delete
     
     // Check if company exists
     const existingCompany = await prisma.companies.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only delete non-deleted records
+      },
       include: {
         _count: {
           select: {
-            people: true,
-            actions: true,
+            people: {
+              where: {
+                deletedAt: null
+              }
+            },
+            actions: {
+              where: {
+                deletedAt: null
+              }
+            },
           },
         },
       },
     });
 
     if (!existingCompany) {
-      return createNotFoundErrorResponse('Company not found');
-    }
-
-    // Check if company has related data
-    if (existingCompany._count.people > 0 || existingCompany._count.actions > 0) {
-      return createErrorResponse(
-        'Cannot delete company with associated people or actions. Please remove or reassign them first.',
-        409
+      return NextResponse.json(
+        { success: false, error: 'Company not found' },
+        { status: 404 }
       );
     }
 
-    // Delete company
-    await prisma.companies.delete({
-      where: { id },
-    });
+    // For hard delete, check if company has related data
+    if (mode === 'hard' && (existingCompany._count.people > 0 || existingCompany._count.actions > 0)) {
+      return NextResponse.json(
+        { success: false, error: 'Cannot hard delete company with associated people or actions. Please remove or reassign them first.' },
+        { status: 409 }
+      );
+    }
 
-    return createSuccessResponse(
-      { message: 'Company deleted successfully', id },
-      200
-    );
+    if (mode === 'hard') {
+      // Hard delete - permanently remove from database
+      await prisma.companies.delete({
+        where: { id },
+      });
+    } else {
+      // Soft delete - set deletedAt timestamp
+      await prisma.companies.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: null,
+      meta: {
+        message: `Company ${mode === 'hard' ? 'permanently deleted' : 'deleted'} successfully`,
+        mode,
+      },
+    });
 
   } catch (error) {
     console.error('Error deleting company:', error);
-    return createErrorResponse('Failed to delete company', 500);
+    return NextResponse.json(
+      { success: false, error: 'Failed to delete company' },
+      { status: 500 }
+    );
   }
 }

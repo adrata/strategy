@@ -393,13 +393,25 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       // ⚡ PERFORMANCE MONITORING: Track API call timing
       const startTime = performance.now();
       
-      // 🚀 FAST INITIAL LOAD: Load only essential fields for Overview tab first
+      // 🚀 FAST INITIAL LOAD: Load record using v1 APIs
       const timestamp = Date.now();
-      const response = await authFetch(`/api/data/unified?type=${section}&id=${recordId}&fields=essential`);
+      let response: Response;
+      let record: any;
+      
+      // Use appropriate v1 API based on section
+      if (section === 'companies') {
+        response = await authFetch(`/api/v1/companies/${recordId}`);
+      } else if (section === 'people' || section === 'leads' || section === 'prospects' || section === 'opportunities') {
+        response = await authFetch(`/api/v1/people/${recordId}`);
+      } else {
+        // For other record types, throw error since unified API is no longer available
+        throw new Error(`Record type '${section}' is not yet supported in v1 APIs. Please use companies or people records.`);
+      }
+      
       const endTime = performance.now();
       const loadTime = endTime - startTime;
       
-      console.log(`⚡ [PERFORMANCE] Unified API call took ${loadTime.toFixed(2)}ms for ${section} record: ${recordId}`);
+      console.log(`⚡ [PERFORMANCE] v1 API call took ${loadTime.toFixed(2)}ms for ${section} record: ${recordId}`);
       
       if (!response.ok) {
         if (response['status'] === 404) {
@@ -411,19 +423,23 @@ export function PipelineDetailPage({ section, slug }: PipelineDetailPageProps) {
       const result = await response.json();
       
       if (result['success'] && result.data) {
-        // Extract the record from the unified API response
-        const sectionData = result['data'][section] || [];
-        console.log(`🔍 [DIRECT LOAD] Looking for record ${recordId} in ${sectionData.length} ${section} records`);
-        
-        const record = sectionData.find((r: any) => r['id'] === recordId);
+        // For v1 APIs, the data is directly in result.data
+        if (section === 'companies' || section === 'people' || section === 'leads' || section === 'prospects' || section === 'opportunities') {
+          record = result.data;
+        } else {
+          // Fallback for unified API response format
+          const sectionData = result['data'][section] || [];
+          console.log(`🔍 [DIRECT LOAD] Looking for record ${recordId} in ${sectionData.length} ${section} records`);
+          record = sectionData.find((r: any) => r['id'] === recordId);
+        }
         
         if (record) {
-          console.log(`✅ [DIRECT LOAD] Successfully loaded ${section} record from unified API:`, {
+          console.log(`✅ [DIRECT LOAD] Successfully loaded ${section} record from v1 API:`, {
             id: record.id,
-            name: record.name,
+            name: record.name || record.fullName,
             description: record.description ? 'Yes' : 'No',
             website: record.website ? 'Yes' : 'No',
-            source: 'unified_api'
+            source: 'v1_api'
           });
           
           // Cache the record for future use

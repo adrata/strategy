@@ -136,18 +136,11 @@ export class PipelineClientService {
    */
   static async getLeadById(leadId: string): Promise<Lead | null> {
     try {
-      const response = await fetch('/api/data/unified', {
-        method: 'POST',
+      const response = await fetch(`/api/v1/people/${leadId}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          type: 'leads',
-          action: 'get',
-          id: leadId,
-          workspaceId: '01K1VBYXHD0J895XAN0HGFBKJP', // Dan's workspace ID as fallback
-          userId: '01K1VBYZG41K9QA0D9CF06KNRG' // Dan's user ID as fallback
-        }),
       });
       
       if (!response.ok) {

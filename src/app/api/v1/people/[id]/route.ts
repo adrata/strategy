@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
  * GET /api/v1/people/[id] - Get a specific person
  * PUT /api/v1/people/[id] - Update a person (full replacement)
  * PATCH /api/v1/people/[id] - Partially update a person
- * DELETE /api/v1/people/[id] - Delete a person
+ * DELETE /api/v1/people/[id] - Delete a person (soft delete by default, hard delete with ?mode=hard)
  */
 
 // GET /api/v1/people/[id] - Get a specific person
@@ -30,7 +30,10 @@ export async function GET(
     const { id } = params;
 
     const person = await prisma.people.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only show non-deleted records
+      },
       include: {
         company: {
           select: {
@@ -41,6 +44,9 @@ export async function GET(
             status: true,
             priority: true,
           },
+          where: {
+            deletedAt: null // Only show non-deleted companies
+          }
         },
         mainSeller: {
           select: {
@@ -61,12 +67,19 @@ export async function GET(
             scheduledAt: true,
             completedAt: true,
           },
+          where: {
+            deletedAt: null // Only show non-deleted actions
+          },
           take: 10,
           orderBy: { createdAt: 'desc' },
         },
         _count: {
           select: {
-            actions: true,
+            actions: {
+              where: {
+                deletedAt: null
+              }
+            },
           },
         },
       },
@@ -127,7 +140,10 @@ export async function PUT(
 
     // Check if person exists
     const existingPerson = await prisma.people.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only update non-deleted records
+      },
     });
 
     if (!existingPerson) {
@@ -171,7 +187,11 @@ export async function PUT(
         },
         _count: {
           select: {
-            actions: true,
+            actions: {
+              where: {
+                deletedAt: null
+              }
+            },
           },
         },
       },
@@ -233,7 +253,10 @@ export async function PATCH(
 
     // Check if person exists
     const existingPerson = await prisma.people.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only update non-deleted records
+      },
     });
 
     if (!existingPerson) {
@@ -277,7 +300,11 @@ export async function PATCH(
         },
         _count: {
           select: {
-            actions: true,
+            actions: {
+              where: {
+                deletedAt: null
+              }
+            },
           },
         },
       },
@@ -319,7 +346,7 @@ export async function PATCH(
   }
 }
 
-// DELETE /api/v1/people/[id] - Delete a person
+// DELETE /api/v1/people/[id] - Delete a person (soft delete by default, hard delete with ?mode=hard)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -335,14 +362,23 @@ export async function DELETE(
     }
 
     const { id } = params;
+    const { searchParams } = new URL(request.url);
+    const mode = searchParams.get('mode') || 'soft'; // Default to soft delete
 
     // Check if person exists
     const existingPerson = await prisma.people.findUnique({
-      where: { id },
+      where: { 
+        id,
+        deletedAt: null // Only delete non-deleted records
+      },
       include: {
         _count: {
           select: {
-            actions: true,
+            actions: {
+              where: {
+                deletedAt: null
+              }
+            },
           },
         },
       },
@@ -355,24 +391,36 @@ export async function DELETE(
       );
     }
 
-    // Check if person has related data
-    if (existingPerson._count.actions > 0) {
+    // For hard delete, check if person has related data
+    if (mode === 'hard' && existingPerson._count.actions > 0) {
       return NextResponse.json(
-        { success: false, error: 'Cannot delete person with associated actions. Please remove or reassign them first.' },
+        { success: false, error: 'Cannot hard delete person with associated actions. Please remove or reassign them first.' },
         { status: 409 }
       );
     }
 
-    // Delete person
-    await prisma.people.delete({
-      where: { id },
-    });
+    if (mode === 'hard') {
+      // Hard delete - permanently remove from database
+      await prisma.people.delete({
+        where: { id },
+      });
+    } else {
+      // Soft delete - set deletedAt timestamp
+      await prisma.people.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    }
 
     return NextResponse.json({
       success: true,
       data: null,
       meta: {
-        message: 'Person deleted successfully',
+        message: `Person ${mode === 'hard' ? 'permanently deleted' : 'deleted'} successfully`,
+        mode,
       },
     });
 

@@ -1,30 +1,35 @@
-# 🚀 Adrata Unified API Architecture - 2025
+# 🚀 Adrata API v1 Architecture - 2025
 
-## 📊 **API Consolidation Summary**
+## 📊 **API Migration Summary**
 
-**Before:** 188 individual API endpoints  
-**After:** 12 essential API directories with 4 core unified APIs  
-**Reduction:** 94% fewer directories (193 → 12) and 61% fewer route files (143 → 56) with 10x better performance
+**Before:** 188 individual API endpoints across multiple legacy structures  
+**After:** Clean v1 API structure with organized feature-specific endpoints  
+**Migration:** All legacy APIs migrated to `/api/v1/` with proper organization
 
 ---
 
-## 🎯 **Essential API Structure**
+## 🎯 **v1 API Structure**
 
-### **Core Unified APIs (4)**
-- **`data/`** - Unified data operations (CRUD for all data types)
-- **`pipeline/`** - Unified pipeline operations (Core, Advanced, Powerhouse)
-- **`intelligence/`** - Unified intelligence operations (Research, AI, Chat, Buyer-Group)
-- **`auth/`** - Unified authentication operations (Login, Logout, Refresh, OAuth)
+### **Core Data APIs**
+- **`/api/v1/people/`** - People, leads, prospects, opportunities management
+- **`/api/v1/companies/`** - Company data and management
+- **`/api/v1/actions/`** - Action tracking and management
+- **`/api/v1/users/`** - User management and profiles
+- **`/api/v1/workspaces/`** - Workspace management
 
-### **Essential Utility APIs (8)**
-- **`health/`** - Health checks and system status
-- **`webhooks/`** - External integrations and webhooks
-- **`twilio/`** - Calling and communication functionality
-- **`email/`** - Email processing and management
-- **`calendar/`** - Calendar integration and scheduling
-- **`workspace/`** - Workspace management and configuration
-- **`users/`** - User management and profiles
-- **`settings/`** - Application settings and configuration
+### **Feature-Specific APIs**
+- **`/api/v1/integrations/`** - Grand Central integrations (Nango, workflows)
+- **`/api/v1/documents/`** - Atrium document management
+- **`/api/v1/files/`** - Encode file system operations
+- **`/api/v1/communications/`** - Email, phone, calendar communications
+- **`/api/v1/collaboration/`** - Chat and collaboration features
+- **`/api/v1/intelligence/`** - AI and intelligence operations
+
+### **Legacy APIs (Still Active)**
+- **`/api/auth/`** - Authentication operations
+- **`/api/health/`** - Health checks and system status
+- **`/api/webhooks/`** - External integrations and webhooks
+- **`/api/settings/`** - Application settings and configuration
 
 ---
 

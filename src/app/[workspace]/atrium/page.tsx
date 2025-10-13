@@ -62,7 +62,7 @@ export default function AtriumPage() {
   const handleCreateDocument = useCallback(async (documentType: string) => {
     try {
       // Create a new document via API
-      const response = await fetch('/api/atrium/documents', {
+      const response = await fetch('/api/v1/documents/documents', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -128,13 +128,53 @@ const safeLocalStorage = {
   },
 };
 
+// Get initial theme settings from data attributes set by blocking script
+const getInitialThemeSettings = () => {
+  if (typeof window === "undefined") {
+    return {
+      themeMode: "light" as const,
+      lightTheme: "ghost",
+      darkTheme: "dark-matter",
+      zoom: 100,
+    };
+  }
+
+  try {
+    // Read from data attributes set by blocking script
+    const themeMode = document.documentElement.getAttribute('data-theme-mode') as "light" | "dark" | "auto" || "light";
+    const lightTheme = document.documentElement.getAttribute('data-light-theme') || "ghost";
+    const darkTheme = document.documentElement.getAttribute('data-dark-theme') || "dark-matter";
+    
+    // Get zoom from localStorage (not set by blocking script to avoid flash)
+    const savedZoom = safeLocalStorage.getItem("zoom");
+    const zoom = savedZoom ? parseInt(savedZoom, 10) : 100;
+    
+    return {
+      themeMode,
+      lightTheme,
+      darkTheme,
+      zoom: isNaN(zoom) || zoom < 50 || zoom > 200 ? 100 : zoom,
+    };
+  } catch (error) {
+    return {
+      themeMode: "light" as const,
+      lightTheme: "ghost",
+      darkTheme: "dark-matter",
+      zoom: 100,
+    };
+  }
+};
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // Initialize with settings from blocking script
+  const initialSettings = getInitialThemeSettings();
+  
   const [themeMode, setThemeMode] = useState<"light" | "dark" | "auto">(
-    "light",
+    initialSettings.themeMode,
   );
-  const [lightTheme, setLightTheme] = useState("ghost");
-  const [darkTheme, setDarkTheme] = useState("dark-matter");
-  const [zoom, setZoom] = useState(100);
+  const [lightTheme, setLightTheme] = useState(initialSettings.lightTheme);
+  const [darkTheme, setDarkTheme] = useState(initialSettings.darkTheme);
+  const [zoom, setZoom] = useState(initialSettings.zoom);
 
   // Compute current theme and dark mode status
   const isDarkMode =
@@ -148,9 +188,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Check if this is the initial load (no transitions to prevent flash)
+    const isInitialLoad = !document.documentElement.hasAttribute('data-theme-applied');
+    
     // Use the modern theme applier
     themeApplier.applyTheme(currentTheme, {
-      enableTransitions: true,
+      enableTransitions: !isInitialLoad, // Disable transitions on initial load
       transitionDuration: 200,
       persistToStorage: false, // ThemeProvider handles persistence
       updateSystemTheme: true
@@ -165,6 +208,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         } else {
           root.classList.remove('dark');
         }
+        
+        // Mark that theme has been applied
+        root.setAttribute('data-theme-applied', 'true');
       } else {
         console.warn(`🎨 Failed to apply theme: ${currentTheme}`);
         // Fallback to legacy method
@@ -182,6 +228,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         } else {
           root.classList.remove('dark');
         }
+        
+        // Mark that theme has been applied
+        root.setAttribute('data-theme-applied', 'true');
       }
     });
   }, [currentTheme, isDarkMode]);
@@ -200,43 +249,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [themeMode]);
 
-  // Load settings from localStorage after mount (client-side only)
-  useEffect(() => {
-    const stored = safeLocalStorage.getItem("theme-settings");
-    if (stored) {
-      try {
-        const {
-          themeMode: storedMode,
-          lightTheme,
-          darkTheme,
-        } = JSON.parse(stored);
-        const validModes: Array<"light" | "dark" | "auto"> = [
-          "light",
-          "dark",
-          "auto",
-        ];
-        if (storedMode && validModes.includes(storedMode)) {
-          setThemeMode(storedMode);
-        }
-        if (lightTheme) setLightTheme(lightTheme);
-        if (darkTheme) setDarkTheme(darkTheme);
-      } catch (error) {
-        // Silent fail
-      }
-    }
-
-    const savedZoom = safeLocalStorage.getItem("zoom");
-    if (savedZoom) {
-      try {
-        const parsed = parseInt(savedZoom, 10);
-        if (!isNaN(parsed) && parsed >= 50 && parsed <= 200) {
-          setZoom(parsed);
-        }
-      } catch (error) {
-        // Silent fail
-      }
-    }
-  }, []);
+  // No need to load from localStorage - already initialized from blocking script
 
   // Save settings to localStorage when they change
   useEffect(() => {

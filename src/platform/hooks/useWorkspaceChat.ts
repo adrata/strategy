@@ -150,7 +150,7 @@ export function useChat(): UseChatReturn {
     }
     
     try {
-      const response = await fetch('/api/chat-sessions', {
+      const response = await fetch('/api/v1/collaboration/sessions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

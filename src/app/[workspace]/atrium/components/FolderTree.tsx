@@ -29,7 +29,7 @@ export function FolderTree({ onFolderSelect }: FolderTreeProps) {
       setIsLoading(true);
       
       // TODO: Implement actual API call
-      // const response = await fetch('/api/atrium/folders?...');
+      // const response = await fetch('/api/v1/documents/folders?...');
       // const data = await response.json();
       
       // Mock data for now

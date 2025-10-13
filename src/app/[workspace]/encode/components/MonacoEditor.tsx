@@ -202,7 +202,7 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
       const code = editorRef.current.getValue();
       
       // TODO: Integrate with Daytona service for code execution
-      const response = await fetch('/api/encode/execute', {
+      const response = await fetch('/api/v1/files/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

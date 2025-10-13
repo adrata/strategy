@@ -24,7 +24,7 @@ export function useNangoAuth(): UseNangoAuthReturn {
 
     try {
       // Call our API to initiate OAuth flow
-      const response = await fetch('/api/grand-central/nango/connect', {
+      const response = await fetch('/api/v1/integrations/nango/connect', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

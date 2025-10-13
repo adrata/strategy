@@ -379,7 +379,7 @@ export class CallingService {
       );
 
       // Make actual Twilio call via our API endpoint
-      const response = await fetch("/api/twilio/make-call", {
+      const response = await fetch("/api/v1/communications/phone/make-call", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -900,7 +900,7 @@ export class CallingService {
       );
 
       // This would call an API endpoint to generate a Twilio access token
-      const response = await fetch("/api/twilio/token", {
+      const response = await fetch("/api/v1/communications/phone/token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, identity: `user_${userId}` }),

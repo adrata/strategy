@@ -43,7 +43,7 @@ export function useOasisChat() {
     }
 
     try {
-      const response = await fetch(`/api/oasis/chats?workspaceId=${user.activeWorkspaceId}`, {
+      const response = await fetch(`/api/v1/collaboration/chat/chats?workspaceId=${user.activeWorkspaceId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export function useOasisChat() {
 
   const fetchMessages = useCallback(async (chatId: string): Promise<Message[]> => {
     try {
-      const response = await fetch(`/api/oasis/messages?chatId=${chatId}`, {
+      const response = await fetch(`/api/v1/collaboration/chat/messages?chatId=${chatId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ export function useOasisChat() {
     }
 
     try {
-      const response = await fetch('/api/oasis/messages', {
+      const response = await fetch('/api/v1/collaboration/chat/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ export function useOasisChat() {
     }
 
     try {
-      const response = await fetch('/api/oasis/messages', {
+      const response = await fetch('/api/v1/collaboration/chat/messages', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ export function useOasisChat() {
     }
 
     try {
-      const response = await fetch('/api/oasis/messages', {
+      const response = await fetch('/api/v1/collaboration/chat/messages', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ export function useOasisChat() {
     }
 
     try {
-      const response = await fetch('/api/oasis/reactions', {
+      const response = await fetch('/api/v1/collaboration/chat/reactions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ export function useOasisChat() {
     }
 
     try {
-      const response = await fetch('/api/oasis/reactions', {
+      const response = await fetch('/api/v1/collaboration/chat/reactions', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ export function useOasisChat() {
     }
 
     try {
-      await fetch('/api/oasis/typing', {
+      await fetch('/api/v1/collaboration/chat/typing', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -247,7 +247,7 @@ export function useOasisChat() {
     }
 
     try {
-      await fetch('/api/oasis/typing', {
+      await fetch('/api/v1/collaboration/chat/typing', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

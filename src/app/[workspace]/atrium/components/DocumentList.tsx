@@ -44,7 +44,7 @@ export function DocumentList() {
       setError(null);
       
       // TODO: Implement actual API call
-      // const response = await fetch('/api/atrium/documents?...');
+      // const response = await fetch('/api/v1/documents/documents?...');
       // const data = await response.json();
       
       // Mock data for now

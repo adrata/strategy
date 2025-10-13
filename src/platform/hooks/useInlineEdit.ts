@@ -31,18 +31,14 @@ export const useInlineEdit = (options: UseInlineEditOptions = {}) => {
     try {
       console.log(`🔧 [INLINE EDIT] Updating ${recordType} ${recordId} field ${field} to:`, value);
       
-      // Use unified API for updates
-      const response = await authFetch('/api/data/unified', {
+      // Use v1 APIs for updates
+      const apiType = recordType === 'account' ? 'companies' : recordType === 'contact' ? 'people' : 'people';
+      const response = await authFetch(`/api/v1/${apiType}/${recordId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          type: recordType === 'account' ? 'companies' : recordType === 'contact' ? 'people' : `${recordType}s`,
-          action: 'update',
-          id: recordId,
-          data: { [field]: value }
-        }),
+        body: JSON.stringify({ [field]: value }),
       });
 
       if (response.ok) {

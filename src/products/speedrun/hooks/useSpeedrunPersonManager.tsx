@@ -11,6 +11,7 @@ import {
   hasDailyTargetBeenMet,
 } from "../state";
 import { useSpeedrunContext } from "@/products/speedrun/context/SpeedrunProvider";
+import { useUnifiedAuth } from "@/platform/auth";
 
 // SpeedrunWinsService - TODO: Implement real tracking service
 const SpeedrunWinsService = {
@@ -142,6 +143,56 @@ export function useSpeedrunPersonManager() {
           `speedrun-completed-${today}`,
           JSON.stringify(currentCompleted),
         );
+
+        // Check if we've completed 50 records and trigger auto-fetch
+        const newCompletedCount = completedPeople.length + 1;
+        if (newCompletedCount >= 50) {
+          console.log(`🎯 Completed 50 records! Triggering auto-fetch of next batch...`);
+          
+          try {
+            // Get workspace and user context for API call
+            const { user } = useUnifiedAuth();
+            const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
+            const userId = user?.id;
+
+            // Trigger re-ranking and fetch next batch
+            const response = await fetch('/api/v1/speedrun/re-rank', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-workspace-id': workspaceId || '',
+                'x-user-id': userId || '',
+              },
+              body: JSON.stringify({
+                completedCount: newCompletedCount,
+                triggerAutoFetch: true
+              }),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              console.log(`✅ Successfully fetched next batch of 50 records`);
+              
+              // Dispatch event to show congratulations modal
+              window.dispatchEvent(new CustomEvent('speedrun-batch-complete', {
+                detail: {
+                  batchNumber: result.data?.batchNumber || 1,
+                  completedCount: newCompletedCount,
+                  message: result.data?.message || `Amazing work! You've finished your first batch and we're fetching your next 50 records to keep the momentum going.`
+                }
+              }));
+              
+              // Reload the speedrun data to get the new batch after a short delay
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+            } else {
+              console.error(`❌ Failed to fetch next batch: ${response.status}`);
+            }
+          } catch (error) {
+            console.error(`❌ Error fetching next batch:`, error);
+          }
+        }
       } catch (error) {
         console.error(`❌ Failed to complete person ${personId}:`, error);
 

@@ -149,7 +149,7 @@ export function RightPanel() {
   const [textareaHeight, setTextareaHeight] = useState(182);
   const [viewMode, setViewMode] = useState<'ai' | 'conversations' | 'chat' | 'actions' | 'achievements' | 'targets' | 'calendar' | 'insights'>('ai');
   
-  // Conversation management with persistence - WORKSPACE ISOLATED
+  // Conversation management with hybrid persistence (localStorage + API)
   const [conversations, setConversations] = useState<Conversation[]>(() => {
     if (typeof window !== 'undefined' && workspaceId) {
       try {
@@ -183,6 +183,10 @@ export function RightPanel() {
       }
     ];
   });
+  
+  // Sync state for hybrid persistence
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
   const [activeConversationId, setActiveConversationId] = useState('main-chat');
   const [showConversationHistory, setShowConversationHistory] = useState(false);
   const [showMenuPopup, setShowMenuPopup] = useState(false);
@@ -264,6 +268,133 @@ export function RightPanel() {
     }
   }, [workspaceId]);
 
+  // API sync functions for hybrid persistence
+  const syncConversationsFromAPI = async () => {
+    if (!workspaceId || !userId || isSyncing) return;
+    
+    setIsSyncing(true);
+    try {
+      console.log('🔄 [CHAT] Syncing conversations from API...');
+      const response = await fetch('/api/v1/conversations?includeMessages=true');
+      const result = await response.json();
+      
+      if (result.success && result.data.conversations) {
+        const apiConversations = result.data.conversations.map((conv: any) => ({
+          id: conv.id,
+          title: conv.title,
+          messages: conv.messages || [],
+          lastActivity: new Date(conv.lastActivity),
+          isActive: conv.isActive,
+          welcomeMessage: conv.welcomeMessage
+        }));
+        
+        // Merge with localStorage data (API is source of truth)
+        setConversations(prevConversations => {
+          const merged = [...apiConversations];
+          
+          // Add any localStorage conversations that aren't in API (for offline support)
+          prevConversations.forEach(localConv => {
+            if (!merged.find(apiConv => apiConv.id === localConv.id)) {
+              merged.push(localConv);
+            }
+          });
+          
+          return merged.sort((a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime());
+        });
+        
+        setLastSyncTime(new Date());
+        console.log('✅ [CHAT] Synced conversations from API:', apiConversations.length);
+      }
+    } catch (error) {
+      console.warn('⚠️ [CHAT] Failed to sync conversations from API:', error);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const saveConversationToAPI = async (conversation: Conversation) => {
+    if (!workspaceId || !userId) return;
+    
+    try {
+      const response = await fetch('/api/v1/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: conversation.title,
+          welcomeMessage: conversation.welcomeMessage,
+          metadata: { source: 'frontend' }
+        })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        console.log('✅ [CHAT] Saved conversation to API:', result.data.conversation.id);
+        return result.data.conversation.id;
+      }
+    } catch (error) {
+      console.warn('⚠️ [CHAT] Failed to save conversation to API:', error);
+    }
+    return null;
+  };
+
+  const saveMessageToAPI = async (conversationId: string, message: ChatMessage) => {
+    if (!workspaceId || !userId) return;
+    
+    try {
+      const response = await fetch(`/api/v1/conversations/${conversationId}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: message.type,
+          content: message.content,
+          metadata: {
+            isTypewriter: message.isTypewriter,
+            hasTodos: message.hasTodos,
+            todos: message.todos,
+            sources: message.sources,
+            browserResults: message.browserResults,
+            isBrowsing: message.isBrowsing,
+            routingInfo: message.routingInfo,
+            cost: message.cost,
+            provider: message.provider
+          }
+        })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        console.log('✅ [CHAT] Saved message to API:', result.data.message.id);
+        return result.data.message.id;
+      }
+    } catch (error) {
+      console.warn('⚠️ [CHAT] Failed to save message to API:', error);
+    }
+    return null;
+  };
+
+  // Sync from API on mount and periodically
+  useEffect(() => {
+    if (workspaceId && userId) {
+      // Initial sync after a short delay to let localStorage load first
+      const timer = setTimeout(() => {
+        syncConversationsFromAPI();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [workspaceId, userId]);
+
+  // Periodic sync every 30 seconds
+  useEffect(() => {
+    if (!workspaceId || !userId) return;
+    
+    const interval = setInterval(() => {
+      syncConversationsFromAPI();
+    }, 30000);
+    
+    return () => clearInterval(interval);
+  }, [workspaceId, userId]);
+
   
   // Refs
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -303,6 +434,7 @@ export function RightPanel() {
         // Lead-specific actions focused on qualification and conversion
         actions.push(`What should I know about ${name} before calling?`);
         actions.push(`Find ${company}'s biggest challenges right now`);
+        actions.push(`Create me a deep value report for ${name}`);
         
         if (status === 'new' || status === 'uncontacted') {
           actions.push(`Draft a compelling opening line for ${name}`);
@@ -320,6 +452,7 @@ export function RightPanel() {
         // Prospect-specific actions focused on advancing the deal
         actions.push(`What's ${name}'s decision-making process at ${company}?`);
         actions.push(`Find ${company}'s budget and timeline for solutions`);
+        actions.push(`Create me a deep value report for ${name}`);
         
         if (status === 'qualified') {
           actions.push(`How do I present our solution to ${name}?`);
@@ -347,6 +480,7 @@ export function RightPanel() {
         actions.push(`How can I build a relationship with ${company}?`);
         actions.push(`What's ${company}'s growth strategy and priorities?`);
         actions.push(`Who are the key decision makers at ${company}?`);
+        actions.push(`Create me a deep value report for ${company}`);
         break;
         
       case 'people':
@@ -355,6 +489,7 @@ export function RightPanel() {
         actions.push(`How can I leverage my relationship with ${name}?`);
         actions.push(`Who does ${name} report to at ${company}?`);
         actions.push(`What's the best way to stay in touch with ${name}?`);
+        actions.push(`Create me a deep value report for ${name}`);
         break;
         
       default:
@@ -405,9 +540,9 @@ export function RightPanel() {
   const activeConversation = getActiveConversation();
   const chatMessages = activeConversation?.messages || [];
 
-  const createNewConversation = () => {
+  const createNewConversation = async () => {
     const newConv: Conversation = {
-      id: `conv-${Date.now()}`,
+      id: `conv-${Date.now()}`, // Temporary ID, will be replaced by API
       title: `Chat ${conversations.length + 1}`,
       messages: [],
       lastActivity: new Date(),
@@ -417,12 +552,27 @@ export function RightPanel() {
     const activeIndex = conversations.findIndex(c => c.isActive);
     const insertIndex = activeIndex >= 0 ? activeIndex + 1 : conversations.length;
     
+    // Update UI immediately (optimistic update)
     setConversations(prev => {
       const updated = prev.map(c => ({ ...c, isActive: false }));
       updated.splice(insertIndex, 0, newConv);
       return updated;
     });
     setActiveConversationId(newConv.id);
+    
+    // Save to API in background
+    try {
+      const apiId = await saveConversationToAPI(newConv);
+      if (apiId) {
+        // Update the conversation with the real API ID
+        setConversations(prev => prev.map(conv => 
+          conv.id === newConv.id ? { ...conv, id: apiId } : conv
+        ));
+        setActiveConversationId(apiId);
+      }
+    } catch (error) {
+      console.warn('Failed to save new conversation to API:', error);
+    }
   };
 
   const switchToConversation = (conversationId: string) => {
@@ -717,11 +867,18 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         timestamp: new Date()
       };
       
+      // Update UI immediately (optimistic update)
       setConversations(prev => prev.map(conv => 
         conv.isActive 
-          ? { ...conv, messages: [...conv.messages, userMessage] }
+          ? { ...conv, messages: [...conv.messages, userMessage], lastActivity: new Date() }
           : conv
       ));
+      
+      // Save to API in background
+      const activeConv = conversations.find(c => c.isActive);
+      if (activeConv && activeConv.id !== 'main-chat') {
+        saveMessageToAPI(activeConv.id, userMessage);
+      }
       
       chat.setChatSessions(prev => ({
         ...prev,
@@ -749,6 +906,55 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
           ? { ...conv, messages: [...conv.messages, typingMessage] }
           : conv
       ));
+
+      // Check for deep value report generation request
+      const isReportRequest = input.toLowerCase().includes('deep value report') || 
+                             input.toLowerCase().includes('create me a deep value report') ||
+                             input.toLowerCase().includes('generate a deep value report');
+      
+      if (isReportRequest && currentRecord) {
+        console.log('📊 [AI CHAT] Deep value report request detected for record:', currentRecord.id);
+        
+        // Trigger report generation
+        try {
+          const report = {
+            id: `${currentRecord.id}-deep-value-report-${Date.now()}`,
+            title: `Deep Value Report for ${currentRecord.fullName || currentRecord.name || currentRecord.companyName || 'Record'}`,
+            type: 'company' as const,
+            description: 'Comprehensive deep value analysis',
+            category: 'Deep Value Analysis',
+            isGenerating: true,
+            sourceRecordId: currentRecord.id,
+            sourceRecordType: recordType || 'people',
+            workspaceId,
+            userId
+          };
+
+          // Add report generation message
+          const reportMessage: ChatMessage = {
+            id: `report-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            type: 'assistant',
+            content: `I'll create a comprehensive deep value report for ${currentRecord.fullName || currentRecord.name || currentRecord.companyName || 'this record'}. This will include competitive analysis, market positioning, decision frameworks, and engagement strategies.`,
+            timestamp: new Date()
+          };
+
+          setConversations(prev => prev.map(conv => 
+            conv.isActive 
+              ? { ...conv, messages: [...conv.messages, reportMessage] }
+              : conv
+          ));
+
+          // TODO: Trigger report view in middle panel
+          // This would be handled by the parent component or context
+          console.log('📊 [AI CHAT] Report generation triggered:', report);
+          
+          setIsProcessing(false);
+          return; // Exit early, don't process as regular chat
+        } catch (error) {
+          console.error('❌ [AI CHAT] Failed to trigger report generation:', error);
+          // Continue with regular chat processing
+        }
+      }
 
       // Enhanced AI API call with OpenRouter integration
       console.log('🤖 [AI CHAT] Making optimized API call to /api/ai-chat with OpenRouter');
@@ -857,6 +1063,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         
         messagesToAdd.push(assistantMessage);
 
+        // Update UI immediately (optimistic update)
         setConversations(prev => prev.map(conv => 
           conv.isActive 
             ? { 
@@ -864,10 +1071,19 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
                 messages: [
                   ...conv.messages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing'),
                   ...messagesToAdd
-                ]
+                ],
+                lastActivity: new Date()
               }
             : conv
         ));
+        
+        // Save to API in background
+        const activeConv = conversations.find(c => c.isActive);
+        if (activeConv && activeConv.id !== 'main-chat') {
+          messagesToAdd.forEach(message => {
+            saveMessageToAPI(activeConv.id, message);
+          });
+        }
         
         chat.setChatSessions(prev => {
           const currentMessages = prev[activeSubApp] || [];
@@ -905,6 +1121,7 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
         timestamp: new Date()
       };
 
+      // Update UI immediately (optimistic update)
       setConversations(prev => prev.map(conv => 
         conv.isActive 
           ? { 
@@ -912,10 +1129,17 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
               messages: [
                 ...conv.messages.filter(msg => msg.content !== 'typing' && msg.content !== 'browsing'),
                 errorMessage
-              ]
+              ],
+              lastActivity: new Date()
             }
           : conv
       ));
+      
+      // Save to API in background
+      const activeConv = conversations.find(c => c.isActive);
+      if (activeConv && activeConv.id !== 'main-chat') {
+        saveMessageToAPI(activeConv.id, errorMessage);
+      }
     } finally {
       setIsProcessing(false);
       setTimeout(scrollToBottom, 100);

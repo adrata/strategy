@@ -26,6 +26,9 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/tests/e2e/', // E2E tests are run separately with Playwright
   ],
+  transformIgnorePatterns: [
+    'node_modules/(?!(.*\\.mjs$|@adrata|@platform|@frontend|@products|@faker-js))',
+  ],
   // Output directory for coverage reports
   coverageDirectory: 'tests/results/coverage',
   // Output directory for test results

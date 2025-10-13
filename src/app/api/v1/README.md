@@ -18,6 +18,35 @@ A **simple, clean, and secure** REST API for the next great enterprise operating
 ├── actions/             # Action/task management
 │   ├── route.ts         # GET (list), POST (create)
 │   └── [id]/route.ts    # GET, PUT, PATCH, DELETE
+├── users/               # User management
+│   ├── route.ts         # GET (list), POST (create)
+│   └── [id]/route.ts    # GET, PUT, PATCH, DELETE
+├── workspaces/          # Workspace management
+│   └── route.ts         # GET, POST, PUT, DELETE
+├── integrations/        # Grand Central integrations
+│   ├── nango/           # Nango API proxy
+│   └── workflows/       # Workflow management
+├── documents/           # Atrium document management
+│   ├── documents/       # Document CRUD
+│   ├── folders/         # Folder management
+│   ├── upload/          # File upload
+│   └── search/          # Document search
+├── files/               # Encode file system
+│   ├── projects/        # Project management
+│   ├── files/           # File operations
+│   └── execute/         # Code execution
+├── communications/      # Communication APIs
+│   ├── email/           # Email operations
+│   ├── phone/           # Twilio phone operations
+│   └── calendar/        # Calendar integration
+├── collaboration/       # Collaboration features
+│   ├── chat/            # Oasis chat system
+│   └── sessions/        # Chat sessions
+├── intelligence/        # AI and intelligence
+│   ├── person/          # Person intelligence
+│   ├── company/         # Company intelligence
+│   ├── buyer-group/     # Buyer group analysis
+│   └── market/          # Market analysis
 ├── health/route.ts      # Health check
 └── README.md           # This documentation
 ```

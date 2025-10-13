@@ -220,6 +220,40 @@ const IntegrationsHub = () => {
         } else {
           throw new Error(data.error || "Failed to get Outlook authorization URL");
         }
+      } else if (integrationId === "zoom") {
+        const response = await fetch("/api/auth/oauth/connect", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            provider: "zoom",
+            scopes: [
+              "meeting:write",
+              "meeting:read",
+              "recording:read",
+              "user:read",
+            ],
+            workspaceId: user.activeWorkspaceId,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.error ||
+              `HTTP ${response.status}: Failed to initiate Zoom OAuth connection`,
+          );
+        }
+
+        const data = await response.json();
+
+        if (data['success'] && data.authorizationUrl) {
+          window['location']['href'] = data.authorizationUrl;
+        } else {
+          throw new Error(data.error || "Failed to get Zoom authorization URL");
+        }
       } else {
         setOauthMessage({
           type: "error",
@@ -293,6 +327,9 @@ const IntegrationsHub = () => {
     if (integrationId === "zoho-crm") {
       return connectedProviders.find((p) => p['provider'] === "zoho") || null;
     }
+    if (integrationId === "zoom") {
+      return connectedProviders.find((p) => p['provider'] === "zoom") || null;
+    }
     return null;
   };
 
@@ -354,6 +391,26 @@ const IntegrationsHub = () => {
         }),
         ...(zohoConnection?.tokenStatus && {
           tokenStatus: zohoConnection.tokenStatus,
+        }),
+      };
+    })(),
+
+    // Zoom
+    (() => {
+      const zoomConnection = isConnected("zoom");
+      return {
+        id: "zoom",
+        name: "Zoom",
+        description: "Video conferencing and meeting recordings",
+        icon: Settings,
+        connected: !!zoomConnection,
+        status: zoomConnection?.tokenStatus === "valid" ? "active" : "inactive",
+        ...(zoomConnection?.email && { email: zoomConnection.email }),
+        ...(zoomConnection?.lastUpdated && {
+          lastUpdated: zoomConnection.lastUpdated,
+        }),
+        ...(zoomConnection?.tokenStatus && {
+          tokenStatus: zoomConnection.tokenStatus,
         }),
       };
     })(),

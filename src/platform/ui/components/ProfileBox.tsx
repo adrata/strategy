@@ -24,6 +24,7 @@ import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
 // import { DemoScenarioSwitcher } from "./DemoScenarioSwitcher"; // Removed - no longer using demo scenarios popup
 import { GrandCentralModal } from "./GrandCentralModal";
 import { DemoScenarioNavigationService } from "@/platform/services/DemoScenarioNavigationService";
+import { useSettingsPopup } from "./SettingsPopupContext";
 
 // Theme keys that should be preserved during sign-out to prevent theme flash
 const THEME_KEYS_TO_PRESERVE = [
@@ -114,6 +115,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
 }) => {
   const router = useRouter();
   const { signOut, isDesktop, user: authUser } = useUnifiedAuth();
+  const { setIsSettingsOpen } = useSettingsPopup();
   const [activeTab, setActiveTab] = useState<"main" | "docs">("main");
   // const [isDemoSwitcherOpen, setIsDemoSwitcherOpen] = useState(false); // Removed - no longer using demo scenarios popup
   const [isGrandCentralOpen, setIsGrandCentralOpen] = useState(false);
@@ -953,11 +955,19 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         {/* 2. Settings */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={() => handleNavigation("./grand-central/profile")}
+          onClick={() => {
+            console.log('⚙️ ProfileBox: Settings clicked, opening settings popup');
+            setIsProfileOpen(false);
+            // Open settings popup after profile closes
+            setTimeout(() => {
+              console.log('⚙️ ProfileBox: Opening settings popup');
+              setIsSettingsOpen(true);
+            }, 100);
+          }}
           role="button"
           tabIndex={0}
           onKeyDown={(e) =>
-            e['key'] === "Enter" && handleNavigation("./grand-central/profile")
+            e['key'] === "Enter" && setIsProfileOpen(false)
           }
         >
           Settings

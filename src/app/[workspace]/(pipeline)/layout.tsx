@@ -11,12 +11,15 @@ import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/A
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
+import { SettingsPopupProvider } from "@/platform/ui/components/SettingsPopupContext";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
 import { OasisLeftPanel } from "@/products/oasis/components/OasisLeftPanel";
 import { StacksLeftPanel } from "@/frontend/components/stacks/StacksLeftPanel";
 import { StacksDetailPanel } from "@/products/stacks/components/StacksDetailPanel";
 import { useStacks, StacksProvider } from "@/products/stacks/context/StacksProvider";
 import { useUnifiedAuth } from "@/platform/auth";
+import { SettingsPopup } from "@/frontend/components/pipeline/SettingsPopup";
+import { useSettingsPopup } from "@/platform/ui/components/SettingsPopupContext";
 
 // Oasis Context
 interface OasisContextType {
@@ -41,11 +44,34 @@ export const useOasis = () => {
 // Wrapper component for sprint left panel that uses SprintContext
 function SprintLeftPanelWrapper() {
   const { selectedRecord, setSelectedRecord, currentSprintIndex, setCurrentSprintIndex, completedRecords } = useSprint();
+  const router = useRouter();
+  const pathname = usePathname();
+  
+  // Generate slug for a record
+  const generateRecordSlug = (record: any) => {
+    const name = record.name || record.fullName || 'unknown';
+    const cleanName = name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+    return `${cleanName}-${record.id}`;
+  };
+
+  // Navigate to individual record URL when record is selected
+  const handleRecordSelect = (record: any) => {
+    const slug = generateRecordSlug(record);
+    const currentPath = pathname;
+    const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+    
+    if (workspaceMatch) {
+      const workspaceSlug = workspaceMatch[1];
+      router.push(`/${workspaceSlug}/speedrun/${slug}`);
+    } else {
+      router.push(`/speedrun/${slug}`);
+    }
+  };
   
   return (
     <SpeedrunSprintLeftPanel
       selectedRecord={selectedRecord}
-      onRecordSelect={setSelectedRecord}
+      onRecordSelect={handleRecordSelect}
       currentSprintIndex={currentSprintIndex}
       onSprintChange={setCurrentSprintIndex}
       completedRecords={completedRecords}
@@ -94,6 +120,7 @@ function PipelineLayoutContent({
   // Now we can use the context hooks since we're inside the providers
   const { ui } = useAcquisitionOS();
   const { user: authUser } = useUnifiedAuth();
+  const { isSettingsOpen, setIsSettingsOpen } = useSettingsPopup();
   const pathname = usePathname();
 
   // User detection for conditional left panel visibility
@@ -162,17 +189,25 @@ function PipelineLayoutContent({
   const isLeftPanelVisible = shouldShowLeftPanel && ui.isLeftPanelVisible;
 
   return (
-    <PanelLayout
-      thinLeftPanel={null}
-      leftPanel={getLeftPanel()}
-      middlePanel={children}
-      rightPanel={getRightPanel()}
-      zoom={100}
-      isLeftPanelVisible={isLeftPanelVisible}
-      isRightPanelVisible={ui.isRightPanelVisible}
-      onToggleLeftPanel={ui.toggleLeftPanel}
-      onToggleRightPanel={ui.toggleRightPanel}
-    />
+    <>
+      <PanelLayout
+        thinLeftPanel={null}
+        leftPanel={getLeftPanel()}
+        middlePanel={children}
+        rightPanel={getRightPanel()}
+        zoom={100}
+        isLeftPanelVisible={isLeftPanelVisible}
+        isRightPanelVisible={ui.isRightPanelVisible}
+        onToggleLeftPanel={ui.toggleLeftPanel}
+        onToggleRightPanel={ui.toggleRightPanel}
+      />
+      
+      {/* Settings Popup */}
+      <SettingsPopup
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
+    </>
   );
 }
 
@@ -245,24 +280,26 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
               <SprintProvider>
                 <OasisContext.Provider value={oasisContextValue}>
                   <ProfilePopupProvider>
-                    <PipelineLayoutContent
-                      currentSection={currentSection}
-                      onSectionChange={handleSectionChange}
-                      isSpeedrunVisible={isSpeedrunVisible}
-                      setIsSpeedrunVisible={setIsSpeedrunVisible}
-                      isOpportunitiesVisible={isOpportunitiesVisible}
-                      setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-                      isProspectsVisible={isProspectsVisible}
-                      setIsProspectsVisible={setIsProspectsVisible}
-                      isLeadsVisible={isLeadsVisible}
-                      setIsLeadsVisible={setIsLeadsVisible}
-                      isCustomersVisible={isCustomersVisible}
-                      setIsCustomersVisible={setIsCustomersVisible}
-                      isPartnersVisible={isPartnersVisible}
-                      setIsPartnersVisible={setIsPartnersVisible}
-                    >
-                      {children}
-                    </PipelineLayoutContent>
+                    <SettingsPopupProvider>
+                      <PipelineLayoutContent
+                        currentSection={currentSection}
+                        onSectionChange={handleSectionChange}
+                        isSpeedrunVisible={isSpeedrunVisible}
+                        setIsSpeedrunVisible={setIsSpeedrunVisible}
+                        isOpportunitiesVisible={isOpportunitiesVisible}
+                        setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+                        isProspectsVisible={isProspectsVisible}
+                        setIsProspectsVisible={setIsProspectsVisible}
+                        isLeadsVisible={isLeadsVisible}
+                        setIsLeadsVisible={setIsLeadsVisible}
+                        isCustomersVisible={isCustomersVisible}
+                        setIsCustomersVisible={setIsCustomersVisible}
+                        isPartnersVisible={isPartnersVisible}
+                        setIsPartnersVisible={setIsPartnersVisible}
+                      >
+                        {children}
+                      </PipelineLayoutContent>
+                    </SettingsPopupProvider>
                   </ProfilePopupProvider>
                 </OasisContext.Provider>
               </SprintProvider>

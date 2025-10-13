@@ -384,6 +384,409 @@ export function TableRow({
     );
   }
 
+  // Opportunities section rendering
+  if (section === 'opportunities') {
+    return (
+      <tr 
+        key={record.id || index} 
+        className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+        onClick={handleRowClick}
+      >
+        {(() => {
+          // Use workspace-specific column order for opportunities
+          const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
+          const logicalOrder = sectionConfig.columnOrder || ['rank', 'company', 'stage', 'value', 'lastAction', 'nextAction'];
+          const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
+          
+          return orderedVisibleColumns.map((column, columnIndex) => {
+            if (isColumnHidden(workspaceId, section, column, workspaceName)) return null;
+            
+            switch (column) {
+              case 'rank':
+                const rank = record['rank'] || record['winningScore']?.rank || (index + 1);
+                return (
+                  <td key="rank" className={textClasses}>
+                    <div className="text-left font-medium">
+                      <div className="text-sm font-semibold">{rank}</div>
+                    </div>
+                  </td>
+                );
+              case 'company':
+              case 'account':
+                let companyName = '';
+                if (typeof record['company'] === 'string' && record['company'] && record['company'].trim()) {
+                  companyName = record['company'];
+                } else if (record['company']?.name) {
+                  companyName = record['company'].name;
+                } else if (record['account']?.name) {
+                  companyName = record['account'].name;
+                } else if (record['companyName']) {
+                  companyName = record['companyName'];
+                } else {
+                  companyName = '-';
+                }
+                
+                const truncatedName = companyName.length > 10 ? companyName.substring(0, 10) + '...' : companyName;
+                return (
+                  <td key="company" className={textClasses}>
+                    <div className="truncate max-w-20" title={companyName}>
+                      {truncatedName}
+                    </div>
+                  </td>
+                );
+              case 'name':
+                return (
+                  <td key="name" className={nameClasses}>
+                    <div className="truncate max-w-32">{record['name'] || record['opportunityName'] || '-'}</div>
+                  </td>
+                );
+              case 'stage':
+                return (
+                  <td key="stage" className={textClasses}>
+                    <div className="truncate max-w-32">
+                      {record['stage'] || record['status'] || '-'}
+                    </div>
+                  </td>
+                );
+              case 'value':
+              case 'amount':
+              case 'revenue':
+                const value = record['value'] || record['amount'] || record['revenue'] || record['dealValue'];
+                return (
+                  <td key="value" className={textClasses}>
+                    <div className="truncate max-w-32">
+                      {value ? `$${value.toLocaleString()}` : '-'}
+                    </div>
+                  </td>
+                );
+              case 'probability':
+                const probability = record['probability'] || record['closeProbability'];
+                return (
+                  <td key="probability" className={textClasses}>
+                    <div className="truncate max-w-32">
+                      {probability ? `${probability}%` : '-'}
+                    </div>
+                  </td>
+                );
+              case 'closeDate':
+              case 'close date':
+                const closeDate = record['closeDate'] || record['expectedCloseDate'];
+                return (
+                  <td key="closeDate" className={textClasses}>
+                    <div className="truncate max-w-32">
+                      {closeDate ? formatDate(closeDate) : '-'}
+                    </div>
+                  </td>
+                );
+              case 'nextAction':
+                return (
+                  <td key="nextAction" className={textClasses}>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const nextAction = getLeadsNextAction(record, index);
+                        return (
+                          <>
+                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
+                              {nextAction.timing}
+                            </span>
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                              {nextAction.action}
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </td>
+                );
+              case 'lastAction':
+                return (
+                  <td key="lastAction" className={mutedClasses}>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
+                        const timing = getRealtimeActionTiming(lastActionDate);
+                        const actionText = record['lastAction'] || record['lastActionDescription'] || '-';
+                        
+                        return (
+                          <>
+                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
+                              {timing.text}
+                            </span>
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                              {actionText}
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </td>
+                );
+              default:
+                return null;
+            }
+          });
+        })()}
+      </tr>
+    );
+  }
+
+  // People section rendering
+  if (section === 'people') {
+    return (
+      <tr 
+        key={record.id || index} 
+        className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+        onClick={handleRowClick}
+      >
+        {(() => {
+          // Use workspace-specific column order for people
+          const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
+          const logicalOrder = sectionConfig.columnOrder || ['rank', 'name', 'company', 'title', 'lastAction', 'nextAction'];
+          const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
+          
+          return orderedVisibleColumns.map((column, columnIndex) => {
+            if (isColumnHidden(workspaceId, section, column, workspaceName)) return null;
+            
+            switch (column) {
+              case 'rank':
+                const companyRank = record['companyRank'] || record['company']?.rank || 0;
+                const personRank = record['personRank'] || record['rank'] || (index + 1);
+                const globalRank = record['globalPersonRank'] || record['rank'] || (index + 1);
+                
+                let displayRank;
+                if (companyRank > 0) {
+                  displayRank = `${companyRank}:${personRank}`;
+                } else {
+                  displayRank = globalRank;
+                }
+                
+                return (
+                  <td key="rank" className={textClasses}>
+                    <div className="text-left font-medium">
+                      <div className="text-sm font-semibold">{displayRank}</div>
+                      {companyRank > 0 && (
+                        <div className="text-xs text-[var(--muted)]">
+                          Company #{companyRank}
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                );
+              case 'company':
+                let companyName = '';
+                if (typeof record['company'] === 'string' && record['company'] && record['company'].trim()) {
+                  companyName = record['company'];
+                } else if (record['company']?.name) {
+                  companyName = record['company'].name;
+                } else if (record['companyName']) {
+                  companyName = record['companyName'];
+                } else {
+                  companyName = '-';
+                }
+                
+                const truncatedName = companyName.length > 10 ? companyName.substring(0, 10) + '...' : companyName;
+                return (
+                  <td key="company" className={textClasses}>
+                    <div className="truncate max-w-20" title={companyName}>
+                      {truncatedName}
+                    </div>
+                  </td>
+                );
+              case 'person':
+              case 'name':
+                return (
+                  <td key="name" className={nameClasses}>
+                    <div className="truncate max-w-32">{displayName}</div>
+                  </td>
+                );
+              case 'title':
+                return (
+                  <td key="title" className={textClasses}>
+                    <div className="truncate max-w-32">
+                      {record['title'] || 
+                       record['jobTitle'] || 
+                       record?.['customFields']?.enrichedData?.overview?.title ||
+                       record?.['customFields']?.rawData?.active_experience_title ||
+                       '-'}
+                    </div>
+                  </td>
+                );
+              case 'nextAction':
+                return (
+                  <td key="nextAction" className={textClasses}>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const nextAction = getLeadsNextAction(record, index);
+                        return (
+                          <>
+                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
+                              {nextAction.timing}
+                            </span>
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                              {nextAction.action}
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </td>
+                );
+              case 'lastAction':
+                return (
+                  <td key="lastAction" className={mutedClasses}>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
+                        const timing = getRealtimeActionTiming(lastActionDate);
+                        const actionText = record['lastAction'] || record['lastActionDescription'] || '-';
+                        
+                        return (
+                          <>
+                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
+                              {timing.text}
+                            </span>
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                              {actionText}
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </td>
+                );
+              default:
+                return null;
+            }
+          });
+        })()}
+      </tr>
+    );
+  }
+
+  // Companies section rendering
+  if (section === 'companies') {
+    return (
+      <tr 
+        key={record.id || index} 
+        className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+        onClick={handleRowClick}
+      >
+        {(() => {
+          // Use workspace-specific column order for companies
+          const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
+          const logicalOrder = sectionConfig.columnOrder || ['rank', 'company', 'industry', 'status', 'lastAction', 'nextAction'];
+          const orderedVisibleColumns = logicalOrder.filter(col => visibleColumns?.includes(col));
+          
+          return orderedVisibleColumns.map((column, columnIndex) => {
+            if (isColumnHidden(workspaceId, section, column, workspaceName)) return null;
+            
+            switch (column) {
+              case 'rank':
+                const rank = record['rank'] || record['companyRank'] || (index + 1);
+                return (
+                  <td key="rank" className={textClasses}>
+                    <div className="text-left font-medium">
+                      <div className="text-sm font-semibold">{rank}</div>
+                    </div>
+                  </td>
+                );
+              case 'company':
+                const companyName = record.name || record['companyName'] || '-';
+                const truncatedName = companyName.length > 10 ? companyName.substring(0, 10) + '...' : companyName;
+                return (
+                  <td key="company" className={textClasses}>
+                    <div className="truncate max-w-20" title={companyName}>
+                      {truncatedName}
+                    </div>
+                  </td>
+                );
+              case 'industry':
+                return (
+                  <td key="industry" className={textClasses}>
+                    <div className="truncate max-w-32">
+                      {record['industry'] || record['company']?.industry || '-'}
+                    </div>
+                  </td>
+                );
+              case 'status':
+                return (
+                  <td key="status" className={textClasses}>
+                    <div className="truncate max-w-32">
+                      {record['status'] || record['stage'] || '-'}
+                    </div>
+                  </td>
+                );
+              case 'arr':
+                const arr = record['arr'] || record['annualRecurringRevenue'];
+                return (
+                  <td key="arr" className={textClasses}>
+                    <div className="truncate max-w-32">
+                      {arr ? `$${arr.toLocaleString()}` : '-'}
+                    </div>
+                  </td>
+                );
+              case 'healthScore':
+              case 'health score':
+                const healthScore = record['healthScore'] || record['health'];
+                return (
+                  <td key="healthScore" className={textClasses}>
+                    <div className="truncate max-w-32">
+                      {healthScore ? `${healthScore}%` : '-'}
+                    </div>
+                  </td>
+                );
+              case 'nextAction':
+                return (
+                  <td key="nextAction" className={textClasses}>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const nextAction = getLeadsNextAction(record, index);
+                        return (
+                          <>
+                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
+                              {nextAction.timing}
+                            </span>
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                              {nextAction.action}
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </td>
+                );
+              case 'lastAction':
+                return (
+                  <td key="lastAction" className={mutedClasses}>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
+                        const timing = getRealtimeActionTiming(lastActionDate);
+                        const actionText = record['lastAction'] || record['lastActionDescription'] || '-';
+                        
+                        return (
+                          <>
+                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
+                              {timing.text}
+                            </span>
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                              {actionText}
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </td>
+                );
+              default:
+                return null;
+            }
+          });
+        })()}
+      </tr>
+    );
+  }
+
   // Default rendering for other sections
     return (
          <tr
