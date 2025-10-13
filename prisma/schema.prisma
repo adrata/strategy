@@ -446,10 +446,7 @@ model people {
   skills               String?
   valueDriver          String?
   yearsExperience      Int?
-  nextActionPriority   String?             @db.VarChar(20)
-  nextActionReasoning  String?
-  nextActionType       String?             @db.VarChar(50)
-  nextActionUpdatedAt  DateTime?
+  
   actions              actions[]
   company              companies?          @relation(fields: [companyId], references: [id])
   mainSeller           users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
