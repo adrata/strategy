@@ -104,7 +104,7 @@ export function BaseTable({
   };
 
   return (
-    <div className={`bg-[var(--background)] border border-[var(--border)] overflow-hidden ${className}`}>
+    <div className={`bg-[var(--background)] border border-[var(--border)] overflow-hidden rounded-md ${className}`}>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <TableHeaderRefactored

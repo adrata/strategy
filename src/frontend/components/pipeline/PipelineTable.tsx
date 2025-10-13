@@ -345,7 +345,7 @@ export function PipelineTable({
   return (
     <div 
       key={`pipeline-table-${section}-${visibleColumns?.join('-')}`} 
-      className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative" 
+      className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative rounded-md" 
       style={{ height: `${tableHeight}px` }}
     >
       {/* Table container */}

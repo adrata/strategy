@@ -257,7 +257,7 @@ export function PipelineTable({
   // Empty state - show table with "No data. Add a lead." in first row
   if (!data || data.length === 0) {
     return (
-      <div className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative" style={{ height: `${tableHeight}px` }}>
+      <div className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative rounded-md" style={{ height: `${tableHeight}px` }}>
         <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
           <table className="w-full">
             <TableHeader
@@ -286,7 +286,7 @@ export function PipelineTable({
   }
   
   return (
-      <div className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative" style={{ height: `${tableHeight}px` }}>
+      <div className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative rounded-md" style={{ height: `${tableHeight}px` }}>
       {/* Table */}
       <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
         <table className="w-full">

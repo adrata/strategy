@@ -236,7 +236,7 @@ export function QueryConsole() {
               {/* Results Table */}
               {result.data.length > 0 ? (
                 <div className="overflow-x-auto">
-                  <table className="w-full border border-[var(--border)]">
+                  <table className="w-full border border-[var(--border)] rounded-md">
                     <thead className="bg-[var(--panel-background)]">
                       <tr>
                         {result.columns.map((column, index) => (
