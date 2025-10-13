@@ -53,7 +53,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
       }
 
       // Generate new intelligence without timeout
-      const response = await fetch(`/api/companies/${record.id}/intelligence`);
+      const response = await fetch(`/api/v1/companies/${record.id}/intelligence`);
       const data = await response.json();
 
       if (data.success) {
@@ -76,7 +76,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
     setError(null);
 
     try {
-      const response = await fetch(`/api/companies/${record.id}/intelligence`, {
+      const response = await fetch(`/api/v1/companies/${record.id}/intelligence`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ forceRegenerate: true })
