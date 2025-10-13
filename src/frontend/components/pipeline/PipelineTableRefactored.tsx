@@ -261,10 +261,7 @@ export function PipelineTable({
     onRecordClick(record);
   };
   
-  // Handle edit
-  const handleEdit = (record: PipelineRecord) => {
-    setEditingRecord(record);
-  };
+  // Handle edit - using the one from usePipelineActions hook
   
   // Handle add action
   const handleAddActionClick = (record: PipelineRecord) => {
