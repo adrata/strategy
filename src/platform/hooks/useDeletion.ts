@@ -57,30 +57,27 @@ export function useDeletion(): UseDeletionReturn {
     setError(null);
 
     try {
-      const response = await authFetch('/api/v1/deletion', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const result = await authFetch(
+        '/api/v1/deletion',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action,
+            entityType: options.entityType,
+            entityId: options.entityId,
+          }),
         },
-        body: JSON.stringify({
-          action,
-          entityType: options.entityType,
-          entityId: options.entityId,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to ${action}`);
-      }
-
-      const result = await response.json();
+        { success: false, error: `Failed to ${action}` } // fallback
+      );
       
-      if (result.success) {
+      if (result?.success) {
         options.onSuccess?.();
         return true;
       } else {
-        throw new Error(result.error || `Failed to ${action}`);
+        throw new Error(result?.error || `Failed to ${action}`);
       }
 
     } catch (err) {
@@ -110,19 +107,16 @@ export function useDeletion(): UseDeletionReturn {
     setError(null);
 
     try {
-      const response = await authFetch('/api/v1/deletion?action=stats');
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch deletion stats');
-      }
-
-      const result = await response.json();
+      const result = await authFetch(
+        '/api/v1/deletion?action=stats',
+        {}, // options
+        { success: false, data: null, error: 'Failed to fetch deletion stats' } // fallback
+      );
       
-      if (result.success) {
+      if (result?.success) {
         return result.data;
       } else {
-        throw new Error(result.error || 'Failed to fetch deletion stats');
+        throw new Error(result?.error || 'Failed to fetch deletion stats');
       }
 
     } catch (err) {

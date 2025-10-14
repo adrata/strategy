@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
-import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAndCreateErrorResponse, SecureApiContext } from '@/platform/services/secure-api-helper';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 
 // Response cache for fast performance
@@ -194,9 +194,12 @@ export async function GET(request: NextRequest) {
 
 // POST /api/v1/companies - Create a new company
 export async function POST(request: NextRequest) {
+  // Declare context outside try block so it's accessible in catch block
+  let context: SecureApiContext | null = null;
+  
   try {
     // Authenticate and authorize user using unified auth system
-    const { context, response } = await getSecureApiContext(request, {
+    const { context: authContext, response } = await getSecureApiContext(request, {
       requireAuth: true,
       requireWorkspaceAccess: true
     });
@@ -205,18 +208,55 @@ export async function POST(request: NextRequest) {
       return response; // Return error response if authentication failed
     }
 
-    if (!context) {
+    if (!authContext) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
+    context = authContext;
+
     const body = await request.json();
 
-    // Basic validation
-    if (!body.name) {
-      return NextResponse.json(
-        { success: false, error: 'Company name is required' },
-        { status: 400 }
-      );
+    // Comprehensive validation for required fields
+    if (!body.name || typeof body.name !== 'string' || body.name.trim().length === 0) {
+      return createErrorResponse('Company name is required and must be a non-empty string', 'VALIDATION_ERROR', 400);
+    }
+
+    // Validate workspaceId is present (should be set by auth context)
+    if (!context.workspaceId) {
+      return createErrorResponse('Workspace ID is required', 'VALIDATION_ERROR', 400);
+    }
+
+    // Validate email format if provided
+    if (body.email && typeof body.email === 'string' && body.email.trim().length > 0) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(body.email.trim())) {
+        return createErrorResponse('Invalid company email format', 'VALIDATION_ERROR', 400);
+      }
+    }
+
+    // Validate website URL format if provided
+    if (body.website && typeof body.website === 'string' && body.website.trim().length > 0) {
+      try {
+        new URL(body.website.trim());
+      } catch {
+        return createErrorResponse('Invalid website URL format', 'VALIDATION_ERROR', 400);
+      }
+    }
+
+    // Validate opportunity amount if provided
+    if (body.opportunityAmount !== undefined && body.opportunityAmount !== null) {
+      const amount = parseFloat(body.opportunityAmount);
+      if (isNaN(amount) || amount < 0) {
+        return createErrorResponse('Opportunity amount must be a valid positive number', 'VALIDATION_ERROR', 400);
+      }
+    }
+
+    // Validate opportunity probability if provided
+    if (body.opportunityProbability !== undefined && body.opportunityProbability !== null) {
+      const probability = parseFloat(body.opportunityProbability);
+      if (isNaN(probability) || probability < 0 || probability > 100) {
+        return createErrorResponse('Opportunity probability must be a number between 0 and 100', 'VALIDATION_ERROR', 400);
+      }
     }
 
     // Create company and action in a transaction
@@ -280,6 +320,17 @@ export async function POST(request: NextRequest) {
 
     const company = result.company;
 
+    // 🚀 CACHE INVALIDATION: Clear companies cache when new company is created
+    try {
+      const cachePattern = `companies-${context.workspaceId}-${context.userId}-*`;
+      // Note: Using responseCache.clear() since this is a Map-based cache
+      // In a real Redis implementation, you would use cache.invalidateByPattern(cachePattern)
+      responseCache.clear();
+      console.log(`🗑️ [COMPANIES API] Invalidated cache for pattern: ${cachePattern}`);
+    } catch (error) {
+      console.warn('⚠️ [COMPANIES API] Cache invalidation failed:', error);
+    }
+
     // Generate initial next action using AI service
     try {
       const nextActionService = new IntelligentNextActionService({
@@ -301,19 +352,22 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error creating company:', error);
-    
     // Handle unique constraint violations
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
-      return NextResponse.json(
-        { success: false, error: 'Company with this information already exists' },
-        { status: 400 }
-      );
+      return createErrorResponse('Company with this information already exists', 'DUPLICATE_COMPANY', 400);
     }
     
-    return NextResponse.json(
-      { success: false, error: 'Failed to create company' },
-      { status: 500 }
+    return logAndCreateErrorResponse(
+      error,
+      {
+        endpoint: 'V1 COMPANIES API POST',
+        userId: context?.userId,
+        workspaceId: context?.workspaceId,
+        requestId: request.headers.get('x-request-id') || undefined
+      },
+      'Failed to create company',
+      'COMPANY_CREATE_ERROR',
+      500
     );
   }
 }

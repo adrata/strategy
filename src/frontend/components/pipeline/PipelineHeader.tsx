@@ -13,6 +13,11 @@ import { getTimeTrackingData, formatHours } from '@/platform/utils/time-tracking
 import { AddNoteModal } from './AddNoteModal';
 import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
+import { AddLeadModal } from '@/platform/ui/components/AddLeadModal';
+import { AddProspectModal } from '@/platform/ui/components/AddProspectModal';
+import { AddOpportunityModal } from '@/platform/ui/components/AddOpportunityModal';
+import { AddCompanyModal } from '@/platform/ui/components/AddCompanyModal';
+import { AddPersonModal } from '@/platform/ui/components/AddPersonModal';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
 import { PanelLoader } from '@/platform/ui/components/Loader';
 import { useUnifiedAuth } from '@/platform/auth';
@@ -77,11 +82,67 @@ export function PipelineHeader({
   const { navigateToPipeline } = useWorkspaceNavigation();
   const [showAddNoteModal, setShowAddNoteModal] = useState(false);
   const [showAddActionModal, setShowAddActionModal] = useState(false);
+  const [showAddLeadModal, setShowAddLeadModal] = useState(false);
+  const [showAddProspectModal, setShowAddProspectModal] = useState(false);
+  const [showAddOpportunityModal, setShowAddOpportunityModal] = useState(false);
+  const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
+  const [showAddPersonModal, setShowAddPersonModal] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+
+  // Function to open the correct modal based on section
+  const openAddModal = () => {
+    console.log('🔧 [Add Button] Opening modal for section:', section);
+    setSelectedRecord(null);
+    
+    switch (section) {
+      case 'leads':
+        setShowAddLeadModal(true);
+        break;
+      case 'prospects':
+        setShowAddProspectModal(true);
+        break;
+      case 'opportunities':
+        setShowAddOpportunityModal(true);
+        break;
+      case 'companies':
+        setShowAddCompanyModal(true);
+        break;
+      case 'people':
+        setShowAddPersonModal(true);
+        break;
+      default:
+        console.warn('Unknown section for add modal:', section);
+        setShowAddLeadModal(true); // fallback
+    }
+  };
+
+  // Generic success handler for all modals
+  const handleAddSuccess = () => {
+    // Close all modals
+    setShowAddLeadModal(false);
+    setShowAddProspectModal(false);
+    setShowAddOpportunityModal(false);
+    setShowAddCompanyModal(false);
+    setShowAddPersonModal(false);
+    setSelectedRecord(null);
+    
+    // Refresh the list
+    onRefresh?.();
+    
+    // Show success message after modal closes
+    setTimeout(() => {
+      setShowSuccessMessage(true);
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 3000);
+    }, 100);
+  };
   const [timeData, setTimeData] = useState(() => {
     const data = getTimeTrackingData('America/New_York', user?.id);
     // Provide realistic defaults if data is empty
@@ -362,7 +423,7 @@ export function PipelineHeader({
       setSelectedRecord(null);
       setShowAddActionModal(true);
     } else {
-      console.log(`Creating new ${section.slice(0, -1)}`);
+      console.log(`🔧 [PipelineHeader] Creating new ${section.slice(0, -1)} - calling onAddRecord`);
       onAddRecord?.();
     }
   }, [section, navigateToPipeline, onAddRecord]);
@@ -1025,27 +1086,17 @@ export function PipelineHeader({
                     <>
                       {sectionInfo['actionButton'] && (
                         <button 
-                          onClick={handleAction}
+                          onClick={openAddModal}
                           className="px-3 sm:px-4 py-2 bg-[var(--background)] text-black border border-[var(--border)] rounded-lg text-sm font-medium hover:bg-[var(--panel-background)] transition-colors flex items-center gap-1 sm:gap-2"
                         >
                           <span className="hidden xs:inline">
-                            {
-                              (section === 'leads') ? `Add Lead${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
-                              (section === 'prospects') ? `Add Prospect` :
-                              (section === 'opportunities') ? `Add Opportunity${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
-                              (section === 'companies') ? `Add Company${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
-                              (section === 'people') ? `Add Person${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}` :
-                              (section === 'speedrun') ? (timeData.isBeforeWorkingHours ? `Add Action (${getCommonShortcut('SUBMIT')})` : sectionInfo.actionButton) :
-                              sectionInfo.actionButton
+                            {section === 'speedrun' ? 
+                              (timeData.isBeforeWorkingHours ? `Add Action (${getCommonShortcut('SUBMIT')})` : sectionInfo.actionButton) :
+                              `${sectionInfo.actionButton}${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}`
                             }
                           </span>
                           <span className="xs:hidden">
-                            {section === 'leads' ? 'Add Lead' : 
-                             section === 'prospects' ? 'Add Prospect' :
-                             section === 'opportunities' ? 'Add Opportunity' :
-                             section === 'companies' ? 'Add Company' :
-                             section === 'people' ? 'Add Person' :
-                             'Add'}
+                            {sectionInfo.actionButton}
                           </span>
                         </button>
                       )}
@@ -1177,6 +1228,80 @@ export function PipelineHeader({
         onSubmit={handleTaskSubmit}
         isLoading={false}
       />
+
+      {/* Add Lead Modal */}
+      <AddLeadModal
+        isOpen={showAddLeadModal}
+        onClose={() => {
+          setShowAddLeadModal(false);
+          setSelectedRecord(null);
+        }}
+        onLeadAdded={handleAddSuccess}
+        section={section}
+      />
+
+      {/* Add Prospect Modal */}
+      <AddProspectModal
+        isOpen={showAddProspectModal}
+        onClose={() => {
+          setShowAddProspectModal(false);
+          setSelectedRecord(null);
+        }}
+        onProspectAdded={handleAddSuccess}
+        section={section}
+      />
+
+      {/* Add Opportunity Modal */}
+      <AddOpportunityModal
+        isOpen={showAddOpportunityModal}
+        onClose={() => {
+          setShowAddOpportunityModal(false);
+          setSelectedRecord(null);
+        }}
+        onOpportunityAdded={handleAddSuccess}
+        section={section}
+      />
+
+      {/* Add Company Modal */}
+      <AddCompanyModal
+        isOpen={showAddCompanyModal}
+        onClose={() => {
+          setShowAddCompanyModal(false);
+          setSelectedRecord(null);
+        }}
+        onCompanyAdded={handleAddSuccess}
+        section={section}
+      />
+
+      {/* Add Person Modal */}
+      <AddPersonModal
+        isOpen={showAddPersonModal}
+        onClose={() => {
+          setShowAddPersonModal(false);
+          setSelectedRecord(null);
+        }}
+        onPersonAdded={handleAddSuccess}
+        section={section}
+      />
+
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[70] rounded-lg shadow-lg px-4 py-2 border"
+             style={{
+               backgroundColor: getCategoryColors(section).bg,
+               borderColor: getCategoryColors(section).border
+             }}>
+          <div className="flex items-center">
+            <svg className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"
+                 style={{ color: getCategoryColors(section).primary }}>
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <p className="text-sm font-medium" style={{ color: getCategoryColors(section).text }}>
+              {section.charAt(0).toUpperCase() + section.slice(1)} created successfully!
+            </p>
+          </div>
+        </div>
+      )}
 
     </>
   );

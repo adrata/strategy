@@ -7,6 +7,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
 // import { usePipelineData } from '@/platform/stores/PipelineDataStore';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
@@ -248,9 +249,15 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const [sortBy, setSortBy] = useState('rank');
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isColumnsDropdownOpen, setIsColumnsDropdownOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const sortDropdownRef = useRef<HTMLDivElement>(null);
   const columnsDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Set client-side flag
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Get vertical options from real data
   const getVerticalOptions = () => {
@@ -584,8 +591,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
         </button>
 
         {/* Enhanced Filter Dropdown Menu - Status and Last Contacted */}
-        {isDropdownOpen && (
-          <div className="absolute z-[1000] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
+        {isDropdownOpen && isClient && createPortal(
+          <div className="fixed z-[9999] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg" style={{
+            top: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().bottom + 4 : 0,
+            left: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().left : 0
+          }}>
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-[var(--foreground)]">Filter By</h3>
@@ -684,7 +694,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 </button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
 
@@ -702,8 +713,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 </button>
 
                 {/* Sort Dropdown Menu - Match Filter styling */}
-                {isSortDropdownOpen && (
-                  <div className="absolute z-[1000] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
+                {isSortDropdownOpen && isClient && createPortal(
+                  <div className="fixed z-[9999] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg" style={{
+                    top: sortDropdownRef.current ? sortDropdownRef.current.getBoundingClientRect().bottom + 4 : 0,
+                    left: sortDropdownRef.current ? sortDropdownRef.current.getBoundingClientRect().left : 0
+                  }}>
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-medium text-[var(--foreground)]">Sort By</h3>
@@ -775,7 +789,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </div>,
+                  document.body
                 )}
               </div>
 
@@ -795,8 +810,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 </button>
 
                 {/* Columns Dropdown Menu - Match Filter/Sort styling */}
-                {isColumnsDropdownOpen && (
-                  <div className="absolute z-[1000] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
+                {isColumnsDropdownOpen && isClient && createPortal(
+                  <div className="fixed z-[9999] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg" style={{
+                    top: columnsDropdownRef.current ? columnsDropdownRef.current.getBoundingClientRect().bottom + 4 : 0,
+                    left: columnsDropdownRef.current ? columnsDropdownRef.current.getBoundingClientRect().left : 0
+                  }}>
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-medium text-[var(--foreground)]">Show Columns</h3>
@@ -835,7 +853,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                       </div>
 
                     </div>
-                  </div>
+                  </div>,
+                  document.body
                 )}
               </div>
 

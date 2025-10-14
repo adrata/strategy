@@ -1,23 +1,39 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createButtonTextWithShortcut } from '@/platform/utils/keyboard-shortcut-display';
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { XMarkIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { authFetch } from '@/platform/api-fetch';
+import { getCategoryColors } from '@/platform/config/color-palette';
 
 interface AddCompanyModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCompanyAdded: (company: any) => void;
+  section?: string;
 }
 
-export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyModalProps) {
+export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'companies' }: AddCompanyModalProps) {
+  // Get section-specific colors
+  const colors = getCategoryColors(section);
   const [formData, setFormData] = useState({
     name: "",
     website: "",
     notes: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-focus name input when modal opens
+  useEffect(() => {
+    if (isOpen && nameInputRef.current) {
+      // Small delay to ensure modal is fully rendered
+      setTimeout(() => {
+        nameInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen]);
 
   // Keyboard shortcut for Cmd+Enter (⌘⏎)
   useEffect(() => {
@@ -50,7 +66,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
     setIsSubmitting(true);
     
     try {
-      const response = await authFetch('/api/v1/companies', {
+      const result = await authFetch('/api/v1/companies', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,30 +76,26 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
           website: formData.website,
           notes: formData.notes
         }),
-      });
+      }, { success: false, error: 'Failed to create company' }); // fallback
 
-      if (!response.ok) {
-        throw new Error('Failed to create company');
-      }
-
-      const result = await response.json();
+      console.log('Company creation response:', result);
       
-      if (!result.success) {
+      // Check if the response indicates success
+      if (result.success && result.data) {
+        console.log('✅ [AddCompanyModal] Company created successfully');
+        
+        // Reset form
+        setFormData({
+          name: "",
+          website: "",
+          notes: ""
+        });
+        
+        // Call callback immediately to close modal and refresh list
+        onCompanyAdded(result.data);
+      } else {
         throw new Error(result.error || 'Failed to create company');
       }
-      
-      // Call the callback with the new company
-      onCompanyAdded(result.data);
-      
-      // Reset form
-      setFormData({
-        name: "",
-        website: "",
-        notes: ""
-      });
-      
-      // Close modal
-      onClose();
       
     } catch (error) {
       console.error('Error creating company:', error);
@@ -102,61 +114,76 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-[60]">
+      <div className="bg-[var(--background)] rounded-2xl shadow-2xl w-full max-w-md mx-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div className="flex items-center gap-3">
-            <button
-              onClick={handleClose}
-              className="p-1 hover:bg-[var(--hover)] rounded-lg transition-colors"
-            >
-              <ArrowLeftIcon className="w-5 h-5 text-[var(--muted)]" />
-            </button>
             <div 
-              className="w-10 h-10 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: '#8B5CF6' }}
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: colors.bg }}
             >
               <svg 
                 className="w-5 h-5" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
-                style={{ color: 'white' }}
+                style={{ color: colors.primary }}
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-[var(--foreground)]">
-                Add Company
-              </h2>
-              <p className="text-sm text-[var(--muted-foreground)]">
-                Create a new company record
-              </p>
+              <h2 className="text-xl font-bold text-[var(--foreground)]">Add New Company</h2>
+              <p className="text-sm text-[var(--muted)]">Create a new company</p>
             </div>
           </div>
           <button
-            onClick={handleClose}
-            className="p-1 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            onClick={onClose}
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+            <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Status Badge - Section-specific colors */}
+          <div 
+            className="flex items-center gap-2 p-3 rounded-lg border"
+            style={{
+              backgroundColor: colors.bg,
+              borderColor: colors.border
+            }}
+          >
+            <div 
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: colors.primary }}
+            ></div>
+            <span 
+              className="text-sm font-medium"
+              style={{ color: colors.text }}
+            >
+              Status: {section.charAt(0).toUpperCase() + section.slice(1)}
+            </span>
+          </div>
+
           {/* Company Name */}
           <div>
             <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               Company Name *
             </label>
             <input
+              ref={nameInputRef}
               type="text"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               placeholder="Enter company name"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
+              style={{
+                '--tw-ring-color': `${colors.primary}30`,
+                '--tw-border-color': colors.primary
+              } as React.CSSProperties}
               required
             />
           </div>
@@ -202,9 +229,19 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded }: AddCompanyM
             <button
               type="submit"
               disabled={isSubmitting || !formData.name.trim()}
-              className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 text-white rounded-lg transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: colors.primary,
+                '--tw-bg-opacity': '1'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = colors.dark;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = colors.primary;
+              }}
             >
-              {isSubmitting ? 'Adding...' : createButtonTextWithShortcut('Add Company', ['⌘⏎', 'Ctrl+Enter'])}
+              {isSubmitting ? 'Adding...' : `Complete (${getCommonShortcut('SUBMIT')})`}
             </button>
           </div>
         </form>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { authFetch } from '@/platform/api-fetch';
 import { BuildingOfficeIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import { InlineEditField } from '../InlineEditField';
@@ -23,6 +23,7 @@ interface BuyerGroupMember {
   email: string;
   phone?: string;
   role: string;
+  buyerGroupStatus?: string;  // ADD THIS
   influence: string;
   isPrimary: boolean;
   company: string;
@@ -36,6 +37,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const [isFetching, setIsFetching] = useState(false); // Prevent multiple simultaneous fetches
   const [lastFetchTime, setLastFetchTime] = useState<number | null>(null);
   const router = useRouter();
+  
+  // Track previous companyId to detect changes and invalidate cache
+  const previousCompanyIdRef = useRef<string | null>(null);
 
   // Handle person click navigation
   const handlePersonClick = (person: any) => {
@@ -92,9 +96,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
 
   useEffect(() => {
     const fetchBuyerGroups = async () => {
-      // console.log('🔍 [BUYER GROUPS DEBUG] Starting fetchBuyerGroups');
-      // console.log('🔍 [BUYER GROUPS DEBUG] Record:', record);
-      // console.log('🔍 [BUYER GROUPS DEBUG] Record ID:', record?.id);
+      console.log('🔍 [BUYER GROUPS DEBUG] Starting fetchBuyerGroups');
+      console.log('🔍 [BUYER GROUPS DEBUG] Record:', record);
+      console.log('🔍 [BUYER GROUPS DEBUG] Record ID:', record?.id);
       
       if (!record?.id) {
         // console.log('🔍 [BUYER GROUPS DEBUG] No record ID, setting loading to false');
@@ -102,9 +106,57 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         return;
       }
       
-      // 🚫 PREVENT MULTIPLE FETCHES: Check if already fetching or recently fetched
-      if (isFetching || (lastFetchTime && Date.now() - lastFetchTime < 5000)) {
-        // console.log('🔍 [BUYER GROUPS DEBUG] Already fetching or recently fetched, skipping');
+      // Get the company name and ID from the record
+      let companyName = '';
+      let companyId = '';
+      
+      if (recordType === 'people') {
+        // For person records, get company from companyId or company object
+        companyId = record.companyId;
+        companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                     record.companyName || 'Company';
+      } else {
+        // For company records, use the record name as company name
+        companyName = record.name || 
+                     (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                     record.companyName ||
+                     'Company';
+        companyId = record.id; // For company records, the record ID is the company ID
+      }
+      
+      // 🔄 CACHE INVALIDATION: Check if companyId changed
+      const previousCompanyId = previousCompanyIdRef.current;
+      const companyIdChanged = previousCompanyId !== null && previousCompanyId !== companyId;
+      
+      console.log('🔍 [BUYER GROUPS DEBUG] Company change check:', {
+        previousCompanyId,
+        currentCompanyId: companyId,
+        companyIdChanged,
+        recordType
+      });
+      
+      // If company changed, clear stale cache and reset state
+      if (companyIdChanged) {
+        console.log('🔄 [BUYER GROUPS] Company changed, clearing stale cache and resetting state');
+        setBuyerGroups([]);
+        setLastFetchTime(null); // Reset fetch throttle to allow immediate re-fetch
+        setIsFetching(false);
+        
+        // Clear buyer group specific cache for previous company
+        if (previousCompanyId) {
+          const workspaceId = record.workspaceId || '01K7DNYR5VZ7JY36KGKKN76XZ1';
+          const previousCacheKey = `buyer-groups-${previousCompanyId}-${workspaceId}`;
+          localStorage.removeItem(previousCacheKey);
+          console.log('🗑️ [BUYER GROUPS] Cleared cache for previous company:', previousCacheKey);
+        }
+      }
+      
+      // Update the ref with current companyId
+      previousCompanyIdRef.current = companyId;
+      
+      // 🚫 PREVENT MULTIPLE FETCHES: Check if already fetching or recently fetched (unless company changed)
+      if (isFetching || (!companyIdChanged && lastFetchTime && Date.now() - lastFetchTime < 5000)) {
+        console.log('🔍 [BUYER GROUPS DEBUG] Already fetching or recently fetched, skipping');
         return;
       }
       
@@ -113,29 +165,14 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       setLastFetchTime(Date.now());
       
       try {
+        // ⚡ PERFORMANCE: Check if we already have people data in context
+        // This avoids unnecessary API calls when data is already available
+        const workspaceId = record.workspaceId || '01K7DNYR5VZ7JY36KGKKN76XZ1'; // Use record's workspace or default to Notary Everyday
         
-        // Get the company name from the record - try multiple sources
-        // For person records, we need to get the company from companyId or company object
-        let companyName = '';
-        let companyId = '';
-        
-        if (recordType === 'people') {
-          // For person records, get company from companyId or company object
-          companyId = record.companyId;
-          companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                       record.companyName || 'Company';
-        } else {
-          // For company records, use the record name as company name
-          companyName = record.name || 
-                       (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
-                       record.companyName ||
-                       'Company';
-          companyId = record.id; // For company records, the record ID is the company ID
-        }
-        
-        // console.log('🔍 [BUYER GROUPS DEBUG] Record type:', recordType);
-        // console.log('🔍 [BUYER GROUPS DEBUG] Company name:', companyName);
-        // console.log('🔍 [BUYER GROUPS DEBUG] Company ID:', companyId);
+        console.log('🔍 [BUYER GROUPS DEBUG] Record type:', recordType);
+        console.log('🔍 [BUYER GROUPS DEBUG] Company name:', companyName);
+        console.log('🔍 [BUYER GROUPS DEBUG] Company ID:', companyId);
+        console.log('🔍 [BUYER GROUPS DEBUG] Workspace ID:', workspaceId);
         // console.log('🔍 [BUYER GROUPS DEBUG] Record name:', record.name);
         // console.log('🔍 [BUYER GROUPS DEBUG] Record company:', record.company);
         // console.log('🔍 [BUYER GROUPS DEBUG] Record companyName:', record.companyName);
@@ -146,10 +183,6 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           setLoading(false);
           return;
         }
-        
-        // ⚡ PERFORMANCE: Check if we already have people data in context
-        // This avoids unnecessary API calls when data is already available
-        const workspaceId = record.workspaceId || '01K5D01YCQJ9TJ7CT4DZDE79T1'; // Correct TOP workspace
         const userId = record.assignedUserId || '01K1VBYXHD0J895XAN0HGFBKJP'; // Use record's assigned user or workspace ID
         
         const cacheKey = `people-${workspaceId}-${userId}`;
@@ -159,24 +192,42 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         // ⚡ PERFORMANCE: Check buyer group specific cache first (faster)
         const buyerGroupCachedData = safeGetItem(buyerGroupCacheKey, 10 * 60 * 1000); // 10 minutes TTL for better performance
         if (buyerGroupCachedData && Array.isArray(buyerGroupCachedData) && buyerGroupCachedData.length > 0) {
-          console.log('📦 [BUYER GROUPS] Using cached buyer group data');
-          setBuyerGroups(buyerGroupCachedData);
-          setLoading(false);
-          clearTimeout(loadingTimeout);
-          return;
+          // 🔍 CACHE VALIDATION: Verify cache is for current company
+          const cacheIsValid = !companyIdChanged && buyerGroupCachedData.every(member => 
+            member.companyId === companyId || member.company === companyName
+          );
+          
+          if (cacheIsValid) {
+            console.log('📦 [BUYER GROUPS] Using validated cached buyer group data for company:', companyName);
+            setBuyerGroups(buyerGroupCachedData);
+            setLoading(false);
+            setIsFetching(false);
+            return;
+          } else {
+            console.log('⚠️ [BUYER GROUPS] Cache invalid for current company, will fetch fresh data');
+          }
         }
         
         // 🚀 PRELOAD: Check for preloaded buyer group data
         const preloadedData = localStorage.getItem(`buyer-groups-${companyId}-${workspaceId}`);
-        if (preloadedData) {
+        if (preloadedData && !companyIdChanged) {
           try {
             const preloadedMembers = JSON.parse(preloadedData);
             if (Array.isArray(preloadedMembers) && preloadedMembers.length > 0) {
-              console.log('⚡ [BUYER GROUPS] Using preloaded buyer group data');
-              setBuyerGroups(preloadedMembers);
-              setLoading(false);
-              clearTimeout(loadingTimeout);
-              return;
+              // 🔍 VALIDATE: Ensure preloaded data is for current company
+              const preloadedIsValid = preloadedMembers.every(member => 
+                member.companyId === companyId || member.company === companyName
+              );
+              
+              if (preloadedIsValid) {
+                console.log('⚡ [BUYER GROUPS] Using validated preloaded buyer group data for company:', companyName);
+                setBuyerGroups(preloadedMembers);
+                setLoading(false);
+                setIsFetching(false);
+                return;
+              } else {
+                console.log('⚠️ [BUYER GROUPS] Preloaded data invalid for current company');
+              }
             }
           } catch (error) {
             console.log('⚠️ [BUYER GROUPS] Failed to parse preloaded data:', error);
@@ -192,54 +243,61 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
         
         // Only fetch if no cache or cache is stale
         if (peopleData.length === 0) {
-          console.log('🔍 [BUYER GROUPS] Fetching fresh buyer group data');
+          console.log('🔍 [BUYER GROUPS] Fetching fresh buyer group data for company:', companyName, 'ID:', companyId);
           
           // 🚀 ULTRA-FAST: Use dedicated fast buyer group API
           try {
-            const fastResponse = await authFetch(`/api/data/buyer-groups/fast?companyId=${companyId}`);
-            if (fastResponse.ok) {
-              const fastResult = await fastResponse.json();
-              if (fastResult.success && fastResult.members) {
-                console.log('⚡ [BUYER GROUPS] Fast API returned:', fastResult.members.length, 'members');
-                console.log('⚡ [BUYER GROUPS] Performance:', fastResult.performance);
-                
-                // Convert to people format for compatibility
-                peopleData = fastResult.members.map(member => ({
-                  id: member.id,
-                  fullName: member.name,
-                  firstName: member.name.split(' ')[0],
-                  lastName: member.name.split(' ').slice(1).join(' '),
-                  company: member.company,
-                  companyId: companyId,
-                  jobTitle: member.title,
-                  email: member.email,
-                  phone: member.phone,
-                  linkedinUrl: member.linkedinUrl,
-                  buyerGroupRole: member.role
-                }));
-                
-                // Cache the data immediately
-                const essentialData = peopleData.map(person => ({
-                  id: person.id,
-                  fullName: person.fullName,
-                  firstName: person.firstName,
-                  lastName: person.lastName,
-                  company: person.company,
-                  companyId: person.companyId,
-                  jobTitle: person.jobTitle,
-                  email: person.email
-                }));
-                
-                safeSetItem(cacheKey, essentialData);
-                // console.log('📦 [BUYER GROUPS] Cached fast API data');
-              } else {
-                // console.log('⚠️ [BUYER GROUPS] Fast API returned no members');
-              }
+            console.log('🔍 [BUYER GROUPS] Making API call to:', `/api/data/buyer-groups/fast?companyId=${companyId}`);
+            console.log('🔍 [BUYER GROUPS] authFetch function:', typeof authFetch);
+            const fastResult = await authFetch(`/api/data/buyer-groups/fast?companyId=${companyId}`);
+            console.log('🔍 [BUYER GROUPS] API response:', fastResult);
+            console.log('🔍 [BUYER GROUPS] API response success:', fastResult?.success);
+            console.log('🔍 [BUYER GROUPS] API response data length:', fastResult?.data?.length);
+            if (fastResult && fastResult.success && fastResult.data) {
+              const members = fastResult.data;
+              console.log('⚡ [BUYER GROUPS] Fast API returned:', members.length, 'members');
+              console.log('⚡ [BUYER GROUPS] Performance:', fastResult.meta?.processingTime);
+              console.log('⚡ [BUYER GROUPS] Members:', members);
+              
+              // Convert to people format for compatibility
+              peopleData = members.map(member => ({
+                id: member.id,
+                fullName: member.name,
+                firstName: member.name.split(' ')[0],
+                lastName: member.name.split(' ').slice(1).join(' '),
+                company: member.company,
+                companyId: companyId,
+                jobTitle: member.title,
+                email: member.email,
+                phone: member.phone,
+                linkedinUrl: member.linkedinUrl,
+                buyerGroupRole: member.role
+              }));
+              
+              // Cache the data immediately
+              const essentialData = peopleData.map(person => ({
+                id: person.id,
+                fullName: person.fullName,
+                firstName: person.firstName,
+                lastName: person.lastName,
+                company: person.company,
+                companyId: person.companyId,
+                jobTitle: person.jobTitle,
+                email: person.email
+              }));
+              
+              safeSetItem(cacheKey, essentialData);
+              // console.log('📦 [BUYER GROUPS] Cached fast API data');
             } else {
-              // console.log('⚠️ [BUYER GROUPS] Fast API failed with status:', fastResponse.status);
+              console.log('⚠️ [BUYER GROUPS] Fast API returned no data or failed:', fastResult);
             }
           } catch (fastError) {
-            // console.log('⚠️ [BUYER GROUPS] Fast API failed, using empty state for better UX');
+            console.log('⚠️ [BUYER GROUPS] Fast API failed:', fastError);
+            console.error('❌ [BUYER GROUPS] Error details:', {
+              message: fastError.message,
+              stack: fastError.stack,
+              name: fastError.name
+            });
           }
           
         }
@@ -271,7 +329,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
 
         // If no people found, show empty state (no hardcoded fallbacks)
         if (uniqueCompanyPeople.length === 0) {
-          // console.log('🔍 [BUYER GROUPS] No people found in database for this company');
+          console.log('🔍 [BUYER GROUPS] No people found in database for this company:', companyName, 'ID:', companyId);
+          console.log('🔍 [BUYER GROUPS] peopleData length:', peopleData.length);
           setBuyerGroups([]);
           setLoading(false);
           return;
@@ -358,6 +417,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             email: person.email || person.workEmail || '',
             phone: person.phone || person.mobilePhone || '',
             role: buyerRole,
+            buyerGroupStatus: person.buyerGroupStatus,  // ADD THIS - capture from API
             influence: buyerRole === 'Decision Maker' ? 'high' : buyerRole === 'Champion' ? 'high' : 'medium',
             isPrimary: isPrimary,
             company: companyName,
@@ -428,7 +488,12 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     };
 
     fetchBuyerGroups();
-  }, [record?.id]); // Only depend on record ID to prevent unnecessary re-fetches
+    
+    // Cleanup function to reset fetching state
+    return () => {
+      setIsFetching(false);
+    };
+  }, [record?.id, recordType]); // Depend on both record ID and record type to ensure proper re-fetching
 
   const handleInlineSave = async (field: string, value: string, recordId?: string, recordTypeParam?: string) => {
     if (onSave) {
@@ -437,18 +502,26 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   };
 
   const handleMemberClick = async (member: any) => {
-    console.log('Clicking on member:', member);
-    try {
-      // Navigate directly to people record
-      const peopleSlug = `${member.name.toLowerCase().replace(/\s+/g, '-')}-${member.id}`;
-      console.log('Navigating directly to people record:', `/top/people/${peopleSlug}`);
-      router.push(`/top/people/${peopleSlug}`);
-    } catch (error) {
-      console.error('Error navigating to member record:', error);
-      // Fallback to people record with proper URL structure
-      const peopleSlug = `${member.name.toLowerCase().replace(/\s+/g, '-')}-${member.id}`;
-      console.log('Error occurred, fallback to people record:', `/top/people/${peopleSlug}`);
-      router.push(`/top/people/${peopleSlug}`);
+    console.log('🔗 [BUYER GROUPS] Navigating to person:', member);
+    
+    // Generate proper slug with person's name
+    const personName = member.name || member.fullName || 'person';
+    const personSlug = generateSlug(personName, member.id);
+    
+    // Get current workspace from URL
+    const currentPath = window.location.pathname;
+    const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+    
+    if (workspaceMatch) {
+      const workspaceSlug = workspaceMatch[1];
+      const personUrl = `/${workspaceSlug}/people/${personSlug}`;
+      console.log(`🔗 [BUYER GROUPS] Navigating to: ${personUrl}`);
+      router.push(personUrl);
+    } else {
+      // Fallback to non-workspace URL
+      const personUrl = `/people/${personSlug}`;
+      console.log(`🔗 [BUYER GROUPS] Navigating to: ${personUrl}`);
+      router.push(personUrl);
     }
   };
 
@@ -461,6 +534,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   const stakeholders = buyerGroups.filter(p => p.role === 'Stakeholder').length;
   const blockers = buyerGroups.filter(p => p.role === 'Blocker').length;
   const introducers = buyerGroups.filter(p => p.role === 'Introducer').length;
+  
 
   return (
     <div className="space-y-8">
@@ -561,6 +635,20 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                     }`}>
                       {member.role}
                     </span>
+                    {/* ADD THIS - Buyer Group Status Badge */}
+                    {member.buyerGroupStatus && (
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        member.buyerGroupStatus === 'in' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
+                        member.buyerGroupStatus === 'out' ? 'bg-gray-100 text-gray-600 border border-gray-200' :
+                        member.buyerGroupStatus === 'pending' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                        'bg-gray-100 text-gray-600'
+                      }`}>
+                        {member.buyerGroupStatus === 'in' ? '✓ In Group' :
+                         member.buyerGroupStatus === 'out' ? 'Out' :
+                         member.buyerGroupStatus === 'pending' ? 'Pending' : 
+                         member.buyerGroupStatus}
+                      </span>
+                    )}
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       member.influence === 'high' ? 'bg-purple-100 text-purple-800' :
                       member.influence === 'medium' ? 'bg-orange-100 text-orange-800' :

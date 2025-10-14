@@ -1,15 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
+import { authFetch } from '@/platform/api-fetch';
+import { getCategoryColors } from '@/platform/config/color-palette';
 
 interface AddProspectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onProspectAdded: (prospect: any) => void;
+  section?: string;
 }
 
-export function AddProspectModal({ isOpen, onClose, onProspectAdded }: AddProspectModalProps) {
+export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = 'prospects' }: AddProspectModalProps) {
+  // Get section-specific colors
+  const colors = getCategoryColors(section);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -20,6 +26,64 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded }: AddProspe
     notes: ""
   });
   const [isLoading, setIsLoading] = useState(false);
+  const firstNameInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-focus first name input when modal opens
+  useEffect(() => {
+    if (isOpen && firstNameInputRef.current) {
+      // Small delay to ensure modal is fully rendered
+      setTimeout(() => {
+        firstNameInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen]);
+
+  // Keyboard shortcut for Ctrl+Enter
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Ctrl+Enter (Windows/Linux) or Cmd+Enter (Mac)
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        // Check if we're in an input field or textarea
+        const target = event.target as HTMLElement;
+        const isInputField =
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.contentEditable === "true";
+
+        // If we're in an input field, prevent default and trigger form submission
+        if (isInputField) {
+          event.preventDefault();
+          event.stopPropagation();
+          
+          // Validate form and submit if valid
+          if (formData.firstName.trim() && formData.lastName.trim() && !isLoading) {
+            const form = document.querySelector('form');
+            if (form) {
+              form.requestSubmit();
+            }
+          }
+          return;
+        }
+
+        // If not in input field, also trigger form submission
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Validate form and submit if valid
+        if (formData.firstName.trim() && formData.lastName.trim() && !isLoading) {
+          const form = document.querySelector('form');
+          if (form) {
+            form.requestSubmit();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, formData.firstName, formData.lastName, isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,34 +100,39 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded }: AddProspe
         source: "Manual Entry"
       };
 
+      console.log('Creating prospect with data:', prospectData);
+
       // Call the v1 API to create the prospect
-      const response = await fetch('/api/v1/people', {
+      const result = await authFetch('/api/v1/people', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(prospectData)
-      });
+      }, { success: false, error: 'Failed to create prospect' }); // fallback
 
-      if (!response.ok) {
-        throw new Error('Failed to create prospect');
+      console.log('Prospect creation response:', result);
+      
+      // Check if the response indicates success
+      if (result.success && result.data) {
+        console.log('✅ [AddProspectModal] Prospect created successfully');
+        
+        // Reset form
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          jobTitle: "",
+          company: "",
+          notes: ""
+        });
+        
+        // Call callback immediately to close modal and refresh list
+        onProspectAdded(result.data);
+      } else {
+        throw new Error(result.error || 'Failed to create prospect');
       }
-
-      const result = await response.json();
-      onProspectAdded(result.data);
-      
-      // Reset form
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        jobTitle: "",
-        company: "",
-        notes: ""
-      });
-      
-      onClose();
     } catch (error) {
       console.error('Error creating prospect:', error);
       alert('Failed to create prospect. Please try again.');
@@ -75,7 +144,9 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded }: AddProspe
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <>
+
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
       <div className="bg-[var(--background)] rounded-2xl shadow-2xl w-full max-w-md mx-4">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
@@ -107,11 +178,16 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded }: AddProspe
                 First Name *
               </label>
               <input
+                ref={firstNameInputRef}
                 type="text"
                 value={formData.firstName}
                 onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                 placeholder="Enter first name"
-                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
+                style={{
+                  '--tw-ring-color': `${colors.primary}30`,
+                  '--tw-border-color': colors.primary
+                } as React.CSSProperties}
                 required
               />
             </div>
@@ -221,11 +297,12 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded }: AddProspe
               disabled={isLoading || !formData.firstName || !formData.lastName}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Creating...' : 'Create Prospect'}
+              {isLoading ? 'Creating...' : `Create Prospect (${getCommonShortcut('SUBMIT')})`}
             </button>
           </div>
         </form>
       </div>
     </div>
+    </>
   );
 }

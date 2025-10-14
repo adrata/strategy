@@ -10,6 +10,19 @@ import {
 // Helper function to convert Monaco objects to strings
 const convertToString = (item: any): string => {
   if (typeof item === "string") return item;
+  if (typeof item === "number") return String(item);
+  if (typeof item === "boolean") return String(item);
+  if (item === null || item === undefined) return "";
+  
+  // Handle arrays recursively
+  if (Array.isArray(item)) {
+    return item
+      .map(convertToString)
+      .filter(str => str && str !== "[object Object]")
+      .join(", ");
+  }
+  
+  // Handle objects
   if (typeof item === "object" && item !== null) {
     return (
       item.signal ||
@@ -30,9 +43,11 @@ const convertToString = (item: any): string => {
       item.challenge ||
       item.technology ||
       item.tool ||
+      item.toString?.() ||
       JSON.stringify(item) // Better fallback than String(item)
     );
   }
+  
   return String(item);
 };
 
@@ -124,12 +139,12 @@ export const extractProductionInsights = (
       .map(convertToString)
       .filter(signal => signal && !signal.includes('[object Object]'))
       .concat([
-        person.recentActivity || `Recent engagement from ${person.company}`,
+        convertToString(person.recentActivity) || `Recent engagement from ${person.company}`,
         `${person.status || 'Active'} status indicates current engagement level`,
         `${person.priority || 'Standard'} priority contact based on role influence`,
-        `${buyerAnalysis?.role || person.relationship || "Key stakeholder"} in decision-making process`,
-        person.department ? `${person.department} department involvement` : "Cross-functional influence",
-        person.location ? `Based in ${person.location} market` : "Strategic geographic presence"
+        `${buyerAnalysis?.role || convertToString(person.relationship) || "Key stakeholder"} in decision-making process`,
+        convertToString(person.department) ? `${convertToString(person.department)} department involvement` : "Cross-functional influence",
+        convertToString(person.location) ? `Based in ${convertToString(person.location)} market` : "Strategic geographic presence"
       ])
       .filter(Boolean)
       .slice(0, 6),
@@ -180,7 +195,7 @@ export const extractProductionProfile = (person: SpeedrunPerson): ProfileData =>
       (personIntel?.motivations || [])
         .map(convertToString)
         .filter(motivator => motivator && !motivator.includes('[object Object]'))
-        .concat(person.interests)
+        .concat(convertToString(person.interests).split(", ").filter(Boolean))
         .filter(Boolean)
         .join(", ") || "Professional growth, business success",
     values:
@@ -197,7 +212,7 @@ export const extractProductionProfile = (person: SpeedrunPerson): ProfileData =>
       (personIntel?.skills || [])
         .map(convertToString)
         .filter(interest => interest && !interest.includes('[object Object]'))
-        .concat(person.interests)
+        .concat(convertToString(person.interests).split(", ").filter(Boolean))
         .filter(Boolean)
         .join(", ") || "Technology, Business",
     role: monaco?.buyerGroupAnalysis?.role || person.relationship || "Contact",
@@ -219,15 +234,17 @@ export const extractProductionCareer = (person: SpeedrunPerson): CareerData => {
         ?.map((edu) => `${edu.degree} from ${edu.school} (${edu.year})`)
         .join(", ") ||
       "Professional background in business and industry expertise",
-    certifications: (personIntel?.skills || person.interests || [])
+    certifications: (personIntel?.skills || [])
       .map(convertToString)
       .filter(cert => cert && !cert.includes('[object Object]'))
+      .concat(convertToString(person.interests).split(", ").filter(Boolean))
       .slice(0, 3)
       .concat(["Professional Certification"])
       .slice(0, 3),
-    skills: (personIntel?.skills || person.interests || [])
+    skills: (personIntel?.skills || [])
       .map(convertToString)
-      .filter(skill => skill && !skill.includes('[object Object]')),
+      .filter(skill => skill && !skill.includes('[object Object]'))
+      .concat(convertToString(person.interests).split(", ").filter(Boolean)),
     timeline: enrichedProfile?.experience?.map((exp) => ({
       year: exp.duration || "Recent",
       title: exp.title,
@@ -299,7 +316,7 @@ export const extractProductionHistory = (person: SpeedrunPerson): HistoryData =>
     const lastContactDate = person.lastContact || defaultDate;
 
     return {
-      aiSummary: `${person.name} is a ${person.status?.toLowerCase() || "active"} prospect with ${monaco?.buyerGroupAnalysis?.role || "contact"} role. Recent activity: ${enrichedProfile?.recentActivity?.[0]?.description || person.recentActivity || "Business contact established"}.`,
+      aiSummary: `${person.name} is a ${person.status?.toLowerCase() || "active"} prospect with ${monaco?.buyerGroupAnalysis?.role || "contact"} role. Recent activity: ${enrichedProfile?.recentActivity?.[0]?.description || convertToString(person.recentActivity) || "Business contact established"}.`,
       timeline: [
         ...(enrichedProfile?.recentActivity
           ?.filter((activity) => activity.description)
@@ -312,7 +329,7 @@ export const extractProductionHistory = (person: SpeedrunPerson): HistoryData =>
           date: lastContactDate,
           type: "Contact",
           summary:
-            person.recentActivity || "Initial business contact established",
+            convertToString(person.recentActivity) || "Initial business contact established",
         },
         {
           date: lastContactDate,
@@ -328,7 +345,7 @@ export const extractProductionHistory = (person: SpeedrunPerson): HistoryData =>
             opportunityIntel?.nextBestAction ||
             person.nextAction ||
             "Follow-up scheduled",
-          status: `${person.status || "Active"} - ${monaco?.buyerGroupAnalysis?.role || person.relationship || "Professional"}`,
+          status: `${person.status || "Active"} - ${monaco?.buyerGroupAnalysis?.role || convertToString(person.relationship) || "Professional"}`,
         },
       ],
       interactionMetrics: {

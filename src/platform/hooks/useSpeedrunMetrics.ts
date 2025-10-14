@@ -28,10 +28,13 @@ export function useSpeedrunMetrics(): SpeedrunMetrics {
         console.log('📊 Loading Speedrun metrics...');
         
         // Fetch prospects data
-        const response = await authFetch('/api/data/prospects');
-        const data = await response.json();
+        const data = await authFetch(
+          '/api/data/prospects',
+          {}, // options
+          { success: false, prospects: [] } // fallback
+        );
         
-        if (data['success'] && Array.isArray(data.prospects)) {
+        if (data?.success && Array.isArray(data.prospects)) {
           const prospects = data.prospects;
           
           // Count people

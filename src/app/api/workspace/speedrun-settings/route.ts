@@ -1,20 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-options';
-import { prisma } from '@/lib/prisma';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { prisma } from '@/platform/database/prisma-client';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) return response;
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get('workspaceId');
 
     if (!workspaceId) {
-      return NextResponse.json({ error: 'Workspace ID is required' }, { status: 400 });
+      return createErrorResponse('Workspace ID is required', 'WORKSPACE_ID_REQUIRED', 400);
     }
 
     // Get workspace with speedrun settings
@@ -29,7 +33,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!workspace) {
-      return NextResponse.json({ error: 'Workspace not found' }, { status: 404 });
+      return createErrorResponse('Workspace not found', 'WORKSPACE_NOT_FOUND', 404);
     }
 
     // Return settings with defaults if not set
@@ -38,44 +42,49 @@ export async function GET(request: NextRequest) {
       weeklyTarget: workspace.speedrunWeeklyTarget ?? 250,
     };
 
-    return NextResponse.json({
-      success: true,
-      data: settings,
-    });
+    return createSuccessResponse(settings);
   } catch (error) {
     console.error('Error fetching speedrun settings:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch speedrun settings' },
-      { status: 500 }
+    return createErrorResponse(
+      'Failed to fetch speedrun settings',
+      'FETCH_ERROR',
+      500
     );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) return response;
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const body = await request.json();
     const { workspaceId, dailyTarget, weeklyTarget } = body;
 
     if (!workspaceId) {
-      return NextResponse.json({ error: 'Workspace ID is required' }, { status: 400 });
+      return createErrorResponse('Workspace ID is required', 'WORKSPACE_ID_REQUIRED', 400);
     }
 
     if (typeof dailyTarget !== 'number' || typeof weeklyTarget !== 'number') {
-      return NextResponse.json(
-        { error: 'Daily and weekly targets must be numbers' },
-        { status: 400 }
+      return createErrorResponse(
+        'Daily and weekly targets must be numbers',
+        'INVALID_TARGET_TYPE',
+        400
       );
     }
 
     if (dailyTarget < 1 || dailyTarget > 1000 || weeklyTarget < 1 || weeklyTarget > 5000) {
-      return NextResponse.json(
-        { error: 'Targets must be between 1-1000 (daily) and 1-5000 (weekly)' },
-        { status: 400 }
+      return createErrorResponse(
+        'Targets must be between 1-1000 (daily) and 1-5000 (weekly)',
+        'INVALID_TARGET_RANGE',
+        400
       );
     }
 
@@ -95,18 +104,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        dailyTarget: updatedWorkspace.speedrunDailyTarget,
-        weeklyTarget: updatedWorkspace.speedrunWeeklyTarget,
-      },
+    return createSuccessResponse({
+      dailyTarget: updatedWorkspace.speedrunDailyTarget,
+      weeklyTarget: updatedWorkspace.speedrunWeeklyTarget,
     });
   } catch (error) {
     console.error('Error updating speedrun settings:', error);
-    return NextResponse.json(
-      { error: 'Failed to update speedrun settings' },
-      { status: 500 }
+    return createErrorResponse(
+      'Failed to update speedrun settings',
+      'UPDATE_ERROR',
+      500
     );
   }
 }

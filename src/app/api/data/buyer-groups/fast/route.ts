@@ -15,7 +15,19 @@ export async function GET(request: NextRequest) {
     const companyId = searchParams.get("companyId");
     
     // Get secure context
-    const context = await getSecureApiContext(request);
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
     const workspaceId = context.workspaceId;
     const userId = context.userId;
     
@@ -24,6 +36,7 @@ export async function GET(request: NextRequest) {
     }
 
     console.log(`🚀 [FAST BUYER GROUPS] Loading buyer group for company: ${companyId}`);
+    console.log(`🚀 [FAST BUYER GROUPS] Workspace ID: ${workspaceId}, User ID: ${userId}`);
 
     // First, get the company name to search by email domain
     const company = await prisma.companies.findUnique({
@@ -45,9 +58,10 @@ export async function GET(request: NextRequest) {
         + '.com';
     }
     
+    console.log(`🚀 [FAST BUYER GROUPS] Company found:`, company);
     console.log(`🚀 [FAST BUYER GROUPS] Searching for people with companyId: ${companyId} or email domain: ${emailDomain}`);
 
-    // Single optimized query to get people IN the buyer group for the company
+    // Single optimized query to get people with buyer group roles for the company
     const people = await prisma.people.findMany({
       where: {
         AND: [
@@ -65,22 +79,19 @@ export async function GET(request: NextRequest) {
             workspaceId: workspaceId,
             deletedAt: null
           },
-          // Filter for people IN the buyer group
+          // Filter for people with buyer group roles OR marked as buyer group members
           {
             OR: [
-              // People with buyerGroupStatus: 'in'
+              // People with buyerGroupRole set (primary filter)
+              { buyerGroupRole: { not: null } },
+              // People with isBuyerGroupMember = true
+              { isBuyerGroupMember: true },
+              // People with buyerGroupStatus: 'in' in customFields
               {
                 customFields: {
                   path: ['buyerGroupStatus'],
                   equals: 'in'
                 }
-              },
-              // People with buyer group roles from today's enrichment (Group 3)
-              {
-                AND: [
-                  { buyerGroupRole: { not: null } },
-                  { createdAt: { gte: new Date('2025-09-30T00:00:00.000Z') } }
-                ]
               }
             ]
           }
@@ -97,6 +108,7 @@ export async function GET(request: NextRequest) {
         linkedinUrl: true,
         customFields: true,
         buyerGroupRole: true,
+        buyerGroupStatus: true,  // ADD THIS - direct field from people table
         createdAt: true,
         updatedAt: true,
         lastEnriched: true
@@ -117,6 +129,9 @@ export async function GET(request: NextRequest) {
       const storedRole = customFields?.buyerGroupRole || person.buyerGroupRole;
       const buyerRole = storedRole || getBuyerGroupRole(jobTitle);
       
+      // Extract buyer group status from direct field or customFields
+      const buyerGroupStatus = person.buyerGroupStatus || customFields?.buyerGroupStatus || 'unknown';
+      
       return {
         id: person.id,
         name: person.fullName || `${person.firstName} ${person.lastName}`,
@@ -125,6 +140,7 @@ export async function GET(request: NextRequest) {
         phone: person.phone || '',
         linkedinUrl: person.linkedinUrl || '',
         role: buyerRole,
+        buyerGroupStatus: buyerGroupStatus,  // ADD THIS
         influence: getInfluenceLevel(buyerRole),
         isPrimary: false, // Will be set by caller if needed
         company: companyId,
@@ -137,20 +153,21 @@ export async function GET(request: NextRequest) {
     const duration = endTime - startTime;
     
     console.log(`⚡ [FAST BUYER GROUPS] Loaded ${buyerGroupMembers.length} members in ${duration}ms`);
-    console.log(`🔍 [FAST BUYER GROUPS] Filtering: Only people IN buyer group (buyerGroupStatus: 'in' or today's enrichment)`);
+    console.log(`🔍 [FAST BUYER GROUPS] Filtering: People with buyerGroupRole OR isBuyerGroupMember OR buyerGroupStatus: 'in'`);
+    console.log(`🔍 [FAST BUYER GROUPS] Raw people found:`, people.length);
     
     // Debug: Show breakdown of people found
+    const peopleWithRole = people.filter(p => p.buyerGroupRole);
+    const peopleWithMember = people.filter(p => p.isBuyerGroupMember);
     const peopleWithInStatus = people.filter(p => {
       const customFields = p.customFields as Record<string, any> || {};
       return customFields.buyerGroupStatus === 'in';
     });
-    const peopleFromToday = people.filter(p => 
-      p.createdAt && p.createdAt.toISOString().split('T')[0] === '2025-09-30' && p.buyerGroupRole
-    );
     
     console.log(`📊 [FAST BUYER GROUPS] Breakdown:`);
+    console.log(`   People with buyerGroupRole: ${peopleWithRole.length}`);
+    console.log(`   People with isBuyerGroupMember: ${peopleWithMember.length}`);
     console.log(`   People with 'in' status: ${peopleWithInStatus.length}`);
-    console.log(`   People from today's enrichment: ${peopleFromToday.length}`);
     console.log(`   Total in buyer group: ${buyerGroupMembers.length}`);
 
     return createSuccessResponse(buyerGroupMembers, {

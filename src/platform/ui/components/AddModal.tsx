@@ -19,6 +19,8 @@ interface AddModalProps {
 }
 
 export function AddModal({ refreshData }: AddModalProps = {}) {
+  console.log('🔍 [AddModal] Component rendered');
+  
   const {
     ui: { isAddModalOpen, setIsAddModalOpen, activeSection, activeWorkspace },
     forms: { formData, setFormData, handleCreateRecord },
@@ -34,6 +36,10 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       activeWorkspace: activeWorkspace?.id || 'none',
       timestamp: new Date().toISOString()
     });
+    
+    if (isAddModalOpen) {
+      console.log('🎯 [AddModal] Modal should be visible now!');
+    }
   }, [isAddModalOpen, activeSection, activeWorkspace]);
 
   // Success message state
@@ -85,6 +91,16 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
     }
   }, [isAddModalOpen, setFormData]);
 
+  // Reset specialized modal states when main modal closes
+  useEffect(() => {
+    if (!isAddModalOpen) {
+      setShowAddLeadModal(false);
+      setShowAddProspectModal(false);
+      setShowAddCompanyModal(false);
+      setShowAddPersonModal(false);
+    }
+  }, [isAddModalOpen]);
+
   // Auto-open specialized modals for specific entity types
   useEffect(() => {
     console.log('🔍 [AddModal] Auto-open effect triggered:', {
@@ -114,6 +130,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       }
     }
   }, [isAddModalOpen, activeSection]);
+
 
   // Search contacts as user types
   useEffect(() => {
@@ -376,6 +393,11 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
 
   if (!isAddModalOpen) return null;
 
+  // Don't render main modal content if specialized modals are open
+  if (showAddLeadModal || showAddProspectModal || showAddCompanyModal || showAddPersonModal) {
+    return null;
+  }
+
   const getSectionTitle = () => {
     switch (activeSection) {
       case "leads":
@@ -462,9 +484,29 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
   };
 
 
+  // Don't render main modal content if specialized modals are open
+  const hasSpecializedModalOpen = showAddLeadModal || showAddProspectModal || showAddCompanyModal || showAddPersonModal;
+  
+  console.log('🔍 [AddModal] Render state:', {
+    isAddModalOpen,
+    activeSection,
+    showAddLeadModal,
+    showAddProspectModal,
+    showAddCompanyModal,
+    showAddPersonModal,
+    hasSpecializedModalOpen
+  });
+  
+  if (isAddModalOpen && activeSection === 'leads') {
+    console.log('🎯 [AddModal] Should show AddLeadModal - showAddLeadModal:', showAddLeadModal);
+  }
+
   return (
-    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <>
+      {/* Main Modal - only show if no specialized modal is open */}
+      {!hasSpecializedModalOpen && (
+        <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div 
@@ -1275,6 +1317,8 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         </form>
         )}
       </div>
+    </div>
+  )}
 
       {/* Add Company Modal */}
       {showAddCompanyModal && (
@@ -1518,22 +1562,30 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       {/* Add Company Modal */}
       <AddCompanyModal
         isOpen={showAddCompanyModal}
-        onClose={() => setShowAddCompanyModal(false)}
+        onClose={() => {
+          setShowAddCompanyModal(false);
+          setIsAddModalOpen(false);
+        }}
         onCompanyAdded={(company) => {
           // Set the selected company in the form
           setSelectedCompany(company);
           setCompanySearchQuery(company.name);
           setCompanySearchResults([]);
           setShowAddCompanyModal(false);
+          setIsAddModalOpen(false);
         }}
       />
 
       {/* Add Lead Modal */}
       <AddLeadModal
         isOpen={showAddLeadModal}
-        onClose={() => setShowAddLeadModal(false)}
+        onClose={() => {
+          setShowAddLeadModal(false);
+          setIsAddModalOpen(false);
+        }}
         onLeadAdded={(lead) => {
           setShowAddLeadModal(false);
+          setIsAddModalOpen(false);
           if (refreshData) {
             refreshData();
           }
@@ -1543,11 +1595,15 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       {/* Add Prospect Modal */}
       <AddProspectModal
         isOpen={showAddProspectModal}
-        onClose={() => setShowAddProspectModal(false)}
+        onClose={() => {
+          setShowAddProspectModal(false);
+          setIsAddModalOpen(false);
+        }}
         onProspectAdded={(prospect) => {
           setShowSuccessMessage(true);
           setSuccessMessage(`Prospect "${prospect.fullName}" created successfully!`);
           setShowAddProspectModal(false);
+          setIsAddModalOpen(false);
           if (refreshData) {
             refreshData();
           }
@@ -1557,14 +1613,18 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       {/* Add Person Modal */}
       <AddPersonModal
         isOpen={showAddPersonModal}
-        onClose={() => setShowAddPersonModal(false)}
+        onClose={() => {
+          setShowAddPersonModal(false);
+          setIsAddModalOpen(false);
+        }}
         onPersonAdded={(person) => {
           setShowAddPersonModal(false);
+          setIsAddModalOpen(false);
           if (refreshData) {
             refreshData();
           }
         }}
       />
-    </div>
+    </>
   );
 }

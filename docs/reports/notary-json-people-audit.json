@@ -1,0 +1,245 @@
+{
+  "timestamp": "2025-10-14T02:20:01.820Z",
+  "workspace": {
+    "id": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+    "name": "Notary Everyday",
+    "slug": "notary-everyday"
+  },
+  "jsonPeopleCount": 10,
+  "databasePeopleCount": 412,
+  "matches": [
+    {
+      "jsonPerson": {
+        "index": 1,
+        "name": "Michael Abbey",
+        "title": "President & COO",
+        "company": "President & COO Meadowlark Title, LLC Boston, MA 949-584-6658 mba@meadowlarktitle.com",
+        "email": "mba@meadowlarktitle.com"
+      },
+      "databasePerson": {
+        "id": "01K7EVSSF2TGRGM7Y6EXWW9FC2",
+        "fullName": "Michael Abbey",
+        "firstName": "Michael",
+        "lastName": "Abbey",
+        "email": "mba@meadowlarktitle.com",
+        "workEmail": null,
+        "personalEmail": null,
+        "phone": "949-584-6658",
+        "mobilePhone": null,
+        "workPhone": null,
+        "jobTitle": "President & COO",
+        "company": {
+          "id": "01K7EVSSA192R7T94GVHF7DM99",
+          "name": "C Boston, MA"
+        }
+      },
+      "matchType": "exact_name",
+      "confidence": "high"
+    },
+    {
+      "jsonPerson": {
+        "index": 2,
+        "name": "Ranabir Acharjee",
+        "title": "Chief Strategy Officer",
+        "company": "Chief Strategy Officer Remedial Infotech USA INC Jonesboro, GA 770-749-7736 ra@remedialinfotech.com",
+        "email": "ra@remedialinfotech.com"
+      },
+      "databasePerson": {
+        "id": "01K7EVSSYKR37Q6VX23QH0MP0W",
+        "fullName": "Ranabir Acharjee",
+        "firstName": "Ranabir",
+        "lastName": "Acharjee",
+        "email": "ra@remedialinfotech.com",
+        "workEmail": null,
+        "personalEmail": null,
+        "phone": "770-749-7736",
+        "mobilePhone": null,
+        "workPhone": null,
+        "jobTitle": "Chief Strategy Officer",
+        "company": {
+          "id": "01K7EVSSWFGRZK88T9G1XVB3TG",
+          "name": "Remedialinfotech"
+        }
+      },
+      "matchType": "exact_name",
+      "confidence": "high"
+    },
+    {
+      "jsonPerson": {
+        "index": 3,
+        "name": "Andrew Acker",
+        "title": "COO",
+        "company": "COO D. Bello Newport Beach, CA 949-340-2660 aacker@dbello.com",
+        "email": "aacker@dbello.com"
+      },
+      "databasePerson": {
+        "id": "01K7EVSTA3ANX3XHKX9WZE7194",
+        "fullName": "Andrew Acker",
+        "firstName": "Andrew",
+        "lastName": "Acker",
+        "email": "aacker@dbello.com",
+        "workEmail": null,
+        "personalEmail": null,
+        "phone": "949-340-2660",
+        "mobilePhone": null,
+        "workPhone": null,
+        "jobTitle": "COO",
+        "company": {
+          "id": "01K46CDEEZEH4RTB1RZRB3EZE0",
+          "name": "D. Bello"
+        }
+      },
+      "matchType": "exact_name",
+      "confidence": "high"
+    },
+    {
+      "jsonPerson": {
+        "index": 4,
+        "name": "Bayleigh Ackman",
+        "title": "Director, Customer Success",
+        "company": "Director, Customer Success Qualia Concord, NH bayleigh.ackman@qualia.com",
+        "email": "bayleigh.ackman@qualia.com"
+      },
+      "databasePerson": {
+        "id": "01K7EVSTNG1MY09YF3NGKTFQMD",
+        "fullName": "Bayleigh Ackman",
+        "firstName": "Bayleigh",
+        "lastName": "Ackman",
+        "email": "bayleigh.ackman@qualia.com",
+        "workEmail": null,
+        "personalEmail": null,
+        "phone": null,
+        "mobilePhone": null,
+        "workPhone": null,
+        "jobTitle": "Director, Customer Success",
+        "company": {
+          "id": "01K7EVSTKF8JP0CCQX0YD3M8JM",
+          "name": "Director"
+        }
+      },
+      "matchType": "exact_name",
+      "confidence": "high"
+    },
+    {
+      "jsonPerson": {
+        "index": 5,
+        "name": "Carmen Adams",
+        "title": "Agency Manager",
+        "company": "Agency Manager Fidelity National Title Insurance Co. Franklin, TN 615-259-1677 carmen.adams@fnf.com",
+        "email": "carmen.adams@fnf.com"
+      },
+      "databasePerson": {
+        "id": "01K7EVSW5BPNCKV47715NFK55Q",
+        "fullName": "Carmen Adams",
+        "firstName": "Carmen",
+        "lastName": "Adams",
+        "email": "carmen.adams@fnf.com",
+        "workEmail": null,
+        "personalEmail": null,
+        "phone": "615-259-1677",
+        "mobilePhone": null,
+        "workPhone": null,
+        "jobTitle": "Agency Manager",
+        "company": {
+          "id": "01K7EVSW37R5W2YPJAJ35A6AJV",
+          "name": "Fidelity National Title Insurance Co."
+        }
+      },
+      "matchType": "exact_name",
+      "confidence": "high"
+    },
+    {
+      "jsonPerson": {
+        "index": 6,
+        "name": "Tyler Adams",
+        "title": "CEO & Co-founder",
+        "company": "CEO & Co-founder CertifID Austin, TX 239-281-3707 Tadams@certifID.com",
+        "email": "Tadams@certifID.com"
+      },
+      "databasePerson": {
+        "id": "01K7EVSWGY8E3RBF8M18CHATCD",
+        "fullName": "Tyler Adams",
+        "firstName": "Tyler",
+        "lastName": "Adams",
+        "email": "Tadams@certifID.com",
+        "workEmail": null,
+        "personalEmail": null,
+        "phone": "239-281-3707",
+        "mobilePhone": null,
+        "workPhone": null,
+        "jobTitle": "CEO & Co-founder",
+        "company": {
+          "id": "01K7EVSWEWBMCVXKBBVJCY66K9",
+          "name": "Certifid"
+        }
+      },
+      "matchType": "exact_name",
+      "confidence": "high"
+    },
+    {
+      "jsonPerson": {
+        "index": 7,
+        "name": "Adeel Ahmad",
+        "title": "Senior Vice President",
+        "company": "Senior Vice President AtClose a Visionet Company Pittsburgh, PA Adeel.Ahmad@visionet.com",
+        "email": "Adeel.Ahmad@visionet.com"
+      },
+      "databasePerson": {
+        "id": "01K7EVSWWJJ72HNG96PCSJE1CQ",
+        "fullName": "Adeel Ahmad",
+        "firstName": "Adeel",
+        "lastName": "Ahmad",
+        "email": "Adeel.Ahmad@visionet.com",
+        "workEmail": null,
+        "personalEmail": null,
+        "phone": null,
+        "mobilePhone": null,
+        "workPhone": null,
+        "jobTitle": "Senior Vice President",
+        "company": {
+          "id": "01K7EVSWTENDFXQFSXGRQC5CQM",
+          "name": "Visionet"
+        }
+      },
+      "matchType": "exact_name",
+      "confidence": "high"
+    },
+    {
+      "jsonPerson": {
+        "index": 8,
+        "name": "Ellen C Albrecht NTP",
+        "title": "Senior Underwriter",
+        "company": "Senior Underwriter Security 1st Title LLC Wichita, KS 316-267-8371 ealbrecht@security1st.com",
+        "email": "ealbrecht@security1st.com"
+      },
+      "databasePerson": {
+        "id": "01K7EVSX9CMTQ2FDZTDGMA3S0E",
+        "fullName": "Ellen C Albrecht NTP",
+        "firstName": "Ellen",
+        "lastName": "C Albrecht NTP",
+        "email": "ealbrecht@security1st.com",
+        "workEmail": null,
+        "personalEmail": null,
+        "phone": "316-267-8371",
+        "mobilePhone": null,
+        "workPhone": null,
+        "jobTitle": "Senior Underwriter",
+        "company": {
+          "id": "01K7EVSX79HK77B50ZFK3N83ZD",
+          "name": "Underwriter Security 1"
+        }
+      },
+      "matchType": "exact_name",
+      "confidence": "high"
+    }
+  ],
+  "potentialMatches": [],
+  "summary": {
+    "exactMatches": 8,
+    "potentialMatches": 0,
+    "noMatches": 2
+  },
+  "generatedAt": "2025-10-14T02:20:03.594Z",
+  "operation": "json_people_audit",
+  "note": "This audit used a sample of people from data_notary.json due to file encoding issues"
+}

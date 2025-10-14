@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
-import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAndCreateErrorResponse } from '@/platform/services/secure-api-helper';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAndCreateErrorResponse, SecureApiContext } from '@/platform/services/secure-api-helper';
 import { cache } from '@/platform/services/unified-cache';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 
@@ -229,6 +229,11 @@ export async function GET(request: NextRequest) {
             mainSellerId: true,
             vertical: true,
             notes: true,
+            buyerGroupRole: true,
+            influenceLevel: true,
+            engagementStrategy: true,
+            buyerGroupStatus: true,
+            isBuyerGroupMember: true,
             company: {
               select: {
                 id: true,
@@ -349,9 +354,12 @@ export async function GET(request: NextRequest) {
 
 // POST /api/v1/people - Create a new person
 export async function POST(request: NextRequest) {
+  // Declare context outside try block so it's accessible in catch block
+  let context: SecureApiContext | null = null;
+  
   try {
     // Authenticate and authorize user using unified auth system
-    const { context, response } = await getSecureApiContext(request, {
+    const { context: authContext, response } = await getSecureApiContext(request, {
       requireAuth: true,
       requireWorkspaceAccess: true
     });
@@ -360,18 +368,50 @@ export async function POST(request: NextRequest) {
       return response; // Return error response if authentication failed
     }
 
-    if (!context) {
+    if (!authContext) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
+    context = authContext;
+
     const body = await request.json();
 
-    // Basic validation
-    if (!body.firstName || !body.lastName) {
-      return NextResponse.json(
-        { success: false, error: 'First name and last name are required' },
-        { status: 400 }
-      );
+    // Comprehensive validation for required fields
+    if (!body.firstName || typeof body.firstName !== 'string' || body.firstName.trim().length === 0) {
+      return createErrorResponse('First name is required and must be a non-empty string', 'VALIDATION_ERROR', 400);
+    }
+
+    if (!body.lastName || typeof body.lastName !== 'string' || body.lastName.trim().length === 0) {
+      return createErrorResponse('Last name is required and must be a non-empty string', 'VALIDATION_ERROR', 400);
+    }
+
+    // Validate workspaceId is present (should be set by auth context)
+    if (!context.workspaceId) {
+      return createErrorResponse('Workspace ID is required', 'VALIDATION_ERROR', 400);
+    }
+
+    // Validate email format if provided
+    if (body.email && typeof body.email === 'string' && body.email.trim().length > 0) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(body.email.trim())) {
+        return createErrorResponse('Invalid email format', 'VALIDATION_ERROR', 400);
+      }
+    }
+
+    // Validate workEmail format if provided
+    if (body.workEmail && typeof body.workEmail === 'string' && body.workEmail.trim().length > 0) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(body.workEmail.trim())) {
+        return createErrorResponse('Invalid work email format', 'VALIDATION_ERROR', 400);
+      }
+    }
+
+    // Validate personalEmail format if provided
+    if (body.personalEmail && typeof body.personalEmail === 'string' && body.personalEmail.trim().length > 0) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(body.personalEmail.trim())) {
+        return createErrorResponse('Invalid personal email format', 'VALIDATION_ERROR', 400);
+      }
     }
 
     // Create full name

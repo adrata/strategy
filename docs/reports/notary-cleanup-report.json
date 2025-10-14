@@ -1,0 +1,176 @@
+{
+  "timestamp": "2025-10-14T02:14:55.292Z",
+  "workspace": {
+    "id": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+    "name": "Notary Everyday",
+    "slug": "notary-everyday"
+  },
+  "companiesDeleted": [
+    {
+      "id": "01K7ERXBRB5D3Y02G173KYDW72",
+      "name": "Company 4GGCS8VA",
+      "website": null,
+      "domain": null,
+      "peopleCount": 1,
+      "deletedAt": "2025-10-14T02:14:57.729Z"
+    },
+    {
+      "id": "01K7ERWR6EFXS4S1V4VSVF0HJ3",
+      "name": "Company BR9V40HP",
+      "website": null,
+      "domain": null,
+      "peopleCount": 3,
+      "deletedAt": "2025-10-14T02:14:58.301Z"
+    },
+    {
+      "id": "01K7ERXG994RMD7DE8T6EJVWAN",
+      "name": "Company H9T0B6H8",
+      "website": null,
+      "domain": null,
+      "peopleCount": 1,
+      "deletedAt": "2025-10-14T02:14:58.866Z"
+    },
+    {
+      "id": "01K7ERXGNS16HNH9QV7CKNA12P",
+      "name": "Company JQMQ91P9",
+      "website": null,
+      "domain": null,
+      "peopleCount": 2,
+      "deletedAt": "2025-10-14T02:14:59.464Z"
+    },
+    {
+      "id": "01K7ERXGFK5030ZEYM5T85X0TV",
+      "name": "Company NBWY5DHK",
+      "website": null,
+      "domain": null,
+      "peopleCount": 1,
+      "deletedAt": "2025-10-14T02:15:00.071Z"
+    },
+    {
+      "id": "01K7ERWMWR07NAP3PV0QPJEA9X",
+      "name": "Company YAHSPQN5",
+      "website": null,
+      "domain": null,
+      "peopleCount": 3,
+      "deletedAt": "2025-10-14T02:15:00.651Z"
+    },
+    {
+      "id": "01K46C4NQMXDD4VSKFNA8CVJ2P",
+      "name": "REX",
+      "website": "rexhomes.com",
+      "domain": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-14T02:15:00.942Z"
+    },
+    {
+      "id": "01K46CATC0YA0VTR3JPWMFCFWQ",
+      "name": "SMS",
+      "website": "firstamsms.com",
+      "domain": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-14T02:15:01.243Z"
+    },
+    {
+      "id": "01K46CGWRTZ8BGVJ1HCB71F3DH",
+      "name": "TITLEZEN",
+      "website": null,
+      "domain": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-14T02:15:01.588Z"
+    },
+    {
+      "id": "01K738H0NHWJPZ38TH94J8FCNJ",
+      "name": "Test Company",
+      "website": "https://test.com",
+      "domain": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-14T02:15:01.874Z"
+    },
+    {
+      "id": "01K738KSSH8JE6HWDS7J1Q1WTH",
+      "name": "Test Company 2",
+      "website": "https://test2.com",
+      "domain": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-14T02:15:02.165Z"
+    }
+  ],
+  "peopleDeleted": [
+    {
+      "id": "01K7DNZEVYXC0ZV31P22Q0CE59",
+      "fullName": "Candy Colon",
+      "companyId": "01K7ERXBRB5D3Y02G173KYDW72",
+      "companyName": "Company 4GGCS8VA"
+    },
+    {
+      "id": "01K7DNZ5NX4KFQBC9H1FCV8NCZ",
+      "fullName": "David James Hollamby",
+      "companyId": "01K7ERWR6EFXS4S1V4VSVF0HJ3",
+      "companyName": "Company BR9V40HP"
+    },
+    {
+      "id": "01K7DNZ53HJ52FRKZ1P5BBJPFB",
+      "fullName": "Sandy Radzak",
+      "companyId": "01K7ERWR6EFXS4S1V4VSVF0HJ3",
+      "companyName": "Company BR9V40HP"
+    },
+    {
+      "id": "01K7DNZ5VXXJV5N9C6QJZTTAZK",
+      "fullName": "Colette Chase",
+      "companyId": "01K7ERWR6EFXS4S1V4VSVF0HJ3",
+      "companyName": "Company BR9V40HP"
+    },
+    {
+      "id": "01K7DNZ0BYAZ3X41MBR5A9CQ7A",
+      "fullName": "Emily Dixon",
+      "companyId": "01K7ERXG994RMD7DE8T6EJVWAN",
+      "companyName": "Company H9T0B6H8"
+    },
+    {
+      "id": "01K7DNZA7R9NQTY8QAGF4ET981",
+      "fullName": "Lee Bozenhard",
+      "companyId": "01K7ERXGNS16HNH9QV7CKNA12P",
+      "companyName": "Company JQMQ91P9"
+    },
+    {
+      "id": "01K7DNZAZPTD0YQNB5FTBSDT49",
+      "fullName": "Jennifer Bornick",
+      "companyId": "01K7ERXGNS16HNH9QV7CKNA12P",
+      "companyName": "Company JQMQ91P9"
+    },
+    {
+      "id": "01K7DNZ8Y1ARCXR4TS6F1RWTXT",
+      "fullName": "Simone clacher",
+      "companyId": "01K7ERXGFK5030ZEYM5T85X0TV",
+      "companyName": "Company NBWY5DHK"
+    },
+    {
+      "id": "01K7DNYSX5FRZY1HA85JZ86T0X",
+      "fullName": "Tiffany Zimmerman",
+      "companyId": "01K7ERWMWR07NAP3PV0QPJEA9X",
+      "companyName": "Company YAHSPQN5"
+    },
+    {
+      "id": "01K7DNYTKBJ2KG7SH8AHNFS7GK",
+      "fullName": "Josefina Zuniga-Velazquez",
+      "companyId": "01K7ERWMWR07NAP3PV0QPJEA9X",
+      "companyName": "Company YAHSPQN5"
+    },
+    {
+      "id": "01K7DNYTDG7VJJYKQTARH3D5ZE",
+      "fullName": "Andy Edwards",
+      "companyId": "01K7ERWMWR07NAP3PV0QPJEA9X",
+      "companyName": "Company YAHSPQN5"
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "totalCompaniesDeleted": 11,
+    "totalPeopleDeleted": 11,
+    "companiesWithPeople": 6,
+    "companiesWithoutPeople": 5,
+    "errors": 0
+  },
+  "generatedAt": "2025-10-14T02:15:02.258Z",
+  "operation": "soft_delete_cleanup"
+}

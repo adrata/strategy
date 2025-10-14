@@ -33,28 +33,26 @@ export const useInlineEdit = (options: UseInlineEditOptions = {}) => {
       
       // Use v1 APIs for updates
       const apiType = recordType === 'account' ? 'companies' : recordType === 'contact' ? 'people' : 'people';
-      const response = await authFetch(`/api/v1/${apiType}/${recordId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
+      const result = await authFetch(
+        `/api/v1/${apiType}/${recordId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ [field]: value }),
         },
-        body: JSON.stringify({ [field]: value }),
-      });
+        { success: false, error: 'Update failed' } // fallback
+      );
 
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          const message = `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`;
-          showMessage(message, 'success');
-          options.onSuccess?.(message);
-          console.log(`✅ [INLINE EDIT] Successfully updated ${recordType} ${recordId}`);
-          return true;
-        } else {
-          throw new Error(result.error || 'Update failed');
-        }
+      if (result?.success) {
+        const message = `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`;
+        showMessage(message, 'success');
+        options.onSuccess?.(message);
+        console.log(`✅ [INLINE EDIT] Successfully updated ${recordType} ${recordId}`);
+        return true;
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(result?.error || 'Update failed');
       }
     } catch (error) {
       console.error('❌ [INLINE EDIT] Error updating record:', error);

@@ -560,6 +560,13 @@ export function UniversalRecordTemplate({
         const categories = coresignalData?.categories_and_keywords || [];
         const employeeCount = coresignalData?.employees_count || record?.size || record?.employeeCount;
         
+        // Extract industry for dynamic subtitle
+        const industry = coresignalData?.industry || 
+                         record?.industry || 
+                         categories[0] || 
+                         'company';
+        const industryText = industry === 'company' ? 'company' : `${industry} company`;
+        
         // Determine company size category based on real data
         let sizeCategory = '';
         if (employeeCount) {
@@ -596,15 +603,15 @@ export function UniversalRecordTemplate({
         
         // Combine size and growth stage for strategic context
                if (sizeCategory === 'Small' && growthStage === 'growing') {
-                 return 'Small, growing telecommunications company';
+                 return `Small, growing ${industryText}`;
                } else if (sizeCategory === 'Small' && growthStage === 'startup') {
-                 return 'Small, emerging telecom startup';
+                 return `Small, emerging ${industry === 'company' ? 'startup' : `${industry} startup`}`;
                } else if (sizeCategory === 'Mid-size' && growthStage === 'growing') {
-                 return 'Mid-size, expanding telecom company';
+                 return `Mid-size, expanding ${industryText}`;
                } else if (sizeCategory === 'Growing' && growthStage === 'established') {
-                 return 'Growing, established telecom company';
+                 return `Growing, established ${industryText}`;
                } else {
-                 return `${sizeCategory}, ${growthStage} telecommunications company`;
+                 return `${sizeCategory}, ${growthStage} ${industryText}`;
                }
       case 'people':
         const personTitle = record?.jobTitle || record?.title;
@@ -1522,45 +1529,38 @@ export function UniversalRecordTemplate({
       };
       
       // Make API call to update the record using v1 APIs
-      let response: Response;
+      let result: any;
       
-      if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
-        // All people-related records use v1 people API
-        console.log('🔍 [DEBUG] Using v1 people API for record type:', recordType);
-        response = await authFetch(`/api/v1/people/${record.id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-      } else if (recordType === 'companies') {
-        // Use v1 companies API
-        console.log('🔍 [DEBUG] Using v1 companies API');
-        response = await authFetch(`/api/v1/companies/${record.id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-      } else {
-        // For other record types, try to use appropriate v1 API or throw error
-        console.log('🔍 [DEBUG] Unsupported record type for v1 migration:', recordType);
-        throw new Error(`Record type '${recordType}' is not yet supported in v1 APIs. Please use companies or people records.`);
+      try {
+        if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
+          // All people-related records use v1 people API
+          console.log('🔍 [DEBUG] Using v1 people API for record type:', recordType);
+          result = await authFetch(`/api/v1/people/${record.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
+        } else if (recordType === 'companies') {
+          // Use v1 companies API
+          console.log('🔍 [DEBUG] Using v1 companies API');
+          result = await authFetch(`/api/v1/companies/${record.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
+        } else {
+          // For other record types, try to use appropriate v1 API or throw error
+          console.log('🔍 [DEBUG] Unsupported record type for v1 migration:', recordType);
+          throw new Error(`Record type '${recordType}' is not yet supported in v1 APIs. Please use companies or people records.`);
+        }
+      } catch (error) {
+        console.error('❌ [DEBUG] API Error:', error);
+        throw new Error(`Failed to update record: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ [DEBUG] API Error Response:', {
-          status: response.status,
-          statusText: response.statusText,
-          body: errorText
-        });
-        throw new Error(`Failed to update record: ${response.status} ${response.statusText} - ${errorText}`);
-      }
-
-      const result = await response.json();
       
       if (result.success) {
         showMessage('Record updated successfully!');

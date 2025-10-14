@@ -1,0 +1,1816 @@
+{
+  "timestamp": "2025-10-14T02:35:49.787Z",
+  "summary": {
+    "totalPeopleByWorkspace": [
+      {
+        "_count": {
+          "id": 404
+        },
+        "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1"
+      },
+      {
+        "_count": {
+          "id": 25
+        },
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V"
+      },
+      {
+        "_count": {
+          "id": 16605
+        },
+        "workspaceId": "01K74N79PCW5W8D9X6EK7KJANM"
+      },
+      {
+        "_count": {
+          "id": 2532
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      },
+      {
+        "_count": {
+          "id": 43
+        },
+        "workspaceId": "01K7DSWP8ZBA75K5VSWVXPEMAH"
+      }
+    ],
+    "peopleWithBuyerGroupRole": 20,
+    "peopleWithBuyerGroupStatus": 10,
+    "peopleWithIsBuyerGroupMember": 10,
+    "roleDistribution": [
+      {
+        "_count": {
+          "id": 75
+        },
+        "buyerGroupRole": "Introducer"
+      },
+      {
+        "_count": {
+          "id": 5227
+        },
+        "buyerGroupRole": "Stakeholder"
+      },
+      {
+        "_count": {
+          "id": 8230
+        },
+        "buyerGroupRole": "Decision Maker"
+      },
+      {
+        "_count": {
+          "id": 2985
+        },
+        "buyerGroupRole": "Champion"
+      },
+      {
+        "_count": {
+          "id": 3082
+        },
+        "buyerGroupRole": "Blocker"
+      }
+    ],
+    "sampleCompanies": [
+      {
+        "id": "01K1V9C6M4ESAQ78P2PJY7YM7X",
+        "name": "CloudCaddie",
+        "totalPeople": 0,
+        "withRoles": 0,
+        "withStatus": 0,
+        "withMember": 0
+      },
+      {
+        "id": "01K46BXP8BQF1368ZW4HPQS8J4",
+        "name": "Cadence Title Services",
+        "totalPeople": 2,
+        "withRoles": 2,
+        "withStatus": 0,
+        "withMember": 2
+      },
+      {
+        "id": "01K46BXPHWDH5EG940YJ8151JW",
+        "name": "Liberty Title & Escrow Co., LLC",
+        "totalPeople": 1,
+        "withRoles": 1,
+        "withStatus": 0,
+        "withMember": 1
+      },
+      {
+        "id": "01K46BXPV864PAFERA0CMJM5XV",
+        "name": "First Priority Title Services",
+        "totalPeople": 1,
+        "withRoles": 1,
+        "withStatus": 0,
+        "withMember": 1
+      },
+      {
+        "id": "01K46BXQEJ5D1D06K4TFNPPFH5",
+        "name": "DHI Title",
+        "totalPeople": 0,
+        "withRoles": 0,
+        "withStatus": 0,
+        "withMember": 0
+      }
+    ],
+    "recentEnrichment": 10
+  },
+  "detailedData": {
+    "peopleWithRoles": [
+      {
+        "id": "01K48QDKFSY3ZRX819FX3ZNC70",
+        "fullName": "Julie Sweet",
+        "jobTitle": "CEO",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+        "company": {
+          "name": "Accenture"
+        }
+      },
+      {
+        "id": "01K48QDMH4VYFHHPDFPR0C200K",
+        "fullName": "KC McClure",
+        "jobTitle": "CFO",
+        "buyerGroupRole": "Stakeholder",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+        "company": {
+          "name": "Accenture"
+        }
+      },
+      {
+        "id": "01K48QDNK6WSSXQ4KPB82FAHH7",
+        "fullName": "Penelope Prett",
+        "jobTitle": "CTO",
+        "buyerGroupRole": "Stakeholder",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+        "company": {
+          "name": "Accenture"
+        }
+      },
+      {
+        "id": "01K48QDPH7DSA6D26KHZ28R64W",
+        "fullName": "Manish Sharma",
+        "jobTitle": "Operations Lead",
+        "buyerGroupRole": "Champion",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+        "company": {
+          "name": "Accenture"
+        }
+      },
+      {
+        "id": "01K48QDQJVD25SQK3M99KAM1F1",
+        "fullName": "Kathleen OReilly",
+        "jobTitle": "General Counsel",
+        "buyerGroupRole": "Stakeholder",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+        "company": {
+          "name": "Accenture"
+        }
+      },
+      {
+        "id": "01K4D8Z8B94EYP2ZQ9D1RW23DX",
+        "fullName": "Shari Roll",
+        "jobTitle": "Director of Operations",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": null,
+        "company": null
+      },
+      {
+        "id": "01K4D905J36R011YT3BWRFDEJA",
+        "fullName": "Alison Nazarowski",
+        "jobTitle": "Owner",
+        "buyerGroupRole": "Stakeholder",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": null,
+        "company": null
+      },
+      {
+        "id": "01K4D9097RSHEDZ6XFQTHS2EZY",
+        "fullName": "Armando Romero",
+        "jobTitle": "President CEO",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": null,
+        "company": null
+      },
+      {
+        "id": "01K4D90YW6HF7PW2B7KWYY1RVA",
+        "fullName": "Tami Sturdevant",
+        "jobTitle": "Director of Operations",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": null,
+        "company": null
+      },
+      {
+        "id": "01K4D912J1BY0VHEWZRY60XAGW",
+        "fullName": "Randy Cruz",
+        "jobTitle": "Business Service Manager",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": null,
+        "company": null
+      },
+      {
+        "id": "01K4D916X9VAKRP8K41HWBBN3J",
+        "fullName": "Dennis Egan",
+        "jobTitle": "President",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": null,
+        "company": null
+      },
+      {
+        "id": "01K4D91AKJ849JSAWSXEHHR2BX",
+        "fullName": "Barry Miller",
+        "jobTitle": "President",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": null,
+        "company": null
+      },
+      {
+        "id": "01K4D91F927CM8C98YZAFXV5G8",
+        "fullName": "Edina McGuire",
+        "jobTitle": "Title Processor",
+        "buyerGroupRole": "Stakeholder",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": null,
+        "company": null
+      },
+      {
+        "id": "01K4D91KC0QHAFVC4R0PJWMN2Z",
+        "fullName": "Nicole Montgomery",
+        "jobTitle": "Senior Title Processor",
+        "buyerGroupRole": "Champion",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": null,
+        "company": null
+      },
+      {
+        "id": "01K4D91PPETX7VQ7DBWMMDHFMX",
+        "fullName": "Adam Lohmann",
+        "jobTitle": "CEO",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "companyId": null,
+        "company": null
+      },
+      {
+        "id": "01K4JPQD2SMKZKBHQ97M5N0P6Q",
+        "fullName": "Bruce",
+        "jobTitle": "CEO",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+        "companyId": "01K46BY8CZ3H8H3AYW25N10T3K",
+        "company": {
+          "name": "AMS Title Agency & Escrow, LLC"
+        }
+      },
+      {
+        "id": "01K4JPQDND2YMG9CP3MXC8Y6KX",
+        "fullName": "Kosta Ligris",
+        "jobTitle": "CEO",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+        "companyId": "01K46D2DG98D05VPP7HV6XW4CX",
+        "company": {
+          "name": "Access Title Agency FL"
+        }
+      },
+      {
+        "id": "01K4JPQEG95HR2ZZ1ARA3NQCAJ",
+        "fullName": "Rob",
+        "jobTitle": "CEO",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+        "companyId": "01K4JPQ4JX3YZ30AA6X7QRHRNN",
+        "company": {
+          "name": "Sky Title, LLC"
+        }
+      },
+      {
+        "id": "01K4JPQF5DYRWRD5DFZGX5B02C",
+        "fullName": "Joseph Bowen",
+        "jobTitle": "CEO",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+        "companyId": "01K4JPQ4W6J7BMVAP3AF6AJW90",
+        "company": {
+          "name": "Florida Title, LLC"
+        }
+      },
+      {
+        "id": "01K4JPQFREWA5WT3KDC355635G",
+        "fullName": "Ashley",
+        "jobTitle": "CEO",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": true,
+        "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+        "companyId": "01K4JPQ55PT548VKA0DH6W90EC",
+        "company": {
+          "name": "Propy Inc."
+        }
+      }
+    ],
+    "peopleWithStatus": [
+      {
+        "id": "01K7DW6DVT6HZCHJM4AEEACMSJ",
+        "fullName": "Robin Smyth",
+        "customFields": {
+          "seniority": "Senior",
+          "careerData": {
+            "education": {
+              "degrees": [],
+              "training": [],
+              "lastUpdated": "2025-09-22T07:49:11.681Z",
+              "certifications": []
+            },
+            "currentRole": {
+              "title": "President",
+              "company": "Unknown",
+              "duration": "Current",
+              "industry": "Unknown",
+              "startDate": "Current",
+              "companySize": "Unknown",
+              "achievements": [
+                "Professional achievements",
+                "Team contributions",
+                "Business impact"
+              ],
+              "responsibilities": [
+                "Role-specific responsibilities",
+                "Team collaboration",
+                "Goal achievement"
+              ]
+            },
+            "lastUpdated": "2025-09-22T07:49:11.681Z",
+            "careerHistory": [],
+            "careerSummary": {
+              "summary": "Robin Smyth is a professional with 0 years of experience in . Demonstrates strong leadership capabilities and industry expertise.",
+              "keyStrengths": [
+                "Leadership",
+                "Strategic Thinking",
+                "Team Management"
+              ],
+              "careerHighlights": [
+                "Career Progression",
+                "Industry Expertise",
+                "Leadership Experience"
+              ],
+              "professionalFocus": "Leadership and Strategic Management"
+            },
+            "careerInsights": {},
+            "skillsAnalysis": {
+              "skillGaps": [],
+              "primarySkills": [],
+              "emergingSkills": [
+                "Digital Transformation",
+                "AI/ML",
+                "Cloud Computing"
+              ],
+              "expertiseLevel": "Developing",
+              "secondarySkills": []
+            },
+            "careerMilestones": [],
+            "careerTrajectory": {
+              "timeline": "5-10 years",
+              "nextSteps": [
+                "Senior Leadership",
+                "Strategic Roles",
+                "Industry Expertise"
+              ],
+              "trajectory": "Upward",
+              "careerGoals": [
+                "Leadership Development",
+                "Strategic Impact",
+                "Industry Recognition"
+              ]
+            },
+            "careerProgression": {
+              "riskFactors": [],
+              "advancementRate": "Early Career",
+              "careerStability": "Building",
+              "progressionType": "Early Career",
+              "growthTrajectory": "Upward"
+            },
+            "industryExperience": {
+              "industryTrends": [
+                "Digital Transformation",
+                "Sustainability",
+                "Automation"
+              ],
+              "primaryIndustry": "Unknown",
+              "industryDiversity": "Low",
+              "industryStability": "Stable",
+              "industryExperience": 0
+            },
+            "technicalExpertise": {
+              "expertiseLevel": "Intermediate",
+              "technicalSkills": [],
+              "technologyStack": [],
+              "innovationExperience": "High"
+            },
+            "industryRecognition": {
+              "awards": [],
+              "publications": [],
+              "recognitions": [],
+              "speakingEngagements": []
+            },
+            "leadershipExperience": {
+              "teamSize": "10-50",
+              "leadershipLevel": "Middle",
+              "leadershipRoles": 0,
+              "leadershipStyle": "Collaborative"
+            },
+            "professionalDevelopment": {
+              "conferences": [],
+              "publications": [],
+              "speakingEngagements": [],
+              "professionalMemberships": []
+            }
+          },
+          "coresignal": {
+            "skills": [
+              "operations"
+            ],
+            "education": [
+              {
+                "degree": "Studies toward and Master of Sicence in EE, Electrical and Electronics Engineering",
+                "description": null,
+                "date_to_year": 1979,
+                "date_from_year": 1977,
+                "institution_url": "https://www.linkedin.com/school/montana-state-university",
+                "institution_city": "Bozeman",
+                "institution_name": "Montana State University-Bozeman",
+                "order_in_profile": 1,
+                "institution_state": "Montana",
+                "institution_street": "Montana State University",
+                "institution_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "institution_zipcode": "59717",
+                "activities_and_societies": null,
+                "institution_country_iso2": "US",
+                "institution_country_iso3": "USA",
+                "institution_full_address": "Montana State University; Bozeman, MT 59717, US"
+              },
+              {
+                "degree": "BS, Electrical and Electronics Engineering",
+                "description": null,
+                "date_to_year": 1973,
+                "date_from_year": 1968,
+                "institution_url": "https://www.linkedin.com/school/montana-state-university",
+                "institution_city": "Bozeman",
+                "institution_name": "Montana State University-Bozeman",
+                "order_in_profile": 2,
+                "institution_state": "Montana",
+                "institution_street": "Montana State University",
+                "institution_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "institution_zipcode": "59717",
+                "activities_and_societies": null,
+                "institution_country_iso2": "US",
+                "institution_country_iso3": "USA",
+                "institution_full_address": "Montana State University; Bozeman, MT 59717, US"
+              }
+            ],
+            "employeeId": 310746268,
+            "enrichedAt": "2025-09-28T03:51:35.333Z",
+            "experience": [
+              {
+                "date_to": null,
+                "location": null,
+                "date_from": "August 1990",
+                "company_id": 3196732,
+                "department": "C-Suite",
+                "description": null,
+                "company_name": "Gillespie Prudhon & Associates",
+                "company_type": "Privately Held",
+                "date_to_year": null,
+                "date_to_month": null,
+                "company_is_b2b": 1,
+                "date_from_year": 1990,
+                "position_title": "President",
+                "company_hq_city": "Clackamas",
+                "company_website": "https://www.gpatelecom.com",
+                "date_from_month": 8,
+                "duration_months": 420,
+                "company_hq_state": "OR",
+                "company_industry": "Telecommunications",
+                "management_level": "President/Vice President",
+                "order_in_profile": 1,
+                "active_experience": 1,
+                "company_hq_street": "16111 SE 106th Ave # 100",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_zipcode": null,
+                "company_size_range": null,
+                "company_twitter_url": [],
+                "company_facebook_url": [
+                  "https://www.facebook.com/gillespie-prudhon-and-associates-inc-338456366705798"
+                ],
+                "company_founded_year": null,
+                "company_linkedin_url": "https://www.linkedin.com/company/gillespie-prudhon-%26-associates",
+                "company_stock_ticker": [],
+                "company_employees_count": 9,
+                "company_followers_count": 0,
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_full_address": "16111 SE 106th Ave # 100; Clackamas, OR, United States",
+                "company_last_updated_at": "2025-09-01",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_source_5": 10000000,
+                "company_categories_and_keywords": [
+                  "telecommunications",
+                  "oregon",
+                  "clackamas",
+                  "engineering",
+                  "implementation",
+                  "communications",
+                  "project-management",
+                  "systems-integrator"
+                ],
+                "company_last_funding_round_date": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_last_funding_round_amount_raised": null,
+                "company_employees_count_change_yearly_percentage": 0
+              },
+              {
+                "date_to": "September 1990",
+                "location": null,
+                "date_from": "June 1973",
+                "company_id": null,
+                "department": null,
+                "description": null,
+                "company_name": "The Montana Power Co. (nw NorthWerstern Energy)",
+                "company_type": null,
+                "date_to_year": 1990,
+                "date_to_month": 9,
+                "company_is_b2b": null,
+                "date_from_year": 1973,
+                "position_title": "Telecommunication Operations Maintenence Supervisor",
+                "company_hq_city": null,
+                "company_website": null,
+                "date_from_month": 6,
+                "duration_months": 207,
+                "company_hq_state": null,
+                "company_industry": null,
+                "management_level": null,
+                "order_in_profile": 2,
+                "active_experience": 0,
+                "company_hq_street": null,
+                "company_hq_country": null,
+                "company_hq_regions": [],
+                "company_hq_zipcode": null,
+                "company_size_range": null,
+                "company_twitter_url": [],
+                "company_facebook_url": [],
+                "company_founded_year": null,
+                "company_linkedin_url": null,
+                "company_stock_ticker": [],
+                "company_employees_count": null,
+                "company_followers_count": null,
+                "company_hq_country_iso2": null,
+                "company_hq_country_iso3": null,
+                "company_hq_full_address": null,
+                "company_last_updated_at": null,
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_source_5": null,
+                "company_categories_and_keywords": [],
+                "company_last_funding_round_date": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_annual_revenue_currency_source_5": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_employees_count_change_yearly_percentage": null
+              }
+            ],
+            "followersCount": 753,
+            "isDecisionMaker": 1,
+            "connectionsCount": 500,
+            "totalExperienceMonths": 626
+          },
+          "department": "C-Suite",
+          "companyName": "Gillespie Prudhon & Associates",
+          "primaryRole": "President",
+          "responseTime": "24-48 hours",
+          "statusReason": "Not enriched in today's buyer group discovery",
+          "decisionPower": 56,
+          "decisionMaking": "Data-driven",
+          "influenceLevel": "Low",
+          "influenceScore": 40,
+          "engagementLevel": "Neutral",
+          "buyerGroupStatus": "out",
+          "preferredContact": "Email",
+          "statusUpdateDate": "2025-09-30T20:18:45.734Z",
+          "communicationStyle": "Professional",
+          "engagementStrategy": "Technical solution and integration approach",
+          "isBuyerGroupMember": true,
+          "buyerGroupOptimized": false,
+          "roleAssignmentMethod": "automated_completion",
+          "roleAssignmentReason": "Assigned based on leadership title: President",
+          "buyerGroupRoleAssigned": "2025-09-23T04:14:04.738Z"
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      },
+      {
+        "id": "01K7DW6FS8D75P9456AE4QHRJN",
+        "fullName": "Robert Saddler",
+        "customFields": {
+          "seniority": "Senior",
+          "careerData": {
+            "education": {
+              "degrees": [],
+              "training": [],
+              "lastUpdated": "2025-09-22T07:49:08.729Z",
+              "certifications": []
+            },
+            "currentRole": {
+              "title": "Director, Telecom Systems",
+              "company": "Unknown",
+              "duration": "Current",
+              "industry": "Unknown",
+              "startDate": "Current",
+              "companySize": "Unknown",
+              "achievements": [
+                "Team development",
+                "Process optimization",
+                "Strategic delivery"
+              ],
+              "responsibilities": [
+                "Team leadership",
+                "Strategic planning",
+                "Operations management"
+              ]
+            },
+            "lastUpdated": "2025-09-22T07:49:08.729Z",
+            "careerHistory": [
+              {
+                "type": "Previous",
+                "title": "Senior Manager",
+                "skills": [
+                  "Project Management",
+                  "Team Leadership",
+                  "Strategic Planning"
+                ],
+                "company": "Previous Company",
+                "endDate": "2021-12-31",
+                "duration": "2 years 11 months",
+                "industry": "Technology",
+                "location": "United States",
+                "startDate": "2019-01-01",
+                "description": "Managed cross-functional teams and delivered key projects",
+                "achievements": [
+                  "Delivered 15+ successful projects",
+                  "Managed team of 20+ professionals"
+                ]
+              }
+            ],
+            "careerSummary": {
+              "summary": "Robert Saddler is a Senior Manager with 1 years of experience in Technology. Demonstrates strong leadership capabilities and industry expertise.",
+              "keyStrengths": [
+                "Leadership",
+                "Strategic Thinking",
+                "Team Management"
+              ],
+              "careerHighlights": [
+                "Career Progression",
+                "Industry Expertise",
+                "Leadership Experience"
+              ],
+              "professionalFocus": "Leadership and Strategic Management"
+            },
+            "careerInsights": {},
+            "skillsAnalysis": {
+              "skillGaps": [],
+              "primarySkills": [
+                "Project Management",
+                "Team Leadership",
+                "Strategic Planning"
+              ],
+              "emergingSkills": [
+                "Digital Transformation",
+                "AI/ML",
+                "Cloud Computing"
+              ],
+              "expertiseLevel": "Developing",
+              "secondarySkills": []
+            },
+            "careerMilestones": [],
+            "careerTrajectory": {
+              "timeline": "5-10 years",
+              "nextSteps": [
+                "Senior Leadership",
+                "Strategic Roles",
+                "Industry Expertise"
+              ],
+              "trajectory": "Upward",
+              "careerGoals": [
+                "Leadership Development",
+                "Strategic Impact",
+                "Industry Recognition"
+              ]
+            },
+            "careerProgression": {
+              "riskFactors": [],
+              "advancementRate": "Early Career",
+              "careerStability": "Building",
+              "progressionType": "Early Career",
+              "growthTrajectory": "Upward"
+            },
+            "industryExperience": {
+              "industryTrends": [
+                "Digital Transformation",
+                "Sustainability",
+                "Automation"
+              ],
+              "primaryIndustry": "Unknown",
+              "industryDiversity": "Low",
+              "industryStability": "Stable",
+              "industryExperience": 1
+            },
+            "technicalExpertise": {
+              "expertiseLevel": "Intermediate",
+              "technicalSkills": [],
+              "technologyStack": [],
+              "innovationExperience": "High"
+            },
+            "industryRecognition": {
+              "awards": [],
+              "publications": [],
+              "recognitions": [],
+              "speakingEngagements": []
+            },
+            "leadershipExperience": {
+              "teamSize": "10-50",
+              "leadershipLevel": "Middle",
+              "leadershipRoles": 1,
+              "leadershipStyle": "Collaborative"
+            },
+            "professionalDevelopment": {
+              "conferences": [],
+              "publications": [],
+              "speakingEngagements": [],
+              "professionalMemberships": []
+            }
+          },
+          "coresignal": {
+            "skills": [
+              "automotive",
+              "networking",
+              "engineering",
+              "leadership",
+              "electronics",
+              "technology",
+              "electrical",
+              "mobile",
+              "reporting",
+              "firmware",
+              "database",
+              "product development",
+              "team leadership",
+              "information technology"
+            ],
+            "education": [
+              {
+                "degree": "Bachelor's degree, Electrical and Electronics Engineering",
+                "description": null,
+                "date_to_year": 2012,
+                "date_from_year": 2007,
+                "institution_url": "https://www.linkedin.com/school/wayne-state-university",
+                "institution_city": "Detroit",
+                "institution_name": "Wayne State University",
+                "order_in_profile": 1,
+                "institution_state": "Michigan",
+                "institution_street": "42 W Warren Ave",
+                "institution_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "institution_zipcode": "48202",
+                "activities_and_societies": null,
+                "institution_country_iso2": "US",
+                "institution_country_iso3": "USA",
+                "institution_full_address": "42 W Warren Ave; Detroit, mi 48202, US"
+              }
+            ],
+            "employeeId": 234621965,
+            "enrichedAt": "2025-09-28T03:51:25.921Z",
+            "experience": [
+              {
+                "date_to": null,
+                "location": null,
+                "date_from": "November 2023",
+                "company_id": 97007836,
+                "department": "Product",
+                "description": null,
+                "company_name": "Stellantis",
+                "company_type": "Public Company",
+                "date_to_year": null,
+                "date_to_month": null,
+                "company_is_b2b": 0,
+                "date_from_year": 2023,
+                "position_title": "Technical Product Manager",
+                "company_hq_city": null,
+                "company_website": "https://www.stellantis.com",
+                "date_from_month": 11,
+                "duration_months": 12,
+                "company_hq_state": null,
+                "company_industry": "Motor Vehicle Manufacturing",
+                "management_level": "Manager",
+                "order_in_profile": 1,
+                "active_experience": 1,
+                "company_hq_street": null,
+                "company_hq_country": "Netherlands",
+                "company_hq_regions": [
+                  "Europe",
+                  "Western Europe",
+                  "EMEA",
+                  "EU"
+                ],
+                "company_hq_zipcode": null,
+                "company_size_range": "10,001+ employees",
+                "company_twitter_url": [
+                  "https://www.twitter.com/stellantis"
+                ],
+                "company_facebook_url": [
+                  "https://www.facebook.com/stellantis"
+                ],
+                "company_founded_year": null,
+                "company_linkedin_url": "https://www.linkedin.com/company/stellantis-slovakia",
+                "company_stock_ticker": [
+                  {
+                    "ticker": "STLA",
+                    "exchange": null
+                  },
+                  {
+                    "ticker": "STLA",
+                    "exchange": "NYSE"
+                  }
+                ],
+                "company_employees_count": 110389,
+                "company_followers_count": 2350308,
+                "company_hq_country_iso2": "NL",
+                "company_hq_country_iso3": "NLD",
+                "company_hq_full_address": "Amsterdam, NL",
+                "company_last_updated_at": "2025-09-07",
+                "company_annual_revenue_source_1": 189544005632,
+                "company_annual_revenue_source_5": 157173775870,
+                "company_categories_and_keywords": [
+                  "beauty & personal care",
+                  "automotive",
+                  "mobility",
+                  "tech",
+                  "hanau",
+                  "warm wax",
+                  "professional services",
+                  "waxing",
+                  "hair removal",
+                  "automotive-transportation",
+                  "auto-parts",
+                  "electric-vehicles",
+                  "vehicles",
+                  "industrial",
+                  "manufacturing"
+                ],
+                "company_last_funding_round_date": "2021-07-23",
+                "company_annual_revenue_currency_source_1": "EUR",
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_last_funding_round_amount_raised": 14125806790,
+                "company_employees_count_change_yearly_percentage": null
+              },
+              {
+                "date_to": "November 2023",
+                "location": "NAFTA",
+                "date_from": "February 2022",
+                "company_id": 97007836,
+                "department": "Product",
+                "description": "In this role, I lead a small team of product managers to define products for current and next generation vehicle platforms. We collaborated with engineer and business leads to define core product strategy for overall eco system of apps, including 3P apps, in vehicle marketplace, CarPlay / Android Auto, and OTA based solutions.",
+                "company_name": "Stellantis",
+                "company_type": "Public Company",
+                "date_to_year": 2023,
+                "date_to_month": 11,
+                "company_is_b2b": 0,
+                "date_from_year": 2022,
+                "position_title": "Sr. Product Manager",
+                "company_hq_city": null,
+                "company_website": "https://www.stellantis.com",
+                "date_from_month": 2,
+                "duration_months": 21,
+                "company_hq_state": null,
+                "company_industry": "Motor Vehicle Manufacturing",
+                "management_level": "Senior",
+                "order_in_profile": 2,
+                "active_experience": 0,
+                "company_hq_street": null,
+                "company_hq_country": "Netherlands",
+                "company_hq_regions": [
+                  "Europe",
+                  "Western Europe",
+                  "EMEA",
+                  "EU"
+                ],
+                "company_hq_zipcode": null,
+                "company_size_range": "10,001+ employees",
+                "company_twitter_url": [
+                  "https://www.twitter.com/stellantis"
+                ],
+                "company_facebook_url": [
+                  "https://www.facebook.com/stellantis"
+                ],
+                "company_founded_year": null,
+                "company_linkedin_url": "https://www.linkedin.com/company/stellantis-slovakia",
+                "company_stock_ticker": [
+                  {
+                    "ticker": "STLA",
+                    "exchange": null
+                  },
+                  {
+                    "ticker": "STLA",
+                    "exchange": "NYSE"
+                  }
+                ],
+                "company_employees_count": 110389,
+                "company_followers_count": 2350308,
+                "company_hq_country_iso2": "NL",
+                "company_hq_country_iso3": "NLD",
+                "company_hq_full_address": "Amsterdam, NL",
+                "company_last_updated_at": "2025-09-07",
+                "company_annual_revenue_source_1": 189544005632,
+                "company_annual_revenue_source_5": 157173775870,
+                "company_categories_and_keywords": [
+                  "beauty & personal care",
+                  "automotive",
+                  "mobility",
+                  "tech",
+                  "hanau",
+                  "warm wax",
+                  "professional services",
+                  "waxing",
+                  "hair removal",
+                  "automotive-transportation",
+                  "auto-parts",
+                  "electric-vehicles",
+                  "vehicles",
+                  "industrial",
+                  "manufacturing"
+                ],
+                "company_last_funding_round_date": "2021-07-23",
+                "company_annual_revenue_currency_source_1": "EUR",
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_last_funding_round_amount_raised": 14125806790,
+                "company_employees_count_change_yearly_percentage": null
+              },
+              {
+                "date_to": "February 2022",
+                "location": "Auburn Hills, MI",
+                "date_from": "July 2013",
+                "company_id": 97007836,
+                "department": "Engineering and Technical",
+                "description": "In this role, I create product definition for mobile app(s) that serve as a remote interface for FCA Connected Vehicle Program. The feature sets includes Remote Commands, Vehicle Finder, Send Destination to Vehicle, Vehicle Status Reporting, Smart Watch Support, and Third Party Feature Integration.",
+                "company_name": "Stellantis",
+                "company_type": "Public Company",
+                "date_to_year": 2022,
+                "date_to_month": 2,
+                "company_is_b2b": 0,
+                "date_from_year": 2013,
+                "position_title": "Mobile Application Lead",
+                "company_hq_city": null,
+                "company_website": "https://www.stellantis.com",
+                "date_from_month": 7,
+                "duration_months": 103,
+                "company_hq_state": null,
+                "company_industry": "Motor Vehicle Manufacturing",
+                "management_level": "Senior",
+                "order_in_profile": 3,
+                "active_experience": 0,
+                "company_hq_street": null,
+                "company_hq_country": "Netherlands",
+                "company_hq_regions": [
+                  "Europe",
+                  "Western Europe",
+                  "EMEA",
+                  "EU"
+                ],
+                "company_hq_zipcode": null,
+                "company_size_range": "10,001+ employees",
+                "company_twitter_url": [
+                  "https://www.twitter.com/stellantis"
+                ],
+                "company_facebook_url": [
+                  "https://www.facebook.com/stellantis"
+                ],
+                "company_founded_year": null,
+                "company_linkedin_url": "https://www.linkedin.com/company/stellantis-slovakia",
+                "company_stock_ticker": [
+                  {
+                    "ticker": "STLA",
+                    "exchange": null
+                  },
+                  {
+                    "ticker": "STLA",
+                    "exchange": "NYSE"
+                  }
+                ],
+                "company_employees_count": 110389,
+                "company_followers_count": 2350308,
+                "company_hq_country_iso2": "NL",
+                "company_hq_country_iso3": "NLD",
+                "company_hq_full_address": "Amsterdam, NL",
+                "company_last_updated_at": "2025-09-07",
+                "company_annual_revenue_source_1": 189544005632,
+                "company_annual_revenue_source_5": 157173775870,
+                "company_categories_and_keywords": [
+                  "beauty & personal care",
+                  "automotive",
+                  "mobility",
+                  "tech",
+                  "hanau",
+                  "warm wax",
+                  "professional services",
+                  "waxing",
+                  "hair removal",
+                  "automotive-transportation",
+                  "auto-parts",
+                  "electric-vehicles",
+                  "vehicles",
+                  "industrial",
+                  "manufacturing"
+                ],
+                "company_last_funding_round_date": "2021-07-23",
+                "company_annual_revenue_currency_source_1": "EUR",
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_last_funding_round_amount_raised": 14125806790,
+                "company_employees_count_change_yearly_percentage": null
+              },
+              {
+                "date_to": "July 2013",
+                "location": null,
+                "date_from": "April 2012",
+                "company_id": 3807748,
+                "department": "Engineering and Technical",
+                "description": "In this role, I developed firmware to control an embedded cellular modem. This device regularly checked its status into a database along with being able to reliably make a call at any time.",
+                "company_name": "Illuminating Concepts",
+                "company_type": "Privately Held",
+                "date_to_year": 2013,
+                "date_to_month": 7,
+                "company_is_b2b": 1,
+                "date_from_year": 2012,
+                "position_title": "Firmware Developer",
+                "company_hq_city": "Farmington Hills",
+                "company_website": "https://www.illuminatingconcepts.com",
+                "date_from_month": 4,
+                "duration_months": 15,
+                "company_hq_state": "Michigan",
+                "company_industry": "Architecture and Planning",
+                "management_level": "Specialist",
+                "order_in_profile": 4,
+                "active_experience": 0,
+                "company_hq_street": "30717 West Ten Mile Rd.",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_zipcode": "48336",
+                "company_size_range": "11-50 employees",
+                "company_twitter_url": [
+                  "https://www.twitter.com/ic_lights"
+                ],
+                "company_facebook_url": [
+                  "https://www.facebook.com/iclightingdesigners"
+                ],
+                "company_founded_year": 1981,
+                "company_linkedin_url": "https://www.linkedin.com/company/illuminating-concepts",
+                "company_stock_ticker": [],
+                "company_employees_count": 37,
+                "company_followers_count": 1952,
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_full_address": "30717 West Ten Mile Rd.; Farmington Hills, Michigan 48336, US",
+                "company_last_updated_at": "2025-09-06",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_source_5": 17318920,
+                "company_categories_and_keywords": [
+                  "lighting design",
+                  "lighting design and consultation services",
+                  "architectural visualization",
+                  "procurement and logisitics",
+                  "architectural",
+                  "retail",
+                  "award-winning",
+                  "environmental",
+                  "real-estate-construction",
+                  "3d-modeling",
+                  "construction-design",
+                  "interior-design",
+                  "lighting",
+                  "project management"
+                ],
+                "company_last_funding_round_date": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_last_funding_round_amount_raised": null,
+                "company_employees_count_change_yearly_percentage": 0
+              },
+              {
+                "date_to": "April 2012",
+                "location": null,
+                "date_from": "August 2004",
+                "company_id": 5916763,
+                "department": "Customer Service",
+                "description": "• Crowd manager and customer service representative • Facilitator of high paced transactions",
+                "company_name": "Olympia Entertainment - Detroit Red Wings & Tigers",
+                "company_type": "Privately Held",
+                "date_to_year": 2012,
+                "date_to_month": 4,
+                "company_is_b2b": null,
+                "date_from_year": 2004,
+                "position_title": "Valet Attendant",
+                "company_hq_city": "Detroit",
+                "company_website": "https://www.olympiaentertainment.com/",
+                "date_from_month": 8,
+                "duration_months": 92,
+                "company_hq_state": "Michigan",
+                "company_industry": "Entertainment Providers",
+                "management_level": "Specialist",
+                "order_in_profile": 5,
+                "active_experience": 0,
+                "company_hq_street": "2211 Woodward Ave",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_zipcode": "48201",
+                "company_size_range": "201-500 employees",
+                "company_twitter_url": [
+                  "https://www.twitter.com/oeonthego"
+                ],
+                "company_facebook_url": [
+                  "https://www.facebook.com/officialhockeytowncafe"
+                ],
+                "company_founded_year": null,
+                "company_linkedin_url": "https://www.linkedin.com/company/olympia-entertainment---detroit-red-wings-%26-tigers",
+                "company_stock_ticker": [],
+                "company_employees_count": 666,
+                "company_followers_count": 27126,
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_full_address": "2211 Woodward Ave; Detroit, MI 48201, US",
+                "company_last_updated_at": "2025-09-01",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_source_5": 12245350,
+                "company_categories_and_keywords": [
+                  "entertainment and sports"
+                ],
+                "company_last_funding_round_date": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_last_funding_round_amount_raised": null,
+                "company_employees_count_change_yearly_percentage": 5.723370429252783
+              }
+            ],
+            "followersCount": 494,
+            "isDecisionMaker": 0,
+            "connectionsCount": 497,
+            "totalExperienceMonths": 243
+          },
+          "department": "Product",
+          "companyName": "Stellantis",
+          "primaryRole": "Technical Product Manager",
+          "responseTime": "24-48 hours",
+          "statusReason": "Not enriched in today's buyer group discovery",
+          "decisionPower": 73,
+          "decisionMaking": "Data-driven",
+          "influenceLevel": "Medium",
+          "influenceScore": 65,
+          "engagementLevel": "Neutral",
+          "buyerGroupStatus": "out",
+          "preferredContact": "Email",
+          "statusUpdateDate": "2025-09-30T20:13:39.217Z",
+          "communicationStyle": "Professional",
+          "engagementStrategy": "Operational efficiency and team productivity focus",
+          "isBuyerGroupMember": true,
+          "buyerGroupOptimized": false,
+          "roleAssignmentMethod": "automated_completion",
+          "roleAssignmentReason": "Assigned based on leadership title: Director, Telecom Systems",
+          "buyerGroupRoleAssigned": "2025-09-23T04:11:29.531Z"
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      },
+      {
+        "id": "01K7DW6M2270FB6DYKF96E7PKZ",
+        "fullName": "Oswald Bristol",
+        "customFields": {
+          "seniority": "Senior",
+          "coresignal": {
+            "skills": [],
+            "education": [
+              {
+                "degree": "Associate's Degree, Automobile/Automotive Mechanics Technology/Technician, 3.19",
+                "description": null,
+                "date_to_year": 2006,
+                "date_from_year": 2004,
+                "institution_url": "https://www.linkedin.com/school/universal-technical-institute",
+                "institution_city": null,
+                "institution_name": "Universal Technical Institute-Auto, Motorcycle, & Marine Mechanics Institute Division-Orlando",
+                "order_in_profile": 1,
+                "institution_state": null,
+                "institution_street": null,
+                "institution_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "institution_zipcode": null,
+                "activities_and_societies": null,
+                "institution_country_iso2": "US",
+                "institution_country_iso3": "USA",
+                "institution_full_address": null
+              },
+              {
+                "degree": "High School, General Studies, 3.0",
+                "description": null,
+                "date_to_year": 1990,
+                "date_from_year": 1987,
+                "institution_url": null,
+                "institution_city": null,
+                "institution_name": "OAKRIDGE HS",
+                "order_in_profile": 2,
+                "institution_state": null,
+                "institution_street": null,
+                "institution_regions": [],
+                "institution_zipcode": null,
+                "activities_and_societies": "Activities and Societies: JROTC, DRILL TEAM, TRACK TEAM, SOCCER TEAM.",
+                "institution_country_iso2": null,
+                "institution_country_iso3": null,
+                "institution_full_address": null
+              }
+            ],
+            "employeeId": 325480771,
+            "enrichedAt": "2025-09-28T03:48:58.091Z",
+            "experience": [
+              {
+                "date_to": null,
+                "location": null,
+                "date_from": "March 1997",
+                "company_id": 3058061,
+                "department": "Other",
+                "description": null,
+                "company_name": "US Army",
+                "company_type": "Government Agency",
+                "date_to_year": null,
+                "date_to_month": null,
+                "company_is_b2b": 0,
+                "date_from_year": 1997,
+                "position_title": "US PARATROOPER",
+                "company_hq_city": "Arlington",
+                "company_website": "https://www.usarmybasic.com",
+                "date_from_month": 3,
+                "duration_months": 257,
+                "company_hq_state": "Virginia",
+                "company_industry": "Armed Forces",
+                "management_level": "Specialist",
+                "order_in_profile": 1,
+                "active_experience": 1,
+                "company_hq_street": "1500 Army Navy Dr",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_zipcode": "",
+                "company_size_range": "10,001+ employees",
+                "company_twitter_url": [
+                  "https://www.twitter.com/usarmy"
+                ],
+                "company_facebook_url": [
+                  "https://www.facebook.com/usarmy"
+                ],
+                "company_founded_year": 1775,
+                "company_linkedin_url": "https://www.linkedin.com/company/us-army/about",
+                "company_stock_ticker": [],
+                "company_employees_count": 349540,
+                "company_followers_count": 1173016,
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_full_address": "1500 Army Navy Dr; Arlington, Virginia, US",
+                "company_last_updated_at": "2025-09-04",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_source_5": null,
+                "company_categories_and_keywords": [
+                  "army training",
+                  "- -",
+                  "administrative support",
+                  "arts & media",
+                  "intelligence",
+                  "legal",
+                  "combat",
+                  "mechanics",
+                  "computers & technology",
+                  "medical & emergency",
+                  "construction",
+                  "transportation",
+                  "engineering",
+                  "aviation",
+                  "combat support",
+                  "law enforcement",
+                  "pay charts",
+                  "apft scores",
+                  "graduations",
+                  "us army basic training",
+                  "ranks and insignias",
+                  "government-public-services",
+                  "security"
+                ],
+                "company_last_funding_round_date": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_annual_revenue_currency_source_5": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_employees_count_change_yearly_percentage": -17.53523953438954
+              }
+            ],
+            "followersCount": 58,
+            "isDecisionMaker": 0,
+            "connectionsCount": 56,
+            "totalExperienceMonths": 257
+          },
+          "department": "Other",
+          "companyName": "US Army",
+          "lastUpdated": "2025-09-23T02:30:13.395Z",
+          "primaryRole": "US PARATROOPER",
+          "responseTime": "24-48 hours",
+          "statusReason": "Not enriched in today's buyer group discovery",
+          "decisionPower": 41,
+          "buyerGroupRole": "Stakeholder",
+          "decisionMaking": "Data-driven",
+          "influenceLevel": "Low",
+          "influenceScore": 25,
+          "engagementLevel": "Neutral",
+          "buyerGroupStatus": "out",
+          "preferredContact": "Email",
+          "statusUpdateDate": "2025-09-30T20:18:40.950Z",
+          "communicationStyle": "Professional",
+          "engagementStrategy": "Educational approach with use cases",
+          "hiddenFromSections": [
+            "people",
+            "companies",
+            "leads",
+            "speedrun"
+          ],
+          "isBuyerGroupMember": false,
+          "buyerGroupOptimized": false
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      },
+      {
+        "id": "01K7DW6MB2503E7W7ZG9M0WVP0",
+        "fullName": "Michael Christian",
+        "customFields": {
+          "lastUpdated": "2025-09-23T02:30:12.989Z",
+          "statusReason": "Not enriched in today's buyer group discovery",
+          "buyerGroupRole": "Stakeholder",
+          "buyerGroupStatus": "out",
+          "statusUpdateDate": "2025-09-30T20:18:38.035Z",
+          "hiddenFromSections": [
+            "people",
+            "companies",
+            "leads",
+            "speedrun"
+          ],
+          "isBuyerGroupMember": false,
+          "buyerGroupOptimized": true
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      },
+      {
+        "id": "01K7DW6MKP65QSBA754PWE896A",
+        "fullName": "Jose Hardy",
+        "customFields": {
+          "lastUpdated": "2025-09-23T02:30:12.636Z",
+          "statusReason": "Not enriched in today's buyer group discovery",
+          "buyerGroupRole": "Stakeholder",
+          "buyerGroupStatus": "out",
+          "statusUpdateDate": "2025-09-30T20:18:38.357Z",
+          "hiddenFromSections": [
+            "people",
+            "companies",
+            "leads",
+            "speedrun"
+          ],
+          "isBuyerGroupMember": false,
+          "buyerGroupOptimized": true
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      },
+      {
+        "id": "01K7DW6MSQCJRT0704BG77KMCP",
+        "fullName": "Hannah Tillman",
+        "customFields": {
+          "lastUpdated": "2025-09-23T02:30:02.400Z",
+          "statusReason": "Not enriched in today's buyer group discovery",
+          "buyerGroupRole": "Stakeholder",
+          "buyerGroupStatus": "out",
+          "statusUpdateDate": "2025-09-30T20:14:51.649Z",
+          "hiddenFromSections": [
+            "people",
+            "companies",
+            "leads",
+            "speedrun"
+          ],
+          "isBuyerGroupMember": true,
+          "buyerGroupOptimized": true
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      },
+      {
+        "id": "01K7DW6MZK8XD3HY1BA9VE9X3V",
+        "fullName": "Edward Wostbrock",
+        "customFields": {
+          "lastUpdated": "2025-09-23T02:30:12.298Z",
+          "statusReason": "Not enriched in today's buyer group discovery",
+          "buyerGroupRole": "Stakeholder",
+          "buyerGroupStatus": "out",
+          "statusUpdateDate": "2025-09-30T20:18:37.717Z",
+          "hiddenFromSections": [
+            "people",
+            "companies",
+            "leads",
+            "speedrun"
+          ],
+          "isBuyerGroupMember": false,
+          "buyerGroupOptimized": true
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      },
+      {
+        "id": "01K7DW6N5K8ZJNA0BM2Z4HKNZD",
+        "fullName": "Chris Branning",
+        "customFields": {
+          "lastUpdated": "2025-09-23T02:30:11.962Z",
+          "statusReason": "Not enriched in today's buyer group discovery",
+          "buyerGroupRole": "Stakeholder",
+          "buyerGroupStatus": "out",
+          "statusUpdateDate": "2025-09-30T20:18:35.811Z",
+          "hiddenFromSections": [
+            "people",
+            "companies",
+            "leads",
+            "speedrun"
+          ],
+          "isBuyerGroupMember": false,
+          "buyerGroupOptimized": true
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      },
+      {
+        "id": "01K7DW6NBH0YWVT7FC79CDAJS6",
+        "fullName": "Brian White",
+        "customFields": {
+          "lastUpdated": "2025-09-23T02:30:11.621Z",
+          "statusReason": "Not enriched in today's buyer group discovery",
+          "buyerGroupRole": "Stakeholder",
+          "buyerGroupStatus": "out",
+          "statusUpdateDate": "2025-09-30T20:18:34.470Z",
+          "hiddenFromSections": [
+            "people",
+            "companies",
+            "leads",
+            "speedrun"
+          ],
+          "isBuyerGroupMember": false,
+          "buyerGroupOptimized": true
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      },
+      {
+        "id": "01K7DW6NHGPWFD1WTZAVA67VS9",
+        "fullName": "Yuqiang Tang",
+        "customFields": {
+          "lastUpdated": "2025-09-23T02:29:54.374Z",
+          "statusReason": "Not enriched in today's buyer group discovery",
+          "buyerGroupRole": "Stakeholder",
+          "buyerGroupStatus": "out",
+          "statusUpdateDate": "2025-09-30T20:19:44.237Z",
+          "hiddenFromSections": [
+            "people",
+            "companies",
+            "leads",
+            "speedrun"
+          ],
+          "isBuyerGroupMember": false,
+          "buyerGroupOptimized": true
+        },
+        "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK"
+      }
+    ],
+    "buyerGroupMembers": [
+      {
+        "id": "01K48QDKFSY3ZRX819FX3ZNC70",
+        "fullName": "Julie Sweet",
+        "jobTitle": "CEO",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "company": {
+          "name": "Accenture"
+        }
+      },
+      {
+        "id": "01K48QDMH4VYFHHPDFPR0C200K",
+        "fullName": "KC McClure",
+        "jobTitle": "CFO",
+        "buyerGroupRole": "Stakeholder",
+        "buyerGroupStatus": null,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "company": {
+          "name": "Accenture"
+        }
+      },
+      {
+        "id": "01K48QDNK6WSSXQ4KPB82FAHH7",
+        "fullName": "Penelope Prett",
+        "jobTitle": "CTO",
+        "buyerGroupRole": "Stakeholder",
+        "buyerGroupStatus": null,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "company": {
+          "name": "Accenture"
+        }
+      },
+      {
+        "id": "01K48QDPH7DSA6D26KHZ28R64W",
+        "fullName": "Manish Sharma",
+        "jobTitle": "Operations Lead",
+        "buyerGroupRole": "Champion",
+        "buyerGroupStatus": null,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "company": {
+          "name": "Accenture"
+        }
+      },
+      {
+        "id": "01K48QDQJVD25SQK3M99KAM1F1",
+        "fullName": "Kathleen OReilly",
+        "jobTitle": "General Counsel",
+        "buyerGroupRole": "Stakeholder",
+        "buyerGroupStatus": null,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "company": {
+          "name": "Accenture"
+        }
+      },
+      {
+        "id": "01K4D8Z8B94EYP2ZQ9D1RW23DX",
+        "fullName": "Shari Roll",
+        "jobTitle": "Director of Operations",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "company": null
+      },
+      {
+        "id": "01K4D905J36R011YT3BWRFDEJA",
+        "fullName": "Alison Nazarowski",
+        "jobTitle": "Owner",
+        "buyerGroupRole": "Stakeholder",
+        "buyerGroupStatus": null,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "company": null
+      },
+      {
+        "id": "01K4D9097RSHEDZ6XFQTHS2EZY",
+        "fullName": "Armando Romero",
+        "jobTitle": "President CEO",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "company": null
+      },
+      {
+        "id": "01K4D90YW6HF7PW2B7KWYY1RVA",
+        "fullName": "Tami Sturdevant",
+        "jobTitle": "Director of Operations",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "company": null
+      },
+      {
+        "id": "01K4D912J1BY0VHEWZRY60XAGW",
+        "fullName": "Randy Cruz",
+        "jobTitle": "Business Service Manager",
+        "buyerGroupRole": "Decision Maker",
+        "buyerGroupStatus": null,
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "company": null
+      }
+    ],
+    "companiesWithPeople": [
+      {
+        "id": "01K1V9C6M4ESAQ78P2PJY7YM7X",
+        "name": "CloudCaddie",
+        "workspaceId": "01K7464TNANHQXPCZT1FYX205V",
+        "people": []
+      },
+      {
+        "id": "01K46BXP8BQF1368ZW4HPQS8J4",
+        "name": "Cadence Title Services",
+        "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+        "people": [
+          {
+            "id": "01K7DP0V24NS19RE3GV1CGSKBR",
+            "fullName": "Brooklyn Bello",
+            "jobTitle": "Senior Escrow Officer",
+            "buyerGroupRole": "Stakeholder",
+            "buyerGroupStatus": null,
+            "isBuyerGroupMember": true
+          },
+          {
+            "id": "01K7DP0V7ZCF8KACY2BZHXT5EB",
+            "fullName": "Jennifer Billingsley",
+            "jobTitle": "Title And Escrow Assistant",
+            "buyerGroupRole": "Stakeholder",
+            "buyerGroupStatus": null,
+            "isBuyerGroupMember": true
+          }
+        ]
+      },
+      {
+        "id": "01K46BXPHWDH5EG940YJ8151JW",
+        "name": "Liberty Title & Escrow Co., LLC",
+        "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+        "people": [
+          {
+            "id": "01K7DP02HJ26ZXJP7VAG7QQEAT",
+            "fullName": "Mike DiOrio",
+            "jobTitle": "Compliance Consultant",
+            "buyerGroupRole": "Blocker",
+            "buyerGroupStatus": null,
+            "isBuyerGroupMember": true
+          }
+        ]
+      },
+      {
+        "id": "01K46BXPV864PAFERA0CMJM5XV",
+        "name": "First Priority Title Services",
+        "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+        "people": [
+          {
+            "id": "01K7DP0AS8ES4J5T1X5C63303D",
+            "fullName": "albert gonzalez",
+            "jobTitle": "Chief Executive Officer",
+            "buyerGroupRole": "Decision Maker",
+            "buyerGroupStatus": null,
+            "isBuyerGroupMember": true
+          }
+        ]
+      },
+      {
+        "id": "01K46BXQEJ5D1D06K4TFNPPFH5",
+        "name": "DHI Title",
+        "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+        "people": []
+      }
+    ],
+    "recentEnrichment": [
+      {
+        "id": "01K7G6J807W7NAV5D8ETGQ6D9X",
+        "fullName": "Ross Sylvester",
+        "createdAt": "2025-10-14T01:50:09.925Z",
+        "buyerGroupRole": null,
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": false
+      },
+      {
+        "id": "01K7G654RHSMEVVV6N73E609AE",
+        "fullName": "Ross asdfasdf",
+        "createdAt": "2025-10-14T01:43:00.624Z",
+        "buyerGroupRole": null,
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": false
+      },
+      {
+        "id": "01K7G62KT7CQMZFMVQ0WP9V5KZ",
+        "fullName": "R S",
+        "createdAt": "2025-10-14T01:41:37.733Z",
+        "buyerGroupRole": null,
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": false
+      },
+      {
+        "id": "01K7G6191EW0VPE3Z125YPNG5N",
+        "fullName": "Jake Smith",
+        "createdAt": "2025-10-14T01:40:53.933Z",
+        "buyerGroupRole": null,
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": false
+      },
+      {
+        "id": "01K7G5YHTG92GQ4YBFMH2GNBMH",
+        "fullName": "Ross Sylvester",
+        "createdAt": "2025-10-14T01:39:24.622Z",
+        "buyerGroupRole": null,
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": false
+      },
+      {
+        "id": "01K7G44PSK3BHZ1ESR6K6GXCB9",
+        "fullName": "Test Test",
+        "createdAt": "2025-10-14T01:07:49.170Z",
+        "buyerGroupRole": null,
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": false
+      },
+      {
+        "id": "01K7G3TEAJ1GW0JF93EXVR1A1Q",
+        "fullName": "Test Test",
+        "createdAt": "2025-10-14T01:02:12.815Z",
+        "buyerGroupRole": null,
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": false
+      },
+      {
+        "id": "01K7FZMZ1J0MMRW74DC2JDZH4P",
+        "fullName": "John K  Dano ",
+        "createdAt": "2025-10-13T23:49:19.023Z",
+        "buyerGroupRole": null,
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": false
+      },
+      {
+        "id": "01K7FB79CM7S12NK48ZJQ1AVAK",
+        "fullName": "Lyliam  Chau",
+        "createdAt": "2025-10-13T17:52:19.346Z",
+        "buyerGroupRole": null,
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": false
+      },
+      {
+        "id": "01K7FB4G5F7BY8NGERRG5DJ13E",
+        "fullName": "Barry  Miller ",
+        "createdAt": "2025-10-13T17:50:47.981Z",
+        "buyerGroupRole": null,
+        "buyerGroupStatus": null,
+        "isBuyerGroupMember": false
+      }
+    ]
+  }
+}

@@ -69,12 +69,12 @@ export function InsightsTab({ person, insightsData }: InsightsTabProps) {
             <h4 className="font-semibold text-[var(--foreground)] mb-2">
               Next Best Move
             </h4>
-            <p className="text-[var(--foreground)]">{insightsData.nextMove}</p>
+            <p className="text-[var(--foreground)]">{typeof insightsData.nextMove === 'string' ? insightsData.nextMove : String(insightsData.nextMove)}</p>
           </div>
           
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
             <h4 className="font-semibold text-[var(--foreground)] mb-2">Persona</h4>
-            <p className="text-[var(--foreground)]">{insightsData.persona}</p>
+            <p className="text-[var(--foreground)]">{typeof insightsData.persona === 'string' ? insightsData.persona : String(insightsData.persona)}</p>
           </div>
           
           <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
@@ -85,7 +85,7 @@ export function InsightsTab({ person, insightsData }: InsightsTabProps) {
               {insightsData.buyingSignals.map((signal, idx) => (
                 <li key={idx} className="flex items-start">
                   <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span className="text-[var(--foreground)]">{signal}</span>
+                  <span className="text-[var(--foreground)]">{typeof signal === 'string' ? signal : String(signal)}</span>
                 </li>
               ))}
             </ul>
@@ -99,7 +99,7 @@ export function InsightsTab({ person, insightsData }: InsightsTabProps) {
               {insightsData.objections.map((objection, idx) => (
                 <li key={idx} className="flex items-start">
                   <span className="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span className="text-[var(--foreground)]">{objection}</span>
+                  <span className="text-[var(--foreground)]">{typeof objection === 'string' ? objection : String(objection)}</span>
                 </li>
               ))}
             </ul>
@@ -113,7 +113,7 @@ export function InsightsTab({ person, insightsData }: InsightsTabProps) {
               {insightsData.recommendations.map((recommendation, idx) => (
                 <li key={idx} className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span className="text-[var(--foreground)]">{recommendation}</span>
+                  <span className="text-[var(--foreground)]">{typeof recommendation === 'string' ? recommendation : String(recommendation)}</span>
                 </li>
               ))}
             </ul>
@@ -124,14 +124,14 @@ export function InsightsTab({ person, insightsData }: InsightsTabProps) {
               <h4 className="font-semibold text-[var(--foreground)] mb-2">
                 Win/Loss Analysis
               </h4>
-              <p className="text-[var(--foreground)]">{insightsData.winLoss}</p>
+              <p className="text-[var(--foreground)]">{typeof insightsData.winLoss === 'string' ? insightsData.winLoss : String(insightsData.winLoss)}</p>
             </div>
             
             <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
               <h4 className="font-semibold text-[var(--foreground)] mb-2">
                 Competitive Intelligence
               </h4>
-              <p className="text-[var(--foreground)]">{insightsData.competitive}</p>
+              <p className="text-[var(--foreground)]">{typeof insightsData.competitive === 'string' ? insightsData.competitive : String(insightsData.competitive)}</p>
             </div>
           </div>
         </div>

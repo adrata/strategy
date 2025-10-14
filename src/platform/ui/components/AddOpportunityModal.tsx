@@ -1,43 +1,22 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-// Force rebuild to fix useEffect import issue
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { authFetch } from '@/platform/api-fetch';
 import { getCategoryColors } from '@/platform/config/color-palette';
 
-interface AddLeadModalProps {
+interface AddOpportunityModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLeadAdded: (lead: any) => void;
+  onOpportunityAdded: (opportunity: any) => void;
   section?: string;
 }
 
-export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }: AddLeadModalProps) {
+export function AddOpportunityModal({ isOpen, onClose, onOpportunityAdded, section = 'opportunities' }: AddOpportunityModalProps) {
   // Get section-specific colors
   const colors = getCategoryColors(section);
   
-  // 🔍 DEBUG: Log when modal receives isOpen prop changes
-  useEffect(() => {
-    console.log('🔍 [AddLeadModal] isOpen prop changed:', {
-      isOpen,
-      section,
-      colors,
-      timestamp: new Date().toISOString()
-    });
-  }, [isOpen, section, colors]);
-
-  // Auto-focus first name input when modal opens
-  useEffect(() => {
-    if (isOpen && firstNameInputRef.current) {
-      // Small delay to ensure modal is fully rendered
-      setTimeout(() => {
-        firstNameInputRef.current?.focus();
-      }, 100);
-    }
-  }, [isOpen]);
-
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -49,6 +28,16 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
   });
   const [isLoading, setIsLoading] = useState(false);
   const firstNameInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-focus first name input when modal opens
+  useEffect(() => {
+    if (isOpen && firstNameInputRef.current) {
+      // Small delay to ensure modal is fully rendered
+      setTimeout(() => {
+        firstNameInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen]);
 
   // Keyboard shortcut for Ctrl+Enter
   useEffect(() => {
@@ -69,7 +58,6 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
           event.preventDefault();
           event.stopPropagation();
           
-          // Validate form and submit if valid
           if (formData.firstName.trim() && formData.lastName.trim() && !isLoading) {
             const form = document.querySelector('form');
             if (form) {
@@ -77,18 +65,6 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
             }
           }
           return;
-        }
-
-        // If not in input field, also trigger form submission
-        event.preventDefault();
-        event.stopPropagation();
-        
-        // Validate form and submit if valid
-        if (formData.firstName.trim() && formData.lastName.trim() && !isLoading) {
-          const form = document.querySelector('form');
-          if (form) {
-            form.requestSubmit();
-          }
         }
       }
     };
@@ -105,29 +81,29 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
       // Create full name from first and last name
       const fullName = `${formData.firstName} ${formData.lastName}`.trim();
       
-      const leadData = {
+      const opportunityData = {
         ...formData,
         fullName,
-        status: "LEAD", // Lock in as LEAD
+        status: "OPPORTUNITY", // Lock in as OPPORTUNITY
         source: "Manual Entry"
       };
 
-      console.log('Creating lead with data:', leadData);
+      console.log('Creating opportunity with data:', opportunityData);
 
-      // Call the v1 API to create the lead
+      // Call the v1 API to create the opportunity
       const result = await authFetch('/api/v1/people', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(leadData)
-      }, { success: false, error: 'Failed to create lead' }); // fallback
+        body: JSON.stringify(opportunityData)
+      }, { success: false, error: 'Failed to create opportunity' }); // fallback
 
-      console.log('Lead creation response:', result);
+      console.log('Opportunity creation response:', result);
       
       // Check if the response indicates success
       if (result.success && result.data) {
-        console.log('✅ [AddLeadModal] Lead created successfully');
+        console.log('✅ [AddOpportunityModal] Opportunity created successfully');
         
         // Reset form
         setFormData({
@@ -141,14 +117,14 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
         });
         
         // Call callback immediately to close modal and refresh list
-        onLeadAdded(result.data);
+        onOpportunityAdded(result.data);
       } else {
-        throw new Error(result.error || 'Failed to create lead');
+        throw new Error(result.error || 'Failed to create opportunity');
       }
     } catch (error) {
-      console.error('Error creating lead:', error);
+      console.error('Error creating opportunity:', error);
       // Show a more user-friendly error message
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create lead. Please try again.';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create opportunity. Please try again.';
       alert(errorMessage);
     } finally {
       setIsLoading(false);
@@ -156,28 +132,30 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
   };
 
   if (!isOpen) {
-    console.log('🔍 [AddLeadModal] Modal not open, returning null');
+    console.log('🔍 [AddOpportunityModal] Modal not open, returning null');
     return null;
   }
 
-  console.log('🔍 [AddLeadModal] Modal is open, rendering modal content');
+  console.log('🔍 [AddOpportunityModal] Modal is open, rendering modal content');
 
   return (
     <>
-
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
       <div className="bg-[var(--background)] rounded-2xl shadow-2xl w-full max-w-md mx-4">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div 
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: colors.bg }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: colors.primary }}>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">Add New Lead</h2>
-              <p className="text-sm text-[var(--muted)]">Create a new lead contact</p>
+              <h2 className="text-xl font-bold text-[var(--foreground)]">Add New Opportunity</h2>
+              <p className="text-sm text-[var(--muted)]">Create a new opportunity contact</p>
             </div>
           </div>
           <button
@@ -239,12 +217,51 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
                 value={formData.lastName}
                 onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                 placeholder="Enter last name"
-                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
+                style={{
+                  '--tw-ring-color': `${colors.primary}30`,
+                  '--tw-border-color': colors.primary
+                } as React.CSSProperties}
                 required
               />
             </div>
           </div>
 
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              placeholder="Enter email address"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
+              style={{
+                '--tw-ring-color': `${colors.primary}30`,
+                '--tw-border-color': colors.primary
+              } as React.CSSProperties}
+            />
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Phone
+            </label>
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+              placeholder="Enter phone number"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
+              style={{
+                '--tw-ring-color': `${colors.primary}30`,
+                '--tw-border-color': colors.primary
+              } as React.CSSProperties}
+            />
+          </div>
 
           {/* Job Title */}
           <div>
@@ -256,7 +273,11 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
               value={formData.jobTitle}
               onChange={(e) => setFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
               placeholder="Enter job title"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
+              style={{
+                '--tw-ring-color': `${colors.primary}30`,
+                '--tw-border-color': colors.primary
+              } as React.CSSProperties}
             />
           </div>
 
@@ -270,10 +291,31 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
               value={formData.company}
               onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
               placeholder="Enter company name"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
+              style={{
+                '--tw-ring-color': `${colors.primary}30`,
+                '--tw-border-color': colors.primary
+              } as React.CSSProperties}
             />
           </div>
 
+          {/* Notes */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Notes
+            </label>
+            <textarea
+              value={formData.notes}
+              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder="Enter any additional notes"
+              rows={3}
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors resize-none"
+              style={{
+                '--tw-ring-color': `${colors.primary}30`,
+                '--tw-border-color': colors.primary
+              } as React.CSSProperties}
+            />
+          </div>
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3 pt-4">

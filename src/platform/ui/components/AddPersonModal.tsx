@@ -1,17 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // Force rebuild to fix useEffect import issue
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
+import { authFetch } from '@/platform/api-fetch';
+import { getCategoryColors } from '@/platform/config/color-palette';
 
 interface AddPersonModalProps {
   isOpen: boolean;
   onClose: () => void;
   onPersonAdded: (person: any) => void;
+  section?: string;
 }
 
-export function AddPersonModal({ isOpen, onClose, onPersonAdded }: AddPersonModalProps) {
+export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'people' }: AddPersonModalProps) {
+  // Get section-specific colors
+  const colors = getCategoryColors(section);
   // 🔍 DEBUG: Log when modal receives isOpen prop changes
   useEffect(() => {
     console.log('🔍 [AddPersonModal] isOpen prop changed:', {
@@ -31,7 +36,17 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded }: AddPersonModa
     notes: ""
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const firstNameInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-focus first name input when modal opens
+  useEffect(() => {
+    if (isOpen && firstNameInputRef.current) {
+      // Small delay to ensure modal is fully rendered
+      setTimeout(() => {
+        firstNameInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen]);
 
   // Keyboard shortcut for Ctrl+Enter
   useEffect(() => {
@@ -47,11 +62,22 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded }: AddPersonModa
           target.tagName === "TEXTAREA" ||
           target.contentEditable === "true";
 
-        // If we're in an input field, allow the default behavior (form submission)
+        // If we're in an input field, prevent default and trigger form submission
         if (isInputField) {
+          event.preventDefault();
+          event.stopPropagation();
+          
+          // Validate form and submit if valid
+          if (formData.firstName.trim() && formData.lastName.trim() && !isLoading) {
+            const form = document.querySelector('form');
+            if (form) {
+              form.requestSubmit();
+            }
+          }
           return;
         }
 
+        // If not in input field, also trigger form submission
         event.preventDefault();
         event.stopPropagation();
         
@@ -83,46 +109,40 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded }: AddPersonModa
         source: "Manual Entry"
       };
 
+      console.log('Creating person with data:', personData);
+
       // Call the v1 API to create the person
-      const response = await fetch('/api/v1/people', {
+      const result = await authFetch('/api/v1/people', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(personData)
-      });
+      }, { success: false, error: 'Failed to create person' }); // fallback
 
-      if (!response.ok) {
-        throw new Error('Failed to create person');
+      console.log('Person creation response:', result);
+      
+      // Check if the response indicates success
+      if (result.success && result.data) {
+        console.log('✅ [AddPersonModal] Person created successfully');
+        
+        // Reset form
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          jobTitle: "",
+          company: "",
+          status: "LEAD",
+          notes: ""
+        });
+        
+        // Call callback immediately to close modal and refresh list
+        onPersonAdded(result.data);
+      } else {
+        throw new Error(result.error || 'Failed to create person');
       }
-
-      const result = await response.json();
-      
-      // Reset form first
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        jobTitle: "",
-        company: "",
-        status: "LEAD",
-        notes: ""
-      });
-      
-      // Show success message
-      setShowSuccessMessage(true);
-      
-      // Close modal first
-      onClose();
-      
-      // Then call the success callback
-      onPersonAdded(result.data);
-      
-      // Hide success message after 3 seconds
-      setTimeout(() => {
-        setShowSuccessMessage(false);
-      }, 3000);
     } catch (error) {
       console.error('Error creating person:', error);
       alert('Failed to create person. Please try again.');
@@ -140,19 +160,8 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded }: AddPersonModa
 
   return (
     <>
-      {/* Success Message */}
-      {showSuccessMessage && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[10000] bg-green-50 border border-green-200 rounded-lg shadow-lg px-4 py-2">
-          <div className="flex items-center">
-            <svg className="h-4 w-4 text-green-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            <p className="text-sm text-green-700 font-medium">Person created successfully!</p>
-          </div>
-        </div>
-      )}
 
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
         <div className="bg-[var(--background)] rounded-2xl shadow-2xl w-full max-w-md mx-4">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
@@ -202,11 +211,16 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded }: AddPersonModa
                 First Name *
               </label>
               <input
+                ref={firstNameInputRef}
                 type="text"
                 value={formData.firstName}
                 onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
                 placeholder="Enter first name"
-                className="w-full border border-[var(--border)] rounded-lg px-4 py-2 outline-none transition-colors focus:border-blue-500"
+                className="w-full border border-[var(--border)] rounded-lg px-4 py-2 outline-none transition-colors focus:ring-2"
+                style={{
+                  '--tw-ring-color': `${colors.primary}30`,
+                  '--tw-border-color': colors.primary
+                } as React.CSSProperties}
                 required
               />
             </div>

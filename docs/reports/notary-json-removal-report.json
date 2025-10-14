@@ -1,0 +1,148 @@
+{
+  "timestamp": "2025-10-14T02:21:39.307Z",
+  "workspace": {
+    "id": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+    "name": "Notary Everyday",
+    "slug": "notary-everyday"
+  },
+  "peopleRemoved": [
+    {
+      "id": "01K7EVSW5BPNCKV47715NFK55Q",
+      "fullName": "Carmen Adams",
+      "email": "carmen.adams@fnf.com",
+      "companyId": "01K7EVSW37R5W2YPJAJ35A6AJV",
+      "companyName": "Fidelity National Title Insurance Co.",
+      "removedAt": "2025-10-14T02:21:41.376Z"
+    },
+    {
+      "id": "01K7EVSWWJJ72HNG96PCSJE1CQ",
+      "fullName": "Adeel Ahmad",
+      "email": "Adeel.Ahmad@visionet.com",
+      "companyId": "01K7EVSWTENDFXQFSXGRQC5CQM",
+      "companyName": "Visionet",
+      "removedAt": "2025-10-14T02:21:41.472Z"
+    },
+    {
+      "id": "01K7EVSWGY8E3RBF8M18CHATCD",
+      "fullName": "Tyler Adams",
+      "email": "Tadams@certifID.com",
+      "companyId": "01K7EVSWEWBMCVXKBBVJCY66K9",
+      "companyName": "Certifid",
+      "removedAt": "2025-10-14T02:21:41.566Z"
+    },
+    {
+      "id": "01K7EVSTA3ANX3XHKX9WZE7194",
+      "fullName": "Andrew Acker",
+      "email": "aacker@dbello.com",
+      "companyId": "01K46CDEEZEH4RTB1RZRB3EZE0",
+      "companyName": "D. Bello",
+      "removedAt": "2025-10-14T02:21:41.662Z"
+    },
+    {
+      "id": "01K7EVSX9CMTQ2FDZTDGMA3S0E",
+      "fullName": "Ellen C Albrecht NTP",
+      "email": "ealbrecht@security1st.com",
+      "companyId": "01K7EVSX79HK77B50ZFK3N83ZD",
+      "companyName": "Underwriter Security 1",
+      "removedAt": "2025-10-14T02:21:41.754Z"
+    },
+    {
+      "id": "01K7EVSSYKR37Q6VX23QH0MP0W",
+      "fullName": "Ranabir Acharjee",
+      "email": "ra@remedialinfotech.com",
+      "companyId": "01K7EVSSWFGRZK88T9G1XVB3TG",
+      "companyName": "Remedialinfotech",
+      "removedAt": "2025-10-14T02:21:41.856Z"
+    },
+    {
+      "id": "01K7EVSTNG1MY09YF3NGKTFQMD",
+      "fullName": "Bayleigh Ackman",
+      "email": "bayleigh.ackman@qualia.com",
+      "companyId": "01K7EVSTKF8JP0CCQX0YD3M8JM",
+      "companyName": "Director",
+      "removedAt": "2025-10-14T02:21:41.954Z"
+    },
+    {
+      "id": "01K7EVSSF2TGRGM7Y6EXWW9FC2",
+      "fullName": "Michael Abbey",
+      "email": "mba@meadowlarktitle.com",
+      "companyId": "01K7EVSSA192R7T94GVHF7DM99",
+      "companyName": "C Boston, MA",
+      "removedAt": "2025-10-14T02:21:42.048Z"
+    }
+  ],
+  "companiesRemoved": [
+    {
+      "id": "01K7EVSSA192R7T94GVHF7DM99",
+      "name": "C Boston, MA",
+      "website": null,
+      "domain": null,
+      "jsonPeopleCount": 1,
+      "removedAt": "2025-10-14T02:21:42.414Z"
+    },
+    {
+      "id": "01K7EVSX79HK77B50ZFK3N83ZD",
+      "name": "Underwriter Security 1",
+      "website": null,
+      "domain": null,
+      "jsonPeopleCount": 1,
+      "removedAt": "2025-10-14T02:21:42.605Z"
+    },
+    {
+      "id": "01K46CDEEZEH4RTB1RZRB3EZE0",
+      "name": "D. Bello",
+      "website": "dbello.com",
+      "domain": null,
+      "jsonPeopleCount": 1,
+      "removedAt": "2025-10-14T02:21:42.790Z"
+    },
+    {
+      "id": "01K7EVSSWFGRZK88T9G1XVB3TG",
+      "name": "Remedialinfotech",
+      "website": null,
+      "domain": null,
+      "jsonPeopleCount": 1,
+      "removedAt": "2025-10-14T02:21:42.986Z"
+    },
+    {
+      "id": "01K7EVSWTENDFXQFSXGRQC5CQM",
+      "name": "Visionet",
+      "website": null,
+      "domain": null,
+      "jsonPeopleCount": 1,
+      "removedAt": "2025-10-14T02:21:43.172Z"
+    },
+    {
+      "id": "01K7EVSWEWBMCVXKBBVJCY66K9",
+      "name": "Certifid",
+      "website": null,
+      "domain": null,
+      "jsonPeopleCount": 1,
+      "removedAt": "2025-10-14T02:21:43.368Z"
+    },
+    {
+      "id": "01K7EVSTKF8JP0CCQX0YD3M8JM",
+      "name": "Director",
+      "website": null,
+      "domain": null,
+      "jsonPeopleCount": 1,
+      "removedAt": "2025-10-14T02:21:43.554Z"
+    },
+    {
+      "id": "01K7EVSW37R5W2YPJAJ35A6AJV",
+      "name": "Fidelity National Title Insurance Co.",
+      "website": null,
+      "domain": null,
+      "jsonPeopleCount": 1,
+      "removedAt": "2025-10-14T02:21:43.741Z"
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "totalPeopleRemoved": 8,
+    "totalCompaniesRemoved": 8,
+    "errors": 0
+  },
+  "generatedAt": "2025-10-14T02:21:43.837Z",
+  "operation": "remove_json_imports"
+}

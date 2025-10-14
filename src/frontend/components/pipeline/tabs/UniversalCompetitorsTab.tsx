@@ -36,21 +36,35 @@ export function UniversalCompetitorsTab({ record, recordType }: UniversalCompeti
     const fetchCompetitors = async () => {
       setLoading(true);
       try {
-        // Get competitor data from CoreSignal
-        const coreSignalCompetitors = record?.competitors || [];
+        // Get competitor data from multiple sources
+        // Primary: record.competitors field
+        // Fallback: record.customFields.competitors
+        const primaryCompetitors = record?.competitors || [];
+        const fallbackCompetitors = record?.customFields?.competitors || [];
+        
+        // Use primary source if available, otherwise use fallback
+        const coreSignalCompetitors = primaryCompetitors.length > 0 ? primaryCompetitors : fallbackCompetitors;
+        
+        console.log('🔍 [COMPETITORS TAB] Debug info:', {
+          recordId: record?.id,
+          recordName: record?.name,
+          primaryCompetitors,
+          fallbackCompetitors,
+          finalCompetitors: coreSignalCompetitors
+        });
         
         if (coreSignalCompetitors.length > 0) {
-          // Use ONLY real CoreSignal competitor data - no fake descriptions or threat levels
+          // Use ONLY real competitor data - no fake descriptions or threat levels
           const competitorData = coreSignalCompetitors.map((competitorName: string, index: number) => ({
             id: `competitor-${index}`,
-            name: competitorName, // Use original CoreSignal name
+            name: competitorName, // Use original competitor name
             description: null, // No fake descriptions
             threat: null // No fake threat levels
           }));
           
           setCompetitors(competitorData);
         } else {
-          // No competitors if no CoreSignal data
+          // No competitors if no data found
           setCompetitors([]);
         }
       } catch (error) {

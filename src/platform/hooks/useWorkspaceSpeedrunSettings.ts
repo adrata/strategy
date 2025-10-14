@@ -24,12 +24,13 @@ export function useWorkspaceSpeedrunSettings() {
 
       try {
         const response = await authFetch(
-          `/api/workspace/speedrun-settings?workspaceId=${authUser.activeWorkspaceId}`
+          `/api/workspace/speedrun-settings?workspaceId=${authUser.activeWorkspaceId}`,
+          {}, // options
+          { success: false, data: { dailyTarget: 50, weeklyTarget: 250 } } // fallback
         );
         
-        if (response.ok) {
-          const data = await response.json();
-          setSettings(data.data);
+        if (response?.success && response?.data) {
+          setSettings(response.data);
         }
       } catch (error) {
         console.error('Failed to load workspace speedrun settings:', error);

@@ -61,22 +61,16 @@ export function useSpeedrunSignals(
         
         // Call API to check for new signals since lastCheck
         const { authFetch } = await import('@/platform/api-fetch');
-        const response = await authFetch(`/api/speedrun/check-signals?workspaceId=${workspaceId}&since=${lastCheck.toISOString()}`);
+        const data = await authFetch(
+          `/api/speedrun/check-signals?workspaceId=${workspaceId}&since=${lastCheck.toISOString()}`,
+          {}, // options
+          { signal: null } // fallback
+        );
         
-        if (response.ok && isActive) {
-          try {
-            const data = await response.json();
-            
-            if (data.signal && isActive) {
-              console.log('🚨 [Speedrun Signals] New signal received:', data.signal);
-              setActiveSignal(data.signal);
-              setLastCheck(new Date());
-            }
-          } catch (parseError) {
-            console.warn('⚠️ [Speedrun Signals] Failed to parse response:', parseError);
-          }
-        } else if (!response.ok) {
-          console.warn(`⚠️ [Speedrun Signals] API returned ${response.status}: ${response.statusText}`);
+        if (data?.signal && isActive) {
+          console.log('🚨 [Speedrun Signals] New signal received:', data.signal);
+          setActiveSignal(data.signal);
+          setLastCheck(new Date());
         }
       } catch (error) {
         if (isActive) {
@@ -115,26 +109,28 @@ export function useSpeedrunSignals(
       
       // Call the API to add contact to Speedrun
       const { authFetch } = await import('@/platform/api-fetch');
-      const response = await authFetch('/api/speedrun/add-from-signal', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const result = await authFetch(
+        '/api/speedrun/add-from-signal',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contactId: activeSignal.contact.id,
+            contactType: activeSignal.contact.type || 'lead',
+            signal: activeSignal,
+            workspaceId
+          }),
         },
-        body: JSON.stringify({
-          contactId: activeSignal.contact.id,
-          contactType: activeSignal.contact.type || 'lead',
-          signal: activeSignal,
-          workspaceId
-        }),
-      });
+        { success: false, error: 'Failed to add contact to Speedrun' } // fallback
+      );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ [Speedrun Signals] API Error:', response.status, errorText);
-        throw new Error(`Failed to add contact to Speedrun: ${response.status}`);
+      if (!result?.success) {
+        console.error('❌ [Speedrun Signals] API Error:', result?.error);
+        throw new Error(result?.error || 'Failed to add contact to Speedrun');
       }
 
-      const result = await response.json();
       console.log('✅ [Speedrun Signals] API Response:', result);
 
       // Notify parent component
