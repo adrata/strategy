@@ -187,6 +187,72 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
+                  // Theme definitions (embedded to avoid async loading)
+                  const themes = {
+                    'ghost': {
+                      '--background': '#ffffff',
+                      '--foreground': '#1e1e1e',
+                      '--accent': '#000000',
+                      '--border': '#e3e4e8',
+                      '--muted': '#666666',
+                      '--muted-light': '#999999',
+                      '--loading-bg': '#e5e7eb',
+                      '--hover': '#f5f5f5',
+                      '--button-text': '#ffffff',
+                      '--button-background': '#000000',
+                      '--button-hover': '#333333',
+                      '--button-active': '#666666',
+                      '--success': '#10b981',
+                      '--warning': '#f59e0b',
+                      '--error': '#ef4444',
+                      '--info': '#3b82f6',
+                      '--badge-new-bg': '#f3f4f6',
+                      '--badge-new-text': '#374151',
+                      '--badge-contacted-bg': '#dbeafe',
+                      '--badge-contacted-text': '#1e40af',
+                      '--badge-qualified-bg': '#dcfce7',
+                      '--badge-qualified-text': '#166534',
+                      '--badge-lost-bg': '#fee2e2',
+                      '--badge-lost-text': '#dc2626',
+                      '--active-app-border': '#000000',
+                      '--panel-background': '#f7f7f9',
+                      '--scrollbar-thumb': '#e0e0e0',
+                      '--focus-ring': '#3b82f6',
+                      '--focus-ring-width': '2px'
+                    },
+                    'dark-matter': {
+                      '--background': '#111112',
+                      '--foreground': '#e0e0e3',
+                      '--accent': '#ffffff',
+                      '--border': '#2d2e36',
+                      '--muted': '#bbbbbb',
+                      '--muted-light': '#444444',
+                      '--loading-bg': '#e5e7eb',
+                      '--hover': '#232326',
+                      '--button-text': '#171717',
+                      '--button-background': '#ffffff',
+                      '--button-hover': '#e5e5e5',
+                      '--button-active': '#cccccc',
+                      '--success': '#10b981',
+                      '--warning': '#f59e0b',
+                      '--error': '#ef4444',
+                      '--info': '#3b82f6',
+                      '--badge-new-bg': '#374151',
+                      '--badge-new-text': '#e5e7eb',
+                      '--badge-contacted-bg': '#4b5563',
+                      '--badge-contacted-text': '#f9fafb',
+                      '--badge-qualified-bg': '#6b7280',
+                      '--badge-qualified-text': '#ffffff',
+                      '--badge-lost-bg': '#374151',
+                      '--badge-lost-text': '#d1d5db',
+                      '--active-app-border': '#ffffff',
+                      '--panel-background': '#18181b',
+                      '--scrollbar-thumb': '#444444',
+                      '--focus-ring': '#60a5fa',
+                      '--focus-ring-width': '2px'
+                    }
+                  };
+                  
                   // Get theme settings from localStorage
                   const themeSettings = localStorage.getItem('theme-settings');
                   const zoom = localStorage.getItem('zoom');
@@ -215,6 +281,17 @@ export default function RootLayout({
                     document.documentElement.classList.remove('dark');
                   }
                   
+                  // CRITICAL: Apply theme CSS variables immediately
+                  const activeTheme = isDarkMode ? darkTheme : lightTheme;
+                  const themeVars = themes[activeTheme];
+                  
+                  if (themeVars) {
+                    // Apply all CSS variables to document root
+                    for (const [key, value] of Object.entries(themeVars)) {
+                      document.documentElement.style.setProperty(key, value);
+                    }
+                  }
+                  
                   // Apply zoom if available
                   if (zoom) {
                     const zoomValue = parseInt(zoom, 10);
@@ -232,6 +309,18 @@ export default function RootLayout({
                   // Silent fail - fallback to light mode
                   document.documentElement.classList.remove('dark');
                   document.documentElement.setAttribute('data-theme-mode', 'light');
+                  
+                  // Apply fallback light theme variables
+                  const fallbackVars = {
+                    '--background': '#ffffff',
+                    '--foreground': '#1e1e1e',
+                    '--accent': '#000000',
+                    '--border': '#e3e4e8'
+                  };
+                  
+                  for (const [key, value] of Object.entries(fallbackVars)) {
+                    document.documentElement.style.setProperty(key, value);
+                  }
                 }
               })();
             `,
