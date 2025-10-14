@@ -1693,8 +1693,8 @@ export function UniversalRecordTemplate({
         return value === 'yes';
       };
 
-      // Build update payload from form data
-      const updatePayload = {
+      // Build update payload from form data - only include fields that exist in the form
+      const rawPayload = {
         // Basic info (Overview tab)
         firstName: getFormValue('firstName'),
         lastName: getFormValue('lastName'),
@@ -1718,31 +1718,23 @@ export function UniversalRecordTemplate({
         influenceScore: getFormNumber('influenceScore'),
         decisionPowerScore: getFormNumber('decisionPowerScore'),
         relationshipWarmth: getFormValue('relationshipWarmth'),
-        
-        // Career tab
-        industry: getFormValue('industry'),
-        yearsExperience: getFormNumber('yearsExperience'),
-        educationLevel: getFormValue('educationLevel'),
-        skills: getFormValue('skills'),
-        certifications: getFormValue('certifications'),
-        
-        // Contact info
-        email: getFormValue('email'),
-        phone: getFormValue('phone'),
-        linkedinUrl: getFormValue('linkedinUrl'),
-        city: getFormValue('city'),
-        lastContactDate: getFormValue('lastContactDate'),
-        nextActionDate: getFormValue('nextActionDate'),
-        nextAction: getFormValue('nextAction'),
-        bestContactTime: getFormValue('bestContactTime'),
-        
-        // Notes tab
-        notes: getFormValue('notes'),
-        tags: getFormValue('tags'),
-        valueDriver: getFormValue('valueDriver'),
       };
 
-      console.log('📝 [DEBUG] Form data collected:', updatePayload);
+      console.log('📝 [DEBUG] Raw form data collected:', rawPayload);
+      
+      // Filter out empty strings, null, undefined, and zero values (except booleans)
+      // This prevents sending invalid data that could violate database constraints
+      const updatePayload = Object.fromEntries(
+        Object.entries(rawPayload).filter(([key, value]) => {
+          // Always include boolean values (even if false)
+          if (typeof value === 'boolean') return true;
+          // Exclude empty strings, null, undefined, and 0
+          if (value === '' || value === null || value === undefined || value === 0) return false;
+          return true;
+        })
+      );
+
+      console.log('📝 [DEBUG] Cleaned payload to send:', updatePayload);
       
       // Make API call to update the record using v1 APIs
       let result: any;
@@ -1751,6 +1743,9 @@ export function UniversalRecordTemplate({
         if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
           // All people-related records use v1 people API
           console.log('🔍 [DEBUG] Using v1 people API for record type:', recordType);
+          console.log('🔍 [DEBUG] API endpoint:', `/api/v1/people/${record.id}`);
+          console.log('🔍 [DEBUG] Payload being sent:', JSON.stringify(updatePayload, null, 2));
+          
           result = await authFetch(`/api/v1/people/${record.id}`, {
             method: 'PATCH',
             headers: {
@@ -1758,9 +1753,13 @@ export function UniversalRecordTemplate({
             },
             body: JSON.stringify(updatePayload),
           });
+          
+          console.log('✅ [DEBUG] API response:', result);
         } else if (recordType === 'companies') {
           // Use v1 companies API
           console.log('🔍 [DEBUG] Using v1 companies API');
+          console.log('🔍 [DEBUG] Payload being sent:', JSON.stringify(updatePayload, null, 2));
+          
           result = await authFetch(`/api/v1/companies/${record.id}`, {
             method: 'PATCH',
             headers: {
@@ -1768,13 +1767,19 @@ export function UniversalRecordTemplate({
             },
             body: JSON.stringify(updatePayload),
           });
+          
+          console.log('✅ [DEBUG] API response:', result);
         } else {
           // For other record types, try to use appropriate v1 API or throw error
           console.log('🔍 [DEBUG] Unsupported record type for v1 migration:', recordType);
           throw new Error(`Record type '${recordType}' is not yet supported in v1 APIs. Please use companies or people records.`);
         }
       } catch (error) {
-        console.error('❌ [DEBUG] API Error:', error);
+        console.error('❌ [DEBUG] API Error details:', {
+          error,
+          message: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined
+        });
         throw new Error(`Failed to update record: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
       
