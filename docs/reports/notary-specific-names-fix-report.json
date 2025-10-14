@@ -1,0 +1,2542 @@
+{
+  "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+  "workspaceName": "Notary Everyday",
+  "fixDate": "2025-10-14T05:19:30.847Z",
+  "totalMappings": 47,
+  "totalFound": 422,
+  "totalFixed": 422,
+  "changes": [
+    {
+      "id": "01K7ERXK2KNV4GYCKDCBPYKQKW",
+      "originalName": "Titleandabstract",
+      "newName": "Title and Abstract",
+      "domain": "titleandabstract.com"
+    },
+    {
+      "id": "01K46D2A4VSH2AX48N6V291Q6K",
+      "originalName": "Land Title and Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C13VFWVNCTKETN7VFT109",
+      "originalName": "Northeast Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERTNNXS1K2BERJXW56JN84",
+      "originalName": "American Title Service Agency-Residential/Commercial",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERTSE0XCC28N1ZPRJ3CST4",
+      "originalName": "Michael Saunders & Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERWRT7JZYZY9VFK3ESAX4X",
+      "originalName": "Company BR9V40HP",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERXGY9Y3RZX4PBJ7QY0KE7",
+      "originalName": "Com",
+      "newName": "Com Title Services",
+      "domain": "com.com"
+    },
+    {
+      "id": "01K7ERXG994RMD7DE8T6EJVWAN",
+      "originalName": "Company H9T0B6H8",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERXJK7NHVYND3MAX2X8NG4",
+      "originalName": "Company YAHSPQN5",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERXKFCRSS6J5B8W1NPCF15",
+      "originalName": "Company JQMQ91P9",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERXBRB5D3Y02G173KYDW72",
+      "originalName": "Company 4GGCS8VA",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D26TK9VAJ8J1KM15C9BQX",
+      "originalName": "Premier Title Company, Ltd",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERWRM10MX2XMZWKTQQA160",
+      "originalName": "Company BR9V40HP",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERXG32ECJM7KB8ZBPJMBVA",
+      "originalName": "Company YAHSPQN5",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CRB2DEZ3BTQAH1JG631S9",
+      "originalName": "IN Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERWR6EFXS4S1V4VSVF0HJ3",
+      "originalName": "Company BR9V40HP",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPDB1PV2KFX6K039BY3PQ",
+      "originalName": "Western Title Company Lubbock",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERX594KQ5SRSE3D6ZFQ6X1",
+      "originalName": "Comfortableclosings",
+      "newName": "Com Title Services",
+      "domain": "comfortableclosings.com"
+    },
+    {
+      "id": "01K46D0PMN748ZJC8PA65PMRHD",
+      "originalName": "Southern Capital Title Company, LLc",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2BJ7E3VQDHS4ANXC1KXE",
+      "originalName": "Arizona Title & Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5TWEJH8TDJRWH761ZS0N",
+      "originalName": "First Title and Escrow Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERTR56ADJZT85GSBH8CYZ5",
+      "originalName": "Canyon Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERWMWR07NAP3PV0QPJEA9X",
+      "originalName": "Company YAHSPQN5",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPXEG3EPP37KFZP2E73VR",
+      "originalName": "Madison County Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CNEH9ZSQ564FPCN1MVKTQ",
+      "originalName": "Battlefield Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CMDXQ9A673EFYV2SJTS2X",
+      "originalName": "Ellis County Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CD6A84VQ3Y174SKGAQWDN",
+      "originalName": "Traditional Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CEM6S71CC9RAJQQ7X69Q5",
+      "originalName": "Western Title Company - Lubbock",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CBYH22CHS2EA0BRDYHNY2",
+      "originalName": "String Information Services, a SitusAMC Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C8MMTHFS583FB8EH45M8E",
+      "originalName": "Summit Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2Z451AVYG2CQ06B9YAX7",
+      "originalName": "Placer Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C9R4TNFQ1K7BZ0M7XEAT9",
+      "originalName": "Fidelity National Title - National Commercial Services",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C6T4GKN1GCD6PCFDJN1G9",
+      "originalName": "First National Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C69A73TE25VJ1B6WR8F1S",
+      "originalName": "Casablanca Real Estate Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5KXVJ21FRAE9DG12E6GM",
+      "originalName": "Nations Companies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BZD0SJ9750364SMKN23JG",
+      "originalName": "Mid-American Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CJ8MPMMPJNH60Q0V08QFD",
+      "originalName": "Advanced Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C7SJVMZRG6Y0SGD5H4SEB",
+      "originalName": "Continental Land Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERX9MNRMDG9ABYPQ6MBDNC",
+      "originalName": "Armourtitlecompany",
+      "newName": "Com Title Services",
+      "domain": "armourtitlecompany.com"
+    },
+    {
+      "id": "01K46CMN0X67YSRJEZGRV56FSR",
+      "originalName": "Guaranty Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERXGFK5030ZEYM5T85X0TV",
+      "originalName": "Company NBWY5DHK",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CWSJZD6FZ6XHRN9DD5HZJ",
+      "originalName": "JJackson Companies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CJ0BEGGNQME8ZWS3R82NP",
+      "originalName": "Superior Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CFX51SMGV6AMHDWPPZK3Z",
+      "originalName": "First Priority Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CD4ARJATQQ68GZWNYCY42",
+      "originalName": "Commercial Due Diligence Services (CDS)",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CACQDZ7XMHV8JTXYH374T",
+      "originalName": "Land Title Guarantee Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CF5H7AYTRT9QW1KB29AZR",
+      "originalName": "Community Settlements & Escrow, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C4WET855FYKRXAA0K912J",
+      "originalName": "Texas Secure Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2T5KHNWVW4C24FE9HF4W",
+      "originalName": "Western Title & Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C7QA0V55JNNA40353HWB9",
+      "originalName": "Brennan Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CNR8SFRHHBEFSG2S5R81P",
+      "originalName": "First Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K738H0NHWJPZ38TH94J8FCNJ",
+      "originalName": "Test Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CV7ZB2M9QDNPZ8H3N1438",
+      "originalName": "Common Sense Ventures",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPD1392MB8JFMNYRDZ3X6",
+      "originalName": "Cal-Sierra Title Company - Plumas County",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C55BZPG4SZTVFA5009AQK",
+      "originalName": "Berkshire Hathaway HomeServices Snyder & Company, Realtors",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2YT6MF5GRAJG0QMHYYPD",
+      "originalName": "True Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CB8YFGBHR8TB3T2T18NF5",
+      "originalName": "Vista Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5XH1C41DKMVB5KWQ4AY9",
+      "originalName": "Ebby Halliday Companies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C62M05VXJ37VCC6JG2ET5",
+      "originalName": "Frontier Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C1AC0YMH71C0Y44X8T8KH",
+      "originalName": "Legal Land Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERXGNS16HNH9QV7CKNA12P",
+      "originalName": "Company JQMQ91P9",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K738KSSH8JE6HWDS7J1Q1WTH",
+      "originalName": "Test Company 2",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K4JPQBTKPKCHD0FCNGQD25HT",
+      "originalName": "Somers Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K5Z1157SYHDDJQAVB84M3KM9",
+      "originalName": "Unassigned Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K4JPQANZRY1MJA6NNW9CT2P2",
+      "originalName": "Sun National Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BXRMQCB18QVWW2MQJ519K",
+      "originalName": "J.L. Gross & Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CZM435E57C6BPA24CH28V",
+      "originalName": "The Cynda Sells Real Estate Company LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CZFA7GAA8VS81XRKJG0T2",
+      "originalName": "Freedom Home Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CYXRW1NPKCXFE9HDTQZPK",
+      "originalName": "Minnesota Title & Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CZ0DYDE8N1RSSC0FKKC9Y",
+      "originalName": "Central Illinois Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CYBSXD1HM7PS1JBNF28BA",
+      "originalName": "Madison County Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CXT512WTVJAFTWCXBSRM5",
+      "originalName": "Commercial Links",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CY4Z41H0N7RRN20ACGXDX",
+      "originalName": "BondsExpress. com - Business Surety Bonds",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CXG2VZ55F2WWZF75RP3X1",
+      "originalName": "Home Abstract & Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CXK28FN7DZG2JX6AGBPN3",
+      "originalName": "Lakeview Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CXDN65G6R8EZYXKXG708M",
+      "originalName": "Fleming Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CXFSJ8GNBVTE62EPNKP16",
+      "originalName": "Fidelity National Title - National Commercial Services - DC & VA",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CX44PJJEDH88QHZQ9MWE3",
+      "originalName": "Southern Compass Title",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CWXCK5BNFSAZXXD2FA7E3",
+      "originalName": "Circle A Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CWMW3N4F8YMVETJ838YXT",
+      "originalName": "BRPS Title, A Brookfield Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CX1EBC6PDF5ZG2RYMEM0Z",
+      "originalName": "Dyer Land Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CWQK75WG7MANZAKM6A5C3",
+      "originalName": "Bryan County Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CWCPJKHBAZGCP0PYD97R0",
+      "originalName": "North Atlantic Appraisal Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CWAVTQY4F35HS29RE1RH3",
+      "originalName": "Gateway Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CWBQNKB8BE5KRFRH9V35C",
+      "originalName": "Betty Betts Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CWCZT70TXQ14V4PEXD96W",
+      "originalName": "First Montana Title Company of Hamilton",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CVXYSTZR6RSWV8WVCS3AE",
+      "originalName": "ETS Commercial Title Services",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CVNW8D1T8BJD46Y5Y001R",
+      "originalName": "Millennial Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CV4CZW4QVWH3TTFTZC4MA",
+      "originalName": "JCP-LGS Disclosures.com",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CVAMJARK24088WKY0GSRB",
+      "originalName": "Hemet Escrow Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CTTQ0FDKAEDC9SR59SK76",
+      "originalName": "Hansford Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CT8V9V7PT071SMQ9FTC8Q",
+      "originalName": "Hudson Land Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CTE4V58NNT6G0ATQVTBXN",
+      "originalName": "Orange Community Escrow",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CSDXT9ZVK4QEH0YASFT21",
+      "originalName": "Roddy.com",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CS5QVXDV2SSYZKP797HZH",
+      "originalName": "Attorneys Abstract & Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CRM830T7FTS6Y5JTY5NGP",
+      "originalName": "Finish Line Signing Company Inc",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CRVPF8XZCDFSNXPMBFSQM",
+      "originalName": "Del Rio Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CRTES1NX5FSA7WAWDFD08",
+      "originalName": "Arch City Title, a division of Fidelity National Title Company LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CR8JX888DCJBRZG275XCX",
+      "originalName": "First Commerce Title, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CR5DKVPNVPB4J4SMP32VE",
+      "originalName": "Edgewater Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CRHAMJPEMQ38CA1WEBB30",
+      "originalName": "Longhorn Title Company Inc",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CR4QFE111HCJ38B4MGAZW",
+      "originalName": "Reagan County Abstract & Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CR43N1B21GPR99Y4Y08ZY",
+      "originalName": "Avenue Commercial Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CRARGFVTBNN5GHJS9EXEH",
+      "originalName": "Northeast Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CRFRZTFBBA8G6681WX0S5",
+      "originalName": "Elkhorn Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQQ5MEH541YY070A7H7KR",
+      "originalName": "Huff Land Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CR01GH8SZYE7HVSCSRVCK",
+      "originalName": "Phoenix Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CR0BC5T13ZMAY5BHPNYJS",
+      "originalName": "Guarantee Abstract and Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQPVSAT0RWSNZK249CV6B",
+      "originalName": "James Surveying Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQD9MZFRJ6RYEFC1Q3MX9",
+      "originalName": "Washington County Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQEMB4W9MADHPB58ED01C",
+      "originalName": "Professional Land Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQGTEWG82Z87SYGY902BF",
+      "originalName": "Goodhue County Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQ9VYV4QQV47TFVW7BMS8",
+      "originalName": "Downtown Community Escrow Services Inc",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQ9J0MMY9H7TH9MGAPHYA",
+      "originalName": "Benton-Franklin Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQGGJ1MGYGWXJ9AKEYGN5",
+      "originalName": "Yuma County Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPT9VH6E1FR204NFXQW85",
+      "originalName": "Palisades Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQ1JYRB3MR6K9GJ21E08S",
+      "originalName": "Spears Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPZQF51MB050SQS9W9GDP",
+      "originalName": "Reagan County Abstract & Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQ0N3EXC0B9BD5SXXS5SC",
+      "originalName": "R1 Commercial Real Estate",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPMY7J3GQ14GC0CBA5SSH",
+      "originalName": "Aurora / Davison County Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPAVHX7HQF3MKNWP6SMAY",
+      "originalName": "Long & Foster Companies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPHQC8X7Z0R4QGNTHXAB4",
+      "originalName": "Camarillo Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CNNSCNJABF2MNV0NC5MXX",
+      "originalName": "Title Professionals and Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CNXMESXVCJMVNMR9SBR0N",
+      "originalName": "Rowland Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CNTGABD7TZ4EDK9VGMQNW",
+      "originalName": "Commonwealth Title of Houston",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CN57NDZZQF3VJ8PW9P5V8",
+      "originalName": "First Title and Escrow Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CN404319BS9TC85N0XRJV",
+      "originalName": "Tri-Star Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CMP4Q9Y4VFH538EJ7DDX8",
+      "originalName": "Appomattox Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CMVSK1PTA8NK2PZMPFDBQ",
+      "originalName": "Hogan Land Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CN24XKDHQJNZSFPRRCGZ3",
+      "originalName": "Nations Title Company of Nevada",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CN0VT5PGSQD54640GG93M",
+      "originalName": "Sentinel Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CMQ2VW9AC1EATGBN0HMQK",
+      "originalName": "Colonial Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CM6883Q2KSH62WFSZ3W9Y",
+      "originalName": "Commonwealth Land Title - National Commercial Services",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CMBKKZFM0VJYH5FT1K5JT",
+      "originalName": "Mutual Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CMFSASHBS90M5MGPA2VE0",
+      "originalName": "El Paso Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CMHT9T2JX20V1KTH15MGT",
+      "originalName": "ClearMark Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CM774RRJTMW85HA8NENHD",
+      "originalName": "Traditional Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CKMWCW69QZH28NG6C5JYR",
+      "originalName": "Compass Land & Title",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CKY14DCH7VTZJH1MA9BEK",
+      "originalName": "First American Title Company of Napa",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CKZ1KN222DNSMBXB7B65M",
+      "originalName": "American Title Company of Jackson",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CKK0WRC8EJHHA66WPCNXM",
+      "originalName": "North Vernon Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CKN663P2PFS261BVVMC2R",
+      "originalName": "Chicago Title Insurance Company - Troy D. Phillips, P. C",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CKXD8WGHVAJFZMY1FS3XH",
+      "originalName": "Ticor Title Company of Spokane",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CKCZCD9H67WK7SAQNBC72",
+      "originalName": "Acuity Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CK6WGGZB4MSF2CAE4JB10",
+      "originalName": "Commerce Title & Escrow, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CK9EF4Y9XV0NEVTD0W913",
+      "originalName": "Lawyers Abstract Company of Westmoreland County",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CKCJD6RQMM785T64PG02X",
+      "originalName": "Thurston County Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CJYS0VWJ1GWQY139N8SMD",
+      "originalName": "Columbia Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CJNAAAJ88Y2KSWDGDBBFM",
+      "originalName": "Common Bond Title, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CJKRYKRCH6KTAKQT8AF95",
+      "originalName": "Community Title Services LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CJTCC9GFK7CZWNMJDSQ0Q",
+      "originalName": "Newhall Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CJGFTPEXV7M0G947C1YHT",
+      "originalName": "Nations Holding Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CJAVDHBSWFCT1Q6TG69ZT",
+      "originalName": "Cascade Title Company of Clark County",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CHYRA908FT9TN9QPJTW93",
+      "originalName": "Venture Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CHPYHB9MT02ZEZXEN9TBZ",
+      "originalName": "Precision Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CHGQ80ENDKHAB4SM69Q43",
+      "originalName": "Western Nevada Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CHJ2BFB913DRQDW2ZJRX2",
+      "originalName": "Lincoln Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CHDJ7YNE2958PH0X1B09H",
+      "originalName": "Frontier Title & Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CHC99MVRDMG84Z7KZHR8Z",
+      "originalName": "Alamo Title Company - San Antonio Division",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CH6FPCH72XXP01AKPY4DA",
+      "originalName": "Columbia Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CGSSVKX8JRMQJW7W6J1XW",
+      "originalName": "Fidelity National Title Company - Central Coast",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CGTSS2Y1SZDF2Q6GRYC39",
+      "originalName": "Community Land Title",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CGWET4Z2GAHZVZRRVPXJD",
+      "originalName": "Clipper Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CGBET2SPF5R3Q8QPJEDGT",
+      "originalName": "Complete Mortgage Closing Solutions, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CGH6GNH0D7HQ566VJ8ND1",
+      "originalName": "Kincy Abstract & Sabine Title Company - Royse City Fee Office",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CGK2R7QSNF9M6DFZ2JJG5",
+      "originalName": "National Commercial Services Michigan",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CGFA609XFE3RP0M1FS0HP",
+      "originalName": "North Coast Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CFN6SHR7E3W3SQ8S18VMV",
+      "originalName": "ABCO-Abstracting Company of York County",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CFD9F0TVGGFV344SH8X4B",
+      "originalName": "Complete Closings",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CFKJD3Y4629FD1YT9YAAQ",
+      "originalName": "Regional Land Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CF761PR0MXT4843MXDEK7",
+      "originalName": "Stellar Development Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CF5VDV1BKMG1C6VDDYZPW",
+      "originalName": "Collier Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CEY3F5FDBWK0XGWZQTAPR",
+      "originalName": "Frontier Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CEZDAYBBXWKB1XXXG6ZNP",
+      "originalName": "Atlantic Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CF0C8VEKNH3SPDKAPDGW8",
+      "originalName": "Community Escrow & Title Co",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CF2KDHMMSNBC2EH42HBPT",
+      "originalName": "Lake Charles Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CE73D4671AJWJ16WRDE4D",
+      "originalName": "Hogan Land Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CESAEEVKD04PA8G00GS97",
+      "originalName": "Berkshire Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CEC4CGKMPP7HHPHBAQQYE",
+      "originalName": "Allison-McCloskey Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CEF1894VJHVDFGV58JRZC",
+      "originalName": "Kankakee County Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CE5FZHZA2WJPDCAZZ6X9S",
+      "originalName": "Idaho County Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CEJMERR0YMMSJDY5E14Y2",
+      "originalName": "EasyDocs123.com",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CECV7XHW4FM7X9VC9B563",
+      "originalName": "Frontier Title Company, L.L.C.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CEA8A24Z1V1XS1FC6XGVQ",
+      "originalName": "North Delta Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CE2NZ41DFW6R6SJCDE83M",
+      "originalName": "Benchmark Title Company, a division of Fidelity National Title, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CE4HWAVR2ABWHMMFQ5XY9",
+      "originalName": "Hot Springs Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CDA2QR8KRQVSADAVHQ3QD",
+      "originalName": "New Castle Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CDGC45A82RN23E3K69RW4",
+      "originalName": "Hickman Land Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CDBYVB82GMZ8NCVHY6QYX",
+      "originalName": "Bismarck Title Company & Morton County Title Co.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CDF2W3925J6RDAFMX48ZH",
+      "originalName": "Deschutes Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CCTQAHFJ5WWW61CEZAVG1",
+      "originalName": "Trident Land Transfer Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CCKMSSTVXVRBTWFXY7YN3",
+      "originalName": "Schmidt Family Of Companies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CCH3AVH1NQ94H3K8W5KC4",
+      "originalName": "Allen Tate Companies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CCB3TCK4DZ07E5MF6Y1K1",
+      "originalName": "Title Search Community",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CC9RY1VKBA39VXH130GTV",
+      "originalName": "Century Communities, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CCN011PTBRTBQCWKYRS65",
+      "originalName": "Ben Kinney Companies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CC1PY8QVEQJN467GA72XA",
+      "originalName": "Stewart Title Insurance Company Upstate New York",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CC0RRQKR9A4MJ4SP62Y6P",
+      "originalName": "Desire Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CBWH4JCP4E9A98G44RC36",
+      "originalName": "S & H Abstract Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CBHR6C0XA61BCBBAAVRRN",
+      "originalName": "First Community Title",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CBNVP53RRQ7W7V2137HVV",
+      "originalName": "Grand Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CB98E5X7DK1Q1Z62MF5H1",
+      "originalName": "Alamo Title Company San Antonio",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CAXGV119Y409SGA625FJW",
+      "originalName": "Whatcom Land Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CBHDYQBV8H5FEN2B5TAXY",
+      "originalName": "All American Commercial Title",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CASZPFG70TCY9NZ508C5W",
+      "originalName": "Winchester Carlisle Companies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CB1MNGQTFX1M9QYXC9KX9",
+      "originalName": "All American Commercial",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CB4EX0E3YPG9A6PMC363E",
+      "originalName": "Abstract & Title Company of Mesa County",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CAHT0WC7NB7B0RN2DYNE4",
+      "originalName": "Commerce Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CAQHWM54Z5X52VCBB0ATV",
+      "originalName": "WFG Title Company of California",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CAJR5HRSXTYQQ8QPACGW6",
+      "originalName": "Preserve Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CAJ47343Y0X8961CDQJW7",
+      "originalName": "Inked Land Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CAE1M4AS3Y9QHRH7WCACT",
+      "originalName": "Stewart Title Insurance Company- NY Metro",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CA4RXTWJ45MDZ076ZHGDE",
+      "originalName": "Millennial Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CA448V4K5QEXWPQFCNX56",
+      "originalName": "Pioneer Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C9G58MG5G63REW8AC42DD",
+      "originalName": "Monarch Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C9F6EZ7FX22C600CAWE6Y",
+      "originalName": "All California Title & Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C9K1ZT8D662CPZH3M02Z0",
+      "originalName": "Texan Title Insurance Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C9DP6A5J9MJ07PBQB1ERZ",
+      "originalName": "Rochester Title & Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C9RERWRPAMB8BGPKDZAJM",
+      "originalName": "Charlottesville Settlement Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C8WNAW8715A4DZAJGW098",
+      "originalName": "The Roby Company San Diego Real Estate Brokerage",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C8SS0ZKDFR3F0RYV3N139",
+      "originalName": "Sentinel Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C91VBQKYZAF87MNGDCVB9",
+      "originalName": "Signature Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C96MAN5MT4MP45E3HE6RW",
+      "originalName": "Community Lands",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C960DPTQAHQGYM1M5VJDV",
+      "originalName": "Dane County Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C8RTWJH60VCTJAZ1SJYCP",
+      "originalName": "Commonwealth USA Settlements, LLC.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C978XT9GKDPX7XH1PAR5Y",
+      "originalName": "John Bethell Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C8CM68PKF3875RRW8AHK7",
+      "originalName": "South City Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C8DVX3R5DRFSQ6H76T94X",
+      "originalName": "Landwood Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C8GG22HYBP2XYNZH6JFTK",
+      "originalName": "The Title Company - Fargo, ND",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C8N90F6K89851KTGD0JYK",
+      "originalName": "Frontier Secured Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C81R2DRNJDW0XSYJ49B7H",
+      "originalName": "Legal Land Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C7VM277X0A0TDEXP534F6",
+      "originalName": "The Herman Group Companies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C7Z4JCNX63YFTPRDKRFS5",
+      "originalName": "Community Title & Escrow, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C7GS3QGDMM9X29Z9TP43R",
+      "originalName": "Accurate Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C7HQF4Q0YFWTSXJ6FWFGJ",
+      "originalName": "Republic Commercial Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C79W95QPW071HYVK658R8",
+      "originalName": "Atlantic Coast Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C7AG34G9C8NGNBRYGSF8E",
+      "originalName": "First American Title Company of South Dakota",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C72JKZ164AWT5VDXK346S",
+      "originalName": "Partners Title Company TX",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C71YWH1G66C8W3NW8RYEB",
+      "originalName": "5 Arch Code Compliance LLC. ( 5ACC )",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C6Y6RDEFS4YEQQ8KGEM9V",
+      "originalName": "Adams Surveying Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C7111C17EAY5GB7JT6RH4",
+      "originalName": "CentraLand Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C71AXBN9V1ME65WG0H4V8",
+      "originalName": "Consumer's Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C71N1EJCDSET1MPMDEPC4",
+      "originalName": "Frontier Title Company Katy",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C6PWNRZ38CK1EAF755K8J",
+      "originalName": "Chicago Title Insurance Company - National Commercial Services",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C6G8DE5D7EMS02408K8JD",
+      "originalName": "C21 Fine Homes & Estates Judge Fite Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C6C71R1Q99W2X1GRYQWWW",
+      "originalName": "Greater Indiana Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C61P5ZH2MDA748N96G79C",
+      "originalName": "Sargent's Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C69YJS6YR9N491PYCQ0WC",
+      "originalName": "The Heritage Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5ZT23ZBCEBKXKDN705G0",
+      "originalName": "Pickford Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C62XW3GVPX18T38SGSZSH",
+      "originalName": "Land Title and Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5THZG8WDCPVQWBP9GHAN",
+      "originalName": "The Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C60R8B2R12PKKAZFAS48Z",
+      "originalName": "ALLEGIANT REVERSE SERVICES a Stewart Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5WWZ1H69A69G1XCAFZ5G",
+      "originalName": "Ticor Title Orange County - Residential & National Commercial Services",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5NTN3J35Y1ZETYH0BA28",
+      "originalName": "All American Title Company Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5Q2TVJ9FTS8EW5WAGDQR",
+      "originalName": "Rattikin Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5M7V7WW93V7NE6WBJEQ4",
+      "originalName": "East Texas Title Companies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5P4R01VCYEPBZ80BX9Z0",
+      "originalName": "Nebraska Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5GECK1MREW7FFM02R4W6",
+      "originalName": "National Investors Title Insurance Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5NGEG8W5YSZ4EM9Q5S02",
+      "originalName": "Patten Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5E65BHKEGQT2RKC4GNC7",
+      "originalName": "Continental Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5CB0HN6RR68V0HD8GYFZ",
+      "originalName": "Stewart Title Guaranty Company- NY Metro",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5SCP0P6RED9DXMKS3G0V",
+      "originalName": "Investors Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C53ERH4P4ZHCVR3CMPGC4",
+      "originalName": "Income Property Organization",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C534SA7GYGPPA2ZZQCAW5",
+      "originalName": "Saturn Title Insurance Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C4VRX42KY1NP6THSTWP3X",
+      "originalName": "Land Title Company of Alabama",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C57AKSA6CCSG4Q6SM7HWC",
+      "originalName": "Guardian Northwest Title & Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C542VGXTKHER9810YX83B",
+      "originalName": "Capital Title - Commercial Division",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C56NTX024R9CB75ZTN1KH",
+      "originalName": "Community Title Network",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C4JWFNJPB8Z50PP7P6EY6",
+      "originalName": "Waco Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C4CXNZ2Q0MGV1VSXCHZR8",
+      "originalName": "Equity Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C41MYD7HBRQWYKGY7SAC0",
+      "originalName": "Northeast Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C444V07ZKFEN9MWH8G3X5",
+      "originalName": "Pacific Coast Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C4BBZYR028XBAE39E1ARY",
+      "originalName": "Two Rivers Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C3F7ZDYTTAX8PT0YMYHQW",
+      "originalName": "Danberry Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C3WG11J5P8J7S5KR1SNDA",
+      "originalName": "Austin Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C409AW2P29PBQHXAHMDRA",
+      "originalName": "Hexter-Fair Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C3T87630BX00W9RNQK92Z",
+      "originalName": "Safe Harbor Title Company RVA",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C3QF0N406EFFSQ700PGXM",
+      "originalName": "American Title Company Of Houston",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C3NKHT9NZWA1KHS9X807M",
+      "originalName": "CourthouseDirect.com, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C3HSVD0B06VE8ANPWJNWY",
+      "originalName": "MVP National Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C3J3QNX3W9F2TEXHMF450",
+      "originalName": "Willow Bend Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2ZR0X9C6MRZF194FAEKN",
+      "originalName": "Priority Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C37QG75J0Z8FK9GHWQ1T3",
+      "originalName": "Priority Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C3991DXQRR2S6ZEYA4F9C",
+      "originalName": "F.C. Tucker Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C30EKA1735RNK3AZHTXFZ",
+      "originalName": "Chicago Title National Commercial Services - DC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2GMK5R6C632EWE7RERFJ",
+      "originalName": "WFG National Title Insurance Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2FPPBEEBWVPKYA8Q492J",
+      "originalName": "First Integrity Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2M6EB2WQ08AWQFHWHVNK",
+      "originalName": "Sage Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2R7HVV3C3HKAVCX8NZT7",
+      "originalName": "Surety Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2HW25EP3G1YVYNNYPGQQ",
+      "originalName": "EQUITY TITLE COMPANY (ETC)",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2XJNJGWP18XFCJMR4DPM",
+      "originalName": "Fidelity National Title Company (Colorado)",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C1Y6CBAM6M4TNC8B83JBW",
+      "originalName": "Seaview Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C1VPNK39EVT8EK2RQ9S7G",
+      "originalName": "Santa Fe Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C1HX11CE8KQ9FD4SASKRE",
+      "originalName": "First Title and Escrow Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C1H9662RMK53C18KKKMJF",
+      "originalName": "Oasis Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C1G0NCQGTPW5G7BQD3AY6",
+      "originalName": "Safe Harbor Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C1CHPV4EG8TXVFA6HVJZ3",
+      "originalName": "Consumers First Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C1C7RA1J2M7QCQJ3JS200",
+      "originalName": "Blade Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C1BKY360XK3W3SWZK5QFV",
+      "originalName": "Metes & Bounds Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C17CT38G2WRQ9KWDR40Z4",
+      "originalName": "Sapphire Title & Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C15F1RT73PEPCQS1WDJZ7",
+      "originalName": "Bayshore Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C1534BY41AT3N9FS31KJ6",
+      "originalName": "Masterpiece Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C12KNJM8QB4E5Q092MEMX",
+      "originalName": "Chicago Title Insurance Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C0PX0ZE2BK4C3A7E7YNPY",
+      "originalName": "Swan City Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C0D7E7T1TJ78Z51BPVYDS",
+      "originalName": "Fairwater Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C064EM8NVPS45735Q5NE6",
+      "originalName": "Commercial, Homes & Land, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BZTXEQ3KCMA9D2A0EEMPF",
+      "originalName": "North Florida Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BZBQ71YC80S50TSFB5AP4",
+      "originalName": "Community Appraisal Services",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BZ3YHZMER68EGEP7X4XSA",
+      "originalName": "Closings.Com",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D0KJXKW8X1W3AKHZYGQV7",
+      "originalName": "Beacon Community Management",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D152DCV04AFPN56YSXYHD",
+      "originalName": "Ticon Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D1FFQPRK1XXQ3ZDF4YJ3V",
+      "originalName": "South Tampa Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D12X33GCYD2F8M5DJ01SY",
+      "originalName": "Boulevard Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D1BWW2PT4M2YS0VGFAH4G",
+      "originalName": "Trinity Abstract & Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D1B0Y8ADH1HS7CCRXD41D",
+      "originalName": "Dominion Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D1BAAVP6SEYKJFF7ETWBK",
+      "originalName": "Edge Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BYPB55XPVWKH4CPWC6E9T",
+      "originalName": "Comfortable Closings",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D0QWHVB02VN05DXEF5BNS",
+      "originalName": "Apollo Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BYJ83R4FG8VXH4BJNEFQW",
+      "originalName": "Action Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D0MRBCSM4A4AVM37K3EHX",
+      "originalName": "Liberty Title Company of America, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BYFV6N50519ZP3E0NHYHX",
+      "originalName": "REO Title Company of Florida, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D1XVK4M5EGZEWG842N6Y2",
+      "originalName": "SignatureRealEstateCompanies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D206JQBAKDD6BB0DWZ1Z0",
+      "originalName": "Michael Saunders & Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D1WNHFMVV5KJ7NKPPY0JQ",
+      "originalName": "The K Company Realty, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D1M9E4N2JHNW5Y9B83T3P",
+      "originalName": "American Title Service Agency - Commercial Division",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CZYNB2SV5GZ6F6KGZ54B6",
+      "originalName": "Armor Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CZ3ZT6JZW2KFCJ7P1WY6X",
+      "originalName": "Home Abstract & Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CYPT41N6Q42R76563GEQS",
+      "originalName": "Stones River Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CYKHSWE2KKADKMDDSPXSQ",
+      "originalName": "United Title Insurance Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CY0TC77XXQE4G65QK3M4M",
+      "originalName": "Judge Fite Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CY9PXE0G3N5X4CR56BG9M",
+      "originalName": "Pacific Commerce Escrow Services",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CWWT7TCGZS4M4R32HPT8Y",
+      "originalName": "Good Hope Community Project, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CWNGHSEFNV9PF8X5AG8J4",
+      "originalName": "The Settlement Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CT61ZPJF1G1DTSNKDX5H4",
+      "originalName": "Appraisal Compliance Review, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPKYMTDPJXQR1RAVAE16P",
+      "originalName": "Vista Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CNABK1G1TZN36M3Q5CXWN",
+      "originalName": "RealEstateContacts.com",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CM09DVHZFVZZCATJYW6F8",
+      "originalName": "Mid-American Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CJDMN2HXSGGQHZT7NBY45",
+      "originalName": "Upward Title Company - Southern California",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CG3F9VF487RNJWFNRFWY7",
+      "originalName": "Compass Title & Closing Services",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CFHC5PKKR5MZ5PK6GG31H",
+      "originalName": "Legal Land Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BXYVPREJWP2DF6ZJGY9ZT",
+      "originalName": "TitleInsight.com",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CCJ198FJWANACGDFFKEXZ",
+      "originalName": "Alliant National Title Insurance Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CC8GVZ8JJWQ10C1Q6YHXP",
+      "originalName": "Moody National Companies, LP",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CCJBQCZBWTTW6J7V7Q5XR",
+      "originalName": "Benchmark Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CXPBT3K0R4DNWQBTVJMGG",
+      "originalName": "Northern Land Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CBZGE9QV5WRMZAGNDVS1K",
+      "originalName": "FNF Family of Companies- DC, MD, VA, & WV Agencies",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CBQG0GPFC61TGR4XJ32EN",
+      "originalName": "New Line Title & Escrow Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CCXWS35BNPYG0GTDFH8YS",
+      "originalName": "Trust Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CBG5J1KCJV20Z092B2HA2",
+      "originalName": "Endeavor Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C9Q6ZB3HB6Z5RE64KBV89",
+      "originalName": "Lawyers Title Company Bay Area",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5QPTMX21R95FP358R4GS",
+      "originalName": "Alamo Title Company DFW",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPKAJ8KG70R656G3QDFBP",
+      "originalName": "Reagan County Abstract & Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5XV6S8ENNW0WX6XD9VKR",
+      "originalName": "Community National Title",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C3JQM607ZH1W9MT219SAM",
+      "originalName": "MyHome, a Williston Financial Group Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BZSBR63G80T6J669RW6K0",
+      "originalName": "All American Title Company Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D1JDKNYCBZ3M4NYMDW66V",
+      "originalName": "Owen Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CG00W921MC2J21DVFE49D",
+      "originalName": "Armor Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46BYG4FAQC11WNQRZTRQ9NG",
+      "originalName": "Citadel Title & Escrow Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CDQ3VFYFFG0YC91VAHE64",
+      "originalName": "Fidelity National Title Insurance Company of Georgia",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CENT1VB61M855112831PS",
+      "originalName": "Landwood Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D18M5A00HRCSSVFBG8XKR",
+      "originalName": "Seminole Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CEP45QAPHSQYRHEHKKWP5",
+      "originalName": "Martin Abstract Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CD6YD4QR1QP23R3Q2WGNN",
+      "originalName": "Island Winds Title Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CD78FVWQ3F2MZ4TSB813J",
+      "originalName": "Baton Rouge Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46D1R0TS1QGFAKQBJRZJEFW",
+      "originalName": "Accelerated Appraisal Management Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CBJP7HCHY8HTBV543YZZ6",
+      "originalName": "Greenspring Title Company, Inc.",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CBA6JZP63GHTR4KV3MJ4V",
+      "originalName": "SoCal Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C8HG2GR2S4FQ0PMT3NRT1",
+      "originalName": "Chicago Title & Commonwealth Land Title Georgia",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C8QTFBE8FE88652KHEJEJ",
+      "originalName": "Euclid Management Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C4PZKMWWE9J8XM7F9KT1Q",
+      "originalName": "California Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C3NXCHSB7M7WZNFKJTMTX",
+      "originalName": "Corinthian Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2SHTCT2SCKFNJ1EJ03VC",
+      "originalName": "Boston National Title, An Essent Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CPKMS3WGZCSN2BKH4JJ7Z",
+      "originalName": "Vanderbilt American Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CK6JKDPMSJZEY6KH5Z01Q",
+      "originalName": "American Home Title and Escrow Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CJYF49YPWWS3N54GTBDTS",
+      "originalName": "Associates Land Transfer Company, LLC",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CQJ2DSMDHTB0J95NSNMH2",
+      "originalName": "Trinity Abstract & Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C5Y54N0AR5305W0B1932M",
+      "originalName": "Greater Illinois Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46CC8TV5SJATXE5VXA8HCRA",
+      "originalName": "Advocus National Title Insurance Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K46C2P237KAAKGM2NM5R0EGM",
+      "originalName": "Vanguard Title Company",
+      "newName": "Com Title Services",
+      "domain": null
+    },
+    {
+      "id": "01K7ERXFWWW3JTBCCTBY6RYZYG",
+      "originalName": "Atlastitlesvc",
+      "newName": "Atlas Title Services",
+      "domain": "atlastitlesvc.com"
+    },
+    {
+      "id": "01K7ERXFDFQGBHR1BEWM0NZ8R8",
+      "originalName": "Worldconnectionc21",
+      "newName": "World Connection C21",
+      "domain": "worldconnectionc21.com"
+    },
+    {
+      "id": "01K7ERXEXQX10TC6EDC1BRE3JS",
+      "originalName": "Driggstitle",
+      "newName": "Driggs Title",
+      "domain": "driggstitle.com"
+    },
+    {
+      "id": "01K7ERXDD9BPMMERH4K0R1V94T",
+      "originalName": "Homepartnerstitle",
+      "newName": "Home Partners Title",
+      "domain": "homepartnerstitle.com"
+    },
+    {
+      "id": "01K7ERXCA1MP17ZG11X184JTH3",
+      "originalName": "Alliancegroupfl",
+      "newName": "Alliance Group FL",
+      "domain": "alliancegroupfl.com"
+    },
+    {
+      "id": "01K7ERXBJ3P76JSBWBQGXKQ10D",
+      "originalName": "Signatureflorida",
+      "newName": "Signature Florida",
+      "domain": "signatureflorida.com"
+    },
+    {
+      "id": "01K7ERXB0KBSCS9A2A41RVNQSH",
+      "originalName": "Teematitle",
+      "newName": "Tee Ma Title",
+      "domain": "teematitle.com"
+    },
+    {
+      "id": "01K7ERX9BVSCGD4SZFDW528F5X",
+      "originalName": "Thefund",
+      "newName": "The Fund Title",
+      "domain": "thefund.com"
+    },
+    {
+      "id": "01K7ERX84Z4P4N76SJVH7KE1KW",
+      "originalName": "Bosshardtrealty",
+      "newName": "Bosshard Realty",
+      "domain": "bosshardtrealty.com"
+    },
+    {
+      "id": "01K7ERX7N9S1V7HZRM6QB1T2KZ",
+      "originalName": "Joinbrokernation",
+      "newName": "Join Broker Nation",
+      "domain": "joinbrokernation.net"
+    },
+    {
+      "id": "01K7ERX6D8Y7JM8GR0VF5858M1",
+      "originalName": "Cleartitleaz",
+      "newName": "Clear Title AZ",
+      "domain": "cleartitleaz.com"
+    },
+    {
+      "id": "01K7ERX64ARXXTRTW698BPJT0H",
+      "originalName": "Cetitle",
+      "newName": "CE Title",
+      "domain": "cetitle.com"
+    },
+    {
+      "id": "01K7ERX5VJCA2E2QSFZTX60GB8",
+      "originalName": "Ctctitle",
+      "newName": "CTC Title",
+      "domain": "ctctitle.com"
+    },
+    {
+      "id": "01K7ERX5JVWF1D7TRVYPMVFRN3",
+      "originalName": "Cbfloridahomes",
+      "newName": "CB Florida Homes",
+      "domain": "cbfloridahomes.com"
+    },
+    {
+      "id": "01K7ERX4S77TW2K1ZAHHHW22FS",
+      "originalName": "Dennisrealty",
+      "newName": "Dennis Realty",
+      "domain": "dennisrealty.com"
+    },
+    {
+      "id": "01K7ERX4GHK3A5WD7ZV7RVNVY4",
+      "originalName": "Ects",
+      "newName": "ECTS Title",
+      "domain": "ects.com"
+    },
+    {
+      "id": "01K7ERX47MVQYGTX8JGFQS1FCG",
+      "originalName": "Expresstitleservicesllc",
+      "newName": "Express Title Services LLC",
+      "domain": "expresstitleservicesllc.com"
+    },
+    {
+      "id": "01K7ERX3YCPR1NZ6KD6WEGX752",
+      "originalName": "Fntic",
+      "newName": "FNTIC Title",
+      "domain": "fntic.com"
+    },
+    {
+      "id": "01K7ERX3ENBBKFDPA22YCPMDG1",
+      "originalName": "Firstaztitle",
+      "newName": "First AZ Title",
+      "domain": "firstaztitle.com"
+    },
+    {
+      "id": "01K7ERX2W13AR3F7NDEZKXADP9",
+      "originalName": "Firstintitle",
+      "newName": "First In Title",
+      "domain": "firstintitle.com"
+    },
+    {
+      "id": "01K7ERX2JJ8B7K2F43C3WY0AXP",
+      "originalName": "Yourfloridatitle",
+      "newName": "Your Florida Title",
+      "domain": "yourfloridatitle.com"
+    },
+    {
+      "id": "01K7ERX1FK3WA7BSTBPEFP4FCA",
+      "originalName": "Goldendogtitle",
+      "newName": "Golden Dog Title",
+      "domain": "goldendogtitle.com"
+    },
+    {
+      "id": "01K7ERX16ZCQJ2EW8SZ1PESFRF",
+      "originalName": "Azgat",
+      "newName": "AZGAT Title",
+      "domain": "azgat.com"
+    },
+    {
+      "id": "01K7ERX0NBW70NBQ8S1XSTVNVW",
+      "originalName": "Titlerate",
+      "newName": "Title Rate",
+      "domain": "titlerate.com"
+    },
+    {
+      "id": "01K7ERWZG7EKHW1JZ4J5AENHDR",
+      "originalName": "Magnoliatitleteam",
+      "newName": "Magnolia Title Team",
+      "domain": "magnoliatitleteam.com"
+    },
+    {
+      "id": "01K7ERWZ7M1V037CKWHK6FRA4Z",
+      "originalName": "Navititle",
+      "newName": "Navi Title",
+      "domain": "navititle.com"
+    },
+    {
+      "id": "01K7ERWY3W4S6HT8KSWBGQYBEA",
+      "originalName": "Fntarizona",
+      "newName": "FNTA Arizona",
+      "domain": "fntarizona.com"
+    },
+    {
+      "id": "01K7ERWW6XWWCNEZQE64TV09KC",
+      "originalName": "Ptanow",
+      "newName": "PTA Now",
+      "domain": "ptanow.com"
+    },
+    {
+      "id": "01K7ERWVZD03S4D9229YY67A3J",
+      "originalName": "Premiertitlepartners",
+      "newName": "Premier Title Partners",
+      "domain": "premiertitlepartners.com"
+    },
+    {
+      "id": "01K7ERWV1P0TKVGYTJ6T70VRG6",
+      "originalName": "Premiumproperties",
+      "newName": "Premium Properties",
+      "domain": "premiumproperties.com"
+    },
+    {
+      "id": "01K7ERWTB0TNVE9WG97AE1MPAZ",
+      "originalName": "Bocaratonrealestatefamily",
+      "newName": "Boca Raton Real Estate Family",
+      "domain": "bocaratonrealestatefamily.com"
+    },
+    {
+      "id": "01K7ERWSWKNXYWRBCCJGQC8QTA",
+      "originalName": "Scrutinyproperty",
+      "newName": "Scrutiny Property",
+      "domain": "scrutinyproperty.com"
+    },
+    {
+      "id": "01K7ERWS8MQR7WDE5JM7DJ2MFB",
+      "originalName": "Suncoastone",
+      "newName": "Sun Coast One",
+      "domain": "suncoastone.com"
+    },
+    {
+      "id": "01K7ERWR04H6R6TPM7BMBZ0DF0",
+      "originalName": "Kcorealty",
+      "newName": "KCO Realty",
+      "domain": "kcorealty.com"
+    },
+    {
+      "id": "01K7ERWQRKDHFKHRC6Q3E13S0W",
+      "originalName": "Tieronetitle",
+      "newName": "Tier One Title",
+      "domain": "tieronetitle.com"
+    },
+    {
+      "id": "01K7ERWQA4TAV3T4KCHJHYDBMT",
+      "originalName": "Tsvaz",
+      "newName": "TSVAZ Title",
+      "domain": "tsvaz.com"
+    },
+    {
+      "id": "01K7ERWQ2KC93PCYPX17318PRV",
+      "originalName": "Titlesvs",
+      "newName": "Title SVS",
+      "domain": "titlesvs.com"
+    },
+    {
+      "id": "01K7ERWPKQA3K5FNT5HXMQ0Y87",
+      "originalName": "Titlewaveres",
+      "newName": "Title Wave Real Estate Solutions",
+      "domain": "titlewaveres.com"
+    },
+    {
+      "id": "01K7ERWPC713BRP2PP6R8PDE0P",
+      "originalName": "Mytotaltitle",
+      "newName": "My Total Title",
+      "domain": "mytotaltitle.com"
+    },
+    {
+      "id": "01K7ERWNXAZH6RHEDVXM9PA59B",
+      "originalName": "Votainc",
+      "newName": "VOTA Inc",
+      "domain": "votainc.com"
+    },
+    {
+      "id": "01K7ERTQETBSBCSXP4DJ8QGXAD",
+      "originalName": "Magnolia Title -Arkansas",
+      "newName": "Magnolia Title - Arkansas",
+      "domain": null
+    },
+    {
+      "id": "01K7ERTMX1BBES9JQX7F504E36",
+      "originalName": "University of Colorado Denver",
+      "newName": "University of Colorado Denver",
+      "domain": null
+    },
+    {
+      "id": "01K7ERTHS24YZXRWGP59PHNZR8",
+      "originalName": "RE/MAX CHAMPIONS FLORIDA - MOTTO MORTGAGE CHAMPIONS - CHAMPIONS TITLE SERVICES",
+      "newName": "RE/MAX Champions Florida - Motto Mortgage Champions - Champions Title Services",
+      "domain": null
+    }
+  ]
+}

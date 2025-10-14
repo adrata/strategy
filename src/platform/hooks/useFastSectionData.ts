@@ -125,7 +125,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           url = `/api/v1/people?limit=${Math.max(limit, 10000)}`;
           break;
         case 'companies':
-          url = `/api/v1/companies?limit=${limit}`;
+          // For companies, always fetch all records to support proper pagination
+          url = `/api/v1/companies?limit=${Math.max(limit, 10000)}`;
           break;
         default:
           // Fallback to old section API for unsupported sections

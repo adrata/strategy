@@ -69,7 +69,7 @@ export function PanelLayout({
   // Divider logic: always a 1px line, 100% height, with a wider responsive hit area
   const dividerHitArea = 8; // Reduced for more precise cursor alignment
   const dividerLineWidth = 1;
-  const dividerLineColor = dragging ? "#3B82F6" : hovering ? "#6B7280" : "var(--border)";
+  const dividerLineColor = dragging ? "#3B82F6" : hovering ? "#6B7280" : "#d1d5db";
   
   // Simple divider styles without visual effects
   const dividerStyle = {

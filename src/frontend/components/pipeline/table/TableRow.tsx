@@ -801,7 +801,7 @@ export function TableRow({
             style={{ width: getColumnWidth(index) }}
           >
             <div className="text-sm text-[var(--foreground)] truncate">
-              {String(record[header.toLowerCase()] || record[header] || header)}
+              {String(record[header.toLowerCase()] || record[header] || '-')}
             </div>
           </td>
         );

@@ -1,0 +1,16 @@
+{
+  "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+  "workspaceName": "Notary Everyday",
+  "fixDate": "2025-10-14T05:20:02.451Z",
+  "totalMappings": 45,
+  "totalFound": 1,
+  "totalFixed": 1,
+  "changes": [
+    {
+      "id": "01K7ERTHS24YZXRWGP59PHNZR8",
+      "originalName": "RE/MAX Champions Florida - Motto Mortgage Champions - Champions Title Services",
+      "newName": "RE/MAX Champions Florida - Motto Mortgage Champions - Champions Title Services",
+      "domain": null
+    }
+  ]
+}

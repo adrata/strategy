@@ -1,0 +1,111 @@
+{
+  "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+  "workspaceName": "Notary Everyday",
+  "cleanupDate": "2025-10-14T05:16:10.993Z",
+  "totalProcessed": 15,
+  "totalCleaned": 14,
+  "changes": [
+    {
+      "id": "01K7ERTJYG1W7B4VFA46P1KVMW",
+      "originalName": "Great American Title Agency - Surprise (ph. 623-455-3683)",
+      "cleanedName": "Great American Title Agency - Surprise",
+      "domain": null,
+      "lengthReduction": 19
+    },
+    {
+      "id": "01K7ERTK5X1XC1NEXD20SVVY5E",
+      "originalName": "Flueid Software Corporation",
+      "cleanedName": "Flueid Software",
+      "domain": null,
+      "lengthReduction": 12
+    },
+    {
+      "id": "01K7ERTKN1CFZ2Y20G68YG107F",
+      "originalName": "Brightline Title/Albertelli Law",
+      "cleanedName": "Brightline Title",
+      "domain": null,
+      "lengthReduction": 15
+    },
+    {
+      "id": "01K7ERTKWEAD9WF7R3MZZJR68X",
+      "originalName": "Coldwell Banker Sunstar Realty",
+      "cleanedName": "Coldwell Banker Realty",
+      "domain": null,
+      "lengthReduction": 8
+    },
+    {
+      "id": "01K7ERTNEFF3A6X3X1W4BATC70",
+      "originalName": "Arizona Research & Retrieval",
+      "cleanedName": "Arizona",
+      "domain": null,
+      "lengthReduction": 21
+    },
+    {
+      "id": "01K7ERTP4B7400EA67BJZ0FSPY",
+      "originalName": "TitleWave Real Estate Solutions and Mezzo-soprano",
+      "cleanedName": "TitleWave Real Estate Solutions",
+      "domain": null,
+      "lengthReduction": 18
+    },
+    {
+      "id": "01K7ERTQXVWJ0FJBFB4SP9X2RH",
+      "originalName": "ClearEdge Title (fka Meridian National Title)",
+      "cleanedName": "ClearEdge Title",
+      "domain": null,
+      "lengthReduction": 30
+    },
+    {
+      "id": "01K7ERTRV13DJA8R3GH1FW7ZGH",
+      "originalName": "Magnus Title Agency 602.332.3111 / Romy@Magnus Title.com",
+      "cleanedName": "Magnus Title Agency 602.332.3111",
+      "domain": null,
+      "lengthReduction": 24
+    },
+    {
+      "id": "01K7ERTS6J5TT8QNFBSB8K7N2T",
+      "originalName": "Equitable Title of Dr. Phillips",
+      "cleanedName": "Equitable Title",
+      "domain": null,
+      "lengthReduction": 16
+    },
+    {
+      "id": "01K7ERTSE0XCC28N1ZPRJ3CST4",
+      "originalName": "Michael Saunders & Company for The Residences",
+      "cleanedName": "Michael Saunders & Company",
+      "domain": null,
+      "lengthReduction": 19
+    },
+    {
+      "id": "01K7ERTJFRYJHRB2SRRVEJCJTK",
+      "originalName": "Liberty Title & Escrow - Tactically Executing Real Estate Transactions for Financial Lending Institutions Through The Entire Loan Life Cycle",
+      "cleanedName": "Liberty Title & Escrow",
+      "domain": null,
+      "lengthReduction": 118
+    },
+    {
+      "id": "01K46CZF0ZSGRC3EJPH5T2M8TQ",
+      "originalName": "JG Weiss Research & Retrieval, Inc",
+      "cleanedName": "JG Weiss, Inc",
+      "domain": null,
+      "lengthReduction": 21
+    },
+    {
+      "id": "01K46D2GR7XBTNYGC8GQHD3BAR",
+      "originalName": "Arizona Research & Retrieval Services, Inc.",
+      "cleanedName": "Arizona Services, Inc.",
+      "domain": null,
+      "lengthReduction": 21
+    },
+    {
+      "id": "01K46D2H1JWK8GQRBXNRVS0EFX",
+      "originalName": "Coldwell Banker Sunstar Realty Coldwell Banker Morris Realty",
+      "cleanedName": "Coldwell Banker Realty Coldwell Banker Morris Realty",
+      "domain": null,
+      "lengthReduction": 8
+    }
+  ],
+  "summary": {
+    "totalCharactersRemoved": 350,
+    "averageLengthReduction": 25
+  }
+}

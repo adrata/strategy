@@ -72,11 +72,11 @@ export function InfiniteScrollTable({
       case 'leads':
         return (
           <tr key={key} className="hover:bg-[var(--panel-background)] cursor-pointer">
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.company || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.fullName || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.title || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.email || 'No email'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.status || 'Unknown'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.company || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.fullName || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.title || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.email || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.status || '-'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
               <span className={`px-2 py-1 text-xs rounded-full ${
                 record['priority'] === 'high' ? 'bg-red-100 text-red-800' :
@@ -92,11 +92,11 @@ export function InfiniteScrollTable({
       case 'prospects':
         return (
           <tr key={key} className="hover:bg-[var(--panel-background)] cursor-pointer">
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.company || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.fullName || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.jobTitle || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.email || 'No email'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.status || 'Unknown'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.company || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.fullName || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.jobTitle || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.email || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.status || '-'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
               <span className={`px-2 py-1 text-xs rounded-full ${
                 record['priority'] === 'high' ? 'bg-red-100 text-red-800' :
@@ -112,10 +112,10 @@ export function InfiniteScrollTable({
       case 'people':
         return (
           <tr key={key} className="hover:bg-[var(--panel-background)] cursor-pointer">
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.fullName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.jobTitle || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.email || 'No email'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.status || 'Unknown'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.fullName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.jobTitle || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.email || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.status || '-'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
               {new Date(record.updatedAt).toLocaleDateString()}
             </td>
@@ -125,11 +125,11 @@ export function InfiniteScrollTable({
       case 'companies':
         return (
           <tr key={key} className="hover:bg-[var(--panel-background)] cursor-pointer">
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.name || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.industry || 'Unknown'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.size || 'Unknown'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.name || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.industry || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.size || '-'}</td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
-              {record.revenue ? `$${record.revenue.toLocaleString()}` : 'Unknown'}
+              {record.revenue ? `$${record.revenue.toLocaleString()}` : '-'}
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
               {new Date(record.updatedAt).toLocaleDateString()}
@@ -141,7 +141,7 @@ export function InfiniteScrollTable({
         return (
           <tr key={key} className="hover:bg-[var(--panel-background)] cursor-pointer">
             <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
-              {record.name || record.fullName || 'Unknown'}
+              {record.name || record.fullName || '-'}
             </td>
           </tr>
         );

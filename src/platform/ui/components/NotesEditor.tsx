@@ -63,6 +63,7 @@ export function NotesEditor({
         setLastSavedValue(valueToSave);
       } catch (error) {
         console.error('Failed to save notes:', error);
+        // Don't update lastSavedValue on error so it can be retried
       }
     }
   }, [autoSave, onSave, lastSavedValue]);

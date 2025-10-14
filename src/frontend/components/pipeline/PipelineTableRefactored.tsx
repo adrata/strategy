@@ -501,7 +501,7 @@ export function PipelineTable({
                         }
                         break;
                       default:
-                        cellContent = record[header.toLowerCase()] || record[header] || '';
+                        cellContent = record[header.toLowerCase()] || record[header] || '-';
                     }
                     
                     return (
