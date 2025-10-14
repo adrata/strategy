@@ -307,7 +307,9 @@ export function CompleteActionModal({
     console.log('✅ [CompleteActionModal] Submitting action...');
 
     // Call the submit handler
+    console.log('📤 [CompleteActionModal] Calling onSubmit with formData:', formData);
     onSubmit(formData);
+    console.log('📤 [CompleteActionModal] onSubmit called successfully');
 
     // Reset guard immediately since onSubmit is synchronous
     // The parent component will handle async operations and close the modal

@@ -471,24 +471,28 @@ Focus on the most strategic next move that will advance the relationship toward 
     recommendation: NextActionRecommendation
   ): Promise<void> {
     try {
-      const updateData = {
-        nextAction: recommendation.action,
-        nextActionDate: recommendation.date,
-        nextActionReasoning: recommendation.reasoning,
-        nextActionPriority: recommendation.priority,
-        nextActionType: recommendation.type,
-        nextActionUpdatedAt: recommendation.updatedAt
-      };
-
       if (entityType === 'person') {
+        // People table has all the fields
         await prisma.people.update({
           where: { id: entityId },
-          data: updateData
+          data: {
+            nextAction: recommendation.action,
+            nextActionDate: recommendation.date,
+            nextActionReasoning: recommendation.reasoning,
+            nextActionPriority: recommendation.priority,
+            nextActionType: recommendation.type,
+            nextActionUpdatedAt: recommendation.updatedAt
+          }
         });
       } else {
+        // Companies table only has basic fields
         await prisma.companies.update({
           where: { id: entityId },
-          data: updateData
+          data: {
+            nextAction: recommendation.action,
+            nextActionDate: recommendation.date
+            // Remove: nextActionReasoning, nextActionPriority, nextActionType, nextActionUpdatedAt
+          }
         });
       }
 

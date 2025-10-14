@@ -6,7 +6,7 @@
  * Clean header with section info, metrics, and actions
  */
 
-import React, { useEffect, useCallback, useState, useRef } from 'react';
+import React, { useEffect, useCallback, useState, useRef, startTransition } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 // Removed deleted PipelineDataStore - using unified data system
 import { getTimeTrackingData, formatHours } from '@/platform/utils/time-tracking';
@@ -28,7 +28,6 @@ import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { RankingSystem } from '@/platform/services/ranking-system';
 import { PipelineMetrics } from '@/platform/services/pipeline-metrics-calculator';
 import { useWorkspaceSpeedrunSettings } from '@/platform/hooks/useWorkspaceSpeedrunSettings';
-import { notificationService } from '@/platform/services/notification-service';
 import { 
   ChevronDownIcon,
   CheckCircleIcon,
@@ -90,9 +89,11 @@ export function PipelineHeader({
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
   const [showAddPersonModal, setShowAddPersonModal] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessageKey, setSuccessMessageKey] = useState(0);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
+  const successMessageTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -102,18 +103,55 @@ export function PipelineHeader({
     console.log(`🏗️ [PipelineHeader] Component MOUNTED for section: ${section}`);
     return () => {
       console.log(`💥 [PipelineHeader] Component UNMOUNTED for section: ${section}`);
+      // Clean up success message timeout
+      if (successMessageTimeoutRef.current) {
+        clearTimeout(successMessageTimeoutRef.current);
+        successMessageTimeoutRef.current = null;
+      }
     };
+  }, [section]);
+
+  // Check for success message flag after page reload
+  useEffect(() => {
+    const shouldShowSuccess = sessionStorage.getItem('showSuccessMessage') === 'true';
+    const successSection = sessionStorage.getItem('successMessageSection');
+    
+    console.log(`🔍 [PipelineHeader] Checking success message flags:`, {
+      shouldShowSuccess,
+      successSection,
+      currentSection: section,
+      match: shouldShowSuccess && successSection === section
+    });
+    
+    if (shouldShowSuccess && successSection === section) {
+      console.log(`🎉 [PipelineHeader] Showing success message after page reload for section: ${section}`);
+      
+      // Clear the flag
+      sessionStorage.removeItem('showSuccessMessage');
+      sessionStorage.removeItem('successMessageSection');
+      
+      // Show success message
+      setSuccessMessageKey(prev => prev + 1);
+      setShowSuccessMessage(true);
+      
+      // Hide after 3 seconds
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 3000);
+    }
   }, [section]);
 
   // Debug: Track success message state changes
   useEffect(() => {
     console.log(`🔔 [PipelineHeader] showSuccessMessage state changed to:`, showSuccessMessage);
+    console.log(`🔔 [PipelineHeader] Section: ${section}`);
+    console.log(`🔔 [PipelineHeader] Component instance:`, Math.random().toString(36).substr(2, 9));
     if (showSuccessMessage) {
       console.log(`✅ [PipelineHeader] SUCCESS MESSAGE IS NOW VISIBLE`);
     } else {
       console.log(`❌ [PipelineHeader] SUCCESS MESSAGE IS NOW HIDDEN`);
     }
-  }, [showSuccessMessage]);
+  }, [showSuccessMessage, section]);
 
   // Function to open the correct modal based on section
   const openAddModal = () => {
@@ -147,12 +185,10 @@ export function PipelineHeader({
   };
 
   // Generic success handler for all modals
-  const handleAddSuccess = (data?: any) => {
+  const handleAddSuccess = useCallback((data?: any) => {
     console.log(`✅ [PipelineHeader] ========== handleAddSuccess CALLED ========== `);
     console.log(`✅ [PipelineHeader] Section: ${section}`);
     console.log(`✅ [PipelineHeader] Data received:`, data);
-    console.log(`✅ [PipelineHeader] Current showSuccessMessage state:`, showSuccessMessage);
-    console.log(`✅ [PipelineHeader] Component instance ID:`, Math.random().toString(36).substr(2, 9));
     
     // Close all modals immediately
     console.log(`🚪 [PipelineHeader] Closing modals now`);
@@ -163,6 +199,11 @@ export function PipelineHeader({
     setShowAddPersonModal(false);
     setShowAddActionModal(false); // Also close the action modal
     setSelectedRecord(null);
+    
+    // Set success message flag in session storage to show after page reload
+    console.log(`🎉 [PipelineHeader] Setting success message flag for after reload`);
+    sessionStorage.setItem('showSuccessMessage', 'true');
+    sessionStorage.setItem('successMessageSection', section);
     
     // Clear cache and refresh the list
     console.log(`🔄 [PipelineHeader] Calling onClearCache for section: ${section}`);
@@ -178,34 +219,11 @@ export function PipelineHeader({
       }));
     }
     
-    // Add small delay to ensure API has processed the new company
+    // Add delay to ensure API has processed the new record
     setTimeout(() => {
       onClearCache?.();
     }, 100);
-    
-    // Show success notification using the notification service
-    setTimeout(async () => {
-      console.log(`🎉 [PipelineHeader] Showing success notification for section: ${section}`);
-      
-      const successMessage = section === 'speedrun' ? 'Action logged successfully!' : `${section.charAt(0).toUpperCase() + section.slice(1)} created successfully!`;
-      
-      try {
-        await notificationService.showNotification(
-          'Success!',
-          successMessage,
-          {
-            icon: '/adrata-icon.png'
-          }
-        );
-        console.log(`✅ [PipelineHeader] Success notification shown: ${successMessage}`);
-      } catch (error) {
-        console.error(`❌ [PipelineHeader] Failed to show notification:`, error);
-        // Fallback to UI success message if notification fails
-        setShowSuccessMessage(true);
-        setTimeout(() => setShowSuccessMessage(false), 3000);
-      }
-    }, 100);
-  };
+  }, [section, onClearCache]);
   const [timeData, setTimeData] = useState(() => {
     const data = getTimeTrackingData('America/New_York', user?.id);
     // Provide realistic defaults if data is empty
@@ -403,6 +421,10 @@ export function PipelineHeader({
 
   // Handle action logging
   const handleActionSubmit = async (actionData: ActionLogData) => {
+    console.log('🎯 [handleActionSubmit] ========== FUNCTION CALLED ==========');
+    console.log('🎯 [handleActionSubmit] Function called with actionData:', actionData);
+    console.log('🎯 [handleActionSubmit] Current showSuccessMessage state:', showSuccessMessage);
+    
     // If we have a selected record, use it; otherwise, we need a person name
     const recordId = selectedRecord?.id;
     const recordType = selectedRecord ? section.slice(0, -1) : 'contact';
@@ -444,7 +466,15 @@ export function PipelineHeader({
       setSelectedRecord(null);
       
       // Call the success handler to show success message and refresh data
+      console.log('🚀 [handleActionSubmit] About to call handleAddSuccess with result:', result);
+      console.log('🚀 [handleActionSubmit] Current showSuccessMessage state before call:', showSuccessMessage);
       handleAddSuccess(result);
+      console.log('🚀 [handleActionSubmit] handleAddSuccess called');
+      
+      // Check state after a small delay to allow React to update
+      setTimeout(() => {
+        console.log('🚀 [handleActionSubmit] Current showSuccessMessage state after call (delayed):', showSuccessMessage);
+      }, 100);
     } catch (error) {
       console.error('Failed to log action:', error);
       alert(`Failed to save action: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -1372,33 +1402,24 @@ export function PipelineHeader({
       {/* Success Message */}
       {showSuccessMessage && (
         <div 
-          className="fixed inset-0 pointer-events-none"
+          key={successMessageKey}
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800 animate-fade-in"
           style={{ 
-            zIndex: 9999999
+            position: 'fixed',
+            top: '1rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 50
           }}
         >
-          <div 
-            className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-green-500 border-2 border-green-600 rounded-lg shadow-2xl px-6 py-4"
-            style={{ 
-              animation: 'slideInFromTop 0.3s ease-out',
-              minWidth: '300px',
-              textAlign: 'center',
-              zIndex: 9999999
-            }}
-          >
-            <div className="flex items-center justify-center">
-              <svg className="h-6 w-6 text-white mr-3" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <p className="text-lg text-white font-bold">
-                {section === 'speedrun' ? 'Action logged successfully!' : `${section.charAt(0).toUpperCase() + section.slice(1)} created successfully!`}
-              </p>
-            </div>
+          <div className="flex items-center space-x-2">
+            <span>✅</span>
+            <span className="text-sm font-medium">
+              {section === 'speedrun' ? 'Action logged successfully!' : `${section.charAt(0).toUpperCase() + section.slice(1)} created successfully!`}
+            </span>
           </div>
         </div>
       )}
-
-      
 
     </>
   );

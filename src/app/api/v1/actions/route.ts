@@ -336,18 +336,15 @@ export async function POST(request: NextRequest) {
     });
 
     // Generate next action using AI service
-    try {
-      const nextActionService = new IntelligentNextActionService({
-        workspaceId: context.workspaceId,
-        userId: context.userId
-      });
-      
-      await nextActionService.updateNextActionOnNewAction(action);
-      console.log('✅ [ACTIONS API] Generated next action for action', action.id);
-    } catch (error) {
-      console.error('⚠️ [ACTIONS API] Failed to generate next action:', error);
-      // Don't fail the request if next action generation fails
-    }
+    // Fire and forget - don't await
+    const nextActionService = new IntelligentNextActionService({
+      workspaceId: context.workspaceId,
+      userId: context.userId
+    });
+    
+    nextActionService.updateNextActionOnNewAction(action).catch(error => {
+      console.error('⚠️ [ACTIONS API] Background next action generation failed:', error);
+    });
 
     return createSuccessResponse(action, {
       message: 'Action created successfully',
