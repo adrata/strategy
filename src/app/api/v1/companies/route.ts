@@ -396,30 +396,32 @@ export async function POST(request: NextRequest) {
       console.log('🔍 [V1 COMPANIES API] Starting company creation...');
       
       // Log the data being sent to help identify missing columns
+      // Start with minimal required fields to avoid P2022 errors
       const companyData = {
         name: body.name,
-        legalName: body.legalName,
-        email: body.email,
-        website: body.website || null,  // Convert empty strings to null
-        phone: body.phone,
-        address: body.address,
-        city: body.city,
-        state: body.state,
-        country: body.country,
-        industry: body.industry,
-        status: body.status || 'ACTIVE',
-        priority: body.priority || 'MEDIUM',
         workspaceId: context.workspaceId,
-        mainSellerId: validatedMainSellerId || body.mainSellerId || null, // Use validated user or null
-        notes: body.notes || null,  // Convert empty strings to null
+        // Only include optional fields if they have values
+        ...(body.legalName && { legalName: body.legalName }),
+        ...(body.email && { email: body.email }),
+        ...(body.website && { website: body.website }),
+        ...(body.phone && { phone: body.phone }),
+        ...(body.address && { address: body.address }),
+        ...(body.city && { city: body.city }),
+        ...(body.state && { state: body.state }),
+        ...(body.country && { country: body.country }),
+        ...(body.industry && { industry: body.industry }),
+        ...(body.status && { status: body.status }),
+        ...(body.priority && { priority: body.priority }),
+        ...(validatedMainSellerId && { mainSellerId: validatedMainSellerId }),
+        ...(body.mainSellerId && { mainSellerId: body.mainSellerId }),
+        ...(body.notes && { notes: body.notes }),
         // Only include opportunity fields if they have values to avoid P2022 errors
         ...(body.opportunityStage && { opportunityStage: body.opportunityStage }),
         ...(body.opportunityAmount && { opportunityAmount: body.opportunityAmount }),
         ...(body.opportunityProbability && { opportunityProbability: body.opportunityProbability }),
         ...(body.expectedCloseDate && { expectedCloseDate: new Date(body.expectedCloseDate) }),
         ...(body.actualCloseDate && { actualCloseDate: new Date(body.actualCloseDate) }),
-        createdAt: new Date(),  // ADD THIS - explicitly set like people endpoint
-        updatedAt: new Date(),
+        // Let Prisma handle createdAt and updatedAt with defaults
       };
       
       console.log('🔍 [V1 COMPANIES API] Company data to create:', {

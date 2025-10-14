@@ -138,18 +138,17 @@ export async function findOrCreateCompany(
     data: {
       workspaceId,
       name: trimmedName,
-      status: 'ACTIVE',
-      priority: 'MEDIUM',
-      industry: additionalData?.industry,
-      domain: additionalData?.domain,
-      website: additionalData?.website || (additionalData?.domain ? `https://${additionalData.domain}` : undefined),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      // Only include optional fields if they have values
+      ...(additionalData?.industry && { industry: additionalData.industry }),
+      ...(additionalData?.domain && { domain: additionalData.domain }),
+      ...(additionalData?.website && { website: additionalData.website }),
+      ...(additionalData?.domain && !additionalData?.website && { website: `https://${additionalData.domain}` }),
       customFields: {
         createdFrom: 'auto_linking',
         sourceData: 'lead_creation',
         createdAt: new Date().toISOString()
       }
+      // Let Prisma handle createdAt and updatedAt with defaults
     }
   });
 
