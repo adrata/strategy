@@ -9,7 +9,7 @@
  * - Right panel: AI chat
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { useUnifiedAuth } from '@/platform/auth';
@@ -247,21 +247,30 @@ export function SpeedrunSprintView() {
     return `${cleanName}-${record.id}`;
   };
 
-  // Navigate to individual record URL when record is selected
+  // Select record in sprint view (no URL navigation - stay on sprint page)
   const handleRecordSelect = (record: any) => {
-    const slug = generateRecordSlug(record);
-    const currentPath = window.location.pathname;
-    const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-    
-    if (workspaceMatch) {
-      const workspaceSlug = workspaceMatch[1];
-      router.push(`/${workspaceSlug}/speedrun/${slug}`);
-    } else {
-      router.push(`/speedrun/${slug}`);
-    }
+    console.log(`🏃‍♂️ [SPRINT] Selecting record: ${record.name || record.fullName} (ID: ${record.id})`);
+    setSelectedRecord(record);
   };
 
-  // Keyboard shortcuts for Command+Enter
+  // Handle navigation between records
+  const handleNavigateNext = useCallback(() => {
+    if (!data || !selectedRecord) return;
+    const currentIndex = data.findIndex((r: any) => r['id'] === selectedRecord.id);
+    if (currentIndex < data.length - 1) {
+      setSelectedRecord(data[currentIndex + 1]);
+    }
+  }, [data, selectedRecord, setSelectedRecord]);
+
+  const handleNavigatePrevious = useCallback(() => {
+    if (!data || !selectedRecord) return;
+    const currentIndex = data.findIndex((r: any) => r['id'] === selectedRecord.id);
+    if (currentIndex > 0) {
+      setSelectedRecord(data[currentIndex - 1]);
+    }
+  }, [data, selectedRecord, setSelectedRecord]);
+
+  // Keyboard shortcuts for Command+Enter and Tab navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Check if any modal is already open - if so, don't interfere
@@ -309,6 +318,59 @@ export function SpeedrunSprintView() {
         return false;
       }
       
+      // Tab key for navigating between records
+      if (event.key === "Tab" && selectedRecord && data && data.length > 0) {
+        // Check if we're in an input field - if so, don't interfere with normal tab behavior
+        const activeElement = document.activeElement;
+        const isInputField = activeElement && (
+          activeElement.tagName === 'INPUT' ||
+          activeElement.tagName === 'TEXTAREA' ||
+          activeElement.contentEditable === 'true' ||
+          activeElement.getAttribute('role') === 'textbox'
+        );
+        
+        if (!isInputField) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          
+          if (event.shiftKey) {
+            // Shift+Tab: Navigate to previous record
+            console.log(`⌨️ Shift+Tab pressed - navigating to previous record`);
+            handleNavigatePrevious();
+          } else {
+            // Tab: Navigate to next record
+            console.log(`⌨️ Tab pressed - navigating to next record`);
+            handleNavigateNext();
+          }
+          
+          return false;
+        }
+      }
+      
+      // Escape key to go back to speedrun list
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        console.log(`⌨️ Escape pressed - going back to speedrun list`);
+        navigateToPipeline('speedrun');
+        return false;
+      }
+      
+      // Command+Left Arrow (or Ctrl+Left Arrow) to go back to speedrun list
+      if (
+        (event.metaKey || event.ctrlKey) &&
+        event.key === "ArrowLeft"
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        console.log(`⌨️ Command+Left Arrow pressed - going back to speedrun list`);
+        navigateToPipeline('speedrun');
+        return false;
+      }
+      
       // No action needed for other key combinations
       return;
     };
@@ -316,25 +378,7 @@ export function SpeedrunSprintView() {
     // Add event listener with capture to ensure we get the event first
     document.addEventListener("keydown", handleKeyDown, true);
     return () => document.removeEventListener("keydown", handleKeyDown, true);
-  }, [selectedRecord]);
-
-
-  // Handle navigation between records
-  const handleNavigateNext = () => {
-    if (!data || !selectedRecord) return;
-    const currentIndex = data.findIndex((r: any) => r['id'] === selectedRecord.id);
-    if (currentIndex < data.length - 1) {
-      setSelectedRecord(data[currentIndex + 1]);
-    }
-  };
-
-  const handleNavigatePrevious = () => {
-    if (!data || !selectedRecord) return;
-    const currentIndex = data.findIndex((r: any) => r['id'] === selectedRecord.id);
-    if (currentIndex > 0) {
-      setSelectedRecord(data[currentIndex - 1]);
-    }
-  };
+  }, [selectedRecord, data, handleNavigateNext, handleNavigatePrevious]);
 
   // Handle snooze
   const handleSnooze = (recordId: string, duration: string) => {
@@ -563,7 +607,8 @@ export function SpeedrunSprintView() {
           });
           if (currentIndex > 0) {
             const previousRecord = data[currentIndex - 1];
-            handleRecordSelect(previousRecord);
+            console.log(`🏃‍♂️ [SPRINT] Navigating to previous record: ${previousRecord.name || previousRecord.fullName} (ID: ${previousRecord.id})`);
+            setSelectedRecord(previousRecord);
           }
         }}
         onNavigateNext={() => {
@@ -579,9 +624,11 @@ export function SpeedrunSprintView() {
             totalSprints: totalSprints
           });
           if (nextRecord) {
-            handleRecordSelect(nextRecord);
+            console.log(`🏃‍♂️ [SPRINT] Navigating to next record: ${nextRecord.name || nextRecord.fullName} (ID: ${nextRecord.id})`);
+            setSelectedRecord(nextRecord);
           } else if (hasNextSprint) {
             // Current sprint done, move to next sprint
+            console.log(`🏃‍♂️ [SPRINT] Current sprint complete, moving to next sprint: ${currentSprintIndex + 2}`);
             setCurrentSprintIndex(currentSprintIndex + 1);
           }
         }}
@@ -598,9 +645,16 @@ export function SpeedrunSprintView() {
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
           Select a Prospect
         </h3>
-        <p className="text-[var(--muted)]">
+        <p className="text-[var(--muted)] mb-3">
           Choose a prospect from the left panel to view their details.
         </p>
+        <div className="text-sm text-[var(--muted)] bg-[var(--panel-background)] rounded-lg px-3 py-2 border border-[var(--border)]">
+          <div className="font-medium mb-1">💡 Keyboard Shortcuts:</div>
+          <div className="space-y-1 text-xs">
+            <div>• <kbd className="px-1.5 py-0.5 bg-[var(--background)] border border-[var(--border)] rounded font-mono">Tab</kbd> / <kbd className="px-1.5 py-0.5 bg-[var(--background)] border border-[var(--border)] rounded font-mono">Shift+Tab</kbd> - Navigate between records</div>
+            <div>• <kbd className="px-1.5 py-0.5 bg-[var(--background)] border border-[var(--border)] rounded font-mono">Esc</kbd> / <kbd className="px-1.5 py-0.5 bg-[var(--background)] border border-[var(--border)] rounded font-mono">⌘←</kbd> - Back to speedrun list</div>
+          </div>
+        </div>
       </div>
     </div>
   );

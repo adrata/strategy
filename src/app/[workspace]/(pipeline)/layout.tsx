@@ -44,28 +44,10 @@ export const useOasis = () => {
 // Wrapper component for sprint left panel that uses SprintContext
 function SprintLeftPanelWrapper() {
   const { selectedRecord, setSelectedRecord, currentSprintIndex, setCurrentSprintIndex, completedRecords } = useSprint();
-  const router = useRouter();
-  const pathname = usePathname();
-  
-  // Generate slug for a record
-  const generateRecordSlug = (record: any) => {
-    const name = record.name || record.fullName || 'unknown';
-    const cleanName = name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
-    return `${cleanName}-${record.id}`;
-  };
 
-  // Navigate to individual record URL when record is selected
+  // Update selected record in sprint context instead of navigating away
   const handleRecordSelect = (record: any) => {
-    const slug = generateRecordSlug(record);
-    const currentPath = pathname;
-    const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
-    
-    if (workspaceMatch) {
-      const workspaceSlug = workspaceMatch[1];
-      router.push(`/${workspaceSlug}/speedrun/${slug}`);
-    } else {
-      router.push(`/speedrun/${slug}`);
-    }
+    setSelectedRecord(record);
   };
   
   return (
