@@ -389,19 +389,19 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString()
     });
 
+    // Create company data object outside transaction scope for error handler access
+    const companyData = {
+      name: body.name,
+      workspaceId: context.workspaceId,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
     // Create company and action in a transaction
     let result;
     try {
       result = await prisma.$transaction(async (tx) => {
       console.log('🔍 [V1 COMPANIES API] Starting company creation...');
-      
-      // Minimal company data with required timestamp fields
-      const companyData = {
-        name: body.name,
-        workspaceId: context.workspaceId,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
       
       console.log('🔍 [V1 COMPANIES API] Company data to create:', {
         fields: Object.keys(companyData),

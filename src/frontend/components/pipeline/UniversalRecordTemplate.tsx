@@ -632,7 +632,7 @@ export function UniversalRecordTemplate({
         const personTitle = record?.jobTitle || record?.title;
         // Use the same company extraction logic as UniversalOverviewTab
         const personCoresignalData = record?.customFields?.coresignal || {};
-        const personCompany = personCoresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || 
+        const personCompany = personCoresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
                              personCoresignalData.experience?.[0]?.company_name || 
                              record?.company?.name || 
                              record?.companyName || 
@@ -1279,7 +1279,7 @@ export function UniversalRecordTemplate({
           action: 'soft_delete',
           entityType: recordType === 'companies' ? 'companies' : 
                      recordType === 'people' ? 'people' : 
-                     recordType === 'actions' ? 'actions' : 'people',
+                     'people',
           entityId: record.id,
         }),
       });
@@ -1489,8 +1489,8 @@ export function UniversalRecordTemplate({
       };
       
         console.log('📤 [UNIVERSAL] Request body prepared:', {
-          type: requestBody.type,
-          subject: requestBody.subject,
+          type: 'type' in requestBody ? requestBody.type : 'not included',
+          subject: 'subject' in requestBody ? requestBody.subject : 'not included',
           hasPersonId: 'personId' in requestBody,
           hasCompanyId: 'companyId' in requestBody,
           personId: 'personId' in requestBody ? requestBody.personId : 'not included',
@@ -1857,7 +1857,7 @@ export function UniversalRecordTemplate({
           action: 'soft_delete',
           entityType: recordType === 'companies' ? 'companies' : 
                      recordType === 'people' ? 'people' : 
-                     recordType === 'actions' ? 'actions' : 'people',
+                     'people',
           entityId: record.id,
         }),
       });
@@ -2146,7 +2146,7 @@ export function UniversalRecordTemplate({
         case 'career':
           console.log(`💼 [UNIVERSAL] Rendering career tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+            <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'strategy':
           console.log(`🎯 [UNIVERSAL] Rendering strategy tab for ${recordType}`);
