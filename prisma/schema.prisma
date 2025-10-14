@@ -309,6 +309,10 @@ model companies {
   twitterFollowers       Int?
   twitterUrl             String?          @db.VarChar(500)
   youtubeUrl             String?          @db.VarChar(500)
+  nextActionReasoning    String?
+  nextActionPriority     String?          @db.VarChar(20)
+  nextActionType         String?          @db.VarChar(50)
+  nextActionUpdatedAt    DateTime?
   actions                actions[]
   mainSeller             users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
   workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -333,129 +337,128 @@ model companies {
 
 /// Contact/person records
 model people {
-  id                   String              @id @default(ulid()) @db.VarChar(30)
-  workspaceId          String              @db.VarChar(30)
-  companyId            String?             @db.VarChar(30)
-  firstName            String              @db.VarChar(100)
-  lastName             String              @db.VarChar(100)
-  fullName             String              @db.VarChar(200)
-  displayName          String?             @db.VarChar(200)
-  salutation           String?             @db.VarChar(50)
-  suffix               String?             @db.VarChar(50)
-  jobTitle             String?             @db.VarChar(300)
-  title                String?             @db.VarChar(300)
-  department           String?             @db.VarChar(200)
-  seniority            String?             @db.VarChar(50)
-  email                String?             @db.VarChar(300)
-  workEmail            String?             @db.VarChar(300)
-  personalEmail        String?             @db.VarChar(300)
-  phone                String?             @db.VarChar(50)
-  mobilePhone          String?             @db.VarChar(50)
-  workPhone            String?             @db.VarChar(50)
-  linkedinUrl          String?             @db.VarChar(500)
-  linkedinNavigatorUrl String?             @db.VarChar(500)
-  linkedinConnectionDate DateTime?         @db.Timestamp(6)
-  address              String?             @db.VarChar(500)
-  city                 String?             @db.VarChar(100)
-  state                String?             @db.VarChar(100)
-  country              String?             @db.VarChar(100)
-  postalCode           String?             @db.VarChar(50)
-  dateOfBirth          DateTime?           @db.Timestamp(6)
-  gender               String?             @db.VarChar(20)
-  bio                  String?
-  profilePictureUrl    String?             @db.VarChar(500)
-  status               PersonStatus?       @default(LEAD)
-  priority             PersonPriority?     @default(MEDIUM)
-  source               String?
-  tags                 String[]            @default([])
-  customFields         Json?
-  notes                String?
-  preferredLanguage    String?             @db.VarChar(10)
-  timezone             String?             @db.VarChar(50)
-  emailVerified        Boolean?            @default(false)
-  phoneVerified        Boolean?            @default(false)
-  lastAction           String?
-  lastActionDate       DateTime?           @db.Timestamp(6)
-  nextAction           String?
-  nextActionDate       DateTime?           @db.Timestamp(6)
-  nextActionReasoning  String?             @db.Text
-  nextActionPriority   String?             @db.VarChar(20)
-  nextActionType       String?             @db.VarChar(50)
-  nextActionUpdatedAt  DateTime?
-  actionStatus         String?
-  engagementScore      Float?              @default(0)
-  globalRank           Int?                @default(0)
-  companyRank          Int?                @default(0)
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime
-  entityId             String?             @db.VarChar(30)
-  deletedAt            DateTime?
-  mainSellerId         String?             @db.VarChar(30)
-  vertical             String?             @db.VarChar(100)
-  achievements         String[]            @default([])
-  budgetResponsibility String?             @db.VarChar(100)
-  buyerGroupOptimized  Boolean?            @default(false)
-  buyerGroupRole       String?             @db.VarChar(50)
-  buyerGroupStatus     String?             @db.VarChar(50)
-  careerTimeline       Json?
-  certifications       String[]            @default([])
-  communicationStyle   String?             @db.VarChar(50)
-  coresignalData       Json?
-  currentCompany       String?             @db.VarChar(200)
-  currentRole          String?             @db.VarChar(200)
-  dataCompleteness     Float?              @default(0)
-  decisionMaking       String?             @db.VarChar(50)
-  decisionPower        Int?                @default(0)
-  degrees              Json?
-  emailConfidence      Float?              @default(0)
-  engagementLevel      String?             @db.VarChar(50)
-  engagementStrategy   String?             @db.VarChar(100)
-  enrichedData         Json?
-  enrichmentScore      Float?              @default(0)
-  enrichmentSources    String[]            @default([])
-  enrichmentVersion    String?             @db.VarChar(20)
-  fieldsOfStudy        String[]            @default([])
-  graduationYears      Int[]               @default([])
-  hiddenFromSections   String[]            @default([])
-  industryExperience   String?             @db.VarChar(100)
-  industrySkills       String[]            @default([])
-  influenceLevel       String?             @db.VarChar(50)
-  influenceScore       Float?              @default(0)
-  institutions         String[]            @default([])
-  isBuyerGroupMember   Boolean?            @default(false)
-  languages            String[]            @default([])
-  lastEnriched         DateTime?
-  leadershipExperience String?             @db.VarChar(100)
-  mobileVerified       Boolean?            @default(false)
-  phoneConfidence      Float?              @default(0)
-  preferredContact     String?             @db.VarChar(50)
-  previousRoles        Json?
-  publications         String[]            @default([])
-  responseTime         String?             @db.VarChar(50)
-  roleHistory          Json?
-  rolePromoted         Json?
-  softSkills           String[]            @default([])
-  speakingEngagements  String[]            @default([])
-  statusReason         String?             @db.VarChar(200)
-  statusUpdateDate     DateTime?
-  teamSize             String?             @db.VarChar(50)
-  technicalSkills      String[]            @default([])
-  totalExperience      Int?
-  yearsAtCompany       Int?
-  yearsInRole          Int?
-  bestContactTime      String?             @db.VarChar(50)
-  decisionPowerScore   Int?                @default(0)
-  educationLevel       String?             @db.VarChar(100)
-  relationshipWarmth   String?             @db.VarChar(50)
-  skills               String?
-  valueDriver          String?
-  yearsExperience      Int?
-  
-  actions              actions[]
-  company              companies?          @relation(fields: [companyId], references: [id])
-  mainSeller           users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
-  workspace            workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  coSellers            person_co_sellers[]
+  id                     String              @id @default(ulid()) @db.VarChar(30)
+  workspaceId            String              @db.VarChar(30)
+  companyId              String?             @db.VarChar(30)
+  firstName              String              @db.VarChar(100)
+  lastName               String              @db.VarChar(100)
+  fullName               String              @db.VarChar(200)
+  displayName            String?             @db.VarChar(200)
+  salutation             String?             @db.VarChar(50)
+  suffix                 String?             @db.VarChar(50)
+  jobTitle               String?             @db.VarChar(300)
+  title                  String?             @db.VarChar(300)
+  department             String?             @db.VarChar(200)
+  seniority              String?             @db.VarChar(50)
+  email                  String?             @db.VarChar(300)
+  workEmail              String?             @db.VarChar(300)
+  personalEmail          String?             @db.VarChar(300)
+  phone                  String?             @db.VarChar(50)
+  mobilePhone            String?             @db.VarChar(50)
+  workPhone              String?             @db.VarChar(50)
+  linkedinUrl            String?             @db.VarChar(500)
+  address                String?             @db.VarChar(500)
+  city                   String?             @db.VarChar(100)
+  state                  String?             @db.VarChar(100)
+  country                String?             @db.VarChar(100)
+  postalCode             String?             @db.VarChar(50)
+  dateOfBirth            DateTime?           @db.Timestamp(6)
+  gender                 String?             @db.VarChar(20)
+  bio                    String?
+  profilePictureUrl      String?             @db.VarChar(500)
+  status                 PersonStatus?       @default(LEAD)
+  priority               PersonPriority?     @default(MEDIUM)
+  source                 String?
+  tags                   String[]            @default([])
+  customFields           Json?
+  notes                  String?
+  preferredLanguage      String?             @db.VarChar(10)
+  timezone               String?             @db.VarChar(50)
+  emailVerified          Boolean?            @default(false)
+  phoneVerified          Boolean?            @default(false)
+  lastAction             String?
+  lastActionDate         DateTime?           @db.Timestamp(6)
+  nextAction             String?
+  nextActionDate         DateTime?           @db.Timestamp(6)
+  actionStatus           String?
+  engagementScore        Float?              @default(0)
+  globalRank             Int?                @default(0)
+  companyRank            Int?                @default(0)
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime
+  entityId               String?             @db.VarChar(30)
+  deletedAt              DateTime?
+  mainSellerId           String?             @db.VarChar(30)
+  vertical               String?             @db.VarChar(100)
+  achievements           String[]            @default([])
+  budgetResponsibility   String?             @db.VarChar(100)
+  buyerGroupOptimized    Boolean?            @default(false)
+  buyerGroupRole         String?             @db.VarChar(50)
+  buyerGroupStatus       String?             @db.VarChar(50)
+  careerTimeline         Json?
+  certifications         String[]            @default([])
+  communicationStyle     String?             @db.VarChar(50)
+  coresignalData         Json?
+  currentCompany         String?             @db.VarChar(200)
+  currentRole            String?             @db.VarChar(200)
+  dataCompleteness       Float?              @default(0)
+  decisionMaking         String?             @db.VarChar(50)
+  decisionPower          Int?                @default(0)
+  degrees                Json?
+  emailConfidence        Float?              @default(0)
+  engagementLevel        String?             @db.VarChar(50)
+  engagementStrategy     String?             @db.VarChar(100)
+  enrichedData           Json?
+  enrichmentScore        Float?              @default(0)
+  enrichmentSources      String[]            @default([])
+  enrichmentVersion      String?             @db.VarChar(20)
+  fieldsOfStudy          String[]            @default([])
+  graduationYears        Int[]               @default([])
+  hiddenFromSections     String[]            @default([])
+  industryExperience     String?             @db.VarChar(100)
+  industrySkills         String[]            @default([])
+  influenceLevel         String?             @db.VarChar(50)
+  influenceScore         Float?              @default(0)
+  institutions           String[]            @default([])
+  isBuyerGroupMember     Boolean?            @default(false)
+  languages              String[]            @default([])
+  lastEnriched           DateTime?
+  leadershipExperience   String?             @db.VarChar(100)
+  mobileVerified         Boolean?            @default(false)
+  phoneConfidence        Float?              @default(0)
+  preferredContact       String?             @db.VarChar(50)
+  previousRoles          Json?
+  publications           String[]            @default([])
+  responseTime           String?             @db.VarChar(50)
+  roleHistory            Json?
+  rolePromoted           Json?
+  softSkills             String[]            @default([])
+  speakingEngagements    String[]            @default([])
+  statusReason           String?             @db.VarChar(200)
+  statusUpdateDate       DateTime?
+  teamSize               String?             @db.VarChar(50)
+  technicalSkills        String[]            @default([])
+  totalExperience        Int?
+  yearsAtCompany         Int?
+  yearsInRole            Int?
+  nextActionPriority     String?             @db.VarChar(20)
+  nextActionReasoning    String?
+  nextActionType         String?             @db.VarChar(50)
+  nextActionUpdatedAt    DateTime?
+  linkedinConnectionDate DateTime?           @db.Timestamp(6)
+  linkedinNavigatorUrl   String?             @db.VarChar(500)
+  bestContactTime        String?             @db.VarChar(50)
+  decisionPowerScore     Int?                @default(0)
+  educationLevel         String?             @db.VarChar(100)
+  relationshipWarmth     String?             @db.VarChar(50)
+  skills                 String?
+  valueDriver            String?
+  yearsExperience        Int?
+  actions                actions[]
+  company                companies?          @relation(fields: [companyId], references: [id])
+  mainSeller             users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
+  workspace              workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  coSellers              person_co_sellers[]
 
   @@index([workspaceId])
   @@index([companyId])
