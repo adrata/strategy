@@ -1537,6 +1537,18 @@ export function UniversalRecordTemplate({
           message: result.message,
           fullResult: result
         });
+        
+        // Debug the created action
+        if (result.success && result.data) {
+          console.log('✅ [UNIVERSAL] Action created successfully:', {
+            actionId: result.data.id,
+            actionType: result.data.type,
+            actionSubject: result.data.subject,
+            personId: result.data.personId,
+            companyId: result.data.companyId,
+            createdAt: result.data.createdAt
+          });
+        }
 
         if (result.success) {
           showMessage('Action logged successfully!');

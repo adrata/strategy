@@ -100,18 +100,6 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     return event.content && event.content.length > 150;
   };
 
-  const generateTimelineFromRecord = useCallback(() => {
-    // Only show real actions from the database - no fallback data
-    console.log('🔄 [ACTIONS] Initializing actions tab for record:', {
-      record: record,
-      recordType: recordType,
-      createdAt: record?.createdAt
-    });
-    
-    // Start with empty events - only real actions will be loaded from API
-    setTimelineEvents([]);
-  }, [record, recordType]);
-
   const loadTimelineFromAPI = useCallback(async () => {
     if (!record?.id) {
       console.log('🚨 [TIMELINE] No record ID, skipping API load');
@@ -195,6 +183,14 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         });
         
         // Debug the actions response in detail
+        console.log('🔍 [TIMELINE] Actions response details:', {
+          success: actionsResponse?.success,
+          data: actionsResponse?.data,
+          error: actionsResponse?.error,
+          actionsCount: actionsResponse?.data?.length || 0,
+          fullResponse: actionsResponse
+        });
+        
         if (actionsResponse) {
           console.log('🔍 [TIMELINE] Actions response details:', {
             success: actionsResponse.success,
@@ -314,6 +310,18 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
       setLoading(false);
     }
   }, [record, recordType, getUserName]);
+
+  const generateTimelineFromRecord = useCallback(() => {
+    // Only show real actions from the database - no fallback data
+    console.log('🔄 [ACTIONS] Initializing actions tab for record:', {
+      record: record,
+      recordType: recordType,
+      createdAt: record?.createdAt
+    });
+    
+    // Start with empty events - only real actions will be loaded from API
+    setTimelineEvents([]);
+  }, [record, recordType]);
 
   // Listen for action creation events to refresh timeline
   useEffect(() => {
