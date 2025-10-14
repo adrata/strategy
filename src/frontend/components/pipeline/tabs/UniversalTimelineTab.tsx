@@ -24,6 +24,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { users } = useWorkspaceUsers();
 
   // Function to get user name from user ID
@@ -326,19 +327,38 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
   // Listen for action creation events to refresh timeline
   useEffect(() => {
     const handleActionCreated = (event: CustomEvent) => {
+      console.log('🔄 [TIMELINE] Action created event received:', {
+        eventDetail: event.detail,
+        currentRecordId: record?.id,
+        currentRecordType: recordType,
+        eventRecordId: event.detail?.recordId,
+        eventRecordType: event.detail?.recordType
+      });
+      
       const { recordId, recordType: eventRecordType } = event.detail;
       if (recordId === record?.id && eventRecordType === recordType) {
-        console.log('🔄 [TIMELINE] Action created event received, refreshing timeline');
+        console.log('🔄 [TIMELINE] Action created event matches current record, refreshing timeline');
         // Clear cache and reload
         const cacheKey = `timeline-${record.id}`;
         localStorage.removeItem(cacheKey);
+        console.log('🗑️ [TIMELINE] Cleared cache and calling loadTimelineFromAPI');
+        // Trigger refresh with both function call and state update
         loadTimelineFromAPI();
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        console.log('🔄 [TIMELINE] Action created event does not match current record, ignoring');
       }
     };
+
+    console.log('🔄 [TIMELINE] Setting up actionCreated event listener for record:', {
+      recordId: record?.id,
+      recordType: recordType
+    });
 
     document.addEventListener('actionCreated', handleActionCreated as EventListener);
     
     return () => {
+      console.log('🔄 [TIMELINE] Removing actionCreated event listener');
       document.removeEventListener('actionCreated', handleActionCreated as EventListener);
     };
   }, [record?.id, recordType, loadTimelineFromAPI]);
@@ -348,7 +368,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
       generateTimelineFromRecord();
       loadTimelineFromAPI();
     }
-  }, [record, users, generateTimelineFromRecord, loadTimelineFromAPI]);
+  }, [record, users, generateTimelineFromRecord, loadTimelineFromAPI, refreshTrigger]);
 
   const isPastEvent = (date: Date) => date <= new Date();
 

@@ -295,6 +295,30 @@ export async function POST(request: NextRequest) {
       console.warn('⚠️ [V1 COMPANIES API] Could not validate user, mainSellerId will be null:', error);
     }
 
+    // Validate that userId exists in users table for action creation
+    if (context.userId) {
+      try {
+        const actionUserExists = await prisma.users.findUnique({
+          where: { id: context.userId },
+          select: { id: true, email: true }
+        });
+        
+        if (!actionUserExists) {
+          console.warn('⚠️ [V1 COMPANIES API] Context userId not in database:', {
+            userId: context.userId,
+            userEmail: context.userEmail
+          });
+        } else {
+          console.log('✅ [V1 COMPANIES API] Context user validated for action creation:', {
+            userId: actionUserExists.id,
+            email: actionUserExists.email
+          });
+        }
+      } catch (error) {
+        console.warn('⚠️ [V1 COMPANIES API] Could not validate context userId:', error);
+      }
+    }
+
     // Validate that the mainSellerId (if provided) exists in the users table
     if (body.mainSellerId && body.mainSellerId !== context.userId) {
       console.log('🔍 [V1 COMPANIES API] Validating mainSellerId:', body.mainSellerId);
@@ -413,28 +437,39 @@ export async function POST(request: NextRequest) {
         mainSellerId: company.mainSellerId
       });
 
-      // Create action for company creation
-      console.log('🔍 [V1 COMPANIES API] Creating action record...');
-      const action = await tx.actions.create({
-        data: {
-          type: 'company_created',
-          subject: `New company added: ${company.name}`,
-          description: `System created new company record for ${company.name}`,
-          status: 'COMPLETED',
-          priority: 'NORMAL',
-          workspaceId: context.workspaceId,
-          userId: context.userId,
-          companyId: company.id,
-          completedAt: new Date(),
-          updatedAt: new Date(), // Provide updatedAt value since schema doesn't have @updatedAt
-        },
-      });
+      // Create action for company creation (non-blocking)
+      let action = null;
+      try {
+        console.log('🔍 [V1 COMPANIES API] Creating action record...');
+        action = await tx.actions.create({
+          data: {
+            type: 'company_created',
+            subject: `New company added: ${company.name}`,
+            description: `System created new company record for ${company.name}`,
+            status: 'COMPLETED',
+            priority: 'NORMAL',
+            workspaceId: context.workspaceId,
+            userId: context.userId,
+            companyId: company.id,
+            completedAt: new Date(),
+            updatedAt: new Date(), // Provide updatedAt value since schema doesn't have @updatedAt
+          },
+        });
 
-      console.log('✅ [V1 COMPANIES API] Action created successfully:', {
-        actionId: action.id,
-        actionType: action.type,
-        companyId: action.companyId
-      });
+        console.log('✅ [V1 COMPANIES API] Action created successfully:', {
+          actionId: action.id,
+          actionType: action.type,
+          companyId: action.companyId
+        });
+      } catch (actionError) {
+        console.error('⚠️ [V1 COMPANIES API] Failed to create action (non-blocking):', {
+          error: actionError,
+          errorMessage: actionError instanceof Error ? actionError.message : String(actionError),
+          userId: context.userId,
+          companyId: company.id
+        });
+        // Continue without action - company creation should still succeed
+      }
 
       return { company, action };
       });

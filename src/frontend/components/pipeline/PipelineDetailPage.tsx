@@ -76,6 +76,9 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   // Use centralized profile popup context
   const { isProfileOpen, setIsProfileOpen, profileAnchor, setProfileAnchor, profilePopupRef } = useProfilePopup();
   
+  // Get user data from PipelineContext - MOVED TO TOP to fix hooks order violation
+  const { user: pipelineUser, company, workspace } = usePipeline();
+  
   // Load data for navigation - REQUIRED for navigation arrows to work
   const { data: acquisitionData } = useAcquisitionOS();
   
@@ -688,7 +691,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     const recordToShow = selectedRecord || previousRecord;
     
     // Get user data from PipelineContext to match PipelineLeftPanelStandalone
-    const { user: pipelineUser, company, workspace } = usePipeline();
+    // Note: pipelineUser, company, workspace are now available from the top-level hook call
     
     // Create the middle panel content (record template)
     const middlePanelContent = (
@@ -918,7 +921,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   }
 
   // Get user data from PipelineContext to match PipelineLeftPanelStandalone
-  const { user: pipelineUser, company, workspace } = usePipeline();
+  // Note: pipelineUser, company, workspace are now available from the top-level hook call
 
 
   // No fallback states - only show real data

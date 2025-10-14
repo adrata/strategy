@@ -193,8 +193,24 @@ export function logAndCreateErrorResponse(
   if (error instanceof Error) {
     // Prisma errors
     if (error.name === 'PrismaClientKnownRequestError') {
-      responseMessage = 'Database operation failed';
-      responseCode = 'DATABASE_ERROR';
+      const prismaError = error as any;
+      console.error('❌ [SECURE API] Prisma error details:', {
+        code: prismaError.code,
+        meta: prismaError.meta,
+        clientVersion: prismaError.clientVersion
+      });
+      
+      // Handle specific Prisma error codes
+      if (prismaError.code === 'P2003') {
+        responseMessage = 'Foreign key constraint failed';
+        responseCode = 'FOREIGN_KEY_ERROR';
+      } else if (prismaError.code === 'P2002') {
+        responseMessage = 'Unique constraint violation';
+        responseCode = 'DUPLICATE_ERROR';
+      } else {
+        responseMessage = 'Database operation failed';
+        responseCode = 'DATABASE_ERROR';
+      }
       responseStatus = 500;
     }
     // Validation errors

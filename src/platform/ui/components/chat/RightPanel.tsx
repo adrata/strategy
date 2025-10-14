@@ -191,6 +191,9 @@ export function RightPanel() {
   const [showConversationHistory, setShowConversationHistory] = useState(false);
   const [showMenuPopup, setShowMenuPopup] = useState(false);
   
+  // Track if conversations have been initially loaded to prevent re-loading on workspace changes
+  const conversationsLoadedRef = useRef(false);
+  
   // Mock data for AI actions and team wins
   const [aiActions] = useState<AIAction[]>([
     {
@@ -242,8 +245,9 @@ export function RightPanel() {
   }, [conversations, workspaceId]);
 
   // Load conversations from localStorage on component mount - WORKSPACE ISOLATED
+  // Only load once to prevent closed tabs from reappearing
   useEffect(() => {
-    if (typeof window !== 'undefined' && workspaceId) {
+    if (typeof window !== 'undefined' && workspaceId && !conversationsLoadedRef.current) {
       try {
         const storageKey = `adrata-conversations-${workspaceId}`;
         const stored = localStorage.getItem(storageKey);
@@ -261,6 +265,7 @@ export function RightPanel() {
           }));
           setConversations(restoredConversations);
           console.log('📂 [CHAT] Loaded conversations from localStorage:', restoredConversations.length, 'for workspace:', workspaceId);
+          conversationsLoadedRef.current = true;
         }
       } catch (error) {
         console.warn('Failed to load stored conversations:', error);
