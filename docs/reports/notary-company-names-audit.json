@@ -1,0 +1,3202 @@
+{
+  "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+  "workspaceName": "Notary Everyday",
+  "auditDate": "2025-10-14T05:11:55.620Z",
+  "totalCompanies": 3802,
+  "summary": {
+    "longNames": 1,
+    "namesWithSpecialChars": 3,
+    "namesWithTags": 15,
+    "duplicateNames": 123,
+    "cleanNames": 3798,
+    "suspiciousNames": 101,
+    "nonCompanyNames": 0
+  },
+  "issues": {
+    "longNames": [
+      {
+        "id": "01K7ERTJFRYJHRB2SRRVEJCJTK",
+        "name": "Liberty Title & Escrow - Tactically Executing Real Estate Transactions for Financial Lending Institutions Through The Entire Loan Life Cycle",
+        "length": 140,
+        "tags": []
+      }
+    ],
+    "namesWithSpecialChars": [
+      {
+        "id": "01K46CYP7KJGZVKP1Q725QREE9",
+        "name": "Freeman Team Properties - CA DRE# 02070661 - NV DRE# S.0190123",
+        "tags": []
+      },
+      {
+        "id": "01K7ERTRV13DJA8R3GH1FW7ZGH",
+        "name": "Magnus Title Agency 602.332.3111 / Romy@Magnus Title.com",
+        "tags": []
+      },
+      {
+        "id": "01K46CGM2RVRHHCY21EXKQAQCP",
+        "name": "Proactive Alliance Team @ Real Broker NY LLC",
+        "tags": []
+      }
+    ],
+    "namesWithTags": [
+      {
+        "id": "01K46C6PWNRZ38CK1EAF755K8J",
+        "name": "Chicago Title Insurance Company - National Commercial Services - Pittsburgh",
+        "tags": []
+      },
+      {
+        "id": "01K46C30EKA1735RNK3AZHTXFZ",
+        "name": "Chicago Title National Commercial Services - DC - MD - VA",
+        "tags": []
+      },
+      {
+        "id": "01K46CM6883Q2KSH62WFSZ3W9Y",
+        "name": "Commonwealth Land Title - National Commercial Services - New York",
+        "tags": []
+      },
+      {
+        "id": "01K46CBVKANT6KKH92H993S0W9",
+        "name": "Fidelity National Title - NCS - DC - MD - VA",
+        "tags": []
+      },
+      {
+        "id": "01K46CXFSJ8GNBVTE62EPNKP16",
+        "name": "Fidelity National Title - National Commercial Services - DC & VA",
+        "tags": []
+      },
+      {
+        "id": "01K46C9R4TNFQ1K7BZ0M7XEAT9",
+        "name": "Fidelity National Title - National Commercial Services - New York",
+        "tags": []
+      },
+      {
+        "id": "01K46BZS1P2PBC9BXVTZ04AS18",
+        "name": "First American Title (formerly Real Estate Closing Solutions)",
+        "tags": []
+      },
+      {
+        "id": "01K46CYP7KJGZVKP1Q725QREE9",
+        "name": "Freeman Team Properties - CA DRE# 02070661 - NV DRE# S.0190123",
+        "tags": []
+      },
+      {
+        "id": "01K7ERTJYG1W7B4VFA46P1KVMW",
+        "name": "Great American Title Agency - Surprise (ph. 623-455-3683)",
+        "tags": []
+      },
+      {
+        "id": "01K46CPWTJXG9H5Y9K494R19QF",
+        "name": "INTEGRATED SEARCH TECHNOLOGIES, LLC (INDIANA SEARCH TECHNOLOGIES, LLC)",
+        "tags": []
+      },
+      {
+        "id": "01K46CW3T1WXHPYD3HKQ9NN13S",
+        "name": "Kevin Vice - Entrepreneur - Attorney - Business Law - Real Estate",
+        "tags": []
+      },
+      {
+        "id": "01K46C9J3WK53VNT65EVQSXB8H",
+        "name": "Mr. Title - Keith Stonehouse - Devon Title",
+        "tags": []
+      },
+      {
+        "id": "01K7ERTHS24YZXRWGP59PHNZR8",
+        "name": "RE/MAX CHAMPIONS FLORIDA - MOTTO MORTGAGE CHAMPIONS - CHAMPIONS TITLE SERVICES",
+        "tags": []
+      },
+      {
+        "id": "01K46C6QGKZHG2PJN4NMCWBD53",
+        "name": "Ryland Homes (now CalAtlantic Homes- Please see updates below)",
+        "tags": []
+      },
+      {
+        "id": "01K46C5F4K5SFH8AFSXJ9DZ94F",
+        "name": "Smolar Andriko Law Group (formerly PC Law Associates)",
+        "tags": []
+      }
+    ],
+    "duplicates": [
+      {
+        "name": "aces title agency",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CGYASW6MZ0HFB0WZFFP0F",
+            "name": "ACES Title Agency",
+            "domain": null,
+            "website": "cbstitleagency.com"
+          },
+          {
+            "id": "01K4JPQ49JXJXC0BY4Z9FA2FA0",
+            "name": "ACES Title Agency",
+            "domain": null,
+            "website": "https://aces.com"
+          }
+        ]
+      },
+      {
+        "name": "ams title agency & escrow, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46BY8CZ3H8H3AYW25N10T3K",
+            "name": "AMS Title Agency & Escrow, LLC",
+            "domain": null,
+            "website": "amstitlefl.com"
+          },
+          {
+            "id": "01K4JPQ4063CFYJ7Z99WFJ0J8G",
+            "name": "AMS Title Agency & Escrow, LLC",
+            "domain": null,
+            "website": "https://amstitleagency.com"
+          }
+        ]
+      },
+      {
+        "name": "asap title agency, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C06EDG6P20TT6QVDHW8BT",
+            "name": "ASAP Title Agency, LLC",
+            "domain": null,
+            "website": "snaptitle.com"
+          },
+          {
+            "id": "01K46BY8ZRVZBK8GC40QABQ7GK",
+            "name": "ASAP Title Agency, LLC",
+            "domain": null,
+            "website": "asaptitleagency.com"
+          }
+        ]
+      },
+      {
+        "name": "abstract associates of lancaster, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CHY45F4M40PXW0JG40QY3",
+            "name": "Abstract Associates Of Lancaster, Inc.",
+            "domain": null,
+            "website": "abstractassociates.com"
+          },
+          {
+            "id": "01K46CEBTF71ZED8XVVGS8YD12",
+            "name": "Abstract Associates of Lancaster, Inc.",
+            "domain": null,
+            "website": "abstractassociates.com"
+          }
+        ]
+      },
+      {
+        "name": "acer title & escrow, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46BYQT5FVMP9CTCKPPQHEH5",
+            "name": "Acer Title & Escrow, LLC",
+            "domain": null,
+            "website": "quakertitle.com"
+          },
+          {
+            "id": "01K46CD9EJDWJNRX5B7YG0RYXA",
+            "name": "Acer Title & Escrow, LLC",
+            "domain": null,
+            "website": "acertitle.com"
+          }
+        ]
+      },
+      {
+        "name": "advantage title, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CS1GPNJ7316R8E81QX42V",
+            "name": "Advantage Title, LLC",
+            "domain": null,
+            "website": "advantagetitlellc.net"
+          },
+          {
+            "id": "01K46C4D7H7ZDNM9EXSDGQNCNN",
+            "name": "Advantage Title, LLC",
+            "domain": null,
+            "website": "advantagetitle.com"
+          }
+        ]
+      },
+      {
+        "name": "all american title company inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C5NTN3J35Y1ZETYH0BA28",
+            "name": "All American Title Company Inc.",
+            "domain": null,
+            "website": "allamericantitleco.com"
+          },
+          {
+            "id": "01K46BZSBR63G80T6J669RW6K0",
+            "name": "All American Title Company Inc.",
+            "domain": null,
+            "website": "allamtitle.com"
+          }
+        ]
+      },
+      {
+        "name": "all real estate solutions, llc.",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46CFV6KN1QSPWDGBJ4QDYQ0",
+            "name": "All Real Estate Solutions, LLC.",
+            "domain": null,
+            "website": "kohlrealestatesolutions.com"
+          },
+          {
+            "id": "01K46CHEGCT69WE5ZHZHDX2EWJ",
+            "name": "All Real Estate Solutions, LLC.",
+            "domain": null,
+            "website": "allresolutions.com"
+          },
+          {
+            "id": "01K46C3P77AWJ6PYVVEP0MRGEM",
+            "name": "All Real Estate Solutions, LLC.",
+            "domain": null,
+            "website": "c3realestatesolutions.com"
+          }
+        ]
+      },
+      {
+        "name": "allegiance title of tennessee, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CT4TFK0WC7BD435ZK88TM",
+            "name": "Allegiance Title of Tennessee, LLC",
+            "domain": null,
+            "website": "reliancetitletn.com"
+          },
+          {
+            "id": "01K46CWS0AVJ3TR8RNX7XPVXHM",
+            "name": "Allegiance Title of Tennessee, LLC",
+            "domain": null,
+            "website": "allegiancetitletn.com"
+          }
+        ]
+      },
+      {
+        "name": "alliance title & escrow",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46BYEX50NMB8MCN25XDHHHY",
+            "name": "Alliance Title & Escrow",
+            "domain": null,
+            "website": "alliantfl.com"
+          },
+          {
+            "id": "01K46C5HCKC4N5R5T51PS8E256",
+            "name": "Alliance Title & Escrow",
+            "domain": null,
+            "website": "alliancetitle.com"
+          }
+        ]
+      },
+      {
+        "name": "alliance title corporation",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C49TC3Y0C9FJ3HB6TQETA",
+            "name": "Alliance Title Corporation",
+            "domain": null,
+            "website": "allegiancetitle.com"
+          },
+          {
+            "id": "01K46CCZSQS39GSRW04SC3RF2D",
+            "name": "Alliance Title Corporation",
+            "domain": null,
+            "website": "alliancetitlecorp.com"
+          }
+        ]
+      },
+      {
+        "name": "anclote title services, inc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C1WYDKEW3HEDB6BQ6GCWC",
+            "name": "Anclote Title Services, Inc",
+            "domain": null,
+            "website": "anclote-title.com"
+          },
+          {
+            "id": "01K46D1Y5058ZQC53P3CVMFHV1",
+            "name": "Anclote Title Services, Inc",
+            "domain": null,
+            "website": "anchortitlefla.com"
+          }
+        ]
+      },
+      {
+        "name": "armor title company, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CZYNB2SV5GZ6F6KGZ54B6",
+            "name": "Armor Title Company, LLC",
+            "domain": null,
+            "website": "armourtitlecompany.com"
+          },
+          {
+            "id": "01K46CG00W921MC2J21DVFE49D",
+            "name": "Armor Title Company, LLC",
+            "domain": null,
+            "website": "armortitle.com"
+          }
+        ]
+      },
+      {
+        "name": "attorneys title group, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C9YQ5M9PZ15952ZXBWT31",
+            "name": "Attorneys Title Group, LLC",
+            "domain": null,
+            "website": "youratg.com"
+          },
+          {
+            "id": "01K46CEDF6BYSGJG2X7E12NE4P",
+            "name": "Attorneys Title Group, LLC",
+            "domain": null,
+            "website": "attorneystitlemn.com"
+          }
+        ]
+      },
+      {
+        "name": "bella title llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C83M1ZRTK59PQP2HJVGMK",
+            "name": "BELLA TITLE LLC",
+            "domain": null,
+            "website": "belltitle.com"
+          },
+          {
+            "id": "01K46CJHDXXM4JC27DD5DE4332",
+            "name": "BELLA TITLE LLC",
+            "domain": null,
+            "website": "bella-title.com"
+          }
+        ]
+      },
+      {
+        "name": "berkshire hathaway homeservices carolinas realty",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46D1Z12QQ7TSB9H7KEXMYQS",
+            "name": "Berkshire Hathaway HomeServices Carolinas Realty",
+            "domain": null,
+            "website": "bhhsfloridarealty.com"
+          },
+          {
+            "id": "01K46D1ZKWVQHACWBAMMW19EJV",
+            "name": "Berkshire Hathaway HomeServices Carolinas Realty",
+            "domain": null,
+            "website": "bhhsfloridarealty.com"
+          },
+          {
+            "id": "01K46C6CV7Q0A3A5D9B8JPNPNP",
+            "name": "Berkshire Hathaway HomeServices Carolinas Realty",
+            "domain": null,
+            "website": "bhhscarolinas.com"
+          }
+        ]
+      },
+      {
+        "name": "berkshire hathaway homeservices heritage real estate",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46CETYF7PAE6GC6ZWSMJQ8Z",
+            "name": "Berkshire Hathaway HomeServices Heritage Real Estate",
+            "domain": null,
+            "website": "mycomohome.com"
+          },
+          {
+            "id": "01K46CKNG2PDPR4HDXSRKXPJZJ",
+            "name": "Berkshire Hathaway HomeServices Heritage Real Estate",
+            "domain": null,
+            "website": "bhhscrest.com"
+          },
+          {
+            "id": "01K46CQ8W3AB0THNGAP6NMRJV2",
+            "name": "Berkshire Hathaway HomeServices Heritage Real Estate",
+            "domain": null,
+            "website": "bhhsheritage.com"
+          }
+        ]
+      },
+      {
+        "name": "berkshire hathaway homeservices starck real estate-elgin",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46CK5A58PGJ1RHPV31SFVH5",
+            "name": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+            "domain": null,
+            "website": "starckre.com"
+          },
+          {
+            "id": "01K46CCHQCGC862B86DQPZ5W43",
+            "name": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+            "domain": null,
+            "website": "starckre.com"
+          },
+          {
+            "id": "01K46CCM9WKMBREBD2QBSKSAEP",
+            "name": "Berkshire Hathaway Homeservices Starck Real Estate-Elgin",
+            "domain": null,
+            "website": "bhhsall.com"
+          }
+        ]
+      },
+      {
+        "name": "bestitle agency, inc.",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46C60E9TKV5FGJG5NBCYCRA",
+            "name": "BesTitle Agency, Inc.",
+            "domain": null,
+            "website": "webtitle.agency"
+          },
+          {
+            "id": "01K46C45PE8GBSK7HX56TF9VTF",
+            "name": "BesTitle Agency, Inc.",
+            "domain": null,
+            "website": "etitleagency.com"
+          },
+          {
+            "id": "01K46CCS33D723EJA7P7HH2QNB",
+            "name": "BesTitle Agency, Inc.",
+            "domain": null,
+            "website": "bestitle.com"
+          }
+        ]
+      },
+      {
+        "name": "better homes and gardens real estate, the masiello group",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CMQESRM61D4HDMPATAX4R",
+            "name": "Better Homes and Gardens Real Estate, The Masiello Group",
+            "domain": null,
+            "website": "masiello.com"
+          },
+          {
+            "id": "01K46CT0BF8WVSJVEG6EGHGZ66",
+            "name": "Better Homes and Gardens Real Estate, The Masiello Group",
+            "domain": null,
+            "website": "masiello.com"
+          }
+        ]
+      },
+      {
+        "name": "bosse title corp",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CW9PH3W8RA7X0APXMBTZ5",
+            "name": "Bosse Title Corp",
+            "domain": null,
+            "website": "jeffbosse.com"
+          },
+          {
+            "id": "01K46CFVTQN33YQZZHK05BN6YW",
+            "name": "Bosse Title Corp",
+            "domain": null,
+            "website": "bossetitle.com"
+          }
+        ]
+      },
+      {
+        "name": "brightline title, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K4JPQ653E6YHVZTVXEQMGTSP",
+            "name": "Brightline Title, LLC",
+            "domain": null,
+            "website": "https://brightlinetitle.com"
+          },
+          {
+            "id": "01K46D02E22WBXZKYWJJ6YW1K2",
+            "name": "Brightline Title, LLC",
+            "domain": null,
+            "website": "brightlinetitle.com"
+          }
+        ]
+      },
+      {
+        "name": "c.l.a. title & escrow",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C4G8750D4P99004TB53MW",
+            "name": "C.L.A. Title & Escrow",
+            "domain": null,
+            "website": "clatitle.com"
+          },
+          {
+            "id": "01K46BZRBYA920M83AYYWN9QBM",
+            "name": "C.L.A. Title & Escrow",
+            "domain": null,
+            "website": "fltitle.co"
+          }
+        ]
+      },
+      {
+        "name": "cf escrow, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CBV9CNJCKJ53TPNAZ2SGQ",
+            "name": "CF Escrow, Inc.",
+            "domain": null,
+            "website": "cvescrow.com"
+          },
+          {
+            "id": "01K46CZ1XATNXZTTZC8E194ZF0",
+            "name": "CF Escrow, Inc.",
+            "domain": null,
+            "website": "cfescrow.com"
+          }
+        ]
+      },
+      {
+        "name": "chase title and escrow services, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CQ6BPY7SJ284SZP8D6YKG",
+            "name": "CHASE TITLE AND ESCROW SERVICES, LLC",
+            "domain": null,
+            "website": "acmetitleandescrow.com"
+          },
+          {
+            "id": "01K46CWG5QFCG5WP1J4S5WKRZQ",
+            "name": "CHASE TITLE AND ESCROW SERVICES, LLC",
+            "domain": null,
+            "website": "chasetitleservices.com"
+          }
+        ]
+      },
+      {
+        "name": "chb title, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C8KP22AX35AG6MF3ZF2ST",
+            "name": "CHB Title, LLC",
+            "domain": null,
+            "website": "chbtitle.com"
+          },
+          {
+            "id": "01K46CMSY7PPF1AZAZR6WFGQA8",
+            "name": "CHB Title, LLC",
+            "domain": null,
+            "website": "chbtitle.com"
+          }
+        ]
+      },
+      {
+        "name": "colonial title group, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CYZG81PJ3686SS8D0RM7X",
+            "name": "COLONIAL TITLE GROUP, INC.",
+            "domain": null,
+            "website": "ctgtn.com"
+          },
+          {
+            "id": "01K46CJB5DJRA2TA3WC2VJ4EZW",
+            "name": "COLONIAL TITLE GROUP, INC.",
+            "domain": null,
+            "website": "colonytitle.com"
+          }
+        ]
+      },
+      {
+        "name": "capital abstract & title co., llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46D1DWH6CVXXCS5F7R05ZNG",
+            "name": "Capital Abstract & Title Co., LLC",
+            "domain": null,
+            "website": "capitalabstract.com"
+          },
+          {
+            "id": "01K46C9A5R51Q35HD8BT2SWYY9",
+            "name": "Capital Abstract & Title Co., LLC",
+            "domain": null,
+            "website": "capitalabstracttitle.com"
+          }
+        ]
+      },
+      {
+        "name": "capital title & escrow, llc",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46D1463ER6V47RA6CQPRSA6",
+            "name": "Capital Title & Escrow, LLC",
+            "domain": null,
+            "website": "vitaltitleescrow.com"
+          },
+          {
+            "id": "01K46C6S6PKJK4W73JKQ37W929",
+            "name": "Capital Title & Escrow, LLC",
+            "domain": null,
+            "website": "capitaltitleins.com"
+          },
+          {
+            "id": "01K46CCX8RYAQADD0H501M49W4",
+            "name": "Capital Title & Escrow, LLC",
+            "domain": null,
+            "website": "captitlenh.com"
+          }
+        ]
+      },
+      {
+        "name": "carver county abstract & title co., inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CJJ1XP52EZ96J64G51TKN",
+            "name": "Carver County Abstract & Title Co., Inc.",
+            "domain": null,
+            "website": "carvercountyabstract.com"
+          },
+          {
+            "id": "01K46C92FESHCW5HHDKNZM0D0T",
+            "name": "Carver County Abstract & Title Co., Inc.",
+            "domain": null,
+            "website": "kerrtitle.com"
+          }
+        ]
+      },
+      {
+        "name": "century title services, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CSQCHVDGC2EAYRJKJVKB0",
+            "name": "Century Title Services, Inc.",
+            "domain": null,
+            "website": null
+          },
+          {
+            "id": "01K46D0SY433EP53YRA9QG9YQW",
+            "name": "Century Title Services, Inc.",
+            "domain": null,
+            "website": "venturetitleservices.com"
+          }
+        ]
+      },
+      {
+        "name": "clear title co",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CQS43A04PF411XB0E18ES",
+            "name": "Clear Title Co",
+            "domain": null,
+            "website": "cleartitlecompany.com"
+          },
+          {
+            "id": "01K46CMH3N0SEP1AA5T8W5FEMH",
+            "name": "Clear Title Co",
+            "domain": null,
+            "website": "mycleartitle.com"
+          }
+        ]
+      },
+      {
+        "name": "coldwell banker sneller real estate",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CCW0N2XGS3V8EDBGPY1R2",
+            "name": "Coldwell Banker Sneller Real Estate",
+            "domain": null,
+            "website": "snellerrealestate.com"
+          },
+          {
+            "id": "01K46C34X5TJ52CBN11FP3GYNR",
+            "name": "Coldwell Banker Sneller Real Estate",
+            "domain": null,
+            "website": "cbselectre.com"
+          }
+        ]
+      },
+      {
+        "name": "columbia title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CJYS0VWJ1GWQY139N8SMD",
+            "name": "Columbia Title Company",
+            "domain": null,
+            "website": "columbia-title.com"
+          },
+          {
+            "id": "01K46CH6FPCH72XXP01AKPY4DA",
+            "name": "Columbia Title Company",
+            "domain": null,
+            "website": "columbiatitlegroup.com"
+          }
+        ]
+      },
+      {
+        "name": "company br9v40hp",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K7ERWR6EFXS4S1V4VSVF0HJ3",
+            "name": "Company BR9V40HP",
+            "domain": null,
+            "website": null
+          },
+          {
+            "id": "01K7ERWRT7JZYZY9VFK3ESAX4X",
+            "name": "Company BR9V40HP",
+            "domain": null,
+            "website": null
+          },
+          {
+            "id": "01K7ERWRM10MX2XMZWKTQQA160",
+            "name": "Company BR9V40HP",
+            "domain": null,
+            "website": null
+          }
+        ]
+      },
+      {
+        "name": "company jqmq91p9",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K7ERXGNS16HNH9QV7CKNA12P",
+            "name": "Company JQMQ91P9",
+            "domain": null,
+            "website": null
+          },
+          {
+            "id": "01K7ERXKFCRSS6J5B8W1NPCF15",
+            "name": "Company JQMQ91P9",
+            "domain": null,
+            "website": null
+          }
+        ]
+      },
+      {
+        "name": "company yahspqn5",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K7ERXG32ECJM7KB8ZBPJMBVA",
+            "name": "Company YAHSPQN5",
+            "domain": null,
+            "website": null
+          },
+          {
+            "id": "01K7ERWMWR07NAP3PV0QPJEA9X",
+            "name": "Company YAHSPQN5",
+            "domain": null,
+            "website": null
+          },
+          {
+            "id": "01K7ERXJK7NHVYND3MAX2X8NG4",
+            "name": "Company YAHSPQN5",
+            "domain": null,
+            "website": null
+          }
+        ]
+      },
+      {
+        "name": "core lender services, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CXKDDP968K1Q5Y2K2NB67",
+            "name": "Core Lender Services, Inc.",
+            "domain": null,
+            "website": "corelenderservices.com"
+          },
+          {
+            "id": "01K46C7039S1Z0Y45GXR35KQJZ",
+            "name": "Core Lender Services, Inc.",
+            "domain": null,
+            "website": "trglenderservices.com"
+          }
+        ]
+      },
+      {
+        "name": "cosmopolitan title agency, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C1FPQY4M3GAVJWV77TK4G",
+            "name": "Cosmopolitan Title Agency, LLC",
+            "domain": null,
+            "website": "cosmotitle.com"
+          },
+          {
+            "id": "01K46C7V9S57K8WXGG6YSK2JBM",
+            "name": "Cosmopolitan Title Agency, LLC",
+            "domain": null,
+            "website": "brbcosmo.com"
+          }
+        ]
+      },
+      {
+        "name": "eastland title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C13HK1FV1E6MDRG7XTSAQ",
+            "name": "EASTLAND TITLE COMPANY",
+            "domain": null,
+            "website": "eastlandtitletx.com"
+          },
+          {
+            "id": "01K46CGXPSJ1EQ6KJYVC0RMG71",
+            "name": "EASTLAND TITLE COMPANY",
+            "domain": null,
+            "website": "eastlandtitletx.com"
+          }
+        ]
+      },
+      {
+        "name": "elite title solutions,llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CPREBT3M03P70CVE35HRJ",
+            "name": "ELITE TITLE SOLUTIONS,LLC",
+            "domain": null,
+            "website": "elitetitlecompany.com"
+          },
+          {
+            "id": "01K46BZ1TTMQ0GZ0GR934565MT",
+            "name": "ELITE TITLE SOLUTIONS,LLC",
+            "domain": null,
+            "website": "unitedtitlesolutions.com"
+          }
+        ]
+      },
+      {
+        "name": "edina realty 50th and france",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CE7DB79B2DPVK0CHC591T",
+            "name": "Edina Realty 50th and France",
+            "domain": null,
+            "website": "edinarealty.com"
+          },
+          {
+            "id": "01K46CH3BVYF48BRTV3CEAW44G",
+            "name": "Edina Realty 50th and France",
+            "domain": null,
+            "website": "edinarealty.com"
+          }
+        ]
+      },
+      {
+        "name": "elite title services llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CYXFK11D6RPJEGV3TEV13",
+            "name": "Elite Title Services LLC",
+            "domain": null,
+            "website": "etsclosings.com"
+          },
+          {
+            "id": "01K46BZRQTNG04E2ZJFC8M1MMP",
+            "name": "Elite Title Services LLC",
+            "domain": null,
+            "website": "luxetitleservices.com"
+          }
+        ]
+      },
+      {
+        "name": "encore title services, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C26GNX6EZM690DD4MRM6W",
+            "name": "Encore Title Services, LLC",
+            "domain": null,
+            "website": "encoretitleservices.com"
+          },
+          {
+            "id": "01K46C0HT6XBXXY5XKM48V75R9",
+            "name": "Encore Title Services, LLC",
+            "domain": null,
+            "website": "evoketitle.com"
+          }
+        ]
+      },
+      {
+        "name": "entrust title group",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CDPFSB2R5TRCZNZE11NBJ",
+            "name": "Entrust Title Group",
+            "domain": null,
+            "website": "etgtitle.com"
+          },
+          {
+            "id": "01K46BZNG4EYGCRWVJYJDW1SYD",
+            "name": "Entrust Title Group",
+            "domain": null,
+            "website": "trusttitlegroup.com"
+          }
+        ]
+      },
+      {
+        "name": "esquire title services, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46D1HTY99QY8BKP2CR4ETQ0",
+            "name": "Esquire Title Services, Inc.",
+            "domain": null,
+            "website": "empiretitleservices.com"
+          },
+          {
+            "id": "01K46C0T1FN9AQAV3D4S29ECM3",
+            "name": "Esquire Title Services, Inc.",
+            "domain": null,
+            "website": "esquiretitleservices.com"
+          }
+        ]
+      },
+      {
+        "name": "executive title llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CR5RGMG32R13PT2VT6DFF",
+            "name": "Executive Title LLC",
+            "domain": null,
+            "website": "executivetitlewi.com"
+          },
+          {
+            "id": "01K46CB53EZ3PKD2XWK1BYRR8W",
+            "name": "Executive Title LLC",
+            "domain": null,
+            "website": "etofmn.com"
+          }
+        ]
+      },
+      {
+        "name": "first title and escrow company, inc.",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46CN57NDZZQF3VJ8PW9P5V8",
+            "name": "First Title and Escrow Company, Inc.",
+            "domain": null,
+            "website": null
+          },
+          {
+            "id": "01K46C5TWEJH8TDJRWH761ZS0N",
+            "name": "First Title and Escrow Company, Inc.",
+            "domain": null,
+            "website": "firsttitleservices.com"
+          },
+          {
+            "id": "01K46C1HX11CE8KQ9FD4SASKRE",
+            "name": "First Title and Escrow Company, Inc.",
+            "domain": null,
+            "website": "spiritclosings.com"
+          }
+        ]
+      },
+      {
+        "name": "freedom title corporation",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CNVRXNDW0TBFEKFB29KTN",
+            "name": "Freedom Title Corporation",
+            "domain": null,
+            "website": "freedomtitle.com"
+          },
+          {
+            "id": "01K46CHETAF5XE6TAYTH4WNGQ1",
+            "name": "Freedom Title Corporation",
+            "domain": null,
+            "website": "freedom-title.com"
+          }
+        ]
+      },
+      {
+        "name": "frontier title company, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CEY3F5FDBWK0XGWZQTAPR",
+            "name": "Frontier Title Company, LLC",
+            "domain": null,
+            "website": "frontiertitlecompany.com"
+          },
+          {
+            "id": "01K46C62M05VXJ37VCC6JG2ET5",
+            "name": "Frontier Title Company, LLC",
+            "domain": null,
+            "website": "frontiertitletexas.com"
+          }
+        ]
+      },
+      {
+        "name": "gallo title services, llc",
+        "count": 6,
+        "entries": [
+          {
+            "id": "01K46CQ3F6G5F0MQA9F235NZ9K",
+            "name": "Gallo Title Services, LLC",
+            "domain": null,
+            "website": "clktitles.com"
+          },
+          {
+            "id": "01K46CRD7X0C5PJD1ET9X2FJTY",
+            "name": "Gallo Title Services, LLC",
+            "domain": null,
+            "website": "actil.net"
+          },
+          {
+            "id": "01K46BY9JF8EMATAA7NCC3NPHG",
+            "name": "Gallo Title Services, LLC",
+            "domain": null,
+            "website": "alltitleservices.com"
+          },
+          {
+            "id": "01K46BY54PHF8ABXXHB253MR62",
+            "name": "Gallo Title Services, LLC",
+            "domain": null,
+            "website": "a1titleservices.com"
+          },
+          {
+            "id": "01K46CRDVK18QTDW52C4M80944",
+            "name": "Gallo Title Services, LLC",
+            "domain": null,
+            "website": "alltitleservices.com"
+          },
+          {
+            "id": "01K46CWR5TTYTZE7X9HX2K71JX",
+            "name": "Gallo Title Services, LLC",
+            "domain": null,
+            "website": "gallotitle.com"
+          }
+        ]
+      },
+      {
+        "name": "global american title agency",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CAZPY5BSCCRE30SZTSJMK",
+            "name": "Global American Title Agency",
+            "domain": null,
+            "website": "globaltitle.com"
+          },
+          {
+            "id": "01K46BXR202TEN4X4K375PF7PQ",
+            "name": "Global American Title Agency",
+            "domain": null,
+            "website": "azgat.com"
+          }
+        ]
+      },
+      {
+        "name": "global title solutions",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46D238XFXV7RBGMZX5SJPB9",
+            "name": "Global Title Solutions",
+            "domain": null,
+            "website": "mytotaltitle.com"
+          },
+          {
+            "id": "01K46C64SSXZH23RNMF6NK8EBK",
+            "name": "Global Title Solutions",
+            "domain": null,
+            "website": "globaltitlesolutions.com"
+          }
+        ]
+      },
+      {
+        "name": "heritage title, ltd",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CDKJ6MP9RY491R2337BQV",
+            "name": "Heritage Title, Ltd",
+            "domain": null,
+            "website": "heritagetitlemd.com"
+          },
+          {
+            "id": "01K46C4BP3W5CVYWZ70STD3SF4",
+            "name": "Heritage Title, Ltd",
+            "domain": null,
+            "website": "heritagetco.com"
+          }
+        ]
+      },
+      {
+        "name": "hogan land title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CMVSK1PTA8NK2PZMPFDBQ",
+            "name": "Hogan Land Title Company",
+            "domain": null,
+            "website": "hogantitle.com"
+          },
+          {
+            "id": "01K46CE73D4671AJWJ16WRDE4D",
+            "name": "Hogan Land Title Company",
+            "domain": null,
+            "website": "hogantitle.com"
+          }
+        ]
+      },
+      {
+        "name": "home abstract & title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CZ3ZT6JZW2KFCJ7P1WY6X",
+            "name": "Home Abstract & Title Company",
+            "domain": null,
+            "website": "homeabstract.com"
+          },
+          {
+            "id": "01K46CXG2VZ55F2WWZF75RP3X1",
+            "name": "Home Abstract & Title Company",
+            "domain": null,
+            "website": "almaabstract.com"
+          }
+        ]
+      },
+      {
+        "name": "home title group, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C7N435CJWRRRQPTYZX5F9",
+            "name": "Home Title Group, Inc.",
+            "domain": null,
+            "website": "coretitlegroupllc.com"
+          },
+          {
+            "id": "01K46CCWYSHYB3T3RKB9S2MGNZ",
+            "name": "Home Title Group, Inc.",
+            "domain": null,
+            "website": "hometitlegroup.com"
+          }
+        ]
+      },
+      {
+        "name": "homepartners title services",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K7ERTJQAQ5T0CMPQHP2ZR98G",
+            "name": "HomePartners Title Services",
+            "domain": null,
+            "website": null
+          },
+          {
+            "id": "01K46D00CYWFN3CB6E6VNYBSW3",
+            "name": "HomePartners Title Services",
+            "domain": null,
+            "website": "homepartnerstitle.com"
+          }
+        ]
+      },
+      {
+        "name": "homesale settlement services md",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C8Y0AHERS50K7ECKF4WM1",
+            "name": "HomeSale Settlement Services MD",
+            "domain": null,
+            "website": "homesale.com"
+          },
+          {
+            "id": "01K46CVQ1EPHDG9MPTDBYKF4KE",
+            "name": "HomeSale Settlement Services MD",
+            "domain": null,
+            "website": "homesalesettlementsmd.com"
+          }
+        ]
+      },
+      {
+        "name": "homeland title & escrow, ltd.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CN4KT6NTJ55TE5GKGVF12",
+            "name": "Homeland Title & Escrow, Ltd.",
+            "domain": null,
+            "website": "homelandtitleandescrow.com"
+          },
+          {
+            "id": "01K46C94R59AEMK4SVYW8S97ZF",
+            "name": "Homeland Title & Escrow, Ltd.",
+            "domain": null,
+            "website": "highlandtitle.com"
+          }
+        ]
+      },
+      {
+        "name": "hometown title, inc.",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46CMA26P7VTYE4JAFFD8MY9",
+            "name": "Hometown Title, Inc.",
+            "domain": null,
+            "website": "hometowntitletx.com"
+          },
+          {
+            "id": "01K46CNZSNV5AKK9CG3TE425HW",
+            "name": "Hometown Title, Inc.",
+            "domain": null,
+            "website": "hometowntitletx.com"
+          },
+          {
+            "id": "01K46CX0JNVF297G5BHD1DEB0T",
+            "name": "Hometown Title, Inc.",
+            "domain": null,
+            "website": "hometowntitleinc.com"
+          }
+        ]
+      },
+      {
+        "name": "howard hanna real estate services",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CAFDPWQ6Y6QEDB3FYZ1X6",
+            "name": "Howard Hanna Real Estate Services",
+            "domain": null,
+            "website": "howardhanna.com"
+          },
+          {
+            "id": "01K46CBC2F42V8E41WY8VSDFWM",
+            "name": "Howard Hanna Real Estate Services",
+            "domain": null,
+            "website": "howardhanna.com"
+          }
+        ]
+      },
+      {
+        "name": "icon title agency llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CD94GKYF38GZ1AAXPX7VR",
+            "name": "Icon Title Agency LLC",
+            "domain": null,
+            "website": "icon-title.com"
+          },
+          {
+            "id": "01K46C52FM7ZSENEGVBZ5C1W83",
+            "name": "Icon Title Agency LLC",
+            "domain": null,
+            "website": "iconictitleagency.com"
+          }
+        ]
+      },
+      {
+        "name": "independence search & abstract co. inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CR0N7XK7R3G92T3DSSWG9",
+            "name": "Independence Search & Abstract Co. Inc.",
+            "domain": null,
+            "website": "independencesearchandabstract.com"
+          },
+          {
+            "id": "01K46C2ERWX059AYN5YR67THM6",
+            "name": "Independence Search & Abstract Co. Inc.",
+            "domain": null,
+            "website": "independencesearchandabstract.com"
+          }
+        ]
+      },
+      {
+        "name": "janus title agency, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46BXTETZS2CQ5GHJMTHC8DV",
+            "name": "Janus Title Agency, LLC",
+            "domain": null,
+            "website": "magnustitle.com"
+          },
+          {
+            "id": "01K46C994XNB2GMKP9CDPS6S42",
+            "name": "Janus Title Agency, LLC",
+            "domain": null,
+            "website": "jtagency.com"
+          }
+        ]
+      },
+      {
+        "name": "land title services, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CAY4MMS0YVVAHPA6S0SMK",
+            "name": "Land Title Services, Inc.",
+            "domain": null,
+            "website": "landtitleservices.net"
+          },
+          {
+            "id": "01K46C0TZPT1RG57Q5QJAH5G60",
+            "name": "Land Title Services, Inc.",
+            "domain": null,
+            "website": "landtitleservices.net"
+          }
+        ]
+      },
+      {
+        "name": "land title and escrow company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C62XW3GVPX18T38SGSZSH",
+            "name": "Land Title and Escrow Company",
+            "domain": null,
+            "website": "ltco.com"
+          },
+          {
+            "id": "01K46D2A4VSH2AX48N6V291Q6K",
+            "name": "Land Title and Escrow Company",
+            "domain": null,
+            "website": "lutztitleandescrow.com"
+          }
+        ]
+      },
+      {
+        "name": "landmark title inc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C2KJNFZP5H30A48V0761J",
+            "name": "Landmark Title Inc",
+            "domain": null,
+            "website": "landmarkclovis.com"
+          },
+          {
+            "id": "01K46C2HJ66F7R720D3EESBD5N",
+            "name": "Landmark Title Inc",
+            "domain": null,
+            "website": "landmarktitleutah.com"
+          }
+        ]
+      },
+      {
+        "name": "landmark title, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C2JYTZPRME6GRNCT0BWD3",
+            "name": "Landmark Title, Inc.",
+            "domain": null,
+            "website": "lmarktitle.com"
+          },
+          {
+            "id": "01K46C2H8AJCE5460G3KGT37J0",
+            "name": "Landmark Title, Inc.",
+            "domain": null,
+            "website": "landmarktitleva.com"
+          }
+        ]
+      },
+      {
+        "name": "landwood title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CENT1VB61M855112831PS",
+            "name": "Landwood Title Company",
+            "domain": null,
+            "website": "landwood.com"
+          },
+          {
+            "id": "01K46C8DVX3R5DRFSQ6H76T94X",
+            "name": "Landwood Title Company",
+            "domain": null,
+            "website": "lakewoodtitletx.com"
+          }
+        ]
+      },
+      {
+        "name": "leap settlement services",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46CETM8141R6D6XD9D5QFW5",
+            "name": "Leap Settlement Services",
+            "domain": null,
+            "website": "abesettlement.com"
+          },
+          {
+            "id": "01K46CWWGVVP5D12ZPGBY2G9RG",
+            "name": "Leap Settlement Services",
+            "domain": null,
+            "website": "leapsettlement.com"
+          },
+          {
+            "id": "01K46CSPRTKAAMB41QX8BHA5F9",
+            "name": "Leap Settlement Services",
+            "domain": null,
+            "website": "keysettlementservices.com"
+          }
+        ]
+      },
+      {
+        "name": "legacy title & escrow, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C1T1CN7774EZBCR6EWCRR",
+            "name": "Legacy Title & Escrow, LLC",
+            "domain": null,
+            "website": "legacytitleusa.com"
+          },
+          {
+            "id": "01K46CJRTTJBSG5T856XVC090D",
+            "name": "Legacy Title & Escrow, LLC",
+            "domain": null,
+            "website": "legacytitleescrow.com"
+          }
+        ]
+      },
+      {
+        "name": "legal land title company",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46C1AC0YMH71C0Y44X8T8KH",
+            "name": "Legal Land Title Company",
+            "domain": null,
+            "website": "closewithbell.com"
+          },
+          {
+            "id": "01K46CFHC5PKKR5MZ5PK6GG31H",
+            "name": "Legal Land Title Company",
+            "domain": null,
+            "website": "legallandtitle.com"
+          },
+          {
+            "id": "01K46C81R2DRNJDW0XSYJ49B7H",
+            "name": "Legal Land Title Company",
+            "domain": null,
+            "website": "rltla.com"
+          }
+        ]
+      },
+      {
+        "name": "liberty title & escrow co., llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46BXPHWDH5EG940YJ8151JW",
+            "name": "Liberty Title & Escrow Co., LLC",
+            "domain": null,
+            "website": "ltae.com"
+          },
+          {
+            "id": "01K46C2SVPHG4KM7JVDAEGJB03",
+            "name": "Liberty Title & Escrow Co., LLC",
+            "domain": null,
+            "website": "libtitle.com"
+          }
+        ]
+      },
+      {
+        "name": "libra title agency, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C3TMK9TEG2507EYDBPD2D",
+            "name": "Libra Title Agency, LLC",
+            "domain": null,
+            "website": "libertytitle.com"
+          },
+          {
+            "id": "01K46CH14VXBSS1QTRTJYYJ6G0",
+            "name": "Libra Title Agency, LLC",
+            "domain": null,
+            "website": "libratitle.com"
+          }
+        ]
+      },
+      {
+        "name": "m&m title",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CX8HFK3W9RZYSK2A35D0T",
+            "name": "M&M Title",
+            "domain": null,
+            "website": "mmtitle.net"
+          },
+          {
+            "id": "01K46CGQVNGXNBM1EWFZPB4DDZ",
+            "name": "M&M Title",
+            "domain": null,
+            "website": "metitle.net"
+          }
+        ]
+      },
+      {
+        "name": "monarch title of texas",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CGT5R6GBGRYHV3EDVR8ER",
+            "name": "MONARCH TITLE OF TEXAS",
+            "domain": null,
+            "website": "monrchtitleoftexas.com"
+          },
+          {
+            "id": "01K46C7Q034HPS51SWWD6YZ2CZ",
+            "name": "Monarch Title of Texas",
+            "domain": null,
+            "website": "monarchtitleoftexas.com"
+          }
+        ]
+      },
+      {
+        "name": "msc closing services",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CG6YCVW181KHMV42CY2G3",
+            "name": "MSC Closing Services",
+            "domain": null,
+            "website": "ihclosing.com"
+          },
+          {
+            "id": "01K46CGP9FEE17SVDW1DMZ9CAT",
+            "name": "MSC Closing Services",
+            "domain": null,
+            "website": "mscclosingservices.com"
+          }
+        ]
+      },
+      {
+        "name": "majestic title services, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46BZQZXH5N19Z8BXMK9956B",
+            "name": "Majestic Title Services, Inc.",
+            "domain": null,
+            "website": "majestytitle.com"
+          },
+          {
+            "id": "01K46CR8WRJW98XF23S5X869EV",
+            "name": "Majestic Title Services, Inc.",
+            "domain": null,
+            "website": "majestictitleservices.com"
+          }
+        ]
+      },
+      {
+        "name": "mid-american title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CM09DVHZFVZZCATJYW6F8",
+            "name": "Mid-American Title Company",
+            "domain": null,
+            "website": "mid-americantitle.com"
+          },
+          {
+            "id": "01K46BZD0SJ9750364SMKN23JG",
+            "name": "Mid-American Title Company",
+            "domain": null,
+            "website": "mgamericantitle.com"
+          }
+        ]
+      },
+      {
+        "name": "midwest title services",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C5HPPDN5E86D96S2H0YJA",
+            "name": "Midwest Title Services",
+            "domain": null,
+            "website": "inwesttitle.com"
+          },
+          {
+            "id": "01K46CF2XFCB1VMCV2JMXHRWA9",
+            "name": "Midwest Title Services",
+            "domain": null,
+            "website": "mtstitle.com"
+          }
+        ]
+      },
+      {
+        "name": "millennial title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CA4RXTWJ45MDZ076ZHGDE",
+            "name": "Millennial Title Company",
+            "domain": null,
+            "website": "millennialtitle.com"
+          },
+          {
+            "id": "01K46CVNW8D1T8BJD46Y5Y001R",
+            "name": "Millennial Title Company",
+            "domain": null,
+            "website": "millennialtitlecompany.com"
+          }
+        ]
+      },
+      {
+        "name": "nrg land services, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C4Q9F1250CWSVDE5717DF",
+            "name": "NRG Land Services, LLC",
+            "domain": null,
+            "website": "jcgland.com"
+          },
+          {
+            "id": "01K46CCC2VD1F609KD70JVH5FG",
+            "name": "NRG Land Services, LLC",
+            "domain": null,
+            "website": "nrg-ls.com"
+          }
+        ]
+      },
+      {
+        "name": "next deal",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46BYK47M0XCQQ9RH5CNQC2D",
+            "name": "Next Deal",
+            "domain": null,
+            "website": "nextdeal.us"
+          },
+          {
+            "id": "01K46BZ183A3B5MKQFJ30D2691",
+            "name": "Next Deal",
+            "domain": null,
+            "website": "nextdeal.us"
+          }
+        ]
+      },
+      {
+        "name": "north hills escrow corp.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CYW1CJD2PMH1H36TF9P4V",
+            "name": "North Hills Escrow Corp.",
+            "domain": null,
+            "website": "northhillsescrow.com"
+          },
+          {
+            "id": "01K46CSTW9KKQWQFRYKNV03Y7C",
+            "name": "North Hills Escrow Corp.",
+            "domain": null,
+            "website": "shescrow.com"
+          }
+        ]
+      },
+      {
+        "name": "northeast title company",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46C41MYD7HBRQWYKGY7SAC0",
+            "name": "Northeast Title Company",
+            "domain": null,
+            "website": "nwtitle.com"
+          },
+          {
+            "id": "01K46C13VFWVNCTKETN7VFT109",
+            "name": "Northeast Title Company",
+            "domain": null,
+            "website": "setitle.com"
+          },
+          {
+            "id": "01K46CRARGFVTBNN5GHJS9EXEH",
+            "name": "Northeast Title Company",
+            "domain": null,
+            "website": "netitle.com"
+          }
+        ]
+      },
+      {
+        "name": "piq national settlement services inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C4YYWMMXNPN9ZHHVV1QBD",
+            "name": "PIQ NATIONAL SETTLEMENT SERVICES INC.",
+            "domain": null,
+            "website": "natsett.com"
+          },
+          {
+            "id": "01K46CD86JF1EDFJX2AFYX891W",
+            "name": "PIQ NATIONAL SETTLEMENT SERVICES INC.",
+            "domain": null,
+            "website": "piqnational.com"
+          }
+        ]
+      },
+      {
+        "name": "pm title, llc",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46C9CQMYQTDN2071ENSHWJW",
+            "name": "PM Title, LLC",
+            "domain": null,
+            "website": "fmtitlecompany.com"
+          },
+          {
+            "id": "01K46CEXEK1D7RMCCS4FY2733J",
+            "name": "PM Title, LLC",
+            "domain": null,
+            "website": "pm-title.com"
+          },
+          {
+            "id": "01K46C680KKYWWGRWV38XMCPZQ",
+            "name": "PM Title, LLC",
+            "domain": null,
+            "website": "mmtitle.com"
+          }
+        ]
+      },
+      {
+        "name": "pro title group, inc.",
+        "count": 4,
+        "entries": [
+          {
+            "id": "01K46CBGFFGD3D8KGKPX2SFRQC",
+            "name": "PRO TITLE GROUP, INC.",
+            "domain": null,
+            "website": "cbtitlegroup.com"
+          },
+          {
+            "id": "01K46CH0TVVYFGCHAB831HV3H7",
+            "name": "PRO TITLE GROUP, INC.",
+            "domain": null,
+            "website": "protitlegroup.com"
+          },
+          {
+            "id": "01K46C8AA0X63P82RKMXM3RWKP",
+            "name": "PRO TITLE GROUP, INC.",
+            "domain": null,
+            "website": "arktitlegroup.com"
+          },
+          {
+            "id": "01K46CEJAGKWVT4F9XJABFEWBN",
+            "name": "PRO TITLE GROUP, INC.",
+            "domain": null,
+            "website": "brtitlegroup.com"
+          }
+        ]
+      },
+      {
+        "name": "palm west escrow",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CFWGZVY826V65YKZ0RSSM",
+            "name": "Palm West Escrow",
+            "domain": null,
+            "website": "calwestescrow.com"
+          },
+          {
+            "id": "01K46CV1592NZ0VRW0PVFRS9EF",
+            "name": "Palm West Escrow",
+            "domain": null,
+            "website": "palmwestescrow.com"
+          }
+        ]
+      },
+      {
+        "name": "premier title, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C8BK212F28KDVVGT1JEF5",
+            "name": "Premier Title, Inc.",
+            "domain": null,
+            "website": "premier-title.com"
+          },
+          {
+            "id": "01K46CDCJV986WWC71ADTC58CZ",
+            "name": "Premier Title, Inc.",
+            "domain": null,
+            "website": "premiertitleinc.net"
+          }
+        ]
+      },
+      {
+        "name": "prime settlement inc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CZT45V0WSX7K7E2ADDE79",
+            "name": "Prime Settlement Inc",
+            "domain": null,
+            "website": "prime-settlement.com"
+          },
+          {
+            "id": "01K46C7522S6A8FQZKYD17N34C",
+            "name": "Prime Settlement Inc",
+            "domain": null,
+            "website": "settlewithpride.com"
+          }
+        ]
+      },
+      {
+        "name": "priority title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C37QG75J0Z8FK9GHWQ1T3",
+            "name": "Priority Title Company",
+            "domain": null,
+            "website": "prioritytitlecompany.com"
+          },
+          {
+            "id": "01K46C2ZR0X9C6MRZF194FAEKN",
+            "name": "Priority Title Company",
+            "domain": null,
+            "website": "prioritytitleus.com"
+          }
+        ]
+      },
+      {
+        "name": "progressive title corporation",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C47JV0RW5K03R6E6YSZXD",
+            "name": "Progressive Title Corporation",
+            "domain": null,
+            "website": "progressivetitle.com"
+          },
+          {
+            "id": "01K46C8NX78CBY5K2E0HG2A4EP",
+            "name": "Progressive Title Corporation",
+            "domain": null,
+            "website": "progtitle.com"
+          }
+        ]
+      },
+      {
+        "name": "providence title",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CEX4GF1FCM1MBVANQRR4W",
+            "name": "Providence Title",
+            "domain": null,
+            "website": "provtitlenlg.com"
+          },
+          {
+            "id": "01K46C0S31HP8CGB6ZBZZ0S3AF",
+            "name": "Providence Title",
+            "domain": null,
+            "website": "provident-title.com"
+          }
+        ]
+      },
+      {
+        "name": "rl title and escrow, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CWHNKG1K93N0YKBJ56DVT",
+            "name": "RL Title and Escrow, Inc.",
+            "domain": null,
+            "website": "rltitleandescrow.com"
+          },
+          {
+            "id": "01K46C5KKSFXX4F06JS96RC23S",
+            "name": "RL Title and Escrow, Inc.",
+            "domain": null,
+            "website": "cwtitle.com"
+          }
+        ]
+      },
+      {
+        "name": "reagan county abstract & title company",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46CR4QFE111HCJ38B4MGAZW",
+            "name": "Reagan County Abstract & Title Company",
+            "domain": null,
+            "website": "reagantitle.com"
+          },
+          {
+            "id": "01K46CPZQF51MB050SQS9W9GDP",
+            "name": "Reagan County Abstract & Title Company",
+            "domain": null,
+            "website": "bentontitle.com"
+          },
+          {
+            "id": "01K46CPKAJ8KG70R656G3QDFBP",
+            "name": "Reagan County Abstract & Title Company",
+            "domain": null,
+            "website": "rcathutch.com"
+          }
+        ]
+      },
+      {
+        "name": "reliance title agency, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C7YFWRVRHE3ZTEHMCWJFC",
+            "name": "Reliance Title Agency, LLC",
+            "domain": null,
+            "website": "relianceta.com"
+          },
+          {
+            "id": "01K46C83A7H0XWA04XP73MYHTF",
+            "name": "Reliance Title Agency, LLC",
+            "domain": null,
+            "website": "relianttitleusa.com"
+          }
+        ]
+      },
+      {
+        "name": "resource title national agency, inc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CHBZ9JX15Y4GWKZTBTNFA",
+            "name": "Resource Title National Agency, Inc",
+            "domain": null,
+            "website": "rtnai.com"
+          },
+          {
+            "id": "01K46C883F5ZPR18AY9E3J9V3Z",
+            "name": "Resource Title National Agency, Inc",
+            "domain": null,
+            "website": "rtnai.com"
+          }
+        ]
+      },
+      {
+        "name": "revere title agency, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CMXRNA792WTJ5Z50GSHHK",
+            "name": "Revere Title Agency, Inc.",
+            "domain": null,
+            "website": "reveretitle.com"
+          },
+          {
+            "id": "01K46CH0GX7CNRQ4GCHBTJG0XZ",
+            "name": "Revere Title Agency, Inc.",
+            "domain": null,
+            "website": "everett-title.com"
+          }
+        ]
+      },
+      {
+        "name": "sage title & escrow services, inc.",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46CN15PTEWHS933HHC9GZ0G",
+            "name": "Sage Title & Escrow Services, Inc.",
+            "domain": null,
+            "website": "sagecompanies.net"
+          },
+          {
+            "id": "01K46D108T7048Y3G1J704T8JZ",
+            "name": "Sage Title & Escrow Services, Inc.",
+            "domain": null,
+            "website": "cmptitleservices.com"
+          },
+          {
+            "id": "01K46C1P3CER6H68DKQVQNQ6NF",
+            "name": "Sage Title & Escrow Services, Inc.",
+            "domain": null,
+            "website": "bridgetitleandescrow.com"
+          }
+        ]
+      },
+      {
+        "name": "sentinel title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C8SS0ZKDFR3F0RYV3N139",
+            "name": "Sentinel Title Company",
+            "domain": null,
+            "website": "sentineltitle.net"
+          },
+          {
+            "id": "01K46CN0VT5PGSQD54640GG93M",
+            "name": "Sentinel Title Company",
+            "domain": null,
+            "website": "sentineltitlecompany.com"
+          }
+        ]
+      },
+      {
+        "name": "southcoast title and escrow, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CGKRSHFNZE3BHMR146GFK",
+            "name": "SouthCoast Title and Escrow, Inc.",
+            "domain": null,
+            "website": "southcoasttitleinc.com"
+          },
+          {
+            "id": "01K46C6ECTH8Y9J9ZHNRM2D8B5",
+            "name": "SouthCoast Title and Escrow, Inc.",
+            "domain": null,
+            "website": "setitle.net"
+          }
+        ]
+      },
+      {
+        "name": "speedy title & escrow services, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CM9R6QM0FDGDNPJG3FGP8",
+            "name": "Speedy Title & Escrow Services, LLC",
+            "domain": null,
+            "website": "speedy-escrow.com"
+          },
+          {
+            "id": "01K46C1J72TDT3KBTSPD0RKYVK",
+            "name": "Speedy Title & Escrow Services, LLC",
+            "domain": null,
+            "website": "siestatitle.com"
+          }
+        ]
+      },
+      {
+        "name": "springdale title, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C84YSY70GXHEJ2WF5G7FQ",
+            "name": "Springdale Title, LLC",
+            "domain": null,
+            "website": "springdaletitle.com"
+          },
+          {
+            "id": "01K46C4YATSPZXWFPETJMHPP18",
+            "name": "Springdale Title, LLC",
+            "domain": null,
+            "website": "springdaletitle.com"
+          }
+        ]
+      },
+      {
+        "name": "standish title agency, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CZ7H5TAD441B06NWGBPFB",
+            "name": "Standish Title Agency, Inc.",
+            "domain": null,
+            "website": "standish-title.com"
+          },
+          {
+            "id": "01K46BZT9JWV07F8TKH5YNQDYW",
+            "name": "Standish Title Agency, Inc.",
+            "domain": null,
+            "website": "starfishtitle.com"
+          }
+        ]
+      },
+      {
+        "name": "state title partners",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C5MW8R8BFTMMT8KPRVPVZ",
+            "name": "State Title Partners",
+            "domain": null,
+            "website": "truetitlepartners.com"
+          },
+          {
+            "id": "01K46CNQ10R4C68KSC335SH124",
+            "name": "State Title Partners",
+            "domain": null,
+            "website": "statetitle.net"
+          }
+        ]
+      },
+      {
+        "name": "stellar title services llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CP38K4YMKX46XP9WQ5Q9Q",
+            "name": "Stellar Title Services LLC",
+            "domain": null,
+            "website": "pillartitleservices.com"
+          },
+          {
+            "id": "01K46CSX1VH763FT276DPX3BBF",
+            "name": "Stellar Title Services LLC",
+            "domain": null,
+            "website": "stellartitlemn.com"
+          }
+        ]
+      },
+      {
+        "name": "t.m. title services, inc.",
+        "count": 4,
+        "entries": [
+          {
+            "id": "01K46C486NEKWSAPE13QBTT6T9",
+            "name": "T.M. Title Services, Inc.",
+            "domain": null,
+            "website": "netcotitle.com"
+          },
+          {
+            "id": "01K46CPWGHQGVDZE3GSCKCEYYW",
+            "name": "T.M. Title Services, Inc.",
+            "domain": null,
+            "website": "tm-title.com"
+          },
+          {
+            "id": "01K46C1943DYFGCF6T11WVKXAK",
+            "name": "T.M. Title Services, Inc.",
+            "domain": null,
+            "website": "jmtitleservices.com"
+          },
+          {
+            "id": "01K46C50K74T87TTBZ3CYS10E4",
+            "name": "T.M. Title Services, Inc.",
+            "domain": null,
+            "website": "teamtitle.co"
+          }
+        ]
+      },
+      {
+        "name": "title partners of florida, inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46D0JPK653GCSABRJ1DF7NG",
+            "name": "TITLE PARTNERS OF FLORIDA, INC.",
+            "domain": null,
+            "website": "titlepartnersfl.com"
+          },
+          {
+            "id": "01K46CZTQ2VGWEZBEDZSQ0P7A4",
+            "name": "TITLE PARTNERS OF FLORIDA, INC.",
+            "domain": null,
+            "website": "titlepartnersfl.com"
+          }
+        ]
+      },
+      {
+        "name": "the tres group",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K4JPQCD5ZSHY4835PZVNGYTK",
+            "name": "The TRES Group",
+            "domain": null,
+            "website": "https://thetresgroup.com"
+          },
+          {
+            "id": "01K7ERTEQQZKGV8QN2HVW7SAMY",
+            "name": "The Tres Group",
+            "domain": null,
+            "website": null
+          }
+        ]
+      },
+      {
+        "name": "the title team llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C0F55NS7Y4MV8GHBMBR80",
+            "name": "The Title Team LLC",
+            "domain": null,
+            "website": "letstalktitle.com"
+          },
+          {
+            "id": "01K46BZ4TJK8MSGGTTF5RPC6G6",
+            "name": "The Title Team LLC",
+            "domain": null,
+            "website": "thetitleteamfl.com"
+          }
+        ]
+      },
+      {
+        "name": "titan title & closing, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C570940QNPB8W0ASCZ0BW",
+            "name": "Titan Title & Closing, LLC",
+            "domain": null,
+            "website": "citytitlellc.com"
+          },
+          {
+            "id": "01K46CJ5SJRP856YRXH60DWZMY",
+            "name": "Titan Title & Closing, LLC",
+            "domain": null,
+            "website": "titantitleclosing.com"
+          }
+        ]
+      },
+      {
+        "name": "title guarantee",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C5ETF41XKMT84E3ZHPQJR",
+            "name": "Title Guarantee",
+            "domain": null,
+            "website": "tghawaii.com"
+          },
+          {
+            "id": "01K46CE01V40EQ5PTEQXZP5BS3",
+            "name": "Title Guarantee",
+            "domain": null,
+            "website": "utahtitle.com"
+          }
+        ]
+      },
+      {
+        "name": "title partners, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C314D247ZE7YBJQ80FNGF",
+            "name": "Title Partners, LLC",
+            "domain": null,
+            "website": "titlepartnersllc.com"
+          },
+          {
+            "id": "01K46C7X7HNASD5MEN2RT1V055",
+            "name": "Title Partners, LLC",
+            "domain": null,
+            "website": "mytitlepartners.com"
+          }
+        ]
+      },
+      {
+        "name": "trademark title inc.",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C9FH6GNXGYGKD33KBBH4Q",
+            "name": "Trademark Title Inc.",
+            "domain": null,
+            "website": "trademarktitleinc.com"
+          },
+          {
+            "id": "01K46C4PNM1T0X3QJQBCVEJ32D",
+            "name": "Trademark Title Inc.",
+            "domain": null,
+            "website": "trademarktitle.com"
+          }
+        ]
+      },
+      {
+        "name": "traditional title company, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CD6A84VQ3Y174SKGAQWDN",
+            "name": "Traditional Title Company, LLC",
+            "domain": null,
+            "website": "vatechgroup.com"
+          },
+          {
+            "id": "01K46CM774RRJTMW85HA8NENHD",
+            "name": "Traditional Title Company, LLC",
+            "domain": null,
+            "website": "ttctitle.com"
+          }
+        ]
+      },
+      {
+        "name": "trinity abstract & title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CQJ2DSMDHTB0J95NSNMH2",
+            "name": "Trinity Abstract & Title Company",
+            "domain": null,
+            "website": "gghlegal.com"
+          },
+          {
+            "id": "01K46D1BWW2PT4M2YS0VGFAH4G",
+            "name": "Trinity Abstract & Title Company",
+            "domain": null,
+            "website": "infinityabstracttitle.com"
+          }
+        ]
+      },
+      {
+        "name": "true title, inc.",
+        "count": 3,
+        "entries": [
+          {
+            "id": "01K46CDAPP7NW1JFR4XXQWAXH9",
+            "name": "True Title, Inc.",
+            "domain": null,
+            "website": "truetitle.net"
+          },
+          {
+            "id": "01K46CJDAPYCQ8NX9AXBJ3YJMH",
+            "name": "True Title, Inc.",
+            "domain": null,
+            "website": "truetitleinc.com"
+          },
+          {
+            "id": "01K46CJ45YQ4G1JPASWT3PNANV",
+            "name": "True Title, Inc.",
+            "domain": null,
+            "website": "titleky.com"
+          }
+        ]
+      },
+      {
+        "name": "union title insurance agency, llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46C2G0Q3T126P5BWBR48A77",
+            "name": "Union Title Insurance Agency, LLC",
+            "domain": null,
+            "website": "irontitle.com"
+          },
+          {
+            "id": "01K46CRR7GP9G0TH5TZXKERC2C",
+            "name": "Union Title Insurance Agency, LLC",
+            "domain": null,
+            "website": "uniontitle.net"
+          }
+        ]
+      },
+      {
+        "name": "us title llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CA7REYMQ1KRJ1HNQAZKFJ",
+            "name": "Us Title Llc",
+            "domain": null,
+            "website": "us-title.com"
+          },
+          {
+            "id": "01K46CXCG36RSXE1RY4MWMPHBK",
+            "name": "Us Title Llc",
+            "domain": null,
+            "website": "usttl.com"
+          }
+        ]
+      },
+      {
+        "name": "vista title company",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CPKYMTDPJXQR1RAVAE16P",
+            "name": "Vista Title Company",
+            "domain": null,
+            "website": "vistatitle.com"
+          },
+          {
+            "id": "01K46CB8YFGBHR8TB3T2T18NF5",
+            "name": "Vista Title Company",
+            "domain": null,
+            "website": "vistatitleco.com"
+          }
+        ]
+      },
+      {
+        "name": "west texas abstract & title co. llc",
+        "count": 2,
+        "entries": [
+          {
+            "id": "01K46CDZDWX793F0QQB08SB3RS",
+            "name": "WEST TEXAS ABSTRACT & TITLE CO. LLC",
+            "domain": null,
+            "website": "wtabstract.com"
+          },
+          {
+            "id": "01K46CGVTTJQ5VN8V5866ARB2H",
+            "name": "WEST TEXAS ABSTRACT & TITLE CO. LLC",
+            "domain": null,
+            "website": "wtabstract.com"
+          }
+        ]
+      }
+    ],
+    "suspiciousNames": [
+      {
+        "id": "01K46BY3CF9CN7RRTTDTWYG2JK",
+        "name": "A & A ESCROW SERVICES, INC.",
+        "tags": [],
+        "domain": null,
+        "website": "aaescrow.com"
+      },
+      {
+        "id": "01K46BY3NXA9BWWEPW9X0Q5PM8",
+        "name": "A & A TITLE SERVICES, LLC",
+        "tags": [],
+        "domain": null,
+        "website": "aandatitle.com"
+      },
+      {
+        "id": "01K46BY3Z9MNB1C2ZABHY5E4VZ",
+        "name": "A & G Title and Abstract Co., Inc.",
+        "tags": [],
+        "domain": null,
+        "website": "agtitleservices.com"
+      },
+      {
+        "id": "01K46BYE113ZM1302JZXHCY1E2",
+        "name": "A Clear Choice Title & Escrow of Osceola",
+        "tags": [],
+        "domain": null,
+        "website": "aclearchoicetitle.com"
+      },
+      {
+        "id": "01K46BY48KCK1A433AS3TSKV5V",
+        "name": "A Southern Land Title Agency LLC",
+        "tags": [],
+        "domain": null,
+        "website": "aslandtitle.com"
+      },
+      {
+        "id": "01K46CNX0GYD91G71TN5DHDCWS",
+        "name": "ACRES",
+        "tags": [],
+        "domain": null,
+        "website": null
+      },
+      {
+        "id": "01K46CPYC6VM8SZQESZGG39SCA",
+        "name": "At Home Title",
+        "tags": [],
+        "domain": null,
+        "website": "athometitle.com"
+      },
+      {
+        "id": "01K46CK4180NRHWS25MDHBWWF3",
+        "name": "At Home Title Services",
+        "tags": [],
+        "domain": null,
+        "website": "athometitleservices.com"
+      },
+      {
+        "id": "01K46CP0S8EMVB7T09PRYFX80T",
+        "name": "COCRS",
+        "tags": [],
+        "domain": null,
+        "website": "cocrs.com"
+      },
+      {
+        "id": "01K46CNCZMXYJP9871Y463SKK1",
+        "name": "FAHTCO",
+        "tags": [],
+        "domain": null,
+        "website": "fahtco.com"
+      },
+      {
+        "id": "01K46C7MG19K40RCCDEB98ETA0",
+        "name": "IN REM REO Services",
+        "tags": [],
+        "domain": null,
+        "website": "inremreo.com"
+      },
+      {
+        "id": "01K46CRB2DEZ3BTQAH1JG631S9",
+        "name": "IN Title Company",
+        "tags": [],
+        "domain": null,
+        "website": "intitleco.com"
+      },
+      {
+        "id": "01K46BZ0BYEJ0DQT78H3BB9H2T",
+        "name": "In Downtown Title",
+        "tags": [],
+        "domain": null,
+        "website": "indowntowntitle.com"
+      },
+      {
+        "id": "01K46CZP7SC9XZJ7AXDD0P7T35",
+        "name": "In Title",
+        "tags": [],
+        "domain": null,
+        "website": "intitlesd.com"
+      },
+      {
+        "id": "01K46CCQH9AXC58KXQ36YR5XSK",
+        "name": "KVS TITLE",
+        "tags": [],
+        "domain": null,
+        "website": "kvstitle.com"
+      },
+      {
+        "id": "01K46BZK84GV9SVB2VX9HG0RN7",
+        "name": "MREG",
+        "tags": [],
+        "domain": null,
+        "website": "metzreg.com"
+      },
+      {
+        "id": "01K46D2833WDS445S0QCGP0B56",
+        "name": "On Chain Listings",
+        "tags": [],
+        "domain": null,
+        "website": "onchainlistings.com"
+      },
+      {
+        "id": "01K46C9P6X9M44BSA516WRM54H",
+        "name": "On Demand Escrow",
+        "tags": [],
+        "domain": null,
+        "website": "ondemandescrow.com"
+      },
+      {
+        "id": "01K46CC3YWJP7ESSFET92M50KS",
+        "name": "On Point Land Services Corporation",
+        "tags": [],
+        "domain": null,
+        "website": "onpointland.com"
+      },
+      {
+        "id": "01K46CA8Q4BBERNB1ZJFSWAXWZ",
+        "name": "PLACE",
+        "tags": [],
+        "domain": null,
+        "website": "place.com"
+      },
+      {
+        "id": "01K46CGM2RVRHHCY21EXKQAQCP",
+        "name": "Proactive Alliance Team @ Real Broker NY LLC",
+        "tags": [],
+        "domain": null,
+        "website": "theproactivealliance.com"
+      },
+      {
+        "id": "01K46BY102M17PNV3P004BS73F",
+        "name": "REAL RES",
+        "tags": [],
+        "domain": null,
+        "website": "realres.com"
+      },
+      {
+        "id": "01K46C517675CPHNK2P20WK0WW",
+        "name": "RESE",
+        "tags": [],
+        "domain": null,
+        "website": "resetitle.com"
+      },
+      {
+        "id": "01K46C6SGMFS4QMWFFM8F6HDFM",
+        "name": "RESICAP",
+        "tags": [],
+        "domain": null,
+        "website": "resicap.com"
+      },
+      {
+        "id": "01K46C9GF9EJBH741YF9B44F91",
+        "name": "RESPRO",
+        "tags": [],
+        "domain": null,
+        "website": "respro.org"
+      },
+      {
+        "id": "01K46BZVHBEBWCGTFBCJ5WTKK2",
+        "name": "REVINRE",
+        "tags": [],
+        "domain": null,
+        "website": "revinre.com"
+      },
+      {
+        "id": "01K46C4NQMXDD4VSKFNA8CVJ2P",
+        "name": "REX",
+        "tags": [],
+        "domain": null,
+        "website": "rexhomes.com"
+      },
+      {
+        "id": "01K46C0QH1RKDRWFCACNA4RWMC",
+        "name": "RTR TITLE",
+        "tags": [],
+        "domain": null,
+        "website": "rtrtitle.com"
+      },
+      {
+        "id": "01K46CATC0YA0VTR3JPWMFCFWQ",
+        "name": "SMS",
+        "tags": [],
+        "domain": null,
+        "website": "firstamsms.com"
+      },
+      {
+        "id": "01K46C5893J824N49P6026N7AC",
+        "name": "THE SIMPLY GROUP",
+        "tags": [],
+        "domain": null,
+        "website": "thesimplygrp.com"
+      },
+      {
+        "id": "01K46CGWRTZ8BGVJ1HCB71F3DH",
+        "name": "TITLEZEN",
+        "tags": [],
+        "domain": null,
+        "website": null
+      },
+      {
+        "id": "01K46CE222366J4Y5BQQF3MDRA",
+        "name": "TSB TITLE",
+        "tags": [],
+        "domain": null,
+        "website": "tsbtitle.com"
+      },
+      {
+        "id": "01K46C6QWC4TJFTCP8PEMDV1JG",
+        "name": "The Agency Birmingham",
+        "tags": [],
+        "domain": null,
+        "website": "theagencyre.com"
+      },
+      {
+        "id": "01K46C9EFC798ENNJ5AH2B0WAX",
+        "name": "The Agency Texas",
+        "tags": [],
+        "domain": null,
+        "website": "theagencytexas.com"
+      },
+      {
+        "id": "01K46CY7MDR9SE5Z7GV3Q4NPG6",
+        "name": "The Appraisal House, Inc",
+        "tags": [],
+        "domain": null,
+        "website": "theappraisalhouse.com"
+      },
+      {
+        "id": "01K46CRWA9ZSRXJMAR362FEK5N",
+        "name": "The Associated Group",
+        "tags": [],
+        "domain": null,
+        "website": "associatedgroupllc.com"
+      },
+      {
+        "id": "01K46C7DWRB39WYVM9GDZ9TAK3",
+        "name": "The Beth Samberg Team",
+        "tags": [],
+        "domain": null,
+        "website": "bethsamberg.com"
+      },
+      {
+        "id": "01K46C06RCGSD17JB0W5V7VSAM",
+        "name": "The Brian Liscio Team at Lokation Real Estate",
+        "tags": [],
+        "domain": null,
+        "website": "bllcareers.com"
+      },
+      {
+        "id": "01K46CPS27Z1QYPWX0GRQA1H1W",
+        "name": "The Brokerage Real Estate Enthusiasts",
+        "tags": [],
+        "domain": null,
+        "website": "thebrokerageree.com"
+      },
+      {
+        "id": "01K46CDNHMZFJHA2H19DVT1Q37",
+        "name": "The Closers of Virginia, Inc.",
+        "tags": [],
+        "domain": null,
+        "website": "us.com"
+      },
+      {
+        "id": "01K4JPQB6AF36C0Q2CQD69WRA8",
+        "name": "The Closing Agent, Inc.",
+        "tags": [],
+        "domain": null,
+        "website": "https://theclosingagent.com"
+      },
+      {
+        "id": "01K46CZARSR4XF1B6QYMF1EE80",
+        "name": "The Closing Department",
+        "tags": [],
+        "domain": null,
+        "website": "closingdepartment.com"
+      },
+      {
+        "id": "01K46CC7G4CHJX7DD4PFP1VQJ4",
+        "name": "The Closing Exchange",
+        "tags": [],
+        "domain": null,
+        "website": "theclosingexchange.com"
+      },
+      {
+        "id": "01K46BYDDWNBAMR3PS5RRY95V6",
+        "name": "The Closing Signing Service",
+        "tags": [],
+        "domain": null,
+        "website": "theclosingsigningservice.com"
+      },
+      {
+        "id": "01K46BYZJA42YCFM1VSM8QH3DS",
+        "name": "The Closing Table, Inc..",
+        "tags": [],
+        "domain": null,
+        "website": "theclosingtable.com"
+      },
+      {
+        "id": "01K4JPQC3R5TKC6239J7DRH06W",
+        "name": "The Closing Team",
+        "tags": [],
+        "domain": null,
+        "website": "https://closingteamfl.com"
+      },
+      {
+        "id": "01K46CZM435E57C6BPA24CH28V",
+        "name": "The Cynda Sells Real Estate Company LLC",
+        "tags": [],
+        "domain": null,
+        "website": "cyndasells.com"
+      },
+      {
+        "id": "01K46C8DHZX6PZY2JKKNQ8B68C",
+        "name": "The Denver 100, LLC",
+        "tags": [],
+        "domain": null,
+        "website": "thedenver100.com"
+      },
+      {
+        "id": "01K46CF93A4DJMTRR0W478SW7C",
+        "name": "The Escrow Experts",
+        "tags": [],
+        "domain": null,
+        "website": "theescrowexperts.com"
+      },
+      {
+        "id": "01K46CVCEBHBDQ05P9366ZR15C",
+        "name": "The Escrow House",
+        "tags": [],
+        "domain": null,
+        "website": "theescrowhouse.com"
+      },
+      {
+        "id": "01K46C1SQ4KFXXBKKWWF4NT7Q6",
+        "name": "The Forseti Group",
+        "tags": [],
+        "domain": null,
+        "website": "theforsetigroup.com"
+      },
+      {
+        "id": "01K46CFSMJ9JKKEY2YZ4V0853F",
+        "name": "The Gibraltar Group - Title Services",
+        "tags": [],
+        "domain": null,
+        "website": "thegibraltargrp.com"
+      },
+      {
+        "id": "01K46C1KS4JCQ88553YCB00QGE",
+        "name": "The Goodman Taylor Team",
+        "tags": [],
+        "domain": null,
+        "website": "thegoodmantaylorteam.com"
+      },
+      {
+        "id": "01K46C69YJS6YR9N491PYCQ0WC",
+        "name": "The Heritage Escrow Company",
+        "tags": [],
+        "domain": null,
+        "website": "heritageescrow.com"
+      },
+      {
+        "id": "01K46C7VM277X0A0TDEXP534F6",
+        "name": "The Herman Group Companies",
+        "tags": [],
+        "domain": null,
+        "website": "hermangroup.net"
+      },
+      {
+        "id": "01K46CTGQMV1ZWY9VQ23M97P8X",
+        "name": "The Holley Group",
+        "tags": [],
+        "domain": null,
+        "website": "theholleygroup.com"
+      },
+      {
+        "id": "01K46CP885D8747A18W5CHCSFJ",
+        "name": "The Infinity Group",
+        "tags": [],
+        "domain": null,
+        "website": "poweredbyinfinity.com"
+      },
+      {
+        "id": "01K46D1WNHFMVV5KJ7NKPPY0JQ",
+        "name": "The K Company Realty, LLC",
+        "tags": [],
+        "domain": null,
+        "website": "kcorealty.com"
+      },
+      {
+        "id": "01K46CZHETS4B1X5HMT1T2GXB6",
+        "name": "The Kacino Real Estate Group ( KRG Commercial )",
+        "tags": [],
+        "domain": null,
+        "website": "krgatl.com"
+      },
+      {
+        "id": "01K46CHDWCXPWDSYXGYT348FFN",
+        "name": "The Land Group",
+        "tags": [],
+        "domain": null,
+        "website": "landgrouptitle.com"
+      },
+      {
+        "id": "01K46CVYHR1P5GFJN701WVYZME",
+        "name": "The Law Office of Sal Espino PLLC",
+        "tags": [],
+        "domain": null,
+        "website": "salespino.com"
+      },
+      {
+        "id": "01K46C1GAJVT9EEFK0XA2VXHA4",
+        "name": "The Lindsay Fricks Group",
+        "tags": [],
+        "domain": null,
+        "website": "lindsayfricks.com"
+      },
+      {
+        "id": "01K46C230NDFYFBHHA4J403SS2",
+        "name": "The Marketing Mama",
+        "tags": [],
+        "domain": null,
+        "website": "yourmarketingmama.com"
+      },
+      {
+        "id": "01K46CXY0QB5H15VEY2YZTRBYC",
+        "name": "The Maxine Dumas Group",
+        "tags": [],
+        "domain": null,
+        "website": "maxinedumas.com"
+      },
+      {
+        "id": "01K46BYMW9P4QDG7G79TCZCSPG",
+        "name": "The Owner Finance Network",
+        "tags": [],
+        "domain": null,
+        "website": "theownerfinancenetwork.com"
+      },
+      {
+        "id": "01K46CQ0Z1TNSCPMHXBMJ4GEVC",
+        "name": "The Owners' Escrow",
+        "tags": [],
+        "domain": null,
+        "website": "ownersescrow.com"
+      },
+      {
+        "id": "01K46CB9WN9P6MGHQT3TXAABH5",
+        "name": "The Planning and Zoning Resource Corporation",
+        "tags": [],
+        "domain": null,
+        "website": "pzr.com"
+      },
+      {
+        "id": "01K46CF8SDEV2C94QE3F4PKRGX",
+        "name": "The Property Closers",
+        "tags": [],
+        "domain": null,
+        "website": "propertycloserspgh.com"
+      },
+      {
+        "id": "01K46CST8J6Y8SX24N5V0GPREQ",
+        "name": "The Real Estate Analyst and American Real Estate Servicing",
+        "tags": [],
+        "domain": null,
+        "website": null
+      },
+      {
+        "id": "01K46CZH5MG21SJ23D4SJQ7EH5",
+        "name": "The Real Estate Edge",
+        "tags": [],
+        "domain": null,
+        "website": null
+      },
+      {
+        "id": "01K46CW4P1MGT12NA142XY7KPQ",
+        "name": "The Real Estate Hub Billings",
+        "tags": [],
+        "domain": null,
+        "website": "rehubbillings.com"
+      },
+      {
+        "id": "01K46C9KZW66YJMT507C7V7XQ3",
+        "name": "The Real Estate Magazine",
+        "tags": [],
+        "domain": null,
+        "website": "theremagnd.com"
+      },
+      {
+        "id": "01K46CH1EVQD8M4D69GACH0254",
+        "name": "The Real Estate Project",
+        "tags": [],
+        "domain": null,
+        "website": "therealestateproject.org"
+      },
+      {
+        "id": "01K46CYNYCV94JGFQ5ME371FF3",
+        "name": "The Real Estate Store LLC",
+        "tags": [],
+        "domain": null,
+        "website": "wasilik.com"
+      },
+      {
+        "id": "01K46D1QP4S6GKP0J287EG0YZ0",
+        "name": "The Realty Agency",
+        "tags": [],
+        "domain": null,
+        "website": "therealtyagency.com"
+      },
+      {
+        "id": "01K46BXVMFQAG6BEQXHBN95F7V",
+        "name": "The Realty Exchange Firm",
+        "tags": [],
+        "domain": null,
+        "website": "realtyexchangefirm.com"
+      },
+      {
+        "id": "01K7ERTG87J52PVX5F4JZV194K",
+        "name": "The Robert Slack Group",
+        "tags": [],
+        "domain": null,
+        "website": null
+      },
+      {
+        "id": "01K46C8WNAW8715A4DZAJGW098",
+        "name": "The Roby Company San Diego Real Estate Brokerage",
+        "tags": [],
+        "domain": null,
+        "website": "therobycompany.com"
+      },
+      {
+        "id": "01K46C6M2BQVED9H8N2HWHYDJ8",
+        "name": "The Row Title & Escrow, LLC",
+        "tags": [],
+        "domain": null,
+        "website": "rowtitle.com"
+      },
+      {
+        "id": "01K46CWNGHSEFNV9PF8X5AG8J4",
+        "name": "The Settlement Company",
+        "tags": [],
+        "domain": null,
+        "website": "thesetco.com"
+      },
+      {
+        "id": "01K46CEQRBR1P4B2X0066RAQKH",
+        "name": "The South Mountain Group Inc.",
+        "tags": [],
+        "domain": null,
+        "website": "southmountaintitle.com"
+      },
+      {
+        "id": "01K46CGFMBQRFH7B9J34P4QHVK",
+        "name": "The Strata Group, LLC",
+        "tags": [],
+        "domain": null,
+        "website": "mystratagroup.com"
+      },
+      {
+        "id": "01K4JPQCD5ZSHY4835PZVNGYTK",
+        "name": "The TRES Group",
+        "tags": [],
+        "domain": null,
+        "website": "https://thetresgroup.com"
+      },
+      {
+        "id": "01K46C42K6SWDR8Q21YKQFQ748",
+        "name": "The Talon Group",
+        "tags": [],
+        "domain": null,
+        "website": "talonnw.com"
+      },
+      {
+        "id": "01K46CTCX8HP3AE36DJ4CTZKMG",
+        "name": "The Title Agents",
+        "tags": [],
+        "domain": null,
+        "website": "thetitleagents.net"
+      },
+      {
+        "id": "01K46C5THZG8WDCPVQWBP9GHAN",
+        "name": "The Title Company",
+        "tags": [],
+        "domain": null,
+        "website": "thetitleco.com"
+      },
+      {
+        "id": "01K46C8GG22HYBP2XYNZH6JFTK",
+        "name": "The Title Company - Fargo, ND",
+        "tags": [],
+        "domain": null,
+        "website": "thetitlecompany.com"
+      },
+      {
+        "id": "01K46C10CNX0H23A59KRT5RZHS",
+        "name": "The Title Connection of South Florida",
+        "tags": [],
+        "domain": null,
+        "website": null
+      },
+      {
+        "id": "01K46C0X91RFESNW3YSY5H79J5",
+        "name": "The Title Firm",
+        "tags": [],
+        "domain": null,
+        "website": "titlefirm.com"
+      },
+      {
+        "id": "01K46CA1M2WZD8NZ1F6FR01HY6",
+        "name": "The Title Group, Inc.",
+        "tags": [],
+        "domain": null,
+        "website": "thetitlegroupinc.com"
+      },
+      {
+        "id": "01K46BYZVMHFES20VME3PJGRVZ",
+        "name": "The Title Partners of Central Florida",
+        "tags": [],
+        "domain": null,
+        "website": "titlepartners.com"
+      },
+      {
+        "id": "01K46C4V526T3H6XJ7YQBGJTTQ",
+        "name": "The Title Professionals, LLC",
+        "tags": [],
+        "domain": null,
+        "website": "thetitleprofessionals.com"
+      },
+      {
+        "id": "01K46BZ2438ZYQ9N2R4RNG6V4A",
+        "name": "The Title Station, Inc.",
+        "tags": [],
+        "domain": null,
+        "website": "thetitlestation.com"
+      },
+      {
+        "id": "01K46C0F55NS7Y4MV8GHBMBR80",
+        "name": "The Title Team LLC",
+        "tags": [],
+        "domain": null,
+        "website": "letstalktitle.com"
+      },
+      {
+        "id": "01K46BZ4TJK8MSGGTTF5RPC6G6",
+        "name": "The Title Team LLC",
+        "tags": [],
+        "domain": null,
+        "website": "thetitleteamfl.com"
+      },
+      {
+        "id": "01K46CA4EJEGFWJFZJQ8A0M9X1",
+        "name": "The Title Team North Shore",
+        "tags": [],
+        "domain": null,
+        "website": "northshoretitle.com"
+      },
+      {
+        "id": "01K7ERTEQQZKGV8QN2HVW7SAMY",
+        "name": "The Tres Group",
+        "tags": [],
+        "domain": null,
+        "website": null
+      },
+      {
+        "id": "01K46CB7YH061S3NQA5C28G5J2",
+        "name": "The Ultimate Salesperson LLC",
+        "tags": [],
+        "domain": null,
+        "website": "fntic.com"
+      },
+      {
+        "id": "01K46CFXS7J8X6FRR0KP3N897T",
+        "name": "The W Home Group",
+        "tags": [],
+        "domain": null,
+        "website": "homegroup.com"
+      },
+      {
+        "id": "01K46BZBA9NF5JD455DJCYSHMV",
+        "name": "The Waites Group",
+        "tags": [],
+        "domain": null,
+        "website": "thewaitesgroup.com"
+      },
+      {
+        "id": "01K738PZA1RY8TFGXWMNA3H896",
+        "name": "The new new new new",
+        "tags": [],
+        "domain": null,
+        "website": ""
+      }
+    ],
+    "nonCompanyNames": []
+  },
+  "statistics": {
+    "averageNameLength": 23.83114150447133,
+    "maxNameLength": 140,
+    "minNameLength": 3,
+    "companiesWithTags": 0,
+    "averageTagsPerCompany": 0
+  }
+}

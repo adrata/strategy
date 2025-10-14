@@ -135,22 +135,20 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         case 'people':
           return [
             { id: 'overview', label: 'Overview' },
+            { id: 'actions', label: 'Actions' },
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' },
-            { id: 'timeline', label: 'Timeline' },
             { id: 'delete', label: 'Delete' }
           ];
         case 'companies':
           return [
             { id: 'overview', label: 'Overview' },
+            { id: 'timeline', label: 'Actions' },
             { id: 'news', label: 'News' },
             { id: 'intelligence', label: 'Intelligence' },
-            { id: 'value', label: 'Value' },
             { id: 'buyer-groups', label: 'Buyer Group' },
-            { id: 'opportunities', label: 'Opportunities' },
             { id: 'notes', label: 'Notes' },
-            { id: 'timeline', label: 'Timeline' },
             { id: 'delete', label: 'Delete' }
           ];
         case 'leads':
@@ -159,7 +157,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' },
-            { id: 'timeline', label: 'Timeline' },
+            { id: 'actions', label: 'Actions' },
             { id: 'delete', label: 'Delete' }
           ];
       case 'prospects':
@@ -168,7 +166,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           { id: 'intelligence', label: 'Intelligence' },
           { id: 'career', label: 'Career' },
           { id: 'notes', label: 'Notes' },
-          { id: 'timeline', label: 'Timeline' },
+          { id: 'actions', label: 'Actions' },
           { id: 'delete', label: 'Delete' }
         ];
       case 'opportunities':
@@ -178,7 +176,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           { id: 'stakeholders', label: 'Stakeholders' },
           { id: 'competitive', label: 'Competitive' },
           { id: 'close-plan', label: 'Close Plan' },
-          { id: 'timeline', label: 'Timeline' },
+          { id: 'actions', label: 'Actions' },
           { id: 'notes', label: 'Notes' },
           { id: 'delete', label: 'Delete' }
         ];
@@ -857,7 +855,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderBuyerGroupsTab();
         case 'notes':
           return renderNotesTab();
-        case 'timeline':
+        case 'actions':
           return renderTimelineTab();
         case 'delete':
           return renderDeleteTab();
@@ -868,20 +866,16 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       switch (activeTab) {
         case 'overview':
           return renderHomeTab();
+        case 'timeline':
+          return renderTimelineTab();
         case 'news':
           return renderIntelligenceTab(); // News tab shows intelligence data
         case 'intelligence':
           return renderIntelligenceTab();
-        case 'value':
-          return renderValueTab();
         case 'buyer-groups':
           return renderBuyerGroupsTab();
-        case 'opportunities':
-          return renderOpportunitiesTab();
         case 'notes':
           return renderNotesTab();
-        case 'timeline':
-          return renderTimelineTab();
         case 'delete':
           return renderDeleteTab();
         default:
@@ -905,7 +899,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderBuyerGroupsTab();
         case 'notes':
           return renderNotesTab();
-        case 'timeline':
+        case 'actions':
           return renderTimelineTab();
         case 'delete':
           return renderDeleteTab();
@@ -924,7 +918,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderCompetitiveTab();
         case 'close-plan':
           return renderClosePlanTab();
-        case 'timeline':
+        case 'actions':
           return renderTimelineTab();
         case 'notes':
           return renderNotesTab();

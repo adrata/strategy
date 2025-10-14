@@ -135,10 +135,40 @@ export function SpeedrunLeadDetails({
   };
 
   // Handle person update save
-  const handlePersonUpdate = (updatedData: Partial<SpeedrunPerson>) => {
-    console.log("💾 Saving updated person data:", updatedData);
-    // TODO: Integrate with API to save the updated person data
-    setState((prev) => ({ ...prev, showUpdatePopup: false }));
+  const handlePersonUpdate = async (updatedData: Partial<SpeedrunPerson>) => {
+    try {
+      console.log("💾 Saving updated person data:", updatedData);
+      
+      // Make API call to update person
+      const response = await fetch(`/api/v1/people/${person.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update person');
+      }
+
+      const result = await response.json();
+      console.log("✅ Successfully updated person:", result.data);
+      
+      // Show success message
+      setSuccessMessage("Contact updated successfully!");
+      
+      // Close popup
+      setState((prev) => ({ ...prev, showUpdatePopup: false }));
+      
+      // TODO: Trigger record refresh to show updated data
+      // This would typically involve calling a refresh function passed as a prop
+      
+    } catch (error) {
+      console.error("❌ Error updating person:", error);
+      setErrorMessage(error instanceof Error ? error.message : "Failed to update contact");
+    }
   };
 
   // Handle report clicks

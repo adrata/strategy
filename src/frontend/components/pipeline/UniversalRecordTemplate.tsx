@@ -162,7 +162,6 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         { id: 'news', label: 'News' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'buyer-groups', label: 'Buyer Group' },
-        { id: 'competitors', label: 'Competitors' },
         { id: 'notes', label: 'Notes' }
       ];
     case 'people':
@@ -226,7 +225,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
 const DEFAULT_TABS: TabConfig[] = [
   { id: 'overview', label: 'Home' },
   { id: 'company', label: 'Account' },
-  { id: 'activity', label: 'Activity' },
+  { id: 'actions', label: 'Actions' },
   { id: 'notes', label: 'Notes' }
 ];
 
@@ -2268,6 +2267,10 @@ export function UniversalRecordTemplate({
               <UniversalHistoryTab key={activeTab} recordType={recordType} /> :
               <UniversalTimelineTab key={activeTab} record={record} recordType={recordType} />
           );
+        case 'actions':
+          return renderTabWithErrorBoundary(
+            <ActivityTab key={activeTab} record={record} recordType={recordType} />
+          );
         case 'timeline':
           return renderTabWithErrorBoundary(
             <UniversalTimelineTab key={activeTab} record={record} recordType={recordType} />
@@ -2684,14 +2687,22 @@ export function UniversalRecordTemplate({
             {/* Tabs */}
             <div className="border-b border-[var(--border)] mb-6">
               <nav className="-mb-px flex space-x-8">
-                {[
+                {(recordType === 'companies' ? [
+                  { id: 'overview', label: 'Overview' },
+                  { id: 'timeline', label: 'Actions' },
+                  { id: 'news', label: 'News' },
+                  { id: 'intelligence', label: 'Intelligence' },
+                  { id: 'buyer-groups', label: 'Buyer Group' },
+                  { id: 'notes', label: 'Notes' },
+                  { id: 'delete', label: 'Delete' }
+                ] : [
                   { id: 'overview', label: 'Overview' },
                   { id: 'intelligence', label: 'Intelligence' },
                   { id: 'career', label: 'Career' },
-                  { id: 'activity', label: 'Activity' },
+                  { id: 'actions', label: 'Actions' },
                   { id: 'notes', label: 'Notes' },
                   { id: 'delete', label: 'Delete' }
-                ].map((tab) => (
+                ]).map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveEditTab(tab.id)}
@@ -2711,124 +2722,237 @@ export function UniversalRecordTemplate({
             <div className="space-y-4">
               {activeEditTab === 'overview' && (
                 <div className="space-y-6">
-                  {/* Basic Information */}
-                  <div>
-                    <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {recordType === 'companies' ? (
+                    <>
+                      {/* Company Information */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                        <input
-                          type="text"
-                          defaultValue={formatFieldValue(record?.name || record?.fullName, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={formatFieldValue(record?.name || record?.fullName) ? '' : '-'}
-                        />
+                        <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Company Information</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
+                            <input
+                              type="text"
+                              defaultValue={formatFieldValue(record?.name || record?.companyName, '')}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Enter company name"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Legal Name</label>
+                            <input
+                              type="text"
+                              defaultValue={formatFieldValue(record?.legalName, '')}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="-"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
+                            <input
+                              type="url"
+                              defaultValue={formatFieldValue(record?.website, '')}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="-"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                            <input
+                              type="tel"
+                              defaultValue={formatFieldValue(record?.phone, '')}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="-"
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                          <textarea
+                            defaultValue={formatFieldValue(record?.description, '')}
+                            rows={3}
+                            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="-"
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                        <input
-                          type="text"
-                          defaultValue={formatFieldValue(record?.title || record?.jobTitle, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={formatFieldValue(record?.title || record?.jobTitle) ? '' : '-'}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
-                        <CompanySelector
-                          value={record?.company || record?.companyName || ''}
-                          onChange={(company) => {
-                            // Handle company selection - this would need to be connected to form state
-                            console.log('Company selected:', company);
-                          }}
-                          placeholder="Search or add company..."
-                          className="w-full"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                        <input
-                          type="text"
-                          defaultValue={formatFieldValue(record?.department, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={formatFieldValue(record?.department) ? '' : '-'}
-                        />
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* Bio */}
-                  <div>
-                    <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Bio</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Business Details */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Current Status</label>
-                        <select
-                          defaultValue={record?.status || 'active'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                          <option value="active">Active</option>
-                          <option value="inactive">Inactive</option>
-                          <option value="qualified">Qualified</option>
-                          <option value="cold">Cold</option>
-                        </select>
+                        <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Business Details</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                            <input
+                              type="text"
+                              defaultValue={formatFieldValue(record?.industry, '')}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="-"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Company Size</label>
+                            <select
+                              defaultValue={record?.size || ''}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="">-</option>
+                              <option value="1-10">1-10 employees</option>
+                              <option value="11-50">11-50 employees</option>
+                              <option value="51-200">51-200 employees</option>
+                              <option value="201-500">201-500 employees</option>
+                              <option value="501-1000">501-1000 employees</option>
+                              <option value="1000+">1000+ employees</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Founded Year</label>
+                            <input
+                              type="number"
+                              min="1800"
+                              max="2024"
+                              defaultValue={formatFieldValue(record?.foundedYear, '')}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="-"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                            <select
+                              defaultValue={record?.status || 'ACTIVE'}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="ACTIVE">Active</option>
+                              <option value="INACTIVE">Inactive</option>
+                              <option value="PROSPECT">Prospect</option>
+                              <option value="CLIENT">Client</option>
+                            </select>
+                          </div>
+                        </div>
                       </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Basic Information */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Level</label>
-                        <select
-                          defaultValue={record?.engagementLevel || 'medium'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                          <option value="high">High</option>
-                          <option value="medium">Medium</option>
-                          <option value="low">Low</option>
-                        </select>
+                        <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <input
+                              type="text"
+                              defaultValue={formatFieldValue(record?.name || record?.fullName, '')}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder={formatFieldValue(record?.name || record?.fullName) ? '' : '-'}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                            <input
+                              type="text"
+                              defaultValue={formatFieldValue(record?.title || record?.jobTitle, '')}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder={formatFieldValue(record?.title || record?.jobTitle) ? '' : '-'}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                            <CompanySelector
+                              value={record?.company || record?.companyName || ''}
+                              onChange={(company) => {
+                                // Handle company selection - this would need to be connected to form state
+                                console.log('Company selected:', company);
+                              }}
+                              placeholder="Search or add company..."
+                              className="w-full"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                            <input
+                              type="text"
+                              defaultValue={formatFieldValue(record?.department, '')}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder={formatFieldValue(record?.department) ? '' : '-'}
+                            />
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Bio */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Influence Level</label>
-                        <select
-                          defaultValue={record?.influenceLevel || 'medium'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                          <option value="high">High</option>
-                          <option value="medium">Medium</option>
-                          <option value="low">Low</option>
-                        </select>
+                        <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Bio</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Current Status</label>
+                            <select
+                              defaultValue={record?.status || 'active'}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="active">Active</option>
+                              <option value="inactive">Inactive</option>
+                              <option value="qualified">Qualified</option>
+                              <option value="cold">Cold</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Level</label>
+                            <select
+                              defaultValue={record?.engagementLevel || 'medium'}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="high">High</option>
+                              <option value="medium">Medium</option>
+                              <option value="low">Low</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Influence Level</label>
+                            <select
+                              defaultValue={record?.influenceLevel || 'medium'}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="high">High</option>
+                              <option value="medium">Medium</option>
+                              <option value="low">Low</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Decision Power</label>
+                            <select
+                              defaultValue={record?.decisionPower || 'limited'}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="high">High</option>
+                              <option value="moderate">Moderate</option>
+                              <option value="limited">Limited</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                            <select
+                              defaultValue={record?.priority || 'medium'}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="high">High</option>
+                              <option value="medium">Medium</option>
+                              <option value="low">Low</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Group Member</label>
+                            <select
+                              defaultValue={record?.isBuyerGroupMember ? 'yes' : 'no'}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="yes">Yes</option>
+                              <option value="no">No</option>
+                            </select>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Decision Power</label>
-                        <select
-                          defaultValue={record?.decisionPower || 'limited'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                          <option value="high">High</option>
-                          <option value="moderate">Moderate</option>
-                          <option value="limited">Limited</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                        <select
-                          defaultValue={record?.priority || 'medium'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                          <option value="high">High</option>
-                          <option value="medium">Medium</option>
-                          <option value="low">Low</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Group Member</label>
-                        <select
-                          defaultValue={record?.isBuyerGroupMember ? 'yes' : 'no'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                          <option value="yes">Yes</option>
-                          <option value="no">No</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
+                    </>
+                  )}
                 </div>
               )}
 
@@ -3127,6 +3251,63 @@ export function UniversalRecordTemplate({
                         </select>
                       </div>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {activeEditTab === 'timeline' && (
+                <div className="space-y-6">
+                  <div className="text-center py-12 text-[var(--muted)]">
+                    <div className="mb-4">
+                      <svg className="mx-auto h-12 w-12 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Actions Yet</h3>
+                    <p className="text-sm text-[var(--muted)] mb-4">
+                      Company timeline activities will appear here when available.
+                    </p>
+                    <p className="text-xs text-[var(--muted)]">
+                      Actions, meetings, and other company-related activities will be displayed in this timeline.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {activeEditTab === 'news' && (
+                <div className="space-y-6">
+                  <div className="text-center py-12 text-[var(--muted)]">
+                    <div className="mb-4">
+                      <svg className="mx-auto h-12 w-12 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No News Available</h3>
+                    <p className="text-sm text-[var(--muted)] mb-4">
+                      Company news and updates will appear here when available.
+                    </p>
+                    <p className="text-xs text-[var(--muted)]">
+                      Recent news articles, press releases, and company updates will be displayed here.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {activeEditTab === 'buyer-groups' && (
+                <div className="space-y-6">
+                  <div className="text-center py-12 text-[var(--muted)]">
+                    <div className="mb-4">
+                      <svg className="mx-auto h-12 w-12 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Buyer Groups</h3>
+                    <p className="text-sm text-[var(--muted)] mb-4">
+                      Buyer group information will appear here when available.
+                    </p>
+                    <p className="text-xs text-[var(--muted)]">
+                      Information about decision-making groups and key stakeholders will be displayed here.
+                    </p>
                   </div>
                 </div>
               )}

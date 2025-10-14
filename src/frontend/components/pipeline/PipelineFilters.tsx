@@ -247,6 +247,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const showPriorityFilter = ['leads', 'prospects', 'opportunities', 'speedrun'].includes(section);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [sortBy, setSortBy] = useState('rank');
+  const [previousSortBy, setPreviousSortBy] = useState('rank');
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isColumnsDropdownOpen, setIsColumnsDropdownOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -455,9 +456,12 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
 
   const handleSortSelect = (value: string) => {
+    // Store current value as previous before changing
+    setPreviousSortBy(sortBy);
     setSortBy(value);
-    // Don't close dropdown or apply sort yet - wait for Apply button
-    console.log('Sort selected (pending apply):', value);
+    // Apply sort immediately for real-time feedback
+    onSortChange?.(value);
+    console.log(`🔧 [SORT FIX] Real-time sort applied: ${value} (previous: ${sortBy})`);
   };
 
   const handleColumnToggle = (columnValue: string) => {
@@ -780,6 +784,10 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                       <div className="flex gap-2 pt-2 border-t border-[var(--border)] justify-end mt-4">
                         <button
                           onClick={() => {
+                            console.log(`🔧 [SORT FIX] Cancel clicked - reverting to previous sort: ${previousSortBy}`);
+                            // Revert to previous sort value
+                            setSortBy(previousSortBy);
+                            onSortChange?.(previousSortBy);
                             setIsSortDropdownOpen(false);
                           }}
                           className="px-3 py-2 text-sm font-medium text-gray-700 bg-[var(--hover)] rounded-md hover:bg-[var(--panel-background)] focus:outline-none focus:ring-2 focus:ring-gray-500"
@@ -788,9 +796,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                         </button>
                         <button
                           onClick={() => {
-                            onSortChange?.(sortBy);
+                            console.log(`🔧 [SORT FIX] PipelineFilters Apply clicked: sortBy=${sortBy} - locking in selection`);
+                            // Sort is already applied in real-time, just close dropdown to lock in selection
+                            setPreviousSortBy(sortBy); // Update previous value to current for next time
                             setIsSortDropdownOpen(false);
-                            console.log('Sort applied:', sortBy);
+                            console.log(`🔧 [SORT FIX] Sort locked in: ${sortBy}`);
                           }}
                           className="px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >

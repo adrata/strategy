@@ -61,12 +61,12 @@ export function LeadDetailsTabContent({
           />
         );
 
-      case "Timeline":
+      case "Actions":
         return (
           <div className="p-6">
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
-                Timeline
+                Actions
               </h3>
               <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
                 <p className="text-[var(--muted)] mb-3">

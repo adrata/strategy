@@ -425,6 +425,20 @@ export const PipelineContent = React.memo(function PipelineContent({
         (record.company?.vertical && record.company.vertical.toLowerCase().replace(/\s+/g, '_') === verticalFilter) ||
         (record.company?.industry && record.company.industry.toLowerCase().replace(/\s+/g, '_') === verticalFilter);
 
+      // Revenue filter
+      const matchesRevenue = revenueFilter === 'all' || (() => {
+        const revenue = record.revenue || record.company?.revenue || record.annualRevenue || 0;
+        const revenueNum = typeof revenue === 'string' ? parseFloat(revenue.replace(/[^0-9.]/g, '')) : revenue;
+        switch (revenueFilter) {
+          case 'enterprise': return revenueNum >= 1000000000; // $1B+
+          case 'large': return revenueNum >= 100000000 && revenueNum < 1000000000; // $100M-$1B
+          case 'medium': return revenueNum >= 10000000 && revenueNum < 100000000; // $10M-$100M
+          case 'small': return revenueNum >= 1000000 && revenueNum < 10000000; // $1M-$10M
+          case 'startup': return revenueNum < 1000000; // <$1M
+          default: return true;
+        }
+      })();
+
       // Status filter - handle both status and stage fields for different record types
       const matchesStatus = statusFilter === 'all' ||
         (record['status'] && record.status.toLowerCase() === statusFilter.toLowerCase()) ||
@@ -436,6 +450,12 @@ export const PipelineContent = React.memo(function PipelineContent({
         priorityFilter === 'all' ||
         (record['priority'] && record.priority.toLowerCase() === priorityFilter.toLowerCase()) ||
         (!record['priority'] && priorityFilter === 'none'); // Allow filtering for records without priority
+
+      // Timezone filter - only apply for speedrun and leads sections
+      const matchesTimezone = !['speedrun', 'leads'].includes(section) || // Skip timezone filter for other sections
+        timezoneFilter === 'all' ||
+        (record['timezone'] && record['timezone'] === timezoneFilter) ||
+        (record['timeZone'] && record['timeZone'] === timezoneFilter);
 
       // Company Size filter - handle both numeric employeeCount and string size fields
       const matchesCompanySize = companySizeFilter === 'all' || (() => {
@@ -467,12 +487,46 @@ export const PipelineContent = React.memo(function PipelineContent({
         }
       })();
 
-      return matchesSearch && matchesVertical && matchesStatus && matchesPriority && matchesCompanySize;
+      // Location filter (State-based)
+      const matchesLocation = locationFilter === 'all' || (() => {
+        const hqState = record.hqState || record.company?.hqState;
+        const state = record.state || record.company?.state;
+        
+        const location = locationFilter.toLowerCase().replace(/\s+/g, '_');
+        
+        return (hqState && hqState.toLowerCase().replace(/\s+/g, '_') === location) ||
+               (state && state.toLowerCase().replace(/\s+/g, '_') === location);
+      })();
+
+      // Last contacted filter
+      const matchesLastContacted = lastContactedFilter === 'all' || (() => {
+        const lastContact = record.lastContactDate || record.lastContact || record.lastAction;
+        if (!lastContact) {
+          return lastContactedFilter === 'never';
+        }
+        
+        const contactDate = new Date(lastContact);
+        const now = new Date();
+        const daysDiff = Math.floor((now.getTime() - contactDate.getTime()) / (1000 * 60 * 60 * 24));
+        
+        switch (lastContactedFilter) {
+          case 'never': return false; // Already handled above
+          case 'today': return daysDiff === 0;
+          case 'week': return daysDiff <= 7;
+          case 'month': return daysDiff <= 30;
+          case 'quarter': return daysDiff <= 90;
+          case 'overdue': return daysDiff > 90;
+          default: return true;
+        }
+      })();
+
+      return matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation && matchesLastContacted;
     });
 
     // Apply smart ranking or sorting
-    if (section === 'speedrun') {
-      // For speedrun, sort by rank to show 1, 2, 3, 4, 5... in order
+    if (section === 'speedrun' && (!sortField || sortField === 'rank')) {
+      // For speedrun, default sort by rank to show 1, 2, 3, 4, 5... in order
+      // But allow other sort fields to override this
       filtered = [...filtered].sort((a: any, b: any) => {
         const aRank = parseInt(a.winningScore?.rank || a.rank || '999', 10);
         const bRank = parseInt(b.winningScore?.rank || b.rank || '999', 10);
@@ -480,6 +534,7 @@ export const PipelineContent = React.memo(function PipelineContent({
       });
     } else if (sortField) {
       // Regular field sorting with robust field handling
+      console.log(`🔧 [SORT FIX] Applying sort: field=${sortField}, direction=${sortDirection}, section=${section}`);
       filtered = [...filtered].sort((a: any, b: any) => {
         let aVal = getSortableValue(a, sortField);
         let bVal = getSortableValue(b, sortField);
@@ -690,17 +745,27 @@ export const PipelineContent = React.memo(function PipelineContent({
       'rank': 'rank',
       'company': 'company',
       'name': 'name',
+      'title': 'title',
       'status': 'status',
       'stage': 'stage',
-      'lastContact': 'lastActionDate',
+      'priority': 'priority',
+      'amount': 'amount',
+      'lastContact': 'lastContact', // Keep as lastContact since getSortableValue handles both
       'nextAction': 'nextAction'
     };
     
     const actualField = fieldMapping[field] || field;
-    setSortField(actualField);
-    setSortDirection('asc'); // Always start with ascending from dropdown
-    console.log(`🔧 Dropdown sort: ${field} -> ${actualField}`);
-  }, []);
+    
+    // If clicking the same field, toggle direction; otherwise start with ascending
+    if (sortField === actualField) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(actualField);
+      setSortDirection('asc');
+    }
+    
+    console.log(`🔧 [SORT FIX] Dropdown sort: ${field} -> ${actualField} (section: ${section}, direction: ${sortField === actualField ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc'})`);
+  }, [section, sortField, sortDirection]);
 
   const handleColumnSort = useCallback((columnName: string) => {
     // Map column display names to actual data field names (section-specific)
