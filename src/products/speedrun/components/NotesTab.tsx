@@ -21,6 +21,17 @@ export function NotesTab({
   onSave,
   lastSavedAt = null,
 }: NotesTabProps) {
+  // Track unsaved changes to prevent external overwrites
+  const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState<boolean>(false);
+  const [lastSavedNotes, setLastSavedNotes] = React.useState<string>(notes);
+
+  // Update lastSavedNotes when notes change externally (but not from user input)
+  React.useEffect(() => {
+    if (notes === lastSavedNotes || !hasUnsavedChanges) {
+      setLastSavedNotes(notes);
+    }
+  }, [notes, lastSavedNotes, hasUnsavedChanges]);
+
   // Utility functions for notes statistics
   const getWordCount = (text: string) => {
     if (!text || text.trim().length === 0) return 0;
@@ -48,6 +59,26 @@ export function NotesTab({
       return `${days}d ago`;
     }
   };
+
+  // Handle notes change to track unsaved changes
+  const handleNotesChange = React.useCallback((newNotes: string) => {
+    setNotes(newNotes);
+    setHasUnsavedChanges(newNotes !== lastSavedNotes);
+  }, [setNotes, lastSavedNotes]);
+
+  // Enhanced save handler that updates tracking state
+  const handleSave = React.useCallback(async (value: string) => {
+    if (onSave) {
+      try {
+        await onSave(value);
+        setLastSavedNotes(value);
+        setHasUnsavedChanges(false);
+      } catch (error) {
+        setHasUnsavedChanges(true);
+        throw error; // Re-throw to let NotesEditor handle the error
+      }
+    }
+  }, [onSave]);
 
   return (
     <div className="h-full flex flex-col">
@@ -79,11 +110,11 @@ export function NotesTab({
       <div className="flex-1">
         <NotesEditor
           value={notes}
-          onChange={setNotes}
+          onChange={handleNotesChange}
           placeholder="Add your notes here..."
           autoSave={!!onSave}
           saveStatus={saveStatus}
-          onSave={onSave}
+          onSave={handleSave}
           debounceMs={1500}
           lastSavedAt={lastSavedAt}
           className="h-full"

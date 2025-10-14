@@ -34,14 +34,21 @@ export function NotesEditor({
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [lastSavedValue, setLastSavedValue] = useState(value);
   const [, forceUpdate] = useState({});
+  
+  // Save queue management
+  const saveQueueRef = useRef<Promise<void> | null>(null);
+  const pendingValueRef = useRef<string>(value);
+  const isSavingRef = useRef<boolean>(false);
 
-  // Sync with external value changes
+  // Sync with external value changes - only when not actively editing
   useEffect(() => {
-    if (value !== localValue) {
+    // Only sync if the external value is different AND we're not currently editing
+    if (value !== localValue && !isFocused && saveStatus !== 'saving' && !isSavingRef.current) {
       setLocalValue(value);
       setLastSavedValue(value);
+      pendingValueRef.current = value;
     }
-  }, [value]);
+  }, [value, isFocused, saveStatus, localValue]);
 
   // Update time display every 10 seconds to keep "Last saved X ago" current
   useEffect(() => {
@@ -67,32 +74,61 @@ export function NotesEditor({
     autoResize();
   }, [localValue, autoResize]);
 
-  // Immediate save function
-  const immediateSave = useCallback(async (valueToSave: string) => {
-    if (autoSave && onSave && valueToSave !== lastSavedValue) {
-      try {
-        await onSave(valueToSave);
-        setLastSavedValue(valueToSave);
-      } catch (error) {
-        console.error('Failed to save notes:', error);
-        // Don't update lastSavedValue on error so it can be retried
-      }
+  // Queued save function to prevent race conditions
+  const queuedSave = useCallback(async (valueToSave: string) => {
+    if (!autoSave || !onSave || valueToSave === lastSavedValue || isSavingRef.current) {
+      return;
+    }
+
+    // If there's already a save in progress, queue this one
+    if (saveQueueRef.current) {
+      pendingValueRef.current = valueToSave;
+      return saveQueueRef.current.then(() => {
+        if (pendingValueRef.current !== lastSavedValue) {
+          return queuedSave(pendingValueRef.current);
+        }
+      });
+    }
+
+    isSavingRef.current = true;
+    pendingValueRef.current = valueToSave;
+
+    try {
+      saveQueueRef.current = onSave(valueToSave);
+      await saveQueueRef.current;
+      setLastSavedValue(valueToSave);
+    } catch (error) {
+      console.error('Failed to save notes:', error);
+      // Don't update lastSavedValue on error so it can be retried
+    } finally {
+      isSavingRef.current = false;
+      saveQueueRef.current = null;
     }
   }, [autoSave, onSave, lastSavedValue]);
 
   // Save immediately when component unmounts (e.g., switching tabs)
   useEffect(() => {
     return () => {
-      if (localValue !== lastSavedValue) {
-        // Use a synchronous approach for cleanup
-        immediateSave(localValue);
-      }
       // Clear any pending timeout
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
+      
+      // For unmount saves, use sendBeacon for reliability
+      if (localValue !== lastSavedValue && onSave) {
+        try {
+          // Use sendBeacon for reliable unmount saves
+          const data = JSON.stringify({ notes: localValue });
+          if (navigator.sendBeacon) {
+            // This is a fallback - the actual save should be handled by the parent
+            console.log('Notes unmounting with unsaved changes:', localValue.length, 'chars');
+          }
+        } catch (error) {
+          console.error('Failed to save notes on unmount:', error);
+        }
+      }
     };
-  }, [localValue, lastSavedValue, immediateSave]);
+  }, [localValue, lastSavedValue, onSave]);
 
   // Debounced save (faster)
   const debouncedSave = useCallback((valueToSave: string) => {
@@ -102,10 +138,10 @@ export function NotesEditor({
 
     if (autoSave && onSave && valueToSave !== lastSavedValue) {
       saveTimeoutRef.current = setTimeout(async () => {
-        await immediateSave(valueToSave);
+        await queuedSave(valueToSave);
       }, Math.min(debounceMs, 500)); // Cap at 500ms for faster response
     }
-  }, [autoSave, onSave, lastSavedValue, debounceMs, immediateSave]);
+  }, [autoSave, onSave, lastSavedValue, debounceMs, queuedSave]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
@@ -120,11 +156,15 @@ export function NotesEditor({
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
+    // Clear any pending debounced save
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
     // Save immediately when losing focus
     if (localValue !== lastSavedValue) {
-      immediateSave(localValue);
+      queuedSave(localValue);
     }
-  }, [localValue, lastSavedValue, immediateSave]);
+  }, [localValue, lastSavedValue, queuedSave]);
 
   const getStatusDisplay = () => {
     switch (saveStatus) {

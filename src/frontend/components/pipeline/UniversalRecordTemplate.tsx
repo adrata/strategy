@@ -4077,6 +4077,7 @@ function CompanyTab({ record, recordType }: { record: any; recordType: string })
 
 export function NotesTab({ record, recordType }: { record: any; recordType: string }) {
   const { updateCurrentRecord } = useRecordContext();
+  
   // Initialize notes instantly from record prop
   const getInitialNotes = () => {
     if (record?.notes) {
@@ -4105,6 +4106,8 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
     record?.updatedAt ? new Date(record.updatedAt) : null
   );
   const [lastSavedNotes, setLastSavedNotes] = React.useState<string>(getInitialNotes);
+  const [isUserEditing, setIsUserEditing] = React.useState<boolean>(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState<boolean>(false);
 
 
   // Silently refresh notes from API in background (no loading state)
@@ -4134,9 +4137,9 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
               ? result.data.notes 
               : result.data.notes.content || result.data.notes.text || '';
             
-            // Only update if the notes are different and we're not currently saving
+            // Only update if the notes are different and we're not currently editing or saving
             // This prevents overwriting user changes during active editing
-            if (freshNotes !== notes && saveStatus !== 'saving') {
+            if (freshNotes !== notes && saveStatus !== 'saving' && !isUserEditing && !hasUnsavedChanges) {
               setNotes(freshNotes);
               setLastSavedNotes(freshNotes);
               if (result.data.updatedAt) {
@@ -4172,6 +4175,7 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
     try {
       console.log('💾 [NOTES] Starting save for:', { recordId: record.id, recordType, contentLength: notesContent.length });
       setSaveStatus('saving');
+      setHasUnsavedChanges(false);
 
       // Map record types to v1 API endpoints
       const apiEndpoint = recordType === 'companies' 
@@ -4213,20 +4217,27 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
     } catch (error) {
       console.error('❌ [NOTES] Error saving notes:', error);
       setSaveStatus('error');
+      setHasUnsavedChanges(true); // Mark as having unsaved changes on error
       // Clear error status after 3 seconds
       setTimeout(() => setSaveStatus('idle'), 3000);
       
       // Show user-friendly error message
       console.warn('⚠️ [NOTES] Save failed - changes will be retried automatically');
     }
-  }, [record?.id, recordType, lastSavedNotes, saveStatus]);
+  }, [record?.id, recordType, lastSavedNotes, saveStatus, updateCurrentRecord]);
+
+  // Handle notes change to track user editing
+  const handleNotesChange = React.useCallback((newNotes: string) => {
+    setNotes(newNotes);
+    setHasUnsavedChanges(newNotes !== lastSavedNotes);
+  }, [lastSavedNotes]);
 
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1">
         <NotesEditor
           value={notes}
-          onChange={setNotes}
+          onChange={handleNotesChange}
           placeholder="Add your notes here..."
           autoSave={true}
           saveStatus={saveStatus}
