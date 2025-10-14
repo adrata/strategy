@@ -18,6 +18,18 @@
   animation: fade-in 0.3s ease-out;
 }
 
+/* Animation for success messages */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -100%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
 /* Import centralized scrollbar styling */
 @import '../platform/styles/scrollbar.css';
 

@@ -27,6 +27,12 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
       colors,
       timestamp: new Date().toISOString()
     });
+    
+    if (!isOpen) {
+      console.log('❌ [AddLeadModal] Modal is being closed!');
+    } else {
+      console.log('✅ [AddLeadModal] Modal is being opened!');
+    }
   }, [isOpen, section, colors]);
 
   // Auto-focus first name input when modal opens
@@ -217,7 +223,10 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
             </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={() => {
+              console.log('❌ [AddLeadModal] X button clicked - closing modal');
+              onClose();
+            }}
             className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
           >
             <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
@@ -303,10 +312,14 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
             </label>
             <CompanySelector
               value={formData.selectedCompany}
-              onChange={(company) => setFormData(prev => ({ 
-                ...prev, 
-                selectedCompany: company 
-              }))}
+              onChange={(company) => {
+                console.log('🏢 [AddLeadModal] Company selected/changed:', company);
+                setFormData(prev => ({ 
+                  ...prev, 
+                  selectedCompany: company 
+                }));
+                console.log('🏢 [AddLeadModal] Form data updated with company:', company);
+              }}
               placeholder="Search or add company..."
             />
           </div>
@@ -316,7 +329,10 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
           <div className="flex items-center gap-3 pt-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => {
+                console.log('❌ [AddLeadModal] Cancel button clicked - closing modal');
+                onClose();
+              }}
               className="flex-1 px-4 py-2 border border-[var(--border)] text-gray-700 rounded-lg hover:bg-[var(--panel-background)] transition-colors"
             >
               Cancel

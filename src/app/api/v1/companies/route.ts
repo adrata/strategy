@@ -395,33 +395,12 @@ export async function POST(request: NextRequest) {
       result = await prisma.$transaction(async (tx) => {
       console.log('🔍 [V1 COMPANIES API] Starting company creation...');
       
-      // Log the data being sent to help identify missing columns
-      // Start with minimal required fields to avoid P2022 errors
+      // Minimal company data with required timestamp fields
       const companyData = {
         name: body.name,
         workspaceId: context.workspaceId,
-        // Only include optional fields if they have values
-        ...(body.legalName && { legalName: body.legalName }),
-        ...(body.email && { email: body.email }),
-        ...(body.website && { website: body.website }),
-        ...(body.phone && { phone: body.phone }),
-        ...(body.address && { address: body.address }),
-        ...(body.city && { city: body.city }),
-        ...(body.state && { state: body.state }),
-        ...(body.country && { country: body.country }),
-        ...(body.industry && { industry: body.industry }),
-        ...(body.status && { status: body.status }),
-        ...(body.priority && { priority: body.priority }),
-        ...(validatedMainSellerId && { mainSellerId: validatedMainSellerId }),
-        ...(body.mainSellerId && { mainSellerId: body.mainSellerId }),
-        ...(body.notes && { notes: body.notes }),
-        // Only include opportunity fields if they have values to avoid P2022 errors
-        ...(body.opportunityStage && { opportunityStage: body.opportunityStage }),
-        ...(body.opportunityAmount && { opportunityAmount: body.opportunityAmount }),
-        ...(body.opportunityProbability && { opportunityProbability: body.opportunityProbability }),
-        ...(body.expectedCloseDate && { expectedCloseDate: new Date(body.expectedCloseDate) }),
-        ...(body.actualCloseDate && { actualCloseDate: new Date(body.actualCloseDate) }),
-        // Let Prisma handle createdAt and updatedAt with defaults
+        createdAt: new Date(),
+        updatedAt: new Date()
       };
       
       console.log('🔍 [V1 COMPANIES API] Company data to create:', {
@@ -541,24 +520,34 @@ export async function POST(request: NextRequest) {
     }
     
     // Enhanced error logging for P2022 (column doesn't exist) errors
-    if (error instanceof Error && error.name === 'PrismaClientKnownRequestError') {
-      const prismaError = error as any;
-      console.error('❌ [V1 COMPANIES API] Prisma error details:', {
-        code: prismaError.code,
-        meta: prismaError.meta,
-        message: prismaError.message,
-        clientVersion: prismaError.clientVersion
-      });
-      
-      if (prismaError.code === 'P2022') {
-        console.error('❌ [V1 COMPANIES API] P2022 Error - Column does not exist:', {
-          columnName: prismaError.meta?.column_name,
-          tableName: prismaError.meta?.table_name,
-          schemaName: prismaError.meta?.schema_name,
-          fullMeta: prismaError.meta
+      if (error instanceof Error && error.name === 'PrismaClientKnownRequestError') {
+        const prismaError = error as any;
+        console.error('❌ [V1 COMPANIES API] Prisma error details:', {
+          code: prismaError.code,
+          meta: prismaError.meta,
+          message: prismaError.message,
+          clientVersion: prismaError.clientVersion,
+          stack: prismaError.stack
         });
+        
+        if (prismaError.code === 'P2022') {
+          console.error('❌ [V1 COMPANIES API] P2022 Error - Column does not exist:', {
+            columnName: prismaError.meta?.column_name,
+            tableName: prismaError.meta?.table_name,
+            schemaName: prismaError.meta?.schema_name,
+            fullMeta: prismaError.meta,
+            attemptedData: companyData,
+            bodyReceived: body
+          });
+          
+          // Return a more specific error message
+          return createErrorResponse(
+            `Database column '${prismaError.meta?.column_name}' does not exist in table '${prismaError.meta?.table_name}'. This indicates a schema mismatch between the application and database.`,
+            'SCHEMA_MISMATCH',
+            500
+          );
+        }
       }
-    }
     
     // Log full Prisma error details for debugging
     console.error('❌ [V1 COMPANIES API] Detailed error:', {

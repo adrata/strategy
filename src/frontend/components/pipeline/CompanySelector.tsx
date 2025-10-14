@@ -88,8 +88,19 @@ export function CompanySelector({
   };
 
   // Handle adding new company
-  const handleAddCompany = async () => {
+  const handleAddCompany = async (e?: React.MouseEvent) => {
+    // Prevent event propagation to avoid triggering parent click handlers
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     if (!newCompanyName.trim()) return;
+
+    console.log('🏢 [CompanySelector] Starting company creation:', {
+      name: newCompanyName.trim(),
+      website: newCompanyWebsite.trim()
+    });
 
     setIsCreating(true);
     setCreateError('');
@@ -106,21 +117,25 @@ export function CompanySelector({
         }),
       });
 
+      console.log('🏢 [CompanySelector] Company creation response:', data);
+
       if (data.success && data.data) {
+        console.log('✅ [CompanySelector] Company created successfully, calling onChange:', data.data);
         onChange(data.data);
         setNewCompanyName('');
         setNewCompanyWebsite('');
         setShowAddForm(false);
         setIsOpen(false);
         setCreateError('');
+        console.log('✅ [CompanySelector] Company selector state reset, dropdown closed');
       } else {
         const errorMsg = data.error || 'Failed to create company';
-        console.error('Failed to create company:', errorMsg);
+        console.error('❌ [CompanySelector] Failed to create company:', errorMsg);
         setCreateError(errorMsg);
       }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Failed to create company. Please try again.';
-      console.error('Error creating company:', error);
+      console.error('❌ [CompanySelector] Error creating company:', error);
       setCreateError(errorMsg);
     } finally {
       setIsCreating(false);
@@ -302,7 +317,7 @@ export function CompanySelector({
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={handleAddCompany}
+                    onClick={(e) => handleAddCompany(e)}
                     disabled={!newCompanyName.trim() || isCreating}
                     className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >

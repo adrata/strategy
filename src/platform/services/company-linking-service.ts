@@ -138,6 +138,8 @@ export async function findOrCreateCompany(
     data: {
       workspaceId,
       name: trimmedName,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       // Only include optional fields if they have values
       ...(additionalData?.industry && { industry: additionalData.industry }),
       ...(additionalData?.domain && { domain: additionalData.domain }),
@@ -148,7 +150,6 @@ export async function findOrCreateCompany(
         sourceData: 'lead_creation',
         createdAt: new Date().toISOString()
       }
-      // Let Prisma handle createdAt and updatedAt with defaults
     }
   });
 

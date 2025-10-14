@@ -142,6 +142,20 @@ export function CompleteActionModal({
     }
   }, [showCreatePersonForm]);
 
+  // Reset submission guard when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      isSubmittingRef.current = false;
+    }
+  }, [isOpen]);
+
+  // Reset submission guard when loading state changes
+  useEffect(() => {
+    if (!isLoading) {
+      isSubmittingRef.current = false;
+    }
+  }, [isLoading]);
+
   // Search people as user types
   useEffect(() => {
     const trimmedQuery = personSearchQuery.trim();
@@ -290,15 +304,14 @@ export function CompleteActionModal({
     
     // Set submission guard
     isSubmittingRef.current = true;
-    
-    try {
-      onSubmit(formData);
-    } finally {
-      // Reset submission guard after a short delay to allow for async operations
-      setTimeout(() => {
-        isSubmittingRef.current = false;
-      }, 1000);
-    }
+    console.log('✅ [CompleteActionModal] Submitting action...');
+
+    // Call the submit handler
+    onSubmit(formData);
+
+    // Reset guard immediately since onSubmit is synchronous
+    // The parent component will handle async operations and close the modal
+    isSubmittingRef.current = false;
   };
 
   // Cross-platform keyboard shortcut detection

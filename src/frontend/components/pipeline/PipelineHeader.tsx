@@ -28,6 +28,7 @@ import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { RankingSystem } from '@/platform/services/ranking-system';
 import { PipelineMetrics } from '@/platform/services/pipeline-metrics-calculator';
 import { useWorkspaceSpeedrunSettings } from '@/platform/hooks/useWorkspaceSpeedrunSettings';
+import { notificationService } from '@/platform/services/notification-service';
 import { 
   ChevronDownIcon,
   CheckCircleIcon,
@@ -91,6 +92,7 @@ export function PipelineHeader({
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
+  const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -159,6 +161,7 @@ export function PipelineHeader({
     setShowAddOpportunityModal(false);
     setShowAddCompanyModal(false);
     setShowAddPersonModal(false);
+    setShowAddActionModal(false); // Also close the action modal
     setSelectedRecord(null);
     
     // Clear cache and refresh the list
@@ -180,18 +183,27 @@ export function PipelineHeader({
       onClearCache?.();
     }, 100);
     
-    // Show success message after a brief delay to ensure it's visible
-    setTimeout(() => {
-      console.log(`🎉 [PipelineHeader] Setting showSuccessMessage to TRUE (after 100ms delay)`);
-      console.log(`🎉 [PipelineHeader] Current component instance:`, Math.random().toString(36).substr(2, 9));
-      setShowSuccessMessage(true);
-      console.log(`🎉 [PipelineHeader] showSuccessMessage has been set to true`);
+    // Show success notification using the notification service
+    setTimeout(async () => {
+      console.log(`🎉 [PipelineHeader] Showing success notification for section: ${section}`);
       
-      // Hide success message after 3 seconds
-      setTimeout(() => {
-        console.log(`⏰ [PipelineHeader] Hiding success message for section: ${section}`);
-        setShowSuccessMessage(false);
-      }, 3000);
+      const successMessage = section === 'speedrun' ? 'Action logged successfully!' : `${section.charAt(0).toUpperCase() + section.slice(1)} created successfully!`;
+      
+      try {
+        await notificationService.showNotification(
+          'Success!',
+          successMessage,
+          {
+            icon: '/adrata-icon.png'
+          }
+        );
+        console.log(`✅ [PipelineHeader] Success notification shown: ${successMessage}`);
+      } catch (error) {
+        console.error(`❌ [PipelineHeader] Failed to show notification:`, error);
+        // Fallback to UI success message if notification fails
+        setShowSuccessMessage(true);
+        setTimeout(() => setShowSuccessMessage(false), 3000);
+      }
     }, 100);
   };
   const [timeData, setTimeData] = useState(() => {
@@ -393,17 +405,23 @@ export function PipelineHeader({
   const handleActionSubmit = async (actionData: ActionLogData) => {
     // If we have a selected record, use it; otherwise, we need a person name
     const recordId = selectedRecord?.id;
-    const recordType = selectedRecord ? section.slice(0, -1) : 'contact'; // Default to contact if no record
+    const recordType = selectedRecord ? section.slice(0, -1) : 'contact';
     
-    if (!recordId && !actionData.person) {
+    if (!recordId && !actionData.personId) {
       console.error('No record or person selected for action');
+      alert('Please select a person before adding an action');
       return;
     }
     
+    setIsSubmittingAction(true);
+    
     try {
-      const response = await authFetch('/api/v1/actions', {
+      const response = await fetch('/api/v1/actions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
         body: JSON.stringify({
           type: actionData.type,
           subject: actionData.action.length > 100 ? actionData.action.substring(0, 100) + '...' : actionData.action,
@@ -413,14 +431,25 @@ export function PipelineHeader({
         })
       });
 
-      if (response.ok) {
-        setShowAddActionModal(false);
-        setSelectedRecord(null);
-        // Trigger refresh
-        onRefresh();
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || 'Failed to save action');
       }
+
+      const result = await response.json();
+      console.log('✅ Action saved successfully:', result);
+      
+      // Close the action modal
+      setShowAddActionModal(false);
+      setSelectedRecord(null);
+      
+      // Call the success handler to show success message and refresh data
+      handleAddSuccess(result);
     } catch (error) {
       console.error('Failed to log action:', error);
+      alert(`Failed to save action: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsSubmittingAction(false);
     }
   };
 
@@ -1273,7 +1302,7 @@ export function PipelineHeader({
         personName={selectedRecord?.name || selectedRecord?.fullName}
         companyName={selectedRecord?.company?.name || selectedRecord?.company}
         section={section}
-        isLoading={false}
+        isLoading={isSubmittingAction}
       />
 
       {/* Add Task Modal */}
@@ -1343,22 +1372,32 @@ export function PipelineHeader({
       {/* Success Message */}
       {showSuccessMessage && (
         <div 
-          className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[99999] bg-green-500 border-2 border-green-600 rounded-lg shadow-2xl px-6 py-4"
+          className="fixed inset-0 pointer-events-none"
           style={{ 
-            pointerEvents: 'none',
-            animation: 'slideInFromTop 0.3s ease-out'
+            zIndex: 9999999
           }}
         >
-          <div className="flex items-center">
-            <svg className="h-6 w-6 text-white mr-3" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            <p className="text-lg text-white font-bold">
-              {section.charAt(0).toUpperCase() + section.slice(1)} created successfully!
-            </p>
+          <div 
+            className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-green-500 border-2 border-green-600 rounded-lg shadow-2xl px-6 py-4"
+            style={{ 
+              animation: 'slideInFromTop 0.3s ease-out',
+              minWidth: '300px',
+              textAlign: 'center',
+              zIndex: 9999999
+            }}
+          >
+            <div className="flex items-center justify-center">
+              <svg className="h-6 w-6 text-white mr-3" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <p className="text-lg text-white font-bold">
+                {section === 'speedrun' ? 'Action logged successfully!' : `${section.charAt(0).toUpperCase() + section.slice(1)} created successfully!`}
+              </p>
+            </div>
           </div>
         </div>
       )}
+
       
 
     </>
