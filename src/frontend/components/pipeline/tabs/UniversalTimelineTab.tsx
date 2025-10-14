@@ -159,7 +159,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         
         // Build the correct query parameters based on record type
         let actionsQuery = '';
-        if (recordType === 'leads' || recordType === 'people' || recordType === 'prospects') {
+        if (recordType === 'leads' || recordType === 'people' || recordType === 'prospects' || recordType === 'speedrun' || recordType === 'actions') {
           actionsQuery = `personId=${record.id}`;
         } else if (recordType === 'companies') {
           actionsQuery = `companyId=${record.id}`;

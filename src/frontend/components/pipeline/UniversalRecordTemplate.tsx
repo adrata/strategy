@@ -132,7 +132,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         case 'leads':
           return [
             { id: 'overview', label: 'Overview' },
-            { id: 'timeline', label: 'Actions' },
+            { id: 'actions', label: 'Actions' },
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' }
@@ -140,7 +140,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'prospects':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'timeline', label: 'Actions' },
+        { id: 'actions', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
@@ -148,7 +148,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'opportunities':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'timeline', label: 'Actions' },
+        { id: 'actions', label: 'Actions' },
         { id: 'deal-intel', label: 'Deal Intel' },
         { id: 'stakeholders', label: 'Stakeholders' },
         { id: 'buyer-groups', label: 'Buyer Group' },
@@ -158,7 +158,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'companies':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'timeline', label: 'Actions' },
+        { id: 'actions', label: 'Actions' },
         { id: 'news', label: 'News' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'buyer-groups', label: 'Buyer Group' },
@@ -167,7 +167,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'people':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'timeline', label: 'Actions' },
+        { id: 'actions', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
@@ -175,7 +175,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'speedrun':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'timeline', label: 'Actions' },
+        { id: 'actions', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
@@ -183,7 +183,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'clients':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'timeline', label: 'Actions' },
+        { id: 'actions', label: 'Actions' },
         { id: 'relationship', label: 'Relationship' },
         { id: 'business', label: 'Business' },
         { id: 'personal', label: 'Personal' },
@@ -193,7 +193,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'partners':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'timeline', label: 'Actions' },
+        { id: 'actions', label: 'Actions' },
         { id: 'partnership', label: 'Partnership' },
         { id: 'collaboration', label: 'Collaboration' },
         { id: 'performance', label: 'Performance' },
@@ -203,7 +203,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'sellers':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'timeline', label: 'Actions' },
+        { id: 'actions', label: 'Actions' },
         { id: 'companies', label: 'Companies' },
         { id: 'performance', label: 'Performance' },
         { id: 'profile', label: 'Profile' },
@@ -212,7 +212,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     default:
       return [
         { id: 'overview', label: 'Home' },
-        { id: 'timeline', label: 'Actions' },
+        { id: 'actions', label: 'Actions' },
         { id: 'company', label: companyName },
         { id: 'industry', label: 'Industry' },
         { id: 'career', label: 'Career' },
@@ -1279,7 +1279,7 @@ export function UniversalRecordTemplate({
           action: 'soft_delete',
           entityType: recordType === 'companies' ? 'companies' : 
                      recordType === 'people' ? 'people' : 
-                     recordType === 'timeline' ? 'actions' : 'people',
+                     recordType === 'actions' ? 'actions' : 'people',
           entityId: record.id,
         }),
       });
@@ -1857,7 +1857,7 @@ export function UniversalRecordTemplate({
           action: 'soft_delete',
           entityType: recordType === 'companies' ? 'companies' : 
                      recordType === 'people' ? 'people' : 
-                     recordType === 'timeline' ? 'actions' : 'people',
+                     recordType === 'actions' ? 'actions' : 'people',
           entityId: record.id,
         }),
       });
@@ -2309,7 +2309,7 @@ export function UniversalRecordTemplate({
           );
         case 'actions':
           return renderTabWithErrorBoundary(
-            <ActivityTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalTimelineTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'timeline':
           return renderTabWithErrorBoundary(
