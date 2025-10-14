@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = Math.min(parseInt(searchParams.get('limit') || '100'), 1000); // Cap at 1000, default 100
-    const search = searchParams.get('search') || '';
+    const search = (searchParams.get('search') || '').trim(); // Trim whitespace for consistent searching
     const status = searchParams.get('status') || '';
     const priority = searchParams.get('priority') || '';
     const industry = searchParams.get('industry') || '';
@@ -401,7 +401,7 @@ export async function POST(request: NextRequest) {
           name: body.name,
           legalName: body.legalName,
           email: body.email,
-          website: body.website,
+          website: body.website || null,  // Convert empty strings to null
           phone: body.phone,
           address: body.address,
           city: body.city,
@@ -412,13 +412,14 @@ export async function POST(request: NextRequest) {
           priority: body.priority || 'MEDIUM',
           workspaceId: context.workspaceId,
           mainSellerId: validatedMainSellerId || body.mainSellerId || null, // Use validated user or null
-          notes: body.notes,
+          notes: body.notes || null,  // Convert empty strings to null
           opportunityStage: body.opportunityStage,
           opportunityAmount: body.opportunityAmount,
           opportunityProbability: body.opportunityProbability,
           expectedCloseDate: body.expectedCloseDate ? new Date(body.expectedCloseDate) : null,
           actualCloseDate: body.actualCloseDate ? new Date(body.actualCloseDate) : null,
-          updatedAt: new Date(), // Provide updatedAt value since schema doesn't have @updatedAt
+          createdAt: new Date(),  // ADD THIS - explicitly set like people endpoint
+          updatedAt: new Date(),
         },
         include: {
           mainSeller: {
@@ -452,7 +453,8 @@ export async function POST(request: NextRequest) {
             userId: context.userId,
             companyId: company.id,
             completedAt: new Date(),
-            updatedAt: new Date(), // Provide updatedAt value since schema doesn't have @updatedAt
+            createdAt: new Date(),  // ADD THIS
+            updatedAt: new Date(),
           },
         });
 
@@ -478,7 +480,9 @@ export async function POST(request: NextRequest) {
         error: transactionError,
         errorMessage: transactionError instanceof Error ? transactionError.message : String(transactionError),
         errorStack: transactionError instanceof Error ? transactionError.stack : undefined,
-        prismaCode: transactionError && typeof transactionError === 'object' && 'code' in transactionError ? transactionError.code : undefined
+        prismaCode: transactionError && typeof transactionError === 'object' && 'code' in transactionError ? transactionError.code : undefined,
+        prismaMessage: transactionError && typeof transactionError === 'object' && 'message' in transactionError ? transactionError.message : undefined,
+        prismaMeta: transactionError && typeof transactionError === 'object' && 'meta' in transactionError ? transactionError.meta : undefined,
       });
       throw transactionError; // Re-throw to be caught by outer catch block
     }

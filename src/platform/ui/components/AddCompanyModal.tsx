@@ -129,8 +129,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
         },
         body: JSON.stringify({
           name: formData.name,
-          website: formData.website,
-          notes: formData.notes,
+          website: formData.website?.trim() || undefined,
+          notes: formData.notes?.trim() || undefined,
           ...(user?.id && { mainSellerId: user.id }) // Only include if user exists
         }),
         timeout: 30000 // Increase timeout to 30 seconds

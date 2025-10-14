@@ -33,7 +33,9 @@ export function CompanySelector({
   const [isSearching, setIsSearching] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newCompanyName, setNewCompanyName] = useState('');
-  const [newCompanyDomain, setNewCompanyDomain] = useState('');
+  const [newCompanyWebsite, setNewCompanyWebsite] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState('');
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -89,6 +91,9 @@ export function CompanySelector({
   const handleAddCompany = async () => {
     if (!newCompanyName.trim()) return;
 
+    setIsCreating(true);
+    setCreateError('');
+
     try {
       const data = await authFetch('/api/v1/companies', {
         method: 'POST',
@@ -97,22 +102,28 @@ export function CompanySelector({
         },
         body: JSON.stringify({
           name: newCompanyName.trim(),
-          domain: newCompanyDomain.trim() || undefined,
-          website: newCompanyDomain.trim() ? `https://${newCompanyDomain.trim()}` : undefined
+          website: newCompanyWebsite.trim() || undefined
         }),
       });
 
       if (data.success && data.data) {
         onChange(data.data);
         setNewCompanyName('');
-        setNewCompanyDomain('');
+        setNewCompanyWebsite('');
         setShowAddForm(false);
         setIsOpen(false);
+        setCreateError('');
       } else {
-        console.error('Failed to create company:', data.error || 'Unknown error');
+        const errorMsg = data.error || 'Failed to create company';
+        console.error('Failed to create company:', errorMsg);
+        setCreateError(errorMsg);
       }
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to create company. Please try again.';
       console.error('Error creating company:', error);
+      setCreateError(errorMsg);
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -224,7 +235,11 @@ export function CompanySelector({
             <div className="border-t border-[var(--border)] py-1">
               <button
                 type="button"
-                onClick={() => setShowAddForm(true)}
+                onClick={() => {
+                  setShowAddForm(true);
+                  setNewCompanyName(searchQuery.trim());
+                  setCreateError('');
+                }}
                 className="w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] focus:bg-[var(--panel-background)] focus:outline-none text-blue-600"
               >
                 <div className="flex items-center gap-2">
@@ -239,6 +254,18 @@ export function CompanySelector({
           {showAddForm && (
             <div className="border-t border-[var(--border)] p-4 bg-[var(--panel-background)]">
               <div className="space-y-3">
+                {/* Error Message */}
+                {createError && (
+                  <div className="bg-red-50 border border-red-200 rounded-md p-2">
+                    <div className="flex items-center">
+                      <svg className="w-4 h-4 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p className="text-xs text-red-700">{createError}</p>
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                     Company Name *
@@ -246,37 +273,49 @@ export function CompanySelector({
                   <input
                     type="text"
                     value={newCompanyName}
-                    onChange={(e) => setNewCompanyName(e.target.value)}
+                    onChange={(e) => {
+                      setNewCompanyName(e.target.value);
+                      setCreateError('');
+                    }}
                     placeholder="Enter company name"
                     className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     autoFocus
+                    disabled={isCreating}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
-                    Domain (optional)
+                    Website (optional)
                   </label>
                   <input
                     type="text"
-                    value={newCompanyDomain}
-                    onChange={(e) => setNewCompanyDomain(e.target.value)}
-                    placeholder="example.com"
+                    value={newCompanyWebsite}
+                    onChange={(e) => {
+                      setNewCompanyWebsite(e.target.value);
+                      setCreateError('');
+                    }}
+                    placeholder="https://example.com or example.com"
                     className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={isCreating}
                   />
                 </div>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={handleAddCompany}
-                    disabled={!newCompanyName.trim()}
+                    disabled={!newCompanyName.trim() || isCreating}
                     className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Add Company
+                    {isCreating ? 'Adding...' : 'Add Company'}
                   </button>
                   <button
                     type="button"
-                    onClick={() => setShowAddForm(false)}
-                    className="px-3 py-1.5 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]"
+                    onClick={() => {
+                      setShowAddForm(false);
+                      setCreateError('');
+                    }}
+                    disabled={isCreating}
+                    className="px-3 py-1.5 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
                   >
                     Cancel
                   </button>

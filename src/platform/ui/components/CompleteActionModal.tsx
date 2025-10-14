@@ -49,6 +49,7 @@ export function CompleteActionModal({
   });
   const notesRef = useRef<HTMLTextAreaElement>(null);
   const firstNameInputRef = useRef<HTMLInputElement>(null);
+  const personSearchRef = useRef<HTMLInputElement>(null);
   
   // Get section-specific colors
   const categoryColors = getCategoryColors(section);
@@ -117,6 +118,16 @@ export function CompleteActionModal({
       // Small delay to ensure modal is fully rendered
       setTimeout(() => {
         notesRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen, formData.person]);
+
+  // Auto-focus person search field when modal opens with no person selected
+  useEffect(() => {
+    if (isOpen && !formData.person && personSearchRef.current) {
+      // Small delay to ensure modal is fully rendered
+      setTimeout(() => {
+        personSearchRef.current?.focus();
       }, 100);
     }
   }, [isOpen, formData.person]);
@@ -282,7 +293,7 @@ export function CompleteActionModal({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (isModifierKeyPressed(e) && e.key === 'Enter') {
       e.preventDefault();
-      if (!isLoading && formData.person.trim()) {
+      if (!isLoading && formData.person.trim() && formData.action.trim()) {
         handleSubmit(e as any);
       }
     }
@@ -344,7 +355,7 @@ export function CompleteActionModal({
         event.stopPropagation();
         event.stopImmediatePropagation();
         
-        if (!isLoading && formData.person.trim()) {
+        if (!isLoading && formData.person.trim() && formData.action.trim()) {
           handleSubmit(event as any);
         }
       }
@@ -357,7 +368,7 @@ export function CompleteActionModal({
       document.removeEventListener('keydown', handleDocumentKeyDown, true);
       document.removeEventListener('keydown', handleDocumentKeyDown, false);
     };
-  }, [isOpen, isLoading, formData.action, formData.type]);
+  }, [isOpen, isLoading, formData.action, formData.person, formData.type]);
 
   const handleClose = () => {
     if (!isLoading) {
@@ -434,7 +445,7 @@ export function CompleteActionModal({
             {/* Person - Auto-filled or Search */}
             <div>
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Person *
+                Person * {!formData.person && <span className="text-xs font-normal text-[var(--muted)]">(Search and select a person to continue)</span>}
               </label>
               {formData.person ? (
                 // Show selected person
@@ -456,6 +467,7 @@ export function CompleteActionModal({
                 // Show search field
                 <div className="relative">
                   <input
+                    ref={personSearchRef}
                     type="text"
                     value={personSearchQuery}
                     onChange={(e) => setPersonSearchQuery(e.target.value)}
@@ -694,28 +706,34 @@ export function CompleteActionModal({
               </button>
               <button
                 type="submit"
-                disabled={isLoading || !formData.person.trim()}
+                disabled={isLoading || !formData.person.trim() || !formData.action.trim()}
                 className="flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
-                  backgroundColor: formData.person.trim() && !isLoading 
+                  backgroundColor: formData.person.trim() && formData.action.trim() && !isLoading 
                     ? categoryColors.bgHover 
                     : categoryColors.bg,
                   color: categoryColors.primary,
                   borderColor: categoryColors.border
                 }}
                 onMouseEnter={(e) => {
-                  if (!isLoading && formData.person.trim()) {
+                  if (!isLoading && formData.person.trim() && formData.action.trim()) {
                     e.currentTarget.style.backgroundColor = categoryColors.bgHover;
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isLoading) {
-                    e.currentTarget.style.backgroundColor = formData.person.trim()
+                    e.currentTarget.style.backgroundColor = formData.person.trim() && formData.action.trim()
                       ? categoryColors.bgHover 
                       : categoryColors.bg;
                   }
                 }}
-                title={`Add action (${getCommonShortcut('SUBMIT')})`}
+                title={
+                  !formData.person.trim() 
+                    ? 'Please select a person first' 
+                    : !formData.action.trim()
+                    ? 'Please add notes before submitting'
+                    : `Add action (${getCommonShortcut('SUBMIT')})`
+                }
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">

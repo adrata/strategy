@@ -202,13 +202,16 @@ export function logAndCreateErrorResponse(
       
       // Handle specific Prisma error codes
       if (prismaError.code === 'P2003') {
-        responseMessage = 'Foreign key constraint failed';
+        responseMessage = 'Foreign key constraint failed - referenced record does not exist';
         responseCode = 'FOREIGN_KEY_ERROR';
       } else if (prismaError.code === 'P2002') {
-        responseMessage = 'Unique constraint violation';
+        responseMessage = 'Unique constraint violation - record already exists';
         responseCode = 'DUPLICATE_ERROR';
+      } else if (prismaError.code === 'P2000') {
+        responseMessage = 'Value too long for column';
+        responseCode = 'VALUE_TOO_LONG';
       } else {
-        responseMessage = 'Database operation failed';
+        responseMessage = `Database operation failed (${prismaError.code || 'unknown'})`;
         responseCode = 'DATABASE_ERROR';
       }
       responseStatus = 500;
