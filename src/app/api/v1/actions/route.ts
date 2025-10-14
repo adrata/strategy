@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
+import { cache } from '@/platform/services/unified-cache';
 
 const prisma = new PrismaClient();
 
@@ -274,7 +275,7 @@ export async function POST(request: NextRequest) {
       outcome: body.outcome,
       scheduledAt: body.scheduledAt ? new Date(body.scheduledAt) : null,
       completedAt: body.completedAt ? new Date(body.completedAt) : null,
-      status: body.status || 'PLANNED',
+      status: (body.status || 'PLANNED').toUpperCase(),
       priority: body.priority || 'NORMAL',
       workspaceId: context.workspaceId,
       userId: context.userId,
@@ -345,6 +346,59 @@ export async function POST(request: NextRequest) {
     nextActionService.updateNextActionOnNewAction(action).catch(error => {
       console.error('⚠️ [ACTIONS API] Background next action generation failed:', error);
     });
+
+    // Update person's lastAction fields if action is completed
+    if (action.personId && action.status === 'COMPLETED') {
+      try {
+        await prisma.people.update({
+          where: { id: action.personId },
+          data: {
+            lastAction: action.subject,
+            lastActionDate: action.completedAt || action.createdAt,
+            actionStatus: action.status
+          }
+        });
+        console.log('✅ [ACTIONS API] Updated person lastAction fields:', {
+          personId: action.personId,
+          lastAction: action.subject,
+          lastActionDate: action.completedAt || action.createdAt
+        });
+      } catch (error) {
+        console.error('❌ [ACTIONS API] Failed to update person lastAction fields:', error);
+      }
+    }
+
+    // Update company's lastAction fields if action is completed
+    if (action.companyId && action.status === 'COMPLETED') {
+      try {
+        await prisma.companies.update({
+          where: { id: action.companyId },
+          data: {
+            lastAction: action.subject,
+            lastActionDate: action.completedAt || action.createdAt,
+            actionStatus: action.status
+          }
+        });
+        console.log('✅ [ACTIONS API] Updated company lastAction fields:', {
+          companyId: action.companyId,
+          lastAction: action.subject,
+          lastActionDate: action.completedAt || action.createdAt
+        });
+      } catch (error) {
+        console.error('❌ [ACTIONS API] Failed to update company lastAction fields:', error);
+      }
+    }
+
+    // Invalidate speedrun cache if action is for a person
+    if (action.personId) {
+      try {
+        const cachePattern = `speedrun-${context.workspaceId}-${context.userId}-*`;
+        await cache.invalidate(cachePattern);
+        console.log(`🗑️ [ACTIONS API] Invalidated speedrun cache for pattern: ${cachePattern}`);
+      } catch (error) {
+        console.warn('⚠️ [ACTIONS API] Speedrun cache invalidation failed:', error);
+      }
+    }
 
     return createSuccessResponse(action, {
       message: 'Action created successfully',

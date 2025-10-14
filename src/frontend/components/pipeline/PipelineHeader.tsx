@@ -449,7 +449,9 @@ export function PipelineHeader({
           subject: actionData.action.length > 100 ? actionData.action.substring(0, 100) + '...' : actionData.action,
           description: actionData.action,
           personId: actionData.personId,
-          companyId: actionData.companyId
+          companyId: actionData.companyId,
+          status: 'COMPLETED',
+          completedAt: new Date().toISOString()
         })
       });
 
@@ -461,6 +463,23 @@ export function PipelineHeader({
       const result = await response.json();
       console.log('✅ Action saved successfully:', result);
       
+      // Clear timeline cache if we have a personId
+      if (actionData.personId) {
+        const cacheKey = `timeline-${actionData.personId}`;
+        localStorage.removeItem(cacheKey);
+        console.log('🗑️ [HEADER] Cleared timeline cache for person:', actionData.personId);
+        
+        // Dispatch event to trigger timeline refresh
+        document.dispatchEvent(new CustomEvent('actionCreated', {
+          detail: {
+            recordId: actionData.personId,
+            recordType: 'speedrun',
+            actionId: result.data?.id,
+            timestamp: new Date().toISOString()
+          }
+        }));
+      }
+      
       // Close the action modal
       setShowAddActionModal(false);
       setSelectedRecord(null);
@@ -470,6 +489,12 @@ export function PipelineHeader({
       console.log('🚀 [handleActionSubmit] Current showSuccessMessage state before call:', showSuccessMessage);
       handleAddSuccess(result);
       console.log('🚀 [handleActionSubmit] handleAddSuccess called');
+      
+      // Call refresh to update the table
+      if (onRefresh) {
+        console.log('🔄 [HEADER] Calling onRefresh to update table');
+        onRefresh();
+      }
       
       // Check state after a small delay to allow React to update
       setTimeout(() => {

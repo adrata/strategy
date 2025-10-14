@@ -303,7 +303,9 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
           description: actionData.notes,
           companyId: account.id,
           outcome: actionData.nextAction,
-          scheduledAt: actionData.nextActionDate
+          scheduledAt: actionData.nextActionDate,
+          status: 'COMPLETED',
+          completedAt: new Date().toISOString()
         })
       });
 
