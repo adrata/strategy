@@ -33,6 +33,40 @@ const responseCache = new Map<string, { data: any, timestamp: number }>();
 const CACHE_TTL = 30000; // 30 seconds
 
 /**
+ * Validate database schema for companies table
+ * This helps detect schema mismatches between development and production
+ */
+async function validateCompaniesSchema(): Promise<{ hasMainSellerId: boolean; hasAssignedUserId: boolean; error?: string }> {
+  try {
+    // Try to query with mainSellerId
+    let hasMainSellerId = false;
+    try {
+      await prisma.$queryRaw`SELECT "mainSellerId" FROM "companies" LIMIT 1`;
+      hasMainSellerId = true;
+    } catch (error) {
+      // Column doesn't exist
+    }
+
+    // Try to query with assignedUserId
+    let hasAssignedUserId = false;
+    try {
+      await prisma.$queryRaw`SELECT "assignedUserId" FROM "companies" LIMIT 1`;
+      hasAssignedUserId = true;
+    } catch (error) {
+      // Column doesn't exist
+    }
+
+    return { hasMainSellerId, hasAssignedUserId };
+  } catch (error) {
+    return { 
+      hasMainSellerId: false, 
+      hasAssignedUserId: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+}
+
+/**
  * Companies CRUD API v1
  * GET /api/v1/companies - List companies with search and pagination
  * POST /api/v1/companies - Create a new company
@@ -245,6 +279,10 @@ export async function POST(request: NextRequest) {
 
     context = authContext;
 
+    // Validate database schema for debugging
+    const schemaValidation = await validateCompaniesSchema();
+    console.log('🔍 [V1 COMPANIES API] Schema validation:', schemaValidation);
+
     const body = await request.json();
 
     // Comprehensive validation for required fields
@@ -397,6 +435,11 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date()
     };
 
+    // Add mainSellerId if provided
+    if (body.mainSellerId) {
+      companyData.mainSellerId = body.mainSellerId;
+    }
+
     // Create company and action in a transaction
     let result;
     try {
@@ -409,19 +452,56 @@ export async function POST(request: NextRequest) {
         data: companyData
       });
       
-      // Create company
-      const company = await tx.companies.create({
-        data: companyData,
-        include: {
-          mainSeller: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
+      // Create company with fallback for column name issues
+      let company;
+      try {
+        company = await tx.companies.create({
+          data: companyData,
+          include: {
+            mainSeller: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
             },
           },
-        },
-      });
+        });
+      } catch (createError) {
+        // If mainSellerId column doesn't exist, try with assignedUserId (fallback for old schema)
+        if (createError && typeof createError === 'object' && 'code' in createError && createError.code === 'P2022') {
+          const prismaError = createError as any;
+          if (prismaError.meta?.column_name === 'mainSellerId') {
+            console.warn('⚠️ [V1 COMPANIES API] mainSellerId column not found, trying with assignedUserId (old schema)');
+            
+            // Create data object with assignedUserId instead of mainSellerId
+            const fallbackData = { ...companyData };
+            if (fallbackData.mainSellerId) {
+              fallbackData.assignedUserId = fallbackData.mainSellerId;
+              delete fallbackData.mainSellerId;
+            }
+            
+            company = await tx.companies.create({
+              data: fallbackData,
+              include: {
+                mainSeller: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                  },
+                },
+              },
+            });
+            
+            console.log('✅ [V1 COMPANIES API] Company created with fallback schema (assignedUserId)');
+          } else {
+            throw createError; // Re-throw if it's a different column issue
+          }
+        } else {
+          throw createError; // Re-throw if it's not a column issue
+        }
+      }
 
       console.log('✅ [V1 COMPANIES API] Company created successfully:', {
         companyId: company.id,
@@ -519,35 +599,58 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Company with this information already exists', 'DUPLICATE_COMPANY', 400);
     }
     
-    // Enhanced error logging for P2022 (column doesn't exist) errors
-      if (error instanceof Error && error.name === 'PrismaClientKnownRequestError') {
-        const prismaError = error as any;
-        console.error('❌ [V1 COMPANIES API] Prisma error details:', {
-          code: prismaError.code,
-          meta: prismaError.meta,
-          message: prismaError.message,
-          clientVersion: prismaError.clientVersion,
-          stack: prismaError.stack
+    // Enhanced error logging for Prisma errors
+    if (error instanceof Error && error.name === 'PrismaClientKnownRequestError') {
+      const prismaError = error as any;
+      console.error('❌ [V1 COMPANIES API] Prisma error details:', {
+        code: prismaError.code,
+        meta: prismaError.meta,
+        message: prismaError.message,
+        clientVersion: prismaError.clientVersion,
+        stack: prismaError.stack
+      });
+      
+      if (prismaError.code === 'P2022') {
+        console.error('❌ [V1 COMPANIES API] P2022 Error - Column does not exist:', {
+          columnName: prismaError.meta?.column_name,
+          tableName: prismaError.meta?.table_name,
+          schemaName: prismaError.meta?.schema_name,
+          fullMeta: prismaError.meta,
+          attemptedData: companyData,
+          bodyReceived: body
         });
         
-        if (prismaError.code === 'P2022') {
-          console.error('❌ [V1 COMPANIES API] P2022 Error - Column does not exist:', {
-            columnName: prismaError.meta?.column_name,
-            tableName: prismaError.meta?.table_name,
-            schemaName: prismaError.meta?.schema_name,
-            fullMeta: prismaError.meta,
-            attemptedData: companyData,
-            bodyReceived: body
-          });
-          
-          // Return a more specific error message
+        // Check if it's the mainSellerId column issue
+        if (prismaError.meta?.column_name === 'mainSellerId') {
+          console.error('❌ [V1 COMPANIES API] mainSellerId column missing - likely migration not applied to production');
           return createErrorResponse(
-            `Database column '${prismaError.meta?.column_name}' does not exist in table '${prismaError.meta?.table_name}'. This indicates a schema mismatch between the application and database.`,
-            'SCHEMA_MISMATCH',
+            'Database schema mismatch: mainSellerId column not found. This indicates the database migration has not been applied to production.',
+            'SCHEMA_MIGRATION_MISSING',
             500
           );
         }
+        
+        // Return a more specific error message
+        return createErrorResponse(
+          `Database column '${prismaError.meta?.column_name}' does not exist in table '${prismaError.meta?.table_name}'. This indicates a schema mismatch between the application and database.`,
+          'SCHEMA_MISMATCH',
+          500
+        );
       }
+      
+      // Handle other Prisma errors
+      if (prismaError.code === 'P2003') {
+        console.error('❌ [V1 COMPANIES API] P2003 Error - Foreign key constraint failed:', {
+          meta: prismaError.meta,
+          attemptedData: companyData
+        });
+        return createErrorResponse(
+          'Foreign key constraint failed - referenced record does not exist',
+          'FOREIGN_KEY_ERROR',
+          400
+        );
+      }
+    }
     
     // Log full Prisma error details for debugging
     console.error('❌ [V1 COMPANIES API] Detailed error:', {
