@@ -395,32 +395,42 @@ export async function POST(request: NextRequest) {
       result = await prisma.$transaction(async (tx) => {
       console.log('🔍 [V1 COMPANIES API] Starting company creation...');
       
+      // Log the data being sent to help identify missing columns
+      const companyData = {
+        name: body.name,
+        legalName: body.legalName,
+        email: body.email,
+        website: body.website || null,  // Convert empty strings to null
+        phone: body.phone,
+        address: body.address,
+        city: body.city,
+        state: body.state,
+        country: body.country,
+        industry: body.industry,
+        status: body.status || 'ACTIVE',
+        priority: body.priority || 'MEDIUM',
+        workspaceId: context.workspaceId,
+        mainSellerId: validatedMainSellerId || body.mainSellerId || null, // Use validated user or null
+        notes: body.notes || null,  // Convert empty strings to null
+        // Only include opportunity fields if they have values to avoid P2022 errors
+        ...(body.opportunityStage && { opportunityStage: body.opportunityStage }),
+        ...(body.opportunityAmount && { opportunityAmount: body.opportunityAmount }),
+        ...(body.opportunityProbability && { opportunityProbability: body.opportunityProbability }),
+        ...(body.expectedCloseDate && { expectedCloseDate: new Date(body.expectedCloseDate) }),
+        ...(body.actualCloseDate && { actualCloseDate: new Date(body.actualCloseDate) }),
+        createdAt: new Date(),  // ADD THIS - explicitly set like people endpoint
+        updatedAt: new Date(),
+      };
+      
+      console.log('🔍 [V1 COMPANIES API] Company data to create:', {
+        fields: Object.keys(companyData),
+        nonNullFields: Object.entries(companyData).filter(([_, value]) => value !== null && value !== undefined).map(([key, _]) => key),
+        data: companyData
+      });
+      
       // Create company
       const company = await tx.companies.create({
-        data: {
-          name: body.name,
-          legalName: body.legalName,
-          email: body.email,
-          website: body.website || null,  // Convert empty strings to null
-          phone: body.phone,
-          address: body.address,
-          city: body.city,
-          state: body.state,
-          country: body.country,
-          industry: body.industry,
-          status: body.status || 'ACTIVE',
-          priority: body.priority || 'MEDIUM',
-          workspaceId: context.workspaceId,
-          mainSellerId: validatedMainSellerId || body.mainSellerId || null, // Use validated user or null
-          notes: body.notes || null,  // Convert empty strings to null
-          opportunityStage: body.opportunityStage,
-          opportunityAmount: body.opportunityAmount,
-          opportunityProbability: body.opportunityProbability,
-          expectedCloseDate: body.expectedCloseDate ? new Date(body.expectedCloseDate) : null,
-          actualCloseDate: body.actualCloseDate ? new Date(body.actualCloseDate) : null,
-          createdAt: new Date(),  // ADD THIS - explicitly set like people endpoint
-          updatedAt: new Date(),
-        },
+        data: companyData,
         include: {
           mainSeller: {
             select: {
@@ -526,6 +536,26 @@ export async function POST(request: NextRequest) {
     // Handle unique constraint violations
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return createErrorResponse('Company with this information already exists', 'DUPLICATE_COMPANY', 400);
+    }
+    
+    // Enhanced error logging for P2022 (column doesn't exist) errors
+    if (error instanceof Error && error.name === 'PrismaClientKnownRequestError') {
+      const prismaError = error as any;
+      console.error('❌ [V1 COMPANIES API] Prisma error details:', {
+        code: prismaError.code,
+        meta: prismaError.meta,
+        message: prismaError.message,
+        clientVersion: prismaError.clientVersion
+      });
+      
+      if (prismaError.code === 'P2022') {
+        console.error('❌ [V1 COMPANIES API] P2022 Error - Column does not exist:', {
+          columnName: prismaError.meta?.column_name,
+          tableName: prismaError.meta?.table_name,
+          schemaName: prismaError.meta?.schema_name,
+          fullMeta: prismaError.meta
+        });
+      }
     }
     
     // Log full Prisma error details for debugging

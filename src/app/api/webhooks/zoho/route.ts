@@ -802,12 +802,17 @@ async function processAccountWebhook(operation: string, data: any) {
               website: accountData.Website || '',
               phone: accountData.Phone || '',
               industry: accountData.Industry || '',
-              accountType: accountData.Type || 'Customer',
               description: accountData.Description || '',
-              zohoId: accountData.id,
-              ownerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
-              size: accountData.Employees ? parseInt(accountData.Employees).toString() : null,
+              employeeCount: accountData.Employees ? parseInt(accountData.Employees) : null, // Use employeeCount instead of size
               revenue: accountData.Annual_Revenue ? parseFloat(accountData.Annual_Revenue) : null,
+              mainSellerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Use mainSellerId instead of ownerId
+              customFields: {
+                zohoId: accountData.id,
+                accountType: accountData.Type || 'Customer',
+                importedFrom: 'zoho_webhook',
+                importedAt: new Date().toISOString()
+              },
+              createdAt: new Date(),
               updatedAt: new Date()
             }
           });

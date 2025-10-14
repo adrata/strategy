@@ -50,6 +50,7 @@ export function CompleteActionModal({
   const notesRef = useRef<HTMLTextAreaElement>(null);
   const firstNameInputRef = useRef<HTMLInputElement>(null);
   const personSearchRef = useRef<HTMLInputElement>(null);
+  const isSubmittingRef = useRef<boolean>(false);
   
   // Get section-specific colors
   const categoryColors = getCategoryColors(section);
@@ -268,6 +269,13 @@ export function CompleteActionModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Prevent double submission
+    if (isSubmittingRef.current || isLoading) {
+      console.log('🚫 [CompleteActionModal] Submission already in progress, ignoring');
+      return;
+    }
+    
     if (!formData.person.trim()) {
       alert('Please select a person');
       return;
@@ -280,7 +288,17 @@ export function CompleteActionModal({
       console.log('🔄 Resubmitting action after undo - will save to database');
     }
     
-    onSubmit(formData);
+    // Set submission guard
+    isSubmittingRef.current = true;
+    
+    try {
+      onSubmit(formData);
+    } finally {
+      // Reset submission guard after a short delay to allow for async operations
+      setTimeout(() => {
+        isSubmittingRef.current = false;
+      }, 1000);
+    }
   };
 
   // Cross-platform keyboard shortcut detection
@@ -293,7 +311,8 @@ export function CompleteActionModal({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (isModifierKeyPressed(e) && e.key === 'Enter') {
       e.preventDefault();
-      if (!isLoading && formData.person.trim() && formData.action.trim()) {
+      // Prevent double submission
+      if (!isSubmittingRef.current && !isLoading && formData.person.trim() && formData.action.trim()) {
         handleSubmit(e as any);
       }
     }
@@ -355,18 +374,17 @@ export function CompleteActionModal({
         event.stopPropagation();
         event.stopImmediatePropagation();
         
-        if (!isLoading && formData.person.trim() && formData.action.trim()) {
+        // Prevent double submission
+        if (!isSubmittingRef.current && !isLoading && formData.person.trim() && formData.action.trim()) {
           handleSubmit(event as any);
         }
       }
     };
 
-    // Use both capture and bubble phases to ensure we get the event
-    document.addEventListener('keydown', handleDocumentKeyDown, true); // Capture phase
-    document.addEventListener('keydown', handleDocumentKeyDown, false); // Bubble phase
+    // Use capture phase only (consistent with other modals)
+    document.addEventListener('keydown', handleDocumentKeyDown, true);
     return () => {
       document.removeEventListener('keydown', handleDocumentKeyDown, true);
-      document.removeEventListener('keydown', handleDocumentKeyDown, false);
     };
   }, [isOpen, isLoading, formData.action, formData.person, formData.type]);
 

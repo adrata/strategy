@@ -74,8 +74,8 @@ export class DatabaseService {
       domain: company.domain,
       website: company.website,
       industry: company.industry,
-      size: company.size,
-      location: company.location,
+      employeeCount: company.size ? parseInt(company.size) : null, // Use employeeCount instead of size
+      hqLocation: company.location, // Use hqLocation instead of location
       // SBI-specific fields
       status: company.status,
       parentCompanyName: company.parentCompany?.name,
@@ -83,7 +83,9 @@ export class DatabaseService {
       acquisitionDate: company.acquisitionDate,
       confidence: company.confidence,
       sources: company.sources,
-      lastVerified: company.lastVerified
+      lastVerified: company.lastVerified,
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
     
     // Try to find existing company

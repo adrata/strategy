@@ -424,9 +424,9 @@ export class ExcelImportService {
         industry: rowData.industry,
         hqCity: rowData.city,
         hqState: rowData.state,
-        hqCountry: rowData.country || 'United States',
+        hqCountryIso2: rowData.country || 'US', // Use ISO2 country code instead of hqCountry
         status: 'ACTIVE',
-        source: 'excel_import',
+        sources: ['excel_import'], // Use sources array instead of source field
         customFields: {
           importSource: 'excel_import',
           originalData: rowData,
