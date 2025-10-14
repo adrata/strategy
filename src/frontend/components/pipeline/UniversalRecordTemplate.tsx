@@ -668,10 +668,16 @@ export function UniversalRecordTemplate({
       
       // Map common fields to streamlined schema - using bracket notation for TypeScript strict mode
       if ('name' in updatedData && updatedData['name'] !== undefined) {
-        const nameParts = updatedData['name'].trim().split(' ');
-        updatePayload['firstName'] = nameParts[0] || '';
-        updatePayload['lastName'] = nameParts.slice(1).join(' ') || '';
-        updatePayload['fullName'] = updatedData['name'].trim();
+        if (recordType === 'companies') {
+          // For companies, 'name' is the company name
+          updatePayload['name'] = updatedData['name'].trim();
+        } else {
+          // For people, split name into firstName/lastName
+          const nameParts = updatedData['name'].trim().split(' ');
+          updatePayload['firstName'] = nameParts[0] || '';
+          updatePayload['lastName'] = nameParts.slice(1).join(' ') || '';
+          updatePayload['fullName'] = updatedData['name'].trim();
+        }
       }
       if ('firstName' in updatedData && updatedData['firstName'] !== undefined) {
         updatePayload['firstName'] = updatedData['firstName'];
@@ -697,6 +703,31 @@ export function UniversalRecordTemplate({
       addField('phone', updatedData['phone']);
       addField('mobilePhone', updatedData['mobilePhone']);
       addField('linkedinUrl', updatedData['linkedinUrl']);
+      
+      // Company-specific fields (only for company records)
+      if (recordType === 'companies') {
+        addField('legalName', updatedData['legalName']);
+        addField('tradingName', updatedData['tradingName']);
+        addField('localName', updatedData['localName']);
+        addField('description', updatedData['description']);
+        addField('website', updatedData['website']);
+        addField('fax', updatedData['fax']);
+        addField('sector', updatedData['sector']);
+        addField('size', updatedData['size']);
+        addField('revenue', updatedData['revenue']);
+        addField('currency', updatedData['currency']);
+        addField('employeeCount', updatedData['employeeCount']);
+        addField('foundedYear', updatedData['foundedYear']);
+        addField('registrationNumber', updatedData['registrationNumber']);
+        addField('taxId', updatedData['taxId']);
+        addField('vatNumber', updatedData['vatNumber']);
+        addField('domain', updatedData['domain']);
+        addField('logoUrl', updatedData['logoUrl']);
+        addField('lastAction', updatedData['lastAction']);
+        addField('nextActionReasoning', updatedData['nextActionReasoning']);
+        addField('nextActionPriority', updatedData['nextActionPriority']);
+        addField('nextActionType', updatedData['nextActionType']);
+      }
       
       // Job and company fields
       if ('title' in updatedData && updatedData['title'] !== undefined) {

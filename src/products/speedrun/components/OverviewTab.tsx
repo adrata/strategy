@@ -590,8 +590,8 @@ export function OverviewTab({
         </div>
         
         <div className="space-y-4">
-          {/* Person's notes field (bio) */}
-          {person.bio && person.bio.trim().length > 0 && (
+          {/* Person's notes field */}
+          {person.notes && person.notes.trim().length > 0 && (
             <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <div className="text-2xl flex-shrink-0 mt-1">📝</div>
@@ -605,7 +605,7 @@ export function OverviewTab({
                     </span>
                   </div>
                   <p className="text-[var(--foreground)] text-sm leading-relaxed">
-                    {person.bio}
+                    {person.notes}
                   </p>
                 </div>
               </div>
@@ -651,7 +651,7 @@ export function OverviewTab({
                 </div>
               ))}
             </div>
-          ) : !person.bio && (
+          ) : !person.notes && (
             <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 text-center">
               <div className="text-[var(--muted)] mb-2">📝</div>
               <p className="text-[var(--muted)] text-sm">

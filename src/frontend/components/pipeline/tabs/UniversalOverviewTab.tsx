@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
+import { authFetch } from '@/platform/api-fetch';
 
 interface UniversalOverviewTabProps {
   recordType: string;
@@ -19,11 +20,60 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   
+  // Actions state
+  const [actions, setActions] = useState<any[]>([]);
+  const [actionsLoading, setActionsLoading] = useState(false);
+  const [actionsError, setActionsError] = useState<string | null>(null);
+  
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 3000);
   };
+
+  // Fetch actions from API
+  const fetchActions = useCallback(async () => {
+    if (!record?.id) {
+      setActions([]);
+      return;
+    }
+
+    setActionsLoading(true);
+    setActionsError(null);
+
+    try {
+      // Build the correct query parameters based on record type
+      let actionsQuery = '';
+      if (recordType === 'leads' || recordType === 'people' || recordType === 'prospects' || recordType === 'speedrun' || recordType === 'actions') {
+        actionsQuery = `personId=${record.id}`;
+      } else if (recordType === 'companies') {
+        actionsQuery = `companyId=${record.id}`;
+      } else {
+        // For other types, try both
+        actionsQuery = `personId=${record.id}&companyId=${record.id}`;
+      }
+
+      const response = await authFetch(`/api/v1/actions?${actionsQuery}&limit=5&sortBy=createdAt&sortOrder=desc`);
+      
+      if (response && response.success && Array.isArray(response.data)) {
+        setActions(response.data);
+      } else {
+        setActions([]);
+        setActionsError('Failed to fetch actions');
+      }
+    } catch (error) {
+      console.error('Error fetching actions:', error);
+      setActions([]);
+      setActionsError('Error loading actions');
+    } finally {
+      setActionsLoading(false);
+    }
+  }, [record?.id, recordType]);
+
+  // Fetch actions when component mounts or record changes
+  useEffect(() => {
+    fetchActions();
+  }, [fetchActions]);
 
   // Show skeleton loader while data is loading
   if (!record) {
@@ -211,25 +261,21 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   };
 
 
-  // Generate last actions from real database data only
+  // Generate last actions from fetched API data
   const generateLastActions = () => {
-    const actions = [];
-    
-    // Only add the main last action if it exists and is valid
-    if (recordData.lastAction && 
-        recordData.lastAction !== 'No action planned' && 
-        recordData.lastAction.trim() !== '' && 
-        recordData.lastAction !== '-' &&
-        recordData.lastAction !== '--' &&
-        !recordData.lastAction.includes('--')) {
-      actions.push({
-        action: recordData.lastAction,
-        date: recordData.lastContact !== 'Never' ? formatRelativeDate(recordData.lastContact) : 'Invalid Date'
-      });
+    if (actionsLoading) {
+      return [];
     }
     
-    // No synthetic actions - only show real actions from the database
-    return actions;
+    if (actionsError) {
+      return [];
+    }
+    
+    // Map fetched actions to display format
+    return actions.map(action => ({
+      action: action.subject || action.title || 'Action',
+      date: formatRelativeDate(action.completedAt || action.scheduledAt || action.createdAt)
+    }));
   };
 
   const lastActions = generateLastActions();
@@ -426,7 +472,17 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Last Actions</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-          {lastActions.length > 0 ? (
+          {actionsLoading ? (
+            <div className="text-center py-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+              <p className="text-sm text-[var(--muted)]">Loading actions...</p>
+            </div>
+          ) : actionsError ? (
+            <div className="text-center py-4">
+              <p className="text-sm text-red-600 mb-3">Error loading actions</p>
+              <p className="text-xs text-[var(--muted)]">{actionsError}</p>
+            </div>
+          ) : lastActions.length > 0 ? (
             <ul className="space-y-2">
               {lastActions.map((action, index) => (
                 <li key={index} className="text-sm text-[var(--muted)]">
@@ -450,7 +506,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Recent Notes Summary</h4>
             <div className="text-sm text-[var(--muted)] leading-relaxed">
-              {recordData.notes && recordData.notes !== 'No notes available' && recordData.notes.trim() !== '' ? recordData.notes : 
+              {record.notes && record.notes !== 'No notes available' && record.notes.trim() !== '' ? record.notes : 
                 `No recent notes available`
               }
                   </div>

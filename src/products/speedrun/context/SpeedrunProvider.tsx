@@ -38,6 +38,7 @@ export interface SpeedrunPerson {
   commission: string;
   stableIndex?: number | undefined;
   globalRank?: number; // Database rank field (primary source)
+  notes?: string; // Notes field for persistence
   customFields?: {
     monacoEnrichment?: {
       [key: string]: any;

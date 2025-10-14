@@ -84,11 +84,13 @@ export function SpeedrunLeadDetails({
     dynamicReports: [],
     isLoadingReports: false,
     notes: [],
-    newNote: "",
+    newNote: person.notes || "",
     showAutoDialerPopup: false,
     showPowerDialer: false,
     showUpdatePopup: false,
     currentDialerContacts: [],
+    notesSaveStatus: 'idle',
+    notesLastSavedAt: null,
   });
 
   // Generate reports based on person's role
@@ -121,6 +123,19 @@ export function SpeedrunLeadDetails({
     );
     return cleanup;
   }, [person.id, onComplete]);
+
+  // Sync notes when person changes
+  useEffect(() => {
+    const personNotes = person.notes || "";
+    if (personNotes !== state.newNote) {
+      setState((prev) => ({ 
+        ...prev, 
+        newNote: personNotes,
+        notesLastSavedAt: null,
+        notesSaveStatus: 'idle'
+      }));
+    }
+  }, [person.notes, state.newNote]);
 
   // Handle pulse functionality
   const handlePulse = () => {
@@ -168,6 +183,59 @@ export function SpeedrunLeadDetails({
     } catch (error) {
       console.error("❌ Error updating person:", error);
       setErrorMessage(error instanceof Error ? error.message : "Failed to update contact");
+    }
+  };
+
+  // Handle notes save
+  const handleSaveNotes = async (notesContent: string) => {
+    if (!person?.id) {
+      console.log('❌ [NOTES] No person ID, skipping save');
+      return;
+    }
+
+    // Prevent saving if content hasn't changed since last save
+    if (notesContent === (person.notes || "") && state.notesSaveStatus !== 'error') {
+      console.log('🔄 [NOTES] Content unchanged since last save, skipping save');
+      return;
+    }
+
+    try {
+      console.log('💾 [NOTES] Starting save for:', { personId: person.id, contentLength: notesContent.length });
+      setState((prev) => ({ ...prev, notesSaveStatus: 'saving' }));
+
+      const response = await fetch(`/api/v1/people/${person.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ notes: notesContent }),
+      });
+
+      console.log('📡 [NOTES] API response:', { status: response.status, ok: response.ok });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ [NOTES] API error response:', errorText);
+        throw new Error(`Failed to save notes: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('✅ [NOTES] Save result:', result);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to save notes');
+      }
+
+      setState((prev) => ({ 
+        ...prev, 
+        notesSaveStatus: 'saved',
+        notesLastSavedAt: new Date()
+      }));
+      
+    } catch (error) {
+      console.error('❌ [NOTES] Save error:', error);
+      setState((prev) => ({ ...prev, notesSaveStatus: 'error' }));
+      throw error; // Re-throw to let NotesEditor handle the error
     }
   };
 
@@ -370,6 +438,9 @@ export function SpeedrunLeadDetails({
             }
             onAddNote={addNote}
             formatTimestamp={LeadDetailsUtilities.formatTimestamp}
+            onSaveNotes={handleSaveNotes}
+            saveStatus={state.notesSaveStatus}
+            lastSavedAt={state.notesLastSavedAt}
           />
         </div>
       </div>

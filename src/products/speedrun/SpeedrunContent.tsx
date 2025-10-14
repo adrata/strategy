@@ -43,6 +43,7 @@ interface SpeedrunPerson {
   recentActivity: string;
   commission: string;
   stableIndex?: number | undefined; // Add stable index that doesn't change when people are completed
+  notes?: string; // Notes field for persistence
 }
 
 interface SpeedrunContentProps {

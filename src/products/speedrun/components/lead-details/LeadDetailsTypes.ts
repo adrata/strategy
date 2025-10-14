@@ -31,6 +31,8 @@ export interface LeadDetailsState {
   showAutoDialerPopup: boolean;
   showPowerDialer: boolean;
   currentDialerContacts: any[];
+  notesSaveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  notesLastSavedAt: Date | null;
 }
 
 export interface LeadDetailsHeaderProps {
@@ -90,6 +92,9 @@ export interface LeadDetailsTabContentProps {
   onAddNote: () => void;
   formatTimestamp: (timestamp: string) => string;
   onInlineFieldSave?: (field: string, value: string, recordId: string, recordType: string) => Promise<void>;
+  onSaveNotes?: (value: string) => Promise<void>;
+  saveStatus?: 'idle' | 'saving' | 'saved' | 'error';
+  lastSavedAt?: Date | null;
 }
 
 export interface ReportData {

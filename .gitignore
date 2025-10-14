@@ -108,3 +108,5 @@ tests/artifacts/
 playwright-report/
 playwright/.cache/
 downloads/
+
+test-results

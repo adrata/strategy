@@ -29,6 +29,7 @@ export interface SpeedrunPerson {
   commission: string;
   stableIndex?: number | undefined;
   vertical?: string; // Add vertical field for filtering
+  notes?: string; // Notes field for persistence
   // Multi-player sales fields
   owner?: string; // Owner's name or '-'
   coSellers?: string; // Comma-separated co-sellers names or '-'

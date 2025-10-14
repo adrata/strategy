@@ -19,6 +19,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { CompanySelector } from './CompanySelector';
 import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
+import { UniversalBuyerGroupsTab } from './tabs/UniversalBuyerGroupsTab';
 
 interface UpdateModalProps {
   isOpen: boolean;
@@ -753,9 +754,15 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderBuyerGroupsTab = () => (
     <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-[var(--muted)]">
-        <p className="text-sm">Buyer group information will appear here when available.</p>
-      </div>
+      <UniversalBuyerGroupsTab 
+        record={record} 
+        recordType={recordType} 
+        onSave={async (field: string, value: string) => {
+          // Create a simple inline save handler that updates the record
+          const updatedData = { [field]: value };
+          await onUpdate(updatedData);
+        }} 
+      />
     </div>
   );
 

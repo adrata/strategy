@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { SpeedrunPerson } from "../types/SpeedrunTypes";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
+import { CompanySelector } from '@/frontend/components/pipeline/CompanySelector';
 
 interface UpdatePersonPopupProps {
   isOpen: boolean;
@@ -35,6 +36,7 @@ export function UpdatePersonPopup({
     email: person.email || "",
     phone: person.phone || "",
     company: typeof person.company === 'object' ? person.company?.name || "" : person.company || "",
+    companyId: person.companyId || "",
     status: person.status || "Active",
     priority: person.priority || "Medium",
     nextAction: person.nextAction || "",
@@ -51,6 +53,7 @@ export function UpdatePersonPopup({
       email: person.email || "",
       phone: person.phone || "",
       company: typeof person.company === 'object' ? person.company?.name || "" : person.company || "",
+      companyId: person.companyId || "",
       status: person.status || "Active",
       priority: person.priority || "Medium",
       nextAction: person.nextAction || "",
@@ -69,6 +72,7 @@ export function UpdatePersonPopup({
       email: formData.email,
       phone: formData.phone,
       company: formData.company,
+      companyId: formData.companyId,
       status: formData.status,
       priority: formData.priority,
       nextAction: formData.nextAction,
@@ -185,12 +189,16 @@ export function UpdatePersonPopup({
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Company
         </label>
-        <input
-          type="text"
+        <CompanySelector
           value={formData.company}
-          onChange={(e) => handleChange("company", e.target.value)}
-          placeholder={getDisplayValue(person.company)}
-          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+          onChange={(company) => {
+            setFormData(prev => ({
+              ...prev,
+              company: company?.name || "",
+              companyId: company?.id || ""
+            }));
+          }}
+          placeholder="Search or add company..."
         />
       </div>
     </div>

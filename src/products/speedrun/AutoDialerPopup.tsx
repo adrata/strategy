@@ -29,6 +29,7 @@ interface SpeedrunPerson {
   interests: string[];
   recentActivity: string;
   commission: string;
+  notes?: string; // Notes field for persistence
 }
 
 interface AutoDialerPopupProps {

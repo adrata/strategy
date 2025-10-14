@@ -27,6 +27,9 @@ export function LeadDetailsTabContent({
   onAddNote,
   formatTimestamp,
   onInlineFieldSave,
+  onSaveNotes,
+  saveStatus,
+  lastSavedAt,
 }: LeadDetailsTabContentProps) {
   // Extract data using Monaco extractors
   const insightsData = extractProductionInsights(person);
@@ -58,6 +61,9 @@ export function LeadDetailsTabContent({
             person={person}
             notes={newNote}
             setNotes={onSetNewNote}
+            onSave={onSaveNotes}
+            saveStatus={saveStatus}
+            lastSavedAt={lastSavedAt}
           />
         );
 
