@@ -680,7 +680,7 @@ export function SpeedrunSprintView() {
         onClose={() => setShowAddActionModal(false)}
         onSubmit={handleAddAction}
         personName={selectedRecord?.name || selectedRecord?.fullName}
-        companyName={selectedRecord?.company?.name || selectedRecord?.company}
+        companyName={typeof selectedRecord?.company === 'object' ? selectedRecord?.company?.name : selectedRecord?.company}
         isLoading={isSubmittingAction}
         section="speedrun"
       />

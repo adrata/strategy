@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SpeedrunPerson } from '../types/SpeedrunTypes';
 
 interface OutcomeTrackingPopupProps {
@@ -40,29 +40,7 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
     }
   }, [isOpen]);
 
-  // Handle keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
-
-      // Shift+Enter to save
-      if (e['shiftKey'] && e['key'] === 'Enter') {
-        e.preventDefault();
-        handleSave();
-      }
-      
-      // Escape to close
-      if (e['key'] === 'Escape') {
-        e.preventDefault();
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, actionType, notes]);
-
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!notes.trim()) return;
 
     setIsSubmitting(true);
@@ -80,7 +58,30 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [actionType, notes, onSave, onClose]);
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      // CMD+Enter to save (consistent with other modals)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSave();
+      }
+      
+      // Escape to close
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
+  }, [isOpen, handleSave, onClose]);
 
   const selectedAction = ACTION_TYPES.find(type => type['value'] === actionType);
 
@@ -95,7 +96,7 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
             Log Action - {person.name}
           </h3>
           <p className="text-sm text-[var(--muted)] mt-1">
-            {person.title} at {person.company}
+            {person.title} at {typeof person.company === 'object' ? person.company?.name : person.company}
           </p>
         </div>
 
@@ -165,7 +166,7 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
         {/* Footer */}
         <div className="px-6 py-4 border-t border-[var(--border)] flex justify-between items-center">
           <div className="text-xs text-[var(--muted)]">
-            Press <kbd className="px-1 py-0.5 bg-[var(--accent)]/10 rounded text-[var(--accent)]">Shift+Enter</kbd> to save
+            Press <kbd className="px-1 py-0.5 bg-[var(--accent)]/10 rounded text-[var(--accent)]">⌘+Enter</kbd> to save
           </div>
           <div className="flex gap-3">
             <button

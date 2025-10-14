@@ -70,7 +70,7 @@ export function LeadDetailsTabContent({
               </h3>
               <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
                 <p className="text-[var(--muted)] mb-3">
-                  Timeline for {person.name} at {person.company || 'this company'}...
+                  Timeline for {person.name} at {typeof person.company === 'object' ? person.company?.name || 'this company' : person.company || 'this company'}...
                 </p>
                 <div className="space-y-4">
                   <div className="flex items-start">

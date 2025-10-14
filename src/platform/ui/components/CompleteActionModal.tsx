@@ -132,8 +132,21 @@ export function CompleteActionModal({
 
   // Search people as user types
   useEffect(() => {
-    if (personSearchQuery.length >= 2) {
-      searchPeople(personSearchQuery);
+    const trimmedQuery = personSearchQuery.trim();
+    
+    // Only search if the query is meaningful
+    if (trimmedQuery.length >= 2) {
+      // Check if the query looks like random characters (not a real name/email)
+      const isLikelyRandomText = /^[^a-zA-Z\s@\-']*$/.test(trimmedQuery) || 
+                                 (trimmedQuery.length < 3 && !trimmedQuery.includes('@'));
+      
+      if (isLikelyRandomText) {
+        // Don't search for obviously random text
+        setPersonSearchResults([]);
+        return;
+      }
+      
+      searchPeople(trimmedQuery);
     } else {
       setPersonSearchResults([]);
     }
@@ -459,9 +472,13 @@ export function CompleteActionModal({
                   />
 
                   {/* Person Search Results */}
-                  {(personSearchResults.length > 0 || (personSearchQuery.length >= 2 && !isSearchingPeople)) && !showCreatePersonForm && (
+                  {(personSearchResults.length > 0 || (personSearchQuery.trim().length >= 2 && !isSearchingPeople)) && !showCreatePersonForm && (
                     <div className="absolute z-20 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                      {personSearchResults.length > 0 ? (
+                      {isSearchingPeople ? (
+                        <div className="px-4 py-3 text-center">
+                          <div className="text-sm text-[var(--muted)]">Searching...</div>
+                        </div>
+                      ) : personSearchResults.length > 0 ? (
                         personSearchResults.map((person) => (
                           <div
                             key={person.id}

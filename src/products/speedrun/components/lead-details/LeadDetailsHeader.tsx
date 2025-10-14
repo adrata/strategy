@@ -81,7 +81,7 @@ export function LeadDetailsHeader({
             <div className="flex items-center gap-2">
               <BuildingOfficeIcon className="w-4 h-4 text-[var(--muted)]" />
               <p className="text-sm text-[var(--muted)]">
-                {person.company}
+                {typeof person.company === 'object' ? person.company?.name : person.company}
               </p>
             </div>
           </div>

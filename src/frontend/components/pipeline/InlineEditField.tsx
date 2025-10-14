@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface InlineEditFieldProps {
@@ -33,6 +33,11 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Sync editValue with value prop when it changes
+  useEffect(() => {
+    setEditValue(value);
+  }, [value]);
 
   const handleEditStart = () => {
     setEditValue(value);

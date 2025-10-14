@@ -133,15 +133,62 @@ export async function GET(request: NextRequest) {
       }
       
       if (search) {
-        where.OR = [
-          { firstName: { contains: search, mode: 'insensitive' } },
-          { lastName: { contains: search, mode: 'insensitive' } },
-          { fullName: { contains: search, mode: 'insensitive' } },
-          { email: { contains: search, mode: 'insensitive' } },
-          { workEmail: { contains: search, mode: 'insensitive' } },
-          { jobTitle: { contains: search, mode: 'insensitive' } },
-          { department: { contains: search, mode: 'insensitive' } },
-        ];
+        const searchTerm = search.trim();
+        
+        // Only search if the search term is meaningful (at least 2 characters and not just random characters)
+        if (searchTerm.length >= 2) {
+          // Create more intelligent search conditions
+          const searchConditions = [];
+          
+          // Exact matches (highest priority)
+          searchConditions.push(
+            { fullName: { equals: searchTerm, mode: 'insensitive' } },
+            { firstName: { equals: searchTerm, mode: 'insensitive' } },
+            { lastName: { equals: searchTerm, mode: 'insensitive' } }
+          );
+          
+          // Word boundary matches (starts with)
+          searchConditions.push(
+            { fullName: { startsWith: searchTerm, mode: 'insensitive' } },
+            { firstName: { startsWith: searchTerm, mode: 'insensitive' } },
+            { lastName: { startsWith: searchTerm, mode: 'insensitive' } }
+          );
+          
+          // Email exact matches
+          searchConditions.push(
+            { email: { equals: searchTerm, mode: 'insensitive' } },
+            { workEmail: { equals: searchTerm, mode: 'insensitive' } }
+          );
+          
+          // Email contains (for partial email matches)
+          if (searchTerm.includes('@')) {
+            searchConditions.push(
+              { email: { contains: searchTerm, mode: 'insensitive' } },
+              { workEmail: { contains: searchTerm, mode: 'insensitive' } }
+            );
+          }
+          
+          // Job title and department contains (only for longer search terms)
+          if (searchTerm.length >= 3) {
+            searchConditions.push(
+              { jobTitle: { contains: searchTerm, mode: 'insensitive' } },
+              { department: { contains: searchTerm, mode: 'insensitive' } }
+            );
+          }
+          
+          // Name contains (only for search terms that look like real names/words)
+          // This filters out random character sequences
+          const isLikelyName = /^[a-zA-Z\s\-']+$/.test(searchTerm) && searchTerm.length >= 3;
+          if (isLikelyName) {
+            searchConditions.push(
+              { fullName: { contains: searchTerm, mode: 'insensitive' } },
+              { firstName: { contains: searchTerm, mode: 'insensitive' } },
+              { lastName: { contains: searchTerm, mode: 'insensitive' } }
+            );
+          }
+          
+          where.OR = searchConditions;
+        }
       }
 
       // Pipeline status filtering (PROSPECT, ACTIVE, INACTIVE)

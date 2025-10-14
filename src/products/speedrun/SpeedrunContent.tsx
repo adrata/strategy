@@ -341,6 +341,36 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
     }, 3000); // Hide after 3 seconds
   };
 
+  // Keyboard shortcuts for list view - handle CMD+Enter to open Add Action
+  useEffect(() => {
+    const handleListViewKeyDown = (event: KeyboardEvent) => {
+      // Only handle when in list view (no person selected) and no modals are open
+      if (selectedPerson || showCompleteModal || showSnoozeRemoveModal || showEmailComposer || showPowerDialer) {
+        return;
+      }
+
+      // Check for CMD+Enter or Ctrl+Enter
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Select the first person and open the Add Action modal
+        if (SpeedrunPeople.length > 0) {
+          const firstPerson = SpeedrunPeople[0];
+          console.log(`⌨️ List view: CMD+Enter pressed, opening Add Action for ${firstPerson.name}`);
+          setSelectedPerson(firstPerson);
+          // The handleComplete will be triggered in the next render cycle
+          setTimeout(() => {
+            handleComplete(firstPerson.id);
+          }, 0);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleListViewKeyDown, true);
+    return () => document.removeEventListener('keydown', handleListViewKeyDown, true);
+  }, [selectedPerson, showCompleteModal, showSnoozeRemoveModal, showEmailComposer, showPowerDialer, SpeedrunPeople, setSelectedPerson, handleComplete]);
+
   // Undo system - handle ⌘Z/Ctrl+Z to undo last action
   useEffect(() => {
     const handleUndoKeyDown = (event: KeyboardEvent) => {
@@ -394,16 +424,12 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
     try {
       console.log('🗑️ Deleting action from database:', undoData.actionId);
       
-      // Delete the action from the database
-      const response = await fetch('/api/speedrun/action-log', {
+      // Delete the action from the database using central v1 API
+      const response = await fetch(`/api/v1/actions/${undoData.actionId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          actionId: undoData.actionId,
-          personId: undoData.person.id
-        }),
       });
 
       if (!response.ok) {
@@ -437,7 +463,7 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
       id: person.id,
       name: person.name,
       phone: person.phone,
-      company: person.company,
+      company: typeof person.company === 'object' ? person.company?.name : person.company,
       title: person.title,
       nextAction: person.nextAction,
       priority: person.priority,
@@ -531,22 +557,22 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
       // Get workspace context
       const { workspaceId, userId } = await WorkspaceDataRouter.getApiParams();
       
-      // Save action log to backend
-      const response = await fetch('/api/speedrun/action-log', {
+      // Save action log to backend using central v1 API
+      const response = await fetch('/api/v1/actions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           personId: selectedPerson.id,
-          personName: selectedPerson.name,
-          actionType: actionData.type,
-          notes: actionData.notes,
-          nextAction: actionData.nextAction,
-          nextActionDate: actionData.nextActionDate,
-          workspaceId,
-          userId,
-          actionPerformedBy: actionData.actionPerformedBy || userId,
+          type: actionData.type,
+          subject: `${actionData.type} - ${selectedPerson.name}`,
+          description: actionData.notes,
+          outcome: actionData.nextAction || null,
+          scheduledAt: actionData.nextActionDate ? new Date(actionData.nextActionDate).toISOString() : null,
+          status: 'completed',
+          completedAt: new Date().toISOString(),
+          ownerId: actionData.actionPerformedBy || userId,
         }),
       });
 
@@ -702,7 +728,7 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           onClose={() => setShowSnoozeRemoveModal(false)}
           leadId={selectedPerson.id.toString()}
           leadName={selectedPerson.name}
-          leadCompany={selectedPerson.company}
+          leadCompany={typeof selectedPerson.company === 'object' ? selectedPerson.company?.name : selectedPerson.company}
           onAction={handleSnoozeRemoveAction}
         />
 
@@ -710,7 +736,7 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           isOpen={showEmailComposer}
           onClose={() => setShowEmailComposer(false)}
           leadName={selectedPerson.name}
-          leadCompany={selectedPerson.company}
+          leadCompany={typeof selectedPerson.company === 'object' ? selectedPerson.company?.name : selectedPerson.company}
           leadTitle={selectedPerson.title}
           leadEmail={selectedPerson.email}
           leadLinkedIn={selectedPerson.linkedin || ""}
@@ -724,7 +750,7 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           onClose={() => setShowCompleteModal(false)}
           onSubmit={handleActionLogSubmit}
           personName={selectedPerson.name}
-          companyName={selectedPerson.company}
+          companyName={typeof selectedPerson.company === 'object' ? selectedPerson.company?.name : selectedPerson.company}
           isLoading={isSubmittingAction}
           section="speedrun"
           initialData={lastCompletedAction?.actionData}

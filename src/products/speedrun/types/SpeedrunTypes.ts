@@ -2,7 +2,15 @@ export interface SpeedrunPerson {
   id: number;
   name: string;
   title: string;
-  company: string;
+  company: string | { 
+    id: string; 
+    name: string; 
+    industry?: string; 
+    size?: string; 
+    globalRank?: number;
+    hqState?: string;
+    state?: string;
+  };
   email: string;
   phone: string;
   mobilePhone?: string;

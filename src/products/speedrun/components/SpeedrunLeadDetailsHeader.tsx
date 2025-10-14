@@ -66,7 +66,7 @@ export function SpeedrunLeadDetailsHeader({
                 {person.name}
               </h1>
               <p className="text-sm text-[var(--muted)] mt-1">
-                {person.company}
+                {typeof person.company === 'object' ? person.company?.name : person.company}
               </p>
             </div>
           </div>

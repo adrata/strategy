@@ -62,7 +62,7 @@ export class LeadDetailsUtilities {
       id: person.id,
       name: person.name,
       phone: person.phone,
-      company: person.company,
+      company: typeof person.company === 'object' ? person.company?.name : person.company,
       title: person.title,
       nextAction: person.nextAction,
       priority: person.priority,

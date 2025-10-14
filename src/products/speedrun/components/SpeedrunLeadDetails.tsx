@@ -267,7 +267,7 @@ export function SpeedrunLeadDetails({
 
   // Show company detail view if requested
   if (state.showCompanyDetail) {
-    return <CompanyDetailView companyName={person.company} onBack={onBack} />;
+    return <CompanyDetailView companyName={typeof person.company === 'object' ? person.company?.name : person.company} onBack={onBack} />;
   }
 
   // Render report if active

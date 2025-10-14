@@ -522,7 +522,7 @@ export function OverviewTab({
                 onClick={onCompanyDetailClick}
                 className="mt-1 text-lg font-semibold text-[#2563EB] hover:text-[#1d4ed8] transition-colors cursor-pointer bg-none border-none p-0"
               >
-                {person.company || "-"}
+                {typeof person.company === 'object' ? person.company?.name || "-" : person.company || "-"}
               </button>
             </div>
             <div>

@@ -34,7 +34,7 @@ export function UpdatePersonPopup({
     title: person.title || "",
     email: person.email || "",
     phone: person.phone || "",
-    company: person.company || "",
+    company: typeof person.company === 'object' ? person.company?.name || "" : person.company || "",
     status: person.status || "Active",
     priority: person.priority || "Medium",
     nextAction: person.nextAction || "",
@@ -50,7 +50,7 @@ export function UpdatePersonPopup({
       title: person.title || "",
       email: person.email || "",
       phone: person.phone || "",
-      company: person.company || "",
+      company: typeof person.company === 'object' ? person.company?.name || "" : person.company || "",
       status: person.status || "Active",
       priority: person.priority || "Medium",
       nextAction: person.nextAction || "",
@@ -117,7 +117,10 @@ export function UpdatePersonPopup({
     }));
   };
 
-  const getDisplayValue = (value: string) => {
+  const getDisplayValue = (value: string | { name?: string }) => {
+    if (typeof value === 'object' && value?.name) {
+      return value.name;
+    }
     return value || "-";
   };
 

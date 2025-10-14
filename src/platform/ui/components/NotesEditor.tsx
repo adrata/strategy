@@ -6,6 +6,8 @@ import { CheckIcon, ClockIcon, ExclamationTriangleIcon } from '@heroicons/react/
 interface NotesEditorProps {
   value: string;
   onChange: (value: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   placeholder?: string;
   className?: string;
   disabled?: boolean;
@@ -19,6 +21,8 @@ interface NotesEditorProps {
 export function NotesEditor({
   value,
   onChange,
+  onFocus,
+  onBlur,
   placeholder = "Add your notes here...",
   className = "",
   disabled = false,
@@ -114,15 +118,13 @@ export function NotesEditor({
         clearTimeout(saveTimeoutRef.current);
       }
       
-      // For unmount saves, use sendBeacon for reliability
+      // Save immediately on unmount if there are unsaved changes
       if (localValue !== lastSavedValue && onSave) {
         try {
-          // Use sendBeacon for reliable unmount saves
-          const data = JSON.stringify({ notes: localValue });
-          if (navigator.sendBeacon) {
-            // This is a fallback - the actual save should be handled by the parent
-            console.log('Notes unmounting with unsaved changes:', localValue.length, 'chars');
-          }
+          // Use synchronous save for unmount
+          onSave(localValue).catch(error => {
+            console.error('Failed to save notes on unmount:', error);
+          });
         } catch (error) {
           console.error('Failed to save notes on unmount:', error);
         }
@@ -139,7 +141,7 @@ export function NotesEditor({
     if (autoSave && onSave && valueToSave !== lastSavedValue) {
       saveTimeoutRef.current = setTimeout(async () => {
         await queuedSave(valueToSave);
-      }, Math.min(debounceMs, 500)); // Cap at 500ms for faster response
+      }, debounceMs);
     }
   }, [autoSave, onSave, lastSavedValue, debounceMs, queuedSave]);
 
@@ -152,10 +154,12 @@ export function NotesEditor({
 
   const handleFocus = useCallback(() => {
     setIsFocused(true);
-  }, []);
+    onFocus?.();
+  }, [onFocus]);
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
+    onBlur?.();
     // Clear any pending debounced save
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
@@ -164,7 +168,7 @@ export function NotesEditor({
     if (localValue !== lastSavedValue) {
       queuedSave(localValue);
     }
-  }, [localValue, lastSavedValue, queuedSave]);
+  }, [localValue, lastSavedValue, queuedSave, onBlur]);
 
   const getStatusDisplay = () => {
     switch (saveStatus) {

@@ -36,7 +36,7 @@ export function LeadDetailsModalManager({
         onClose={onSnoozeRemoveModalClose}
         leadId={person.id.toString()}
         leadName={person.name}
-        leadCompany={person.company}
+        leadCompany={typeof person.company === 'object' ? person.company?.name : person.company}
         onAction={(action, leadId) => {
           if (action === "snoozed") {
             onSnooze(parseInt(leadId));

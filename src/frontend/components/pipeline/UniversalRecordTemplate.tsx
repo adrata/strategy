@@ -2317,7 +2317,7 @@ export function UniversalRecordTemplate({
           );
         case 'notes':
           return renderTabWithErrorBoundary(
-            <NotesTab key={activeTab} record={record} recordType={recordType} />
+            <NotesTab record={record} recordType={recordType} />
           );
         default:
           console.warn(`🔄 [UNIVERSAL] Unknown tab: ${activeTab}, falling back to overview`);
@@ -4106,9 +4106,17 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
     record?.updatedAt ? new Date(record.updatedAt) : null
   );
   const [lastSavedNotes, setLastSavedNotes] = React.useState<string>(getInitialNotes);
-  const [isUserEditing, setIsUserEditing] = React.useState<boolean>(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState<boolean>(false);
+  const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
+  // Sync notes state when record.notes prop changes
+  React.useEffect(() => {
+    const newNotes = getInitialNotes();
+    if (newNotes !== notes && !isFocused && saveStatus !== 'saving' && !hasUnsavedChanges) {
+      setNotes(newNotes);
+      setLastSavedNotes(newNotes);
+    }
+  }, [record?.notes, notes, isFocused, saveStatus, hasUnsavedChanges]);
 
   // Silently refresh notes from API in background (no loading state)
   React.useEffect(() => {
@@ -4139,7 +4147,7 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
             
             // Only update if the notes are different and we're not currently editing or saving
             // This prevents overwriting user changes during active editing
-            if (freshNotes !== notes && saveStatus !== 'saving' && !isUserEditing && !hasUnsavedChanges) {
+            if (freshNotes !== notes && saveStatus !== 'saving' && !isFocused && !hasUnsavedChanges) {
               setNotes(freshNotes);
               setLastSavedNotes(freshNotes);
               if (result.data.updatedAt) {
@@ -4157,7 +4165,7 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
 
     // Only refresh on initial load or when record ID changes, not on every notes change
     refreshNotes();
-  }, [record?.id, recordType]); // Removed notes from dependency to prevent refresh loops
+  }, [record?.id, recordType, notes, saveStatus, isFocused, hasUnsavedChanges]);
 
   // Auto-save function using v1 APIs
   const saveNotes = React.useCallback(async (notesContent: string) => {
@@ -4209,9 +4217,6 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
       setLastSavedAt(new Date());
       setLastSavedNotes(notesContent);
       
-      // Update the record context with the new notes
-      updateCurrentRecord({ notes: notesContent });
-      
       // Keep saved status persistent - don't auto-clear
       
     } catch (error) {
@@ -4232,17 +4237,28 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
     setHasUnsavedChanges(newNotes !== lastSavedNotes);
   }, [lastSavedNotes]);
 
+  // Handle focus/blur to track editing state
+  const handleFocus = React.useCallback(() => {
+    setIsFocused(true);
+  }, []);
+
+  const handleBlur = React.useCallback(() => {
+    setIsFocused(false);
+  }, []);
+
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1">
         <NotesEditor
           value={notes}
           onChange={handleNotesChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           placeholder="Add your notes here..."
           autoSave={true}
           saveStatus={saveStatus}
           onSave={saveNotes}
-          debounceMs={500}
+          debounceMs={1000}
           lastSavedAt={lastSavedAt}
           className="h-full"
         />
