@@ -10,6 +10,8 @@ import { useAuth } from "@/platform/hooks/useAuth";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 import { getCategoryColors } from "@/platform/config/color-palette";
 import { getPhoneDisplayValue } from "@/platform/utils/phone-validator";
+import { getCommonShortcut } from "@/platform/utils/keyboard-shortcuts";
+import { useActionLogs } from "../hooks/useActionLogs";
 
 interface OverviewTabProps {
   person: SpeedrunPerson;
@@ -44,6 +46,12 @@ export function OverviewTab({
   // Get auth context to check workspace
   const { authUser } = useAuth();
   
+  // Get workspace ID for action logs
+  const workspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id || '';
+  
+  // Fetch action logs for this person
+  const { actionLogs, loading: actionLogsLoading } = useActionLogs(person.id?.toString() || '', workspaceId);
+  
   // Handle inline field updates for speedrun
   const handleSpeedrunInlineFieldSave = onInlineFieldSave || (async (field: string, value: string, recordId: string, recordType: string) => {
     try {
@@ -72,6 +80,23 @@ export function OverviewTab({
   const contextualInsight = IntelligentStageProgression.getContextualInsight(person);
   const stageProgression = IntelligentStageProgression.analyzeStageProgression(person);
   const activityContext = IntelligentStageProgression.getEnhancedRankingContext(person);
+
+  // Get action type icon for notes display
+  const getActionIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'email': return '📧';
+      case 'call': return '📞';
+      case 'linkedin': return '💼';
+      case 'meeting': return '🤝';
+      case 'text': return '💬';
+      default: return '📝';
+    }
+  };
+
+  // Filter action logs to only those with notes and limit to 5 most recent
+  const recentActionLogsWithNotes = actionLogs
+    .filter(log => log.notes && log.notes.trim().length > 0)
+    .slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -125,7 +150,7 @@ export function OverviewTab({
             e.currentTarget.style.backgroundColor = getCategoryColors('people').bg;
           }}
         >
-          Add Action
+          Add Action ({getCommonShortcut('SUBMIT')})
         </button>
       </div>
 
@@ -547,6 +572,93 @@ export function OverviewTab({
               {generatePersonalNeeds(person)}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Recent Notes - New section */}
+      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              Recent Notes
+            </h3>
+            <p className="text-sm text-[var(--muted)] mt-1">
+              Personal notes and recent activity notes
+            </p>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          {/* Person's notes field (bio) */}
+          {person.bio && person.bio.trim().length > 0 && (
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <div className="text-2xl flex-shrink-0 mt-1">📝</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-[var(--foreground)]">
+                      Personal Notes
+                    </span>
+                    <span className="text-sm text-[var(--muted)]">
+                      Contact notes
+                    </span>
+                  </div>
+                  <p className="text-[var(--foreground)] text-sm leading-relaxed">
+                    {person.bio}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Recent action log notes */}
+          {actionLogsLoading ? (
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+              <div className="animate-pulse flex items-center gap-3">
+                <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-full"></div>
+                <div className="flex-1">
+                  <div className="w-3/4 h-4 bg-[var(--loading-bg)] rounded mb-2"></div>
+                  <div className="w-1/2 h-3 bg-[var(--loading-bg)] rounded"></div>
+                </div>
+              </div>
+            </div>
+          ) : recentActionLogsWithNotes.length > 0 ? (
+            <div className="space-y-3">
+              {recentActionLogsWithNotes.map((log) => (
+                <div
+                  key={log.id}
+                  className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:shadow-sm transition-shadow"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="text-2xl flex-shrink-0 mt-1">
+                      {getActionIcon(log.type)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-[var(--foreground)] capitalize">
+                          {log.type}
+                        </span>
+                        <span className="text-sm text-[var(--muted)]">
+                          {formatRelativeDate(log.timestamp.toISOString())}
+                        </span>
+                      </div>
+                      <p className="text-[var(--foreground)] text-sm leading-relaxed">
+                        {log.notes}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : !person.bio && (
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 text-center">
+              <div className="text-[var(--muted)] mb-2">📝</div>
+              <p className="text-[var(--muted)] text-sm">
+                No notes available yet. Add notes in the Notes tab or complete actions to start tracking!
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 import { getPhoneDisplayValue } from '@/platform/utils/phone-validator';
@@ -24,49 +24,25 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     return <CompanyDetailSkeleton message="Invalid record data..." />;
   }
 
-  // Debug: Log the record structure to see what's available
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🔍 [Person Data Debug] Record structure:', {
-      recordKeys: Object.keys(record || {}),
-      customFields: record?.customFields,
-      company: record?.company,
-      buyerGroupRole: record?.customFields?.buyerGroupRole,
-      coresignal: record?.customFields?.coresignal,
-      coresignalData: record?.customFields?.coresignalData,
-      coresignalProfile: record?.customFields?.coresignalProfile,
-      // Debug the actual values
-      influenceLevel: record?.customFields?.influenceLevel,
-      engagementStrategy: record?.customFields?.engagementStrategy,
-      employeeId: record?.customFields?.coresignal?.employeeId,
-      followersCount: record?.customFields?.coresignal?.followersCount,
-      connectionsCount: record?.customFields?.coresignal?.connectionsCount,
-      totalFields: record?.customFields?.totalFields
-    });
-    
-    // Additional debug for Aaron Adkins specifically
-    if (record?.fullName?.includes('Aaron Adkins') || record?.name?.includes('Aaron Adkins')) {
-      console.log('🎯 [AARON DEBUG] Aaron Adkins record found!');
-      console.log('Full name from record:', record.fullName);
-      console.log('Coresignal data exists:', !!record?.customFields?.coresignal);
-      console.log('Coresignal full_name:', record?.customFields?.coresignal?.full_name);
-      console.log('Coresignal active_experience_title:', record?.customFields?.coresignal?.active_experience_title);
-      console.log('Coresignal primary_professional_email:', record?.customFields?.coresignal?.primary_professional_email);
-    }
-  }
+  // Debug logging removed for performance optimization
 
-  // Extract CoreSignal data from the correct location
-  const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
-  const coresignalProfile = record?.customFields?.coresignalProfile || {};
-  const enrichedData = record?.customFields?.enrichedData || {};
-  
-  // Extract comprehensive person data from database first, then CoreSignal fallback
-  const personData = {
+  // Memoize data extraction to prevent expensive recalculations on every render
+  const { coresignalData, coresignalProfile, enrichedData, personData } = useMemo(() => {
+    // Extract CoreSignal data from the correct location
+    const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
+    const coresignalProfile = record?.customFields?.coresignalProfile || {};
+    const enrichedData = record?.customFields?.enrichedData || {};
+    
+    // Extract comprehensive person data from database first, then CoreSignal fallback
+    const personData = {
     // Basic info - Database fields first, then CoreSignal fallback
     name: String(record?.fullName || record?.name || coresignalData.full_name || '-'),
     title: String(record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || '-'),
     email: String(record?.email || coresignalData.primary_professional_email || '-'),
     phone: getPhoneDisplayValue(record?.phone || coresignalData.phone || coresignalData.mobile_phone || coresignalData.work_phone),
     linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
+    linkedinNavigatorUrl: String(record?.linkedinNavigatorUrl || '-'),
+    linkedinConnectionDate: record?.linkedinConnectionDate || null,
     
     // Company info - Database fields first, then CoreSignal fallback
     company: (() => {
@@ -117,6 +93,9 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     source: record.customFields?.source || 'Data Enrichment',
     seniority: record.customFields?.seniority || 'Mid-level'
   };
+
+  return { coresignalData, coresignalProfile, enrichedData, personData };
+  }, [record]);
 
   // Debug logging removed for cleaner console
 
@@ -237,7 +216,7 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-[var(--foreground)]">Speedrun Summary</h2>
+        <h2 className="text-xl font-semibold text-[var(--foreground)]">Bio</h2>
       </div>
 
       {/* Who are they */}
@@ -349,6 +328,32 @@ export function PersonOverviewTab({ recordType, record: recordProp }: PersonOver
                   ) : (
                     personData.linkedin
                   )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-[var(--muted)]">LinkedIn Navigator:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
+                  {personData.linkedinNavigatorUrl && personData.linkedinNavigatorUrl !== '-' ? (
+                    <a 
+                      href={personData.linkedinNavigatorUrl.startsWith('http') ? personData.linkedinNavigatorUrl : `https://${personData.linkedinNavigatorUrl}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {personData.linkedinNavigatorUrl.replace(/^https?:\/\//, '').replace(/^www\./, '')}
+                    </a>
+                  ) : (
+                    personData.linkedinNavigatorUrl || '-'
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-[var(--muted)]">LinkedIn Connection Date:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
+                  {personData.linkedinConnectionDate ? 
+                    new Date(personData.linkedinConnectionDate).toLocaleDateString() : 
+                    '-'
+                  }
                 </span>
               </div>
             </div>

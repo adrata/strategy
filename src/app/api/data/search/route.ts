@@ -192,7 +192,13 @@ export async function POST(request: NextRequest) {
 
     console.log(`✅ [SEARCH API] Found ${results.length} results for ${category}:`, results);
 
-    return createSuccessResponse(data, meta);
+    return createSuccessResponse(results, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      category,
+      query,
+      count: results.length
+    });
 
   } catch (error) {
     console.error('❌ [SEARCH API] POST Error:', error);
@@ -309,19 +315,19 @@ export async function GET(request: NextRequest) {
 
       default:
         return createErrorResponse(
-          `Unsupported search category: ${category}`,
+          `Unsupported search category: ${type}`,
           'UNSUPPORTED_CATEGORY',
           400
         );
     }
 
-    console.log(`✅ [SEARCH API] Found ${results.length} results for ${category}:`, results);
+    console.log(`✅ [SEARCH API] Found ${results.length} results for ${type}:`, results);
 
     return createSuccessResponse(results, {
       userId: context.userId,
       workspaceId: context.workspaceId,
       role: context.role,
-      category,
+      type,
       query,
       count: results.length
     });

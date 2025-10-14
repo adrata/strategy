@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   PlusIcon, 
   ClockIcon, 
@@ -34,6 +34,7 @@ interface ConversationHeaderProps {
   onCloseConversation: (id: string) => void;
   onSetViewMode: (mode: 'chat' | 'actions' | 'achievements') => void;
   onClosePanel: () => void;
+  onReorderConversations?: (newOrder: Conversation[]) => void;
   menuPopupRef: React.RefObject<HTMLDivElement>;
   conversationHistoryRef: React.RefObject<HTMLDivElement>;
 }
@@ -64,9 +65,48 @@ export function ConversationHeader({
   onCloseConversation,
   onSetViewMode,
   onClosePanel,
+  onReorderConversations,
   menuPopupRef,
   conversationHistoryRef
 }: ConversationHeaderProps) {
+  // Drag and drop state
+  const [draggedConversation, setDraggedConversation] = useState<string | null>(null);
+  
+  // Drag and drop handlers
+  const handleDragStart = (e: React.DragEvent, conversationId: string) => {
+    setDraggedConversation(conversationId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+  
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+  
+  const handleDrop = (e: React.DragEvent, targetConversationId: string) => {
+    e.preventDefault();
+    
+    if (!draggedConversation || draggedConversation === targetConversationId || !onReorderConversations) {
+      setDraggedConversation(null);
+      return;
+    }
+    
+    const newOrder = [...conversations];
+    const draggedIndex = newOrder.findIndex(c => c.id === draggedConversation);
+    const targetIndex = newOrder.findIndex(c => c.id === targetConversationId);
+    
+    // Remove dragged conversation from its current position
+    const [draggedConv] = newOrder.splice(draggedIndex, 1);
+    // Insert it at the target position
+    newOrder.splice(targetIndex, 0, draggedConv);
+    
+    onReorderConversations(newOrder);
+    setDraggedConversation(null);
+  };
+  
+  const handleDragEnd = () => {
+    setDraggedConversation(null);
+  };
   return (
     <div className="flex flex-col flex-shrink-0">
       {/* Top row with tabs and controls */}
@@ -76,11 +116,18 @@ export function ConversationHeader({
           {conversations.map((conv) => (
             <div key={conv.id} className="relative mr-2 group">
               <button
+                draggable
                 onClick={() => onSwitchConversation(conv.id)}
+                onDragStart={(e) => handleDragStart(e, conv.id)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, conv.id)}
+                onDragEnd={handleDragEnd}
                 className={`flex items-center px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
                   conv.isActive
-                    ? 'bg-[var(--hover)] text-gray-800 dark:bg-[var(--loading-bg)] dark:text-[var(--foreground)]'
-                    : 'bg-[var(--panel-background)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)] dark:text-gray-300'
+                    ? 'bg-[var(--panel-background)] text-[var(--foreground)]'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                } ${
+                  draggedConversation === conv.id ? 'opacity-50' : ''
                 }`}
               >
                 <span className="group-hover:opacity-50 transition-opacity">{conv.title}</span>

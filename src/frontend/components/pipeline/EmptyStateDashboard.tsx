@@ -1,6 +1,7 @@
 import React from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { getCategoryColors } from '@/platform/config/color-palette';
+import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 
 interface EmptyStateDashboardProps {
   section: string;
@@ -107,7 +108,7 @@ export function EmptyStateDashboard({ section, onAddRecord, onAddAction }: Empty
                   e.currentTarget.style.backgroundColor = getCategoryColors(section).bg;
                 }}
               >
-                Add Action
+                Add Action ({getCommonShortcut('SUBMIT')})
               </button>
             )}
           </div>

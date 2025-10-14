@@ -75,14 +75,27 @@ export async function apiFetch<T = any>(
 
       // For other client errors, try to parse error message
       let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      let errorCode = 'UNKNOWN_ERROR';
+      let responseBody = null;
+      
       try {
         const errorData = await response.json();
         errorMessage = errorData.error || errorData.message || errorMessage;
+        errorCode = errorData.code || errorCode;
+        responseBody = errorData;
       } catch {
         // If we can't parse the error response, use the status text
       }
 
-      console.error(`❌ API call failed: ${url}`, errorMessage);
+      // Enhanced error logging with more context
+      console.error(`❌ API call failed: ${url}`, {
+        status: response.status,
+        statusText: response.statusText,
+        errorMessage,
+        errorCode,
+        responseBody,
+        headers: Object.fromEntries(response.headers.entries())
+      });
       
       // Return fallback if available
       if (finalFallback !== undefined) {

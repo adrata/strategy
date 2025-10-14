@@ -134,7 +134,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
 
   // Get the display value - for select fields, show the label instead of the value
   const getDisplayValue = () => {
-    if (!value) return placeholder || 'Click to edit';
+    if (!value || value.trim() === '') return '-';
     
     if (inputType === 'select' && options) {
       const option = options.find(opt => opt['value'] === value);
@@ -146,7 +146,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
 
   return (
     <div className="group flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-[var(--panel-background)] transition-colors">
-      <span className={`${className} ${!value ? 'text-[var(--muted)] italic' : ''}`}>
+      <span className={`${className} ${!value || value.trim() === '' ? 'text-[var(--muted)]' : ''}`}>
         {getDisplayValue()}
       </span>
       <button

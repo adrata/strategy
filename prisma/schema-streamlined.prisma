@@ -94,6 +94,8 @@ model workspaces {
   idealCustomerProfile      String?                     @db.VarChar(2000) // Detailed ICP description
   competitiveAdvantages     String[]                    @default([])      // What makes them unique
   salesMethodology          String?                     @db.VarChar(200)  // How they sell
+  speedrunDailyTarget       Int?                        @default(50)
+  speedrunWeeklyTarget      Int?                        @default(250)
   oasis_channels            OasisChannel[]
   oasis_direct_messages     OasisDirectMessage[]
   stacks_projects           StacksProject[]
@@ -371,6 +373,8 @@ model people {
   mobilePhone       String?             @db.VarChar(50)
   workPhone         String?             @db.VarChar(50)
   linkedinUrl       String?             @db.VarChar(500)
+  linkedinNavigatorUrl String?          @db.VarChar(500)
+  linkedinConnectionDate DateTime?      @db.Timestamp(6)
   address           String?             @db.VarChar(500)
   city              String?             @db.VarChar(100)
   state             String?             @db.VarChar(100)

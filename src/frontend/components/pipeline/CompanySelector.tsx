@@ -60,7 +60,7 @@ export function CompanySelector({
         },
         body: JSON.stringify({
           query: query.trim(),
-          type: 'companies',
+          category: 'companies',
           limit: 10
         }),
       });

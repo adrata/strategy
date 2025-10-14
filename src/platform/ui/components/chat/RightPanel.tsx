@@ -598,6 +598,10 @@ export function RightPanel() {
     }
   };
 
+  const handleReorderConversations = (newOrder: Conversation[]) => {
+    setConversations(newOrder);
+  };
+
   const getWelcomeMessage = (app: string): string => {
     console.log('🤖 [AI RIGHT PANEL] getWelcomeMessage called with:', { 
       app, 
@@ -645,19 +649,17 @@ export function RightPanel() {
       
       switch (app) {
         case "Speedrun":
-          return "Hi there! I'm Adrata, your sales acceleration assistant. I can help you with rapid prospecting, pipeline optimization, and closing deals faster. What's your biggest sales challenge right now?";
+          return "Hi! I'm Adrata. What would you like to work on today?";
         case "pipeline":
-          return "Hello! I'm here to help you accelerate your sales process. Whether you need help with pipeline analysis, prospect research, or closing strategies, I've got you covered. What would you like to work on?";
+          return "Hi! I'm Adrata. What would you like to work on today?";
         case "monaco":
-          return "Hey! I'm Adrata, your AI sales partner. I can help you research prospects, craft compelling messages, and optimize your sales approach. What's on your mind today?";
+          return "Hi! I'm Adrata. What would you like to work on today?";
         default:
-          return isPipelineContext 
-            ? "Hi! I'm Adrata, your sales acceleration assistant. I can help you with pipeline optimization, prospect research, and closing strategies. What would you like to focus on today?"
-            : "Hello! I'm here to help you with your sales process. I can assist with research, messaging, pipeline analysis, and more. What can I help you with?";
+          return "Hi! I'm Adrata. What would you like to work on today?";
       }
     }
 
-    return activeConv?.welcomeMessage || "Hi! I'm Adrata, your sales acceleration assistant. I can help you with research, messaging, pipeline optimization, and closing strategies. What would you like to work on today?";
+    return activeConv?.welcomeMessage || "Hi! I'm Adrata. What would you like to work on today?";
   };
 
   // Click outside handler
@@ -1744,6 +1746,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         onCloseConversation={closeConversation}
         onSetViewMode={setViewMode}
         onClosePanel={() => ui.toggleRightPanel()}
+        onReorderConversations={handleReorderConversations}
         menuPopupRef={menuPopupRef}
         conversationHistoryRef={conversationHistoryRef}
       />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { authFetch } from '@/platform/api-fetch';
@@ -257,9 +257,18 @@ export function UniversalRecordTemplate({
   const [activeTab, setActiveTab] = useState(urlTab || defaultTab);
   const [loading, setLoading] = useState(false);
   const [activeReport, setActiveReport] = useState<DeepValueReport | null>(null);
+  const [localRecord, setLocalRecord] = useState(record);
+  const [isPending, startTransition] = useTransition();
+  
+  // Update local record state when prop changes
+  useEffect(() => {
+    setLocalRecord(record);
+  }, [record]);
   
   // Ref for content container to reset scroll position
   const contentRef = useRef<HTMLDivElement>(null);
+  // Ref to track URL sync to prevent circular updates
+  const urlSyncRef = useRef(false);
   
   // Use universal inline edit hook
   const {
@@ -334,20 +343,24 @@ export function UniversalRecordTemplate({
     const validTabIds = tabs.map(tab => tab.id);
     const urlTab = searchParams.get('tab');
     
-    // If URL has a valid tab parameter, use it
+    // If URL has a valid tab parameter, use it (only on initial load or external navigation)
     if (urlTab && validTabIds.includes(urlTab)) {
-      if (activeTab !== urlTab) {
+      if (activeTab !== urlTab && !urlSyncRef.current) {
         setActiveTab(urlTab);
+        urlSyncRef.current = true;
       }
     } 
     // If current active tab is not valid for this record type, reset to first tab
     else if (!validTabIds.includes(activeTab)) {
       const newTab = tabs[0]?.id || 'overview';
       setActiveTab(newTab);
-      // Update URL to reflect the fallback tab
-      updateURLTab(newTab);
+      // Only update URL if we haven't synced yet to prevent circular updates
+      if (!urlSyncRef.current) {
+        updateURLTab(newTab);
+        urlSyncRef.current = true;
+      }
     }
-  }, [tabs, searchParams]);
+  }, [tabs]); // Removed searchParams dependency to prevent circular updates
 
   // Set current record context when component mounts or record changes
   useEffect(() => {
@@ -370,11 +383,14 @@ export function UniversalRecordTemplate({
         // Show success message
         showMessage(`Updated ${updatedFields.join(', ')} successfully`);
         
-        
-        // Optionally refresh the page to show updated data
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        // Dispatch event to update the UI without page reload
+        window.dispatchEvent(new CustomEvent('record-updated', {
+          detail: {
+            recordType,
+            recordId: record?.id,
+            updatedFields
+          }
+        }));
       }
     };
 
@@ -447,11 +463,11 @@ export function UniversalRecordTemplate({
 
   // Get record display name with fallbacks
   const getDisplayName = () => {
-    return record?.name || 
-           record?.fullName || 
-           (record?.firstName && record?.lastName ? `${record.firstName} ${record.lastName}` : '') ||
-           record?.companyName ||
-           record?.title ||
+    return localRecord?.name || 
+           localRecord?.fullName || 
+           (localRecord?.firstName && localRecord?.lastName ? `${localRecord.firstName} ${localRecord.lastName}` : '') ||
+           localRecord?.companyName ||
+           localRecord?.title ||
            'Unknown Record';
   };
 
@@ -639,53 +655,140 @@ export function UniversalRecordTemplate({
   const handleUpdateSubmit = async (updatedData: any, actionData?: any) => {
     try {
       setLoading(true);
-      console.log('🔄 [UNIVERSAL] Updating record:', record.id, 'with data:', updatedData);
+      console.log('🔄 [UNIVERSAL] Updating record:', localRecord.id, 'with data:', updatedData);
       
       // Prepare update data with proper field mapping
       const updatePayload: Record<string, any> = {};
       
+      // Helper function to safely add fields to payload (only if they have actual values)
+      const addField = (key: string, value: any) => {
+        if (value !== undefined && value !== null && value !== '') {
+          updatePayload[key] = value;
+        }
+      };
+      
       // Map common fields to streamlined schema - using bracket notation for TypeScript strict mode
-      if (updatedData['name']) {
+      if ('name' in updatedData && updatedData['name'] !== undefined) {
         const nameParts = updatedData['name'].trim().split(' ');
         updatePayload['firstName'] = nameParts[0] || '';
         updatePayload['lastName'] = nameParts.slice(1).join(' ') || '';
         updatePayload['fullName'] = updatedData['name'].trim();
       }
-      if (updatedData['firstName']) updatePayload['firstName'] = updatedData['firstName'];
-      if (updatedData['lastName']) updatePayload['lastName'] = updatedData['lastName'];
-      if (updatedData['fullName']) updatePayload['fullName'] = updatedData['fullName'];
-      if (updatedData['email']) updatePayload['email'] = updatedData['email'];
-      if (updatedData['workEmail']) updatePayload['workEmail'] = updatedData['workEmail'];
-      if (updatedData['phone']) updatePayload['phone'] = updatedData['phone'];
-      if (updatedData['mobilePhone']) updatePayload['mobilePhone'] = updatedData['mobilePhone'];
-      if (updatedData['title']) updatePayload['jobTitle'] = updatedData['title'];
-      if (updatedData['jobTitle']) updatePayload['jobTitle'] = updatedData['jobTitle'];
-      if (updatedData['status']) updatePayload['status'] = updatedData['status'];
-      if (updatedData['priority']) updatePayload['priority'] = updatedData['priority'];
-      if (updatedData['notes']) updatePayload['notes'] = updatedData['notes'];
-      if (updatedData['industry']) updatePayload['industry'] = updatedData['industry'];
-      if (updatedData['linkedinUrl']) updatePayload['linkedinUrl'] = updatedData['linkedinUrl'];
-      if (updatedData['department']) updatePayload['department'] = updatedData['department'];
-      if (updatedData['seniority']) updatePayload['seniority'] = updatedData['seniority'];
-      if (updatedData['city']) updatePayload['city'] = updatedData['city'];
-      if (updatedData['state']) updatePayload['state'] = updatedData['state'];
-      if (updatedData['country']) updatePayload['country'] = updatedData['country'];
-      if (updatedData['postalCode']) updatePayload['postalCode'] = updatedData['postalCode'];
-      if (updatedData['source']) updatePayload['source'] = updatedData['source'];
-      if (updatedData['nextAction']) updatePayload['nextAction'] = updatedData['nextAction'];
-      if (updatedData['nextActionDate']) updatePayload['nextActionDate'] = updatedData['nextActionDate'];
-      if (updatedData['lastActionDate']) updatePayload['lastActionDate'] = updatedData['lastActionDate'];
-      if (updatedData['tags']) updatePayload['tags'] = updatedData['tags'];
-      if (updatedData['engagementScore']) updatePayload['engagementScore'] = updatedData['engagementScore'];
-      if (updatedData['globalRank']) updatePayload['globalRank'] = updatedData['globalRank'];
-      if (updatedData['companyRank']) updatePayload['companyRank'] = updatedData['companyRank'];
+      if ('firstName' in updatedData && updatedData['firstName'] !== undefined) {
+        updatePayload['firstName'] = updatedData['firstName'];
+      }
+      if ('lastName' in updatedData && updatedData['lastName'] !== undefined) {
+        updatePayload['lastName'] = updatedData['lastName'];
+      }
+      if ('fullName' in updatedData && updatedData['fullName'] !== undefined) {
+        updatePayload['fullName'] = updatedData['fullName'];
+      }
+      
+      // Sync fullName when firstName or lastName are updated individually
+      if (('firstName' in updatedData || 'lastName' in updatedData) && 
+          (updatedData['firstName'] !== undefined || updatedData['lastName'] !== undefined)) {
+        const firstName = updatedData['firstName'] !== undefined ? updatedData['firstName'] : (localRecord?.firstName || '');
+        const lastName = updatedData['lastName'] !== undefined ? updatedData['lastName'] : (localRecord?.lastName || '');
+        updatePayload['fullName'] = `${firstName} ${lastName}`.trim();
+      }
+      
+      // Basic contact fields
+      addField('email', updatedData['email']);
+      addField('workEmail', updatedData['workEmail']);
+      addField('phone', updatedData['phone']);
+      addField('mobilePhone', updatedData['mobilePhone']);
+      addField('linkedinUrl', updatedData['linkedinUrl']);
+      
+      // Job and company fields
+      if ('title' in updatedData && updatedData['title'] !== undefined) {
+        updatePayload['jobTitle'] = updatedData['title'];
+      }
+      addField('jobTitle', updatedData['jobTitle']);
+      addField('department', updatedData['department']);
+      addField('seniority', updatedData['seniority']);
+      
+      // Company information (will need special handling for company linking)
+      addField('companyName', updatedData['company']);
+      addField('companyDomain', updatedData['companyDomain']);
+      addField('industry', updatedData['industry']);
+      addField('vertical', updatedData['vertical']);
+      addField('companySize', updatedData['companySize']);
+      
+      // Status and priority
+      addField('status', updatedData['status']);
+      addField('priority', updatedData['priority']);
+      addField('relationship', updatedData['relationship']);
+      
+      // Location fields
+      addField('address', updatedData['address']);
+      addField('city', updatedData['city']);
+      addField('state', updatedData['state']);
+      addField('country', updatedData['country']);
+      addField('postalCode', updatedData['postalCode']);
+      
+      // Activity and engagement
+      addField('nextAction', updatedData['nextAction']);
+      addField('nextActionDate', updatedData['nextActionDate']);
+      addField('lastActionDate', updatedData['lastActionDate']);
+      addField('engagementScore', updatedData['engagementScore']);
+      
+      // Notes and tags
+      addField('notes', updatedData['notes']);
+      if ('tags' in updatedData && updatedData['tags'] !== undefined) {
+        updatePayload['tags'] = updatedData['tags'];
+      }
+      
+      // Ranking and scoring
+      addField('globalRank', updatedData['globalRank']);
+      addField('companyRank', updatedData['companyRank']);
+      
+      // Additional fields from UpdateModal
+      addField('source', updatedData['source']);
+      addField('bio', updatedData['bio']);
+      addField('profilePictureUrl', updatedData['profilePictureUrl']);
+      
+      // Opportunity fields (for leads/prospects)
+      addField('estimatedValue', updatedData['estimatedValue']);
+      addField('currency', updatedData['currency']);
+      addField('expectedCloseDate', updatedData['expectedCloseDate']);
+      addField('stage', updatedData['stage']);
+      addField('probability', updatedData['probability']);
+      
+      console.log('📝 [UNIVERSAL] Mapped update payload:', updatePayload);
+      
+      // Handle company linking if company name is provided
+      if (updatePayload.companyName && updatePayload.companyName !== localRecord?.companyName) {
+        try {
+          console.log('🏢 [UNIVERSAL] Looking up company:', updatePayload.companyName);
+          
+          // Search for existing company by name
+          const companySearchResponse = await authFetch(`/api/v1/companies?search=${encodeURIComponent(updatePayload.companyName)}&limit=1`);
+          
+          if (companySearchResponse.ok) {
+            const companySearchResult = await companySearchResponse.json();
+            if (companySearchResult.success && companySearchResult.data && companySearchResult.data.length > 0) {
+              const foundCompany = companySearchResult.data[0];
+              updatePayload.companyId = foundCompany.id;
+              console.log('✅ [UNIVERSAL] Found existing company:', foundCompany.id, foundCompany.name);
+            } else {
+              console.log('ℹ️ [UNIVERSAL] No existing company found, will create new one if needed');
+              // For now, we'll let the API handle company creation or leave companyId null
+              // The API can create companies on-demand if needed
+            }
+          }
+        } catch (companyError) {
+          console.error('⚠️ [UNIVERSAL] Error looking up company:', companyError);
+          // Continue with update even if company lookup fails
+        }
+      }
       
       // Make API call to update the record using v1 APIs
       let response: Response;
       
       if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
         // All people-related records use v1 people API
-        response = await authFetch(`/api/v1/people/${record.id}`, {
+        console.log('📡 [UNIVERSAL] Making PATCH request to people API with payload:', updatePayload);
+        response = await authFetch(`/api/v1/people/${localRecord.id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -694,7 +797,8 @@ export function UniversalRecordTemplate({
         });
       } else if (recordType === 'companies') {
         // Use v1 companies API
-        response = await authFetch(`/api/v1/companies/${record.id}`, {
+        console.log('📡 [UNIVERSAL] Making PATCH request to companies API with payload:', updatePayload);
+        response = await authFetch(`/api/v1/companies/${localRecord.id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -703,6 +807,7 @@ export function UniversalRecordTemplate({
         });
       } else {
         // Fallback to legacy unified API for other types
+        console.log('📡 [UNIVERSAL] Making PATCH request to unified API with payload:', updatePayload);
         response = await authFetch('/api/data/unified', {
           method: 'PATCH',
           headers: {
@@ -711,7 +816,7 @@ export function UniversalRecordTemplate({
           body: JSON.stringify({
             type: recordType,
             action: 'update',
-            id: record.id,
+            id: localRecord.id,
             data: updatePayload,
             workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP',
             userId: '01K1VBYZG41K9QA0D9CF06KNRG'
@@ -721,18 +826,39 @@ export function UniversalRecordTemplate({
       
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('❌ [UNIVERSAL] API update failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData
+        });
         throw new Error(errorData.error || 'Failed to update record');
       }
       
       const result = await response.json();
-      console.log('✅ [UNIVERSAL] Record updated successfully:', result);
+      console.log('✅ [UNIVERSAL] Record updated successfully:', {
+        success: result.success,
+        data: result.data,
+        meta: result.meta
+      });
       
-      // Update local record state
+      // Update local record state with API response data
       const updatedRecord = {
-        ...record,
+        ...localRecord,
         ...updatedData,
-        ...updatePayload
+        ...updatePayload,
+        ...result.data // Include any additional data from API response
       };
+      
+      console.log('🔄 [UNIVERSAL] Updated local record state:', {
+        originalRecord: localRecord,
+        updateData: updatedData,
+        updatePayload: updatePayload,
+        apiResponse: result.data,
+        finalRecord: updatedRecord
+      });
+      
+      // Update local state immediately for UI refresh
+      setLocalRecord(updatedRecord);
       
       if (onRecordUpdate) {
         onRecordUpdate(updatedRecord);
@@ -742,7 +868,7 @@ export function UniversalRecordTemplate({
       window.dispatchEvent(new CustomEvent('record-updated', {
         detail: {
           recordType,
-          recordId: record.id,
+          recordId: localRecord.id,
           updatedRecord,
           updateData: updatedData,
           actionData
@@ -1328,7 +1454,7 @@ export function UniversalRecordTemplate({
       console.log('🔄 [UNIVERSAL] Submitting action:', actionData);
       
       // Use different API endpoints based on record type
-      const apiEndpoint = recordType === 'speedrun' ? '/api/speedrun/action-log' : '/api/actions/add';
+      const apiEndpoint = recordType === 'speedrun' ? '/api/speedrun/action-log' : '/api/v1/actions';
       
       // Prepare request body based on record type
       const requestBody = recordType === 'speedrun' ? {
@@ -1338,36 +1464,97 @@ export function UniversalRecordTemplate({
         notes: actionData.action, // Use action field for speedrun
         actionPerformedBy: actionData.actionPerformedBy
       } : {
-        recordId: record.id,
-        recordType: recordType,
-        actionType: actionData.type,
-        notes: actionData.action,
-        person: actionData.person,
-        personId: actionData.personId,
-        company: actionData.company,
-        companyId: actionData.companyId,
-        actionPerformedBy: actionData.actionPerformedBy,
-        workspaceId: record.workspaceId || 'default',
-        userId: record.userId || 'default'
+        type: actionData.type,
+        subject: actionData.action.length > 100 ? actionData.action.substring(0, 100) + '...' : actionData.action,
+        description: actionData.action,
+        // Only include personId/companyId if they are valid (not empty strings or undefined)
+        ...(actionData.personId && actionData.personId.trim() !== '' && { personId: actionData.personId }),
+        ...(actionData.companyId && actionData.companyId.trim() !== '' && { companyId: actionData.companyId })
       };
       
+        console.log('📤 [UNIVERSAL] Request body prepared:', {
+          type: requestBody.type,
+          subject: requestBody.subject,
+          hasPersonId: 'personId' in requestBody,
+          hasCompanyId: 'companyId' in requestBody,
+          personId: 'personId' in requestBody ? requestBody.personId : 'not included',
+          companyId: 'companyId' in requestBody ? requestBody.companyId : 'not included',
+          fullRequestBody: requestBody
+        });
+        
+        console.log('📤 [UNIVERSAL] Action data being sent:', {
+          recordId: record.id,
+          recordType: recordType,
+          actionData: actionData,
+          requestBody: requestBody
+        });
+      
       // Make API call to log the action
-      const response = await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
+      console.log('🌐 [UNIVERSAL] Making API call to:', apiEndpoint);
+      let response;
+      try {
+        response = await fetch(apiEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Include cookies for authentication
+          body: JSON.stringify(requestBody),
+        });
+      } catch (networkError) {
+        console.error('❌ [UNIVERSAL] Network error during API call:', networkError);
+        throw new Error(`Network error: ${networkError instanceof Error ? networkError.message : 'Unknown network error'}`);
+      }
+
+      console.log('📡 [UNIVERSAL] API response received:', {
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to log action: ${response.statusText}`);
-      }
+        // Try to get error details from response body
+        let errorDetails = '';
+        try {
+          const errorBody = await response.json();
+          errorDetails = errorBody.error || errorBody.message || 'Unknown error';
+          console.error('❌ [UNIVERSAL] API error response:', errorBody);
+        } catch (e) {
+          errorDetails = response.statusText || `HTTP ${response.status}`;
+          console.error('❌ [UNIVERSAL] Could not parse error response:', e);
+        }
+        
+        throw new Error(`Failed to log action: ${errorDetails} (Status: ${response.status})`);
+        }
 
-      const result = await response.json();
-      
-      if (result.success) {
-        showMessage('Action logged successfully!');
+        const result = await response.json();
+        
+        console.log('📡 [UNIVERSAL] Full API response result:', {
+          success: result.success,
+          data: result.data,
+          error: result.error,
+          message: result.message,
+          fullResult: result
+        });
+
+        if (result.success) {
+          showMessage('Action logged successfully!');
+        
+        // Clear timeline cache to force refresh
+        const cacheKey = `timeline-${record.id}`;
+        localStorage.removeItem(cacheKey);
+        console.log('🗑️ [UNIVERSAL] Cleared timeline cache for record:', record.id);
+        
+        // Dispatch event to trigger timeline refresh
+        document.dispatchEvent(new CustomEvent('actionCreated', {
+          detail: {
+            recordId: record.id,
+            recordType: recordType,
+            actionId: result.data?.id,
+            timestamp: new Date().toISOString()
+          }
+        }));
         
         // Close the modal
         setIsAddActionModalOpen(false);
@@ -1563,6 +1750,7 @@ export function UniversalRecordTemplate({
       }
       
       if (result.success) {
+        // Show success message
         showMessage('Record updated successfully!');
         
         // Close the modal
@@ -1570,11 +1758,19 @@ export function UniversalRecordTemplate({
         
         // Trigger record update callback if provided
         if (onRecordUpdate) {
-          onRecordUpdate(result.record);
+          onRecordUpdate(result.data || result.record);
         }
         
-        // Refresh the page to show updated data
-        window.location.reload();
+        // Dispatch event to update the UI without page reload
+        window.dispatchEvent(new CustomEvent('record-updated', {
+          detail: {
+            recordType,
+            recordId: record.id,
+            updatedRecord: result.data || result.record
+          }
+        }));
+        
+        // DO NOT reload the page - let the UI update via state
       } else {
         throw new Error(result.error || 'Failed to update record');
       }
@@ -1726,7 +1922,7 @@ export function UniversalRecordTemplate({
       const isOnSprintPage = typeof window !== 'undefined' && window.location.pathname.includes('/speedrun/sprint');
       
       if (isOnSprintPage) {
-        // On sprint page: Show "Add Action" with green styling and keyboard shortcut - Responsive for 15-inch laptops
+        // On sprint page: Show "Add Action with the shortcut" with green styling and keyboard shortcut - Responsive for 15-inch laptops
         buttons.push(
           <button
             key="add-action"
@@ -1734,7 +1930,7 @@ export function UniversalRecordTemplate({
             className="px-3 py-1.5 text-sm bg-green-100 text-green-800 border border-green-200 rounded-md hover:bg-green-200 transition-colors flex items-center gap-1"
           >
             <span className="hidden xs:inline">Add Action ({getCommonShortcut('SUBMIT')})</span>
-            <span className="xs:hidden">Add</span>
+            <span className="xs:hidden">Add Action</span>
           </button>
         );
       } else {
@@ -1815,8 +2011,8 @@ export function UniversalRecordTemplate({
     return buttons;
   };
 
-  // Render tab content
-  const renderTabContent = () => {
+  // Render tab content - memoized to prevent unnecessary rerenders
+  const renderTabContent = useMemo(() => {
     console.log(`🔄 [UNIVERSAL] Rendering tab content for: ${activeTab}, record:`, record?.name || record?.id);
     console.log(`🔄 [UNIVERSAL] Available tabs:`, tabs.map(t => t.id));
     console.log(`🔄 [UNIVERSAL] Record data keys:`, Object.keys(record || {}));
@@ -2097,7 +2293,7 @@ export function UniversalRecordTemplate({
         </div>
       );
     }
-  };
+  }, [activeTab, record, recordType, tabs]);
 
   // If a report is active, show the report view
   if (activeReport) {
@@ -2293,17 +2489,21 @@ export function UniversalRecordTemplate({
               key={tab.id}
               onClick={() => {
                 console.log(`🔄 [UNIVERSAL] Tab clicked: ${tab.id}, was: ${activeTab}`);
+                // Immediate visual feedback - update state first
                 setActiveTab(tab.id);
-                updateURLTab(tab.id);
                 // Reset scroll position to top when switching tabs
                 if (contentRef.current) {
                   contentRef.current.scrollTop = 0;
                 }
+                // Non-blocking URL update in background
+                startTransition(() => {
+                  updateURLTab(tab.id);
+                });
               }}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                 activeTab === tab.id
                   ? 'bg-[var(--panel-background)] text-[var(--foreground)] border border-[var(--border)]'
-                  : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--panel-background)]'
+                  : 'text-[var(--muted)] hover:text-[var(--foreground)]'
               }`}
             >
               {tab.label}
@@ -2320,7 +2520,7 @@ export function UniversalRecordTemplate({
           </div>
         ) : (
           <div key={`${activeTab}-${record?.id}`} className="px-1 min-h-[400px]">
-            {renderTabContent()}
+            {renderTabContent}
           </div>
         )}
       </div>
@@ -2329,7 +2529,7 @@ export function UniversalRecordTemplate({
       <UpdateModal
         isOpen={isUpdateModalOpen}
         onClose={() => setIsUpdateModalOpen(false)}
-        record={record}
+        record={localRecord}
         recordType={recordType as 'leads' | 'prospects' | 'opportunities' | 'companies' | 'people' | 'partners' | 'clients'}
         onUpdate={handleUpdateSubmit}
         onDelete={handleDeleteRecord}
@@ -2545,9 +2745,9 @@ export function UniversalRecordTemplate({
                     </div>
                   </div>
 
-                  {/* Speedrun Summary */}
+                  {/* Bio */}
                   <div>
-                    <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Speedrun Summary</h4>
+                    <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Bio</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Current Status</label>

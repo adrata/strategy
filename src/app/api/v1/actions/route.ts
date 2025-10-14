@@ -164,6 +164,8 @@ export async function GET(request: NextRequest) {
 // POST /api/v1/actions - Create a new action
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔄 [ACTIONS API] POST request received');
+    
     // Authenticate and authorize user using unified auth system
     const { context, response } = await getSecureApiContext(request, {
       requireAuth: true,
@@ -171,41 +173,133 @@ export async function POST(request: NextRequest) {
     });
 
     if (response) {
+      console.error('❌ [ACTIONS API] Authentication failed:', {
+        status: response.status,
+        statusText: response.statusText
+      });
       return response; // Return error response if authentication failed
     }
 
     if (!context) {
+      console.error('❌ [ACTIONS API] No authentication context available');
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const body = await request.json();
+    console.log('✅ [ACTIONS API] Authentication successful:', {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      userEmail: context.userEmail
+    });
 
-    // Basic validation
+    const body = await request.json();
+    console.log('📝 [ACTIONS API] Request body:', {
+      type: body.type,
+      subject: body.subject,
+      description: body.description,
+      personId: body.personId,
+      companyId: body.companyId,
+      status: body.status,
+      priority: body.priority
+    });
+
+    // Enhanced validation
     if (!body.type || !body.subject) {
+      console.error('❌ [ACTIONS API] Validation failed - missing required fields:', {
+        hasType: !!body.type,
+        hasSubject: !!body.subject,
+        body: body
+      });
       return NextResponse.json(
         { success: false, error: 'Type and subject are required' },
         { status: 400 }
       );
     }
 
+    // Validate field types
+    if (typeof body.type !== 'string' || typeof body.subject !== 'string') {
+      console.error('❌ [ACTIONS API] Validation failed - invalid field types:', {
+        typeType: typeof body.type,
+        subjectType: typeof body.subject
+      });
+      return NextResponse.json(
+        { success: false, error: 'Type and subject must be strings' },
+        { status: 400 }
+      );
+    }
+
+    // Validate foreign key references if provided
+    if (body.companyId) {
+      console.log('🔍 [ACTIONS API] Validating company reference:', { companyId: body.companyId });
+      const companyExists = await prisma.companies.findUnique({
+        where: { id: body.companyId, deletedAt: null }
+      });
+      if (!companyExists) {
+        console.error('❌ [ACTIONS API] Validation failed - company not found:', {
+          companyId: body.companyId,
+          context: { userId: context.userId, workspaceId: context.workspaceId }
+        });
+        return NextResponse.json(
+          { success: false, error: `Company with ID ${body.companyId} not found or has been deleted` },
+          { status: 400 }
+        );
+      }
+      console.log('✅ [ACTIONS API] Company reference validated:', { companyName: companyExists.name });
+    }
+
+    if (body.personId) {
+      console.log('🔍 [ACTIONS API] Validating person reference:', { personId: body.personId });
+      const personExists = await prisma.people.findUnique({
+        where: { id: body.personId, deletedAt: null }
+      });
+      if (!personExists) {
+        console.error('❌ [ACTIONS API] Validation failed - person not found:', {
+          personId: body.personId,
+          context: { userId: context.userId, workspaceId: context.workspaceId }
+        });
+        return NextResponse.json(
+          { success: false, error: `Person with ID ${body.personId} not found or has been deleted` },
+          { status: 400 }
+        );
+      }
+      console.log('✅ [ACTIONS API] Person reference validated:', { personName: personExists.fullName || personExists.firstName + ' ' + personExists.lastName });
+    }
+
+    console.log('💾 [ACTIONS API] Creating action in database...');
+    
+    // Prepare action data - only include valid foreign key references
+    const actionData = {
+      type: body.type,
+      subject: body.subject,
+      description: body.description,
+      outcome: body.outcome,
+      scheduledAt: body.scheduledAt ? new Date(body.scheduledAt) : null,
+      completedAt: body.completedAt ? new Date(body.completedAt) : null,
+      status: body.status || 'PLANNED',
+      priority: body.priority || 'NORMAL',
+      workspaceId: context.workspaceId,
+      userId: context.userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    // Only include foreign key references if they were validated
+    if (body.companyId) {
+      actionData.companyId = body.companyId;
+    }
+    if (body.personId) {
+      actionData.personId = body.personId;
+    }
+
+    console.log('📝 [ACTIONS API] Action data prepared:', {
+      type: actionData.type,
+      subject: actionData.subject,
+      hasCompanyId: !!actionData.companyId,
+      hasPersonId: !!actionData.personId
+    });
+    
     // Create action
     const action = await prisma.actions.create({
-      data: {
-        type: body.type,
-        subject: body.subject,
-        description: body.description,
-        outcome: body.outcome,
-        scheduledAt: body.scheduledAt ? new Date(body.scheduledAt) : null,
-        completedAt: body.completedAt ? new Date(body.completedAt) : null,
-        status: body.status || 'PLANNED',
-        priority: body.priority || 'NORMAL',
-        workspaceId: context.workspaceId,
-        userId: context.userId,
-        companyId: body.companyId,
-        personId: body.personId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
+      data: actionData,
       include: {
         user: {
           select: {
@@ -235,6 +329,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log('✅ [ACTIONS API] Action created successfully:', {
+      actionId: action.id,
+      type: action.type,
+      subject: action.subject
+    });
+
     // Generate next action using AI service
     try {
       const nextActionService = new IntelligentNextActionService({
@@ -256,8 +356,70 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error creating action:', error);
+    console.error('❌ [ACTIONS API] Error creating action:', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'UnknownError',
+      timestamp: new Date().toISOString()
+    });
     
-    return createErrorResponse('Failed to create action', 'INTERNAL_ERROR', 500);
+    // Handle specific error types
+    if (error instanceof Error) {
+      // Prisma errors
+      if (error.name === 'PrismaClientKnownRequestError') {
+        const prismaError = error as any;
+        console.error('❌ [ACTIONS API] Prisma error details:', {
+          code: prismaError.code,
+          meta: prismaError.meta,
+          message: prismaError.message
+        });
+        
+        // Handle specific Prisma error codes
+        if (prismaError.code === 'P2002') {
+          return createErrorResponse(
+            'Action with this data already exists',
+            'DUPLICATE_ACTION',
+            409
+          );
+        } else if (prismaError.code === 'P2003') {
+          return createErrorResponse(
+            'Invalid reference to related record',
+            'FOREIGN_KEY_CONSTRAINT',
+            400
+          );
+        } else if (prismaError.code === 'P2025') {
+          return createErrorResponse(
+            'Referenced record not found',
+            'RECORD_NOT_FOUND',
+            404
+          );
+        }
+      }
+      
+      // Validation errors
+      if (error.message.includes('validation') || error.message.includes('required')) {
+        return createErrorResponse(
+          `Validation error: ${error.message}`,
+          'VALIDATION_ERROR',
+          400
+        );
+      }
+      
+      // Authentication errors
+      if (error.message.includes('Authentication') || error.message.includes('Unauthorized')) {
+        return createErrorResponse(
+          'Authentication failed',
+          'AUTH_ERROR',
+          401
+        );
+      }
+    }
+    
+    // Generic error fallback
+    return createErrorResponse(
+      'Failed to create action',
+      'INTERNAL_ERROR',
+      500
+    );
   }
 }

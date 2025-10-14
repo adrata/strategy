@@ -153,7 +153,7 @@ export function SpeedrunSprintLeftPanel({
     return sprintData;
   }, [filteredData, currentSprintIndex, completedRecords]);
   
-  const totalSprints = TOTAL_SPRINTS; // Fixed at 3 sprints
+  const totalSprints = Math.ceil(data.length / SPRINT_SIZE); // Calculate based on actual data
   const hasNextSprint = currentSprintIndex < totalSprints - 1;
   const currentSprintNumber = currentSprintIndex + 1;
 
@@ -169,7 +169,7 @@ export function SpeedrunSprintLeftPanel({
             <span className="text-xs font-medium text-[var(--muted)] bg-[var(--hover)] px-2 py-1 rounded-full">{completedRecords.length}/{SPRINT_SIZE}</span>
           </div>
           <div className="text-xs text-[var(--muted)]">
-            {currentSprintNumber} of {totalSprints} sprints • {TOTAL_PEOPLE} total people in speedrun
+            {currentSprintNumber} of {totalSprints} sprints • {data.length} total people in speedrun
           </div>
           <div className="text-xs text-blue-600 font-medium">
             Batch {Math.floor(completedRecords.length / 50) + 1} • {completedRecords.length} completed today

@@ -13,6 +13,7 @@ import { getTimeTrackingData, formatHours } from '@/platform/utils/time-tracking
 import { AddNoteModal } from './AddNoteModal';
 import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
+import { authFetch } from '@/platform/api-fetch';
 import { AddLeadModal } from '@/platform/ui/components/AddLeadModal';
 import { AddProspectModal } from '@/platform/ui/components/AddProspectModal';
 import { AddOpportunityModal } from '@/platform/ui/components/AddOpportunityModal';
@@ -350,21 +351,15 @@ export function PipelineHeader({
     }
     
     try {
-      const response = await fetch('/api/actions/add', {
+      const response = await authFetch('/api/v1/actions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          recordId: recordId,
-          recordType: recordType,
-          actionType: actionData.type,
-          notes: actionData.action,
-          person: actionData.person,
+          type: actionData.type,
+          subject: actionData.action.length > 100 ? actionData.action.substring(0, 100) + '...' : actionData.action,
+          description: actionData.action,
           personId: actionData.personId,
-          company: actionData.company,
-          companyId: actionData.companyId,
-          actionPerformedBy: actionData.actionPerformedBy,
-          workspaceId: user?.activeWorkspaceId || user?.workspaces?.[0]?.id,
-          userId: user?.id
+          companyId: actionData.companyId
         })
       });
 
@@ -555,13 +550,15 @@ export function PipelineHeader({
         return {
           title: 'Clients',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Earned relationships',
-          actionButton: 'Add Client'
+          actionButton: 'Add Client',
+          secondaryActionButton: 'Add Action'
         };
       case 'partners':
         return {
           title: 'Partners',
           subtitle: recordCount ? `${formatRecordCount(recordCount)} records` : 'Strategic alliances',
-          actionButton: 'Add Partner'
+          actionButton: 'Add Partner',
+          secondaryActionButton: 'Add Action'
         };
       case 'sellers':
         return {
@@ -619,13 +616,15 @@ export function PipelineHeader({
         return {
           title: 'Metrics',
           subtitle: 'Key performance indicators',
-          actionButton: 'Share'
+          actionButton: 'Share',
+          secondaryActionButton: 'Add Action'
         };
       default:
         return {
           title: sectionTitle,
           subtitle: 'Pipeline data',
-          actionButton: 'Add Record'
+          actionButton: 'Add Record',
+          secondaryActionButton: 'Add Action'
         };
     }
   };
@@ -858,7 +857,7 @@ export function PipelineHeader({
       metricItems.push({
         label: 'Actions',
         value: overdueActions > 0 ? overdueActions.toString() : '—',
-        color: overdueActions > 0 ? 'text-red-600' : 'text-[var(--foreground)]'
+        color: 'text-[var(--foreground)]'
       });
       
       metricItems.push({
@@ -906,7 +905,7 @@ export function PipelineHeader({
         metricItems.push({
           label: 'Actions',
           value: overdueActions > 0 ? overdueActions.toString() : '—',
-          color: overdueActions > 0 ? 'text-red-600' : 'text-[var(--foreground)]'
+          color: 'text-[var(--foreground)]'
         });
         
         metricItems.push({
@@ -1043,7 +1042,7 @@ export function PipelineHeader({
                       disabled={loading}
                       className="bg-navy-50 text-navy-900 border border-navy-200 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 sm:gap-2"
                     >
-                      <span className="hidden xs:inline">{(sectionInfo as any).secondaryActionButton}</span>
+                      <span className="hidden xs:inline">{(sectionInfo as any).secondaryActionButton} ({getCommonShortcut('SUBMIT')})</span>
                       <span className="xs:hidden">Add</span>
                     </button>
                   )}
@@ -1092,7 +1091,7 @@ export function PipelineHeader({
                           <span className="hidden xs:inline">
                             {section === 'speedrun' ? 
                               (timeData.isBeforeWorkingHours ? `Add Action (${getCommonShortcut('SUBMIT')})` : sectionInfo.actionButton) :
-                              `${sectionInfo.actionButton}${((recordCount ?? 0) === 0) ? ` (${getCommonShortcut('SUBMIT')})` : ''}`
+                              sectionInfo.actionButton
                             }
                           </span>
                           <span className="xs:hidden">
@@ -1123,9 +1122,9 @@ export function PipelineHeader({
                               : section === 'opportunities'
                               ? 'bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100'
                               : section === 'people'
-                              ? 'bg-violet-50 text-violet-600 border-violet-200 hover:bg-violet-100'
+                              ? 'bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-200'
                               : section === 'companies'
-                              ? 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                              ? 'bg-emerald-100 text-emerald-700 border-emerald-300 hover:bg-emerald-200'
                               : 'bg-[var(--panel-background)] text-[var(--muted)] border-[var(--border)] hover:bg-[var(--hover)]'
                           }`}
                         >
@@ -1133,7 +1132,7 @@ export function PipelineHeader({
                             {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
                           </span>
                           <span className="xs:hidden">
-                            {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : 'Add Action'}
+                            {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : `Add Action (${getCommonShortcut('SUBMIT')})`}
                           </span>
                         </button>
                       )}

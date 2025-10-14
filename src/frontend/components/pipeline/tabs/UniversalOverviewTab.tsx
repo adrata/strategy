@@ -149,6 +149,52 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     }
   };
 
+  // Helper function to check if a value is meaningful (not blank, null, undefined, or "-")
+  const hasValue = (value: any): boolean => {
+    return value && value !== '-' && value !== '--' && String(value).trim() !== '';
+  };
+
+  // Generate natural bio text that gracefully handles missing data
+  const generateBioText = (): string => {
+    const sentences: string[] = [];
+    
+    // Build the main identity sentence
+    const name = hasValue(recordData.name) ? recordData.name : 'This contact';
+    const title = hasValue(recordData.title) ? recordData.title : null;
+    const company = hasValue(recordData.company) ? recordData.company : null;
+    
+    if (title && company) {
+      sentences.push(`${name} is a ${title} at ${company}.`);
+    } else if (title) {
+      sentences.push(`${name} is a ${title}.`);
+    } else if (company) {
+      sentences.push(`${name} works at ${company}.`);
+    } else {
+      sentences.push(`${name} is a professional contact.`);
+    }
+    
+    // Add buyer group status
+    if (recordData.isBuyerGroupMember) {
+      const influenceLevel = hasValue(recordData.influenceLevel) ? recordData.influenceLevel : 'moderate';
+      sentences.push(`They are an active member of the buyer group with ${influenceLevel} influence level.`);
+    } else {
+      sentences.push('They are not currently part of the buyer group.');
+    }
+    
+    // Add engagement and contact information
+    const lastContact = hasValue(recordData.lastContact) && recordData.lastContact !== 'Never' 
+      ? formatRelativeDate(recordData.lastContact) 
+      : null;
+    
+    if (lastContact && lastContact !== 'Never') {
+      sentences.push(`Last contact was ${lastContact}.`);
+    } else {
+      sentences.push('No recent contact recorded.');
+    }
+    
+    return sentences.join(' ');
+  };
+
 
   // Generate last actions from real database data only
   const generateLastActions = () => {
@@ -177,17 +223,14 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
           <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-[var(--foreground)]">Speedrun Summary</h2>
+        <h2 className="text-xl font-semibold text-[var(--foreground)]">Bio</h2>
       </div>
 
       {/* Overview Summary */}
       <div className="space-y-4">
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <div className="text-sm text-[var(--muted)]">
-            {recordData.name} is a {recordData.title || 'professional'} at {recordData.company || 'their company'}. 
-            {recordData.isBuyerGroupMember ? ' They are an active member of the buyer group' : ' They are not currently part of the buyer group'} 
-            with {recordData.influenceLevel || 'moderate'} influence level and {recordData.decisionPower || 'some'} decision-making power. 
-            Current engagement status is {recordData.engagementLevel || 'active'} with last contact {recordData.lastContact || 'recently'}.
+            {generateBioText()}
           </div>
         </div>
       </div>

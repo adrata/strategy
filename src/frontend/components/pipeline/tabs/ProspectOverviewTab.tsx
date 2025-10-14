@@ -123,6 +123,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
     email: String(record?.email || coresignalData.primary_professional_email || '-'),
     phone: String(record?.phone || coresignalData.phone || '-'),
     linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
+    linkedinNavigatorUrl: String(record?.linkedinNavigatorUrl || '-'),
+    linkedinConnectionDate: record?.linkedinConnectionDate || null,
     
     // Company Information - Database fields first, then CoreSignal fallback
     company: (() => {
@@ -386,6 +388,32 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
                   ) : (
                     prospectData.linkedin
                   )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-[var(--muted)]">LinkedIn Navigator:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
+                  {prospectData.linkedinNavigatorUrl && prospectData.linkedinNavigatorUrl !== '-' ? (
+                    <a 
+                      href={prospectData.linkedinNavigatorUrl.startsWith('http') ? prospectData.linkedinNavigatorUrl : `https://${prospectData.linkedinNavigatorUrl}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {prospectData.linkedinNavigatorUrl.replace(/^https?:\/\//, '').replace(/^www\./, '')}
+                    </a>
+                  ) : (
+                    prospectData.linkedinNavigatorUrl || '-'
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-[var(--muted)]">LinkedIn Connection Date:</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">
+                  {prospectData.linkedinConnectionDate ? 
+                    new Date(prospectData.linkedinConnectionDate).toLocaleDateString() : 
+                    '-'
+                  }
                 </span>
               </div>
             </div>

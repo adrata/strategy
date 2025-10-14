@@ -595,6 +595,8 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
     jobTitle: coresignalData.active_experience_title || coresignalData.headline || (person as any).jobTitle || person.title,
     workEmail: coresignalData.primary_professional_email || (person as any).workEmail || person.email,
     linkedinUrl: coresignalData.linkedin_url || (person as any).linkedinUrl || person.linkedin,
+    linkedinNavigatorUrl: (person as any).linkedinNavigatorUrl,
+    linkedinConnectionDate: (person as any).linkedinConnectionDate,
     city: (person as any).city,
     state: (person as any).state,
     notes: (person as any).notes,
@@ -1050,6 +1052,39 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                         placeholder="Enter LinkedIn URL"
                         onSave={handlePersonSave}
                         className="text-lg text-[var(--foreground)]"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--muted)]">
+                      LinkedIn Navigator
+                    </label>
+                    <div className="mt-1">
+                      <InlineEditField
+                        value={enhancedPerson.linkedinNavigatorUrl || ""}
+                        field="linkedinNavigatorUrl"
+                        recordId={person.id || ''}
+                        recordType="people"
+                        placeholder="Enter LinkedIn Navigator URL"
+                        onSave={handlePersonSave}
+                        className="text-lg text-[var(--foreground)]"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--muted)]">
+                      LinkedIn Connection Date
+                    </label>
+                    <div className="mt-1">
+                      <InlineEditField
+                        value={enhancedPerson.linkedinConnectionDate ? new Date(enhancedPerson.linkedinConnectionDate).toISOString().split('T')[0] : ""}
+                        field="linkedinConnectionDate"
+                        recordId={person.id || ''}
+                        recordType="people"
+                        placeholder="YYYY-MM-DD"
+                        onSave={handlePersonSave}
+                        className="text-lg text-[var(--foreground)]"
+                        inputType="date"
                       />
                     </div>
                   </div>
@@ -1688,6 +1723,34 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                   ) : (
                     <p className="text-[var(--muted)]">-</p>
                   )}
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-[var(--muted)]">
+                    LinkedIn Navigator
+                  </label>
+                  {enhancedPerson.linkedinNavigatorUrl ? (
+                    <a
+                      href={enhancedPerson.linkedinNavigatorUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-[var(--muted)] hover:text-gray-700 hover:underline transition-colors"
+                    >
+                      View LinkedIn Navigator
+                    </a>
+                  ) : (
+                    <p className="text-[var(--muted)]">-</p>
+                  )}
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-[var(--muted)]">
+                    LinkedIn Connection Date
+                  </label>
+                  <p className="text-[var(--foreground)]">
+                    {enhancedPerson.linkedinConnectionDate ? 
+                      new Date(enhancedPerson.linkedinConnectionDate).toLocaleDateString() : 
+                      '-'
+                    }
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-[var(--muted)]">

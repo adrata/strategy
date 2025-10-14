@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 // import { useDeepValueReports } from '../hooks/useDeepValueReports'; // Temporarily disabled
@@ -33,67 +33,54 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
     );
   }
 
-  // Debug: Log the record structure to see what's available
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🔍 [Intelligence Tab Debug] Record structure:', {
-      record: record,
-      customFields: record?.customFields,
-      coresignal: record?.customFields?.coresignal,
-      coresignalData: record?.customFields?.coresignalData,
-      coresignalProfile: record?.customFields?.coresignalProfile,
-      // Debug the actual values
-      influenceLevel: record?.customFields?.influenceLevel,
-      engagementStrategy: record?.customFields?.engagementStrategy,
-      employeeId: record?.customFields?.coresignal?.employeeId,
-      followersCount: record?.customFields?.coresignal?.followersCount,
-      connectionsCount: record?.customFields?.coresignal?.connectionsCount,
-      totalFields: record?.customFields?.totalFields
-    });
-  }
-
-  // Extract CoreSignal data from the correct location
-  const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
-  
-  // Check if we're in a demo workspace
-  const isDemoWorkspace = record?.workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || 
-                         record?.workspaceId === 'demo' ||
-                         window.location.pathname.includes('/demo/');
-  
-  // Use AI-generated intelligence data with proper null handling
-  const insightsData = {
-    // AI-generated intelligence fields
-    influenceLevel: record.customFields?.influenceLevel || null,
-    engagementStrategy: record.customFields?.engagementStrategy || null,
-    isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
-    seniority: record.customFields?.seniority || null,
-    influenceScore: record.customFields?.influenceScore || 0,
-    decisionPower: record.customFields?.decisionPower || 0,
-    primaryRole: record.customFields?.primaryRole || record?.jobTitle || record?.title || null,
-    engagementLevel: record.customFields?.engagementLevel || null,
-    communicationStyle: record.customFields?.communicationStyle || null,
-    decisionMaking: record.customFields?.decisionMaking || null,
-    preferredContact: record.customFields?.preferredContact || null,
-    responseTime: record.customFields?.responseTime || null,
-    painPoints: record.customFields?.painPoints || [],
-    interests: record.customFields?.interests || [],
-    goals: record.customFields?.goals || [],
-    challenges: record.customFields?.challenges || [],
-    opportunities: record.customFields?.opportunities || [],
-    intelligenceSummary: record.customFields?.intelligenceSummary || '',
+  // Memoize data extraction to prevent expensive recalculations on every render
+  const { coresignalData, isDemoWorkspace, insightsData } = useMemo(() => {
+    // Extract CoreSignal data from the correct location
+    const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
     
-    // CoreSignal profile data
-    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || null,
-    companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || null,
-    employeeId: coresignalData.id || coresignalData.employeeId || null,
-    followersCount: coresignalData.followers_count || coresignalData.followersCount || 0,
-    connectionsCount: coresignalData.connections_count || coresignalData.connectionsCount || 0,
-    isDecisionMaker: coresignalData.is_decision_maker || coresignalData.isDecisionMaker || 0,
-    totalExperienceMonths: coresignalData.total_experience_duration_months || coresignalData.totalExperienceMonths || 0,
-    enrichedAt: coresignalData.lastEnrichedAt || coresignalData.enrichedAt || '-',
-    skills: coresignalData.inferred_skills || coresignalData.skills || [],
-    education: coresignalData.education || [],
-    experience: coresignalData.experience || []
-  };
+    // Check if we're in a demo workspace
+    const isDemoWorkspace = record?.workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || 
+                           record?.workspaceId === 'demo' ||
+                           window.location.pathname.includes('/demo/');
+    
+    // Use AI-generated intelligence data with proper null handling
+    const insightsData = {
+      // AI-generated intelligence fields
+      influenceLevel: record.customFields?.influenceLevel || null,
+      engagementStrategy: record.customFields?.engagementStrategy || null,
+      isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
+      seniority: record.customFields?.seniority || null,
+      influenceScore: record.customFields?.influenceScore || 0,
+      decisionPower: record.customFields?.decisionPower || 0,
+      primaryRole: record.customFields?.primaryRole || record?.jobTitle || record?.title || null,
+      engagementLevel: record.customFields?.engagementLevel || null,
+      communicationStyle: record.customFields?.communicationStyle || null,
+      decisionMaking: record.customFields?.decisionMaking || null,
+      preferredContact: record.customFields?.preferredContact || null,
+      responseTime: record.customFields?.responseTime || null,
+      painPoints: record.customFields?.painPoints || [],
+      interests: record.customFields?.interests || [],
+      goals: record.customFields?.goals || [],
+      challenges: record.customFields?.challenges || [],
+      opportunities: record.customFields?.opportunities || [],
+      intelligenceSummary: record.customFields?.intelligenceSummary || '',
+      
+      // CoreSignal profile data
+      department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || null,
+      companyName: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_name || coresignalData.experience?.[0]?.company_name || null,
+      employeeId: coresignalData.id || coresignalData.employeeId || null,
+      followersCount: coresignalData.followers_count || coresignalData.followersCount || 0,
+      connectionsCount: coresignalData.connections_count || coresignalData.connectionsCount || 0,
+      isDecisionMaker: coresignalData.is_decision_maker || coresignalData.isDecisionMaker || 0,
+      totalExperienceMonths: coresignalData.total_experience_duration_months || coresignalData.totalExperienceMonths || 0,
+      enrichedAt: coresignalData.lastEnrichedAt || coresignalData.enrichedAt || '-',
+      skills: coresignalData.inferred_skills || coresignalData.skills || [],
+      education: coresignalData.education || [],
+      experience: coresignalData.experience || []
+    };
+
+    return { coresignalData, isDemoWorkspace, insightsData };
+  }, [record]);
 
   // Extract individual values for easier use
   const {

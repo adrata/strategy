@@ -146,7 +146,9 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             { id: 'overview', label: 'Overview' },
             { id: 'news', label: 'News' },
             { id: 'intelligence', label: 'Intelligence' },
+            { id: 'value', label: 'Value' },
             { id: 'buyer-groups', label: 'Buyer Group' },
+            { id: 'opportunities', label: 'Opportunities' },
             { id: 'notes', label: 'Notes' },
             { id: 'timeline', label: 'Timeline' },
             { id: 'delete', label: 'Delete' }
@@ -269,59 +271,173 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   // Initialize form data with record data when modal opens
   useEffect(() => {
     if (isOpen && record) {
-      setFormData({
-        // Basic info
-        name: formatFieldValue(record.fullName || record.name, ''),
-        firstName: formatFieldValue(record.firstName, ''),
-        lastName: formatFieldValue(record.lastName, ''),
-        email: formatFieldValue(record.email || record.workEmail, ''),
-        phone: formatFieldValue(record.phone || record.mobilePhone || record.workPhone, ''),
-        
-        // Company info - handle both string and object formats
-        company: record.company || record.companyName || '',
-        companyDomain: formatFieldValue(record.companyDomain, ''),
-        industry: formatFieldValue(record.industry, ''),
-        vertical: formatFieldValue(record.vertical, ''),
-        companySize: formatFieldValue(record.companySize, ''),
-        
-        // Job info
-        jobTitle: formatFieldValue(record.jobTitle || record.title, ''),
-        department: formatFieldValue(record.department, ''),
-        
-        // Contact details
-        linkedinUrl: formatFieldValue(record.linkedinUrl, ''),
-        address: formatFieldValue(record.address, ''),
-        city: formatFieldValue(record.city, ''),
-        state: formatFieldValue(record.state, ''),
-        country: formatFieldValue(record.country, ''),
-        postalCode: formatFieldValue(record.postalCode, ''),
-        
-        // Status and priority
-        status: record.status || 'new',
-        priority: record.priority || 'medium',
-        relationship: formatFieldValue(record.relationship, ''),
-        
-        // Opportunity fields
-        estimatedValue: formatFieldValue(record.estimatedValue, ''),
-        currency: record.currency || 'USD',
-        expectedCloseDate: formatDateValue(record.expectedCloseDate),
-        stage: formatFieldValue(record.stage || record.currentStage, ''),
-        probability: formatFieldValue(record.probability, ''),
-        
-        // Activity fields
-        nextAction: formatFieldValue(record.nextAction, ''),
-        nextActionDate: formatDateValue(record.nextActionDate),
-        lastActionDate: formatDateValue(record.lastActionDate),
-        
-        // Notes
-        notes: formatFieldValue(record.notes || record.description, ''),
-        tags: record.tags || []
-      });
+      if (recordType === 'companies') {
+        // Company-specific form data
+        setFormData({
+          // Company Information
+          name: record.name || '',
+          legalName: record.legalName || '',
+          tradingName: record.tradingName || '',
+          localName: record.localName || '',
+          description: record.description || '',
+          website: record.website || '',
+          email: record.email || '',
+          phone: record.phone || '',
+          fax: record.fax || '',
+          
+          // Business Details
+          industry: record.industry || '',
+          sector: record.sector || '',
+          size: record.size || '',
+          revenue: record.revenue || '',
+          currency: record.currency || 'USD',
+          employeeCount: record.employeeCount || '',
+          foundedYear: record.foundedYear || '',
+          
+          // Location
+          address: record.address || '',
+          city: record.city || '',
+          state: record.state || '',
+          country: record.country || '',
+          postalCode: record.postalCode || '',
+          
+          // Status & Tracking
+          status: record.status || 'ACTIVE',
+          priority: record.priority || 'MEDIUM',
+          tags: record.tags || [],
+          
+          // Engagement
+          lastAction: record.lastAction || '',
+          lastActionDate: formatDateValue(record.lastActionDate),
+          nextAction: record.nextAction || '',
+          nextActionDate: formatDateValue(record.nextActionDate),
+          nextActionReasoning: record.nextActionReasoning || '',
+          nextActionPriority: record.nextActionPriority || '',
+          nextActionType: record.nextActionType || '',
+          
+          // Legal & Registration
+          registrationNumber: record.registrationNumber || '',
+          taxId: record.taxId || '',
+          vatNumber: record.vatNumber || '',
+          domain: record.domain || '',
+          logoUrl: record.logoUrl || '',
+          
+          // Intelligence Fields
+          businessChallenges: record.businessChallenges || [],
+          businessPriorities: record.businessPriorities || [],
+          competitiveAdvantages: record.competitiveAdvantages || [],
+          growthOpportunities: record.growthOpportunities || [],
+          strategicInitiatives: record.strategicInitiatives || [],
+          successMetrics: record.successMetrics || [],
+          marketThreats: record.marketThreats || [],
+          keyInfluencers: record.keyInfluencers || '',
+          decisionTimeline: record.decisionTimeline || '',
+          marketPosition: record.marketPosition || '',
+          digitalMaturity: record.digitalMaturity || '',
+          techStack: record.techStack || [],
+          competitors: record.competitors || [],
+          
+          // Financial & Business
+          lastFundingAmount: record.lastFundingAmount || '',
+          lastFundingDate: formatDateValue(record.lastFundingDate),
+          stockSymbol: record.stockSymbol || '',
+          isPublic: record.isPublic || false,
+          naicsCodes: record.naicsCodes || [],
+          sicCodes: record.sicCodes || [],
+          
+          // Social Media
+          linkedinUrl: record.linkedinUrl || '',
+          linkedinFollowers: record.linkedinFollowers || '',
+          twitterUrl: record.twitterUrl || '',
+          twitterFollowers: record.twitterFollowers || '',
+          facebookUrl: record.facebookUrl || '',
+          instagramUrl: record.instagramUrl || '',
+          youtubeUrl: record.youtubeUrl || '',
+          githubUrl: record.githubUrl || '',
+          
+          // Location (HQ)
+          hqLocation: record.hqLocation || '',
+          hqFullAddress: record.hqFullAddress || '',
+          hqCity: record.hqCity || '',
+          hqState: record.hqState || '',
+          hqStreet: record.hqStreet || '',
+          hqZipcode: record.hqZipcode || '',
+          hqRegion: record.hqRegion || [],
+          hqCountryIso2: record.hqCountryIso2 || '',
+          hqCountryIso3: record.hqCountryIso3 || '',
+          
+          // Company Updates
+          activeJobPostings: record.activeJobPostings || '',
+          numTechnologiesUsed: record.numTechnologiesUsed || '',
+          technologiesUsed: record.technologiesUsed || [],
+          
+          // SBI Fields
+          confidence: record.confidence || '',
+          sources: record.sources || [],
+          acquisitionDate: formatDateValue(record.acquisitionDate),
+          lastVerified: formatDateValue(record.lastVerified),
+          parentCompanyName: record.parentCompanyName || '',
+          parentCompanyDomain: record.parentCompanyDomain || '',
+          
+          // Notes
+          notes: record.notes || ''
+        });
+      } else {
+        // Person/other record types
+        setFormData({
+          // Basic info
+          name: record.fullName || record.name || '',
+          firstName: record.firstName || '',
+          lastName: record.lastName || '',
+          email: record.email || record.workEmail || '',
+          phone: record.phone || record.mobilePhone || record.workPhone || '',
+          
+          // Company info - handle both string and object formats
+          company: record.company || record.companyName || '',
+          companyDomain: record.companyDomain || '',
+          industry: record.industry || '',
+          vertical: record.vertical || '',
+          companySize: record.companySize || '',
+          
+          // Job info
+          jobTitle: record.jobTitle || record.title || '',
+          department: record.department || '',
+          
+          // Contact details
+          linkedinUrl: record.linkedinUrl || '',
+          address: record.address || '',
+          city: record.city || '',
+          state: record.state || '',
+          country: record.country || '',
+          postalCode: record.postalCode || '',
+          
+          // Status and priority
+          status: record.status || 'new',
+          priority: record.priority || 'medium',
+          relationship: record.relationship || '',
+          
+          // Opportunity fields
+          estimatedValue: record.estimatedValue || '',
+          currency: record.currency || 'USD',
+          expectedCloseDate: formatDateValue(record.expectedCloseDate),
+          stage: record.stage || record.currentStage || '',
+          probability: record.probability || '',
+          
+          // Activity fields
+          nextAction: record.nextAction || '',
+          nextActionDate: formatDateValue(record.nextActionDate),
+          lastActionDate: formatDateValue(record.lastActionDate),
+          
+          // Notes
+          notes: record.notes || record.description || '',
+          tags: record.tags || []
+        });
+      }
       
       // Set initial tab from prop or default
       setActiveTab(getDefaultTab());
     }
-  }, [isOpen, record, initialTab]);
+  }, [isOpen, record, initialTab, recordType]);
 
   // Keyboard shortcut for Update Record when modal is open
   useEffect(() => {
@@ -536,7 +652,103 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   const renderIntelligenceTab = () => (
     <div className="p-6 space-y-4">
       <div className="text-center py-12 text-[var(--muted)]">
-        <p className="text-sm">Intelligence data will appear here when available.</p>
+        <p className="text-sm">Company intelligence data will appear here when available.</p>
+        <p className="text-xs text-[var(--muted)] mt-2">This is a read-only view of AI-generated company insights and analysis.</p>
+      </div>
+    </div>
+  );
+
+  const renderValueTab = () => (
+    <div className="p-6 space-y-6">
+      <div>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Value Propositions & Benefits</h3>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Value Proposition 1</label>
+            <textarea
+              value={formData.valueProp1 || ''}
+              onChange={(e) => handleInputChange('valueProp1', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter value proposition or benefit..."
+              rows={2}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Value Proposition 2</label>
+            <textarea
+              value={formData.valueProp2 || ''}
+              onChange={(e) => handleInputChange('valueProp2', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter value proposition or benefit..."
+              rows={2}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Pain Points & Challenges</h3>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Pain Point 1</label>
+            <textarea
+              value={formData.painPoint1 || ''}
+              onChange={(e) => handleInputChange('painPoint1', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter pain point or challenge..."
+              rows={2}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Pain Point 2</label>
+            <textarea
+              value={formData.painPoint2 || ''}
+              onChange={(e) => handleInputChange('painPoint2', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter pain point or challenge..."
+              rows={2}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Positioning & Messaging</h3>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Opening Line</label>
+            <textarea
+              value={formData.openingLine || ''}
+              onChange={(e) => handleInputChange('openingLine', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter compelling opening line..."
+              rows={2}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Best Contact Method</label>
+            <select
+              value={formData.bestContactMethod || ''}
+              onChange={(e) => handleInputChange('bestContactMethod', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Select Method</option>
+              <option value="email">Email</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="phone">Phone</option>
+              <option value="in_person">In Person</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderOpportunitiesTab = () => (
+    <div className="p-6 space-y-4">
+      <div className="text-center py-12 text-[var(--muted)]">
+        <p className="text-sm">Related opportunities will appear here when available.</p>
+        <p className="text-xs text-[var(--muted)] mt-2">This is a read-only view of opportunities associated with this company.</p>
       </div>
     </div>
   );
@@ -561,7 +773,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   const renderTimelineTab = () => (
     <div className="p-6 space-y-4">
       <div className="text-center py-12 text-[var(--muted)]">
-        <p className="text-sm">Timeline activities will appear here when available.</p>
+        <p className="text-sm">Company timeline activities will appear here when available.</p>
+        <p className="text-xs text-[var(--muted)] mt-2">This is a read-only view of company-related activities and events.</p>
       </div>
     </div>
   );
@@ -583,7 +796,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     </div>
   );
 
-  const renderOpportunitiesTab = () => (
+  const renderAccountOpportunitiesTab = () => (
     <div className="p-6 space-y-4">
       <div className="text-center py-12 text-[var(--muted)]">
         <p className="text-sm">Account opportunities will appear here when available.</p>
@@ -655,33 +868,20 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       switch (activeTab) {
         case 'overview':
           return renderHomeTab();
-        case 'strategy':
-          return renderStrategyTab();
-        case 'people':
-          return renderContactsTab();
+        case 'news':
+          return renderIntelligenceTab(); // News tab shows intelligence data
+        case 'intelligence':
+          return renderIntelligenceTab();
+        case 'value':
+          return renderValueTab();
+        case 'buyer-groups':
+          return renderBuyerGroupsTab();
         case 'opportunities':
           return renderOpportunitiesTab();
-        case 'timeline':
-          return renderTimelineTab();
         case 'notes':
           return renderNotesTab();
-        case 'delete':
-          return renderDeleteTab();
-        default:
-          return renderHomeTab();
-      }
-    } else if (recordType === 'companies') {
-      switch (activeTab) {
-        case 'overview':
-          return renderHomeTab();
-        case 'strategy':
-          return renderStrategyTab();
-        case 'people':
-          return renderContactsTab();
         case 'timeline':
           return renderTimelineTab();
-        case 'notes':
-          return renderNotesTab();
         case 'delete':
           return renderDeleteTab();
         default:
@@ -753,138 +953,522 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     }
   };
 
-  const renderHomeTab = () => (
-    <div className="p-6 space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name *
-          </label>
-          <input
-            type="text"
-            value={formData.name || ''}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.name ? '' : 'Enter full name'}
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Job Title
-          </label>
-          <input
-            type="text"
-            value={formData.jobTitle || ''}
-            onChange={(e) => handleInputChange('jobTitle', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.jobTitle ? '' : '-'}
-          />
-        </div>
-      </div>
+  const renderHomeTab = () => {
+    // For companies, render company-specific fields
+    if (recordType === 'companies') {
+      return (
+        <div className="p-6 space-y-6">
+          {/* Section 1: Company Information */}
+          <div>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Information</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Company Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.name || ''}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter company name"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Legal Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.legalName || ''}
+                  onChange={(e) => handleInputChange('legalName', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Trading Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.tradingName || ''}
+                  onChange={(e) => handleInputChange('tradingName', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Website
+                </label>
+                <input
+                  type="url"
+                  value={formData.website || ''}
+                  onChange={(e) => handleInputChange('website', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.email || ''}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  value={formData.phone || ''}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              <textarea
+                value={formData.description || ''}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="-"
+              />
+            </div>
+          </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            value={formData.email || ''}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.email ? '' : '-'}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Phone
-          </label>
-          <input
-            type="tel"
-            value={formData.phone || ''}
-            onChange={(e) => handleInputChange('phone', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.phone ? '' : '-'}
-          />
-        </div>
-      </div>
+          {/* Section 2: Business Details */}
+          <div>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Business Details</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Industry
+                </label>
+                <input
+                  type="text"
+                  value={formData.industry || ''}
+                  onChange={(e) => handleInputChange('industry', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Sector
+                </label>
+                <input
+                  type="text"
+                  value={formData.sector || ''}
+                  onChange={(e) => handleInputChange('sector', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Company Size
+                </label>
+                <select
+                  value={formData.size || ''}
+                  onChange={(e) => handleInputChange('size', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">-</option>
+                  <option value="1-10">1-10 employees</option>
+                  <option value="11-50">11-50 employees</option>
+                  <option value="51-200">51-200 employees</option>
+                  <option value="201-500">201-500 employees</option>
+                  <option value="501-1000">501-1000 employees</option>
+                  <option value="1000+">1000+ employees</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Employee Count
+                </label>
+                <input
+                  type="number"
+                  value={formData.employeeCount || ''}
+                  onChange={(e) => handleInputChange('employeeCount', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Revenue
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.revenue || ''}
+                  onChange={(e) => handleInputChange('revenue', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Currency
+                </label>
+                <select
+                  value={formData.currency || 'USD'}
+                  onChange={(e) => handleInputChange('currency', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="CAD">CAD</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Founded Year
+              </label>
+              <input
+                type="number"
+                min="1800"
+                max="2024"
+                value={formData.foundedYear || ''}
+                onChange={(e) => handleInputChange('foundedYear', e.target.value)}
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="-"
+              />
+            </div>
+          </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status
-          </label>
-          <select
-            value={formData.status || 'new'}
-            onChange={(e) => handleInputChange('status', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="new">New</option>
-            <option value="contacted">Contacted</option>
-            <option value="qualified">Qualified</option>
-            <option value="engaged">Engaged</option>
-            <option value="closed_won">Closed Won</option>
-            <option value="closed_lost">Closed Lost</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Priority
-          </label>
-          <select
-            value={formData.priority || 'medium'}
-            onChange={(e) => handleInputChange('priority', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-        </div>
-      </div>
+          {/* Section 3: Location */}
+          <div>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Location</h3>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Address
+              </label>
+              <textarea
+                value={formData.address || ''}
+                onChange={(e) => handleInputChange('address', e.target.value)}
+                rows={2}
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="-"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  City
+                </label>
+                <input
+                  type="text"
+                  value={formData.city || ''}
+                  onChange={(e) => handleInputChange('city', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  State
+                </label>
+                <input
+                  type="text"
+                  value={formData.state || ''}
+                  onChange={(e) => handleInputChange('state', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  value={formData.country || ''}
+                  onChange={(e) => handleInputChange('country', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Postal Code
+                </label>
+                <input
+                  type="text"
+                  value={formData.postalCode || ''}
+                  onChange={(e) => handleInputChange('postalCode', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="-"
+                />
+              </div>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Company
-          </label>
-          <CompanySelector
-            value={formData.company}
-            onChange={(company) => {
-              if (company) {
-                handleInputChange('company', company.name);
-                handleInputChange('companyDomain', company.domain || '');
-              } else {
-                handleInputChange('company', '');
-                handleInputChange('companyDomain', '');
-              }
-            }}
-            placeholder="Search or add company..."
-            className="w-full"
-          />
+          {/* Section 4: Status & Tracking */}
+          <div>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Status & Tracking</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  value={formData.status || 'ACTIVE'}
+                  onChange={(e) => handleInputChange('status', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="ACTIVE">Active</option>
+                  <option value="INACTIVE">Inactive</option>
+                  <option value="PROSPECT">Prospect</option>
+                  <option value="CLIENT">Client</option>
+                  <option value="OPPORTUNITY">Opportunity</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Priority
+                </label>
+                <select
+                  value={formData.priority || 'MEDIUM'}
+                  onChange={(e) => handleInputChange('priority', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Tags
+              </label>
+              <input
+                type="text"
+                value={Array.isArray(formData.tags) ? formData.tags.join(', ') : ''}
+                onChange={(e) => handleInputChange('tags', e.target.value.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag))}
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="-"
+              />
+            </div>
+          </div>
+
+          {/* Section 5: Engagement */}
+          <div>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Engagement</h3>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Last Action
+              </label>
+              <input
+                type="text"
+                value={formData.lastAction || ''}
+                onChange={(e) => handleInputChange('lastAction', e.target.value)}
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="-"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Last Action Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.lastActionDate || ''}
+                  onChange={(e) => handleInputChange('lastActionDate', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Next Action Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.nextActionDate || ''}
+                  onChange={(e) => handleInputChange('nextActionDate', e.target.value)}
+                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Next Action
+              </label>
+              <input
+                type="text"
+                value={formData.nextAction || ''}
+                onChange={(e) => handleInputChange('nextAction', e.target.value)}
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="-"
+              />
+            </div>
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Relationship
-          </label>
-          <select
-            value={formData.relationship || ''}
-            onChange={(e) => handleInputChange('relationship', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="">{formData.relationship ? '' : '-'}</option>
-            <option value="champion">Champion</option>
-            <option value="decision_maker">Decision Maker</option>
-            <option value="influencer">Influencer</option>
-            <option value="gatekeeper">Gatekeeper</option>
-            <option value="user">End User</option>
-            <option value="other">Other</option>
-          </select>
+      );
+    }
+
+    // For other record types, use the original person fields
+    return (
+      <div className="p-6 space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Full Name *
+            </label>
+            <input
+              type="text"
+              value={formData.name || ''}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter full name"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Job Title
+            </label>
+            <input
+              type="text"
+              value={formData.jobTitle || ''}
+              onChange={(e) => handleInputChange('jobTitle', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="-"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              value={formData.email || ''}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="-"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Phone
+            </label>
+            <input
+              type="tel"
+              value={formData.phone || ''}
+              onChange={(e) => handleInputChange('phone', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="-"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select
+              value={formData.status || 'new'}
+              onChange={(e) => handleInputChange('status', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="qualified">Qualified</option>
+              <option value="engaged">Engaged</option>
+              <option value="closed_won">Closed Won</option>
+              <option value="closed_lost">Closed Lost</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Priority
+            </label>
+            <select
+              value={formData.priority || 'medium'}
+              onChange={(e) => handleInputChange('priority', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Company
+            </label>
+            <CompanySelector
+              value={formData.company}
+              onChange={(company) => {
+                if (company) {
+                  handleInputChange('company', company.name);
+                  handleInputChange('companyDomain', company.domain || '');
+                } else {
+                  handleInputChange('company', '');
+                  handleInputChange('companyDomain', '');
+                }
+              }}
+              placeholder="Search or add company..."
+              className="w-full"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Relationship
+            </label>
+            <select
+              value={formData.relationship || ''}
+              onChange={(e) => handleInputChange('relationship', e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">-</option>
+              <option value="champion">Champion</option>
+              <option value="decision_maker">Decision Maker</option>
+              <option value="influencer">Influencer</option>
+              <option value="gatekeeper">Gatekeeper</option>
+              <option value="user">End User</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderOpportunityTab = () => (
     <div className="p-6 space-y-4">
@@ -1067,7 +1651,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.company || ''}
             onChange={(e) => handleInputChange('company', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.company ? '' : '-'}
+            placeholder="-"
           />
         </div>
         <div>
@@ -1079,7 +1663,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.companyDomain || ''}
             onChange={(e) => handleInputChange('companyDomain', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.companyDomain ? '' : '-'}
+            placeholder="-"
           />
         </div>
       </div>
@@ -1094,7 +1678,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.industry || ''}
             onChange={(e) => handleInputChange('industry', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.industry ? '' : '-'}
+            placeholder="-"
           />
         </div>
         <div>
@@ -1106,7 +1690,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             onChange={(e) => handleInputChange('vertical', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="">{formData.vertical ? '' : '-'}</option>
+            <option value="">-</option>
             <option value="C Stores">C Stores</option>
             <option value="Grocery Stores">Grocery Stores</option>
             <option value="Corporate Retailers">Corporate Retailers</option>
@@ -1129,7 +1713,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             onChange={(e) => handleInputChange('companySize', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="">{formData.companySize ? '' : '-'}</option>
+            <option value="">-</option>
             <option value="1-10">1-10 employees</option>
             <option value="11-50">11-50 employees</option>
             <option value="51-200">51-200 employees</option>
@@ -1147,7 +1731,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.department || ''}
             onChange={(e) => handleInputChange('department', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.department ? '' : '-'}
+            placeholder="-"
           />
         </div>
       </div>
@@ -1161,7 +1745,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={formData.linkedinUrl || ''}
           onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder={formData.linkedinUrl ? '' : '-'}
+          placeholder="-"
         />
       </div>
 
@@ -1175,7 +1759,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.city || ''}
             onChange={(e) => handleInputChange('city', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.city ? '' : '-'}
+            placeholder="-"
           />
         </div>
         <div>
@@ -1187,7 +1771,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.state || ''}
             onChange={(e) => handleInputChange('state', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.state ? '' : '-'}
+            placeholder="-"
           />
         </div>
         <div>
@@ -1199,7 +1783,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.country || ''}
             onChange={(e) => handleInputChange('country', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder={formData.country ? '' : '-'}
+            placeholder="-"
           />
         </div>
       </div>
@@ -1217,7 +1801,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={formData.nextAction || ''}
           onChange={(e) => handleInputChange('nextAction', e.target.value)}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder={formData.nextAction ? '' : '-'}
+          placeholder="-"
         />
       </div>
 
@@ -1317,14 +1901,14 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     <div className="p-6 space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Notes
+          Company Notes
         </label>
         <textarea
           value={formData.notes || ''}
           onChange={(e) => handleInputChange('notes', e.target.value)}
           rows={8}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder={formData.notes ? '' : '-'}
+          placeholder="Add notes about this company..."
         />
       </div>
 
@@ -1337,7 +1921,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={Array.isArray(formData.tags) ? formData.tags.join(', ') : ''}
           onChange={(e) => handleInputChange('tags', e.target.value.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag))}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder={Array.isArray(formData.tags) && formData.tags.length > 0 ? '' : '-'}
+          placeholder="Add tags separated by commas..."
         />
       </div>
     </div>

@@ -723,6 +723,12 @@ export const PipelineView = React.memo(function PipelineView({
       case 'stage':
         return record.stage || record.dealStage || '';
       
+      case 'priority':
+        return record.priority || '';
+      
+      case 'nextAction':
+        return record.nextAction || record.nextActionDescription || '';
+      
       case 'smart_rank':
         // Use smart ranking score if available
         return record.smartRankScore || 0;
@@ -1259,7 +1265,9 @@ export const PipelineView = React.memo(function PipelineView({
         'Email': 'email',
         'Phone': 'phone',
         'Last Action': 'lastActionDate',
-        'Next Action': 'nextAction'
+        'Next Action': 'nextAction',
+        'Amount': 'amount',
+        'Stage': 'stage'
       };
 
       // Section-specific field mappings
@@ -1272,8 +1280,8 @@ export const PipelineView = React.memo(function PipelineView({
       } else if (section === 'opportunities') {
         return {
           ...baseMap,
-          'Amount': 'company.opportunityAmount',
-          'Stage': 'company.opportunityStage',
+          'Amount': 'amount',
+          'Stage': 'stage',
           'Last Action': 'lastActionDate',
         };
       } else {

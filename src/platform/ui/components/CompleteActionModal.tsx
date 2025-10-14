@@ -22,7 +22,7 @@ export interface ActionLogData {
   personId?: string;
   company?: string;
   companyId?: string;
-  type: 'LinkedIn Friend Request' | 'LinkedIn InMail' | 'LinkedIn DM' | 'Phone' | 'Email';
+  type: 'LinkedIn Connection' | 'LinkedIn InMail' | 'LinkedIn Message' | 'Phone' | 'Email';
   time: 'Now' | 'Past' | 'Future';
   action: string;
   actionPerformedBy?: string; // User ID of who performed the action
@@ -60,7 +60,7 @@ export function CompleteActionModal({
       personId: '',
       company: companyName || '',
       companyId: '',
-      type: 'LinkedIn Friend Request',
+      type: 'LinkedIn Connection',
       time: 'Now',
       action: '',
       actionPerformedBy: currentUser?.id || ''
@@ -109,7 +109,7 @@ export function CompleteActionModal({
       const response = await authFetch(`/api/data/search?q=${encodeURIComponent(query)}&type=people`);
       if (response.ok) {
         const data = await response.json();
-        setPersonSearchResults(data.people || []);
+        setPersonSearchResults(data.data || []); // API wraps results in 'data' field
       }
     } catch (error) {
       console.error('Error searching people:', error);
@@ -121,7 +121,7 @@ export function CompleteActionModal({
   const handlePersonSelect = (person: any) => {
     setFormData(prev => ({
       ...prev,
-      person: person.name || person.fullName,
+      person: person.fullName || `${person.firstName} ${person.lastName}`.trim(),
       personId: person.id,
       company: person.company || prev.company,
       companyId: person.companyId || prev.companyId
@@ -184,9 +184,9 @@ export function CompleteActionModal({
         event.stopImmediatePropagation();
         
         const actionTypes: ActionLogData['type'][] = [
-          'LinkedIn Friend Request',
+          'LinkedIn Connection',
           'LinkedIn InMail', 
-          'LinkedIn DM',
+          'LinkedIn Message',
           'Phone',
           'Email'
         ];
@@ -245,7 +245,7 @@ export function CompleteActionModal({
         personId: '',
         company: companyName || '',
         companyId: '',
-        type: 'LinkedIn Friend Request',
+        type: 'LinkedIn Connection',
         time: 'Now',
         action: '',
         actionPerformedBy: currentUser?.id || ''
@@ -349,10 +349,10 @@ export function CompleteActionModal({
                           className="px-4 py-2 hover:bg-[var(--panel-background)] cursor-pointer border-b border-gray-100 last:border-b-0"
                         >
                           <div className="font-medium text-[var(--foreground)]">
-                            {person.name || person.fullName}
+                            {person.fullName || `${person.firstName} ${person.lastName}`.trim()}
                           </div>
-                          {person.title && (
-                            <div className="text-sm text-[var(--muted)]">{person.title}</div>
+                          {person.jobTitle && (
+                            <div className="text-sm text-[var(--muted)]">{person.jobTitle}</div>
                           )}
                           {person.company && (
                             <div className="text-sm text-[var(--muted)]">{person.company}</div>
@@ -399,9 +399,9 @@ export function CompleteActionModal({
                 } as React.CSSProperties}
                 disabled={isLoading}
               >
-                <option value="LinkedIn Friend Request">1. LinkedIn Friend Request</option>
+                <option value="LinkedIn Connection">1. LinkedIn Connection</option>
                 <option value="LinkedIn InMail">2. LinkedIn InMail</option>
-                <option value="LinkedIn DM">3. LinkedIn DM</option>
+                <option value="LinkedIn Message">3. LinkedIn Message</option>
                 <option value="Phone">4. Phone</option>
                 <option value="Email">5. Email</option>
               </select>

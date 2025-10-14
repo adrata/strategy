@@ -1,0 +1,456 @@
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
+import { XMarkIcon, UserPlusIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { authFetch } from "@/platform/api-fetch";
+
+interface AddPersonToCompanyModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  companyId: string;
+  companyName: string;
+  onPersonAdded: (person: any) => void;
+}
+
+interface Person {
+  id: string;
+  fullName: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone?: string;
+  jobTitle?: string;
+  company?: string;
+  companyId?: string;
+}
+
+export function AddPersonToCompanyModal({
+  isOpen,
+  onClose,
+  companyId,
+  companyName,
+  onPersonAdded
+}: AddPersonToCompanyModalProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Person[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+  
+  // Form data for creating new person
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    jobTitle: ''
+  });
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const firstNameInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-focus search input when modal opens
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen]);
+
+  // Auto-focus first name input when creating new person
+  useEffect(() => {
+    if (showCreateForm && firstNameInputRef.current) {
+      setTimeout(() => {
+        firstNameInputRef.current?.focus();
+      }, 100);
+    }
+  }, [showCreateForm]);
+
+  // Search people as user types
+  useEffect(() => {
+    if (searchQuery.length >= 2) {
+      searchPeople(searchQuery);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
+
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchQuery('');
+      setSearchResults([]);
+      setShowCreateForm(false);
+      setSelectedPerson(null);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        jobTitle: ''
+      });
+    }
+  }, [isOpen]);
+
+  const searchPeople = async (query: string) => {
+    setIsSearching(true);
+    try {
+      const response = await authFetch(`/api/data/search?query=${encodeURIComponent(query)}&type=people`);
+      if (response.ok) {
+        const data = await response.json();
+        setSearchResults(data.data || []);
+      }
+    } catch (error) {
+      console.error('Error searching people:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handlePersonSelect = (person: Person) => {
+    setSelectedPerson(person);
+  };
+
+  const handleLinkExistingPerson = async () => {
+    if (!selectedPerson) return;
+
+    setIsCreating(true);
+    try {
+      const response = await authFetch(`/api/companies/${companyId}/people`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          personId: selectedPerson.id
+        })
+      });
+
+      if (response.ok) {
+        const updatedPerson = await response.json();
+        onPersonAdded(updatedPerson);
+        onClose();
+      } else {
+        throw new Error('Failed to link person to company');
+      }
+    } catch (error) {
+      console.error('Error linking person to company:', error);
+      alert('Failed to link person to company. Please try again.');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleCreateNewPerson = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.firstName.trim() || !formData.lastName.trim()) {
+      alert('First name and last name are required');
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      
+      const personData = {
+        ...formData,
+        fullName,
+        company: companyName,
+        companyId: companyId,
+        status: "LEAD",
+        source: "Manual Entry"
+      };
+
+      const response = await authFetch(`/api/companies/${companyId}/people`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(personData)
+      });
+
+      if (response.ok) {
+        const newPerson = await response.json();
+        onPersonAdded(newPerson);
+        onClose();
+      } else {
+        throw new Error('Failed to create person');
+      }
+    } catch (error) {
+      console.error('Error creating person:', error);
+      alert('Failed to create person. Please try again.');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-3">
+            <UserPlusIcon className="w-6 h-6 text-blue-600" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Add Person to Company
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          >
+            <XMarkIcon className="w-5 h-5 text-gray-500" />
+          </button>
+        </div>
+
+        {/* Company Info */}
+        <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Company:</span>
+            <span className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+              {companyName}
+            </span>
+          </div>
+        </div>
+
+        <div className="p-6">
+          {!showCreateForm ? (
+            <>
+              {/* Search Section */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Search for existing person
+                </label>
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Type name or email to search..."
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              {/* Search Results */}
+              {isSearching && (
+                <div className="text-center py-4">
+                  <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                  <p className="mt-2 text-sm text-gray-500">Searching...</p>
+                </div>
+              )}
+
+              {searchResults.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Search Results
+                  </h3>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {searchResults.map((person) => (
+                      <div
+                        key={person.id}
+                        className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                          selectedPerson?.id === person.id
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                            : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                        onClick={() => handlePersonSelect(person)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-gray-900 dark:text-white">
+                              {person.fullName}
+                            </p>
+                            {person.email && (
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {person.email}
+                              </p>
+                            )}
+                            {person.jobTitle && (
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {person.jobTitle}
+                              </p>
+                            )}
+                          </div>
+                          {selectedPerson?.id === person.id && (
+                            <div className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && (
+                <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                    No people found matching "{searchQuery}"
+                  </p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setShowCreateForm(true)}
+                  className="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                >
+                  Create New Person
+                </button>
+
+                {selectedPerson && (
+                  <button
+                    onClick={handleLinkExistingPerson}
+                    disabled={isCreating}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                  >
+                    {isCreating ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Linking...
+                      </>
+                    ) : (
+                      <>
+                        <UserPlusIcon className="w-4 h-4" />
+                        Link Person
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Create New Person Form */}
+              <div className="mb-6">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                  Create New Person
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  This person will be automatically associated with {companyName}.
+                </p>
+              </div>
+
+              <form onSubmit={handleCreateNewPerson} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      First Name *
+                    </label>
+                    <input
+                      ref={firstNameInputRef}
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Last Name *
+                    </label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Job Title
+                  </label>
+                  <input
+                    type="text"
+                    name="jobTitle"
+                    value={formData.jobTitle}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateForm(false)}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-700 font-medium transition-colors"
+                  >
+                    Back to Search
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={isCreating}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                  >
+                    {isCreating ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <UserPlusIcon className="w-4 h-4" />
+                        Create Person
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

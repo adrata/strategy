@@ -370,6 +370,23 @@ export const PipelineContent = React.memo(function PipelineContent({
         }
         return typeof fallbackRank === 'number' ? fallbackRank : 0;
       
+      case 'priority':
+        return record.priority || '';
+      
+      case 'nextAction':
+        return record.nextAction || record.nextActionDescription || '';
+      
+      case 'stage':
+        return record.stage || record.dealStage || '';
+      
+      case 'amount':
+        // Handle currency amounts
+        const amount = record.amount || record.dealValue || record.value || 0;
+        if (typeof amount === 'string') {
+          return parseFloat(amount.replace(/[^0-9.-]/g, '')) || 0;
+        }
+        return typeof amount === 'number' ? amount : 0;
+      
       default:
         // Fallback to direct property access
         return record[field] || '';
@@ -699,15 +716,17 @@ export const PipelineContent = React.memo(function PipelineContent({
         'Industry': 'industry',
         'Email': 'email',
         'Phone': 'phone',
-        'Last Action': 'lastContactDate',
-        'Next Action': 'nextAction'
+        'Last Action': 'lastActionDate',
+        'Next Action': 'nextAction',
+        'Amount': 'amount',
+        'Stage': 'stage'
       };
 
       // Section-specific field mappings
       if (section === 'speedrun') {
         return {
           ...baseMap,
-          'Last Action': 'lastContact', // Speedrun uses 'lastContact' not 'lastContactDate'
+          'Last Action': 'lastActionDate', // Speedrun uses 'lastActionDate' for consistency
           'Advice': 'nextAction',
         };
       } else if (section === 'opportunities') {
@@ -715,7 +734,7 @@ export const PipelineContent = React.memo(function PipelineContent({
           ...baseMap,
           'Amount': 'amount',
           'Stage': 'stage',
-          'Last Action': 'lastContactDate',
+          'Last Action': 'lastActionDate',
         };
       } else {
         return {

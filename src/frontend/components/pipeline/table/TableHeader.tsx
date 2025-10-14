@@ -23,7 +23,7 @@ const FIELD_MAP: Record<string, string> = {
   'Name': 'name',
   'Title': 'title',
   'Status': 'status',
-  'Last Action': 'lastAction',
+  'Last Action': 'lastActionDate',
   'Next Action': 'nextAction',
   'Amount': 'amount',
   'Stage': 'stage',

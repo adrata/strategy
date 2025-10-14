@@ -285,7 +285,7 @@ export async function PATCH(
     const ALLOWED_PEOPLE_FIELDS = [
       'firstName', 'lastName', 'fullName', 'jobTitle', 'department', 'status',
       'priority', 'email', 'workEmail', 'phone', 'mobilePhone', 'linkedinUrl',
-      'city', 'nextAction', 'nextActionDate', 'notes', 'tags', 'seniority',
+      'linkedinNavigatorUrl', 'linkedinConnectionDate', 'city', 'nextAction', 'nextActionDate', 'notes', 'tags', 'seniority',
       'engagementScore', 'engagementLevel', 'influenceLevel', 'decisionPower',
       'isBuyerGroupMember', 'engagementStrategy', 'buyerGroupOptimized',
       'communicationStyle', 'decisionPowerScore', 'relationshipWarmth',

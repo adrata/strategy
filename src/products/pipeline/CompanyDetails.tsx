@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { formatRelativeDate } from "@/platform/utils";
 import { PipelineClientService } from "@/platform/services/pipeline-client-service";
 import { getCategoryColors } from "@/platform/config/color-palette";
+import { authFetch } from "@/platform/api-fetch";
 // Define CompanyWithDetails interface locally
 interface CompanyWithDetails {
   id: string;
@@ -29,7 +30,7 @@ interface CompanyWithDetails {
     lifetimeValue?: string;
   };
 }
-import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, PlusIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { CompleteActionModal, ActionLogData } from "@/platform/ui/components/CompleteActionModal";
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
@@ -37,6 +38,7 @@ import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation"
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 import { SuccessMessage } from "@/platform/ui/components/SuccessMessage";
 import { useInlineEdit } from "@/platform/hooks/useInlineEdit";
+import { AddPersonToCompanyModal } from "@/frontend/components/pipeline/AddPersonToCompanyModal";
 
 export interface Company {
   id: string;
@@ -81,6 +83,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
   const [companyData, setCompanyData] = useState<CompanyWithDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddActionModal, setShowAddActionModal] = useState(false);
+  const [showAddPersonModal, setShowAddPersonModal] = useState(false);
   const [timelineData, setTimelineData] = useState<any[]>([]);
   const [notesData, setNotesData] = useState<any[]>([]);
   
@@ -291,20 +294,16 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
   // Handle action submission
   const handleActionSubmit = async (actionData: any) => {
     try {
-      const response = await fetch('/api/actions/add', {
+      const response = await authFetch('/api/v1/actions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          recordId: account.id,
-          recordType: 'account',
-          actionType: actionData.actionType,
-          notes: actionData.notes,
-          nextAction: actionData.nextAction,
-          nextActionDate: actionData.nextActionDate,
-          actionPerformedBy: actionData.actionPerformedBy,
-          accountId: account.id,
-          workspaceId: 'adrata', // Default workspace
-          userId: 'dan' // Default user
+          type: actionData.actionType,
+          subject: actionData.notes.length > 100 ? actionData.notes.substring(0, 100) + '...' : actionData.notes,
+          description: actionData.notes,
+          companyId: account.id,
+          outcome: actionData.nextAction,
+          scheduledAt: actionData.nextActionDate
         })
       });
 
@@ -318,6 +317,18 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
       }
     } catch (error) {
       console.error('Failed to log action:', error);
+    }
+  };
+
+  const handlePersonAdded = async (person: any) => {
+    // Refresh company data to show the new person
+    if (account.id) {
+      try {
+        const data = await PipelineClientService.getAccountById(account.id);
+        setAccountData(data);
+      } catch (error) {
+        console.error('Failed to refresh company data:', error);
+      }
     }
   };
 
@@ -362,6 +373,13 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
               >
                 <PlusIcon className="w-4 h-4" />
                 Add Action
+              </button>
+              <button
+                onClick={() => setShowAddPersonModal(true)}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+              >
+                <UserPlusIcon className="w-4 h-4" />
+                Add Person
               </button>
               <button
                 onClick={() => onEditAccount?.(account)}
@@ -940,6 +958,15 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
         companyName={account?.name || ''}
         section="companies"
         isLoading={false}
+      />
+
+      {/* Add Person Modal */}
+      <AddPersonToCompanyModal
+        isOpen={showAddPersonModal}
+        onClose={() => setShowAddPersonModal(false)}
+        companyId={account.id}
+        companyName={account.name}
+        onPersonAdded={handlePersonAdded}
       />
     </div>
   );

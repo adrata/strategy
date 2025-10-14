@@ -13,6 +13,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { useUnifiedAuth } from '@/platform/auth';
+import { authFetch } from '@/platform/api-fetch';
 import { PipelineSkeleton } from '@/platform/ui/components/Loader';
 import { useZoom } from '@/platform/ui/components/ZoomProvider';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
@@ -72,10 +73,10 @@ export function SpeedrunSprintView() {
     }
   }, [workspaceId, userId, loading, allData.length, refresh]);
 
-  // Fixed sprint configuration: 5 sprints total, 10 people per sprint, 50 total people
+  // Dynamic sprint configuration based on actual data
   const SPRINT_SIZE = 10; // Fixed at 10 people per sprint
-  const TOTAL_SPRINTS = 5; // Fixed at 5 sprints total
-  const TOTAL_PEOPLE = 50; // Fixed at 50 total people in speedrun
+  const TOTAL_PEOPLE = allData.length; // Use actual data length
+  const TOTAL_SPRINTS = Math.ceil(TOTAL_PEOPLE / SPRINT_SIZE); // Calculate based on actual data
   
 
   
@@ -409,7 +410,7 @@ export function SpeedrunSprintView() {
     
     try {
       // Save action log to backend using v1 API
-      const response = await fetch('/api/v1/actions', {
+      const response = await authFetch('/api/v1/actions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

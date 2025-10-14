@@ -41,6 +41,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     return userId;
   }, [users]);
 
+
   const toggleEventExpansion = (eventId: string) => {
     setExpandedEvents(prev => {
       const newSet = new Set(prev);
@@ -158,36 +159,77 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         console.log('🔍 [TIMELINE] Fetching fresh timeline data');
         
         // Load activities for this specific record using v1 APIs
+        console.log('🔍 [TIMELINE] Fetching actions for record:', {
+          recordId: record.id,
+          recordType: recordType,
+          record: record,
+          recordKeys: Object.keys(record || {}),
+          recordWorkspaceId: record?.workspaceId,
+          recordAssignedUserId: record?.assignedUserId
+        });
+        
+        // Build the correct query parameters based on record type
+        let actionsQuery = '';
+        if (recordType === 'leads' || recordType === 'people' || recordType === 'prospects') {
+          actionsQuery = `personId=${record.id}`;
+        } else if (recordType === 'companies') {
+          actionsQuery = `companyId=${record.id}`;
+        } else {
+          // For other types, try both
+          actionsQuery = `personId=${record.id}&companyId=${record.id}`;
+        }
+        
+        console.log('🔍 [TIMELINE] Actions query:', actionsQuery);
+        console.log('🔍 [TIMELINE] Full API URL:', `/api/v1/actions?${actionsQuery}`);
+        
         const [actionsResponse, peopleResponse, companiesResponse] = await Promise.all([
-          authFetch(`/api/v1/actions?companyId=${record.id}&personId=${record.id}`),
+          authFetch(`/api/v1/actions?${actionsQuery}`),
           authFetch(`/api/v1/people?companyId=${record.id}`),
           authFetch(`/api/v1/companies?id=${record.id}`)
         ]);
         
+        console.log('🔍 [TIMELINE] API responses received:', {
+          actionsResponse: actionsResponse,
+          peopleResponse: peopleResponse,
+          companiesResponse: companiesResponse
+        });
+        
+        // Debug the actions response in detail
+        if (actionsResponse) {
+          console.log('🔍 [TIMELINE] Actions response details:', {
+            success: actionsResponse.success,
+            data: actionsResponse.data,
+            dataType: typeof actionsResponse.data,
+            dataLength: Array.isArray(actionsResponse.data) ? actionsResponse.data.length : 'not array',
+            error: actionsResponse.error,
+            message: actionsResponse.message
+          });
+        } else {
+          console.log('❌ [TIMELINE] No actions response received');
+        }
+        
         const allActivities: any[] = [];
         
-        // Process actions
-        if (actionsResponse.ok) {
-          const actionsData = await actionsResponse.json();
-          if (actionsData.success && Array.isArray(actionsData.data)) {
-            allActivities.push(...actionsData.data.map((action: any) => ({
-              ...action,
-              type: 'action',
-              timestamp: action.completedAt || action.createdAt || action.scheduledAt
-            })));
-          }
+        // Process actions - authFetch returns parsed data directly
+        if (actionsResponse && actionsResponse.success && Array.isArray(actionsResponse.data)) {
+          console.log('📅 [TIMELINE] Found actions:', actionsResponse.data.length);
+          allActivities.push(...actionsResponse.data.map((action: any) => ({
+            ...action,
+            type: 'action',
+            timestamp: action.completedAt || action.createdAt || action.scheduledAt
+          })));
+        } else {
+          console.log('📅 [TIMELINE] No actions found or invalid response:', actionsResponse);
         }
         
         // Process people (if this is a company record)
-        if (peopleResponse.ok && recordType === 'companies') {
-          const peopleData = await peopleResponse.json();
-          if (peopleData.success && Array.isArray(peopleData.data)) {
-            allActivities.push(...peopleData.data.map((person: any) => ({
-              ...person,
-              type: 'person',
-              timestamp: person.createdAt
-            })));
-          }
+        if (peopleResponse && peopleResponse.success && Array.isArray(peopleResponse.data) && recordType === 'companies') {
+          console.log('📅 [TIMELINE] Found people:', peopleResponse.data.length);
+          allActivities.push(...peopleResponse.data.map((person: any) => ({
+            ...person,
+            type: 'person',
+            timestamp: person.createdAt
+          })));
         }
         
         console.log('📅 [TIMELINE] Total activities found:', allActivities.length);
@@ -272,6 +314,26 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
       setLoading(false);
     }
   }, [record, recordType, getUserName]);
+
+  // Listen for action creation events to refresh timeline
+  useEffect(() => {
+    const handleActionCreated = (event: CustomEvent) => {
+      const { recordId, recordType: eventRecordType } = event.detail;
+      if (recordId === record?.id && eventRecordType === recordType) {
+        console.log('🔄 [TIMELINE] Action created event received, refreshing timeline');
+        // Clear cache and reload
+        const cacheKey = `timeline-${record.id}`;
+        localStorage.removeItem(cacheKey);
+        loadTimelineFromAPI();
+      }
+    };
+
+    document.addEventListener('actionCreated', handleActionCreated as EventListener);
+    
+    return () => {
+      document.removeEventListener('actionCreated', handleActionCreated as EventListener);
+    };
+  }, [record?.id, recordType, loadTimelineFromAPI]);
 
   useEffect(() => {
     if (record) {

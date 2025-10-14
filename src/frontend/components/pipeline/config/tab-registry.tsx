@@ -180,7 +180,6 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
     { id: 'intelligence', label: 'Intelligence', component: UniversalCompanyIntelTab },
     { id: 'value', label: 'Value', component: ValueTab },
     { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
-    // { id: 'competitors', label: 'Competitors', component: UniversalCompetitorsTab }, // Temporarily hidden
     { id: 'opportunities', label: 'Opportunities', component: UniversalOpportunitiesTab },
     { id: 'notes', label: 'Notes', component: UniversalTimelineTab },
     { id: 'timeline', label: 'Timeline', component: UniversalTimelineTab }
