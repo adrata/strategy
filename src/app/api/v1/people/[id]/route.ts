@@ -195,6 +195,13 @@ export async function PUT(
       },
     });
 
+    // Generate a slug for updated person name; not persisted, returned for client navigation
+    const updatedDisplayName = updatedPerson.fullName || `${updatedPerson.firstName ?? ''} ${updatedPerson.lastName ?? ''}`.trim() || updatedPerson.name || '-';
+    const generatedSlug = `${(updatedDisplayName || '-')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')}-${updatedPerson.id}`;
+
     return NextResponse.json({
       success: true,
       data: {
@@ -211,6 +218,7 @@ export async function PUT(
       },
       meta: {
         message: 'Person updated successfully',
+        slug: generatedSlug,
       },
     });
 

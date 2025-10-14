@@ -559,7 +559,14 @@ export const PipelineView = React.memo(function PipelineView({
         refresh: () => Promise.resolve([]), 
         clearCache: () => {} 
       }
-    : { data: [], loading: false, error: null, refresh: async () => {}, clearCache: () => {}, mutate: async () => undefined };
+    : { 
+        data: fastSectionData.data, 
+        loading: fastSectionData.loading, 
+        error: fastSectionData.error, 
+        refresh: fastSectionData.refresh, 
+        clearCache: fastSectionData.clearCache, 
+        mutate: async () => undefined 
+      };
     
   // CRITICAL FIX: Add metrics for metrics section compatibility
   const metrics = section === 'metrics' 

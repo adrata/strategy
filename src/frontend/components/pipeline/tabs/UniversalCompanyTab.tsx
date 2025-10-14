@@ -1,17 +1,29 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
+import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 
 interface UniversalCompanyTabProps {
   recordType: string;
   record?: any;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalCompanyTab({ recordType, record: recordProp }: UniversalCompanyTabProps) {
+export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: UniversalCompanyTabProps) {
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
+  
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const handleSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
 
 
   // Show skeleton loader while data is loading
@@ -207,17 +219,41 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Company Name:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{companyData.name}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Company Name:</span>
+                <InlineEditField
+                  value={companyData.name}
+                  field="name"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Size:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{companyData.size}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Employee Count:</span>
+                <InlineEditField
+                  value={companyData.size}
+                  field="size"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Headquarters:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{companyData.headquarters}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Headquarters:</span>
+                <InlineEditField
+                  value={companyData.headquarters}
+                  field="headquarters"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Founded:</span>
@@ -251,26 +287,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Contact & Market</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Website:</span>
-                <span className="text-sm font-medium">
-                  {companyData.website && companyData.website !== 'No website' ? (
-                    <a 
-                      href={companyData.website.startsWith('http') ? companyData.website : `https://${companyData.website}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      style={{ color: '#0171E4' }}
-                      className="hover:underline"
-                    >
-                      {(() => {
-                        const url = companyData.website.replace(/^https?:\/\/(www\.)?/, '');
-                        return url.replace(/\/$/, '');
-                      })()}
-                    </a>
-                  ) : (
-                    <span className="text-gray-800">No website</span>
-                  )}
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Website:</span>
+                <InlineEditField
+                  value={companyData.website}
+                  field="website"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="text"
+                  className="text-sm font-medium"
+                />
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
@@ -496,6 +524,17 @@ export function UniversalCompanyTab({ recordType, record: recordProp }: Universa
         </div>
       </div>
 
+      {/* Success Toast */}
+      {showSuccessMessage && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
+            <div className="flex items-center space-x-2">
+              <span>✓</span>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

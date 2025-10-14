@@ -58,26 +58,42 @@ export function useProspectsData(): UseProspectsDataReturn {
       const data = Array.isArray(json) ? json : (json?.data || []);
       
       // Transform people data to Prospect format
-      const transformedProspects: Prospect[] = (data || []).map((person: any) => ({
-        id: person.id,
-        company: person.company?.name || person.companyName || '-',
-        name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || '-',
-        title: person.title || person.jobTitle || '-',
-        email: person.email || '-',
-        lastAction: person.lastAction || '-',
-        nextAction: person.nextAction || '-',
-        status: person.status || 'PROSPECT',
-        companyId: person.companyId,
-        phone: person.phone,
-        linkedinUrl: person.linkedinUrl,
-        tags: person.tags || [],
-        lastActionDate: person.lastActionDate,
-        nextActionDate: person.nextActionDate,
-        assignedUserId: person.assignedUserId,
-        workspaceId: person.workspaceId,
-        createdAt: person.createdAt,
-        updatedAt: person.updatedAt,
-      }));
+      const transformedProspects: Prospect[] = (data || []).map((person: any) => {
+        const prospect = {
+          id: person.id,
+          company: person.company?.name || person.companyName || '-',
+          name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || '-',
+          title: person.title || person.jobTitle || '-',
+          email: person.email || '-',
+          lastAction: person.lastAction || '-',
+          nextAction: person.nextAction || '-',
+          status: person.status || 'PROSPECT',
+          companyId: person.companyId,
+          phone: person.phone,
+          linkedinUrl: person.linkedinUrl,
+          tags: person.tags || [],
+          lastActionDate: person.lastActionDate,
+          nextActionDate: person.nextActionDate,
+          assignedUserId: person.assignedUserId,
+          workspaceId: person.workspaceId,
+          createdAt: person.createdAt,
+          updatedAt: person.updatedAt,
+          // Keep original fields for debugging
+          fullName: person.fullName,
+          firstName: person.firstName,
+          lastName: person.lastName,
+        };
+        
+        // Debug logging for first few prospects
+        if (transformedProspects.length < 3) {
+          console.log('🔍 [useProspectsData] Transformed prospect:', {
+            original: person,
+            transformed: prospect
+          });
+        }
+        
+        return prospect;
+      });
 
       setProspects(transformedProspects);
       setCount(transformedProspects.length);

@@ -6,6 +6,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { authFetch } from '@/platform/api-fetch';
 import { getCategoryColors } from '@/platform/config/color-palette';
+import { CompanySelector } from '@/frontend/components/pipeline/CompanySelector';
 
 interface AddPersonModalProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
     phone: "",
     jobTitle: "",
     company: "",
+    companyId: "",
     status: "LEAD", // Default to LEAD, but allow selection
     notes: ""
   });
@@ -106,7 +108,9 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
       const personData = {
         ...formData,
         fullName,
-        source: "Manual Entry"
+        source: "Manual Entry",
+        // Only include companyId if it's set
+        companyId: formData.companyId || undefined
       };
 
       console.log('Creating person with data:', personData);
@@ -134,11 +138,12 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
           phone: "",
           jobTitle: "",
           company: "",
+          companyId: "",
           status: "LEAD",
           notes: ""
         });
         
-        // Call callback immediately to close modal and refresh list
+        // Call callback to close modal, show success message, and refresh list
         onPersonAdded(result.data);
       } else {
         throw new Error(result.error || 'Failed to create person');
@@ -259,12 +264,17 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
             <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               Company
             </label>
-            <input
-              type="text"
+            <CompanySelector
               value={formData.company}
-              onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-              placeholder="Enter company name"
-              className="w-full border border-[var(--border)] rounded-lg px-4 py-2 outline-none transition-colors focus:border-blue-500"
+              onChange={(company) => {
+                setFormData(prev => ({
+                  ...prev,
+                  company: company?.name || "",
+                  companyId: company?.id || ""
+                }));
+              }}
+              placeholder="Search or add company..."
+              disabled={isLoading}
             />
           </div>
 

@@ -1,17 +1,29 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
+import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 
 interface ProspectOverviewTabProps {
   recordType: string;
   record?: any;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function ProspectOverviewTab({ recordType, record: recordProp }: ProspectOverviewTabProps) {
+export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: ProspectOverviewTabProps) {
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
+  
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const handleSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
 
   // Show skeleton loader while data is loading
   if (!record) {
@@ -294,21 +306,53 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Name:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{prospectData.name}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Name:</span>
+                <InlineEditField
+                  value={prospectData.name}
+                  field="name"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Title:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{prospectData.title}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Title:</span>
+                <InlineEditField
+                  value={prospectData.title}
+                  field="title"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Company:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{prospectData.company}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Company:</span>
+                <InlineEditField
+                  value={prospectData.company}
+                  field="company"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Department:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{prospectData.department}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Department:</span>
+                <InlineEditField
+                  value={prospectData.department}
+                  field="department"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
             </div>
           </div>
@@ -317,25 +361,67 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Role & Influence</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Buyer Group Role:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  prospectData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
-                  prospectData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
-                  prospectData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
-                  prospectData.buyerGroupRole === '-' ? 'bg-gray-100 text-gray-800' :
-                  'bg-[var(--hover)] text-gray-800'
-                }`}>
-                  {prospectData.buyerGroupRole}
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Buyer Group Role:</span>
+                <InlineEditField
+                  value={prospectData.buyerGroupRole}
+                  field="buyerGroupRole"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'Decision Maker', label: 'Decision Maker' },
+                    { value: 'Champion', label: 'Champion' },
+                    { value: 'Blocker', label: 'Blocker' },
+                    { value: 'Influencer', label: 'Influencer' },
+                    { value: 'User', label: 'User' }
+                  ]}
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                    prospectData.buyerGroupRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
+                    prospectData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
+                    prospectData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
+                    prospectData.buyerGroupRole === '-' ? 'bg-gray-100 text-gray-800' :
+                    'bg-[var(--hover)] text-gray-800'
+                  }`}
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Influence Level:</span>
-                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{prospectData.influenceLevel}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Influence Level:</span>
+                <InlineEditField
+                  value={prospectData.influenceLevel}
+                  field="influenceLevel"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'High', label: 'High' },
+                    { value: 'Medium', label: 'Medium' },
+                    { value: 'Low', label: 'Low' }
+                  ]}
+                  className="text-sm font-medium text-[var(--foreground)] capitalize"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Engagement Priority:</span>
-                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{prospectData.engagementPriority}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Engagement Priority:</span>
+                <InlineEditField
+                  value={prospectData.engagementPriority}
+                  field="engagementPriority"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'HIGH', label: 'HIGH' },
+                    { value: 'MEDIUM', label: 'MEDIUM' },
+                    { value: 'LOW', label: 'LOW' }
+                  ]}
+                  className="text-sm font-medium text-[var(--foreground)] capitalize"
+                />
               </div>
             </div>
           </div>
@@ -349,29 +435,31 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Email:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {prospectData.email !== '-' ? (
-                    <a href={`mailto:${prospectData.email}`} className="text-blue-600 hover:underline">
-                      {prospectData.email}
-                    </a>
-                  ) : (
-                    prospectData.email
-                  )}
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Email:</span>
+                <InlineEditField
+                  value={prospectData.email}
+                  field="email"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="email"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Phone:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {prospectData.phone !== '-' ? (
-                    <a href={`tel:${prospectData.phone}`} className="text-blue-600 hover:underline">
-                      {prospectData.phone}
-                    </a>
-                  ) : (
-                    prospectData.phone
-                  )}
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Phone:</span>
+                <InlineEditField
+                  value={prospectData.phone}
+                  field="phone"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="text"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
@@ -427,21 +515,41 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
                 <span className="text-sm text-[var(--muted)]">Last Contact:</span>
                 <span className="text-sm font-medium text-[var(--foreground)]">{formatRelativeDate(prospectData.lastContact)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Next Action:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {prospectData.nextActionDate ? formatRelativeDate(prospectData.nextActionDate) : prospectData.nextAction}
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Next Action:</span>
+                <InlineEditField
+                  value={prospectData.nextAction}
+                  field="nextAction"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Status:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  prospectData.status === 'active' ? 'bg-green-100 text-green-800' :
-                  prospectData.status === 'inactive' ? 'bg-[var(--hover)] text-gray-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {prospectData.status}
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Status:</span>
+                <InlineEditField
+                  value={prospectData.status}
+                  field="status"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'PROSPECT', label: 'PROSPECT' },
+                    { value: 'LEAD', label: 'LEAD' },
+                    { value: 'OPPORTUNITY', label: 'OPPORTUNITY' },
+                    { value: 'ACTIVE', label: 'ACTIVE' },
+                    { value: 'INACTIVE', label: 'INACTIVE' }
+                  ]}
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                    prospectData.status === 'active' ? 'bg-green-100 text-green-800' :
+                    prospectData.status === 'inactive' ? 'bg-[var(--hover)] text-gray-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }`}
+                />
               </div>
             </div>
           </div>
@@ -525,6 +633,18 @@ export function ProspectOverviewTab({ recordType, record: recordProp }: Prospect
           </div>
         </div>
       </div>
+
+      {/* Success Toast */}
+      {showSuccessMessage && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
+            <div className="flex items-center space-x-2">
+              <span>✓</span>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -75,6 +75,7 @@ export function UpdateModalV2({
         
         // Company info - handle both string and object formats
         company: record.company || record.companyName || '',
+        companyId: record.companyId || '',
         companyDomain: formatFieldValue(record.companyDomain, ''),
         industry: formatFieldValue(record.industry, ''),
         vertical: formatFieldValue(record.vertical, ''),
@@ -221,11 +222,22 @@ export function UpdateModalV2({
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Company
           </label>
-          <input
-            type="text"
-            value={formData.company || ''}
-            onChange={(e) => handleInputChange('company', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          <CompanySelector
+            value={formData.company}
+            onChange={(company) => {
+              if (company) {
+                handleInputChange('company', company.name);
+                handleInputChange('companyId', company.id);
+                handleInputChange('companyDomain', company.domain || '');
+              } else {
+                handleInputChange('company', '');
+                handleInputChange('companyId', '');
+                handleInputChange('companyDomain', '');
+              }
+            }}
+            placeholder="Search or add company..."
+            className="w-full"
+            disabled={isLoading}
           />
         </div>
       </div>

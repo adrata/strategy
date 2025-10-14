@@ -62,7 +62,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
   const [count, setCount] = useState(0);
   const [loadedSections, setLoadedSections] = useState<Set<string>>(new Set());
 
-  const fetchSectionData = useCallback(async () => {
+  const fetchSectionData = useCallback(async (forceRefresh: boolean = false) => {
     console.log(`🔍 [FAST SECTION DATA] Hook called for ${section}:`, {
       workspaceId: !!workspaceId,
       userId: !!userId,
@@ -72,7 +72,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       alreadyLoaded: loadedSections.has(section),
       loadedSections: Array.from(loadedSections),
       actualWorkspaceId: workspaceId,
-      actualUserId: userId
+      actualUserId: userId,
+      forceRefresh
     });
     
     if (!workspaceId || !userId || authLoading || workspaceLoading) {
@@ -88,8 +89,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       return;
     }
 
-    // 🚀 PERFORMANCE: Skip if we already loaded this section
-    if (loadedSections.has(section)) {
+    // 🚀 PERFORMANCE: Skip if we already loaded this section (unless force refresh)
+    if (!forceRefresh && loadedSections.has(section)) {
       console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
       setLoading(false);
       return;
@@ -104,29 +105,32 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     try {
       console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
       
+      // Add refresh parameter to bypass backend cache when force refreshing
+      const refreshParam = forceRefresh ? '&refresh=true' : '';
+      
       switch (section) {
         case 'speedrun':
-          url = `/api/v1/speedrun?limit=${limit}`;
+          url = `/api/v1/speedrun?limit=${limit}${refreshParam}`;
           break;
         case 'leads':
           // For leads, always fetch all records to support proper pagination
-          url = `/api/v1/people?section=leads&limit=10000`;
+          url = `/api/v1/people?section=leads&limit=10000${refreshParam}`;
           break;
         case 'prospects':
           // For prospects, always fetch all records to support proper pagination
-          url = `/api/v1/people?section=prospects&limit=10000`;
+          url = `/api/v1/people?section=prospects&limit=10000${refreshParam}`;
           break;
         case 'opportunities':
           // For opportunities, always fetch all records to support proper pagination
-          url = `/api/v1/people?section=opportunities&limit=10000`;
+          url = `/api/v1/people?section=opportunities&limit=10000${refreshParam}`;
           break;
         case 'people':
           // For people, use the limit parameter but ensure it's high enough for pagination
-          url = `/api/v1/people?limit=${Math.max(limit, 10000)}`;
+          url = `/api/v1/people?limit=${Math.max(limit, 10000)}${refreshParam}`;
           break;
         case 'companies':
           // For companies, always fetch all records to support proper pagination
-          url = `/api/v1/companies?limit=${Math.max(limit, 10000)}`;
+          url = `/api/v1/companies?limit=${Math.max(limit, 10000)}${refreshParam}`;
           break;
         default:
           // Fallback to old section API for unsupported sections
@@ -362,6 +366,27 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     }
   }, [workspaceId, section, fetchSectionData]);
 
+  // 🚀 CACHE INVALIDATION: Listen for cache invalidation events
+  useEffect(() => {
+    const handleCacheInvalidate = (event: CustomEvent) => {
+      const { pattern, reason } = event.detail;
+      console.log(`🗑️ [FAST SECTION DATA] Cache invalidation event received:`, { pattern, reason, section });
+      
+      // Check if this invalidation affects our section
+      if (pattern.includes(section) || pattern.includes('*')) {
+        console.log(`🔄 [FAST SECTION DATA] Refreshing ${section} data due to cache invalidation`);
+        fetchSectionData();
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('cache-invalidate', handleCacheInvalidate as EventListener);
+      return () => {
+        window.removeEventListener('cache-invalidate', handleCacheInvalidate as EventListener);
+      };
+    }
+  }, [section, fetchSectionData]);
+
   // 🚀 CACHE OPTIMIZATION: Removed debug force refresh that was causing unnecessary reloads
 
   return {
@@ -369,12 +394,24 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     loading,
     error,
     count,
-    refresh: fetchSectionData,
+    refresh: () => fetchSectionData(true),
     clearCache: () => {
-      setLoadedSections(new Set());
+      console.log(`🧹 [FAST SECTION DATA] Clearing cache for section: ${section}`);
+      // Critical: Remove section from loaded sections Set to allow refetch
+      setLoadedSections(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(section);
+        console.log(`🧹 [FAST SECTION DATA] Removed ${section} from loaded sections. Remaining:`, Array.from(newSet));
+        return newSet;
+      });
       setData([]);
       setCount(0);
       setError(null);
+      // Force a refetch with refresh=true to bypass backend cache
+      setTimeout(() => {
+        console.log(`🔄 [FAST SECTION DATA] Force refetching after cache clear for: ${section}`);
+        fetchSectionData(true);
+      }, 0);
     }
   };
 }

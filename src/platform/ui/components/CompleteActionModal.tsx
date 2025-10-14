@@ -39,7 +39,16 @@ export function CompleteActionModal({
   initialData
 }: CompleteActionModalProps) {
   const { users, currentUser } = useWorkspaceUsers();
+  
+  // Debug logging
+  console.log('🔍 [CompleteActionModal] Props:', {
+    personName,
+    companyName,
+    section,
+    isOpen
+  });
   const notesRef = useRef<HTMLTextAreaElement>(null);
+  const firstNameInputRef = useRef<HTMLInputElement>(null);
   
   // Get section-specific colors
   const categoryColors = getCategoryColors(section);
@@ -61,7 +70,7 @@ export function CompleteActionModal({
   
   const [formData, setFormData] = useState<ActionLogData>(() => {
     // Use initialData if provided (for undo), otherwise use defaults
-    return initialData ? {
+    const initialFormData = initialData ? {
       ...initialData,
       person: personName || initialData.person, // Use provided personName or keep existing
       company: companyName || initialData.company // Use provided company or keep existing
@@ -75,6 +84,14 @@ export function CompleteActionModal({
       action: '',
       actionPerformedBy: currentUser?.id || ''
     };
+    
+    console.log('🔍 [CompleteActionModal] Initial formData:', {
+      personName,
+      companyName,
+      initialFormData
+    });
+    
+    return initialFormData;
   });
 
   // Update form data when initialData or props change
@@ -104,6 +121,15 @@ export function CompleteActionModal({
     }
   }, [isOpen, formData.person]);
 
+  // Auto-focus first name input when create form opens
+  useEffect(() => {
+    if (showCreatePersonForm && firstNameInputRef.current) {
+      setTimeout(() => {
+        firstNameInputRef.current?.focus();
+      }, 100);
+    }
+  }, [showCreatePersonForm]);
+
   // Search people as user types
   useEffect(() => {
     if (personSearchQuery.length >= 2) {
@@ -116,11 +142,40 @@ export function CompleteActionModal({
   const searchPeople = async (query: string) => {
     setIsSearchingPeople(true);
     try {
-      const response = await authFetch(`/api/data/search?q=${encodeURIComponent(query)}&type=people`);
-      if (response.ok) {
-        const data = await response.json();
-        setPersonSearchResults(data.data || []); // API wraps results in 'data' field
+      // Build API URL with section-aware filtering
+      const params = new URLSearchParams({
+        search: query,
+        limit: '10'
+      });
+      
+      // Apply section-based filtering
+      if (section === 'leads' || section === 'prospects' || section === 'opportunities') {
+        // For leads/prospects/opportunities, pass the section to filter by status
+        params.set('section', section);
+      } else if (section === 'people' || section === 'companies') {
+        // For people/companies sections, search all people regardless of status
+        params.set('section', 'people');
       }
+      // For other sections (like 'speedrun'), don't add section filter to search all
+      
+      // TEMPORARY DEBUG: Remove section filtering to test if that's the issue
+      // params.delete('section');
+      
+      const apiUrl = `/api/v1/people?${params.toString()}`;
+      console.log('🔍 [CompleteActionModal] Searching people:', {
+        query,
+        section,
+        apiUrl,
+        params: Object.fromEntries(params.entries())
+      });
+      
+      const data = await authFetch(apiUrl);
+      console.log('🔍 [CompleteActionModal] Search response:', {
+        success: data.success,
+        resultCount: data.data?.length || 0,
+        results: data.data?.map((p: any) => ({ id: p.id, name: p.fullName || `${p.firstName} ${p.lastName}` })) || []
+      });
+      setPersonSearchResults(data.data || []); // API wraps results in 'data' field
     } catch (error) {
       console.error('Error searching people:', error);
     } finally {
@@ -349,8 +404,8 @@ export function CompleteActionModal({
                 </h2>
                 <p className="text-sm text-[var(--muted)]">
                   {initialData 
-                    ? `Resubmit your interaction with ${personName} (undo mode - will resave to database)`
-                    : `Log your interaction with ${personName}`
+                    ? `Resubmit your interaction with ${personName || 'selected person'} (undo mode - will resave to database)`
+                    : `Log your interaction with ${personName || 'selected person'}`
                   }
                 </p>
               </div>
@@ -404,7 +459,7 @@ export function CompleteActionModal({
                   />
 
                   {/* Person Search Results */}
-                  {(personSearchResults.length > 0 || (personSearchQuery.length >= 2 && !isSearchingPeople)) && (
+                  {(personSearchResults.length > 0 || (personSearchQuery.length >= 2 && !isSearchingPeople)) && !showCreatePersonForm && (
                     <div className="absolute z-20 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
                       {personSearchResults.length > 0 ? (
                         personSearchResults.map((person) => (
@@ -420,7 +475,7 @@ export function CompleteActionModal({
                               <div className="text-sm text-[var(--muted)]">{person.jobTitle}</div>
                             )}
                             {person.company && (
-                              <div className="text-sm text-[var(--muted)]">{person.company}</div>
+                              <div className="text-sm text-[var(--muted)]">{person.company.name}</div>
                             )}
                           </div>
                         ))
@@ -431,7 +486,11 @@ export function CompleteActionModal({
                           </div>
                           <button
                             type="button"
-                            onClick={() => setShowCreatePersonForm(true)}
+                            onClick={() => {
+                              setShowCreatePersonForm(true);
+                              setPersonSearchQuery('');
+                              setPersonSearchResults([]);
+                            }}
                             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                           >
                             Create new person
@@ -466,6 +525,7 @@ export function CompleteActionModal({
                         First Name *
                       </label>
                       <input
+                        ref={firstNameInputRef}
                         type="text"
                         value={newPersonData.firstName}
                         onChange={(e) => setNewPersonData(prev => ({ ...prev, firstName: e.target.value }))}

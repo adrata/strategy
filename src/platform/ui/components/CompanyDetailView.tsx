@@ -262,7 +262,7 @@ export function CompanyDetailView({
                     </div>
                     <div>
                       <span className="text-sm font-medium text-[var(--muted)]">
-                        Size
+                        Employee Count
                       </span>
                       <p className="text-[var(--foreground)]">
                         {companyData.size}

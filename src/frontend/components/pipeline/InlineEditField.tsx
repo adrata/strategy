@@ -145,7 +145,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   };
 
   return (
-    <div className="group flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-[var(--panel-background)] transition-colors">
+    <div className="group flex flex-1 items-center gap-2 cursor-pointer p-1 rounded hover:bg-[var(--panel-background)] transition-colors min-w-0">
       <span className={`${className} ${!value || value.trim() === '' ? 'text-[var(--muted)]' : ''}`}>
         {getDisplayValue()}
       </span>

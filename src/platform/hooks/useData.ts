@@ -196,25 +196,27 @@ export function useData(
       console.warn('[AUTH] No authentication token available, using v1 APIs');
       
       // NEW: Use v1 APIs instead of old unified API
-      const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
+      const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse, speedrunResponse] = await Promise.all([
         fetch('/api/v1/people?status=LEAD', { credentials: 'include' }),
         fetch('/api/v1/people?status=PROSPECT', { credentials: 'include' }),
         fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' }),
         fetch('/api/v1/companies', { credentials: 'include' }),
-        fetch('/api/v1/people', { credentials: 'include' })
+        fetch('/api/v1/people', { credentials: 'include' }),
+        fetch('/api/v1/speedrun', { credentials: 'include' })
       ]);
       
       // Process v1 API responses
-      const [leadsResult, prospectsResult, opportunitiesResult, companiesResult, peopleResult] = await Promise.all([
+      const [leadsResult, prospectsResult, opportunitiesResult, companiesResult, peopleResult, speedrunResult] = await Promise.all([
         leadsResponse.json(),
         prospectsResponse.json(),
         opportunitiesResponse.json(),
         companiesResponse.json(),
-        peopleResponse.json()
+        peopleResponse.json(),
+        speedrunResponse.json()
       ]);
 
       // Check for errors
-      if (!leadsResult.success || !prospectsResult.success || !opportunitiesResult.success || !companiesResult.success || !peopleResult.success) {
+      if (!leadsResult.success || !prospectsResult.success || !opportunitiesResult.success || !companiesResult.success || !peopleResult.success || !speedrunResult.success) {
         throw new Error('One or more v1 API calls failed');
       }
       
@@ -224,7 +226,8 @@ export function useData(
         prospects: prospectsResult.data || [],
         opportunities: opportunitiesResult.data || [],
         companies: companiesResult.data || [],
-        people: peopleResult.data || []
+        people: peopleResult.data || [],
+        speedrunItems: speedrunResult.data || []
       };
       
       return mapApiDataToPlatformFormat(apiData);
@@ -258,25 +261,27 @@ export function useData(
     console.log('[DATA] Loading data using v1 APIs');
     
     // Fetch all data using v1 APIs
-    const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse] = await Promise.all([
+    const [leadsResponse, prospectsResponse, opportunitiesResponse, companiesResponse, peopleResponse, speedrunResponse] = await Promise.all([
       fetch('/api/v1/people?status=LEAD', { credentials: 'include' }),
       fetch('/api/v1/people?status=PROSPECT', { credentials: 'include' }),
       fetch('/api/v1/companies?status=OPPORTUNITY', { credentials: 'include' }),
       fetch('/api/v1/companies', { credentials: 'include' }),
-      fetch('/api/v1/people', { credentials: 'include' })
+      fetch('/api/v1/people', { credentials: 'include' }),
+      fetch('/api/v1/speedrun', { credentials: 'include' })
     ]);
     
     // Process v1 API responses
-    const [leadsResult, prospectsResult, opportunitiesResult, companiesResult, peopleResult] = await Promise.all([
+    const [leadsResult, prospectsResult, opportunitiesResult, companiesResult, peopleResult, speedrunResult] = await Promise.all([
       leadsResponse.json(),
       prospectsResponse.json(),
       opportunitiesResponse.json(),
       companiesResponse.json(),
-      peopleResponse.json()
+      peopleResponse.json(),
+      speedrunResponse.json()
     ]);
 
     // Check for errors
-    if (!leadsResult.success || !prospectsResult.success || !opportunitiesResult.success || !companiesResult.success || !peopleResult.success) {
+    if (!leadsResult.success || !prospectsResult.success || !opportunitiesResult.success || !companiesResult.success || !peopleResult.success || !speedrunResult.success) {
       throw new Error('One or more v1 API calls failed');
     }
     
@@ -286,7 +291,8 @@ export function useData(
       prospects: prospectsResult.data || [],
       opportunities: opportunitiesResult.data || [],
       companies: companiesResult.data || [],
-      people: peopleResult.data || []
+      people: peopleResult.data || [],
+      speedrunItems: speedrunResult.data || []
     };
 
     console.log('[DATA] API response received:', {

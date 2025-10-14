@@ -580,7 +580,7 @@ export function PipelineTable({
           isOpen={addActionModalOpen}
           onClose={closeAddActionModal}
           onSubmit={handleActionSubmitWrapper}
-          personName={selectedRecord.name || selectedRecord.fullName || ''}
+          personName={selectedRecord.name || selectedRecord.fullName || (selectedRecord.firstName && selectedRecord.lastName ? `${selectedRecord.firstName} ${selectedRecord.lastName}` : '') || ''}
           companyName={selectedRecord.company?.name || selectedRecord.company || ''}
           section={section}
           isLoading={isSubmitting}

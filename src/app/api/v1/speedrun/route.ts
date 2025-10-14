@@ -374,7 +374,7 @@ export async function POST(request: NextRequest) {
     // 🚀 CACHE INVALIDATION: Clear speedrun cache when data changes
     const cacheKey = `speedrun-${context.workspaceId}-${context.userId}-*`;
     try {
-      await cache.invalidateByPattern(cacheKey);
+      await cache.invalidate(cacheKey);
       console.log(`🗑️ [SPEEDRUN API] Invalidated cache for pattern: ${cacheKey}`);
     } catch (error) {
       console.warn('⚠️ [SPEEDRUN API] Cache invalidation failed:', error);

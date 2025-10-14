@@ -1,17 +1,29 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
+import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 
 interface UniversalOverviewTabProps {
   recordType: string;
   record?: any;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalOverviewTab({ recordType, record: recordProp }: UniversalOverviewTabProps) {
+export function UniversalOverviewTab({ recordType, record: recordProp, onSave }: UniversalOverviewTabProps) {
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
+  
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const handleSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
 
   // Show skeleton loader while data is loading
   if (!record) {
@@ -109,6 +121,9 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
     lastAction: record.lastAction || '-',
     nextAction: record.nextAction || 'Schedule follow-up call',
     nextActionDate: record.nextActionDate || '-',
+    
+    // Notes
+    notes: record.notes || '-',
     
     // Metadata
     lastEnrichedAt: record.customFields?.lastEnrichedAt || record.updatedAt || new Date().toISOString(),
@@ -242,21 +257,53 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Name:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.name}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Name:</span>
+                <InlineEditField
+                  value={recordData.name}
+                  field="name"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Title:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.title}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Title:</span>
+                <InlineEditField
+                  value={recordData.title}
+                  field="title"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Company:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.company}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Company:</span>
+                <InlineEditField
+                  value={recordData.company}
+                  field="company"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Department:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.department}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Department:</span>
+                <InlineEditField
+                  value={recordData.department}
+                  field="department"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
             </div>
           </div>
@@ -418,6 +465,18 @@ export function UniversalOverviewTab({ recordType, record: recordProp }: Univers
                 </div>
               </div>
             </div>
+
+            {/* Success Toast */}
+            {showSuccessMessage && (
+              <div className="fixed bottom-4 right-4 z-50">
+                <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
+                  <div className="flex items-center space-x-2">
+                    <span>✓</span>
+                    <span className="text-sm font-medium">{successMessage}</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
     }

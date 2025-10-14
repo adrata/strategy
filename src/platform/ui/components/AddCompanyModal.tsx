@@ -6,6 +6,7 @@ import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { XMarkIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { authFetch } from '@/platform/api-fetch';
 import { getCategoryColors } from '@/platform/config/color-palette';
+import { useUnifiedAuth } from '@/platform/auth';
 
 interface AddCompanyModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ interface AddCompanyModalProps {
 export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'companies' }: AddCompanyModalProps) {
   // Get section-specific colors
   const colors = getCategoryColors(section);
+  const { user } = useUnifiedAuth();
   const [formData, setFormData] = useState({
     name: "",
     website: "",
@@ -71,18 +73,24 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: formData.name,
-          website: formData.website,
-          notes: formData.notes
-        }),
+               body: JSON.stringify({
+                 name: formData.name,
+                 website: formData.website,
+                 notes: formData.notes,
+                 ...(user?.id && { mainSellerId: user.id }) // Only include if user exists
+               }),
+        timeout: 30000 // Increase timeout to 30 seconds
       }, { success: false, error: 'Failed to create company' }); // fallback
 
       console.log('Company creation response:', result);
       
       // Check if the response indicates success
       if (result.success && result.data) {
-        console.log('✅ [AddCompanyModal] Company created successfully');
+        console.log('✅ [AddCompanyModal] Company created successfully', {
+          companyId: result.data.id,
+          companyName: result.data.name,
+          mainSellerId: result.data.mainSellerId
+        });
         
         // Reset form
         setFormData({
@@ -91,14 +99,34 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
           notes: ""
         });
         
-        // Call callback immediately to close modal and refresh list
+        // Call callback to close modal, show success message, and refresh list
         onCompanyAdded(result.data);
       } else {
+        console.error('❌ [AddCompanyModal] Company creation failed:', {
+          result,
+          requestData: {
+            name: formData.name,
+            website: formData.website,
+            notes: formData.notes,
+            mainSellerId: user?.id
+          }
+        });
         throw new Error(result.error || 'Failed to create company');
       }
       
     } catch (error) {
-      console.error('Error creating company:', error);
+      console.error('❌ [AddCompanyModal] Error creating company:', {
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+        requestData: {
+          name: formData.name,
+          website: formData.website,
+          notes: formData.notes,
+          mainSellerId: user?.id
+        },
+        userId: user?.id,
+        userEmail: user?.email
+      });
       alert('Failed to create company. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -178,7 +206,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               type="text"
               value={formData.website}
               onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
-              placeholder="ross.com or https://ross.com"
+              placeholder="example.com or https://example.com"
               className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
             />
           </div>

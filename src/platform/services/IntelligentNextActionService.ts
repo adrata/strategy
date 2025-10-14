@@ -110,7 +110,7 @@ export class IntelligentNextActionService {
             fullName: true,
             jobTitle: true,
             companyId: true,
-            lastContactDate: true,
+            lastActionDate: true,
             globalRank: true,
             company: {
               select: {
@@ -129,7 +129,7 @@ export class IntelligentNextActionService {
           title: person.jobTitle || undefined,
           company: person.company?.name,
           industry: person.company?.industry,
-          lastContactDate: person.lastContactDate
+          lastContactDate: person.lastActionDate
         };
       } else {
         const company = await prisma.companies.findUnique({
@@ -137,7 +137,7 @@ export class IntelligentNextActionService {
           select: {
             name: true,
             industry: true,
-            lastContactDate: true,
+            lastActionDate: true,
             globalRank: true
           }
         });
@@ -148,7 +148,7 @@ export class IntelligentNextActionService {
         entityInfo = {
           name: company.name,
           industry: company.industry || undefined,
-          lastContactDate: company.lastContactDate
+          lastContactDate: company.lastActionDate
         };
       }
 

@@ -179,14 +179,52 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
   // 🎯 NEW SELLER FILTERS: Company Size, Location, Stage
   const getCompanySizeOptions = () => {
-    return [
-      { value: 'all', label: 'All Sizes' },
-      { value: 'startup', label: 'Startup (1-10)' },
-      { value: 'small', label: 'Small (11-50)' },
-      { value: 'medium', label: 'Medium (51-200)' },
-      { value: 'large', label: 'Large (201-1000)' },
-      { value: 'enterprise', label: 'Enterprise (1000+)' }
-    ];
+    const baseOptions = [{ value: 'all', label: 'All Sizes' }];
+    
+    if (!data || !data.length) {
+      return baseOptions;
+    }
+
+    // Check what size ranges actually have data
+    const sizeRanges = {
+      startup: 0,
+      small: 0,
+      medium: 0,
+      large: 0,
+      enterprise: 0
+    };
+
+    data.forEach((record: any) => {
+      // Try numeric employeeCount first
+      const employeeCount = record.employeeCount || record.company?.employeeCount || 0;
+      const empCount = typeof employeeCount === 'string' ? parseInt(employeeCount, 10) : employeeCount;
+      
+      if (empCount > 0) {
+        if (empCount >= 1 && empCount <= 10) sizeRanges.startup++;
+        else if (empCount >= 11 && empCount <= 50) sizeRanges.small++;
+        else if (empCount >= 51 && empCount <= 200) sizeRanges.medium++;
+        else if (empCount >= 201 && empCount <= 1000) sizeRanges.large++;
+        else if (empCount > 1000) sizeRanges.enterprise++;
+      } else {
+        // Fallback: Try to match company.size string
+        const companySize = record.company?.size?.toLowerCase() || '';
+        if (companySize.includes('1-10') || companySize.includes('<10')) sizeRanges.startup++;
+        else if (companySize.includes('11-50') || companySize.includes('1-50')) sizeRanges.small++;
+        else if (companySize.includes('51-200') || companySize.includes('50-200')) sizeRanges.medium++;
+        else if (companySize.includes('201-1000') || companySize.includes('200-1000')) sizeRanges.large++;
+        else if (companySize.includes('1000+') || companySize.includes('5000+') || companySize.includes('10000+')) sizeRanges.enterprise++;
+      }
+    });
+
+    // Only include ranges that have at least 1 company
+    const dynamicOptions = [];
+    if (sizeRanges.startup > 0) dynamicOptions.push({ value: 'startup', label: `Startup (1-10) (${sizeRanges.startup})` });
+    if (sizeRanges.small > 0) dynamicOptions.push({ value: 'small', label: `Small (11-50) (${sizeRanges.small})` });
+    if (sizeRanges.medium > 0) dynamicOptions.push({ value: 'medium', label: `Medium (51-200) (${sizeRanges.medium})` });
+    if (sizeRanges.large > 0) dynamicOptions.push({ value: 'large', label: `Large (201-1000) (${sizeRanges.large})` });
+    if (sizeRanges.enterprise > 0) dynamicOptions.push({ value: 'enterprise', label: `Enterprise (1000+) (${sizeRanges.enterprise})` });
+
+    return [...baseOptions, ...dynamicOptions];
   };
 
   const getLocationOptions = () => {
@@ -242,6 +280,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const companySizeOptions = getCompanySizeOptions();
   const locationOptions = getLocationOptions();
   const stageOptions = getStageOptions();
+
+  // Helper function to check if filter has meaningful data
+  const hasFilterData = (options: {value: string, label: string}[]) => {
+    return options.length > 1; // More than just the "All" option
+  };
 
   // Show priority filter for relevant sections
   const showPriorityFilter = ['leads', 'prospects', 'opportunities', 'speedrun'].includes(section);
@@ -616,11 +659,16 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                   <button
                     onClick={() => {
                       setStatusFilter('all');
-                      setCompanySizeFilter('all');
-                      setLocationFilter('all');
                       onStatusChange?.('all');
-                      onCompanySizeChange?.('all');
-                      onLocationChange?.('all');
+                      // Only reset filters that are actually visible
+                      if (hasFilterData(companySizeOptions)) {
+                        setCompanySizeFilter('all');
+                        onCompanySizeChange?.('all');
+                      }
+                      if (hasFilterData(locationOptions)) {
+                        setLocationFilter('all');
+                        onLocationChange?.('all');
+                      }
                     }}
                     className="text-xs text-[var(--muted)] hover:text-gray-700"
                   >
@@ -653,46 +701,55 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                 </select>
               </div>
 
-              {/* Company Size Filter */}
-              <div className="mb-4">
-                <label className="block text-xs font-medium text-gray-700 mb-2">Company Size</label>
-                <select
-                  value={companySizeFilter}
-                  onChange={(e) => handleCompanySizeChange(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
-                >
-                  {companySizeOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Company Size Filter - Only show if data exists */}
+              {hasFilterData(companySizeOptions) && (
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Company Size</label>
+                  <select
+                    value={companySizeFilter}
+                    onChange={(e) => handleCompanySizeChange(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                  >
+                    {companySizeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
-                      {/* Location Filter */}
-                      <div className="mb-4">
-                        <label className="block text-xs font-medium text-gray-700 mb-2">Location</label>
-                <select
-                  value={locationFilter}
-                  onChange={(e) => handleLocationChange(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
-                >
-                  {locationOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Location Filter - Only show if data exists */}
+              {hasFilterData(locationOptions) && (
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-gray-700 mb-2">Location</label>
+                  <select
+                    value={locationFilter}
+                    onChange={(e) => handleLocationChange(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                  >
+                    {locationOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               {/* Apply/Cancel Buttons */}
               <div className="flex gap-2 pt-2 border-t border-[var(--border)] justify-end">
                 <button
                   onClick={() => {
-                    setCompanySizeFilter('all');
-                    setLocationFilter('all');
-                    onCompanySizeChange?.('all');
-                    onLocationChange?.('all');
+                    // Only reset filters that are actually visible
+                    if (hasFilterData(companySizeOptions)) {
+                      setCompanySizeFilter('all');
+                      onCompanySizeChange?.('all');
+                    }
+                    if (hasFilterData(locationOptions)) {
+                      setLocationFilter('all');
+                      onLocationChange?.('all');
+                    }
                     setIsDropdownOpen(false);
                   }}
                   className="px-3 py-2 text-sm font-medium text-gray-700 bg-[var(--hover)] rounded-md hover:bg-[var(--panel-background)] focus:outline-none focus:ring-2 focus:ring-gray-500"

@@ -5,7 +5,7 @@ import { IntelligentNextActionService } from '@/platform/services/IntelligentNex
 
 /**
  * Clean and normalize website URL
- * Handles various input formats: ross.com, www.ross.com, https://ross.com, https//:ross.com, etc.
+ * Handles various input formats: example.com, www.example.com, https://example.com, https//:example.com, etc.
  */
 function cleanWebsiteUrl(url: string): string {
   if (!url || typeof url !== 'string') {
@@ -251,6 +251,62 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Workspace ID is required', 'VALIDATION_ERROR', 400);
     }
 
+    // Validate userId is present (should be set by auth context)
+    if (!context.userId) {
+      return createErrorResponse('User ID is required', 'VALIDATION_ERROR', 400);
+    }
+
+    // Log context validation
+    console.log('🔍 [V1 COMPANIES API] Context validation:', {
+      hasWorkspaceId: !!context.workspaceId,
+      hasUserId: !!context.userId,
+      hasUserEmail: !!context.userEmail,
+      workspaceId: context.workspaceId,
+      userId: context.userId
+    });
+
+    // Check if current user exists (for mainSellerId assignment)
+    let validatedMainSellerId = null;
+    try {
+      const currentUserExists = await prisma.users.findUnique({
+        where: { id: context.userId },
+        select: { id: true, email: true }
+      });
+      
+      if (currentUserExists) {
+        validatedMainSellerId = currentUserExists.id;
+        console.log('✅ [V1 COMPANIES API] Current user found, will set as mainSeller:', {
+          userId: currentUserExists.id,
+          email: currentUserExists.email
+        });
+      } else {
+        console.warn('⚠️ [V1 COMPANIES API] Current user not in database, mainSellerId will be null:', {
+          userId: context.userId,
+          userEmail: context.userEmail
+        });
+      }
+    } catch (error) {
+      console.warn('⚠️ [V1 COMPANIES API] Could not validate user, mainSellerId will be null:', error);
+    }
+
+    // Validate that the mainSellerId (if provided) exists in the users table
+    if (body.mainSellerId && body.mainSellerId !== context.userId) {
+      console.log('🔍 [V1 COMPANIES API] Validating mainSellerId:', body.mainSellerId);
+      try {
+        const userExists = await prisma.users.findUnique({
+          where: { id: body.mainSellerId },
+          select: { id: true }
+        });
+        if (!userExists) {
+          return createErrorResponse('Invalid mainSellerId: user does not exist', 'VALIDATION_ERROR', 400);
+        }
+        console.log('✅ [V1 COMPANIES API] mainSellerId validation passed');
+      } catch (error) {
+        console.error('❌ [V1 COMPANIES API] Error validating mainSellerId:', error);
+        return createErrorResponse('Error validating mainSellerId', 'VALIDATION_ERROR', 400);
+      }
+    }
+
     // Validate email format if provided
     if (body.email && typeof body.email === 'string' && body.email.trim().length > 0) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -287,8 +343,28 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Log all data before transaction for debugging
+    console.log('🔍 [V1 COMPANIES API] Pre-transaction data:', {
+      context: {
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+        userEmail: context.userEmail
+      },
+      requestBody: {
+        name: body.name,
+        website: body.website,
+        notes: body.notes,
+        mainSellerId: body.mainSellerId
+      },
+      timestamp: new Date().toISOString()
+    });
+
     // Create company and action in a transaction
-    const result = await prisma.$transaction(async (tx) => {
+    let result;
+    try {
+      result = await prisma.$transaction(async (tx) => {
+      console.log('🔍 [V1 COMPANIES API] Starting company creation...');
+      
       // Create company
       const company = await tx.companies.create({
         data: {
@@ -305,15 +381,14 @@ export async function POST(request: NextRequest) {
           status: body.status || 'ACTIVE',
           priority: body.priority || 'MEDIUM',
           workspaceId: context.workspaceId,
-          mainSellerId: body.mainSellerId,
+          mainSellerId: validatedMainSellerId || body.mainSellerId || null, // Use validated user or null
           notes: body.notes,
           opportunityStage: body.opportunityStage,
           opportunityAmount: body.opportunityAmount,
           opportunityProbability: body.opportunityProbability,
           expectedCloseDate: body.expectedCloseDate ? new Date(body.expectedCloseDate) : null,
           actualCloseDate: body.actualCloseDate ? new Date(body.actualCloseDate) : null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          updatedAt: new Date(), // Provide updatedAt value since schema doesn't have @updatedAt
         },
         include: {
           mainSeller: {
@@ -326,7 +401,14 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      console.log('✅ [V1 COMPANIES API] Company created successfully:', {
+        companyId: company.id,
+        companyName: company.name,
+        mainSellerId: company.mainSellerId
+      });
+
       // Create action for company creation
+      console.log('🔍 [V1 COMPANIES API] Creating action record...');
       const action = await tx.actions.create({
         data: {
           type: 'company_created',
@@ -338,13 +420,27 @@ export async function POST(request: NextRequest) {
           userId: context.userId,
           companyId: company.id,
           completedAt: new Date(),
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          updatedAt: new Date(), // Provide updatedAt value since schema doesn't have @updatedAt
         },
       });
 
+      console.log('✅ [V1 COMPANIES API] Action created successfully:', {
+        actionId: action.id,
+        actionType: action.type,
+        companyId: action.companyId
+      });
+
       return { company, action };
-    });
+      });
+    } catch (transactionError) {
+      console.error('❌ [V1 COMPANIES API] Transaction failed:', {
+        error: transactionError,
+        errorMessage: transactionError instanceof Error ? transactionError.message : String(transactionError),
+        errorStack: transactionError instanceof Error ? transactionError.stack : undefined,
+        prismaCode: transactionError && typeof transactionError === 'object' && 'code' in transactionError ? transactionError.code : undefined
+      });
+      throw transactionError; // Re-throw to be caught by outer catch block
+    }
 
     const company = result.company;
 
@@ -359,19 +455,21 @@ export async function POST(request: NextRequest) {
       console.warn('⚠️ [COMPANIES API] Cache invalidation failed:', error);
     }
 
-    // Generate initial next action using AI service
-    try {
-      const nextActionService = new IntelligentNextActionService({
-        workspaceId: context.workspaceId,
-        userId: context.userId
-      });
-      
-      await nextActionService.generateNextAction(company.id, 'company');
-      console.log('✅ [COMPANIES API] Generated initial next action for new company', company.id);
-    } catch (error) {
-      console.error('⚠️ [COMPANIES API] Failed to generate initial next action:', error);
-      // Don't fail the request if next action generation fails
-    }
+    // Generate initial next action using AI service (async, don't await)
+    setImmediate(async () => {
+      try {
+        const nextActionService = new IntelligentNextActionService({
+          workspaceId: context.workspaceId,
+          userId: context.userId
+        });
+        
+        await nextActionService.generateNextAction(company.id, 'company');
+        console.log('✅ [COMPANIES API] Generated initial next action for new company', company.id);
+      } catch (error) {
+        console.error('⚠️ [COMPANIES API] Failed to generate initial next action:', error);
+        // Don't fail the request if next action generation fails
+      }
+    });
 
     return createSuccessResponse(company, {
       message: 'Company created successfully',
@@ -384,6 +482,15 @@ export async function POST(request: NextRequest) {
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return createErrorResponse('Company with this information already exists', 'DUPLICATE_COMPANY', 400);
     }
+    
+    // Log full Prisma error details for debugging
+    console.error('❌ [V1 COMPANIES API] Detailed error:', {
+      error,
+      errorName: error instanceof Error ? error.name : 'Unknown',
+      errorMessage: error instanceof Error ? error.message : String(error),
+      errorStack: error instanceof Error ? error.stack : undefined,
+      prismaCode: error && typeof error === 'object' && 'code' in error ? error.code : undefined,
+    });
     
     return logAndCreateErrorResponse(
       error,

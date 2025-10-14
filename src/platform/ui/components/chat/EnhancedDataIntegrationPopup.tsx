@@ -196,21 +196,44 @@ export function EnhancedDataIntegrationPopup({
     
     setIsLoading(true);
     try {
-      const response = await fetch('/api/data/search', {
-        method: 'POST',
+      let endpoint = '';
+      let params = new URLSearchParams();
+      
+      // Map categories to v1 endpoints
+      switch (activeCategory) {
+        case 'leads':
+          endpoint = '/api/v1/people';
+          params.set('status', 'LEAD');
+          if (searchQuery) params.set('search', searchQuery);
+          params.set('limit', '20');
+          break;
+        case 'people':
+          endpoint = '/api/v1/people';
+          if (searchQuery) params.set('search', searchQuery);
+          params.set('limit', '20');
+          break;
+        case 'companies':
+          endpoint = '/api/v1/companies';
+          if (searchQuery) params.set('search', searchQuery);
+          params.set('limit', '20');
+          break;
+        case 'opportunities':
+          // TODO: Add v1 opportunities endpoint when available
+          endpoint = '/api/data/search';
+          break;
+        default:
+          endpoint = '/api/data/search';
+      }
+
+      const response = await fetch(`${endpoint}?${params.toString()}`, {
+        method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          workspaceId: workspace.id,
-          userId: user?.id,
-          category: activeCategory,
-          query: searchQuery,
-          limit: 20
-        })
+        credentials: 'include'
       });
 
       if (response.ok) {
         const data = await response.json();
-        setSearchResults(data.results || []);
+        setSearchResults(data.data || data.results || []);
       } else {
         console.error('Failed to search data:', response.statusText);
         setSearchResults([]);

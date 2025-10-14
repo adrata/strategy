@@ -18,7 +18,7 @@ interface AddModalProps {
   refreshData?: () => Promise<void>;
 }
 
-export function AddModal({ refreshData }: AddModalProps = {}) {
+export const AddModal = React.memo(function AddModal({ refreshData }: AddModalProps = {}) {
   console.log('🔍 [AddModal] Component rendered');
   
   const {
@@ -275,11 +275,11 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
   const searchContacts = async (query: string) => {
     setIsSearchingContacts(true);
     try {
-      const response = await authFetch(`/api/data/search`);
+      const response = await authFetch(`/api/v1/people?search=${encodeURIComponent(query)}&limit=10`);
       
       if (response.ok) {
         const data = await response.json();
-        setContactSearchResults(data.contacts || []);
+        setContactSearchResults(data.data || []);
       }
     } catch (error) {
       console.error('Error searching contacts:', error);
@@ -325,7 +325,7 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
         authUser: authUser
       });
       
-      const response = await authFetch(`/api/data/search`);
+      const response = await authFetch(`/api/v1/companies?search=${encodeURIComponent(query)}&limit=10`);
       
       if (response.ok) {
         const data = await response.json();
@@ -1584,6 +1584,13 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
           setIsAddModalOpen(false);
         }}
         onLeadAdded={(lead) => {
+          console.log('🎉 [AddModal] onLeadAdded called with lead:', lead);
+          setShowSuccessMessage(true);
+          setSuccessMessage(`Lead "${lead.fullName}" created successfully!`);
+          console.log('🎉 [AddModal] Success message state set:', {
+            showSuccessMessage: true,
+            successMessage: `Lead "${lead.fullName}" created successfully!`
+          });
           setShowAddLeadModal(false);
           setIsAddModalOpen(false);
           if (refreshData) {
@@ -1627,4 +1634,4 @@ export function AddModal({ refreshData }: AddModalProps = {}) {
       />
     </>
   );
-}
+});

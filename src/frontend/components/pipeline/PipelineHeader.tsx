@@ -95,6 +95,24 @@ export function PipelineHeader({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
+  // Debug: Track component mount/unmount
+  useEffect(() => {
+    console.log(`🏗️ [PipelineHeader] Component MOUNTED for section: ${section}`);
+    return () => {
+      console.log(`💥 [PipelineHeader] Component UNMOUNTED for section: ${section}`);
+    };
+  }, [section]);
+
+  // Debug: Track success message state changes
+  useEffect(() => {
+    console.log(`🔔 [PipelineHeader] showSuccessMessage state changed to:`, showSuccessMessage);
+    if (showSuccessMessage) {
+      console.log(`✅ [PipelineHeader] SUCCESS MESSAGE IS NOW VISIBLE`);
+    } else {
+      console.log(`❌ [PipelineHeader] SUCCESS MESSAGE IS NOW HIDDEN`);
+    }
+  }, [showSuccessMessage]);
+
   // Function to open the correct modal based on section
   const openAddModal = () => {
     console.log('🔧 [Add Button] Opening modal for section:', section);
@@ -123,8 +141,15 @@ export function PipelineHeader({
   };
 
   // Generic success handler for all modals
-  const handleAddSuccess = () => {
-    // Close all modals
+  const handleAddSuccess = (data?: any) => {
+    console.log(`✅ [PipelineHeader] ========== handleAddSuccess CALLED ========== `);
+    console.log(`✅ [PipelineHeader] Section: ${section}`);
+    console.log(`✅ [PipelineHeader] Data received:`, data);
+    console.log(`✅ [PipelineHeader] Current showSuccessMessage state:`, showSuccessMessage);
+    console.log(`✅ [PipelineHeader] Component instance ID:`, Math.random().toString(36).substr(2, 9));
+    
+    // Close all modals immediately
+    console.log(`🚪 [PipelineHeader] Closing modals now`);
     setShowAddLeadModal(false);
     setShowAddProspectModal(false);
     setShowAddOpportunityModal(false);
@@ -132,14 +157,20 @@ export function PipelineHeader({
     setShowAddPersonModal(false);
     setSelectedRecord(null);
     
-    // Refresh the list
-    onRefresh?.();
+    // Clear cache and refresh the list
+    console.log(`🔄 [PipelineHeader] Calling onClearCache for section: ${section}`);
+    onClearCache?.();
     
-    // Show success message after modal closes
+    // Show success message after a brief delay to ensure it's visible
     setTimeout(() => {
+      console.log(`🎉 [PipelineHeader] Setting showSuccessMessage to TRUE (after 100ms delay)`);
+      console.log(`🎉 [PipelineHeader] Current component instance:`, Math.random().toString(36).substr(2, 9));
       setShowSuccessMessage(true);
+      console.log(`🎉 [PipelineHeader] showSuccessMessage has been set to true`);
+      
       // Hide success message after 3 seconds
       setTimeout(() => {
+        console.log(`⏰ [PipelineHeader] Hiding success message for section: ${section}`);
         setShowSuccessMessage(false);
       }, 3000);
     }, 100);
@@ -1283,24 +1314,27 @@ export function PipelineHeader({
         section={section}
       />
 
+
       {/* Success Message */}
       {showSuccessMessage && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[70] rounded-lg shadow-lg px-4 py-2 border"
-             style={{
-               backgroundColor: getCategoryColors(section).bg,
-               borderColor: getCategoryColors(section).border
-             }}>
+        <div 
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[99999] bg-green-500 border-2 border-green-600 rounded-lg shadow-2xl px-6 py-4"
+          style={{ 
+            pointerEvents: 'none',
+            animation: 'slideInFromTop 0.3s ease-out'
+          }}
+        >
           <div className="flex items-center">
-            <svg className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor"
-                 style={{ color: getCategoryColors(section).primary }}>
+            <svg className="h-6 w-6 text-white mr-3" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <p className="text-sm font-medium" style={{ color: getCategoryColors(section).text }}>
+            <p className="text-lg text-white font-bold">
               {section.charAt(0).toUpperCase() + section.slice(1)} created successfully!
             </p>
           </div>
         </div>
       )}
+      
 
     </>
   );

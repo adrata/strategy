@@ -148,14 +148,39 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
     
     setIsSearching(true);
     try {
-      // Get workspace context for API call
-      const { workspaceId, userId } = await WorkspaceDataRouter.getApiParams();
+      let endpoint = '';
+      let params = new URLSearchParams();
       
-      const response = await authFetch(`/api/search/${type}`);
+      // Map types to v1 endpoints
+      switch (type) {
+        case 'people':
+          endpoint = '/api/v1/people';
+          params.set('search', query);
+          params.set('limit', '20');
+          break;
+        case 'companies':
+          endpoint = '/api/v1/companies';
+          params.set('search', query);
+          params.set('limit', '20');
+          break;
+        case 'leads':
+          endpoint = '/api/v1/people';
+          params.set('search', query);
+          params.set('status', 'LEAD');
+          params.set('limit', '20');
+          break;
+        default:
+          // Fallback to legacy endpoint for other types
+          endpoint = `/api/data/search?type=${type}&q=${encodeURIComponent(query)}&limit=20`;
+      }
+
+      const response = await authFetch(endpoint.includes('?') ? endpoint : `${endpoint}?${params.toString()}`);
       const data = await response.json();
       
-      if (data.success) {
-        setSearchResults(data.results || []);
+      if (data.success || data.data) {
+        setSearchResults(data.data || data.results || []);
+      } else {
+        setSearchResults([]);
       }
     } catch (error) {
       console.error('Search error:', error);

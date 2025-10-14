@@ -1669,62 +1669,80 @@ export function UniversalRecordTemplate({
         workspaceId: record?.workspaceId
       });
       
-      // Collect form data from all tabs using the modal element
-      const modalElement = document.querySelector('[data-edit-modal]');
-      if (!modalElement) {
-        throw new Error('Edit modal element not found.');
+      // Collect form data using FormData API
+      const formElement = document.getElementById('edit-record-form') as HTMLFormElement;
+      if (!formElement) {
+        throw new Error('Edit record form not found.');
       }
 
-      const formData = {
-        // Basic info (Overview tab) - mapped to streamlined schema fields
-        firstName: (modalElement.querySelector('input[defaultValue*="' + (record?.firstName || '') + '"]') as HTMLInputElement)?.value || record?.firstName,
-        lastName: (modalElement.querySelector('input[defaultValue*="' + (record?.lastName || '') + '"]') as HTMLInputElement)?.value || record?.lastName,
-        fullName: (modalElement.querySelector('input[defaultValue*="' + (record?.name || record?.fullName || '') + '"]') as HTMLInputElement)?.value || record?.fullName,
-        jobTitle: (modalElement.querySelector('input[defaultValue*="' + (record?.title || record?.jobTitle || '') + '"]') as HTMLInputElement)?.value || record?.jobTitle,
-        department: (modalElement.querySelector('input[defaultValue*="' + (record?.department || '') + '"]') as HTMLInputElement)?.value || record?.department,
+      const formData = new FormData(formElement);
+      
+      // Helper function to safely get form values
+      const getFormValue = (name: string): string => {
+        const value = formData.get(name);
+        return value ? value.toString() : '';
+      };
+
+      const getFormNumber = (name: string): number => {
+        const value = formData.get(name);
+        return value ? parseInt(value.toString()) || 0 : 0;
+      };
+
+      const getFormBoolean = (name: string): boolean => {
+        const value = formData.get(name);
+        return value === 'yes';
+      };
+
+      // Build update payload from form data
+      const updatePayload = {
+        // Basic info (Overview tab)
+        firstName: getFormValue('firstName'),
+        lastName: getFormValue('lastName'),
+        jobTitle: getFormValue('jobTitle'),
+        department: getFormValue('department'),
         
-        // Speedrun Summary (Overview tab)
-        status: (modalElement.querySelector('select[defaultValue*="' + (record?.status || 'active') + '"]') as HTMLSelectElement)?.value || record?.status,
-        engagementLevel: (modalElement.querySelector('select[defaultValue*="' + (record?.engagementLevel || 'medium') + '"]') as HTMLSelectElement)?.value || record?.engagementLevel,
-        influenceLevel: (modalElement.querySelector('select[defaultValue*="' + (record?.influenceLevel || 'medium') + '"]') as HTMLSelectElement)?.value || record?.influenceLevel,
-        decisionPower: (modalElement.querySelector('select[defaultValue*="' + (record?.decisionPower || 'limited') + '"]') as HTMLSelectElement)?.value || record?.decisionPower,
-        priority: (modalElement.querySelector('select[defaultValue*="' + (record?.priority || 'medium') + '"]') as HTMLSelectElement)?.value || record?.priority,
-        isBuyerGroupMember: (modalElement.querySelector('select[defaultValue*="' + (record?.isBuyerGroupMember ? 'yes' : 'no') + '"]') as HTMLSelectElement)?.value === 'yes',
+        // Bio/Status fields
+        status: getFormValue('status'),
+        engagementLevel: getFormValue('engagementLevel'),
+        influenceLevel: getFormValue('influenceLevel'),
+        decisionPower: getFormValue('decisionPower'),
+        priority: getFormValue('priority'),
+        isBuyerGroupMember: getFormBoolean('isBuyerGroupMember'),
         
         // Intelligence tab
-        engagementStrategy: (modalElement.querySelector('select[defaultValue*="' + (record?.engagementStrategy || 'standard') + '"]') as HTMLSelectElement)?.value || record?.engagementStrategy,
-        buyerGroupOptimized: (modalElement.querySelector('select[defaultValue*="' + (record?.buyerGroupOptimized ? 'yes' : 'no') + '"]') as HTMLSelectElement)?.value === 'yes',
-        seniority: (modalElement.querySelector('select[defaultValue*="' + (record?.seniority || 'mid-level') + '"]') as HTMLSelectElement)?.value || record?.seniority,
-        communicationStyle: (modalElement.querySelector('select[defaultValue*="' + (record?.communicationStyle || 'professional') + '"]') as HTMLSelectElement)?.value || record?.communicationStyle,
-        engagementScore: parseInt((modalElement.querySelector('input[type="number"][defaultValue*="' + (record?.engagementScore || 0) + '"]') as HTMLInputElement)?.value || '0'),
-        influenceScore: parseInt((modalElement.querySelector('input[type="number"][defaultValue*="' + (record?.influenceScore || 0) + '"]') as HTMLInputElement)?.value || '0'),
-        decisionPowerScore: parseInt((modalElement.querySelector('input[type="number"][defaultValue*="' + (record?.decisionPowerScore || 0) + '"]') as HTMLInputElement)?.value || '0'),
-        relationshipWarmth: (modalElement.querySelector('select[defaultValue*="' + (record?.relationshipWarmth || 'cold') + '"]') as HTMLSelectElement)?.value || record?.relationshipWarmth,
+        engagementStrategy: getFormValue('engagementStrategy'),
+        buyerGroupOptimized: getFormBoolean('buyerGroupOptimized'),
+        seniority: getFormValue('seniority'),
+        communicationStyle: getFormValue('communicationStyle'),
+        engagementScore: getFormNumber('engagementScore'),
+        influenceScore: getFormNumber('influenceScore'),
+        decisionPowerScore: getFormNumber('decisionPowerScore'),
+        relationshipWarmth: getFormValue('relationshipWarmth'),
         
         // Career tab
-        industry: (modalElement.querySelector('input[defaultValue*="' + (record?.industry || '') + '"]') as HTMLInputElement)?.value || record?.industry,
-        yearsExperience: parseInt((modalElement.querySelector('input[type="number"][defaultValue*="' + (record?.yearsExperience || '') + '"]') as HTMLInputElement)?.value || '0'),
-        educationLevel: (modalElement.querySelector('select[defaultValue*="' + (record?.educationLevel || '') + '"]') as HTMLSelectElement)?.value || record?.educationLevel,
-        skills: (modalElement.querySelector('input[placeholder*="Comma-separated skills"]') as HTMLInputElement)?.value || record?.skills,
-        certifications: (modalElement.querySelector('input[placeholder*="Comma-separated certifications"]') as HTMLInputElement)?.value || record?.certifications,
+        industry: getFormValue('industry'),
+        yearsExperience: getFormNumber('yearsExperience'),
+        educationLevel: getFormValue('educationLevel'),
+        skills: getFormValue('skills'),
+        certifications: getFormValue('certifications'),
         
-        // Activity tab (Contact info) - mapped to streamlined schema fields
-        email: (modalElement.querySelector('input[type="email"]') as HTMLInputElement)?.value || record?.email,
-        workEmail: (modalElement.querySelector('input[type="email"]') as HTMLInputElement)?.value || record?.workEmail,
-        phone: (modalElement.querySelector('input[type="tel"]') as HTMLInputElement)?.value || record?.phone,
-        mobilePhone: (modalElement.querySelector('input[type="tel"]') as HTMLInputElement)?.value || record?.mobilePhone,
-        linkedinUrl: (modalElement.querySelector('input[type="url"]') as HTMLInputElement)?.value || record?.linkedinUrl,
-        city: (modalElement.querySelector('input[defaultValue*="' + (record?.location || record?.city || '') + '"]') as HTMLInputElement)?.value || record?.city,
-        lastContactDate: (modalElement.querySelector('input[type="date"]') as HTMLInputElement)?.value || record?.lastContactDate,
-        nextActionDate: (modalElement.querySelectorAll('input[type="date"]')[1] as HTMLInputElement)?.value || record?.nextActionDate,
-        nextAction: (modalElement.querySelector('input[defaultValue*="' + (record?.nextAction || '') + '"]') as HTMLInputElement)?.value || record?.nextAction,
-        bestContactTime: (modalElement.querySelector('select[defaultValue*="' + (record?.bestContactTime || 'morning') + '"]') as HTMLSelectElement)?.value || record?.bestContactTime,
+        // Contact info
+        email: getFormValue('email'),
+        phone: getFormValue('phone'),
+        linkedinUrl: getFormValue('linkedinUrl'),
+        city: getFormValue('city'),
+        lastContactDate: getFormValue('lastContactDate'),
+        nextActionDate: getFormValue('nextActionDate'),
+        nextAction: getFormValue('nextAction'),
+        bestContactTime: getFormValue('bestContactTime'),
         
         // Notes tab
-        notes: (modalElement.querySelector('textarea') as HTMLTextAreaElement)?.value || record?.notes,
-        tags: (modalElement.querySelector('input[placeholder*="Comma-separated tags"]') as HTMLInputElement)?.value || record?.tags,
-        valueDriver: (modalElement.querySelector('input[placeholder*="What drives value"]') as HTMLInputElement)?.value || record?.valueDriver,
+        notes: getFormValue('notes'),
+        tags: getFormValue('tags'),
+        valueDriver: getFormValue('valueDriver'),
       };
+
+      console.log('📝 [DEBUG] Form data collected:', updatePayload);
       
       // Make API call to update the record using v1 APIs
       let result: any;
@@ -1738,7 +1756,7 @@ export function UniversalRecordTemplate({
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(updatePayload),
           });
         } else if (recordType === 'companies') {
           // Use v1 companies API
@@ -1748,7 +1766,7 @@ export function UniversalRecordTemplate({
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(updatePayload),
           });
         } else {
           // For other record types, try to use appropriate v1 API or throw error
@@ -2096,12 +2114,12 @@ export function UniversalRecordTemplate({
           console.log(`🏠 [UNIVERSAL] Rendering overview tab for ${recordType}`);
           return renderTabWithErrorBoundary(
             recordType === 'companies' ? 
-              <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} /> :
+              <UniversalCompanyTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               recordType === 'people' || recordType === 'speedrun' ?
-                <PersonOverviewTab key={activeTab} record={record} recordType={recordType} /> :
+                <PersonOverviewTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               recordType === 'prospects' ?
-                <ProspectOverviewTab key={activeTab} record={record} recordType={recordType} /> :
-                <UniversalOverviewTab key={activeTab} record={record} recordType={recordType} />
+                <ProspectOverviewTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
+                <UniversalOverviewTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'career':
           console.log(`💼 [UNIVERSAL] Rendering career tab for ${recordType}`);
@@ -2719,7 +2737,7 @@ export function UniversalRecordTemplate({
             </div>
 
             {/* Tab Content */}
-            <div className="space-y-4">
+            <form id="edit-record-form" onSubmit={(e) => e.preventDefault()} className="space-y-4">
               {activeEditTab === 'overview' && (
                 <div className="space-y-6">
                   {recordType === 'companies' ? (
@@ -2732,6 +2750,7 @@ export function UniversalRecordTemplate({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
                             <input
                               type="text"
+                              name="companyName"
                               defaultValue={formatFieldValue(record?.name || record?.companyName, '')}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="Enter company name"
@@ -2742,6 +2761,7 @@ export function UniversalRecordTemplate({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Legal Name</label>
                             <input
                               type="text"
+                              name="legalName"
                               defaultValue={formatFieldValue(record?.legalName, '')}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="-"
@@ -2751,6 +2771,7 @@ export function UniversalRecordTemplate({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
                             <input
                               type="url"
+                              name="website"
                               defaultValue={formatFieldValue(record?.website, '')}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="-"
@@ -2760,6 +2781,7 @@ export function UniversalRecordTemplate({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                             <input
                               type="tel"
+                              name="phone"
                               defaultValue={formatFieldValue(record?.phone, '')}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="-"
@@ -2769,6 +2791,7 @@ export function UniversalRecordTemplate({
                         <div className="mt-4">
                           <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                           <textarea
+                            name="description"
                             defaultValue={formatFieldValue(record?.description, '')}
                             rows={3}
                             className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -2785,14 +2808,16 @@ export function UniversalRecordTemplate({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
                             <input
                               type="text"
+                              name="industry"
                               defaultValue={formatFieldValue(record?.industry, '')}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="-"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Company Size</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Employee Count</label>
                             <select
+                              name="size"
                               defaultValue={record?.size || ''}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -2809,6 +2834,7 @@ export function UniversalRecordTemplate({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Founded Year</label>
                             <input
                               type="number"
+                              name="foundedYear"
                               min="1800"
                               max="2024"
                               defaultValue={formatFieldValue(record?.foundedYear, '')}
@@ -2819,6 +2845,7 @@ export function UniversalRecordTemplate({
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                             <select
+                              name="companyStatus"
                               defaultValue={record?.status || 'ACTIVE'}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -2838,18 +2865,30 @@ export function UniversalRecordTemplate({
                         <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                             <input
                               type="text"
-                              defaultValue={formatFieldValue(record?.name || record?.fullName, '')}
+                              name="firstName"
+                              defaultValue={formatFieldValue(record?.firstName, '')}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder={formatFieldValue(record?.name || record?.fullName) ? '' : '-'}
+                              placeholder={formatFieldValue(record?.firstName) ? '' : '-'}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                            <input
+                              type="text"
+                              name="lastName"
+                              defaultValue={formatFieldValue(record?.lastName, '')}
+                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder={formatFieldValue(record?.lastName) ? '' : '-'}
                             />
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                             <input
                               type="text"
+                              name="jobTitle"
                               defaultValue={formatFieldValue(record?.title || record?.jobTitle, '')}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder={formatFieldValue(record?.title || record?.jobTitle) ? '' : '-'}
@@ -2871,6 +2910,7 @@ export function UniversalRecordTemplate({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
                             <input
                               type="text"
+                              name="department"
                               defaultValue={formatFieldValue(record?.department, '')}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder={formatFieldValue(record?.department) ? '' : '-'}
@@ -2886,6 +2926,7 @@ export function UniversalRecordTemplate({
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Current Status</label>
                             <select
+                              name="status"
                               defaultValue={record?.status || 'active'}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -2898,6 +2939,7 @@ export function UniversalRecordTemplate({
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Level</label>
                             <select
+                              name="engagementLevel"
                               defaultValue={record?.engagementLevel || 'medium'}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -2909,6 +2951,7 @@ export function UniversalRecordTemplate({
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Influence Level</label>
                             <select
+                              name="influenceLevel"
                               defaultValue={record?.influenceLevel || 'medium'}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -2920,6 +2963,7 @@ export function UniversalRecordTemplate({
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Decision Power</label>
                             <select
+                              name="decisionPower"
                               defaultValue={record?.decisionPower || 'limited'}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -2931,6 +2975,7 @@ export function UniversalRecordTemplate({
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
                             <select
+                              name="priority"
                               defaultValue={record?.priority || 'medium'}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -2942,6 +2987,7 @@ export function UniversalRecordTemplate({
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Group Member</label>
                             <select
+                              name="isBuyerGroupMember"
                               defaultValue={record?.isBuyerGroupMember ? 'yes' : 'no'}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -2965,6 +3011,7 @@ export function UniversalRecordTemplate({
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Strategy</label>
                         <select
+                          name="engagementStrategy"
                           defaultValue={record?.engagementStrategy || 'standard'}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
@@ -2977,6 +3024,7 @@ export function UniversalRecordTemplate({
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Buyer Group Optimized</label>
                         <select
+                          name="buyerGroupOptimized"
                           defaultValue={record?.buyerGroupOptimized ? 'yes' : 'no'}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
@@ -2987,6 +3035,7 @@ export function UniversalRecordTemplate({
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Seniority</label>
                         <select
+                          name="seniority"
                           defaultValue={record?.seniority || 'mid-level'}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
@@ -2999,6 +3048,7 @@ export function UniversalRecordTemplate({
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Communication Style</label>
                         <select
+                          name="communicationStyle"
                           defaultValue={record?.communicationStyle || 'professional'}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
@@ -3019,6 +3069,7 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Score</label>
                         <input
                           type="number"
+                          name="engagementScore"
                           min="0"
                           max="100"
                           defaultValue={record?.engagementScore || ''}
@@ -3030,6 +3081,7 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Influence Score</label>
                         <input
                           type="number"
+                          name="influenceScore"
                           min="0"
                           max="100"
                           defaultValue={record?.influenceScore || ''}
@@ -3041,6 +3093,7 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Decision Power Score</label>
                         <input
                           type="number"
+                          name="decisionPowerScore"
                           min="0"
                           max="100"
                           defaultValue={record?.decisionPowerScore || ''}
@@ -3051,6 +3104,7 @@ export function UniversalRecordTemplate({
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Relationship Warmth</label>
                         <select
+                          name="relationshipWarmth"
                           defaultValue={record?.relationshipWarmth || 'cold'}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
@@ -3074,6 +3128,7 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
                         <input
                           type="text"
+                          name="careerJobTitle"
                           defaultValue={formatFieldValue(record?.title || record?.jobTitle, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.title || record?.jobTitle) ? '' : '-'}
@@ -3095,6 +3150,7 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
                         <input
                           type="text"
+                          name="careerDepartment"
                           defaultValue={formatFieldValue(record?.department, '')}
                           className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.department) ? '' : '-'}
@@ -3395,7 +3451,7 @@ export function UniversalRecordTemplate({
                   </div>
                 </div>
               )}
-            </div>
+            </form>
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-[var(--border)]">
@@ -3904,7 +3960,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Company Size</label>
+              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Employee Count</label>
               <InlineEditField
                 value={record?.companySize || record?.employeeCount || ''}
                 field="companySize"
@@ -3998,6 +4054,7 @@ function CompanyTab({ record, recordType }: { record: any; recordType: string })
 
 
 export function NotesTab({ record, recordType }: { record: any; recordType: string }) {
+  const { updateCurrentRecord } = useRecordContext();
   // Initialize notes instantly from record prop
   const getInitialNotes = () => {
     if (record?.notes) {
@@ -4010,10 +4067,6 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
     return '';
   };
 
-  const [notes, setNotes] = React.useState<string>(getInitialNotes);
-  const [saveStatus, setSaveStatus] = React.useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  const [lastSavedAt, setLastSavedAt] = React.useState<Date | null>(null);
-
   // Utility functions for notes statistics
   const getWordCount = (text: string) => {
     if (!text || text.trim().length === 0) return 0;
@@ -4024,23 +4077,13 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
     return text ? text.length : 0;
   };
 
-  const formatTimeAgo = (date: Date) => {
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
-    if (diffInSeconds < 60) {
-      return `${diffInSeconds}s ago`;
-    } else if (diffInSeconds < 3600) {
-      const minutes = Math.floor(diffInSeconds / 60);
-      return `${minutes}m ago`;
-    } else if (diffInSeconds < 86400) {
-      const hours = Math.floor(diffInSeconds / 3600);
-      return `${hours}h ago`;
-    } else {
-      const days = Math.floor(diffInSeconds / 86400);
-      return `${days}d ago`;
-    }
-  };
+  const [notes, setNotes] = React.useState<string>(getInitialNotes);
+  const [saveStatus, setSaveStatus] = React.useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [lastSavedAt, setLastSavedAt] = React.useState<Date | null>(
+    record?.updatedAt ? new Date(record.updatedAt) : null
+  );
+  const [lastSavedNotes, setLastSavedNotes] = React.useState<string>(getInitialNotes);
+
 
   // Silently refresh notes from API in background (no loading state)
   React.useEffect(() => {
@@ -4073,6 +4116,10 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
             // This prevents overwriting user changes during active editing
             if (freshNotes !== notes && saveStatus !== 'saving') {
               setNotes(freshNotes);
+              setLastSavedNotes(freshNotes);
+              if (result.data.updatedAt) {
+                setLastSavedAt(new Date(result.data.updatedAt));
+              }
               console.log('✅ [NOTES] Silently updated notes:', { length: freshNotes.length });
             }
           }
@@ -4094,9 +4141,9 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
       return;
     }
 
-    // Prevent saving if content hasn't changed
-    if (notesContent === notes && saveStatus !== 'error') {
-      console.log('🔄 [NOTES] Content unchanged, skipping save');
+    // Prevent saving if content hasn't changed since last save
+    if (notesContent === lastSavedNotes && saveStatus !== 'error') {
+      console.log('🔄 [NOTES] Content unchanged since last save, skipping save');
       return;
     }
 
@@ -4134,8 +4181,12 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
 
       setSaveStatus('saved');
       setLastSavedAt(new Date());
-      // Clear saved status after 2 seconds
-      setTimeout(() => setSaveStatus('idle'), 2000);
+      setLastSavedNotes(notesContent);
+      
+      // Update the record context with the new notes
+      updateCurrentRecord({ notes: notesContent });
+      
+      // Keep saved status persistent - don't auto-clear
       
     } catch (error) {
       console.error('❌ [NOTES] Error saving notes:', error);
@@ -4146,45 +4197,10 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
       // Show user-friendly error message
       console.warn('⚠️ [NOTES] Save failed - changes will be retried automatically');
     }
-  }, [record?.id, recordType, notes, saveStatus]);
+  }, [record?.id, recordType, lastSavedNotes, saveStatus]);
 
   return (
     <div className="h-full flex flex-col">
-      {/* Notes Statistics Header */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border)] bg-[var(--background)]">
-        <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
-          {lastSavedAt && (
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Last saved {formatTimeAgo(lastSavedAt)}
-            </span>
-          )}
-          <span>{getWordCount(notes)} {getWordCount(notes) === 1 ? 'word' : 'words'}</span>
-          <span>{getCharacterCount(notes)} characters</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {saveStatus === 'saving' && (
-            <span className="text-xs text-blue-600 flex items-center gap-1">
-              <div className="w-3 h-3 border border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              Saving...
-            </span>
-          )}
-          {saveStatus === 'saved' && (
-            <span className="text-xs text-green-600 flex items-center gap-1">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Saved
-            </span>
-          )}
-          {saveStatus === 'error' && (
-            <span className="text-xs text-red-600 flex items-center gap-1">
-              <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-              Save failed
-            </span>
-          )}
-        </div>
-      </div>
-      
-      {/* Notes Editor */}
       <div className="flex-1">
         <NotesEditor
           value={notes}
@@ -4197,6 +4213,23 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
           lastSavedAt={lastSavedAt}
           className="h-full"
         />
+      </div>
+
+      {/* Stats Footer */}
+      <div className="px-4 py-2 border-t border-[var(--border)] bg-[var(--background)]">
+        <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+          <div className="flex items-center gap-4">
+            <span>{getWordCount(notes)} words</span>
+            <span>{getCharacterCount(notes)} characters</span>
+          </div>
+          <div className="text-[var(--muted)]">
+            {notes.length > 0 && (
+              <span>
+                {Math.ceil(getWordCount(notes) / 200)} min read
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

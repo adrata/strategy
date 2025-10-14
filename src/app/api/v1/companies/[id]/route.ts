@@ -4,7 +4,7 @@ import { getV1AuthUser } from '../../auth';
 
 /**
  * Clean and normalize website URL
- * Handles various input formats: ross.com, www.ross.com, https://ross.com, https//:ross.com, etc.
+ * Handles various input formats: example.com, www.example.com, https://example.com, https//:example.com, etc.
  */
 function cleanWebsiteUrl(url: string): string {
   if (!url || typeof url !== 'string') {

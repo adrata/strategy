@@ -533,25 +533,27 @@ export async function POST(request: NextRequest) {
     // 🚀 CACHE INVALIDATION: Clear people cache when new person is created
     try {
       const cachePattern = `people-${context.workspaceId}-${context.userId}-*`;
-      await cache.invalidateByPattern(cachePattern);
+      await cache.invalidate(cachePattern);
       console.log(`🗑️ [PEOPLE API] Invalidated cache for pattern: ${cachePattern}`);
     } catch (error) {
       console.warn('⚠️ [PEOPLE API] Cache invalidation failed:', error);
     }
 
-    // Generate initial next action using AI service
-    try {
-      const nextActionService = new IntelligentNextActionService({
-        workspaceId: context.workspaceId,
-        userId: context.userId
-      });
-      
-      await nextActionService.generateNextAction(person.id, 'person');
-      console.log('✅ [PEOPLE API] Generated initial next action for new person', person.id);
-    } catch (error) {
-      console.error('⚠️ [PEOPLE API] Failed to generate initial next action:', error);
-      // Don't fail the request if next action generation fails
-    }
+    // Generate initial next action using AI service (async, don't await)
+    setImmediate(async () => {
+      try {
+        const nextActionService = new IntelligentNextActionService({
+          workspaceId: context.workspaceId,
+          userId: context.userId
+        });
+        
+        await nextActionService.generateNextAction(person.id, 'person');
+        console.log('✅ [PEOPLE API] Generated initial next action for new person', person.id);
+      } catch (error) {
+        console.error('⚠️ [PEOPLE API] Failed to generate initial next action:', error);
+        // Don't fail the request if next action generation fails
+      }
+    });
 
     return NextResponse.json({
       success: true,

@@ -117,6 +117,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
 }) => {
   const router = useRouter();
   const { signOut, isDesktop, user: authUser } = useUnifiedAuth();
+  console.log('🚨 ProfileBox component is rendering!', { userEmail: authUser?.email, isProfileOpen });
   const { setIsSettingsOpen } = useSettingsPopup();
   const [activeTab, setActiveTab] = useState<"main" | "docs">("main");
   // const [isDemoSwitcherOpen, setIsDemoSwitcherOpen] = useState(false); // Removed - no longer using demo scenarios popup
@@ -997,16 +998,26 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 4. Action Guide - Available for all users */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={() => handleNavigation("./action-guide")}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e['key'] === "Enter" && handleNavigation("./action-guide")}
-        >
-          Action Guide
-        </div>
+        {/* 4. Action Guide - Restricted to dan, ross, and todd */}
+        {(() => {
+          const isAuthorized = authUser?.email && ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'].includes(authUser.email);
+          console.log('🔍 Action Guide access check:', { 
+            userEmail: authUser?.email, 
+            isAuthorized, 
+            authorizedEmails: ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com']
+          });
+          return isAuthorized;
+        })() && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+            onClick={() => handleNavigation("./action-guide")}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e['key'] === "Enter" && handleNavigation("./action-guide")}
+          >
+            Action Guide
+          </div>
+        )}
         
         {/* 5. Grand Central - Available for all users */}
         <div

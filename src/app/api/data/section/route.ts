@@ -156,10 +156,14 @@ export async function GET(request: NextRequest) {
               nextAction: true,
               nextActionDate: true,
               mainSellerId: true,
-              mainSellerId: true,
               workspaceId: true,
               createdAt: true,
               updatedAt: true,
+              // 🎯 FIX: Add location fields for filter fallback
+              address: true,
+              city: true,
+              state: true,
+              country: true,
               owner: {
                 select: {
                   id: true,
@@ -188,7 +192,10 @@ export async function GET(request: NextRequest) {
                   id: true,
                   name: true,
                   industry: true,
-                  size: true
+                  size: true,
+                  employeeCount: true,
+                  hqState: true,
+                  state: true
                 }
               }
             }
@@ -251,7 +258,8 @@ export async function GET(request: NextRequest) {
               id: person.id,
               rank: index + 1, // 🎯 SEQUENTIAL RANKING: Start from 1
               name: safeString(person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown', 200),
-              company: safeString(person.company?.name || 'Unknown Company', 200),
+              company: person.company || null, // 🎯 FIX: Pass through complete company object for filters
+              companyName: safeString(person.company?.name || 'Unknown Company', 200), // 🎯 FIX: Add companyName for display
               title: safeString(person.jobTitle || 'Unknown Title', 300),
               role: 'Stakeholder', // Default buyer group role
               stage: 'Prospect', // Default stage
@@ -264,12 +272,16 @@ export async function GET(request: NextRequest) {
               lastActionTime: lastActionTime,
               nextAction: safeString(person.nextAction || 'No next action', 500),
               nextActionDate: person.nextActionDate || null,
-              mainSellerId: person.mainSellerId || null,
               mainSellerId: person.mainSellerId,
               workspaceId: person.workspaceId,
               createdAt: person.createdAt,
               updatedAt: person.updatedAt,
               tags: ['speedrun'], // Add speedrun tag for consistency
+              // 🎯 FIX: Add location fields for filter fallback
+              address: person.address,
+              city: person.city,
+              state: person.state,
+              country: person.country,
               // Add main-seller and co-sellers data
               mainSeller: ownerName,
               coSellers: coSellersNames,

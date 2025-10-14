@@ -32,13 +32,23 @@ export default function ActionGuideLayout({ children }: ActionGuideLayoutProps) 
   const { user: authUser } = useUnifiedAuth();
   const router = useRouter();
 
-  // Access control - available to all workspace users (no restrictions)
+  // Access control - restricted to dan, ross, and todd only
   useEffect(() => {
     if (!authUser?.email) {
       console.log('🚫 Action Guide: No user found - redirecting to login');
       router.push('/login');
+      return;
     }
-  }, [authUser?.email, router]);
+
+    // Check if user is authorized to access Action Guide
+    const isAuthorized = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'].includes(authUser.email);
+    if (!isAuthorized) {
+      console.log('🚫 Action Guide: Unauthorized access attempt by', authUser.email);
+      // Redirect back to workspace
+      const workspace = params.workspace as string;
+      router.push(`/${workspace}`);
+    }
+  }, [authUser?.email, router, params.workspace]);
 
   // Don't render if not authenticated
   if (!authUser?.email) {
@@ -47,6 +57,19 @@ export default function ActionGuideLayout({ children }: ActionGuideLayoutProps) 
         <div className="text-center">
           <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Authentication Required</h2>
           <p className="text-[var(--muted)]">Please log in to access the Action Guide.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check authorization
+  const isAuthorized = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'].includes(authUser.email);
+  if (!isAuthorized) {
+    return (
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Access Denied</h2>
+          <p className="text-[var(--muted)]">Action Guide access is restricted to authorized users only.</p>
         </div>
       </div>
     );

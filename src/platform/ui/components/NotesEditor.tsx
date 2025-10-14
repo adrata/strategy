@@ -33,6 +33,7 @@ export function NotesEditor({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [lastSavedValue, setLastSavedValue] = useState(value);
+  const [, forceUpdate] = useState({});
 
   // Sync with external value changes
   useEffect(() => {
@@ -41,6 +42,17 @@ export function NotesEditor({
       setLastSavedValue(value);
     }
   }, [value]);
+
+  // Update time display every 10 seconds to keep "Last saved X ago" current
+  useEffect(() => {
+    if (lastSavedAt && (saveStatus === 'saved' || saveStatus === 'idle')) {
+      const interval = setInterval(() => {
+        forceUpdate({});
+      }, 10000); // Update every 10 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [lastSavedAt, saveStatus]);
 
   // Auto-resize textarea
   const autoResize = useCallback(() => {
@@ -118,18 +130,12 @@ export function NotesEditor({
     switch (saveStatus) {
       case 'saving':
         return {
-          icon: <ClockIcon className="w-4 h-4 text-blue-500 animate-spin" />,
+          icon: <ClockIcon className="w-4 h-4 text-gray-400 animate-spin" />,
           text: 'Saving...',
-          color: 'text-blue-500'
+          color: 'text-gray-400'
         };
-      case 'error':
-        return {
-          icon: <ExclamationTriangleIcon className="w-4 h-4 text-red-500" />,
-          text: 'Error saving',
-          color: 'text-red-500'
-        };
-      default:
-        // Show "Last saved" message when not actively saving
+      case 'saved':
+        // Show "Last saved" message when successfully saved
         if (lastSavedAt) {
           const now = new Date();
           const diffMs = now.getTime() - lastSavedAt.getTime();
@@ -153,6 +159,52 @@ export function NotesEditor({
             color: 'text-green-500'
           };
         }
+        return {
+          icon: <CheckIcon className="w-4 h-4 text-green-500" />,
+          text: 'Saved',
+          color: 'text-green-500'
+        };
+      case 'error':
+        return {
+          icon: <ExclamationTriangleIcon className="w-4 h-4 text-red-500" />,
+          text: 'Error saving',
+          color: 'text-red-500'
+        };
+      default:
+        // Show "Unsaved changes" when there are changes but no save yet
+        if (localValue && localValue !== lastSavedValue) {
+          return {
+            icon: <ClockIcon className="w-4 h-4 text-orange-500" />,
+            text: 'Unsaved changes',
+            color: 'text-orange-500'
+          };
+        }
+        
+        // Show "Last saved" message when idle and there's a lastSavedAt time
+        if (lastSavedAt) {
+          const now = new Date();
+          const diffMs = now.getTime() - lastSavedAt.getTime();
+          const diffSeconds = Math.floor(diffMs / 1000);
+          const diffMinutes = Math.floor(diffSeconds / 60);
+          
+          let timeText;
+          if (diffSeconds < 10) {
+            timeText = 'Now';
+          } else if (diffSeconds < 60) {
+            timeText = `${diffSeconds}s ago`;
+          } else if (diffMinutes < 60) {
+            timeText = `${diffMinutes}m ago`;
+          } else {
+            timeText = lastSavedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          }
+          
+          return {
+            icon: <CheckIcon className="w-4 h-4 text-green-500" />,
+            text: `Last saved ${timeText}`,
+            color: 'text-green-500'
+          };
+        }
+        
         return {
           icon: null,
           text: '',
@@ -221,17 +273,6 @@ export function NotesEditor({
         )}
       </div>
 
-      {/* Character count and word count */}
-      {localValue && (
-        <div className="flex justify-between items-center mt-2 px-1 text-xs text-[var(--muted)]" style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
-          <span>
-            {localValue.split(/\s+/).filter(word => word.length > 0).length} words
-          </span>
-          <span>
-            {localValue.length} characters
-          </span>
-        </div>
-      )}
     </div>
   );
 }

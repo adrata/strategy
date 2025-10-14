@@ -51,18 +51,8 @@ export function NotesTab({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Notes Statistics Header */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border)] bg-[var(--background)]">
-        <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
-          {lastSavedAt && (
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Last saved {formatTimeAgo(lastSavedAt)}
-            </span>
-          )}
-          <span>{getWordCount(notes)} {getWordCount(notes) === 1 ? 'word' : 'words'}</span>
-          <span>{getCharacterCount(notes)} characters</span>
-        </div>
+      {/* Notes Header */}
+      <div className="flex items-center justify-end px-4 py-2 border-b border-[var(--border)] bg-[var(--background)]">
         <div className="flex items-center gap-2">
           {saveStatus === 'saving' && (
             <span className="text-xs text-blue-600 flex items-center gap-1">
@@ -70,10 +60,10 @@ export function NotesTab({
               Saving...
             </span>
           )}
-          {saveStatus === 'saved' && (
+          {saveStatus === 'saved' && lastSavedAt && (
             <span className="text-xs text-green-600 flex items-center gap-1">
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Saved
+              Last saved {formatTimeAgo(lastSavedAt)}
             </span>
           )}
           {saveStatus === 'error' && (
@@ -98,6 +88,23 @@ export function NotesTab({
           lastSavedAt={lastSavedAt}
           className="h-full"
         />
+      </div>
+
+      {/* Stats Footer */}
+      <div className="px-4 py-2 border-t border-[var(--border)] bg-[var(--background)]">
+        <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+          <div className="flex items-center gap-4">
+            <span>{getWordCount(notes)} words</span>
+            <span>{getCharacterCount(notes)} characters</span>
+          </div>
+          <div className="text-[var(--muted)]">
+            {notes.length > 0 && (
+              <span>
+                {Math.ceil(getWordCount(notes) / 200)} min read
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

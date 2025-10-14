@@ -97,7 +97,7 @@ export function AddPersonToCompanyModal({
   const searchPeople = async (query: string) => {
     setIsSearching(true);
     try {
-      const response = await authFetch(`/api/data/search?q=${encodeURIComponent(query)}&type=people`);
+      const response = await authFetch(`/api/v1/people?search=${encodeURIComponent(query)}&limit=10`);
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data.data || []);
@@ -299,7 +299,7 @@ export function AddPersonToCompanyModal({
                 </div>
               )}
 
-              {searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && (
+              {searchQuery.length >= 2 && searchResults.length === 0 && !isSearching && !showCreateForm && (
                 <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
                     No people found matching "{searchQuery}"
@@ -310,7 +310,11 @@ export function AddPersonToCompanyModal({
               {/* Action Buttons */}
               <div className="flex items-center justify-between">
                 <button
-                  onClick={() => setShowCreateForm(true)}
+                  onClick={() => {
+                    setShowCreateForm(true);
+                    setSearchQuery('');
+                    setSearchResults([]);
+                  }}
                   className="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
                 >
                   Create New Person

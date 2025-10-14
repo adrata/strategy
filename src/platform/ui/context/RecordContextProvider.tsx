@@ -22,6 +22,7 @@ interface RecordContextType {
   recordType: string | null;
   listViewContext: ListViewContext | null;
   setCurrentRecord: (record: any, type: string) => void;
+  updateCurrentRecord: (updates: Partial<any>) => void;
   clearCurrentRecord: () => void;
   setListViewContext: (context: ListViewContext) => void;
   clearListViewContext: () => void;
@@ -46,6 +47,20 @@ export function RecordContextProvider({ children }: RecordContextProviderProps) 
     });
     setCurrentRecordState(record);
     setRecordType(type);
+  };
+
+  const updateCurrentRecord = (updates: Partial<any>) => {
+    if (currentRecord) {
+      console.log('🔄 [RecordContext] Updating current record:', { 
+        id: currentRecord?.id, 
+        updates: Object.keys(updates) 
+      });
+      setCurrentRecordState(prev => ({
+        ...prev,
+        ...updates,
+        updatedAt: new Date().toISOString()
+      }));
+    }
   };
 
   const clearCurrentRecord = () => {
@@ -75,6 +90,7 @@ export function RecordContextProvider({ children }: RecordContextProviderProps) 
       recordType,
       listViewContext,
       setCurrentRecord,
+      updateCurrentRecord,
       clearCurrentRecord,
       setListViewContext,
       clearListViewContext
@@ -93,6 +109,7 @@ export function useRecordContext() {
       recordType: null,
       listViewContext: null,
       setCurrentRecord: () => {},
+      updateCurrentRecord: () => {},
       clearCurrentRecord: () => {},
       setListViewContext: () => {},
       clearListViewContext: () => {}

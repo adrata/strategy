@@ -134,33 +134,39 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
         
         {activeSection === 'companies' && (
           <>
-            <div className="flex-1">
-              <DynamicFilterDropdown
-                label="Industry"
-                value={filters.industry}
-                options={filterOptions.industry || []}
-                onChange={(value) => updateFilter('industry', value)}
-                placeholder="All Industries"
-              />
-            </div>
-            <div className="flex-1">
-              <DynamicFilterDropdown
-                label="Size"
-                value={filters.size}
-                options={filterOptions.size || []}
-                onChange={(value) => updateFilter('size', value)}
-                placeholder="All Sizes"
-              />
-            </div>
-            <div className="flex-1">
-              <DynamicFilterDropdown
-                label="State"
-                value={filters.location}
-                options={filterOptions.location || []}
-                onChange={(value) => updateFilter('location', value)}
-                placeholder="All States"
-              />
-            </div>
+            {(filterOptions.industry || []).length > 0 && (
+              <div className="flex-1">
+                <DynamicFilterDropdown
+                  label="Industry"
+                  value={filters.industry}
+                  options={filterOptions.industry || []}
+                  onChange={(value) => updateFilter('industry', value)}
+                  placeholder="All Industries"
+                />
+              </div>
+            )}
+            {(filterOptions.size || []).length > 0 && (
+              <div className="flex-1">
+                <DynamicFilterDropdown
+                  label="Size"
+                  value={filters.size}
+                  options={filterOptions.size || []}
+                  onChange={(value) => updateFilter('size', value)}
+                  placeholder="All Sizes"
+                />
+              </div>
+            )}
+            {(filterOptions.location || []).length > 0 && (
+              <div className="flex-1">
+                <DynamicFilterDropdown
+                  label="State"
+                  value={filters.location}
+                  options={filterOptions.location || []}
+                  onChange={(value) => updateFilter('location', value)}
+                  placeholder="All States"
+                />
+              </div>
+            )}
           </>
         )}
         

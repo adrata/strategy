@@ -16,6 +16,17 @@ interface AddProspectModalProps {
 export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = 'prospects' }: AddProspectModalProps) {
   // Get section-specific colors
   const colors = getCategoryColors(section);
+  
+  // 🔍 DEBUG: Log when modal receives isOpen prop changes
+  useEffect(() => {
+    console.log('🔍 [AddProspectModal] isOpen prop changed:', {
+      isOpen,
+      section,
+      colors,
+      timestamp: new Date().toISOString()
+    });
+  }, [isOpen, section, colors]);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -128,20 +139,27 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
           notes: ""
         });
         
-        // Call callback immediately to close modal and refresh list
+        // Call callback to close modal, show success message, and refresh list
         onProspectAdded(result.data);
       } else {
         throw new Error(result.error || 'Failed to create prospect');
       }
     } catch (error) {
       console.error('Error creating prospect:', error);
-      alert('Failed to create prospect. Please try again.');
+      // Show a more user-friendly error message
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create prospect. Please try again.';
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    console.log('🔍 [AddProspectModal] Modal not open, returning null');
+    return null;
+  }
+
+  console.log('🔍 [AddProspectModal] Modal is open, rendering modal content');
 
   return (
     <>
@@ -151,9 +169,9 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <div>
@@ -171,6 +189,26 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Status Badge - Section-specific colors */}
+          <div 
+            className="flex items-center gap-2 p-3 rounded-lg border"
+            style={{
+              backgroundColor: colors.bg,
+              borderColor: colors.border
+            }}
+          >
+            <div 
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: colors.primary }}
+            ></div>
+            <span 
+              className="text-sm font-medium"
+              style={{ color: colors.text }}
+            >
+              Status: {section.charAt(0).toUpperCase() + section.slice(1)}
+            </span>
+          </div>
+
           {/* Name Fields - Split like person form */}
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -200,39 +238,12 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                 value={formData.lastName}
                 onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
                 placeholder="Enter last name"
-                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 required
               />
             </div>
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              placeholder="Enter email address"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-            />
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Phone
-            </label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-              placeholder="Enter phone number"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-            />
-          </div>
 
           {/* Job Title */}
           <div>
@@ -244,7 +255,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
               value={formData.jobTitle}
               onChange={(e) => setFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
               placeholder="Enter job title"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
             />
           </div>
 
@@ -258,29 +269,8 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
               value={formData.company}
               onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
               placeholder="Enter company name"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
             />
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Notes
-            </label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder="Additional notes about this prospect"
-              rows={3}
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-            />
-          </div>
-
-          {/* Status Badge - Blue highlighting for prospects */}
-          <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span className="text-sm font-medium text-blue-800">Status: Prospect</span>
-            <span className="text-xs text-blue-600">(Locked)</span>
           </div>
 
           {/* Action Buttons */}
@@ -295,9 +285,19 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
             <button
               type="submit"
               disabled={isLoading || !formData.firstName || !formData.lastName}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: colors.primary,
+                '--tw-bg-opacity': '1'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = colors.dark;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = colors.primary;
+              }}
             >
-              {isLoading ? 'Creating...' : `Create Prospect (${getCommonShortcut('SUBMIT')})`}
+              {isLoading ? 'Creating...' : `Complete (${getCommonShortcut('SUBMIT')})`}
             </button>
           </div>
         </form>

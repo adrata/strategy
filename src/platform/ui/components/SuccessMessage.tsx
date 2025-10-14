@@ -20,15 +20,22 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
 }) => {
   useEffect(() => {
     if (isVisible) {
+      console.log('🎉 [SuccessMessage] Message is visible:', { message, type, section });
       const timer = setTimeout(() => {
+        console.log('🎉 [SuccessMessage] Auto-closing message after', duration, 'ms');
         onClose();
       }, duration);
 
       return () => clearTimeout(timer);
     }
-  }, [isVisible, duration, onClose]);
+  }, [isVisible, duration, onClose, message, type, section]);
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    console.log('🎉 [SuccessMessage] Message not visible, returning null');
+    return null;
+  }
+
+  console.log('🎉 [SuccessMessage] Rendering message:', { message, type, section });
 
   const getTypeStyles = () => {
     switch (type) {
@@ -75,21 +82,23 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
   const styles = getTypeStyles();
 
   return (
-    <div className={`${styles.container} border px-4 py-3 mx-6 mt-4 rounded-lg flex items-center justify-between`}>
-      <div className="flex items-center">
-        <svg className={`w-5 h-5 ${styles.icon} mr-2`} fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d={styles.iconPath} clipRule="evenodd" />
-        </svg>
-        <span className="text-sm font-medium">{message}</span>
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[10000] bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-2">
+      <div className={`${styles.container} border px-4 py-3 rounded-lg flex items-center justify-between`}>
+        <div className="flex items-center">
+          <svg className={`w-5 h-5 ${styles.icon} mr-2`} fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d={styles.iconPath} clipRule="evenodd" />
+          </svg>
+          <span className="text-sm font-medium">{message}</span>
+        </div>
+        <button
+          onClick={onClose}
+          className={styles.closeButton}
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </button>
       </div>
-      <button
-        onClick={onClose}
-        className={styles.closeButton}
-      >
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-        </svg>
-      </button>
     </div>
   );
 };

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDownIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { formatFieldValue } from './utils/field-formatters';
+import { authFetch } from '@/platform/api-fetch';
 
 interface Company {
   id: string;
@@ -53,24 +54,13 @@ export function CompanySelector({
 
     setIsSearching(true);
     try {
-      const response = await fetch('/api/data/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: query.trim(),
-          category: 'companies',
-          limit: 10
-        }),
+      const data = await authFetch(`/api/v1/companies?search=${encodeURIComponent(query.trim())}&limit=10`);
+      console.log('🔍 [CompanySelector] Search response:', {
+        success: data.success,
+        resultCount: data.data?.length || 0,
+        results: data.data
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setSearchResults(data.data || []);
-      } else {
-        setSearchResults([]);
-      }
+      setSearchResults(data.data || []);
     } catch (error) {
       console.error('Error searching companies:', error);
       setSearchResults([]);
@@ -100,7 +90,7 @@ export function CompanySelector({
     if (!newCompanyName.trim()) return;
 
     try {
-      const response = await fetch('/api/companies', {
+      const data = await authFetch('/api/v1/companies', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,15 +102,14 @@ export function CompanySelector({
         }),
       });
 
-      if (response.ok) {
-        const newCompany = await response.json();
-        onChange(newCompany);
+      if (data.success && data.data) {
+        onChange(data.data);
         setNewCompanyName('');
         setNewCompanyDomain('');
         setShowAddForm(false);
         setIsOpen(false);
       } else {
-        console.error('Failed to create company');
+        console.error('Failed to create company:', data.error || 'Unknown error');
       }
     } catch (error) {
       console.error('Error creating company:', error);

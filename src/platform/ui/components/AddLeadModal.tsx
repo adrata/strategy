@@ -14,7 +14,7 @@ interface AddLeadModalProps {
   section?: string;
 }
 
-export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }: AddLeadModalProps) {
+export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }: AddLeadModalProps) {
   // Get section-specific colors
   const colors = getCategoryColors(section);
   
@@ -112,7 +112,8 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
         source: "Manual Entry"
       };
 
-      console.log('Creating lead with data:', leadData);
+      console.log('🚀 [AddLeadModal] Creating lead with data:', leadData);
+      console.log('🚀 [AddLeadModal] About to make API call to /api/v1/people');
 
       // Call the v1 API to create the lead
       const result = await authFetch('/api/v1/people', {
@@ -120,14 +121,25 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(leadData)
+        body: JSON.stringify(leadData),
+        timeout: 30000 // Increase timeout to 30 seconds
       }, { success: false, error: 'Failed to create lead' }); // fallback
 
       console.log('Lead creation response:', result);
       
+      // Debug: Log the full response
+      console.log('🔍 [AddLeadModal] Full API response:', result);
+      console.log('🔍 [AddLeadModal] result.success:', result.success);
+      console.log('🔍 [AddLeadModal] result.data:', result.data);
+      console.log('🔍 [AddLeadModal] result.error:', result.error);
+      
       // Check if the response indicates success
       if (result.success && result.data) {
         console.log('✅ [AddLeadModal] Lead created successfully');
+        console.log('✅ [AddLeadModal] Response data:', result.data);
+        console.log('✅ [AddLeadModal] About to call onLeadAdded callback');
+        console.log('✅ [AddLeadModal] onLeadAdded function:', onLeadAdded);
+        console.log('✅ [AddLeadModal] onLeadAdded type:', typeof onLeadAdded);
         
         // Reset form
         setFormData({
@@ -140,16 +152,33 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
           notes: ""
         });
         
-        // Call callback immediately to close modal and refresh list
-        onLeadAdded(result.data);
+        // Call callback to close modal, show success message, and refresh list
+        console.log(`🚀 [AddLeadModal] CALLING onLeadAdded NOW with data:`, result.data);
+        console.log(`🚀 [AddLeadModal] onLeadAdded function:`, onLeadAdded);
+        console.log(`🚀 [AddLeadModal] onLeadAdded type:`, typeof onLeadAdded);
+        
+        if (onLeadAdded) {
+          onLeadAdded(result.data);
+          console.log(`✅ [AddLeadModal] onLeadAdded callback has been called - waiting for parent component response`);
+        } else {
+          console.error(`❌ [AddLeadModal] onLeadAdded callback is null/undefined!`);
+        }
+        
+        // Success handled by parent component's success message
+        console.log(`🎉 [AddLeadModal] Lead created successfully: ${result.data.firstName} ${result.data.lastName}`);
       } else {
+        console.error('❌ [AddLeadModal] Response indicates failure:', result);
         throw new Error(result.error || 'Failed to create lead');
       }
     } catch (error) {
-      console.error('Error creating lead:', error);
-      // Show a more user-friendly error message
+      console.error('❌ [AddLeadModal] Error creating lead:', error);
+      console.error('❌ [AddLeadModal] Error type:', typeof error);
+      console.error('❌ [AddLeadModal] Error message:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('❌ [AddLeadModal] Full error object:', error);
+      
+      // Error will be handled by the parent component
       const errorMessage = error instanceof Error ? error.message : 'Failed to create lead. Please try again.';
-      alert(errorMessage);
+      console.error('❌ [AddLeadModal] Error creating lead:', errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -170,8 +199,8 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+              <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
@@ -287,16 +316,25 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
             <button
               type="submit"
               disabled={isLoading || !formData.firstName || !formData.lastName}
-              className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
-                backgroundColor: colors.primary,
-                '--tw-bg-opacity': '1'
+                backgroundColor: formData.firstName.trim() && formData.lastName.trim() && !isLoading 
+                  ? colors.bgHover 
+                  : colors.bg,
+                color: colors.primary,
+                borderColor: colors.border
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = colors.dark;
+                if (!isLoading && formData.firstName.trim() && formData.lastName.trim()) {
+                  e.currentTarget.style.backgroundColor = colors.bgHover;
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = colors.primary;
+                if (!isLoading) {
+                  e.currentTarget.style.backgroundColor = formData.firstName.trim() && formData.lastName.trim()
+                    ? colors.bgHover 
+                    : colors.bg;
+                }
               }}
             >
               {isLoading ? 'Creating...' : `Complete (${getCommonShortcut('SUBMIT')})`}
@@ -307,4 +345,4 @@ export function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }
     </div>
     </>
   );
-}
+});

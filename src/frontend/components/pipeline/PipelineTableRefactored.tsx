@@ -177,8 +177,6 @@ export function PipelineTable({
   searchQuery,
   totalCount,
 }: PipelineTableProps) {
-  console.log('🔍 [PipelineTableRefactored] Component rendered for section:', section, 'visibleColumns:', visibleColumns, 'data length:', data?.length, 'isLoading:', isLoading);
-  console.log('🔍 [PipelineTableRefactored] Sample data:', data?.slice(0, 2));
   
   // Get workspace context
   const { user: authUser } = useUnifiedAuth();
@@ -217,17 +215,6 @@ export function PipelineTable({
     totalCount // Pass totalCount for correct pagination
   });
   
-  console.log('🔍 [PipelineTableRefactored] usePipelineData results:', {
-    inputDataLength: data?.length,
-    paginatedDataLength: paginatedData?.length,
-    currentPage,
-    totalPages,
-    totalItems,
-    pageSize,
-    section,
-    disableSorting: section === 'companies',
-    sampleRanks: paginatedData?.slice(0, 5).map(r => ({ name: r.name, rank: (r as any)['rank'] }))
-  });
   
   // Action handling
   const {
@@ -239,15 +226,12 @@ export function PipelineTable({
   } = usePipelineActions({
     onRecordUpdate: (record) => {
       // Handle record update
-      console.log('Record updated:', record);
     },
     onRecordDelete: (recordId) => {
       // Handle record deletion
-      console.log('Record deleted:', recordId);
     },
     onActionAdd: (recordId, action) => {
       // Handle action addition
-      console.log('Action added to record:', recordId, action);
     }
   });
   
@@ -344,24 +328,6 @@ export function PipelineTable({
           {/* Table body */}
           <tbody>
             {paginatedData.map((record, index) => {
-              console.log(`🔍 [PipelineTableRefactored] Rendering row ${index}:`, {
-                recordId: record.id,
-                recordName: record.name || record['fullName'],
-                recordCompany: record['company'],
-                recordRank: (record as any)['rank'],
-                headersLength: headers.length,
-                visibleColumnsLength: visibleColumns?.length,
-                // Show first 10 keys
-                recordKeys: Object.keys(record).slice(0, 10),
-                // DEBUG: Check headers and action fields
-                headers: headers,
-                headersString: headers.join(', '),
-                lastActionTime: record['lastActionTime'],
-                nextActionTiming: record['nextActionTiming'],
-                section: section
-              });
-              
-              // Simple table row for debugging
               return (
                   <tr
                     key={record.id}
@@ -370,9 +336,6 @@ export function PipelineTable({
                   >
                   {headers.map((header, headerIndex) => {
                     let cellContent = '';
-                    
-                    // DEBUG: Log header processing
-                    console.log(`🔍 [HEADER PROCESSING] Header ${headerIndex}: "${header}" (lowercase: "${header.toLowerCase()}")`);
                     
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
@@ -514,9 +477,6 @@ export function PipelineTable({
                           const isStatus = headerLower === 'status';
                           const shouldShowPill = isLastAction || isNextAction || isStatus;
                           
-                          console.log(`🔍 [PILL CHECK] Header: "${header}", lowercase: "${headerLower}", isLastAction: ${isLastAction}, isNextAction: ${isNextAction}, isStatus: ${isStatus}, shouldShowPill: ${shouldShowPill}`);
-                          console.log(`🔍 [PILL CHECK] cellContent: "${cellContent}", record status: "${record['status']}", lastActionTime: "${record['lastActionTime']}", nextActionTiming: "${record['nextActionTiming']}"`);
-                          
                           if (shouldShowPill) {
                             let pillData: { text: string; color: string; icon?: string };
                             
@@ -584,8 +544,6 @@ export function PipelineTable({
                               pillData = { text: cellContent, color: 'bg-[var(--hover)] text-gray-800', icon: '●' };
                             }
                             
-                            console.log(`🔍 [PILL RENDERING] Pill data for ${header}:`, pillData);
-                            
                             return (
                               <div className="flex items-center gap-2">
                                 {isStatus ? (
@@ -639,7 +597,7 @@ export function PipelineTable({
           record={editingRecord}
           section={section}
           onClose={closeEditModal}
-          onSave={handleEditRecord}
+          onSave={handleEdit}
         />
       )}
       
@@ -648,7 +606,7 @@ export function PipelineTable({
           isOpen={!!addingAction}
           onClose={closeAddActionModal}
           onSubmit={handleAddActionSubmit}
-          personName={addingAction.name || addingAction['fullName'] || ''}
+          personName={addingAction.name || addingAction.fullName || addingAction.firstName + ' ' + addingAction.lastName || ''}
           companyName={addingAction['company']?.name || addingAction['company'] || ''}
           section={section}
         />

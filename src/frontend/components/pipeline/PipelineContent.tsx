@@ -704,7 +704,6 @@ export const PipelineContent = React.memo(function PipelineContent({
   const handleClearCache = () => {
     console.log(`🧹 Clearing ${section} cache...`);
     fastSectionData.clearCache();
-    fastSectionData.refresh();
   };
 
   // Handle add record
@@ -1346,7 +1345,9 @@ export const PipelineContent = React.memo(function PipelineContent({
           </div>
         )}
         
-        <AddModal refreshData={async () => { await fastSectionData.refresh(); }} />
+        <AddModal refreshData={useCallback(async () => { 
+          await fastSectionData.refresh(); 
+        }, [fastSectionData])} />
       </>
     </PipelineHydrationFix>
   );

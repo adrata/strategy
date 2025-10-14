@@ -131,10 +131,15 @@ export function getContactFilterOptions(contacts: any[]) {
  * Get filter options for accounts
  */
 export function getAccountFilterOptions(accounts: any[]) {
+  // For location, prioritize hqState, then state, then city
+  const locationData = accounts.map(account => ({
+    location: account.hqState || account.state || account.city || null
+  })).filter(item => item.location);
+
   return {
     industry: getUniqueFilterValues(accounts, 'industry', 12),
     size: getUniqueFilterValues(accounts, 'employeeCount', 8),
-    location: getUniqueFilterValues(accounts, 'city', 12),
+    location: getUniqueFilterValues(locationData, 'location', 12),
     type: getUniqueFilterValues(accounts, 'type', 6)
   };
 }

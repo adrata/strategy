@@ -129,7 +129,7 @@ export function RecordDetailModal({ record, recordType, isOpen, onClose }: Recor
                 
                 <div className="flex items-center gap-3">
                   <UsersIcon className="w-5 h-5 text-[var(--muted)]" />
-                  <span className="text-sm font-medium text-[var(--foreground)]">Company Size</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">Employee Count</span>
                   <span className="text-sm text-[var(--muted)]">{record.companySize || 'Not provided'}</span>
                 </div>
                 
