@@ -3,6 +3,31 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAndCreateErrorResponse, SecureApiContext } from '@/platform/services/secure-api-helper';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 
+/**
+ * Clean and normalize website URL
+ * Handles various input formats: ross.com, www.ross.com, https://ross.com, https//:ross.com, etc.
+ */
+function cleanWebsiteUrl(url: string): string {
+  if (!url || typeof url !== 'string') {
+    return '';
+  }
+
+  let cleaned = url.trim();
+  
+  // Remove common typos in protocol
+  cleaned = cleaned.replace(/^https?\/\/?:?/i, '');
+  
+  // Remove leading www. if present
+  cleaned = cleaned.replace(/^www\./i, '');
+  
+  // If no protocol exists, prepend https://
+  if (!cleaned.match(/^https?:\/\//i)) {
+    cleaned = `https://${cleaned}`;
+  }
+  
+  return cleaned;
+}
+
 // Response cache for fast performance
 const responseCache = new Map<string, { data: any, timestamp: number }>();
 const CACHE_TTL = 30000; // 30 seconds
@@ -234,10 +259,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Validate website URL format if provided
+    // Clean and validate website URL format if provided
     if (body.website && typeof body.website === 'string' && body.website.trim().length > 0) {
+      const cleanedWebsite = cleanWebsiteUrl(body.website);
       try {
-        new URL(body.website.trim());
+        new URL(cleanedWebsite);
+        // Update the body with the cleaned URL
+        body.website = cleanedWebsite;
       } catch {
         return createErrorResponse('Invalid website URL format', 'VALIDATION_ERROR', 400);
       }

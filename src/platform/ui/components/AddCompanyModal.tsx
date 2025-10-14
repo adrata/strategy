@@ -148,25 +148,6 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Status Badge - Section-specific colors */}
-          <div 
-            className="flex items-center gap-2 p-3 rounded-lg border"
-            style={{
-              backgroundColor: colors.bg,
-              borderColor: colors.border
-            }}
-          >
-            <div 
-              className="w-2 h-2 rounded-full"
-              style={{ backgroundColor: colors.primary }}
-            ></div>
-            <span 
-              className="text-sm font-medium"
-              style={{ color: colors.text }}
-            >
-              Status: {section.charAt(0).toUpperCase() + section.slice(1)}
-            </span>
-          </div>
 
           {/* Company Name */}
           <div>
@@ -194,10 +175,10 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               Website
             </label>
             <input
-              type="url"
+              type="text"
               value={formData.website}
               onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
-              placeholder="https://example.com"
+              placeholder="ross.com or https://ross.com"
               className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
             />
           </div>

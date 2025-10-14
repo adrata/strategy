@@ -3,6 +3,31 @@ import { prisma } from '@/lib/prisma';
 import { getV1AuthUser } from '../../auth';
 
 /**
+ * Clean and normalize website URL
+ * Handles various input formats: ross.com, www.ross.com, https://ross.com, https//:ross.com, etc.
+ */
+function cleanWebsiteUrl(url: string): string {
+  if (!url || typeof url !== 'string') {
+    return '';
+  }
+
+  let cleaned = url.trim();
+  
+  // Remove common typos in protocol
+  cleaned = cleaned.replace(/^https?\/\/?:?/i, '');
+  
+  // Remove leading www. if present
+  cleaned = cleaned.replace(/^www\./i, '');
+  
+  // If no protocol exists, prepend https://
+  if (!cleaned.match(/^https?:\/\//i)) {
+    cleaned = `https://${cleaned}`;
+  }
+  
+  return cleaned;
+}
+
+/**
  * Individual Company CRUD API v1
  * GET /api/v1/companies/[id] - Get a specific company
  * PUT /api/v1/companies/[id] - Update a company (full replacement)
@@ -151,6 +176,21 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
+    // Clean and validate website URL if provided
+    if (body.website && typeof body.website === 'string' && body.website.trim().length > 0) {
+      const cleanedWebsite = cleanWebsiteUrl(body.website);
+      try {
+        new URL(cleanedWebsite);
+        // Update the body with the cleaned URL
+        body.website = cleanedWebsite;
+      } catch {
+        return NextResponse.json(
+          { success: false, error: 'Invalid website URL format' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Check if company exists
     const existingCompany = await prisma.companies.findUnique({
       where: { 
@@ -241,6 +281,21 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await request.json();
+
+    // Clean and validate website URL if provided
+    if (body.website && typeof body.website === 'string' && body.website.trim().length > 0) {
+      const cleanedWebsite = cleanWebsiteUrl(body.website);
+      try {
+        new URL(cleanedWebsite);
+        // Update the body with the cleaned URL
+        body.website = cleanedWebsite;
+      } catch {
+        return NextResponse.json(
+          { success: false, error: 'Invalid website URL format' },
+          { status: 400 }
+        );
+      }
+    }
 
     // Check if company exists
     const existingCompany = await prisma.companies.findUnique({

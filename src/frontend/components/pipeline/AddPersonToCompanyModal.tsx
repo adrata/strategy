@@ -97,7 +97,7 @@ export function AddPersonToCompanyModal({
   const searchPeople = async (query: string) => {
     setIsSearching(true);
     try {
-      const response = await authFetch(`/api/data/search?query=${encodeURIComponent(query)}&type=people`);
+      const response = await authFetch(`/api/data/search?q=${encodeURIComponent(query)}&type=people`);
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data.data || []);

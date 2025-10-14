@@ -48,6 +48,16 @@ export function CompleteActionModal({
   const [personSearchQuery, setPersonSearchQuery] = useState('');
   const [personSearchResults, setPersonSearchResults] = useState<any[]>([]);
   const [isSearchingPeople, setIsSearchingPeople] = useState(false);
+  const [showCreatePersonForm, setShowCreatePersonForm] = useState(false);
+  const [isCreatingPerson, setIsCreatingPerson] = useState(false);
+  
+  // Form data for creating new person
+  const [newPersonData, setNewPersonData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    jobTitle: ''
+  });
   
   const [formData, setFormData] = useState<ActionLogData>(() => {
     // Use initialData if provided (for undo), otherwise use defaults
@@ -128,6 +138,53 @@ export function CompleteActionModal({
     }));
     setPersonSearchQuery('');
     setPersonSearchResults([]);
+    setShowCreatePersonForm(false);
+  };
+
+  const handleCreatePerson = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPersonData.firstName.trim() || !newPersonData.lastName.trim()) {
+      alert('First name and last name are required');
+      return;
+    }
+
+    setIsCreatingPerson(true);
+    try {
+      const response = await authFetch('/api/people', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: newPersonData.firstName.trim(),
+          lastName: newPersonData.lastName.trim(),
+          email: newPersonData.email.trim() || undefined,
+          jobTitle: newPersonData.jobTitle.trim() || undefined,
+          company: formData.company || undefined,
+          companyId: formData.companyId || undefined
+        })
+      });
+
+      if (response.ok) {
+        const newPerson = await response.json();
+        // Auto-select the newly created person
+        handlePersonSelect(newPerson);
+        // Reset form
+        setNewPersonData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          jobTitle: ''
+        });
+      } else {
+        throw new Error('Failed to create person');
+      }
+    } catch (error) {
+      console.error('Error creating person:', error);
+      alert('Failed to create person. Please try again.');
+    } finally {
+      setIsCreatingPerson(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -252,6 +309,13 @@ export function CompleteActionModal({
       });
       setPersonSearchQuery('');
       setPersonSearchResults([]);
+      setShowCreatePersonForm(false);
+      setNewPersonData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        jobTitle: ''
+      });
       onClose();
     }
   };
@@ -340,30 +404,138 @@ export function CompleteActionModal({
                   />
 
                   {/* Person Search Results */}
-                  {personSearchResults.length > 0 && (
+                  {(personSearchResults.length > 0 || (personSearchQuery.length >= 2 && !isSearchingPeople)) && (
                     <div className="absolute z-20 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                      {personSearchResults.map((person) => (
-                        <div
-                          key={person.id}
-                          onClick={() => handlePersonSelect(person)}
-                          className="px-4 py-2 hover:bg-[var(--panel-background)] cursor-pointer border-b border-gray-100 last:border-b-0"
-                        >
-                          <div className="font-medium text-[var(--foreground)]">
-                            {person.fullName || `${person.firstName} ${person.lastName}`.trim()}
+                      {personSearchResults.length > 0 ? (
+                        personSearchResults.map((person) => (
+                          <div
+                            key={person.id}
+                            onClick={() => handlePersonSelect(person)}
+                            className="px-4 py-2 hover:bg-[var(--panel-background)] cursor-pointer border-b border-gray-100 last:border-b-0"
+                          >
+                            <div className="font-medium text-[var(--foreground)]">
+                              {person.fullName || `${person.firstName} ${person.lastName}`.trim()}
+                            </div>
+                            {person.jobTitle && (
+                              <div className="text-sm text-[var(--muted)]">{person.jobTitle}</div>
+                            )}
+                            {person.company && (
+                              <div className="text-sm text-[var(--muted)]">{person.company}</div>
+                            )}
                           </div>
-                          {person.jobTitle && (
-                            <div className="text-sm text-[var(--muted)]">{person.jobTitle}</div>
-                          )}
-                          {person.company && (
-                            <div className="text-sm text-[var(--muted)]">{person.company}</div>
-                          )}
+                        ))
+                      ) : (
+                        <div className="px-4 py-3 text-center">
+                          <div className="text-sm text-[var(--muted)] mb-2">
+                            No people found for "{personSearchQuery}"
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowCreatePersonForm(true)}
+                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                          >
+                            Create new person
+                          </button>
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
                 </div>
               )}
             </div>
+
+            {/* Create Person Form */}
+            {showCreatePersonForm && (
+              <div className="border border-[var(--border)] rounded-lg p-4 bg-[var(--panel-background)]">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-medium text-[var(--foreground)]">Create New Person</h3>
+                  <button
+                    type="button"
+                    onClick={() => setShowCreatePersonForm(false)}
+                    className="text-[var(--muted)] hover:text-[var(--foreground)]"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <form onSubmit={handleCreatePerson} className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-[var(--foreground)] mb-1">
+                        First Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={newPersonData.firstName}
+                        onChange={(e) => setNewPersonData(prev => ({ ...prev, firstName: e.target.value }))}
+                        className="w-full px-2 py-1.5 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1"
+                        placeholder="First name"
+                        required
+                        disabled={isCreatingPerson}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-[var(--foreground)] mb-1">
+                        Last Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={newPersonData.lastName}
+                        onChange={(e) => setNewPersonData(prev => ({ ...prev, lastName: e.target.value }))}
+                        className="w-full px-2 py-1.5 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1"
+                        placeholder="Last name"
+                        required
+                        disabled={isCreatingPerson}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-[var(--foreground)] mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={newPersonData.email}
+                      onChange={(e) => setNewPersonData(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full px-2 py-1.5 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1"
+                      placeholder="email@example.com"
+                      disabled={isCreatingPerson}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-[var(--foreground)] mb-1">
+                      Job Title
+                    </label>
+                    <input
+                      type="text"
+                      value={newPersonData.jobTitle}
+                      onChange={(e) => setNewPersonData(prev => ({ ...prev, jobTitle: e.target.value }))}
+                      className="w-full px-2 py-1.5 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1"
+                      placeholder="Job title"
+                      disabled={isCreatingPerson}
+                    />
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowCreatePersonForm(false)}
+                      className="flex-1 px-3 py-1.5 text-xs text-[var(--muted)] bg-[var(--background)] border border-[var(--border)] rounded hover:bg-[var(--panel-background)] transition-colors"
+                      disabled={isCreatingPerson}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isCreatingPerson || !newPersonData.firstName.trim() || !newPersonData.lastName.trim()}
+                      className="flex-1 px-3 py-1.5 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isCreatingPerson ? 'Creating...' : 'Create Person'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
 
             {/* Company - Auto-filled if provided */}
             {formData.company && (

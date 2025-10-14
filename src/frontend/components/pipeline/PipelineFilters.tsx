@@ -253,6 +253,9 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const dropdownRef = useRef<HTMLDivElement>(null);
   const sortDropdownRef = useRef<HTMLDivElement>(null);
   const columnsDropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownContentRef = useRef<HTMLDivElement>(null);
+  const sortDropdownContentRef = useRef<HTMLDivElement>(null);
+  const columnsDropdownContentRef = useRef<HTMLDivElement>(null);
 
   // Set client-side flag
   useEffect(() => {
@@ -428,13 +431,19 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef['current'] && !dropdownRef.current.contains(event.target as Node)) {
+      // Check Filter dropdown
+      if (dropdownRef['current'] && !dropdownRef.current.contains(event.target as Node) &&
+          dropdownContentRef['current'] && !dropdownContentRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
-      if (sortDropdownRef['current'] && !sortDropdownRef.current.contains(event.target as Node)) {
+      // Check Sort dropdown
+      if (sortDropdownRef['current'] && !sortDropdownRef.current.contains(event.target as Node) &&
+          sortDropdownContentRef['current'] && !sortDropdownContentRef.current.contains(event.target as Node)) {
         setIsSortDropdownOpen(false);
       }
-      if (columnsDropdownRef['current'] && !columnsDropdownRef.current.contains(event.target as Node)) {
+      // Check Columns dropdown
+      if (columnsDropdownRef['current'] && !columnsDropdownRef.current.contains(event.target as Node) &&
+          columnsDropdownContentRef['current'] && !columnsDropdownContentRef.current.contains(event.target as Node)) {
         setIsColumnsDropdownOpen(false);
       }
     };
@@ -592,7 +601,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
         {/* Enhanced Filter Dropdown Menu - Status and Last Contacted */}
         {isDropdownOpen && isClient && createPortal(
-          <div className="fixed z-[9999] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg" style={{
+          <div ref={dropdownContentRef} className="fixed z-[9999] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg" style={{
             top: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().bottom + 4 : 0,
             left: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().left : 0
           }}>
@@ -714,7 +723,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
                 {/* Sort Dropdown Menu - Match Filter styling */}
                 {isSortDropdownOpen && isClient && createPortal(
-                  <div className="fixed z-[9999] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg" style={{
+                  <div ref={sortDropdownContentRef} className="fixed z-[9999] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg" style={{
                     top: sortDropdownRef.current ? sortDropdownRef.current.getBoundingClientRect().bottom + 4 : 0,
                     left: sortDropdownRef.current ? sortDropdownRef.current.getBoundingClientRect().left : 0
                   }}>
@@ -811,7 +820,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
                 {/* Columns Dropdown Menu - Match Filter/Sort styling */}
                 {isColumnsDropdownOpen && isClient && createPortal(
-                  <div className="fixed z-[9999] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg" style={{
+                  <div ref={columnsDropdownContentRef} className="fixed z-[9999] mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg" style={{
                     top: columnsDropdownRef.current ? columnsDropdownRef.current.getBoundingClientRect().bottom + 4 : 0,
                     left: columnsDropdownRef.current ? columnsDropdownRef.current.getBoundingClientRect().left : 0
                   }}>

@@ -39,11 +39,11 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
   const searchContacts = async (query: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/data/search`);
+      const response = await fetch(`/api/data/search?q=${encodeURIComponent(query)}&type=people`);
       
       if (response.ok) {
         const data = await response.json();
-        setSearchResults(data.contacts || []);
+        setSearchResults(data.data || []);
       }
     } catch (error) {
       console.error('Error searching contacts:', error);
