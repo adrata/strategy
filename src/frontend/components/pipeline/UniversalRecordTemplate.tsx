@@ -756,23 +756,40 @@ export function UniversalRecordTemplate({
       console.log('📝 [UNIVERSAL] Mapped update payload:', updatePayload);
       
       // Handle company linking if company name is provided
-      if (updatePayload.companyName && updatePayload.companyName !== localRecord?.companyName) {
+      if (updatePayload['companyName'] && updatePayload['companyName'] !== localRecord?.companyName) {
         try {
-          console.log('🏢 [UNIVERSAL] Looking up company:', updatePayload.companyName);
+          console.log('🏢 [UNIVERSAL] Looking up company:', updatePayload['companyName']);
           
           // Search for existing company by name
-          const companySearchResponse = await authFetch(`/api/v1/companies?search=${encodeURIComponent(updatePayload.companyName)}&limit=1`);
+          const companySearchResponse = await authFetch(`/api/v1/companies?search=${encodeURIComponent(updatePayload['companyName'])}&limit=1`);
           
           if (companySearchResponse.ok) {
             const companySearchResult = await companySearchResponse.json();
             if (companySearchResult.success && companySearchResult.data && companySearchResult.data.length > 0) {
               const foundCompany = companySearchResult.data[0];
-              updatePayload.companyId = foundCompany.id;
+              updatePayload['companyId'] = foundCompany.id;
               console.log('✅ [UNIVERSAL] Found existing company:', foundCompany.id, foundCompany.name);
             } else {
-              console.log('ℹ️ [UNIVERSAL] No existing company found, will create new one if needed');
-              // For now, we'll let the API handle company creation or leave companyId null
-              // The API can create companies on-demand if needed
+              console.log('🏢 [UNIVERSAL] Company not found, creating new one');
+              const createResponse = await authFetch('/api/v1/companies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  name: updatePayload['companyName'],
+                  status: 'ACTIVE',
+                  priority: 'MEDIUM'
+                })
+              });
+              
+              if (createResponse.ok) {
+                const createResult = await createResponse.json();
+                if (createResult.success && createResult.data) {
+                  updatePayload['companyId'] = createResult.data.id;
+                  console.log('✅ [UNIVERSAL] Created new company:', createResult.data.id);
+                }
+              } else {
+                console.error('❌ [UNIVERSAL] Failed to create company:', await createResponse.text());
+              }
             }
           }
         } catch (companyError) {

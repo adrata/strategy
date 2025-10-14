@@ -67,15 +67,21 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
     const countsOnly = searchParams.get('counts') === 'true';
+    const forceRefresh = searchParams.get('refresh') === 'true';
     
     const offset = (page - 1) * limit;
     
-    // Check cache first
+    // Check cache first (skip if force refresh)
     const cacheKey = `companies-${context.workspaceId}-${status}-${limit}-${countsOnly}-${page}`;
     const cached = responseCache.get(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    if (!forceRefresh && cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      console.log(`📦 [V1 COMPANIES API] Returning cached data for key: ${cacheKey}`);
       return NextResponse.json(cached.data);
+    }
+    
+    if (forceRefresh) {
+      console.log(`🔄 [V1 COMPANIES API] Force refresh requested, bypassing cache`);
     }
 
     // Enhanced where clause for pipeline management

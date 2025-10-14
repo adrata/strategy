@@ -407,11 +407,14 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       setData([]);
       setCount(0);
       setError(null);
+      setLoading(true); // Set loading to true to show loading state
+      
       // Force a refetch with refresh=true to bypass backend cache
+      // Add small delay to ensure any pending API operations complete
       setTimeout(() => {
         console.log(`🔄 [FAST SECTION DATA] Force refetching after cache clear for: ${section}`);
         fetchSectionData(true);
-      }, 0);
+      }, 50);
     }
   };
 }

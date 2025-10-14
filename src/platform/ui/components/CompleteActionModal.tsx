@@ -400,7 +400,7 @@ export function CompleteActionModal({
               </div>
               <div>
                 <h2 className="text-xl font-bold text-[var(--foreground)]">
-                  {initialData ? '🔄 Undo Action' : 'Complete Action'}
+                  {initialData ? '🔄 Undo Action' : 'Add Action'}
                 </h2>
                 <p className="text-sm text-[var(--muted)]">
                   {initialData 
@@ -702,15 +702,15 @@ export function CompleteActionModal({
                       : categoryColors.bg;
                   }
                 }}
-                title={`Complete action (${getCommonShortcut('SUBMIT')})`}
+                title={`Add action (${getCommonShortcut('SUBMIT')})`}
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Completing...
+                    Adding...
                   </div>
                 ) : (
-                  initialData ? `Resubmit (${getCommonShortcut('SUBMIT')})` : `Complete (${getCommonShortcut('SUBMIT')})`
+                  initialData ? `Resubmit (${getCommonShortcut('SUBMIT')})` : `Add Action (${getCommonShortcut('SUBMIT')})`
                 )}
               </button>
             </div>

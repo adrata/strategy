@@ -187,8 +187,27 @@ export function usePipelineActions({
     
     setIsSubmitting(true);
     try {
-      // TODO: Implement API call to add action
-      console.log('Adding action:', actionData, 'to record:', selectedRecord.id);
+      // Save action to database via action-logs API
+      const response = await fetch('/api/v1/action-logs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          personId: selectedRecord.id,
+          type: actionData.type,
+          description: actionData.description,
+          date: actionData.date,
+          outcome: actionData.outcome,
+          nextAction: actionData.nextAction
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save action log');
+      }
+
+      console.log('✅ Successfully saved action log for record:', selectedRecord.id);
       
       if (onActionAdd) {
         onActionAdd(selectedRecord.id, actionData);
@@ -196,7 +215,8 @@ export function usePipelineActions({
       
       closeAddActionModal();
     } catch (error) {
-      console.error('Error adding action:', error);
+      console.error('❌ Error saving action log:', error);
+      alert('Failed to save action. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

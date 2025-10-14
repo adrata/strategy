@@ -6,6 +6,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { authFetch } from '@/platform/api-fetch';
 import { getCategoryColors } from '@/platform/config/color-palette';
+import { CompanySelector } from '@/frontend/components/pipeline/CompanySelector';
 
 interface AddLeadModalProps {
   isOpen: boolean;
@@ -44,7 +45,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
     email: "",
     phone: "",
     jobTitle: "",
-    company: "",
+    selectedCompany: null as any,
     notes: ""
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -106,7 +107,13 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
       const fullName = `${formData.firstName} ${formData.lastName}`.trim();
       
       const leadData = {
-        ...formData,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        jobTitle: formData.jobTitle,
+        notes: formData.notes,
+        companyId: formData.selectedCompany?.id,
         fullName,
         status: "LEAD", // Lock in as LEAD
         source: "Manual Entry"
@@ -148,7 +155,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
           email: "",
           phone: "",
           jobTitle: "",
-          company: "",
+          selectedCompany: null,
           notes: ""
         });
         
@@ -294,12 +301,13 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Company
             </label>
-            <input
-              type="text"
-              value={formData.company}
-              onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-              placeholder="Enter company name"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+            <CompanySelector
+              value={formData.selectedCompany}
+              onChange={(company) => setFormData(prev => ({ 
+                ...prev, 
+                selectedCompany: company 
+              }))}
+              placeholder="Search or add company..."
             />
           </div>
 

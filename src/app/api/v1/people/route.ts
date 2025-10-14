@@ -3,6 +3,7 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAndCreateErrorResponse, SecureApiContext } from '@/platform/services/secure-api-helper';
 import { cache } from '@/platform/services/unified-cache';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
+import { findOrCreateCompany } from '@/platform/services/company-linking-service';
 
 // 🚀 PERFORMANCE: Enhanced caching with Redis
 const PEOPLE_CACHE_TTL = 2 * 60 * 1000; // 2 minutes for leads/prospects
@@ -416,6 +417,22 @@ export async function POST(request: NextRequest) {
 
     // Create full name
     const fullName = `${body.firstName} ${body.lastName}`;
+
+    // Handle company linking if company name is provided without companyId
+    if (body.company && typeof body.company === 'string' && body.company.trim() && !body.companyId) {
+      try {
+        console.log(`🏢 [PEOPLE API] Auto-linking company: "${body.company}"`);
+        const companyResult = await findOrCreateCompany(
+          body.company,
+          context.workspaceId
+        );
+        body.companyId = companyResult.id;
+        console.log(`✅ [PEOPLE API] ${companyResult.isNew ? 'Created' : 'Found'} company: ${companyResult.name} (${companyResult.id})`);
+      } catch (error) {
+        console.error('⚠️ [PEOPLE API] Failed to link company:', error);
+        // Continue without company linking rather than failing the entire request
+      }
+    }
 
     // Create person and action in a transaction
     const result = await prisma.$transaction(async (tx) => {

@@ -19,13 +19,58 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
   // Get section-specific colors
   const colors = getCategoryColors(section);
   const { user } = useUnifiedAuth();
+
+  // Debug: Log modal lifecycle
+  useEffect(() => {
+    console.log(`🏗️ [AddCompanyModal] Modal ${isOpen ? 'OPENED' : 'CLOSED'} for section: ${section}`);
+    if (isOpen) {
+      console.log(`👤 [AddCompanyModal] User context:`, {
+        userId: user?.id,
+        userEmail: user?.email,
+        hasUser: !!user
+      });
+    }
+  }, [isOpen, section, user?.id, user?.email]);
   const [formData, setFormData] = useState({
     name: "",
     website: "",
     notes: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const nameInputRef = useRef<HTMLInputElement>(null);
+
+  // Reset form and state when modal opens or closes
+  useEffect(() => {
+    if (!isOpen) {
+      // Reset when closing
+      console.log('🔄 [AddCompanyModal] Resetting state on modal close');
+      setIsSubmitting(false);
+      setFormData({
+        name: "",
+        website: "",
+        notes: ""
+      });
+      setErrorMessage('');
+    } else {
+      // Clear any previous error when opening
+      console.log('🔄 [AddCompanyModal] Clearing error state on modal open');
+      setErrorMessage('');
+    }
+  }, [isOpen]);
+
+  // Debug: Log form state changes
+  useEffect(() => {
+    if (isOpen) {
+      console.log('📝 [AddCompanyModal] Form data changed:', {
+        name: formData.name,
+        website: formData.website,
+        notes: formData.notes,
+        isSubmitting,
+        hasError: !!errorMessage
+      });
+    }
+  }, [formData, isSubmitting, errorMessage, isOpen]);
 
   // Auto-focus name input when modal opens
   useEffect(() => {
@@ -61,11 +106,20 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      alert('Company name is required');
+      setErrorMessage('Company name is required');
       return;
     }
 
+    console.log('🚀 [AddCompanyModal] Starting company creation:', {
+      name: formData.name,
+      website: formData.website,
+      notes: formData.notes,
+      userId: user?.id,
+      userEmail: user?.email
+    });
+
     setIsSubmitting(true);
+    setErrorMessage(''); // Clear any previous error
     
     try {
       const result = await authFetch('/api/v1/companies', {
@@ -73,19 +127,19 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
         headers: {
           'Content-Type': 'application/json',
         },
-               body: JSON.stringify({
-                 name: formData.name,
-                 website: formData.website,
-                 notes: formData.notes,
-                 ...(user?.id && { mainSellerId: user.id }) // Only include if user exists
-               }),
+        body: JSON.stringify({
+          name: formData.name,
+          website: formData.website,
+          notes: formData.notes,
+          ...(user?.id && { mainSellerId: user.id }) // Only include if user exists
+        }),
         timeout: 30000 // Increase timeout to 30 seconds
-      }, { success: false, error: 'Failed to create company' }); // fallback
+      }); // Removed fallback to get actual API errors
 
-      console.log('Company creation response:', result);
+      console.log('📡 [AddCompanyModal] Company creation response:', result);
       
       // Check if the response indicates success
-      if (result.success && result.data) {
+      if (result && result.success && result.data) {
         console.log('✅ [AddCompanyModal] Company created successfully', {
           companyId: result.data.id,
           companyName: result.data.name,
@@ -102,6 +156,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
         // Call callback to close modal, show success message, and refresh list
         onCompanyAdded(result.data);
       } else {
+        const errorMsg = result?.error || result?.message || 'Failed to create company';
         console.error('❌ [AddCompanyModal] Company creation failed:', {
           result,
           requestData: {
@@ -111,13 +166,14 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
             mainSellerId: user?.id
           }
         });
-        throw new Error(result.error || 'Failed to create company');
+        setErrorMessage(errorMsg);
       }
       
     } catch (error) {
       console.error('❌ [AddCompanyModal] Error creating company:', {
         error,
         errorMessage: error instanceof Error ? error.message : String(error),
+        errorStack: error instanceof Error ? error.stack : undefined,
         requestData: {
           name: formData.name,
           website: formData.website,
@@ -127,15 +183,27 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
         userId: user?.id,
         userEmail: user?.email
       });
-      alert('Failed to create company. Please try again.');
+      
+      // Set user-friendly error message
+      const errorMsg = error instanceof Error ? error.message : 'Failed to create company. Please try again.';
+      setErrorMessage(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleClose = () => {
+    console.log('🚪 [AddCompanyModal] Close requested:', {
+      isSubmitting,
+      hasFormData: !!formData.name,
+      hasError: !!errorMessage
+    });
+    
     if (!isSubmitting) {
+      console.log('✅ [AddCompanyModal] Closing modal');
       onClose();
+    } else {
+      console.log('⏸️ [AddCompanyModal] Cannot close - submission in progress');
     }
   };
 
@@ -177,6 +245,18 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
 
+          {/* Error Message */}
+          {errorMessage && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-sm text-red-700">{errorMessage}</p>
+              </div>
+            </div>
+          )}
+
           {/* Company Name */}
           <div>
             <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
@@ -186,7 +266,11 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               ref={nameInputRef}
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => {
+                setFormData(prev => ({ ...prev, name: e.target.value }));
+                // Clear error when user starts typing
+                if (errorMessage) setErrorMessage('');
+              }}
               placeholder="Enter company name"
               className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
               style={{

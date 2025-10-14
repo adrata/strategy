@@ -266,12 +266,15 @@ export function PipelineTable({
 
   // Wrapper function to convert ActionLogData types
   const handleActionSubmitWrapper = (actionData: any) => {
-    // Convert from AddActionModal format to usePipelineActions format
+    // Convert from CompleteActionModal format to usePipelineActions format
     const convertedActionData = {
-      type: actionData.actionType || actionData.type,
-      description: actionData.notes || actionData.description,
-      date: actionData.actionDate || actionData.date,
-      outcome: actionData.nextAction || actionData.outcome
+      type: actionData.type, // Already correct format from CompleteActionModal
+      description: actionData.action, // 'action' field contains the notes
+      date: actionData.time === 'Now' ? new Date().toISOString() : 
+            actionData.time === 'Past' ? new Date(Date.now() - 86400000).toISOString() : 
+            new Date(Date.now() + 86400000).toISOString(),
+      outcome: '', // CompleteActionModal doesn't have outcome field
+      nextAction: '' // CompleteActionModal doesn't have nextAction field
     };
     return handleActionSubmit(convertedActionData);
   };

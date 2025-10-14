@@ -134,6 +134,10 @@ export function PipelineHeader({
       case 'people':
         setShowAddPersonModal(true);
         break;
+      case 'speedrun':
+        console.log('Opening Add Action modal for speedrun...');
+        setShowAddActionModal(true);
+        break;
       default:
         console.warn('Unknown section for add modal:', section);
         setShowAddLeadModal(true); // fallback
@@ -159,7 +163,22 @@ export function PipelineHeader({
     
     // Clear cache and refresh the list
     console.log(`🔄 [PipelineHeader] Calling onClearCache for section: ${section}`);
-    onClearCache?.();
+    
+    // Dispatch cache invalidation event for other components
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('cache-invalidate', {
+        detail: { 
+          pattern: `${section}-*`, 
+          reason: 'new_record_added',
+          section: section
+        }
+      }));
+    }
+    
+    // Add small delay to ensure API has processed the new company
+    setTimeout(() => {
+      onClearCache?.();
+    }, 100);
     
     // Show success message after a brief delay to ensure it's visible
     setTimeout(() => {
@@ -444,8 +463,8 @@ export function PipelineHeader({
   // Handle button action
   const handleAction = useCallback(() => {
     if (section === 'speedrun') {
-      console.log('Opening add person popup...');
-      // Open add person popup for speedrun section
+      console.log('Opening add action modal...');
+      // Open add action modal for speedrun section
       setSelectedRecord(null);
       setShowAddActionModal(true);
     } else {
@@ -500,10 +519,15 @@ export function PipelineHeader({
           // Start Speedrun for speedrun section
           console.log(`⌨️ Command+Enter pressed for Start Speedrun`);
           navigateToPipeline('speedrun/sprint');
-        } else if (section === 'leads' || section === 'people') {
-          // Add Lead/Add Person for leads and people sections
-          console.log(`⌨️ Command+Enter pressed for Add ${section === 'leads' ? 'Lead' : 'Person'} in ${section} section`);
+        } else if (section === 'people') {
+          // Add Person for people section
+          console.log(`⌨️ Command+Enter pressed for Add Person in ${section} section`);
           onAddRecord();
+        } else if (section === 'leads') {
+          // Open Add Action modal for leads section
+          console.log(`⌨️ Command+Enter pressed for Add Action in ${section} section`);
+          setSelectedRecord(null);
+          setShowAddActionModal(true);
         } else {
           // Add Action for other sections
           console.log(`⌨️ Command+Enter pressed for Add Action in ${section} section`);
@@ -1138,6 +1162,7 @@ export function PipelineHeader({
                               console.log('Starting speedrun...');
                               navigateToPipeline('speedrun/sprint');
                             } else {
+                              console.log(`Opening Add Action modal for ${section} section`);
                               setSelectedRecord(null);
                               setShowAddActionModal(true);
                             }
@@ -1160,7 +1185,7 @@ export function PipelineHeader({
                           }`}
                         >
                           <span className="hidden xs:inline">
-                            {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
+                            {section === 'speedrun' ? `Start Speedrun (${getCommonShortcut('SUBMIT')})` : `${(sectionInfo as any).secondaryActionButton} (${getCommonShortcut('SUBMIT')})`}
                           </span>
                           <span className="xs:hidden">
                             {section === 'speedrun' ? `Start (${getCommonShortcut('SUBMIT')})` : `Add Action (${getCommonShortcut('SUBMIT')})`}

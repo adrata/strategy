@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getV1AuthUser } from '../../auth';
+import { findOrCreateCompany } from '@/platform/services/company-linking-service';
 
 /**
  * Individual Person CRUD API v1
@@ -277,6 +278,24 @@ export async function PATCH(
       const firstName = body.firstName || existingPerson.firstName;
       const lastName = body.lastName || existingPerson.lastName;
       body.fullName = `${firstName} ${lastName}`;
+    }
+
+    // Handle company linking if company name is provided without companyId
+    if (body.company && typeof body.company === 'string' && body.company.trim() && !body.companyId) {
+      try {
+        console.log(`🏢 [PEOPLE API PATCH] Auto-linking company: "${body.company}"`);
+        const companyResult = await findOrCreateCompany(
+          body.company,
+          existingPerson.workspaceId
+        );
+        body.companyId = companyResult.id;
+        delete body.company; // Remove string field, we're using companyId
+        console.log(`✅ [PEOPLE API PATCH] ${companyResult.isNew ? 'Created' : 'Found'} company: ${companyResult.name} (${companyResult.id})`);
+      } catch (error) {
+        console.error('⚠️ [PEOPLE API PATCH] Failed to link company:', error);
+        // Continue without company linking rather than failing the entire request
+        delete body.company; // Remove the string field to avoid schema issues
+      }
     }
 
     // Special handling for globalRank updates
