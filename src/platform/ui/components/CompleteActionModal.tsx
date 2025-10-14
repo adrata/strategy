@@ -201,7 +201,7 @@ export function CompleteActionModal({
       ...prev,
       person: person.fullName || `${person.firstName} ${person.lastName}`.trim(),
       personId: person.id,
-      company: person.company || prev.company,
+      company: typeof person.company === 'object' ? person.company?.name : person.company || prev.company,
       companyId: person.companyId || prev.companyId
     }));
     setPersonSearchQuery('');
@@ -257,10 +257,6 @@ export function CompleteActionModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.action.trim()) {
-      alert('Please enter action details');
-      return;
-    }
     if (!formData.person.trim()) {
       alert('Please select a person');
       return;
@@ -286,7 +282,7 @@ export function CompleteActionModal({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (isModifierKeyPressed(e) && e.key === 'Enter') {
       e.preventDefault();
-      if (!isLoading && formData.action.trim()) {
+      if (!isLoading && formData.person.trim()) {
         handleSubmit(e as any);
       }
     }
@@ -348,7 +344,7 @@ export function CompleteActionModal({
         event.stopPropagation();
         event.stopImmediatePropagation();
         
-        if (!isLoading && formData.action.trim()) {
+        if (!isLoading && formData.person.trim()) {
           handleSubmit(event as any);
         }
       }
@@ -698,23 +694,23 @@ export function CompleteActionModal({
               </button>
               <button
                 type="submit"
-                disabled={isLoading || !formData.person.trim() || !formData.action.trim()}
+                disabled={isLoading || !formData.person.trim()}
                 className="flex-1 px-4 py-3 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
-                  backgroundColor: formData.action.trim() && formData.person.trim() && !isLoading 
+                  backgroundColor: formData.person.trim() && !isLoading 
                     ? categoryColors.bgHover 
                     : categoryColors.bg,
                   color: categoryColors.primary,
                   borderColor: categoryColors.border
                 }}
                 onMouseEnter={(e) => {
-                  if (!isLoading && formData.person.trim() && formData.action.trim()) {
+                  if (!isLoading && formData.person.trim()) {
                     e.currentTarget.style.backgroundColor = categoryColors.bgHover;
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isLoading) {
-                    e.currentTarget.style.backgroundColor = formData.action.trim() && formData.person.trim()
+                    e.currentTarget.style.backgroundColor = formData.person.trim()
                       ? categoryColors.bgHover 
                       : categoryColors.bg;
                   }
