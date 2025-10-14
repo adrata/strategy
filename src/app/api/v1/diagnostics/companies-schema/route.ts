@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
-import { getSecureApiContext } from '@/platform/services/unified-auth-service';
+import { getSecureApiContext } from '@/platform/services/secure-api-helper';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
