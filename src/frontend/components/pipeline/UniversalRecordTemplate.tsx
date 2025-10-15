@@ -297,7 +297,9 @@ export function UniversalRecordTemplate({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmName, setDeleteConfirmName] = useState('');
 
-  const tabs = customTabs || getTabsForRecordType(recordType, record);
+  const tabs = useMemo(() => {
+    return customTabs || getTabsForRecordType(recordType, record);
+  }, [customTabs, recordType, record?.company, record?.companyName]);
   
   // Function to update URL with tab parameter
   const updateURLTab = (tabId: string) => {
@@ -2414,7 +2416,7 @@ export function UniversalRecordTemplate({
           <button
             key="add-action"
             onClick={() => setIsAddActionModalOpen(true)}
-            className="px-3 py-1.5 text-sm bg-green-100 text-green-800 border border-green-200 rounded-md hover:bg-green-200 transition-colors flex items-center gap-1"
+            className="px-3 py-1.5 text-sm bg-[var(--success-bg)] text-[var(--success-text)] border border-[var(--success-border)] rounded-md hover:bg-[var(--success)] hover:text-[var(--button-text)] transition-colors flex items-center gap-1"
           >
             <span className="hidden xs:inline">Add Action ({getCommonShortcut('SUBMIT')})</span>
             <span className="xs:hidden">Add Action</span>
@@ -2436,7 +2438,7 @@ export function UniversalRecordTemplate({
                 router.push('/speedrun/sprint');
               }
             }}
-            className="px-3 py-1.5 text-sm bg-blue-100 text-blue-800 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors flex items-center gap-1"
+            className="px-3 py-1.5 text-sm bg-[var(--info-bg)] text-[var(--info-text)] border border-[var(--info-border)] rounded-md hover:bg-[var(--info)] hover:text-[var(--button-text)] transition-colors flex items-center gap-1"
           >
             <span className="hidden xs:inline">Start Speedrun ({getCommonShortcut('SUBMIT')})</span>
             <span className="xs:hidden">Start ({getCommonShortcut('SUBMIT')})</span>
@@ -2462,7 +2464,7 @@ export function UniversalRecordTemplate({
           <button
             key="advance-to-opportunity"
             onClick={handleAdvanceToOpportunity}
-            className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors"
+            className="px-3 py-1.5 text-sm bg-[var(--info-bg)] text-[var(--info-text)] border border-[var(--info-border)] rounded-md hover:bg-[var(--info)] hover:text-[var(--button-text)] transition-colors"
           >
             Advance to Opportunity
           </button>
@@ -3964,7 +3966,7 @@ export function UniversalRecordTemplate({
                   </button>
                   <button
                     onClick={handleSaveRecord}
-                    className="px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-lg hover:bg-blue-200 transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-[var(--info-text)] bg-[var(--info-bg)] border border-[var(--info-border)] rounded-lg hover:bg-[var(--info)] hover:text-[var(--button-text)] transition-colors"
                   >
                     Complete ({getCommonShortcut('SUBMIT')})
                   </button>
@@ -4190,23 +4192,23 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
   };
 
   const getStatusColor = (status?: string): string => {
-    if (!status) return 'bg-[var(--hover)] text-gray-800';
+    if (!status) return 'bg-[var(--hover)] text-[var(--foreground)]';
     const statusLower = status.toLowerCase();
-    if (['new', 'uncontacted'].includes(statusLower)) return 'bg-blue-100 text-blue-800';
-    if (['contacted', 'responded'].includes(statusLower)) return 'bg-[var(--hover)] text-gray-800';
-    if (['qualified', 'hot'].includes(statusLower)) return 'bg-green-100 text-green-800';
-    if (['closed_won', 'won'].includes(statusLower)) return 'bg-green-100 text-green-800';
-    if (['closed_lost', 'lost'].includes(statusLower)) return 'bg-red-100 text-red-800';
-    return 'bg-[var(--hover)] text-gray-800';
+    if (['new', 'uncontacted'].includes(statusLower)) return 'bg-[var(--status-new-bg)] text-[var(--status-new-text)]';
+    if (['contacted', 'responded'].includes(statusLower)) return 'bg-[var(--status-contacted-bg)] text-[var(--status-contacted-text)]';
+    if (['qualified', 'hot'].includes(statusLower)) return 'bg-[var(--status-qualified-bg)] text-[var(--status-qualified-text)]';
+    if (['closed_won', 'won'].includes(statusLower)) return 'bg-[var(--status-won-bg)] text-[var(--status-won-text)]';
+    if (['closed_lost', 'lost'].includes(statusLower)) return 'bg-[var(--status-lost-bg)] text-[var(--status-lost-text)]';
+    return 'bg-[var(--hover)] text-[var(--foreground)]';
   };
 
   const getPriorityColor = (priority?: string): string => {
-    if (!priority) return 'bg-[var(--hover)] text-gray-800';
+    if (!priority) return 'bg-[var(--hover)] text-[var(--foreground)]';
     const priorityLower = priority.toLowerCase();
-    if (priorityLower === 'high') return 'bg-red-100 text-red-800';
-    if (priorityLower === 'medium') return 'bg-[var(--hover)] text-gray-800';
-    if (priorityLower === 'low') return 'bg-green-100 text-green-800';
-    return 'bg-[var(--hover)] text-gray-800';
+    if (priorityLower === 'high') return 'bg-[var(--priority-high-bg)] text-[var(--priority-high-text)]';
+    if (priorityLower === 'medium') return 'bg-[var(--priority-medium-bg)] text-[var(--priority-medium-text)]';
+    if (priorityLower === 'low') return 'bg-[var(--priority-low-bg)] text-[var(--priority-low-text)]';
+    return 'bg-[var(--hover)] text-[var(--foreground)]';
   };
 
   return (
@@ -4867,9 +4869,9 @@ function HistoryTab({ record, recordType }: { record: any; recordType: string })
                   </div>
                   {activity['outcome'] && (
                     <span className={`text-xs px-2 py-1 rounded-full ${
-                      activity['outcome'] === 'positive' ? 'bg-green-100 text-green-800' :
-                      activity['outcome'] === 'negative' ? 'bg-red-100 text-red-800' :
-                      'bg-[var(--hover)] text-gray-800'
+                      activity['outcome'] === 'positive' ? 'bg-[var(--success-bg)] text-[var(--success-text)]' :
+                      activity['outcome'] === 'negative' ? 'bg-[var(--error-bg)] text-[var(--error-text)]' :
+                      'bg-[var(--hover)] text-[var(--foreground)]'
                     }`}>
                       {activity.outcome}
                     </span>

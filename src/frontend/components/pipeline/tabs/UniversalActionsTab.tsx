@@ -3,6 +3,7 @@ import { authFetch } from '@/platform/api-fetch';
 import { formatDistanceToNow, format } from 'date-fns';
 import { ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, DocumentTextIcon, PhoneIcon, CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
+import { InlineEditField } from '../InlineEditField';
 
 interface ActionEvent {
   id: string;
@@ -18,14 +19,25 @@ interface ActionEvent {
 interface UniversalActionsTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalActionsTab({ record, recordType }: UniversalActionsTabProps) {
+export function UniversalActionsTab({ record, recordType, onSave }: UniversalActionsTabProps) {
   const [actionEvents, setActionEvents] = useState<ActionEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { users } = useWorkspaceUsers();
+  
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const handleSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
 
   // Function to get user name from user ID
   const getUserName = useCallback((userId: string) => {
@@ -79,21 +91,21 @@ export function UniversalActionsTab({ record, recordType }: UniversalActionsTabP
     switch (type) {
       case 'email':
       case 'email_conversation':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-[var(--info-bg)] text-[var(--info-text)] border-[var(--info-border)]';
       case 'call':
       case 'phone_call':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-[var(--success-bg)] text-[var(--success-text)] border-[var(--success-border)]';
       case 'meeting':
       case 'appointment':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'bg-[var(--panel-background)] text-[var(--foreground)] border-[var(--border)]';
       case 'note':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-[var(--warning-bg)] text-[var(--warning-text)] border-[var(--warning-border)]';
       case 'created':
-        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
+        return 'bg-[var(--hover)] text-[var(--foreground)] border-[var(--border)]';
       case 'status_change':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+        return 'bg-[var(--warning-bg)] text-[var(--warning-text)] border-[var(--warning-border)]';
       default:
-        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
+        return 'bg-[var(--hover)] text-[var(--foreground)] border-[var(--border)]';
     }
   };
 
@@ -403,7 +415,16 @@ export function UniversalActionsTab({ record, recordType }: UniversalActionsTabP
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-sm font-medium text-[var(--foreground)]">{event.title}</h4>
+                      <InlineEditField
+                        value={event.title}
+                        field="title"
+                        onSave={onSave || (() => Promise.resolve())}
+                        recordId={event.id}
+                        recordType="action"
+                        onSuccess={handleSuccess}
+                        placeholder="Enter action title"
+                        className="text-sm font-medium text-[var(--foreground)]"
+                      />
                       {!isPastEvent(event.date) && (
                         <span className="px-4 py-1 bg-red-100 text-red-800 text-xs rounded-full whitespace-nowrap">
                           Scheduled
@@ -419,9 +440,17 @@ export function UniversalActionsTab({ record, recordType }: UniversalActionsTabP
                         </span>
                       )}
                     </div>
-                    {event['description'] && (
-                      <p className="text-sm text-[var(--muted)] mb-2">{event.description}</p>
-                    )}
+                    <InlineEditField
+                      value={event.description}
+                      field="description"
+                      onSave={onSave || (() => Promise.resolve())}
+                      recordId={event.id}
+                      recordType="action"
+                      onSuccess={handleSuccess}
+                      placeholder="Enter action description"
+                      type="textarea"
+                      className="text-sm text-[var(--muted)] mb-2"
+                    />
                     
                     {/* Expandable content for emails and notes */}
                     {hasExpandableContent(event) && (
@@ -530,6 +559,18 @@ export function UniversalActionsTab({ record, recordType }: UniversalActionsTabP
           </div>
         </div>
       </div>
+
+      {/* Success Toast */}
+      {showSuccessMessage && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
+            <div className="flex items-center space-x-2">
+              <span>✓</span>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,11 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { InlineEditField } from '../InlineEditField';
 
 interface UniversalStakeholdersTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalStakeholdersTab({ record, recordType }: UniversalStakeholdersTabProps) {
+export function UniversalStakeholdersTab({ record, recordType, onSave }: UniversalStakeholdersTabProps) {
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const handleSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
+
   // Enhanced data extraction with better error handling
   let stakeholders: any[] = [];
   
@@ -55,19 +67,52 @@ export function UniversalStakeholdersTab({ record, recordType }: UniversalStakeh
                   </span>
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-medium text-[var(--foreground)]">
-                    {stakeholder.name || `${stakeholder.firstName || ''} ${stakeholder.lastName || ''}`.trim() || 'Unknown'}
-                  </h4>
-                  <p className="text-sm text-[var(--muted)]">
-                    {stakeholder.title || stakeholder.role || 'Stakeholder'}
-                  </p>
-                  {stakeholder['email'] && (
-                    <p className="text-sm text-blue-600">{stakeholder.email}</p>
-                  )}
+                  <InlineEditField
+                    value={stakeholder.name || `${stakeholder.firstName || ''} ${stakeholder.lastName || ''}`.trim()}
+                    field="name"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={stakeholder.id}
+                    recordType="stakeholder"
+                    onSuccess={handleSuccess}
+                    placeholder="Enter stakeholder name"
+                    className="font-medium text-[var(--foreground)]"
+                  />
+                  <InlineEditField
+                    value={stakeholder.title || stakeholder.role}
+                    field="title"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={stakeholder.id}
+                    recordType="stakeholder"
+                    onSuccess={handleSuccess}
+                    placeholder="Enter stakeholder title"
+                    className="text-sm text-[var(--muted)]"
+                  />
+                  <InlineEditField
+                    value={stakeholder.email}
+                    field="email"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={stakeholder.id}
+                    recordType="stakeholder"
+                    onSuccess={handleSuccess}
+                    placeholder="Enter stakeholder email"
+                    className="text-sm text-blue-600"
+                  />
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Success Toast */}
+      {showSuccessMessage && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
+            <div className="flex items-center space-x-2">
+              <span>✓</span>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+          </div>
         </div>
       )}
     </div>

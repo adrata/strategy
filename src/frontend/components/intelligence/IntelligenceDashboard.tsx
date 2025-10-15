@@ -112,12 +112,12 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+      <div className="fixed inset-0 bg-[var(--overlay-bg)] bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50">
+        <div className="bg-[var(--background)] rounded-lg p-8 max-w-md w-full mx-4 border border-[var(--border)]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Loading Intelligence</h3>
-            <p className="text-gray-600">Analyzing data and generating insights...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent)] mx-auto mb-4"></div>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Loading Intelligence</h3>
+            <p className="text-[var(--muted)]">Analyzing data and generating insights...</p>
           </div>
         </div>
       </div>
@@ -126,23 +126,23 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
 
   if (error) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+      <div className="fixed inset-0 bg-[var(--overlay-bg)] bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50">
+        <div className="bg-[var(--background)] rounded-lg p-8 max-w-md w-full mx-4 border border-[var(--border)]">
           <div className="text-center">
-            <div className="text-red-600 text-4xl mb-4">⚠️</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Intelligence</h3>
-            <p className="text-gray-600 mb-4">{error}</p>
+            <div className="text-[var(--error)] text-4xl mb-4">⚠️</div>
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Error Loading Intelligence</h3>
+            <p className="text-[var(--muted)] mb-4">{error}</p>
             <div className="flex space-x-3">
               <button
                 onClick={loadIntelligenceData}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-[var(--button-background)] text-[var(--button-text)] rounded-lg hover:bg-[var(--button-hover)] transition-colors"
               >
                 Retry
               </button>
               {onClose && (
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                  className="px-4 py-2 bg-[var(--panel-background)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover)] transition-colors border border-[var(--border)]"
                 >
                   Close
                 </button>
@@ -155,22 +155,22 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-[var(--overlay-bg)] bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50 p-4">
+      <div className="bg-[var(--background)] rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden border border-[var(--border)]">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-[var(--foreground)]">
               {recordType === 'person' ? 'Person Intelligence' : 'Company Intelligence'}
             </h2>
-            <p className="text-gray-600">
+            <p className="text-[var(--muted)]">
               AI-powered insights and recommendations
             </p>
           </div>
           <div className="flex items-center space-x-3">
             <button
               onClick={refreshIntelligence}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+              className="px-4 py-2 bg-[var(--button-background)] text-[var(--button-text)] rounded-lg hover:bg-[var(--button-hover)] flex items-center space-x-2 transition-colors"
             >
               <span>🔄</span>
               <span>Refresh</span>
@@ -178,7 +178,7 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
             {onClose && (
               <button
                 onClick={onClose}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                className="px-4 py-2 bg-[var(--panel-background)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover)] transition-colors border border-[var(--border)]"
               >
                 ✕
               </button>
@@ -187,7 +187,7 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="border-b">
+        <div className="border-b border-[var(--border)]">
           <nav className="flex space-x-8 px-6">
             {[
               { id: 'overview', label: 'Overview', icon: '📊' },
@@ -198,10 +198,10 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-[var(--accent)] text-[var(--accent)]'
+                    : 'border-transparent text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border)]'
                 }`}
               >
                 <span>{tab.icon}</span>
@@ -263,43 +263,43 @@ const OverviewTab: React.FC<{
   const intelligence = recordType === 'person' ? personIntelligence : companyIntelligence;
 
   if (!intelligence) {
-    return <div className="text-center text-gray-500">No intelligence data available</div>;
+    return <div className="text-center text-[var(--muted)]">No intelligence data available</div>;
   }
 
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-blue-50 rounded-lg p-6">
+        <div className="bg-[var(--info-bg)] rounded-lg p-6 border border-[var(--info-border)]">
           <div className="flex items-center">
-            <div className="text-blue-600 text-2xl mr-3">🎯</div>
+            <div className="text-[var(--info)] text-2xl mr-3">🎯</div>
             <div>
-              <p className="text-sm font-medium text-blue-600">Decision Power</p>
-              <p className="text-2xl font-bold text-blue-900">
+              <p className="text-sm font-medium text-[var(--info)]">Decision Power</p>
+              <p className="text-2xl font-bold text-[var(--info-text)]">
                 {recordType === 'person' ? personIntelligence?.buyerProfile.decisionPower : 'N/A'}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-green-50 rounded-lg p-6">
+        <div className="bg-[var(--success-bg)] rounded-lg p-6 border border-[var(--success-border)]">
           <div className="flex items-center">
-            <div className="text-green-600 text-2xl mr-3">📈</div>
+            <div className="text-[var(--success)] text-2xl mr-3">📈</div>
             <div>
-              <p className="text-sm font-medium text-green-600">Confidence</p>
-              <p className="text-2xl font-bold text-green-900">
+              <p className="text-sm font-medium text-[var(--success)]">Confidence</p>
+              <p className="text-2xl font-bold text-[var(--success-text)]">
                 {Math.round(intelligence.confidence * 100)}%
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-purple-50 rounded-lg p-6">
+        <div className="bg-[var(--panel-background)] rounded-lg p-6 border border-[var(--border)]">
           <div className="flex items-center">
-            <div className="text-purple-600 text-2xl mr-3">🔄</div>
+            <div className="text-[var(--muted)] text-2xl mr-3">🔄</div>
             <div>
-              <p className="text-sm font-medium text-purple-600">Last Updated</p>
-              <p className="text-sm font-bold text-purple-900">
+              <p className="text-sm font-medium text-[var(--muted)]">Last Updated</p>
+              <p className="text-sm font-bold text-[var(--foreground)]">
                 {new Date(intelligence.lastUpdated).toLocaleDateString()}
               </p>
             </div>
@@ -308,16 +308,16 @@ const OverviewTab: React.FC<{
       </div>
 
       {/* Data Sources */}
-      <div className="bg-gray-50 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Data Sources</h3>
+      <div className="bg-[var(--panel-background)] rounded-lg p-6 border border-[var(--border)]">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Data Sources</h3>
         <div className="flex items-center space-x-4">
-          <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+          <span className="px-3 py-1 bg-[var(--success-bg)] text-[var(--success-text)] rounded-full text-sm border border-[var(--success-border)]">
             Database
           </span>
-          <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+          <span className="px-3 py-1 bg-[var(--info-bg)] text-[var(--info-text)] rounded-full text-sm border border-[var(--info-border)]">
             Perplexity AI
           </span>
-          <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+          <span className="px-3 py-1 bg-[var(--panel-background)] text-[var(--foreground)] rounded-full text-sm border border-[var(--border)]">
             Claude AI
           </span>
         </div>
@@ -327,32 +327,32 @@ const OverviewTab: React.FC<{
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {recordType === 'person' && personIntelligence && (
           <>
-            <div className="bg-white border rounded-lg p-6">
-              <h4 className="font-semibold text-gray-900 mb-3">Risk Assessment</h4>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+              <h4 className="font-semibold text-[var(--foreground)] mb-3">Risk Assessment</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Job Change Risk:</span>
+                  <span className="text-sm text-[var(--muted)]">Job Change Risk:</span>
                   <span className={`text-sm font-medium ${
-                    personIntelligence.buyerProfile.riskAssessment.jobChangeRisk === 'High' ? 'text-red-600' :
-                    personIntelligence.buyerProfile.riskAssessment.jobChangeRisk === 'Medium' ? 'text-yellow-600' : 'text-green-600'
+                    personIntelligence.buyerProfile.riskAssessment.jobChangeRisk === 'High' ? 'text-[var(--error)]' :
+                    personIntelligence.buyerProfile.riskAssessment.jobChangeRisk === 'Medium' ? 'text-[var(--warning)]' : 'text-[var(--success)]'
                   }`}>
                     {personIntelligence.buyerProfile.riskAssessment.jobChangeRisk}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Buying Stage:</span>
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm text-[var(--muted)]">Buying Stage:</span>
+                  <span className="text-sm font-medium text-[var(--foreground)]">
                     {personIntelligence.buyerProfile.riskAssessment.buyingCycleStage}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white border rounded-lg p-6">
-              <h4 className="font-semibold text-gray-900 mb-3">Best Channels</h4>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+              <h4 className="font-semibold text-[var(--foreground)] mb-3">Best Channels</h4>
               <div className="flex flex-wrap gap-2">
                 {personIntelligence.engagementStrategy.bestChannels.map((channel, index) => (
-                  <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
+                  <span key={index} className="px-2 py-1 bg-[var(--info-bg)] text-[var(--info-text)] rounded text-sm border border-[var(--info-border)]">
                     {channel}
                   </span>
                 ))}
@@ -363,26 +363,26 @@ const OverviewTab: React.FC<{
 
         {recordType === 'company' && companyIntelligence && (
           <>
-            <div className="bg-white border rounded-lg p-6">
-              <h4 className="font-semibold text-gray-900 mb-3">Market Position</h4>
-              <p className="text-sm text-gray-600 mb-2">
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+              <h4 className="font-semibold text-[var(--foreground)] mb-3">Market Position</h4>
+              <p className="text-sm text-[var(--muted)] mb-2">
                 {companyIntelligence.marketPosition.competitivePosition}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[var(--muted)]">
                 Growth: {companyIntelligence.marketPosition.growthTrajectory}
               </p>
             </div>
 
-            <div className="bg-white border rounded-lg p-6">
-              <h4 className="font-semibold text-gray-900 mb-3">Urgency Score</h4>
+            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+              <h4 className="font-semibold text-[var(--foreground)] mb-3">Urgency Score</h4>
               <div className="flex items-center">
-                <div className="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                <div className="flex-1 bg-[var(--panel-background)] rounded-full h-2 mr-3">
                   <div 
-                    className="bg-red-600 h-2 rounded-full" 
+                    className="bg-[var(--error)] h-2 rounded-full" 
                     style={{ width: `${companyIntelligence.timing.urgency * 10}%` }}
                   ></div>
                 </div>
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm font-medium text-[var(--foreground)]">
                   {companyIntelligence.timing.urgency}/10
                 </span>
               </div>

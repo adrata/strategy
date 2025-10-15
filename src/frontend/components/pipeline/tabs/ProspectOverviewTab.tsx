@@ -186,7 +186,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     if (value) {
       return <span className={className}>{children || value}</span>;
     }
-    return <span className="text-sm italic text-[var(--muted)]">-</span>;
+    return <span className="text-sm text-[var(--muted)]">-</span>;
   };
 
   // Extract CoreSignal data from the correct location (same as PersonOverviewTab)
@@ -582,14 +582,18 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">LinkedIn Connection Date:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {prospectData.linkedinConnectionDate ? 
-                    new Date(prospectData.linkedinConnectionDate).toLocaleDateString() : 
-                    '-'
-                  }
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Connection Date:</span>
+                <InlineEditField
+                  value={prospectData.linkedinConnectionDate}
+                  field="linkedinConnectionDate"
+                  variant="date"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
             </div>
           </div>

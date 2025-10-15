@@ -194,6 +194,22 @@ export function RightPanel() {
   // Track if conversations have been initially loaded to prevent re-loading on workspace changes
   const conversationsLoadedRef = useRef(false);
   
+  // Track locally deleted conversation IDs to prevent re-adding during API sync
+  const [deletedConversationIds, setDeletedConversationIds] = useState<Set<string>>(() => {
+    if (typeof window !== 'undefined' && workspaceId) {
+      try {
+        const storageKey = `adrata-deleted-conversations-${workspaceId}`;
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+          return new Set(JSON.parse(stored));
+        }
+      } catch (error) {
+        console.warn('Failed to load deleted conversation IDs:', error);
+      }
+    }
+    return new Set();
+  });
+  
   // Mock data for AI actions and team wins
   const [aiActions] = useState<AIAction[]>([
     {
@@ -243,6 +259,18 @@ export function RightPanel() {
       }
     }
   }, [conversations, workspaceId]);
+
+  // Save deleted conversation IDs to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined' && workspaceId) {
+      try {
+        const storageKey = `adrata-deleted-conversations-${workspaceId}`;
+        localStorage.setItem(storageKey, JSON.stringify(Array.from(deletedConversationIds)));
+      } catch (error) {
+        console.warn('Failed to save deleted conversation IDs:', error);
+      }
+    }
+  }, [deletedConversationIds, workspaceId]);
 
   // Load conversations from localStorage on component mount - WORKSPACE ISOLATED
   // Only load once to prevent closed tabs from reappearing
@@ -295,11 +323,15 @@ export function RightPanel() {
         
         // Merge with localStorage data (API is source of truth)
         setConversations(prevConversations => {
-          const merged = [...apiConversations];
+          // Don't re-add conversations that were deleted locally
+          const merged = apiConversations.filter(
+            apiConv => !deletedConversationIds.has(apiConv.id)
+          );
           
           // Add any localStorage conversations that aren't in API (for offline support)
           prevConversations.forEach(localConv => {
-            if (!merged.find(apiConv => apiConv.id === localConv.id)) {
+            if (!merged.find(apiConv => apiConv.id === localConv.id) && 
+                !deletedConversationIds.has(localConv.id)) {
               merged.push(localConv);
             }
           });
@@ -375,6 +407,23 @@ export function RightPanel() {
       console.warn('⚠️ [CHAT] Failed to save message to API:', error);
     }
     return null;
+  };
+
+  const deleteConversationFromAPI = async (conversationId: string) => {
+    if (!workspaceId || !userId) return;
+    
+    try {
+      const response = await fetch(`/api/v1/conversations/${conversationId}`, {
+        method: 'DELETE'
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        console.log('✅ [CHAT] Deleted conversation from API:', conversationId);
+      }
+    } catch (error) {
+      console.warn('⚠️ [CHAT] Failed to delete conversation from API:', error);
+    }
   };
 
   // Sync from API on mount and periodically
@@ -593,14 +642,25 @@ export function RightPanel() {
   };
 
   const closeConversation = (conversationId: string) => {
-    if (conversations.length > 1) {
-      setConversations(prev => prev.filter(c => c.id !== conversationId));
-      const conv = conversations.find(c => c['id'] === conversationId);
-      if (conv?.isActive && conversations.length > 1) {
-        const remaining = conversations.filter(c => c.id !== conversationId);
-        setActiveConversationId(remaining[0]?.id || 'main-chat');
+    setConversations(prev => {
+      if (prev.length <= 1) return prev;
+      
+      const filtered = prev.filter(c => c.id !== conversationId);
+      const closedConv = prev.find(c => c.id === conversationId);
+      
+      // If closing the active conversation, switch to another
+      if (closedConv?.isActive && filtered.length > 0) {
+        setActiveConversationId(filtered[0].id);
       }
-    }
+      
+      return filtered;
+    });
+    
+    // Track this conversation as deleted locally
+    setDeletedConversationIds(prev => new Set([...Array.from(prev), conversationId]));
+    
+    // Delete from API
+    deleteConversationFromAPI(conversationId);
   };
 
   const handleReorderConversations = (newOrder: Conversation[]) => {

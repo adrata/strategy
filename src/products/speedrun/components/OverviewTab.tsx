@@ -254,23 +254,47 @@ export function OverviewTab({
               Rank
             </div>
             <div className="mt-1">
-              <InlineEditField
-                value={(() => {
-                  // Use globalRank as primary source, fallback to winningScore.rank
+              {(() => {
+                // Check if state-based ranking is active
+                const isStateBased = (person as any).rankingMode === 'state-based';
+                const stateRank = (person as any).stateRank;
+                const companyRankInState = (person as any).companyRankInState;
+                const personRankInCompany = (person as any).personRankInCompany;
+                
+                if (isStateBased && stateRank && companyRankInState && personRankInCompany) {
+                  // Show state-based hierarchy
+                  return (
+                    <div className="space-y-1">
+                      <div className="text-lg text-[var(--foreground)] font-semibold">
+                        #{stateRank}-{companyRankInState}-{personRankInCompany}
+                      </div>
+                      <div className="text-xs text-[var(--muted)]">
+                        State-Company-Person
+                      </div>
+                    </div>
+                  );
+                } else {
+                  // Show global rank
                   const globalRank = (person as any).globalRank;
                   const winningScoreRank = person.winningScore?.rank;
-                  return globalRank ? globalRank.toString() : (winningScoreRank || '');
-                })()}
-                field="globalRank"
-                recordId={person.id?.toString() || ''}
-                recordType="speedrun"
-                inputType="number"
-                placeholder="Enter rank (1-999)"
-                onSave={handleSpeedrunInlineFieldSave}
-                className="text-lg text-[var(--foreground)] font-semibold"
-                min={1}
-                max={999}
-              />
+                  const rankValue = globalRank ? globalRank.toString() : (winningScoreRank || '');
+                  
+                  return (
+                    <InlineEditField
+                      value={rankValue}
+                      field="globalRank"
+                      recordId={person.id?.toString() || ''}
+                      recordType="speedrun"
+                      inputType="number"
+                      placeholder="Enter rank (1-999)"
+                      onSave={handleSpeedrunInlineFieldSave}
+                      className="text-lg text-[var(--foreground)] font-semibold"
+                      min={1}
+                      max={999}
+                    />
+                  );
+                }
+              })()}
             </div>
           </div>
         </div>

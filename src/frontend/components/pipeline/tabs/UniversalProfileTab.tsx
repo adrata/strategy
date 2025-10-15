@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
+import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 
 interface UniversalProfileTabProps {
   recordType: string;
   record?: any;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalProfileTab({ recordType, record: recordProp }: UniversalProfileTabProps) {
+export function UniversalProfileTab({ recordType, record: recordProp, onSave }: UniversalProfileTabProps) {
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
+  
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const handleSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
 
   if (!record) {
     return (
@@ -79,7 +91,16 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 </div>
                 <div>
                   <div className="text-sm font-medium text-[var(--foreground)]">Email</div>
-                  <div className="text-sm text-[var(--muted)]">{profileData.personalInfo.email}</div>
+                  <InlineEditField
+                    value={profileData.personalInfo.email}
+                    field="email"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    placeholder="Enter email address"
+                    className="text-sm text-[var(--muted)]"
+                  />
                 </div>
               </div>
               
@@ -91,7 +112,16 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 </div>
                 <div>
                   <div className="text-sm font-medium text-[var(--foreground)]">Phone</div>
-                  <div className="text-sm text-[var(--muted)]">{profileData.personalInfo.phone}</div>
+                  <InlineEditField
+                    value={profileData.personalInfo.phone}
+                    field="phone"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    placeholder="Enter phone number"
+                    className="text-sm text-[var(--muted)]"
+                  />
                 </div>
               </div>
               
@@ -103,13 +133,16 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 </div>
                 <div>
                   <div className="text-sm font-medium text-[var(--foreground)]">LinkedIn</div>
-                  <div className="text-sm text-[var(--muted)]">
-                    {profileData.personalInfo.linkedin !== '-' ? (
-                      <a href={profileData.personalInfo.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                        View Profile
-                      </a>
-                    ) : '-'}
-                  </div>
+                  <InlineEditField
+                    value={profileData.personalInfo.linkedin}
+                    field="linkedinUrl"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    placeholder="Enter LinkedIn URL"
+                    className="text-sm text-[var(--muted)]"
+                  />
                 </div>
               </div>
               
@@ -121,13 +154,16 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 </div>
                 <div>
                   <div className="text-sm font-medium text-[var(--foreground)]">LinkedIn Navigator</div>
-                  <div className="text-sm text-[var(--muted)]">
-                    {profileData.personalInfo.linkedinNavigatorUrl !== '-' ? (
-                      <a href={profileData.personalInfo.linkedinNavigatorUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                        View Navigator
-                      </a>
-                    ) : '-'}
-                  </div>
+                  <InlineEditField
+                    value={profileData.personalInfo.linkedinNavigatorUrl}
+                    field="linkedinNavigatorUrl"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    placeholder="Enter LinkedIn Navigator URL"
+                    className="text-sm text-[var(--muted)]"
+                  />
                 </div>
               </div>
               
@@ -139,13 +175,16 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 </div>
                 <div>
                   <div className="text-sm font-medium text-[var(--foreground)]">Bio URL</div>
-                  <div className="text-sm text-[var(--muted)]">
-                    {profileData.personalInfo.bio !== '-' ? (
-                      <a href={profileData.personalInfo.bio} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                        View Bio
-                      </a>
-                    ) : '-'}
-                  </div>
+                  <InlineEditField
+                    value={profileData.personalInfo.bio}
+                    field="bio"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    placeholder="Enter bio URL"
+                    className="text-sm text-[var(--muted)]"
+                  />
                 </div>
               </div>
             </div>
@@ -163,7 +202,16 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                 </div>
                 <div>
                   <div className="text-sm font-medium text-[var(--foreground)]">Location</div>
-                  <div className="text-sm text-[var(--muted)]">{profileData.personalInfo.location}</div>
+                  <InlineEditField
+                    value={profileData.personalInfo.location}
+                    field="location"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    placeholder="Enter location"
+                    className="text-sm text-[var(--muted)]"
+                  />
                 </div>
               </div>
               
@@ -204,22 +252,59 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
             <div className="space-y-4">
               <div>
                 <div className="text-sm font-medium text-[var(--foreground)] mb-1">Job Title</div>
-                <div className="text-sm text-[var(--muted)]">{profileData.personalInfo.title}</div>
+                <InlineEditField
+                  value={profileData.personalInfo.title}
+                  field="title"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter job title"
+                  className="text-sm text-[var(--muted)]"
+                />
               </div>
               
               <div>
                 <div className="text-sm font-medium text-[var(--foreground)] mb-1">Department</div>
-                <div className="text-sm text-[var(--muted)]">{profileData.professionalInfo.department}</div>
+                <InlineEditField
+                  value={profileData.professionalInfo.department}
+                  field="department"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter department"
+                  className="text-sm text-[var(--muted)]"
+                />
               </div>
               
               <div>
                 <div className="text-sm font-medium text-[var(--foreground)] mb-1">Seniority Level</div>
-                <div className="text-sm text-[var(--muted)]">{profileData.professionalInfo.seniority}</div>
+                <InlineEditField
+                  value={profileData.professionalInfo.seniority}
+                  field="seniority"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter seniority level"
+                  className="text-sm text-[var(--muted)]"
+                />
               </div>
               
               <div>
                 <div className="text-sm font-medium text-[var(--foreground)] mb-1">Company</div>
-                <div className="text-sm text-[var(--muted)]">{profileData.personalInfo.company}</div>
+                <InlineEditField
+                  value={profileData.personalInfo.company}
+                  field="company"
+                  variant="company"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter company name"
+                  className="text-sm text-[var(--muted)]"
+                />
               </div>
             </div>
           </div>
@@ -229,12 +314,30 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
             <div className="space-y-4">
               <div>
                 <div className="text-sm font-medium text-[var(--foreground)] mb-1">Communication Style</div>
-                <div className="text-sm text-[var(--muted)]">{profileData.communication.style}</div>
+                <InlineEditField
+                  value={profileData.communication.style}
+                  field="communicationStyle"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter communication style"
+                  className="text-sm text-[var(--muted)]"
+                />
               </div>
               
               <div>
                 <div className="text-sm font-medium text-[var(--foreground)] mb-1">Decision Making Style</div>
-                <div className="text-sm text-[var(--muted)]">{profileData.communication.decisionMaking}</div>
+                <InlineEditField
+                  value={profileData.communication.decisionMaking}
+                  field="decisionMakingStyle"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter decision making style"
+                  className="text-sm text-[var(--muted)]"
+                />
               </div>
               
               <div>
@@ -336,6 +439,18 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
           </div>
         </div>
       </div>
+
+      {/* Success Toast */}
+      {showSuccessMessage && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
+            <div className="flex items-center space-x-2">
+              <span>✓</span>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

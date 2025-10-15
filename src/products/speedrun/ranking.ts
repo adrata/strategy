@@ -197,7 +197,13 @@ function rankIndividualsWithinCompany(
 export function rankContacts(
   contacts: CRMRecord[],
   settings: SpeedrunUserSettings,
+  rankingMode: 'global' | 'state-based' = 'global',
+  stateOrder?: string[]
 ): RankedContact[] {
+  if (rankingMode === 'state-based') {
+    return rankContactsByState(contacts, settings, stateOrder);
+  }
+
   // Step 1: Rank companies by value and potential (1-400)
   const companyRankings = rankCompaniesByValue(contacts);
 
@@ -231,6 +237,7 @@ export function rankContacts(
         individual['companyRank'] = Object.keys(companyRankings).indexOf(company) + 1; // 1-400
         individual['personRank'] = index + 1; // 1-4000 within company
         individual['globalPersonRank'] = globalPersonRank + index; // Global rank across all people
+        individual['rankingMode'] = 'global'; // Set ranking mode
         
         // Combine company score (60%) + individual score (40%) for final ranking
         const combinedScore = companyScore * 0.6 + individual.rankingScore * 0.4;
@@ -414,4 +421,127 @@ export function sourceContactsFromCRM(
   );
 
   return uniqueContacts;
+}
+
+/**
+ * 🗺️ STATE-BASED HIERARCHICAL RANKING SYSTEM
+ * State > Company > Person hierarchy with custom state ordering
+ */
+export function rankContactsByState(
+  contacts: CRMRecord[],
+  settings: SpeedrunUserSettings,
+  stateOrder?: string[]
+): RankedContact[] {
+  console.log(`🗺️ [STATE_RANKING] Starting state-based ranking with ${contacts.length} contacts`);
+
+  // Step 1: Extract state information from company data
+  const contactsWithState = contacts.map(contact => {
+    const company = contact.company;
+    let state = 'Unknown';
+    
+    if (typeof company === 'object' && company?.hqState) {
+      state = company.hqState;
+    } else if (typeof company === 'string') {
+      // Try to extract state from company name or other fields
+      // This is a fallback - ideally company should be an object with hqState
+      state = 'Unknown';
+    }
+    
+    return {
+      ...contact,
+      state
+    };
+  });
+
+  // Step 2: Group contacts by state
+  const contactsByState: Record<string, CRMRecord[]> = {};
+  contactsWithState.forEach((contact) => {
+    const state = contact.state;
+    if (!contactsByState[state]) {
+      contactsByState[state] = [];
+    }
+    contactsByState[state].push(contact);
+  });
+
+  // Step 3: Apply state ordering
+  const orderedStates = stateOrder || Object.keys(contactsByState).sort();
+  console.log(`🗺️ [STATE_RANKING] Processing states in order: ${orderedStates.join(', ')}`);
+
+  // Step 4: Rank within each state using existing company ranking logic
+  const allRankedContacts: RankedContact[] = [];
+  let globalPersonRank = 1;
+
+  orderedStates.forEach((state, stateIndex) => {
+    const stateContacts = contactsByState[state];
+    if (!stateContacts || stateContacts.length === 0) return;
+
+    console.log(`🗺️ [STATE_RANKING] Processing state ${state} with ${stateContacts.length} contacts`);
+
+    // Rank companies within this state
+    const companyRankings = rankCompaniesByValue(stateContacts);
+
+    // Group contacts by company within state
+    const contactsByCompany: Record<string, CRMRecord[]> = {};
+    stateContacts.forEach((contact) => {
+      const company = contact.company || "Unknown Company";
+      if (!contactsByCompany[company]) {
+        contactsByCompany[company] = [];
+      }
+      contactsByCompany[company].push(contact);
+    });
+
+    // Rank individuals within each company in this state
+    Object.entries(contactsByCompany).forEach(([company, companyContacts]) => {
+      const companyScore = companyRankings[company] || 0;
+      
+      // Only process companies that have a score
+      if (companyScore > 0) {
+        const rankedIndividuals = rankIndividualsWithinCompany(
+          companyContacts,
+          settings,
+        );
+
+        // Add state-based ranking information
+        rankedIndividuals.forEach((individual, personIndex) => {
+          individual['companyRankingScore'] = companyScore;
+          individual['stateRank'] = stateIndex + 1; // State rank (1-based)
+          individual['companyRankInState'] = Object.keys(companyRankings).indexOf(company) + 1; // Company rank within state
+          individual['personRankInCompany'] = personIndex + 1; // Person rank within company
+          individual['globalPersonRank'] = globalPersonRank + personIndex; // Global rank across all people
+          individual['rankingMode'] = 'state-based'; // Set ranking mode
+          
+          // Combine state rank (60%) + company score (30%) + individual score (10%) for final ranking
+          const combinedScore = (stateIndex + 1) * 0.6 + companyScore * 0.3 + individual.rankingScore * 0.1;
+          individual['rankingScore'] = combinedScore;
+        });
+
+        allRankedContacts.push(...rankedIndividuals);
+        globalPersonRank += rankedIndividuals.length;
+      }
+    });
+  });
+
+  // Step 5: Final sort by combined score and time zone priority
+  const finalRanking = allRankedContacts.sort((a, b) => {
+    // First, sort by time zone calling priority (higher = call earlier in day)
+    const priorityDiff = (b.callingPriority || 3) - (a.callingPriority || 3);
+    if (priorityDiff !== 0) {
+      return priorityDiff; // Higher calling priority first
+    }
+
+    // Then by ranking score (higher = more important)
+    return b.rankingScore - a.rankingScore;
+  });
+
+  console.log(
+    `🗺️ [STATE_RANKING] State-based ranking complete: ${orderedStates.length} states, ${finalRanking.length} people ranked`,
+  );
+  console.log(`📊 [STATE_RANKING] State distribution:`, 
+    orderedStates.map(state => {
+      const stateCount = finalRanking.filter(c => c.stateRank === orderedStates.indexOf(state) + 1).length;
+      return `${state}: ${stateCount} people`;
+    })
+  );
+
+  return finalRanking;
 }

@@ -214,6 +214,36 @@ body:not(.website) {
   --high-contrast-fg: #000000;
   --high-contrast-border: #000000;
   --high-contrast-accent: #000000;
+  --overlay-bg: #000000;
+  --overlay-opacity: 0.5;
+  --success-bg: #dcfce7;
+  --success-text: #166534;
+  --success-border: #bbf7d0;
+  --warning-bg: #fef3c7;
+  --warning-text: #92400e;
+  --warning-border: #fde68a;
+  --error-bg: #fee2e2;
+  --error-text: #dc2626;
+  --error-border: #fecaca;
+  --info-bg: #dbeafe;
+  --info-text: #1e40af;
+  --info-border: #bfdbfe;
+  --status-new-bg: #f3f4f6;
+  --status-new-text: #374151;
+  --status-contacted-bg: #dbeafe;
+  --status-contacted-text: #1e40af;
+  --status-qualified-bg: #dcfce7;
+  --status-qualified-text: #166534;
+  --status-won-bg: #dcfce7;
+  --status-won-text: #166534;
+  --status-lost-bg: #fee2e2;
+  --status-lost-text: #dc2626;
+  --priority-high-bg: #fee2e2;
+  --priority-high-text: #dc2626;
+  --priority-medium-bg: #fef3c7;
+  --priority-medium-text: #92400e;
+  --priority-low-bg: #dcfce7;
+  --priority-low-text: #166534;
 }
 
 /* Theme transition support */

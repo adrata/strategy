@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
+import { InlineEditField } from '../InlineEditField';
 
 interface UniversalCompanyIntelTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
 interface CompanyIntelligence {
@@ -22,9 +24,19 @@ interface CompanyIntelligence {
   model?: string;
 }
 
-export function UniversalCompanyIntelTab({ record: recordProp, recordType }: UniversalCompanyIntelTabProps) {
+export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSave }: UniversalCompanyIntelTabProps) {
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
+  
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const handleSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
   
   const [intelligence, setIntelligence] = useState<CompanyIntelligence | null>(null);
   const [loading, setLoading] = useState(false);
@@ -188,91 +200,120 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType }: Uni
     );
   }
 
-      return (
-        <div className="space-y-6">
-          {/* Header */}
-          <div>
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">Company Intelligence</h2>
-          </div>
+  return (
+    <>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h2 className="text-xl font-semibold text-[var(--foreground)]">Company Intelligence</h2>
+        </div>
 
-          {/* Strategic Intelligence (moved to top, sub-header removed) */}
-          <div className="space-y-4">
+        {/* Strategic Intelligence (moved to top, sub-header removed) */}
+        <div className="space-y-4">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <InlineEditField
+              value={intelligence?.strategicIntelligence}
+              field="strategicIntelligence"
+              onSave={onSave || (() => Promise.resolve())}
+              recordId={record.id}
+              recordType={recordType}
+              onSuccess={handleSuccess}
+              placeholder="Enter strategic intelligence"
+              type="textarea"
+              className="text-sm text-[var(--foreground)] leading-relaxed"
+            />
+          </div>
+        </div>
+
+        {/* Company Wants & Needs Analysis */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Wants & Needs Analysis</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-              <div className="text-sm text-[var(--foreground)] leading-relaxed">
-                {intelligence?.strategicIntelligence || 'Strategic intelligence not available.'}
-              </div>
-            </div>
-          </div>
-
-          {/* Company Wants & Needs Analysis */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Wants & Needs Analysis</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-                <h4 className="font-medium text-[var(--foreground)] mb-3">Strategic Wants</h4>
-                <div className="space-y-2">
-                  {(intelligence?.strategicWants || []).map((want, index) => (
-                    <div key={index} className="text-sm text-gray-700 flex items-start">
-                      <span className="text-blue-500 mr-2">•</span>
-                      {want}
-                    </div>
-                  ))}
-                  {(!intelligence?.strategicWants || intelligence.strategicWants.length === 0) && (
-                    <div className="text-sm text-[var(--muted)] italic">No strategic wants data available.</div>
-                  )}
-                </div>
-              </div>
-              <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-                <h4 className="font-medium text-[var(--foreground)] mb-3">Critical Needs</h4>
-                <div className="space-y-2">
-                  {(intelligence?.criticalNeeds || []).map((need, index) => (
-                    <div key={index} className="text-sm text-gray-700 flex items-start">
-                      <span className="text-red-500 mr-2">•</span>
-                      {need}
-                    </div>
-                  ))}
-                  {(!intelligence?.criticalNeeds || intelligence.criticalNeeds.length === 0) && (
-                    <div className="text-sm text-[var(--muted)] italic">No critical needs data available.</div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Adrata Strategy */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Adrata Intelligence</h3>
-            <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-              <div className="text-sm text-[var(--foreground)] leading-relaxed">
-                {intelligence?.adrataStrategy || 'Adrata intelligence not available.'}
-              </div>
-            </div>
-          </div>
-
-          {/* Business Units - Only show if we have data */}
-          {intelligence?.businessUnits && intelligence.businessUnits.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Business Units</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {intelligence.businessUnits.map((unit, index) => (
-                  <div key={index} className={`p-4 rounded-lg border-2 ${unit.color || 'bg-[var(--hover)] border-[var(--border)]'}`}>
-                    <h4 className="font-medium text-[var(--foreground)] mb-3">{unit.name || 'Business Unit'}</h4>
-                    <div className="space-y-1">
-                      {(unit.functions || []).map((func, funcIndex) => (
-                        <div key={funcIndex} className="text-xs text-gray-700">
-                          {func}
-                        </div>
-                      ))}
-                      {(!unit.functions || unit.functions.length === 0) && (
-                        <div className="text-xs text-[var(--muted)] italic">No functions listed.</div>
-                      )}
-                    </div>
+              <h4 className="font-medium text-[var(--foreground)] mb-3">Strategic Wants</h4>
+              <div className="space-y-2">
+                {(intelligence?.strategicWants || []).map((want, index) => (
+                  <div key={index} className="text-sm text-gray-700 flex items-start">
+                    <span className="text-blue-500 mr-2">•</span>
+                    {want}
                   </div>
                 ))}
+                {(!intelligence?.strategicWants || intelligence.strategicWants.length === 0) && (
+                  <div className="text-sm text-[var(--muted)] italic">No strategic wants data available.</div>
+                )}
               </div>
             </div>
-          )}
-
+            <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+              <h4 className="font-medium text-[var(--foreground)] mb-3">Critical Needs</h4>
+              <div className="space-y-2">
+                {(intelligence?.criticalNeeds || []).map((need, index) => (
+                  <div key={index} className="text-sm text-gray-700 flex items-start">
+                    <span className="text-red-500 mr-2">•</span>
+                    {need}
+                  </div>
+                ))}
+                {(!intelligence?.criticalNeeds || intelligence.criticalNeeds.length === 0) && (
+                  <div className="text-sm text-[var(--muted)] italic">No critical needs data available.</div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      );
+
+        {/* Adrata Strategy */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Adrata Intelligence</h3>
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <InlineEditField
+              value={intelligence?.adrataStrategy}
+              field="adrataStrategy"
+              onSave={onSave || (() => Promise.resolve())}
+              recordId={record.id}
+              recordType={recordType}
+              onSuccess={handleSuccess}
+              placeholder="Enter Adrata strategy"
+              type="textarea"
+              className="text-sm text-[var(--foreground)] leading-relaxed"
+            />
+          </div>
+        </div>
+
+        {/* Business Units - Only show if we have data */}
+        {intelligence?.businessUnits && intelligence.businessUnits.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Business Units</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {intelligence.businessUnits.map((unit, index) => (
+                <div key={index} className={`p-4 rounded-lg border-2 ${unit.color || 'bg-[var(--hover)] border-[var(--border)]'}`}>
+                  <h4 className="font-medium text-[var(--foreground)] mb-3">{unit.name || 'Business Unit'}</h4>
+                  <div className="space-y-1">
+                    {(unit.functions || []).map((func, funcIndex) => (
+                      <div key={funcIndex} className="text-xs text-gray-700">
+                        {func}
+                      </div>
+                    ))}
+                    {(!unit.functions || unit.functions.length === 0) && (
+                      <div className="text-xs text-[var(--muted)] italic">No functions listed.</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Success Toast */}
+      {showSuccessMessage && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
+            <div className="flex items-center space-x-2">
+              <span>✓</span>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

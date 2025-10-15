@@ -68,21 +68,21 @@ export function UniversalOpportunitiesTab({ record, recordType }: { record: any;
               <div className="flex items-start justify-between mb-3">
                 <h4 className="font-medium text-[var(--foreground)]">{opp.name || 'Untitled Opportunity'}</h4>
                 <div className="flex flex-col items-end space-y-1">
-                  <span className="px-4 py-1 bg-blue-100 text-blue-800 text-xs rounded-full whitespace-nowrap">
+                  <span className="px-4 py-1 bg-[var(--info-bg)] text-[var(--info-text)] text-xs rounded-full whitespace-nowrap border border-[var(--info-border)]">
                     {opp.stage || 'Discovery'}
                   </span>
                   {opp['priority'] && (
-                    <span className={`px-4 py-1 text-xs rounded-full whitespace-nowrap ${
-                      opp['priority'] === 'high' ? 'bg-red-100 text-red-800' :
-                      opp['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-green-100 text-green-800'
+                    <span className={`px-4 py-1 text-xs rounded-full whitespace-nowrap border ${
+                      opp['priority'] === 'high' ? 'bg-[var(--priority-high-bg)] text-[var(--priority-high-text)] border-[var(--error-border)]' :
+                      opp['priority'] === 'medium' ? 'bg-[var(--priority-medium-bg)] text-[var(--priority-medium-text)] border-[var(--warning-border)]' :
+                      'bg-[var(--priority-low-bg)] text-[var(--priority-low-text)] border-[var(--success-border)]'
                     }`}>
                       {opp.priority}
                     </span>
                   )}
                 </div>
               </div>
-              <p className="text-2xl font-bold text-green-600 mb-2">
+              <p className="text-2xl font-bold text-[var(--success)] mb-2">
                 ${(opp.amount || 0).toLocaleString()}
               </p>
               <div className="space-y-1 text-sm text-[var(--muted)]">

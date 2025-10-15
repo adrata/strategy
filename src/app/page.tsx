@@ -59,7 +59,7 @@ function CookieNotification() {
         <div className="flex justify-end">
           <button
             onClick={handleAccept}
-            className="bg-black text-white px-6 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
+            className="bg-[var(--button-background)] text-[var(--button-text)] px-6 py-2 rounded-md text-sm font-medium hover:bg-[var(--button-hover)] transition-colors"
           >
             Accept
           </button>
@@ -172,7 +172,7 @@ function WebsiteLanding() {
               </Link>
               <Link
                 href="/demo"
-                className="bg-black text-white px-5 py-1.5 rounded-2xl text-sm font-medium hover:bg-gray-800 transition-colors"
+                className="bg-[var(--button-background)] text-[var(--button-text)] px-5 py-1.5 rounded-2xl text-sm font-medium hover:bg-[var(--button-hover)] transition-colors"
               >
                 See a demo
               </Link>
@@ -643,7 +643,7 @@ function WebsiteLanding() {
             <div className="flex justify-center">
               <a
                 href="/find-your-buyer-group"
-                className="inline-flex items-center gap-2 bg-[var(--foreground)] text-white border border-black px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-800 transition-colors"
+                className="inline-flex items-center gap-2 bg-[var(--button-background)] text-[var(--button-text)] border border-[var(--border)] px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[var(--button-hover)] transition-colors"
               >
                 <span>Find your buyer group now ↗</span>
               </a>
@@ -744,7 +744,7 @@ function WebsiteLanding() {
               <div className="flex justify-center">
                 <a
                   href="/demo"
-                  className="inline-flex items-center gap-2 bg-black text-white px-12 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                  className="inline-flex items-center gap-2 bg-[var(--button-background)] text-[var(--button-text)] px-12 py-3 rounded-lg font-medium hover:bg-[var(--button-hover)] transition-colors"
                 >
                   <span>Get a demo</span>
                   <span>→</span>

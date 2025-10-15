@@ -20,6 +20,7 @@ import { TodayActivityTracker } from "./TodayActivityTracker";
 import { getCommonShortcut, COMMON_SHORTCUTS } from '@/platform/utils/keyboard-shortcuts';
 import { CongratulationsModal } from "./components/CongratulationsModal";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
+import { StateRankingManager } from "./components/StateRankingManager";
 
 // EmailData will be imported from EmailService, removing duplicate type definition
 
@@ -188,6 +189,7 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [showCongratulationsModal, setShowCongratulationsModal] = useState(false);
+  const [showStateRankingManager, setShowStateRankingManager] = useState(false);
   const [batchInfo, setBatchInfo] = useState<{
     batchNumber: number;
     completedCount: number;
@@ -207,6 +209,47 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
 
   // Success message state
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Handle state ranking save
+  const handleStateRankingSave = async (settings: { mode: 'global' | 'state-based', stateOrder: string[] }) => {
+    try {
+      const response = await fetch('/api/v1/user/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          speedrunRankingMode: settings.mode,
+          stateRankingOrder: settings.stateOrder
+        })
+      });
+
+      if (response.ok) {
+        setSuccessMessage(`✅ Ranking mode updated to ${settings.mode === 'state-based' ? 'State-Based' : 'Global'}`);
+        
+        // Trigger re-ranking if mode changed
+        if (settings.mode === 'state-based') {
+          const rerankResponse = await fetch('/api/v1/speedrun/re-rank', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              triggerAutoFetch: true
+            })
+          });
+          
+          if (rerankResponse.ok) {
+            setSuccessMessage('✅ Ranking mode updated and prospects re-ranked!');
+          }
+        }
+      } else {
+        console.error('Failed to save ranking settings');
+      }
+    } catch (error) {
+      console.error('Error saving ranking settings:', error);
+    }
+  };
 
   // Record context for AI
   const { setListViewContext, clearListViewContext } = useRecordContext();
@@ -766,6 +809,14 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           completedCount={batchInfo?.completedCount || 50}
           message={batchInfo?.message}
         />
+
+        <StateRankingManager
+          isOpen={showStateRankingManager}
+          onClose={() => setShowStateRankingManager(false)}
+          onSave={handleStateRankingSave}
+          currentMode="global" // TODO: Get from user settings
+          currentStateOrder={[]} // TODO: Get from user settings
+        />
       </>
     );
   };
@@ -778,7 +829,31 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
   // If we have a selected person, show their details
   if (selectedPerson) {
     content = (
-      <SpeedrunRecordTemplate
+      <div className="h-full flex flex-col">
+        {/* Header with ranking mode button */}
+        <div className="flex items-center justify-between p-4 border-b bg-[var(--background)]">
+          <div className="flex items-center space-x-4">
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">
+              Speedrun Outreach
+            </h2>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-[var(--muted)]">Ranking:</span>
+              <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                Global
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowStateRankingManager(true)}
+            className="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100"
+          >
+            Manage Ranking
+          </button>
+        </div>
+        
+        {/* Main content */}
+        <div className="flex-1 overflow-hidden">
+          <SpeedrunRecordTemplate
         key={selectedPerson.id}
         person={selectedPerson}
         personIndex={SpeedrunPeople.findIndex((p) => p['id'] === selectedPerson.id)}
@@ -850,7 +925,9 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           }
         }}
         onComplete={handleComplete}
-      />
+          />
+        </div>
+      </div>
     );
   }
   // If no person selected but we have people, show simple message

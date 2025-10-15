@@ -129,6 +129,8 @@ model users {
   isActive                  Boolean                     @default(true)
   activeWorkspaceId         String?                     @db.VarChar(30)
   username                  String?                     @unique @db.VarChar(50)
+  speedrunRankingMode       String?                     @default("global") @db.VarChar(20)
+  stateRankingOrder         Json?
   oasis_channel_members     OasisChannelMember[]
   oasis_dm_participants     OasisDMParticipant[]
   oasis_messages            OasisMessage[]

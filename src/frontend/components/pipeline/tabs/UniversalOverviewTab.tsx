@@ -135,7 +135,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     if (value) {
       return <span className={className}>{children || value}</span>;
     }
-    return <span className="text-sm italic text-[var(--muted)]">No data available</span>;
+    return <span className="text-sm text-[var(--muted)]">-</span>;
   };
 
   // Extract comprehensive record data from CoreSignal with database fallback
@@ -421,8 +421,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <span className="text-sm text-[var(--muted)]">Buyer Group Member:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                   recordData.isBuyerGroupMember 
-                    ? (recordType === 'speedrun' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800')
-                    : 'bg-[var(--hover)] text-gray-800'
+                    ? (recordType === 'speedrun' ? 'bg-[var(--success-bg)] text-[var(--success-text)]' : 'bg-[var(--info-bg)] text-[var(--info-text)]')
+                    : 'bg-[var(--hover)] text-[var(--foreground)]'
                 }`}>
                   {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
@@ -594,12 +594,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           {actionsLoading ? (
             <div className="text-center py-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--accent)] mx-auto mb-2"></div>
               <p className="text-sm text-[var(--muted)]">Loading actions...</p>
             </div>
           ) : actionsError ? (
             <div className="text-center py-4">
-              <p className="text-sm text-red-600 mb-3">Error loading actions</p>
+              <p className="text-sm text-[var(--error)] mb-3">Error loading actions</p>
               <p className="text-xs text-[var(--muted)]">{actionsError}</p>
             </div>
           ) : lastActions.length > 0 ? (

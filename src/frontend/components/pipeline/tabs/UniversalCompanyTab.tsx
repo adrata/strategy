@@ -25,6 +25,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     setTimeout(() => setShowSuccessMessage(false), 3000);
   };
 
+  const formatEmptyValue = (value: any): string => {
+    if (!value || value === '' || value === 'null' || value === 'undefined') {
+      return '-';
+    }
+    return value;
+  };
 
   // Show skeleton loader while data is loading
   if (!record) {
@@ -54,7 +60,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     if (value) {
       return <span className={className}>{children || value}</span>;
     }
-    return <span className="text-sm italic text-[var(--muted)]">No data available</span>;
+    return <span className="text-sm text-[var(--muted)]">-</span>;
   };
   
   // Use real company data from record - no fallback to '-'

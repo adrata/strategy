@@ -15,7 +15,7 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
     return value;
   };
 
-  const handleSuccess = () => {
+  const handleSuccess = (message: string) => {
     if (onSuccess) {
       onSuccess();
     }
@@ -59,9 +59,18 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
                   className="font-medium text-[var(--foreground)]"
                 />
               </div>
-              <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Preferred Language:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.preferredLanguage || 'English'}</span>
+              <div className="flex items-center">
+                <span className="text-[var(--muted)] w-24">Preferred Language:</span>
+                <InlineEditField
+                  value={record?.preferredLanguage || 'English'}
+                  field="preferredLanguage"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter preferred language"
+                  className="font-medium text-[var(--foreground)]"
+                />
               </div>
             </div>
           </div>
@@ -69,21 +78,57 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
           <div className="bg-green-50 rounded-lg p-4">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Professional Background</h4>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Years of Experience:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.yearsExperience || '-'}</span>
+              <div className="flex items-center">
+                <span className="text-[var(--muted)] w-24">Years of Experience:</span>
+                <InlineEditField
+                  value={record?.yearsExperience}
+                  field="yearsExperience"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter years of experience"
+                  className="font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Education:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.education || '-'}</span>
+              <div className="flex items-center">
+                <span className="text-[var(--muted)] w-24">Education:</span>
+                <InlineEditField
+                  value={record?.education}
+                  field="education"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter education"
+                  className="font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Certifications:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.certifications || '-'}</span>
+              <div className="flex items-center">
+                <span className="text-[var(--muted)] w-24">Certifications:</span>
+                <InlineEditField
+                  value={record?.certifications}
+                  field="certifications"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter certifications"
+                  className="font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Previous Companies:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.previousCompanies || '-'}</span>
+              <div className="flex items-center">
+                <span className="text-[var(--muted)] w-24">Previous Companies:</span>
+                <InlineEditField
+                  value={record?.previousCompanies}
+                  field="previousCompanies"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  placeholder="Enter previous companies"
+                  className="font-medium text-[var(--foreground)]"
+                />
               </div>
             </div>
           </div>

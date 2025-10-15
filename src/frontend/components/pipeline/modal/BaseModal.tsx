@@ -81,13 +81,13 @@ export function BaseModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`bg-[var(--background)] rounded-lg shadow-xl w-full ${getSizeClasses()} max-h-[90vh] flex flex-col ${className}`}>
+    <div className="fixed inset-0 bg-[var(--overlay-bg)] bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50 p-4">
+      <div className={`bg-[var(--background)] rounded-lg shadow-xl w-full ${getSizeClasses()} max-h-[90vh] flex flex-col border border-[var(--border)] ${className}`}>
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div className="flex items-center space-x-3">
             {icon && (
-              <div className="p-2 bg-blue-100 rounded-lg">
+              <div className="p-2 bg-[var(--info-bg)] rounded-lg border border-[var(--info-border)]">
                 {icon}
               </div>
             )}
@@ -122,8 +122,8 @@ export function BaseModal({
                   onClick={() => setActiveTab(tab.id)}
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]'
+                      ? 'border-[var(--accent)] text-[var(--accent)]'
+                      : 'border-transparent text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border)]'
                   }`}
                 >
                   <span className="flex items-center space-x-2">

@@ -1,17 +1,29 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
+import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 
 interface UniversalCareerTabProps {
   recordType: string;
   record?: any;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalCareerTab({ recordType, record: recordProp }: UniversalCareerTabProps) {
+export function UniversalCareerTab({ recordType, record: recordProp, onSave }: UniversalCareerTabProps) {
   const { currentRecord: contextRecord } = useRecordContext();
   const record = recordProp || contextRecord;
+  
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const handleSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
 
   // Show skeleton loader while data is loading
   if (!record) {
@@ -178,19 +190,45 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Current Position</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-[var(--muted)]">Title:</span>
-              <span className="text-sm font-medium text-[var(--foreground)]">
-                {record?.jobTitle || record?.title || <span className="text-sm italic text-[var(--muted)]">No data available</span>}
-              </span>
+            <div className="flex items-center">
+              <span className="text-sm text-[var(--muted)] w-24">Title:</span>
+              <InlineEditField
+                value={record?.jobTitle || record?.title}
+                field="title"
+                onSave={onSave || (() => Promise.resolve())}
+                recordId={record.id}
+                recordType={recordType}
+                onSuccess={handleSuccess}
+                placeholder="Enter job title"
+                className="text-sm font-medium text-[var(--foreground)]"
+              />
             </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-[var(--muted)]">Company:</span>
-              <span className="text-sm font-medium text-[var(--foreground)]">{careerData.companyName}</span>
+            <div className="flex items-center">
+              <span className="text-sm text-[var(--muted)] w-24">Company:</span>
+              <InlineEditField
+                value={careerData.companyName}
+                field="company"
+                variant="company"
+                onSave={onSave || (() => Promise.resolve())}
+                recordId={record.id}
+                recordType={recordType}
+                onSuccess={handleSuccess}
+                placeholder="Enter company name"
+                className="text-sm font-medium text-[var(--foreground)]"
+              />
             </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-[var(--muted)]">Department:</span>
-              <span className="text-sm font-medium text-[var(--foreground)]">{careerData.department}</span>
+            <div className="flex items-center">
+              <span className="text-sm text-[var(--muted)] w-24">Department:</span>
+              <InlineEditField
+                value={careerData.department}
+                field="department"
+                onSave={onSave || (() => Promise.resolve())}
+                recordId={record.id}
+                recordType={recordType}
+                onSuccess={handleSuccess}
+                placeholder="Enter department"
+                className="text-sm font-medium text-[var(--foreground)]"
+              />
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-[var(--muted)]">Total Experience:</span>
@@ -327,6 +365,18 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Toast */}
+      {showSuccessMessage && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
+            <div className="flex items-center space-x-2">
+              <span>✓</span>
+              <span className="text-sm font-medium">{successMessage}</span>
             </div>
           </div>
         </div>

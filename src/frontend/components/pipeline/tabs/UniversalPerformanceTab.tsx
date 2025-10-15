@@ -1,9 +1,23 @@
+import React, { useState } from 'react';
+import { InlineEditField } from '../InlineEditField';
+
 interface UniversalPerformanceTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalPerformanceTab({ record, recordType }: UniversalPerformanceTabProps) {
+export function UniversalPerformanceTab({ record, recordType, onSave }: UniversalPerformanceTabProps) {
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const handleSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
+
   return (
     <div className="p-6 space-y-8">
       {/* Performance Overview */}
@@ -12,33 +26,61 @@ export function UniversalPerformanceTab({ record, recordType }: UniversalPerform
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-blue-50 rounded-lg p-4">
             <h4 className="font-medium text-[var(--foreground)] mb-2">Overall Score</h4>
-            <div className="text-2xl font-bold text-blue-600">
-              {record?.performanceScore ? `${Math.round(record.performanceScore)}/100` : '87/100'}
-            </div>
+            <InlineEditField
+              value={record?.performanceScore ? `${Math.round(record.performanceScore)}/100` : ''}
+              field="performanceScore"
+              onSave={onSave || (() => Promise.resolve())}
+              recordId={record.id}
+              recordType={recordType}
+              onSuccess={handleSuccess}
+              placeholder="Enter performance score"
+              className="text-2xl font-bold text-blue-600"
+            />
             <p className="text-sm text-[var(--muted)] mt-1">Partnership performance</p>
           </div>
           
           <div className="bg-green-50 rounded-lg p-4">
             <h4 className="font-medium text-[var(--foreground)] mb-2">Revenue</h4>
-            <div className="text-lg font-bold text-green-600">
-              {record?.partnerRevenue ? `$${record.partnerRevenue.toLocaleString()}` : '$2.8M'}
-            </div>
+            <InlineEditField
+              value={record?.partnerRevenue ? `$${record.partnerRevenue.toLocaleString()}` : ''}
+              field="partnerRevenue"
+              onSave={onSave || (() => Promise.resolve())}
+              recordId={record.id}
+              recordType={recordType}
+              onSuccess={handleSuccess}
+              placeholder="Enter partner revenue"
+              className="text-lg font-bold text-green-600"
+            />
             <p className="text-sm text-[var(--muted)] mt-1">This year</p>
           </div>
           
           <div className="bg-purple-50 rounded-lg p-4">
             <h4 className="font-medium text-[var(--foreground)] mb-2">Growth</h4>
-            <div className="text-lg font-bold text-purple-600">
-              {record?.revenueGrowth ? `${Math.round(record.revenueGrowth)}%` : '+35%'}
-            </div>
+            <InlineEditField
+              value={record?.revenueGrowth ? `${Math.round(record.revenueGrowth)}%` : ''}
+              field="revenueGrowth"
+              onSave={onSave || (() => Promise.resolve())}
+              recordId={record.id}
+              recordType={recordType}
+              onSuccess={handleSuccess}
+              placeholder="Enter revenue growth"
+              className="text-lg font-bold text-purple-600"
+            />
             <p className="text-sm text-[var(--muted)] mt-1">Year over year</p>
           </div>
           
           <div className="bg-orange-50 rounded-lg p-4">
             <h4 className="font-medium text-[var(--foreground)] mb-2">Opportunities Closed</h4>
-            <div className="text-2xl font-bold text-orange-600">
-              {record?.dealsClosed || '42'}
-            </div>
+            <InlineEditField
+              value={record?.dealsClosed}
+              field="dealsClosed"
+              onSave={onSave || (() => Promise.resolve())}
+              recordId={record.id}
+              recordType={recordType}
+              onSuccess={handleSuccess}
+              placeholder="Enter deals closed"
+              className="text-2xl font-bold text-orange-600"
+            />
             <p className="text-sm text-[var(--muted)] mt-1">This year</p>
           </div>
         </div>
@@ -315,6 +357,18 @@ export function UniversalPerformanceTab({ record, recordType }: UniversalPerform
           </div>
         </div>
       </div>
+
+      {/* Success Toast */}
+      {showSuccessMessage && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
+            <div className="flex items-center space-x-2">
+              <span>✓</span>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

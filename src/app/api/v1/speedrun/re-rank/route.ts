@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { rankContacts } from '@/products/speedrun/ranking';
 import { getDefaultUserSettings } from '@/products/speedrun/state';
+import { StateRankingService } from '@/products/speedrun/state-ranking';
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,7 +35,10 @@ export async function POST(request: NextRequest) {
         id: true, 
         timezone: true,
         name: true,
-        email: true
+        email: true,
+        // Note: These fields will be available after schema migration
+        // speedrunRankingMode: true,
+        // stateRankingOrder: true
       }
     });
 
@@ -44,6 +48,15 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    // Get ranking mode and state ordering
+    const rankingMode = 'global'; // (user.speedrunRankingMode as 'global' | 'state-based') || 'global';
+    const stateOrder: string[] = []; // (user.stateRankingOrder as string[]) || [];
+
+    console.log(`🔄 [RE-RANK] Using ranking mode: ${rankingMode}`, {
+      stateOrderLength: stateOrder.length,
+      userId
+    });
 
     // Get all people in the workspace that haven't been completed today
     const today = new Date().toDateString();
@@ -124,8 +137,8 @@ export async function POST(request: NextRequest) {
     // Get user settings for ranking
     const userSettings = getDefaultUserSettings('AE'); // Default to AE role
 
-    // Apply ranking algorithm
-    const rankedContacts = rankContacts(crmRecords, userSettings);
+    // Apply ranking algorithm with user's preferred mode
+    const rankedContacts = rankContacts(crmRecords, userSettings, rankingMode, stateOrder);
 
     // Take the top 50 for the new batch
     const newBatch = rankedContacts.slice(0, 50);
@@ -137,6 +150,16 @@ export async function POST(request: NextRequest) {
         data: {
           globalRank: index + 1,
           rank: index + 1,
+          // Add state-based ranking fields if available
+          ...(contact.stateRank && { 
+            customFields: {
+              ...(contact.customFields || {}),
+              stateRank: contact.stateRank,
+              companyRankInState: contact.companyRankInState,
+              personRankInCompany: contact.personRankInCompany,
+              rankingMode: rankingMode
+            }
+          }),
           updatedAt: new Date()
         }
       })
@@ -171,7 +194,12 @@ export async function POST(request: NextRequest) {
           commission: contact.commission,
           globalRank: contact.globalRank,
           rank: contact.rank,
-          rankingScore: contact.rankingScore
+          rankingScore: contact.rankingScore,
+          // State-based ranking fields
+          stateRank: contact.stateRank,
+          companyRankInState: contact.companyRankInState,
+          personRankInCompany: contact.personRankInCompany,
+          rankingMode: rankingMode
         })),
         batchNumber: Math.floor(completedCount / 50) + 1,
         totalCompleted: completedCount,

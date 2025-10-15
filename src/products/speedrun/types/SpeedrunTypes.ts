@@ -32,6 +32,11 @@ export interface SpeedrunPerson {
   stableIndex?: number | undefined;
   vertical?: string; // Add vertical field for filtering
   notes?: string; // Notes field for persistence
+  // State-based ranking fields
+  stateRank?: number; // Rank within state
+  companyRankInState?: number; // Company rank within state
+  personRankInCompany?: number; // Person rank within company
+  rankingMode?: 'global' | 'state-based'; // Current ranking mode
   // Multi-player sales fields
   owner?: string; // Owner's name or '-'
   coSellers?: string; // Comma-separated co-sellers names or '-'

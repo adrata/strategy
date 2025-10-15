@@ -105,7 +105,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     if (value) {
       return <span className={className}>{children || value}</span>;
     }
-    return <span className="text-sm italic text-[var(--muted)]">-</span>;
+    return <span className="text-sm text-[var(--muted)]">-</span>;
   };
 
   // Memoize data extraction to prevent expensive recalculations on every render
@@ -402,7 +402,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Buyer Group Member:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.isBuyerGroupMember ? 'bg-green-100 text-green-800' : 'bg-[var(--hover)] text-gray-800'
+                  personData.isBuyerGroupMember ? 'bg-[var(--success-bg)] text-[var(--success-text)]' : 'bg-[var(--hover)] text-[var(--foreground)]'
                 }`}>
                   {personData.isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
@@ -410,7 +410,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Buyer Group Optimized:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.buyerGroupOptimized ? 'bg-green-100 text-green-800' : 'bg-[var(--hover)] text-gray-800'
+                  personData.buyerGroupOptimized ? 'bg-[var(--success-bg)] text-[var(--success-text)]' : 'bg-[var(--hover)] text-[var(--foreground)]'
                 }`}>
                   {personData.buyerGroupOptimized ? 'Yes' : 'No'}
                 </span>
@@ -493,14 +493,18 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">LinkedIn Connection Date:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {personData.linkedinConnectionDate ? 
-                    new Date(personData.linkedinConnectionDate).toLocaleDateString() : 
-                    '-'
-                  }
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Connection Date:</span>
+                <InlineEditField
+                  value={personData.linkedinConnectionDate}
+                  field="linkedinConnectionDate"
+                  variant="date"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
             </div>
           </div>
@@ -520,9 +524,9 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Status:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.status === 'active' ? 'bg-green-100 text-green-800' :
-                  personData.status === 'inactive' ? 'bg-[var(--hover)] text-gray-800' :
-                  'bg-yellow-100 text-yellow-800'
+                  personData.status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success-text)]' :
+                  personData.status === 'inactive' ? 'bg-[var(--hover)] text-[var(--foreground)]' :
+                  'bg-[var(--warning-bg)] text-[var(--warning-text)]'
                 }`}>
                   {personData.status}
                 </span>
@@ -575,12 +579,12 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
             <h4 className="font-medium text-[var(--foreground)] mb-3">Last Actions:</h4>
             {actionsLoading ? (
               <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--accent)] mx-auto mb-2"></div>
                 <p className="text-sm text-[var(--muted)]">Loading actions...</p>
               </div>
             ) : actionsError ? (
               <div className="text-center py-4">
-                <p className="text-sm text-red-600 mb-3">Error loading actions</p>
+                <p className="text-sm text-[var(--error)] mb-3">Error loading actions</p>
                 <p className="text-xs text-[var(--muted)]">{actionsError}</p>
               </div>
             ) : lastActions.length > 0 ? (

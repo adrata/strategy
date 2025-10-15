@@ -1,9 +1,23 @@
+import React, { useState } from 'react';
+import { InlineEditField } from '../InlineEditField';
+
 interface UniversalBusinessTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalBusinessTab({ record, recordType }: UniversalBusinessTabProps) {
+export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBusinessTabProps) {
+  // Success message state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  const handleSuccess = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
+
   return (
     <div className="p-6 space-y-8">
       {/* Business Overview */}
@@ -12,25 +26,46 @@ export function UniversalBusinessTab({ record, recordType }: UniversalBusinessTa
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-blue-50 rounded-lg p-4">
             <h4 className="font-medium text-[var(--foreground)] mb-2">Account Value</h4>
-            <div className="text-2xl font-bold text-blue-600">
-              {record?.accountValue ? `$${record.accountValue.toLocaleString()}` : record?.revenue ? `$${record.revenue.toLocaleString()}` : '-'}
-            </div>
+            <InlineEditField
+              value={record?.accountValue ? `$${record.accountValue.toLocaleString()}` : record?.revenue ? `$${record.revenue.toLocaleString()}` : ''}
+              field="accountValue"
+              onSave={onSave || (() => Promise.resolve())}
+              recordId={record.id}
+              recordType={recordType}
+              onSuccess={handleSuccess}
+              placeholder="Enter account value"
+              className="text-2xl font-bold text-blue-600"
+            />
             <p className="text-sm text-[var(--muted)] mt-1">Annual contract value</p>
           </div>
           
           <div className="bg-green-50 rounded-lg p-4">
             <h4 className="font-medium text-[var(--foreground)] mb-2">Growth Rate</h4>
-            <div className="text-2xl font-bold text-green-600">
-              {record?.growthRate ? `${Math.round(record.growthRate)}%` : '-'}
-            </div>
+            <InlineEditField
+              value={record?.growthRate ? `${Math.round(record.growthRate)}%` : ''}
+              field="growthRate"
+              onSave={onSave || (() => Promise.resolve())}
+              recordId={record.id}
+              recordType={recordType}
+              onSuccess={handleSuccess}
+              placeholder="Enter growth rate"
+              className="text-2xl font-bold text-green-600"
+            />
             <p className="text-sm text-[var(--muted)] mt-1">Year over year</p>
           </div>
           
           <div className="bg-purple-50 rounded-lg p-4">
             <h4 className="font-medium text-[var(--foreground)] mb-2">Expansion Potential</h4>
-            <div className="text-lg font-bold text-purple-600">
-              {record?.expansionPotential || 'High'}
-            </div>
+            <InlineEditField
+              value={record?.expansionPotential}
+              field="expansionPotential"
+              onSave={onSave || (() => Promise.resolve())}
+              recordId={record.id}
+              recordType={recordType}
+              onSuccess={handleSuccess}
+              placeholder="Enter expansion potential"
+              className="text-lg font-bold text-purple-600"
+            />
             <p className="text-sm text-[var(--muted)] mt-1">Upsell opportunity</p>
           </div>
         </div>
@@ -226,6 +261,18 @@ export function UniversalBusinessTab({ record, recordType }: UniversalBusinessTa
           </div>
         </div>
       </div>
+
+      {/* Success Toast */}
+      {showSuccessMessage && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
+            <div className="flex items-center space-x-2">
+              <span>✓</span>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

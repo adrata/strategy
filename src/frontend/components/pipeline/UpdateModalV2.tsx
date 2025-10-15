@@ -325,7 +325,7 @@ export function UpdateModalV2({
             <button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-[var(--button-background)] text-[var(--button-text)] rounded-lg hover:bg-[var(--button-hover)] transition-colors disabled:opacity-50"
             >
               {isLoading ? 'Saving...' : 'Save Changes'}
             </button>
@@ -335,16 +335,16 @@ export function UpdateModalV2({
         {/* Error message */}
         {error && (
           <div className="px-6 pb-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="bg-[var(--error-bg)] border border-[var(--error-border)] rounded-lg p-3">
+              <p className="text-sm text-[var(--error-text)]">{error}</p>
             </div>
           </div>
         )}
 
         {/* Delete confirmation */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60">
-            <div className="bg-[var(--background)] rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+          <div className="fixed inset-0 bg-[var(--overlay-bg)] bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-60">
+            <div className="bg-[var(--background)] rounded-lg shadow-xl p-6 max-w-md w-full mx-4 border border-[var(--border)]">
               <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
                 Confirm Delete
               </h3>
