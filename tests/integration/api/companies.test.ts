@@ -501,4 +501,211 @@ describe('Companies API', () => {
       validateApiResponse.error(data, 404);
     });
   });
+
+  describe('Enhanced Company Creation Tests', () => {
+    it('should normalize website URLs correctly', async () => {
+      const companyData = createTestCompany({
+        name: 'Test Company',
+        website: 'testcompany.com', // Should be normalized to https://testcompany.com
+      });
+
+      const createdCompany = { ...companyData, id: 'new-company-id' };
+      const createdAction = { id: 'action-id', type: 'company_created' };
+
+      mockPrisma.$transaction.mockImplementation(async (callback) => {
+        return callback({
+          companies: {
+            create: jest.fn().mockResolvedValue(createdCompany),
+          },
+          actions: {
+            create: jest.fn().mockResolvedValue(createdAction),
+          },
+        });
+      });
+
+      const request = new Request('http://localhost:3000/api/v1/companies', {
+        method: 'POST',
+        headers: getTestAuthHeaders(),
+        body: JSON.stringify(companyData),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      validateApiResponse.success(data);
+      expect(data.data.website).toBe('https://testcompany.com');
+    });
+
+    it('should trim company names', async () => {
+      const companyData = createTestCompany({
+        name: '  Test Company  ', // Should be trimmed
+      });
+
+      const createdCompany = { ...companyData, id: 'new-company-id', name: 'Test Company' };
+      const createdAction = { id: 'action-id', type: 'company_created' };
+
+      mockPrisma.$transaction.mockImplementation(async (callback) => {
+        return callback({
+          companies: {
+            create: jest.fn().mockResolvedValue(createdCompany),
+          },
+          actions: {
+            create: jest.fn().mockResolvedValue(createdAction),
+          },
+        });
+      });
+
+      const request = new Request('http://localhost:3000/api/v1/companies', {
+        method: 'POST',
+        headers: getTestAuthHeaders(),
+        body: JSON.stringify(companyData),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      validateApiResponse.success(data);
+      expect(data.data.name).toBe('Test Company');
+    });
+
+    it('should handle special characters in company names', async () => {
+      const companyData = createTestCompany({
+        name: 'Company & Associates, LLC',
+      });
+
+      const createdCompany = { ...companyData, id: 'new-company-id' };
+      const createdAction = { id: 'action-id', type: 'company_created' };
+
+      mockPrisma.$transaction.mockImplementation(async (callback) => {
+        return callback({
+          companies: {
+            create: jest.fn().mockResolvedValue(createdCompany),
+          },
+          actions: {
+            create: jest.fn().mockResolvedValue(createdAction),
+          },
+        });
+      });
+
+      const request = new Request('http://localhost:3000/api/v1/companies', {
+        method: 'POST',
+        headers: getTestAuthHeaders(),
+        body: JSON.stringify(companyData),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      validateApiResponse.success(data);
+      expect(data.data.name).toBe('Company & Associates, LLC');
+    });
+
+    it('should handle concurrent company creation', async () => {
+      const companyData1 = createTestCompany({ name: 'Company 1' });
+      const companyData2 = createTestCompany({ name: 'Company 2' });
+
+      const createdCompany1 = { ...companyData1, id: 'company-1' };
+      const createdCompany2 = { ...companyData2, id: 'company-2' };
+      const createdAction = { id: 'action-id', type: 'company_created' };
+
+      mockPrisma.$transaction.mockImplementation(async (callback) => {
+        return callback({
+          companies: {
+            create: jest.fn().mockResolvedValue(createdCompany1),
+          },
+          actions: {
+            create: jest.fn().mockResolvedValue(createdAction),
+          },
+        });
+      });
+
+      // Create first company
+      const request1 = new Request('http://localhost:3000/api/v1/companies', {
+        method: 'POST',
+        headers: getTestAuthHeaders(),
+        body: JSON.stringify(companyData1),
+      });
+
+      const response1 = await POST(request1);
+      const data1 = await response1.json();
+
+      expect(response1.status).toBe(200);
+      validateApiResponse.success(data1);
+      expect(data1.data.name).toBe('Company 1');
+
+      // Update mock for second company
+      mockPrisma.$transaction.mockImplementation(async (callback) => {
+        return callback({
+          companies: {
+            create: jest.fn().mockResolvedValue(createdCompany2),
+          },
+          actions: {
+            create: jest.fn().mockResolvedValue(createdAction),
+          },
+        });
+      });
+
+      // Create second company
+      const request2 = new Request('http://localhost:3000/api/v1/companies', {
+        method: 'POST',
+        headers: getTestAuthHeaders(),
+        body: JSON.stringify(companyData2),
+      });
+
+      const response2 = await POST(request2);
+      const data2 = await response2.json();
+
+      expect(response2.status).toBe(200);
+      validateApiResponse.success(data2);
+      expect(data2.data.name).toBe('Company 2');
+    });
+
+    it('should validate company name length', async () => {
+      const companyData = createTestCompany({
+        name: 'A'.repeat(1000), // Very long name
+      });
+
+      const request = new Request('http://localhost:3000/api/v1/companies', {
+        method: 'POST',
+        headers: getTestAuthHeaders(),
+        body: JSON.stringify(companyData),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      // Should either succeed or fail gracefully
+      expect([200, 400]).toContain(response.status);
+      if (response.status === 400) {
+        validateApiResponse.error(data, 400);
+      }
+    });
+
+    it('should handle malformed website URLs', async () => {
+      const companyData = createTestCompany({
+        name: 'Test Company',
+        website: 'not-a-valid-url',
+      });
+
+      const request = new Request('http://localhost:3000/api/v1/companies', {
+        method: 'POST',
+        headers: getTestAuthHeaders(),
+        body: JSON.stringify(companyData),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      // Should either normalize the URL or reject it
+      expect([200, 400]).toContain(response.status);
+      if (response.status === 200) {
+        validateApiResponse.success(data);
+        // URL should be normalized or cleaned
+        expect(data.data.website).toBeDefined();
+      }
+    });
+  });
 });

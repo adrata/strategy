@@ -24,6 +24,10 @@ export function NotesTab({
   // Track unsaved changes to prevent external overwrites
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState<boolean>(false);
   const [lastSavedNotes, setLastSavedNotes] = React.useState<string>(notes);
+  
+  // Timing state for save indicator
+  const [timeSinceSave, setTimeSinceSave] = React.useState<number>(0);
+  const [saveStartTime, setSaveStartTime] = React.useState<Date | null>(null);
 
   // Update lastSavedNotes when notes change externally (but not from user input)
   React.useEffect(() => {
@@ -31,6 +35,30 @@ export function NotesTab({
       setLastSavedNotes(notes);
     }
   }, [notes, lastSavedNotes, hasUnsavedChanges]);
+
+  // Track timing for save indicator color transition
+  React.useEffect(() => {
+    if (saveStatus === 'saved') {
+      setSaveStartTime(new Date());
+      setTimeSinceSave(0);
+    } else {
+      setSaveStartTime(null);
+      setTimeSinceSave(0);
+    }
+  }, [saveStatus]);
+
+  // Update time since save every second when in saved state
+  React.useEffect(() => {
+    if (saveStartTime && saveStatus === 'saved') {
+      const interval = setInterval(() => {
+        const now = new Date();
+        const elapsed = Math.floor((now.getTime() - saveStartTime.getTime()) / 1000);
+        setTimeSinceSave(elapsed);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [saveStartTime, saveStatus]);
 
   // Utility functions for notes statistics
   const getWordCount = (text: string) => {
@@ -92,8 +120,8 @@ export function NotesTab({
             </span>
           )}
           {saveStatus === 'saved' && lastSavedAt && (
-            <span className="text-xs text-green-600 flex items-center gap-1">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+            <span className={`text-xs flex items-center gap-1 ${timeSinceSave < 2 ? 'text-green-600' : 'text-gray-600'}`}>
+              <span className={`w-2 h-2 rounded-full ${timeSinceSave < 2 ? 'bg-green-500' : 'bg-gray-500'}`}></span>
               Last saved {formatTimeAgo(lastSavedAt)}
             </span>
           )}

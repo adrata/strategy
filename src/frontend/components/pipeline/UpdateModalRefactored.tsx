@@ -249,19 +249,7 @@ export function UpdateModalRefactored({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
-          <div className="flex space-x-3">
-            {onDelete && (
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                disabled={loading}
-              >
-                Delete
-              </button>
-            )}
-          </div>
-          
+        <div className="flex items-center justify-end p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
           <div className="flex space-x-3">
             <button
               onClick={onClose}

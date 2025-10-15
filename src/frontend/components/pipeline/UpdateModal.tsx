@@ -1981,20 +1981,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
-            <div>
-              {onDelete && (
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  disabled={loading}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-700 bg-[var(--background)] border border-red-300 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <TrashIcon className="w-4 h-4" />
-                  {loading ? 'Deleting...' : 'Delete'}
-                </button>
-              )}
-            </div>
+          <div className="flex items-center justify-end p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
             <div className="flex items-center gap-3">
               <button
                 type="button"

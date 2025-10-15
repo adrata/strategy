@@ -398,6 +398,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.company}
                   field="company"
+                  variant="company"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}
@@ -527,7 +528,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
                 <span className="text-sm font-medium text-[var(--foreground)]">
-                  {prospectData.linkedin !== '-' ? (
+                  {prospectData.linkedin && prospectData.linkedin !== '-' ? (
                     <a 
                       href={prospectData.linkedin.startsWith('http') ? prospectData.linkedin : `https://${prospectData.linkedin}`} 
                       target="_blank" 

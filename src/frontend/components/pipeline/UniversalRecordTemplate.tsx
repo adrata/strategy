@@ -7,6 +7,7 @@ import { authFetch } from '@/platform/api-fetch';
 import { UpdateModal } from './UpdateModal';
 import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
+import { AddPersonToCompanyModal } from './AddPersonToCompanyModal';
 import { CompanySelector } from './CompanySelector';
 import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
@@ -285,6 +286,7 @@ export function UniversalRecordTemplate({
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [isAddActionModalOpen, setIsAddActionModalOpen] = useState(false);
+  const [isAddPersonModalOpen, setIsAddPersonModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isEditRecordModalOpen, setIsEditRecordModalOpen] = useState(false);
   const [activeEditTab, setActiveEditTab] = useState('overview');
@@ -1100,12 +1102,162 @@ export function UniversalRecordTemplate({
   };
 
   // Handle inline field save
-  const handleInlineFieldSave = async (field: string, value: string, recordId?: string, recordTypeParam?: string) => {
+  const handleInlineFieldSave = async (field: string, value: string | any, recordId?: string, recordTypeParam?: string) => {
     // Track this field as having a pending save
     setPendingSaves(prev => new Set(prev).add(field));
     
     try {
       console.log(`🔄 [UNIVERSAL] Saving ${field} = ${value} for ${recordType} ${recordId}`);
+      
+      // Special handling for company field
+      if (field === 'company') {
+        console.log(`🏢 [UNIVERSAL] Company field update - value type: ${typeof value}, is object: ${typeof value === 'object'}`);
+        
+        if (typeof value === 'object' && value !== null && value.id) {
+          // Company object selected from dropdown
+          console.log(`🏢 [UNIVERSAL] Company object selected:`, value);
+          
+          // Update the person record with the companyId and company name
+          const updateData = {
+            companyId: value.id,
+            company: value.name
+          };
+          
+          console.log(`🔄 [UNIVERSAL] Updating person ${recordId} with company data:`, updateData);
+          
+          const response = await fetch(`/api/v1/people/${recordId}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify(updateData),
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to update company');
+          }
+          
+          const result = await response.json();
+          console.log(`✅ [UNIVERSAL] Company object update response:`, result);
+          
+          // Update local state
+          setLocalRecord((prev: any) => ({
+            ...prev,
+            companyId: value.id,
+            company: value.name
+          }));
+          
+          if (onRecordUpdate && result.data) {
+            const updatedRecord = { ...record, ...result.data };
+            onRecordUpdate(updatedRecord);
+          }
+          
+          showMessage(`Updated company to ${value.name} successfully`);
+          return;
+        } else if (typeof value === 'string') {
+          // String value - could be updating existing company name or creating new one
+          console.log(`🏢 [UNIVERSAL] Company string update: "${value}"`);
+          
+          // If there's an existing companyId, update the company name
+          if (record?.companyId) {
+            console.log(`🏢 [UNIVERSAL] Updating existing company ${record.companyId} name to: "${value}"`);
+            
+            const response = await fetch(`/api/v1/companies/${record.companyId}`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include',
+              body: JSON.stringify({ name: value }),
+            });
+            
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || 'Failed to update company name');
+            }
+            
+            const result = await response.json();
+            console.log(`✅ [UNIVERSAL] Company name update response:`, result);
+            
+            // Update local state
+            setLocalRecord((prev: any) => ({
+              ...prev,
+              company: value
+            }));
+            
+            if (onRecordUpdate && result.data) {
+              const updatedRecord = { ...record, ...result.data };
+              onRecordUpdate(updatedRecord);
+            }
+            
+            showMessage(`Updated company name to ${value} successfully`);
+            return;
+          } else {
+            // No existing companyId - create new company and link it
+            console.log(`🏢 [UNIVERSAL] Creating new company: "${value}"`);
+            
+            // First create the company
+            const createResponse = await fetch('/api/v1/companies', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include',
+              body: JSON.stringify({ name: value }),
+            });
+            
+            if (!createResponse.ok) {
+              const errorData = await createResponse.json();
+              throw new Error(errorData.error || 'Failed to create company');
+            }
+            
+            const createResult = await createResponse.json();
+            console.log(`✅ [UNIVERSAL] Company creation response:`, createResult);
+            
+            if (createResult.success && createResult.data) {
+              // Now link the person to the new company
+              const linkResponse = await fetch(`/api/v1/people/${recordId}`, {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                  companyId: createResult.data.id,
+                  company: createResult.data.name
+                }),
+              });
+              
+              if (!linkResponse.ok) {
+                const errorData = await linkResponse.json();
+                throw new Error(errorData.error || 'Failed to link company');
+              }
+              
+              const linkResult = await linkResponse.json();
+              console.log(`✅ [UNIVERSAL] Company linking response:`, linkResult);
+              
+              // Update local state
+              setLocalRecord((prev: any) => ({
+                ...prev,
+                companyId: createResult.data.id,
+                company: createResult.data.name
+              }));
+              
+              if (onRecordUpdate && linkResult.data) {
+                const updatedRecord = { ...record, ...linkResult.data };
+                onRecordUpdate(updatedRecord);
+              }
+              
+              showMessage(`Created and linked company ${value} successfully`);
+              return;
+            } else {
+              throw new Error('Failed to create company');
+            }
+          }
+        }
+      }
       
       // Define which fields belong to which models
       const personalFields = [
@@ -1362,6 +1514,20 @@ export function UniversalRecordTemplate({
         return next;
       });
     }
+  };
+
+  // Handle person added to company
+  const handlePersonAdded = async (newPerson: any) => {
+    console.log('Person added to company:', newPerson);
+    setIsAddPersonModalOpen(false);
+    
+    // Optionally refresh the record data
+    if (onRecordUpdate) {
+      await onRecordUpdate(record.id);
+    }
+    
+    // Show success message
+    showMessage('Person added successfully!', 'success');
   };
 
   const handleDeleteConfirm = async () => {
@@ -2085,6 +2251,19 @@ export function UniversalRecordTemplate({
       </button>
     );
 
+    // Add Person button - only for company records
+    if (recordType === 'companies') {
+      buttons.push(
+        <button
+          key="add-person"
+          onClick={() => setIsAddPersonModalOpen(true)}
+          className="px-3 py-1.5 text-sm bg-[var(--background)] text-gray-700 border border-[var(--border)] rounded-md hover:bg-[var(--panel-background)] transition-colors"
+        >
+          Add Person
+        </button>
+      );
+    }
+
     // Add Action button - Check URL path to determine button text and styling
     if (recordType === 'speedrun') {
       // Check if we're on the sprint page or individual record page
@@ -2797,6 +2976,17 @@ export function UniversalRecordTemplate({
         section={recordType}
         isLoading={loading}
       />
+
+      {/* Add Person to Company Modal */}
+      {recordType === 'companies' && (
+        <AddPersonToCompanyModal
+          isOpen={isAddPersonModalOpen}
+          onClose={() => setIsAddPersonModalOpen(false)}
+          companyId={record?.id}
+          companyName={record?.name || record?.companyName || ''}
+          onPersonAdded={handlePersonAdded}
+        />
+      )}
 
       {/* Profile Image Upload Modal - TEMPORARILY COMMENTED OUT */}
       {/*

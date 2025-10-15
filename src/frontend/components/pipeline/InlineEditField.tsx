@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { InlineCompanySelector } from './InlineCompanySelector';
 
 interface InlineEditFieldProps {
   value: string | null;
   field: string;
-  onSave: (field: string, value: string, recordId: string, recordType: string) => Promise<void>;
+  onSave: (field: string, value: string | any, recordId: string, recordType: string) => Promise<void>;
   className?: string;
   placeholder?: string;
   type?: 'text' | 'textarea' | 'number' | 'email';
+  variant?: 'text' | 'textarea' | 'company';
   recordId?: string;
   recordType?: string;
   inputType?: string;
@@ -23,6 +25,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   className = '',
   placeholder = '',
   type = 'text',
+  variant,
   recordId,
   recordType,
   inputType,
@@ -30,6 +33,22 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   successMessage,
   onSuccess,
 }) => {
+  // If variant is company, render the InlineCompanySelector
+  if (variant === 'company') {
+    return (
+      <InlineCompanySelector
+        value={value}
+        field={field}
+        onSave={onSave}
+        className={className}
+        placeholder={placeholder}
+        recordId={recordId}
+        recordType={recordType}
+        onSuccess={onSuccess}
+      />
+    );
+  }
+
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
   const [isLoading, setIsLoading] = useState(false);

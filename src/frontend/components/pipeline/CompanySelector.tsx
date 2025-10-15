@@ -49,22 +49,50 @@ export function CompanySelector({
 
   // Search companies
   const searchCompanies = async (query: string) => {
+    console.log('🔍 [CompanySelector] searchCompanies called with query:', query);
+    
     if (!query.trim()) {
+      console.log('🔍 [CompanySelector] Empty query, clearing results');
       setSearchResults([]);
       return;
     }
 
     setIsSearching(true);
+    const url = `/api/v1/companies?search=${encodeURIComponent(query.trim())}&limit=10`;
+    console.log('🔍 [CompanySelector] Making API request to:', url);
+    
     try {
-      const data = await authFetch(`/api/v1/companies?search=${encodeURIComponent(query.trim())}&limit=10`);
+      const data = await authFetch(url);
       console.log('🔍 [CompanySelector] Search response:', {
         success: data.success,
         resultCount: data.data?.length || 0,
-        results: data.data
+        results: data.data?.map((c: any) => ({ id: c.id, name: c.name })) || [],
+        fullResponse: data
+      });
+      setSearchResults(data.data || []);
+      console.log('🔍 [CompanySelector] Updated searchResults state with', data.data?.length || 0, 'companies');
+    } catch (error) {
+      console.error('❌ [CompanySelector] Error searching companies:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Load initial companies when dropdown opens
+  const loadInitialCompanies = async () => {
+    console.log('🔍 [CompanySelector] Loading initial companies');
+    setIsSearching(true);
+    try {
+      const data = await authFetch('/api/v1/companies?limit=20');
+      console.log('🔍 [CompanySelector] Initial companies response:', {
+        success: data.success,
+        resultCount: data.data?.length || 0,
+        results: data.data?.map((c: any) => ({ id: c.id, name: c.name })) || []
       });
       setSearchResults(data.data || []);
     } catch (error) {
-      console.error('Error searching companies:', error);
+      console.error('❌ [CompanySelector] Error loading initial companies:', error);
       setSearchResults([]);
     } finally {
       setIsSearching(false);
@@ -74,6 +102,11 @@ export function CompanySelector({
   // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
+    console.log('🔍 [CompanySelector] Search input changed:', {
+      newQuery: query,
+      previousQuery: searchQuery,
+      currentResultsCount: searchResults.length
+    });
     setSearchQuery(query);
     searchCompanies(query);
   };
@@ -151,9 +184,20 @@ export function CompanySelector({
 
   // Handle input focus
   const handleInputFocus = () => {
+    console.log('🔍 [CompanySelector] Input focused, current state:', {
+      isOpen,
+      searchQuery,
+      searchResultsCount: searchResults.length,
+      searchResults: searchResults.map(c => c.name)
+    });
     setIsOpen(true);
     if (searchQuery) {
+      console.log('🔍 [CompanySelector] Input focus: searching with existing query:', searchQuery);
       searchCompanies(searchQuery);
+    } else {
+      console.log('🔍 [CompanySelector] Input focus: no search query, loading initial companies');
+      // Load initial companies when opening without a query
+      loadInitialCompanies();
     }
   };
 
@@ -211,7 +255,22 @@ export function CompanySelector({
         {/* Dropdown arrow */}
         <button
           type="button"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => {
+            console.log('🔍 [CompanySelector] Chevron clicked, current state:', {
+              isOpen,
+              searchQuery,
+              searchResultsCount: searchResults.length,
+              searchResults: searchResults.map(c => c.name)
+            });
+            if (!isOpen) {
+              // Opening dropdown - load initial companies if no search query
+              if (!searchQuery) {
+                console.log('🔍 [CompanySelector] Chevron: loading initial companies on open');
+                loadInitialCompanies();
+              }
+            }
+            setIsOpen(!isOpen);
+          }}
           disabled={disabled}
           className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
         >

@@ -43,6 +43,10 @@ export function NotesEditor({
   const saveQueueRef = useRef<Promise<void> | null>(null);
   const pendingValueRef = useRef<string>(value);
   const isSavingRef = useRef<boolean>(false);
+  
+  // Timing state for save indicator
+  const [timeSinceSave, setTimeSinceSave] = useState<number>(0);
+  const [saveStartTime, setSaveStartTime] = useState<Date | null>(null);
 
   // Sync with external value changes - only when not actively editing
   useEffect(() => {
@@ -64,6 +68,30 @@ export function NotesEditor({
       return () => clearInterval(interval);
     }
   }, [lastSavedAt, saveStatus]);
+
+  // Track timing for save indicator color transition
+  useEffect(() => {
+    if (saveStatus === 'saved') {
+      setSaveStartTime(new Date());
+      setTimeSinceSave(0);
+    } else {
+      setSaveStartTime(null);
+      setTimeSinceSave(0);
+    }
+  }, [saveStatus]);
+
+  // Update time since save every second when in saved state
+  useEffect(() => {
+    if (saveStartTime && saveStatus === 'saved') {
+      const interval = setInterval(() => {
+        const now = new Date();
+        const elapsed = Math.floor((now.getTime() - saveStartTime.getTime()) / 1000);
+        setTimeSinceSave(elapsed);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [saveStartTime, saveStatus]);
 
   // Auto-resize textarea
   const autoResize = useCallback(() => {
@@ -197,10 +225,15 @@ export function NotesEditor({
             timeText = lastSavedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           }
           
+          // Use green for first 2 seconds, then gray
+          const isRecentSave = timeSinceSave < 2;
+          const iconColor = isRecentSave ? 'text-green-500' : 'text-gray-500';
+          const textColor = isRecentSave ? 'text-green-500' : 'text-gray-500';
+          
           return {
-            icon: <CheckIcon className="w-4 h-4 text-green-500" />,
+            icon: <CheckIcon className={`w-4 h-4 ${iconColor}`} />,
             text: `Last saved ${timeText}`,
-            color: 'text-green-500'
+            color: textColor
           };
         }
         // Show helpful hint when there's no content
@@ -251,10 +284,15 @@ export function NotesEditor({
             timeText = lastSavedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           }
           
+          // Use green for first 2 seconds, then gray
+          const isRecentSave = timeSinceSave < 2;
+          const iconColor = isRecentSave ? 'text-green-500' : 'text-gray-500';
+          const textColor = isRecentSave ? 'text-green-500' : 'text-gray-500';
+          
           return {
-            icon: <CheckIcon className="w-4 h-4 text-green-500" />,
+            icon: <CheckIcon className={`w-4 h-4 ${iconColor}`} />,
             text: `Last saved ${timeText}`,
-            color: 'text-green-500'
+            color: textColor
           };
         }
         

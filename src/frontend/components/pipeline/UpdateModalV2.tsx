@@ -311,17 +311,7 @@ export function UpdateModalV2({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-[var(--border)]">
-          <div className="flex gap-2">
-            {onDelete && (
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
-              >
-                Delete
-              </button>
-            )}
-          </div>
+        <div className="flex items-center justify-end p-6 border-t border-[var(--border)]">
           <div className="flex gap-2">
             <button
               onClick={onClose}

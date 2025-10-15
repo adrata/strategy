@@ -344,6 +344,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.company}
                   field="company"
+                  variant="company"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}
@@ -435,7 +436,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex justify-between">
                     <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
                 <span className="text-sm font-medium text-[var(--foreground)]">
-                  {recordData.linkedin !== '-' ? (
+                  {recordData.linkedin && recordData.linkedin !== '-' ? (
                     <a 
                       href={recordData.linkedin.startsWith('http') ? recordData.linkedin : `https://${recordData.linkedin}`} 
                       target="_blank" 

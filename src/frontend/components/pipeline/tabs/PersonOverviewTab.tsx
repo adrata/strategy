@@ -333,6 +333,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={personData.company}
                   field="company"
+                  variant="company"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}
@@ -450,7 +451,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
                 <span className="text-sm font-medium text-[var(--foreground)]">
-                  {personData.linkedin !== '-' ? (
+                  {personData.linkedin && personData.linkedin !== '-' ? (
                     <a 
                       href={personData.linkedin.startsWith('http') ? personData.linkedin : `https://${personData.linkedin}`} 
                       target="_blank" 

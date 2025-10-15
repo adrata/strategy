@@ -7,14 +7,18 @@
 import { test, expect } from '@playwright/test';
 
 const TABLE_SECTIONS = [
-  { section: 'prospects', expectedColumns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'] },
-  { section: 'opportunities', expectedColumns: ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action'] },
-  { section: 'companies', expectedColumns: ['Company', 'Last Action', 'Next Action', 'Industry', 'Size', 'Revenue'] },
-  { section: 'people', expectedColumns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'] }
+  { section: 'speedrun', expectedColumns: ['Rank', 'Name', 'Company', 'Title', 'Last Action', 'Next Action'], hasPriority: true, hasTimezone: true },
+  { section: 'leads', expectedColumns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'], hasPriority: true, hasTimezone: true },
+  { section: 'prospects', expectedColumns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'], hasPriority: true, hasTimezone: false },
+  { section: 'opportunities', expectedColumns: ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action'], hasPriority: true, hasTimezone: false },
+  { section: 'companies', expectedColumns: ['Company', 'Last Action', 'Next Action', 'Industry', 'Size', 'Revenue'], hasPriority: false, hasTimezone: false },
+  { section: 'people', expectedColumns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'], hasPriority: false, hasTimezone: false },
+  { section: 'clients', expectedColumns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'], hasPriority: false, hasTimezone: false },
+  { section: 'partners', expectedColumns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'], hasPriority: false, hasTimezone: false }
 ];
 
 test.describe('All Table Sections', () => {
-  for (const { section, expectedColumns } of TABLE_SECTIONS) {
+  for (const { section, expectedColumns, hasPriority, hasTimezone } of TABLE_SECTIONS) {
     test.describe(`${section} table`, () => {
       test.beforeEach(async ({ page }) => {
         // Navigate to the section
@@ -123,6 +127,239 @@ test.describe('All Table Sections', () => {
         
         // Check that the detail view is visible
         await expect(page.locator('[data-testid="record-detail-panel"]')).toBeVisible();
+      });
+
+      // ===== COMPREHENSIVE FILTER TESTS =====
+      test(`should filter by industry/vertical in ${section}`, async ({ page }) => {
+        // Click on the vertical filter dropdown
+        await page.click('[data-testid="vertical-filter"]');
+        
+        // Select an industry option
+        const industryOption = page.locator('[data-testid="vertical-filter-option"]').first();
+        if (await industryOption.isVisible()) {
+          const industryValue = await industryOption.textContent();
+          await industryOption.click();
+          
+          // Wait for filter to apply
+          await page.waitForTimeout(1000);
+          
+          // Verify that all visible rows have the selected industry
+          const industryCells = page.locator('[data-testid="industry-cell"]');
+          if (await industryCells.first().isVisible()) {
+            const industryTexts = await industryCells.allTextContents();
+            industryTexts.forEach(industry => {
+              expect(industry.toLowerCase()).toContain(industryValue?.toLowerCase() || '');
+            });
+          }
+        }
+      });
+
+      test(`should filter by status in ${section}`, async ({ page }) => {
+        // Click on the status filter dropdown
+        await page.click('[data-testid="status-filter"]');
+        
+        // Select a status option
+        const statusOption = page.locator('[data-testid="status-filter-option"]').first();
+        if (await statusOption.isVisible()) {
+          const statusValue = await statusOption.textContent();
+          await statusOption.click();
+          
+          // Wait for filter to apply
+          await page.waitForTimeout(1000);
+          
+          // Verify that all visible rows have the selected status
+          const statusCells = page.locator('[data-testid="status-cell"]');
+          if (await statusCells.first().isVisible()) {
+            const statusTexts = await statusCells.allTextContents();
+            statusTexts.forEach(status => {
+              expect(status.toLowerCase()).toContain(statusValue?.toLowerCase() || '');
+            });
+          }
+        }
+      });
+
+      // Priority filter test (if applicable)
+      if (hasPriority) {
+        test(`should filter by priority in ${section}`, async ({ page }) => {
+          // Click on the priority filter dropdown
+          await page.click('[data-testid="priority-filter"]');
+          
+          // Select a priority option
+          const priorityOption = page.locator('[data-testid="priority-filter-option-high"]');
+          if (await priorityOption.isVisible()) {
+            await priorityOption.click();
+            
+            // Wait for filter to apply
+            await page.waitForTimeout(1000);
+            
+            // Verify that all visible rows have high priority
+            const priorityCells = page.locator('[data-testid="priority-cell"]');
+            if (await priorityCells.first().isVisible()) {
+              const priorityTexts = await priorityCells.allTextContents();
+              priorityTexts.forEach(priority => {
+                expect(priority.toLowerCase()).toContain('high');
+              });
+            }
+          }
+        });
+      }
+
+      test(`should filter by revenue in ${section}`, async ({ page }) => {
+        // Click on the revenue filter dropdown
+        await page.click('[data-testid="revenue-filter"]');
+        
+        // Select a revenue option
+        const revenueOption = page.locator('[data-testid="revenue-filter-option-medium"]');
+        if (await revenueOption.isVisible()) {
+          await revenueOption.click();
+          
+          // Wait for filter to apply
+          await page.waitForTimeout(1000);
+          
+          // Verify that all visible rows have medium revenue
+          const revenueCells = page.locator('[data-testid="revenue-cell"]');
+          if (await revenueCells.first().isVisible()) {
+            const revenueTexts = await revenueCells.allTextContents();
+            revenueTexts.forEach(revenue => {
+              // Check if revenue is in the medium range ($10M-$100M)
+              const revenueValue = parseFloat(revenue?.replace(/[$,]/g, '') || '0');
+              expect(revenueValue).toBeGreaterThanOrEqual(10000000);
+              expect(revenueValue).toBeLessThanOrEqual(100000000);
+            });
+          }
+        }
+      });
+
+      test(`should filter by last contacted in ${section}`, async ({ page }) => {
+        // Click on the last contacted filter dropdown
+        await page.click('[data-testid="last-contacted-filter"]');
+        
+        // Select a time option
+        const timeOption = page.locator('[data-testid="last-contacted-filter-option-week"]');
+        if (await timeOption.isVisible()) {
+          await timeOption.click();
+          
+          // Wait for filter to apply
+          await page.waitForTimeout(1000);
+          
+          // Verify that all visible rows were contacted within the last week
+          const lastContactCells = page.locator('[data-testid="last-contact-cell"]');
+          if (await lastContactCells.first().isVisible()) {
+            const contactTexts = await lastContactCells.allTextContents();
+            contactTexts.forEach(contact => {
+              // Check if contact was within the last week
+              expect(contact.toLowerCase()).toMatch(/today|yesterday|\d+ days ago|this week/);
+            });
+          }
+        }
+      });
+
+      // Timezone filter test (if applicable)
+      if (hasTimezone) {
+        test(`should filter by timezone in ${section}`, async ({ page }) => {
+          // Click on the timezone filter dropdown
+          await page.click('[data-testid="timezone-filter"]');
+          
+          // Select a timezone option
+          const timezoneOption = page.locator('[data-testid="timezone-filter-option"]').first();
+          if (await timezoneOption.isVisible()) {
+            const timezoneValue = await timezoneOption.textContent();
+            await timezoneOption.click();
+            
+            // Wait for filter to apply
+            await page.waitForTimeout(1000);
+            
+            // Verify that all visible rows have the selected timezone
+            const timezoneCells = page.locator('[data-testid="timezone-cell"]');
+            if (await timezoneCells.first().isVisible()) {
+              const timezoneTexts = await timezoneCells.allTextContents();
+              timezoneTexts.forEach(timezone => {
+                expect(timezone.toLowerCase()).toContain(timezoneValue?.toLowerCase() || '');
+              });
+            }
+          }
+        });
+      }
+
+      test(`should filter by company size in ${section}`, async ({ page }) => {
+        // Click on the company size filter dropdown
+        await page.click('[data-testid="company-size-filter"]');
+        
+        // Select a size option
+        const sizeOption = page.locator('[data-testid="company-size-filter-option-medium"]');
+        if (await sizeOption.isVisible()) {
+          await sizeOption.click();
+          
+          // Wait for filter to apply
+          await page.waitForTimeout(1000);
+          
+          // Verify that all visible rows have medium company size
+          const sizeCells = page.locator('[data-testid="company-size-cell"]');
+          if (await sizeCells.first().isVisible()) {
+            const sizeTexts = await sizeCells.allTextContents();
+            sizeTexts.forEach(size => {
+              expect(size.toLowerCase()).toContain('medium');
+            });
+          }
+        }
+      });
+
+      test(`should filter by location in ${section}`, async ({ page }) => {
+        // Click on the location filter dropdown
+        await page.click('[data-testid="location-filter"]');
+        
+        // Select a location option
+        const locationOption = page.locator('[data-testid="location-filter-option"]').first();
+        if (await locationOption.isVisible()) {
+          const locationValue = await locationOption.textContent();
+          await locationOption.click();
+          
+          // Wait for filter to apply
+          await page.waitForTimeout(1000);
+          
+          // Verify that all visible rows have the selected location
+          const locationCells = page.locator('[data-testid="location-cell"]');
+          if (await locationCells.first().isVisible()) {
+            const locationTexts = await locationCells.allTextContents();
+            locationTexts.forEach(location => {
+              expect(location.toLowerCase()).toContain(locationValue?.toLowerCase() || '');
+            });
+          }
+        }
+      });
+
+      test(`should apply multiple filters together in ${section}`, async ({ page }) => {
+        // Apply search filter
+        await page.fill('[data-testid="search-input"]', 'test');
+        await page.waitForTimeout(500);
+        
+        // Apply status filter
+        await page.click('[data-testid="status-filter"]');
+        const statusOption = page.locator('[data-testid="status-filter-option"]').first();
+        if (await statusOption.isVisible()) {
+          await statusOption.click();
+          await page.waitForTimeout(500);
+        }
+        
+        // Apply industry filter
+        await page.click('[data-testid="vertical-filter"]');
+        const industryOption = page.locator('[data-testid="vertical-filter-option"]').first();
+        if (await industryOption.isVisible()) {
+          await industryOption.click();
+          await page.waitForTimeout(500);
+        }
+        
+        // Verify that filters are applied together
+        const filteredRows = page.locator('[data-testid="table-row"]');
+        await expect(filteredRows).toHaveCount({ min: 0 }); // Could be 0 if no matches
+        
+        // Clear all filters
+        await page.click('[data-testid="clear-filters"]');
+        await page.waitForTimeout(1000);
+        
+        // Verify all rows are visible again
+        const allRows = page.locator('[data-testid="table-row"]');
+        await expect(allRows).toHaveCount({ min: 1 });
       });
 
       test(`should handle pagination in ${section} table`, async ({ page }) => {

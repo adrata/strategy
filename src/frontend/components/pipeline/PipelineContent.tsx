@@ -526,12 +526,11 @@ export const PipelineContent = React.memo(function PipelineContent({
 
     // Apply smart ranking or sorting
     if (section === 'speedrun' && (!sortField || sortField === 'rank')) {
-      // For speedrun, default sort by rank to show 1, 2, 3, 4, 5... in order
-      // But allow other sort fields to override this
+      // For speedrun, default sort by rank but respect sort direction
       filtered = [...filtered].sort((a: any, b: any) => {
         const aRank = parseInt(a.winningScore?.rank || a.rank || '999', 10);
         const bRank = parseInt(b.winningScore?.rank || b.rank || '999', 10);
-        return aRank - bRank; // Lower rank number first (1, 2, 3...)
+        return sortDirection === 'asc' ? aRank - bRank : bRank - aRank;
       });
     } else if (sortField) {
       // Regular field sorting with robust field handling
@@ -569,7 +568,9 @@ export const PipelineContent = React.memo(function PipelineContent({
     }
 
     return filtered;
-  }, [finalData, searchQuery, verticalFilter, statusFilter, priorityFilter, companySizeFilter, sortField, sortDirection, section]);
+  }, [finalData, searchQuery, verticalFilter, statusFilter, priorityFilter, revenueFilter, 
+      lastContactedFilter, timezoneFilter, companySizeFilter, locationFilter, 
+      sortField, sortDirection, section, getSortableValue]);
 
   // Handle record selection - OPTIMIZED NAVIGATION with instant transitions
   const handleRecordClick = useCallback((record: any) => {
