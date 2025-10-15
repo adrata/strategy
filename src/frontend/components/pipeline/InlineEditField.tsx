@@ -50,19 +50,19 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   }
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(value);
+  const [editValue, setEditValue] = useState(value ?? '');
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   // Sync editValue with value prop when it changes, but not while saving
   useEffect(() => {
     if (!isSaving) {
-      setEditValue(value);
+      setEditValue(value ?? '');
     }
   }, [value, isSaving]);
 
   const handleEditStart = () => {
-    setEditValue(value);
+    setEditValue(value ?? '');
     setIsEditing(true);
   };
 
@@ -93,7 +93,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   };
 
   const handleEditCancel = () => {
-    setEditValue(value);
+    setEditValue(value ?? '');
     setIsEditing(false);
   };
 
