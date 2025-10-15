@@ -155,7 +155,7 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[var(--muted)]">
-                        Employee Count:
+                        Total Employees:
                       </span>
                       <span className="font-medium text-[var(--foreground)]">
                         {selectedRecord.employeeCount}

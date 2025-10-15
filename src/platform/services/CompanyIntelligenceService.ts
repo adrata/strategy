@@ -428,6 +428,15 @@ export class CompanyIntelligenceService {
   private buildClaudePrompt(context: CompanyContext): string {
     const { company, people, recentActions, recentNews, hiringTrends, buyerGroup } = context;
     
+    // Validate company data to ensure we have enough information
+    const companyName = company.name || 'Unknown Company';
+    const industry = company.industry || 'Unknown Industry';
+    const employeeCount = company.employeeCount || 'Unknown';
+    const website = company.website || 'Unknown';
+    const linkedinUrl = company.linkedinUrl || 'Unknown';
+    const foundedYear = company.foundedYear || 'Unknown';
+    const revenue = company.revenue || 'Unknown';
+    
     const companyUpdates = company.companyUpdates || [];
     const customFields = company.customFields || {};
     
@@ -452,13 +461,13 @@ export class CompanyIntelligenceService {
 ## COMPANY PROFILE
 
 ### Basic Information
-- Name: ${company.name}
-- Industry: ${company.industry || 'Unknown'}
-- Size: ${company.employeeCount || 'Unknown'} employees
-- Website: ${company.website || 'Unknown'}
-- LinkedIn: ${company.linkedinUrl || 'Unknown'}
-- Founded: ${company.foundedYear || 'Unknown'}
-- Revenue: ${company.revenue || 'Unknown'}
+- Name: ${companyName}
+- Industry: ${industry}
+- Size: ${employeeCount} employees
+- Website: ${website}
+- LinkedIn: ${linkedinUrl}
+- Founded: ${foundedYear}
+- Revenue: ${revenue}
 
 ### Company Updates (CoreSignal Data)
 ${JSON.stringify(companyUpdates, null, 2)}

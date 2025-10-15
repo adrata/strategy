@@ -204,7 +204,7 @@ export class PerplexityAccuracyValidator {
     query += '. Please provide:';
     query += '\n1. Official company name and any name variations';
     query += '\n2. Current website URL';
-    query += '\n3. Headquarters location';
+    query += '\n3. HQ Location';
     query += '\n4. Industry and business description';
     query += '\n5. Approximate employee count';
     query += '\n6. Recent news or significant changes';

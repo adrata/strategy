@@ -257,6 +257,12 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await request.json();
+    
+    console.log(`🔍 [PEOPLE API AUDIT] PATCH request received:`, {
+      personId: id,
+      requestBody: body,
+      authUser: authUser.id
+    });
 
     // Check if person exists
     const existingPerson = await prisma.people.findUnique({
@@ -339,6 +345,13 @@ export async function PATCH(
       .filter(key => ALLOWED_PEOPLE_FIELDS.includes(key))
       .reduce((obj, key) => ({ ...obj, [key]: body[key] }), {});
 
+    console.log(`🔍 [PEOPLE API AUDIT] Database update preparation:`, {
+      personId: id,
+      updateData,
+      allowedFields: ALLOWED_PEOPLE_FIELDS,
+      filteredFields: Object.keys(updateData)
+    });
+
     // Update person with partial data
     const updatedPerson = await prisma.people.update({
       where: { id },
@@ -406,7 +419,7 @@ export async function PATCH(
       // Don't fail the main update if action logging fails
     }
 
-    return NextResponse.json({
+    const responseData = {
       success: true,
       data: {
         ...updatedPerson,
@@ -423,7 +436,16 @@ export async function PATCH(
       meta: {
         message: 'Person updated successfully',
       },
+    };
+
+    console.log(`🔍 [PEOPLE API AUDIT] Database update completed:`, {
+      personId: id,
+      updatedPerson,
+      updateData,
+      responseData
     });
+
+    return NextResponse.json(responseData);
 
   } catch (error) {
     console.error('Error updating person:', error);

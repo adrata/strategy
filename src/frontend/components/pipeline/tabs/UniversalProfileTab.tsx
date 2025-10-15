@@ -18,6 +18,14 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
     );
   }
 
+  // Utility function to standardize empty value display
+  const formatEmptyValue = (value: any): string => {
+    if (!value || value === '' || value === 'null' || value === 'undefined') {
+      return '-';
+    }
+    return value;
+  };
+
   // Use real data from record
   const profileData = {
     personalInfo: {
@@ -26,7 +34,9 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
       company: record?.company || record?.companyName || '-',
       email: record?.email || record?.workEmail || '-',
       phone: record?.phone || record?.workPhone || '-',
-      linkedin: record?.linkedinUrl || record?.linkedin || '-',
+      linkedin: formatEmptyValue(record?.linkedinUrl || record?.linkedin),
+      linkedinNavigatorUrl: formatEmptyValue(record?.linkedinNavigatorUrl),
+      bio: formatEmptyValue(record?.bio),
       location: record?.city && record?.state ? `${record.city}, ${record.state}` : record?.address || '-'
     },
     professionalInfo: {
@@ -97,6 +107,42 @@ export function UniversalProfileTab({ recordType, record: recordProp }: Universa
                     {profileData.personalInfo.linkedin !== '-' ? (
                       <a href={profileData.personalInfo.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
                         View Profile
+                      </a>
+                    ) : '-'}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">LinkedIn Navigator</div>
+                  <div className="text-sm text-[var(--muted)]">
+                    {profileData.personalInfo.linkedinNavigatorUrl !== '-' ? (
+                      <a href={profileData.personalInfo.linkedinNavigatorUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                        View Navigator
+                      </a>
+                    ) : '-'}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-[var(--foreground)]">Bio URL</div>
+                  <div className="text-sm text-[var(--muted)]">
+                    {profileData.personalInfo.bio !== '-' ? (
+                      <a href={profileData.personalInfo.bio} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                        View Bio
                       </a>
                     ) : '-'}
                   </div>

@@ -172,13 +172,35 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
         </div>
         <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
           <div className="text-sm text-[var(--foreground)] leading-relaxed">
-            {intelligenceSummary || (
-              <>
-                <span className="font-semibold text-[var(--foreground)]">{record?.fullName || record?.name || 'This individual'}</span> serves as a <span className="font-semibold text-blue-700">{insightsData.primaryRole || 'Professional'}</span> with <span className="font-semibold text-green-600">{insightsData.influenceScore >= 80 ? 'high' : insightsData.influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{insightsData.decisionPower >= 80 ? 'strong' : insightsData.decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
-                They prefer <span className="font-medium text-gray-800">{insightsData.communicationStyle?.toLowerCase() || 'professional'}</span> communication and make decisions based on <span className="font-medium text-gray-800">{insightsData.decisionMaking?.toLowerCase() || 'data-driven'}</span> analysis. 
-                Current engagement level is <span className="font-medium text-gray-800">{insightsData.engagementLevel || 'Medium'}</span>, indicating <span className="font-medium text-gray-800">{(insightsData.engagementLevel || 'Medium').includes('High') ? 'positive' : (insightsData.engagementLevel || 'Medium').includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
-              </>
-            )}
+            {intelligenceSummary || (() => {
+              const { generatePersonSentence, validatePersonData } = require('@/platform/utils/intelligence-validation');
+              
+              const personData = {
+                name: record?.fullName || record?.name,
+                title: insightsData.primaryRole,
+                company: record?.company || record?.companyName
+              };
+              
+              const validation = validatePersonData(personData);
+              
+              if (!validation.hasCompleteData) {
+                return (
+                  <>
+                    <span className="font-semibold text-[var(--foreground)]">{validation.fallbackData.name}</span> serves as a <span className="font-semibold text-blue-700">{validation.fallbackData.title}</span> with <span className="font-semibold text-green-600">{insightsData.influenceScore >= 80 ? 'high' : insightsData.influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{insightsData.decisionPower >= 80 ? 'strong' : insightsData.decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority. 
+                    They prefer <span className="font-medium text-gray-800">{insightsData.communicationStyle?.toLowerCase() || 'professional'}</span> communication and make decisions based on <span className="font-medium text-gray-800">{insightsData.decisionMaking?.toLowerCase() || 'data-driven'}</span> analysis. 
+                    Current engagement level is <span className="font-medium text-gray-800">{insightsData.engagementLevel || 'Medium'}</span>, indicating <span className="font-medium text-gray-800">{(insightsData.engagementLevel || 'Medium').includes('High') ? 'positive' : (insightsData.engagementLevel || 'Medium').includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
+                  </>
+                );
+              }
+              
+              return (
+                <>
+                  <span className="font-semibold text-[var(--foreground)]">{record?.fullName || record?.name || 'This individual'}</span> serves as a <span className="font-semibold text-blue-700">{insightsData.primaryRole || 'Professional'}</span> with <span className="font-semibold text-green-600">{insightsData.influenceScore >= 80 ? 'high' : insightsData.influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{insightsData.decisionPower >= 80 ? 'strong' : insightsData.decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
+                  They prefer <span className="font-medium text-gray-800">{insightsData.communicationStyle?.toLowerCase() || 'professional'}</span> communication and make decisions based on <span className="font-medium text-gray-800">{insightsData.decisionMaking?.toLowerCase() || 'data-driven'}</span> analysis. 
+                  Current engagement level is <span className="font-medium text-gray-800">{insightsData.engagementLevel || 'Medium'}</span>, indicating <span className="font-medium text-gray-800">{(insightsData.engagementLevel || 'Medium').includes('High') ? 'positive' : (insightsData.engagementLevel || 'Medium').includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
+                </>
+              );
+            })()}
           </div>
         </div>
       </div>

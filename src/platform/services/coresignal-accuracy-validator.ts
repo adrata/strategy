@@ -219,7 +219,7 @@ export class CoreSignalAccuracyValidator {
       if (context.expectedLocation.toLowerCase().includes(coreSignalData.hq_country.toLowerCase())) {
         checks['locationMatch'] = true;
         confidence += 10;
-        reasons.push('Headquarters location matches');
+        reasons.push('HQ Location matches');
       }
     }
     

@@ -770,7 +770,7 @@ Provide ONLY a JSON response:
                 { id: 'ticker', title: 'Stock Ticker' },
                 { id: 'exchange', title: 'Stock Exchange' },
                 { id: 'industry', title: 'Industry' },
-                { id: 'employeeCount', title: 'Employee Count' },
+                { id: 'employeeCount', title: 'Total Employees' },
                 { id: 'headquarters', title: 'Headquarters' },
                 
                 // Executive Data
@@ -802,11 +802,11 @@ Provide ONLY a JSON response:
                 { id: 'cfoPhone', title: 'CFO Phone' },
                 { id: 'cfoLinkedIn', title: 'CFO LinkedIn' },
                 { id: 'cfoEmailSource', title: 'CFO Email Source' },
-                { id: 'companyEmployeeCount', title: 'Company Employee Count (CoreSignal)' },
+                { id: 'companyEmployeeCount', title: 'Company Total Employees (CoreSignal)' },
                 { id: 'companyEmployeeGrowth', title: 'Company Employee Growth %' },
                 { id: 'companyIndustry', title: 'Company Industry (CoreSignal)' },
                 { id: 'companyFoundedYear', title: 'Company Founded Year' },
-                { id: 'companyHeadquarters', title: 'Company Headquarters' },
+                { id: 'companyHeadquarters', title: 'Company HQ Location' },
                 { id: 'companyActiveJobPostings', title: 'Active Job Postings' },
                 { id: 'hiringVelocity', title: 'Hiring Velocity' },
                 { id: 'dataQualityScore', title: 'Data Quality Score' },

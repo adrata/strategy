@@ -127,7 +127,7 @@ async function analyzeSbiCareerData() {
             console.log(`       - Industry: ${intelligence.industry || 'N/A'}`);
             console.log(`       - Size: ${intelligence.size || 'N/A'}`);
             console.log(`       - Revenue: ${intelligence.revenue || 'N/A'}`);
-            console.log(`       - Employee Count: ${intelligence.employeeCount || 'N/A'}`);
+            console.log(`       - Total Employees: ${intelligence.employeeCount || 'N/A'}`);
             console.log(`       - Founded Year: ${intelligence.foundedYear || 'N/A'}`);
             console.log(`       - Website: ${intelligence.website || 'N/A'}`);
           }

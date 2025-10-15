@@ -32,6 +32,8 @@ interface SpeedrunPerson {
   phone: string;
   mobilePhone?: string;
   linkedin?: string;
+  linkedinNavigatorUrl?: string;
+  linkedinConnectionDate?: string;
   photo: string | null;
   priority: string;
   status: string;

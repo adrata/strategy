@@ -380,6 +380,19 @@ export class AIActionsService {
     const title = parameters.title || context?.title || 'your role';
     const topic = parameters.topic || 'business solutions';
     
+    // Validate that we have enough data to generate a meaningful email
+    if (!leadName || leadName === 'there' || !company || company === 'your company') {
+      return {
+        success: false,
+        error: 'Insufficient contact data to generate personalized email',
+        message: 'Please provide contact name and company information',
+        nextSteps: [
+          'Add contact name and company to the record',
+          'Try again with complete contact information'
+        ]
+      };
+    }
+    
     const emailTemplates = {
       introduction: {
         subject: `Exploring ${topic} opportunities at ${company}`,

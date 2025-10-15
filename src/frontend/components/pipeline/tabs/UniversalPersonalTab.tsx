@@ -1,9 +1,25 @@
+import { InlineEditField } from '../InlineEditField';
+
 interface UniversalPersonalTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: any, recordId: string, recordType: string) => Promise<void>;
+  onSuccess?: () => void;
 }
 
-export function UniversalPersonalTab({ record, recordType }: UniversalPersonalTabProps) {
+export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: UniversalPersonalTabProps) {
+  const formatEmptyValue = (value: any): string => {
+    if (!value || value === '' || value === 'null' || value === 'undefined') {
+      return '-';
+    }
+    return value;
+  };
+
+  const handleSuccess = () => {
+    if (onSuccess) {
+      onSuccess();
+    }
+  };
   return (
     <div className="p-6 space-y-8">
       {/* Personal Profile */}
@@ -19,15 +35,29 @@ export function UniversalPersonalTab({ record, recordType }: UniversalPersonalTa
                   {record?.dateOfBirth ? new Date(record.dateOfBirth).toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) : '-'}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Location:</span>
-                <span className="font-medium text-[var(--foreground)]">
-                  {record?.city && record?.state ? `${record.city}, ${record.state}` : record?.city || record?.state || '-'}
-                </span>
+              <div className="flex items-center">
+                <span className="text-[var(--muted)] w-24">Location:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.city && record?.state ? `${record.city}, ${record.state}` : record?.city || record?.state)}
+                  field="city"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Time Zone:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.timezone || '-'}</span>
+              <div className="flex items-center">
+                <span className="text-[var(--muted)] w-24">Time Zone:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.timezone)}
+                  field="timezone"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="font-medium text-[var(--foreground)]"
+                />
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--muted)]">Preferred Language:</span>

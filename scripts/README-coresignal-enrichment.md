@@ -44,7 +44,7 @@ The script enriches companies with:
 - Address, city, state, country, postal code
 
 ### Business Intelligence
-- Industry, sector, size, employee count
+- Industry, sector, size, total employees
 - Founded year, currency, description
 - LinkedIn URL and followers
 - Active job postings
@@ -64,7 +64,7 @@ The script enriches companies with:
 - Company logo URL
 
 ### Location Data
-- Headquarters location details
+- HQ Location details
 - Regional information
 - Country ISO codes
 
@@ -93,7 +93,7 @@ The script enriches companies with:
 ==========================
 📊 Company Name: Southern Company
 📊 Industry: Utilities
-📊 Employee Count: 11751
+📊 Total Employees: 11751
 📊 LinkedIn Followers: 200689
 📊 Technologies Used: 463 technologies
 📊 Is Public: true

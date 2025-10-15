@@ -79,9 +79,9 @@ export class PerplexityEnrichmentService {
    * Build person enrichment prompt
    */
   private buildPersonPrompt(person: any, company?: any): string {
-    const personName = person.fullName || person.name || 'Unknown';
-    const jobTitle = person.jobTitle || person.title || 'Unknown Title';
-    const companyName = company?.name || person.company || 'Unknown Company';
+    const personName = person.fullName || person.name || 'Unknown Contact';
+    const jobTitle = person.jobTitle || person.title || 'Professional';
+    const companyName = company?.name || person.company || 'Unknown Organization';
     const industry = company?.industry || person.industry || 'Unknown Industry';
     const buyerGroupRole = person.customFields?.buyerGroupRole || 'Stakeholder';
     const influenceLevel = person.customFields?.influenceLevel || 'Medium';

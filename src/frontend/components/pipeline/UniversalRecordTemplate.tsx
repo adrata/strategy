@@ -8,6 +8,7 @@ import { UpdateModal } from './UpdateModal';
 import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
 import { AddTaskModal } from './AddTaskModal';
 import { AddPersonToCompanyModal } from './AddPersonToCompanyModal';
+import { AddCompanyModal } from '@/platform/ui/components/AddCompanyModal';
 import { CompanySelector } from './CompanySelector';
 import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
 import { UnifiedAddActionButton } from '@/platform/ui/components/UnifiedAddActionButton';
@@ -287,6 +288,7 @@ export function UniversalRecordTemplate({
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [isAddActionModalOpen, setIsAddActionModalOpen] = useState(false);
   const [isAddPersonModalOpen, setIsAddPersonModalOpen] = useState(false);
+  const [isAddCompanyModalOpen, setIsAddCompanyModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isEditRecordModalOpen, setIsEditRecordModalOpen] = useState(false);
   const [activeEditTab, setActiveEditTab] = useState('overview');
@@ -1103,6 +1105,15 @@ export function UniversalRecordTemplate({
 
   // Handle inline field save
   const handleInlineFieldSave = async (field: string, value: string | any, recordId?: string, recordTypeParam?: string) => {
+    console.log(`🔍 [INLINE EDIT AUDIT] Starting save for field: ${field}`, {
+      field,
+      value,
+      recordId,
+      recordTypeParam,
+      currentRecord: record,
+      currentLocalRecord: localRecord
+    });
+    
     // Track this field as having a pending save
     setPendingSaves(prev => new Set(prev).add(field));
     
@@ -1329,20 +1340,32 @@ export function UniversalRecordTemplate({
       const fieldMapping: Record<string, string> = {
         'name': 'fullName',
         'fullName': 'fullName',  // Ensure fullName maps to fullName
-        'title': 'title',
-        'jobTitle': 'title',  // Map jobTitle to title
+        'title': 'jobTitle',     // Map title to jobTitle for people API
+        'jobTitle': 'jobTitle',  // Keep jobTitle as jobTitle
         'workEmail': 'workEmail',
         'mobilePhone': 'mobilePhone',
-        'company': 'company',  // Keep company as company for database
-        'companyName': 'company'  // Map companyName to company
+        'company': 'company',    // Keep company as company for database
+        'companyName': 'company', // Map companyName to company
+        'bio': 'bio',            // Keep bio as bio
+        'linkedinUrl': 'linkedinUrl', // Keep linkedinUrl as linkedinUrl
+        'linkedinNavigatorUrl': 'linkedinNavigatorUrl' // Keep linkedinNavigatorUrl as linkedinNavigatorUrl
       };
       
       const apiField = fieldMapping[field] || field;
+      
+      console.log(`🔍 [INLINE EDIT AUDIT] Field mapping:`, {
+        originalField: field,
+        mappedField: apiField,
+        fieldMapping,
+        value
+      });
       
       // Prepare update data
       const updateData: Record<string, any> = {
         [apiField]: value
       };
+      
+      console.log(`🔍 [INLINE EDIT AUDIT] Update data prepared:`, updateData);
       
       // Handle name field specially - split into firstName/lastName/fullName
       if (field === 'name' || field === 'fullName') {
@@ -1369,6 +1392,14 @@ export function UniversalRecordTemplate({
       
       // Make API call to save the change using v1 APIs
       let response: Response;
+      
+      console.log(`🔍 [INLINE EDIT AUDIT] Making API request:`, {
+        targetModel,
+        targetId,
+        apiRecordType,
+        updateData,
+        requestBody: JSON.stringify(updateData)
+      });
       
       if (targetModel === 'people' || targetModel === 'leads' || targetModel === 'prospects' || targetModel === 'opportunities' || targetModel === 'speedrun') {
         // All people-related records use v1 people API
@@ -1407,6 +1438,15 @@ export function UniversalRecordTemplate({
       console.log(`✅ [UNIVERSAL] API Response for ${field}:`, JSON.stringify(result, null, 2));
       console.log(`✅ [UNIVERSAL] API Response status: ${response.status}, success: ${result.success}`);
       
+      console.log(`🔍 [INLINE EDIT AUDIT] API Response analysis:`, {
+        field,
+        expectedValue: value,
+        responseData: result.data,
+        fieldInResponse: result.data?.[field],
+        fieldInResponseMapped: result.data?.[apiField],
+        allResponseFields: Object.keys(result.data || {})
+      });
+      
       // Verify the update was successful
       if (!result.success) {
         throw new Error(`API returned success: false - ${result.error || 'Unknown error'}`);
@@ -1417,35 +1457,83 @@ export function UniversalRecordTemplate({
         console.warn(`⚠️ [UNIVERSAL] Field ${field} value mismatch: expected ${value}, got ${result.data[field]}`);
       }
       
+      // Check if the mapped field was updated
+      if (result.data && result.data[apiField] !== value) {
+        console.warn(`⚠️ [UNIVERSAL] Mapped field ${apiField} value mismatch: expected ${value}, got ${result.data[apiField]}`);
+      }
+      
       // Update local record state optimistically
-      setLocalRecord((prev: any) => ({
-        ...prev,
-        [field]: value,
-        // If updating person fields, update the person object as well
-        ...(personalFields.includes(field) && prev.person ? {
-          person: {
-            ...prev.person,
-            [field]: value
-          }
-        } : {}),
-        // If updating company fields, update the company object as well
-        ...(companyFields.includes(field) && prev.company ? {
-          company: {
-            ...prev.company,
-            [field]: value
-          }
-        } : {}),
-        // Update related fields if name was changed
-        ...(field === 'name' || field === 'fullName' ? {
-          firstName: updateData['firstName'],
-          lastName: updateData['lastName'],
-          fullName: updateData['fullName']
-        } : {})
-      }));
+      console.log(`🔍 [INLINE EDIT AUDIT] Updating local record state optimistically:`, {
+        field,
+        value,
+        personalFields,
+        companyFields,
+        isPersonalField: personalFields.includes(field),
+        isCompanyField: companyFields.includes(field),
+        currentLocalRecord: localRecord
+      });
+      
+      setLocalRecord((prev: any) => {
+        const updatedRecord = {
+          ...prev,
+          [field]: value,
+          // If updating person fields, update the person object as well
+          ...(personalFields.includes(field) && prev.person ? {
+            person: {
+              ...prev.person,
+              [field]: value
+            }
+          } : {}),
+          // If updating company fields, update the company object as well
+          ...(companyFields.includes(field) && prev.company ? {
+            company: {
+              ...prev.company,
+              [field]: value
+            }
+          } : {}),
+          // Update related fields if name was changed
+          ...(field === 'name' || field === 'fullName' ? {
+            firstName: updateData['firstName'],
+            lastName: updateData['lastName'],
+            fullName: updateData['fullName']
+          } : {})
+        };
+        
+        console.log(`🔍 [INLINE EDIT AUDIT] Local record state updated:`, {
+          previousRecord: prev,
+          updatedRecord,
+          field,
+          value
+        });
+        
+        return updatedRecord;
+      });
       
       // Update local record state with the new value
+      console.log(`🔍 [INLINE EDIT AUDIT] onRecordUpdate analysis:`, {
+        hasOnRecordUpdate: !!onRecordUpdate,
+        hasResultData: !!result.data,
+        resultData: result.data,
+        originalRecord: record
+      });
+      
       if (onRecordUpdate && result.data) {
-        const updatedRecord = { ...record, ...result.data };
+        // Map API response fields back to frontend field names
+        const mappedResponseData = { ...result.data };
+        
+        // If we mapped the field, ensure the response contains the frontend field name
+        if (apiField !== field && result.data[apiField] !== undefined) {
+          mappedResponseData[field] = result.data[apiField];
+        }
+        
+        const updatedRecord = { ...record, ...mappedResponseData };
+        console.log(`🔍 [INLINE EDIT AUDIT] Calling onRecordUpdate with mapped result.data:`, {
+          originalField: field,
+          apiField: apiField,
+          resultData: result.data,
+          mappedResponseData: mappedResponseData,
+          updatedRecord: updatedRecord
+        });
         onRecordUpdate(updatedRecord);
         console.log(`🔄 [UNIVERSAL] Updated local record state:`, updatedRecord);
       } else if (onRecordUpdate) {
@@ -1460,8 +1548,11 @@ export function UniversalRecordTemplate({
             fullName: updateData['fullName']
           } : {})
         };
+        console.log(`🔍 [INLINE EDIT AUDIT] Calling onRecordUpdate with fallback:`, updatedRecord);
         onRecordUpdate(updatedRecord);
         console.log(`🔄 [UNIVERSAL] Updated local record state (fallback):`, updatedRecord);
+      } else {
+        console.log(`🔍 [INLINE EDIT AUDIT] No onRecordUpdate callback available`);
       }
       
       // Also dispatch a custom event to notify other components of the update
@@ -1528,6 +1619,40 @@ export function UniversalRecordTemplate({
     
     // Show success message
     showMessage('Person added successfully!', 'success');
+  };
+
+  // Handle company added and associate with person/lead/prospect
+  const handleCompanyAdded = async (newCompany: any) => {
+    console.log('Company added, associating with person:', newCompany);
+    setIsAddCompanyModalOpen(false);
+    
+    try {
+      const updateData = {
+        companyId: newCompany.id,
+        company: newCompany.name
+      };
+      
+      const response = await fetch(`/api/v1/people/${record.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(updateData),
+      });
+      
+      if (!response.ok) throw new Error('Failed to associate company');
+      
+      setLocalRecord((prev: any) => ({
+        ...prev,
+        companyId: newCompany.id,
+        company: newCompany.name
+      }));
+      
+      if (onRecordUpdate) await onRecordUpdate(record.id);
+      showMessage('Company added and associated successfully!', 'success');
+    } catch (error) {
+      console.error('Error associating company:', error);
+      showMessage('Failed to associate company', 'error');
+    }
   };
 
   const handleDeleteConfirm = async () => {
@@ -2231,6 +2356,20 @@ export function UniversalRecordTemplate({
       }
     });
 
+    // Add Company button - only for person/lead/prospect records without a company
+    if ((recordType === 'people' || recordType === 'leads' || recordType === 'prospects') && 
+        !record?.companyId && !record?.company) {
+      buttons.push(
+        <button
+          key="add-company"
+          onClick={() => setIsAddCompanyModalOpen(true)}
+          className="px-3 py-1.5 text-sm bg-[var(--background)] text-gray-700 border border-[var(--border)] rounded-md hover:bg-[var(--panel-background)] transition-colors"
+        >
+          Add Company
+        </button>
+      );
+    }
+
     // Update Record button - for all record types
     const updateButtonText = recordType === 'leads' ? 'Update Lead' : 
                             recordType === 'prospects' ? 'Update Prospect' :
@@ -2257,7 +2396,7 @@ export function UniversalRecordTemplate({
         <button
           key="add-person"
           onClick={() => setIsAddPersonModalOpen(true)}
-          className="px-3 py-1.5 text-sm bg-[var(--background)] text-gray-700 border border-[var(--border)] rounded-md hover:bg-[var(--panel-background)] transition-colors"
+          className="px-3 py-1.5 text-sm bg-gray-100 text-gray-600 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
         >
           Add Person
         </button>
@@ -2988,6 +3127,16 @@ export function UniversalRecordTemplate({
         />
       )}
 
+      {/* Add Company Modal */}
+      {(recordType === 'people' || recordType === 'leads' || recordType === 'prospects') && (
+        <AddCompanyModal
+          isOpen={isAddCompanyModalOpen}
+          onClose={() => setIsAddCompanyModalOpen(false)}
+          onCompanyAdded={handleCompanyAdded}
+          section={recordType}
+        />
+      )}
+
       {/* Profile Image Upload Modal - TEMPORARILY COMMENTED OUT */}
       {/*
       <ProfileImageUploadModal
@@ -3146,7 +3295,7 @@ export function UniversalRecordTemplate({
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Employee Count</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Total Employees</label>
                             <select
                               name="size"
                               defaultValue={record?.size || ''}
@@ -4291,7 +4440,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Employee Count</label>
+              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Total Employees</label>
               <InlineEditField
                 value={record?.companySize || record?.employeeCount || ''}
                 field="companySize"
@@ -4387,8 +4536,8 @@ function CompanyTab({ record, recordType }: { record: any; recordType: string })
 export function NotesTab({ record, recordType }: { record: any; recordType: string }) {
   const { updateCurrentRecord } = useRecordContext();
   
-  // Initialize notes instantly from record prop
-  const getInitialNotes = () => {
+  // Initialize notes instantly from record prop - memoized to prevent unnecessary recalculations
+  const getInitialNotes = React.useMemo(() => {
     if (record?.notes) {
       if (typeof record.notes === 'string') {
         return record.notes;
@@ -4397,7 +4546,7 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
       }
     }
     return '';
-  };
+  }, [record?.notes]);
 
   // Utility functions for notes statistics
   const getWordCount = (text: string) => {
@@ -4412,22 +4561,25 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
   const [notes, setNotes] = React.useState<string>(getInitialNotes);
   const [saveStatus, setSaveStatus] = React.useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSavedAt, setLastSavedAt] = React.useState<Date | null>(
-    (record?.updatedAt && getInitialNotes().trim().length > 0) 
+    (record?.updatedAt && getInitialNotes.trim().length > 0) 
       ? new Date(record.updatedAt) 
       : null
   );
   const [lastSavedNotes, setLastSavedNotes] = React.useState<string>(getInitialNotes);
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState<boolean>(false);
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
+  
+  // Track if initial mount is complete to prevent refresh during active editing
+  const isInitialMountRef = React.useRef(true);
 
   // Sync notes state when record.notes prop changes
   React.useEffect(() => {
-    const newNotes = getInitialNotes();
+    const newNotes = getInitialNotes;
     if (newNotes !== notes && !isFocused && saveStatus !== 'saving' && !hasUnsavedChanges) {
       setNotes(newNotes);
       setLastSavedNotes(newNotes);
     }
-  }, [record?.notes, notes, isFocused, saveStatus, hasUnsavedChanges]);
+  }, [getInitialNotes, notes, isFocused, saveStatus, hasUnsavedChanges]);
 
   // Silently refresh notes from API in background (no loading state)
   React.useEffect(() => {
@@ -4458,7 +4610,8 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
             
             // Only update if the notes are different and we're not currently editing or saving
             // This prevents overwriting user changes during active editing
-            if (freshNotes !== notes && saveStatus !== 'saving' && !isFocused && !hasUnsavedChanges) {
+            // Also skip refresh if this is not the initial mount
+            if (freshNotes !== notes && saveStatus !== 'saving' && !isFocused && !hasUnsavedChanges && isInitialMountRef.current) {
               setNotes(freshNotes);
               setLastSavedNotes(freshNotes);
               if (result.data.updatedAt) {
@@ -4471,12 +4624,15 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
       } catch (error) {
         console.error('❌ [NOTES] Error refreshing notes:', error);
         // Silently fail - user already has notes from record prop
+      } finally {
+        // Mark initial mount as complete after first refresh
+        isInitialMountRef.current = false;
       }
     };
 
     // Only refresh on initial load or when record ID changes, not on every notes change
     refreshNotes();
-  }, [record?.id, recordType, notes, saveStatus, isFocused, hasUnsavedChanges]);
+  }, [record?.id, recordType]);
 
   // Auto-save function using v1 APIs
   const saveNotes = React.useCallback(async (notesContent: string) => {

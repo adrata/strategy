@@ -347,7 +347,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="group flex items-center gap-2">
       <span className={`${className} ${!getCurrentCompanyName() ? 'text-gray-400' : ''}`}>
         {getCurrentCompanyName() || placeholder}
       </span>

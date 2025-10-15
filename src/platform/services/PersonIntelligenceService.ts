@@ -334,6 +334,12 @@ export class PersonIntelligenceService {
   private buildClaudePrompt(context: PersonContext): string {
     const { person, company, recentActions, recentNews, buyerGroupContext } = context;
     
+    // Validate person data to ensure we have enough information
+    const personName = person.fullName || person.name || 'Unknown Contact';
+    const jobTitle = person.jobTitle || person.title || 'Professional';
+    const companyName = company?.name || person.company || 'Unknown Company';
+    const industry = company?.industry || person.industry || 'Unknown Industry';
+    
     const coresignalData = person.coresignalData || {};
     const enrichedData = person.enrichedData || {};
     
@@ -354,10 +360,10 @@ export class PersonIntelligenceService {
 ## PERSON PROFILE
 
 ### Basic Information
-- Name: ${person.fullName}
-- Title: ${person.jobTitle || 'Unknown'}
-- Company: ${company?.name || 'Unknown'}
-- Industry: ${company?.industry || 'Unknown'}
+- Name: ${personName}
+- Title: ${jobTitle}
+- Company: ${companyName}
+- Industry: ${industry}
 - Email: ${person.email || 'Unknown'}
 - LinkedIn: ${person.linkedinUrl || 'Unknown'}
 

@@ -525,7 +525,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-[var(--muted)]">
-                          Employee Count
+                          Total Employees
                         </label>
                         <div className="mt-1 text-lg text-[var(--foreground)]">
                           <InlineEditField

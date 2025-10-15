@@ -406,6 +406,9 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           
           // Contact details
           linkedinUrl: record.linkedinUrl || '',
+          linkedinNavigatorUrl: record.linkedinNavigatorUrl || '',
+          linkedinConnectionDate: formatDateValue(record.linkedinConnectionDate),
+          bio: record.bio || '',
           address: record.address || '',
           city: record.city || '',
           state: record.state || '',
@@ -598,6 +601,44 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Enter LinkedIn profile URL"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          LinkedIn Navigator URL
+        </label>
+        <input
+          type="url"
+          value={formData.linkedinNavigatorUrl || ''}
+          onChange={(e) => handleInputChange('linkedinNavigatorUrl', e.target.value)}
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Enter LinkedIn Navigator URL"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          LinkedIn Connection Date
+        </label>
+        <input
+          type="date"
+          value={formData.linkedinConnectionDate || ''}
+          onChange={(e) => handleInputChange('linkedinConnectionDate', e.target.value)}
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Bio URL
+        </label>
+        <input
+          type="url"
+          value={formData.bio || ''}
+          onChange={(e) => handleInputChange('bio', e.target.value)}
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Enter bio URL"
         />
       </div>
     </div>
@@ -1109,7 +1150,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Employee Count
+                  Total Employees
                 </label>
                 <input
                   type="number"
@@ -1749,6 +1790,44 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           type="url"
           value={formData.linkedinUrl || ''}
           onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="-"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          LinkedIn Navigator URL
+        </label>
+        <input
+          type="url"
+          value={formData.linkedinNavigatorUrl || ''}
+          onChange={(e) => handleInputChange('linkedinNavigatorUrl', e.target.value)}
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="-"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          LinkedIn Connection Date
+        </label>
+        <input
+          type="date"
+          value={formData.linkedinConnectionDate || ''}
+          onChange={(e) => handleInputChange('linkedinConnectionDate', e.target.value)}
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Bio URL
+        </label>
+        <input
+          type="url"
+          value={formData.bio || ''}
+          onChange={(e) => handleInputChange('bio', e.target.value)}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="-"
         />

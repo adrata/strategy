@@ -165,7 +165,7 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
       { value: 'industry', label: 'Industry' },
       { value: 'size', label: 'Size' },
       { value: 'revenue', label: 'Revenue' },
-      { value: 'employeeCount', label: 'Employee Count' },
+      { value: 'employeeCount', label: 'Total Employees' },
       { value: 'createdAt', label: 'Created Date' }
     ],
     statusOptions: [

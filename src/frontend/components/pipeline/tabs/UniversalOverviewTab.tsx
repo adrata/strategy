@@ -146,6 +146,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     email: record?.email || coresignalData.primary_professional_email || null,
     phone: record?.phone || coresignalData.phone || null,
     linkedin: record?.linkedin || coresignalData.linkedin_url || null,
+    linkedinNavigatorUrl: record?.linkedinNavigatorUrl || null,
+    bio: record?.bio || null,
     
     // Company info - Coresignal data with database fallback
     company: (() => {
@@ -231,6 +233,14 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     return value && value !== '-' && value !== '--' && String(value).trim() !== '';
   };
 
+  // Utility function to standardize empty value display
+  const formatEmptyValue = (value: any): string => {
+    if (!value || value === '' || value === 'null' || value === 'undefined') {
+      return '-';
+    }
+    return value;
+  };
+
   // Generate natural bio text that gracefully handles missing data
   const generateBioText = (): string => {
     const sentences: string[] = [];
@@ -241,11 +251,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     const company = hasValue(recordData.company) ? recordData.company : null;
     
     if (title && company) {
-      sentences.push(`${name} is a ${title} at ${company}.`);
+      sentences.push(`${name} is a ${title}${company ? ` at ${company}` : ''}.`);
     } else if (title) {
       sentences.push(`${name} is a ${title}.`);
     } else if (company) {
-      sentences.push(`${name} works at ${company}.`);
+      sentences.push(`${name} works${company ? ` at ${company}` : ''}.`);
     } else {
       sentences.push(`${name} is a professional contact.`);
     }
@@ -364,6 +374,42 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.linkedin)}
+                  field="linkedinUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.linkedinNavigatorUrl)}
+                  field="linkedinNavigatorUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.bio)}
+                  field="bio"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
             </div>
           </div>
 
@@ -381,21 +427,53 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Role:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{record.buyerGroupRole || 'Stakeholder'}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Role:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record.buyerGroupRole || 'Stakeholder')}
+                  field="buyerGroupRole"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Influence Level:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.influenceLevel}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Influence Level:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.influenceLevel)}
+                  field="influenceLevel"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Decision Power:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{record.customFields?.decisionPower || '70'}%</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Decision Power:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record.customFields?.decisionPower || '70')}
+                  field="decisionPower"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Engagement Level:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{record.customFields?.engagementLevel || 'Medium'}</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Engagement Level:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record.customFields?.engagementLevel || 'Medium')}
+                  field="engagementLevel"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
             </div>
           </div>
@@ -409,47 +487,66 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
                 <div className="space-y-2">
-              <div className="flex justify-between">
-                    <span className="text-sm text-[var(--muted)]">Email:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {recordData.email !== '-' ? (
-                    <a href={`mailto:${recordData.email}`} className="text-blue-600 hover:underline">
-                      {recordData.email}
-                    </a>
-                  ) : (
-                    recordData.email
-                  )}
-                    </span>
-                  </div>
-              <div className="flex justify-between">
-                    <span className="text-sm text-[var(--muted)]">Phone:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {recordData.phone !== '-' ? (
-                    <a href={`tel:${recordData.phone}`} className="text-blue-600 hover:underline">
-                      {recordData.phone}
-                    </a>
-                  ) : (
-                    recordData.phone
-                  )}
-                    </span>
-                  </div>
-              <div className="flex justify-between">
-                    <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {recordData.linkedin && recordData.linkedin !== '-' ? (
-                    <a 
-                      href={recordData.linkedin.startsWith('http') ? recordData.linkedin : `https://${recordData.linkedin}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      {recordData.linkedin.replace(/^https?:\/\//, '').replace(/^www\./, '')}
-                    </a>
-                  ) : (
-                    recordData.linkedin
-                  )}
-                    </span>
-                  </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.bio)}
+                  field="bio"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Email:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.email)}
+                  field="email"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Phone:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.phone)}
+                  field="phone"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.linkedin)}
+                  field="linkedinUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.linkedinNavigatorUrl)}
+                  field="linkedinNavigatorUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
                 </div>
               </div>
 
@@ -461,20 +558,30 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <span className="text-sm text-[var(--muted)]">Last Contact:</span>
                 <span className="text-sm font-medium text-[var(--foreground)]">{formatRelativeDate(recordData.lastContact)}</span>
                   </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Next Action:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{recordData.nextAction}</span>
-                  </div>
-              <div className="flex justify-between">
-                    <span className="text-sm text-[var(--muted)]">Status:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  recordData.status === 'active' ? 'bg-green-100 text-green-800' :
-                  recordData.status === 'inactive' ? 'bg-[var(--hover)] text-gray-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {recordData.status}
-                    </span>
-                  </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Next Action:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.nextAction)}
+                  field="nextAction"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Status:</span>
+                <InlineEditField
+                  value={formatEmptyValue(recordData.status)}
+                  field="status"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
                   </div>
                 </div>
               </div>

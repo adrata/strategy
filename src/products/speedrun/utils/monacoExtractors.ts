@@ -121,7 +121,7 @@ export const extractProductionInsights = (
     nextMove:
       opportunityIntel?.nextBestAction ||
       person.nextAction ||
-      `Follow up with ${person.name} about their business priorities at ${person.company}.`,
+      `Follow up with ${person.name || 'this contact'} about their business priorities${person.company ? ` at ${person.company}` : ''}.`,
     persona: (() => {
       const hasValidTitle = person['title'] && 
         person.title.toLowerCase() !== 'unknown' && 
@@ -129,17 +129,18 @@ export const extractProductionInsights = (
         person.title !== '-' && 
         person.title.trim() !== '';
       
-      const titlePart = hasValidTitle ? ` is a ${person.title} at` : ` works at`;
+      const titlePart = hasValidTitle ? ` is a ${person.title}` : ` works`;
+      const companyPart = person.company ? ` at ${person.company}` : '';
       const uniqueContext = buyerAnalysis?.rationale || person.bio || 
         `Contact in ${person.department || 'business operations'} with potential decision influence in technology initiatives.`;
       
-      return `${person.name}${titlePart} ${person.company}. ${uniqueContext}`;
+      return `${person.name || 'This contact'}${titlePart}${companyPart}. ${uniqueContext}`;
     })(),
     buyingSignals: (opportunityIntel?.signals || [])
       .map(convertToString)
       .filter(signal => signal && !signal.includes('[object Object]'))
       .concat([
-        convertToString(person.recentActivity) || `Recent engagement from ${person.company}`,
+        convertToString(person.recentActivity) || `Recent engagement${person.company ? ` from ${person.company}` : ''}`,
         `${person.status || 'Active'} status indicates current engagement level`,
         `${person.priority || 'Standard'} priority contact based on role influence`,
         `${buyerAnalysis?.role || convertToString(person.relationship) || "Key stakeholder"} in decision-making process`,
@@ -152,10 +153,10 @@ export const extractProductionInsights = (
       .map(convertToString)
       .filter(objection => objection && !objection.includes('[object Object]'))
       .concat([
-        `${person.company} timeline and implementation planning`,
+        `${person.company || 'Organization'} timeline and implementation planning`,
         person.department ? `${person.department} budget approval requirements` : "Budget allocation considerations",
-        `Integration complexity with ${person.company} existing systems`,
-        `ROI justification for ${person.company} stakeholders`,
+        `Integration complexity with ${person.company || 'existing'} systems`,
+        `ROI justification for ${person.company || 'key'} stakeholders`,
       ])
       .filter(Boolean)
       .slice(0, 4),
@@ -163,11 +164,11 @@ export const extractProductionInsights = (
       .map(convertToString)
       .filter(recommendation => recommendation && !recommendation.includes('[object Object]'))
       .concat([
-        opportunityIntel?.nextBestAction || `Schedule personalized discovery call with ${person.name}`,
-        `Share ${person.company} industry-specific case studies`,
-        `Address ${person.company} unique business challenges`,
+        opportunityIntel?.nextBestAction || `Schedule personalized discovery call with ${person.name || 'this contact'}`,
+        `Share ${person.company || 'industry'}-specific case studies`,
+        `Address ${person.company || 'unique'} business challenges`,
         person.department ? `Focus on ${person.department} departmental benefits` : "Demonstrate cross-functional value",
-        `Tailor solution presentation for ${person.company} requirements`
+        `Tailor solution presentation for ${person.company || 'specific'} requirements`
       ])
       .filter(Boolean)
       .slice(0, 5),
@@ -216,7 +217,7 @@ export const extractProductionProfile = (person: SpeedrunPerson): ProfileData =>
         .filter(Boolean)
         .join(", ") || "Technology, Business",
     role: monaco?.buyerGroupAnalysis?.role || person.relationship || "Contact",
-    context: `${person.name} is a ${person.title} at ${person.company} (${personIntel?.department || "Department"}). Seniority: ${personIntel?.seniorityLevel || "Professional"}. ${person.bio}`,
+    context: `${person.name || 'This contact'} is a ${person.title || 'professional'}${person.company ? ` at ${person.company}` : ''} (${personIntel?.department || "Department"}). Seniority: ${personIntel?.seniorityLevel || "Professional"}. ${person.bio || ''}`,
     tips: `Communication style: ${personIntel?.communicationStyle || "Professional"}. Key motivators: ${(personIntel?.motivations || []).map(convertToString).filter(motivator => motivator && !motivator.includes('[object Object]')).slice(0, 2).join(", ") || "Growth, efficiency"}. Decision power: ${personIntel?.decisionPower || "Moderate"}.`,
   };
 };
@@ -228,7 +229,7 @@ export const extractProductionCareer = (person: SpeedrunPerson): CareerData => {
   const enrichedProfile = monaco?.enrichedProfiles;
 
   return {
-    summary: `${person.name} currently serves as ${person.title} at ${person.company}. Seniority: ${personIntel?.seniorityLevel || "Professional"}. Department: ${personIntel?.department || "Business"}.`,
+    summary: `${person.name || 'This contact'} currently serves as ${person.title || 'a professional'}${person.company ? ` at ${person.company}` : ''}. Seniority: ${personIntel?.seniorityLevel || "Professional"}. Department: ${personIntel?.department || "Business"}.`,
     education:
       enrichedProfile?.education
         ?.map((edu) => `${edu.degree} from ${edu.school} (${edu.year})`)
@@ -282,13 +283,13 @@ export const extractProductionWorkspace = (
     industry: companyIntel?.industry || "Technology Services",
     size: companyIntel?.companySize || "Growing organization",
     hq: "Business headquarters",
-    mission: `${person.company} is focused on delivering value and driving growth in the ${companyIntel?.industry || "technology"} industry.`,
+    mission: `${person.company || 'This organization'} is focused on delivering value and driving growth in the ${companyIntel?.industry || "technology"} industry.`,
     techStack: (companyIntel?.techStack || [])
       .map(convertToString)
       .filter(tech => tech && !tech.includes('[object Object]'))
       .concat(["Modern Business Systems"])
       .slice(0, 5),
-    dayToDay: `${person.name} focuses on ${person.title.toLowerCase()} responsibilities in the ${personIntel?.department || "business"} department. Key areas: ${(personIntel?.skills || []).map(convertToString).filter(skill => skill && !skill.includes('[object Object]')).slice(0, 3).join(", ") || "strategic initiatives"}.`,
+    dayToDay: `${person.name || 'This professional'} focuses on ${(person.title || 'professional').toLowerCase()} responsibilities in the ${personIntel?.department || "business"} department. Key areas: ${(personIntel?.skills || []).map(convertToString).filter(skill => skill && !skill.includes('[object Object]')).slice(0, 3).join(", ") || "strategic initiatives"}.`,
     orgChart: [
       {
         name: person.name,
@@ -298,11 +299,11 @@ export const extractProductionWorkspace = (
       },
     ],
     news: [
-      `${person.company} continues business development in ${companyIntel?.industry || "their industry"}`,
+      `${person.company || 'This organization'} continues business development in ${companyIntel?.industry || "their industry"}`,
       `Market position: ${companyIntel?.marketPosition || "Established player"}`,
       `Digital maturity: ${companyIntel?.digitalMaturity || 75}%`,
     ],
-    fit: `Strong alignment opportunity with ${person.company}'s business objectives. ${person.name} as ${person.title} has ${personIntel?.decisionPower || "moderate"} decision power and ${personIntel?.influence || "professional"} influence level.`,
+    fit: `Strong alignment opportunity with ${person.company || 'this organization'}'s business objectives. ${person.name || 'This contact'} as ${person.title || 'a professional'} has ${personIntel?.decisionPower || "moderate"} decision power and ${personIntel?.influence || "professional"} influence level.`,
   };
 };
 
@@ -467,15 +468,33 @@ export const calculateEngagementScore = (person: SpeedrunPerson): number => {
 // Generate personal wants for a person
 export const generatePersonalWants = (person: SpeedrunPerson): string => {
   try {
+    const { generateWantsStatement, generateFallbackMessage, validatePersonData } = require('@/platform/utils/intelligence-validation');
+    
+    // Validate person data first
+    const personData = {
+      name: person.name,
+      title: person.title,
+      company: person.company,
+      industry: person.vertical
+    };
+    
+    const validation = validatePersonData(personData);
+    
+    // If we don't have enough data, use fallback
+    if (!validation.hasCompleteData && validation.missingFields.length > 1) {
+      return generateFallbackMessage(personData, 'wants');
+    }
+    
     const monaco = person.customFields?.monacoEnrichment;
     const personIntel = monaco?.personIntelligence;
     const motivations = personIntel?.motivations || [];
-    const role = person.title || "Professional";
-    const company = person.company || "their organization";
+    const role = validation.fallbackData.title;
+    const company = validation.fallbackData.company;
 
     if (motivations.length > 0) {
       const primaryMotivation = convertToString(motivations[0]);
-      return `As a ${role}, ${person.name} wants to ${primaryMotivation.toLowerCase()} and drive meaningful impact at ${company}. They are looking for solutions that align with their professional goals and enhance their ability to deliver results.`;
+      const wantsText = generateWantsStatement(personData, primaryMotivation.toLowerCase());
+      return `${wantsText} They are looking for solutions that align with their professional goals and enhance their ability to deliver results.`;
     }
 
     // Default wants based on role
@@ -498,16 +517,39 @@ export const generatePersonalWants = (person: SpeedrunPerson): string => {
       ? roleBasedWants[matchingKeyword as keyof typeof roleBasedWants]
       : "achieve professional excellence and make a positive impact";
 
-    return `${person.name} wants to ${want} at ${company}. They are seeking opportunities to advance their career while contributing to organizational success.`;
+    const wantsText = generateWantsStatement(personData, want);
+    return `${wantsText} They are seeking opportunities to advance their career while contributing to organizational success.`;
   } catch (error) {
     console.warn("Error generating personal wants:", error);
-    return `${person.name} is focused on professional growth and success in their role.`;
+    const { generateFallbackMessage } = require('@/platform/utils/intelligence-validation');
+    return generateFallbackMessage({
+      name: person.name,
+      title: person.title,
+      company: person.company
+    }, 'wants');
   }
 };
 
 // Generate personal needs for a person using intelligent pain engine
 export const generatePersonalNeeds = (person: SpeedrunPerson): string => {
   try {
+    const { generateNeedsStatement, generateFallbackMessage, validatePersonData } = require('@/platform/utils/intelligence-validation');
+    
+    // Validate person data first
+    const personData = {
+      name: person.name,
+      title: person.title,
+      company: person.company,
+      industry: person.vertical
+    };
+    
+    const validation = validatePersonData(personData);
+    
+    // If we don't have enough data, use fallback
+    if (!validation.hasCompleteData && validation.missingFields.length > 1) {
+      return generateFallbackMessage(personData, 'needs');
+    }
+    
     const monaco = person.customFields?.monacoEnrichment;
     const personIntel = monaco?.personIntelligence;
     const companyIntel = monaco?.companyIntelligence;
@@ -516,9 +558,9 @@ export const generatePersonalNeeds = (person: SpeedrunPerson): string => {
     const intelligentPainValueEngine = require('@/platform/services/intelligent-pain-value-engine').intelligentPainValueEngine;
     
     const contactContext = {
-      name: person.name,
-      title: person.title,
-      company: person.company,
+      name: validation.fallbackData.name,
+      title: validation.fallbackData.title,
+      company: validation.fallbackData.company,
       industry: companyIntel?.industry || person.vertical,
       department: personIntel?.department,
       seniority: personIntel?.seniorityLevel,
@@ -537,34 +579,37 @@ export const generatePersonalNeeds = (person: SpeedrunPerson): string => {
     // Fallback to Monaco intelligence if available
     const painPoints = personIntel?.painPoints || [];
     const decisionFactors = personIntel?.decisionFactors || [];
-    const role = person.title || "Professional";
-    const company = person.company || "their organization";
+    const role = validation.fallbackData.title;
+    const company = validation.fallbackData.company;
 
     if (painPoints.length > 0) {
       const primaryPain = convertToString(painPoints[0]);
-      return `${person.name} faces ${primaryPain.toLowerCase()} challenges at ${company}. Specific need: Solutions providing measurable ROI with efficient implementation within existing infrastructure constraints.`;
+      const needsText = generateNeedsStatement(personData, `${primaryPain.toLowerCase()} solutions`);
+      return `${needsText} Specific need: Solutions providing measurable ROI with efficient implementation within existing infrastructure constraints.`;
     }
 
     if (decisionFactors.length > 0) {
       const primaryFactor = convertToString(decisionFactors[0]);
-      return `${person.name} prioritizes ${primaryFactor.toLowerCase()} in vendor selection. Critical requirement: Partners demonstrating proven results and deep understanding of ${company}'s specific operational context.`;
+      const needsText = generateNeedsStatement(personData, `vendors that prioritize ${primaryFactor.toLowerCase()}`);
+      return `${needsText} Critical requirement: Partners demonstrating proven results and deep understanding of operational context.`;
     }
 
     // Enhanced role-based needs with industry context
     const enhancedRoleNeeds = {
-      'Manager, Indirect COE': `${person.name}'s indirect procurement role requires fixture solutions that optimize category management while ensuring vendor compliance and cost efficiency at ${company}`,
-      'CEO': `${person.name} needs strategic infrastructure investments that accelerate revenue growth and competitive positioning for ${company}`,
-      'CTO': `${person.name} requires technology-forward fixture solutions with IoT integration capabilities to support ${company}'s digital transformation`,
-      'VP': `${person.name} needs operational improvements that deliver measurable team performance gains and cost reduction for ${company}`,
-      'Director': `${person.name} requires departmental optimization solutions that enhance efficiency while supporting ${company}'s growth objectives`,
-      'Manager': `${person.name} needs productivity-enhancing tools that improve team collaboration and operational effectiveness at ${company}`,
-      'Engineer': `${person.name} requires advanced technical resources and development tools to support ${company}'s innovation initiatives`,
-      'Analyst': `${person.name} needs comprehensive data analytics platforms for better insights and reporting capabilities at ${company}`,
+      'Manager, Indirect COE': "fixture solutions that optimize category management while ensuring vendor compliance and cost efficiency",
+      'CEO': "strategic infrastructure investments that accelerate revenue growth and competitive positioning",
+      'CTO': "technology-forward fixture solutions with IoT integration capabilities to support digital transformation",
+      'VP': "operational improvements that deliver measurable team performance gains and cost reduction",
+      'Director': "departmental optimization solutions that enhance efficiency while supporting growth objectives",
+      'Manager': "productivity-enhancing tools that improve team collaboration and operational effectiveness",
+      'Engineer': "advanced technical resources and development tools to support innovation initiatives",
+      'Analyst': "comprehensive data analytics platforms for better insights and reporting capabilities",
     };
 
     // Check for exact title match first
     if (enhancedRoleNeeds[person.title as keyof typeof enhancedRoleNeeds]) {
-      return enhancedRoleNeeds[person.title as keyof typeof enhancedRoleNeeds];
+      const need = enhancedRoleNeeds[person.title as keyof typeof enhancedRoleNeeds];
+      return generateNeedsStatement(personData, need);
     }
 
     // Check for keyword matches
@@ -574,26 +619,33 @@ export const generatePersonalNeeds = (person: SpeedrunPerson): string => {
     );
 
     if (matchingKeyword) {
-      return enhancedRoleNeeds[matchingKeyword as keyof typeof enhancedRoleNeeds];
+      const need = enhancedRoleNeeds[matchingKeyword as keyof typeof enhancedRoleNeeds];
+      return generateNeedsStatement(personData, need);
     }
 
     // Industry-specific default needs
     const industryDefaults = {
-      'convenience_store': `${person.name} needs fixture solutions that maximize high-margin product visibility while reducing restocking time at ${company}`,
-      'grocery': `${person.name} requires store layout optimization that improves customer flow and increases basket size at ${company}`,
-      'retail_general': `${person.name} needs flexible merchandising systems supporting rapid category changes and seasonal promotions at ${company}`,
+      'convenience_store': "fixture solutions that maximize high-margin product visibility while reducing restocking time",
+      'grocery': "store layout optimization that improves customer flow and increases basket size",
+      'retail_general': "flexible merchandising systems supporting rapid category changes and seasonal promotions",
     };
     
     const industry = companyIntel?.industry?.toLowerCase() || person.vertical?.toLowerCase() || '';
     const industryKey = Object.keys(industryDefaults).find(key => industry.includes(key.replace('_', ' ')));
     
     if (industryKey) {
-      return industryDefaults[industryKey as keyof typeof industryDefaults];
+      const need = industryDefaults[industryKey as keyof typeof industryDefaults];
+      return generateNeedsStatement(personData, need);
     }
 
-    return `${person.name} needs reliable fixture solutions and trusted retail partnerships to optimize operational efficiency and drive revenue growth at ${company}.`;
+    return generateNeedsStatement(personData, "reliable fixture solutions and trusted retail partnerships to optimize operational efficiency and drive revenue growth");
   } catch (error) {
     console.warn("Error generating intelligent personal needs:", error);
-    return `${person.name} needs tailored retail solutions and strategic partnerships to achieve operational excellence and revenue optimization at ${person.company || 'their organization'}.`;
+    const { generateFallbackMessage } = require('@/platform/utils/intelligence-validation');
+    return generateFallbackMessage({
+      name: person.name,
+      title: person.title,
+      company: person.company
+    }, 'needs');
   }
 };

@@ -246,7 +246,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Employee Count:</span>
+                <span className="text-sm text-[var(--muted)] w-24">Total Employees:</span>
                 <InlineEditField
                   value={companyData.size}
                   field="size"
@@ -257,17 +257,9 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Headquarters:</span>
-                <InlineEditField
-                  value={companyData.headquarters}
-                  field="headquarters"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
+              <div className="flex justify-between">
+                <span className="text-sm text-[var(--muted)]">HQ Location:</span>
+                <DisplayValue value={companyData.headquarters} />
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Founded:</span>
@@ -288,9 +280,17 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   {record?.isPublic ? 'Public Company' : record?.isPublic === false ? 'Private Company' : null}
                 </DisplayValue>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Phone:</span>
-                <DisplayValue value={record?.phone} />
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Phone:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.phone)}
+                  field="phone"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
             </div>
           </div>
@@ -312,26 +312,17 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   className="text-sm font-medium"
                 />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
-                <span className="text-sm font-medium">
-                  {companyData.linkedin ? (
-                    <a 
-                      href={companyData.linkedin.startsWith('http') ? companyData.linkedin : `https://${companyData.linkedin}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      style={{ color: '#0171E4' }}
-                      className="hover:underline"
-                    >
-                      {(() => {
-                        const url = companyData.linkedin.replace(/^https?:\/\/(www\.)?/, '');
-                        return url.replace(/\/$/, '');
-                      })()}
-                    </a>
-                  ) : (
-                    <span className="text-sm italic text-[var(--muted)]">No data available</span>
-                  )}
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <InlineEditField
+                  value={formatEmptyValue(companyData.linkedin)}
+                  field="linkedinUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Market:</span>

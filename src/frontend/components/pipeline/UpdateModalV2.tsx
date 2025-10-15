@@ -87,6 +87,9 @@ export function UpdateModalV2({
         
         // Contact details
         linkedinUrl: formatFieldValue(record.linkedinUrl, ''),
+        linkedinNavigatorUrl: formatFieldValue(record.linkedinNavigatorUrl, ''),
+        linkedinConnectionDate: formatDateValue(record.linkedinConnectionDate),
+        bio: formatFieldValue(record.bio, ''),
         address: formatFieldValue(record.address, ''),
         city: formatFieldValue(record.city, ''),
         state: formatFieldValue(record.state, ''),

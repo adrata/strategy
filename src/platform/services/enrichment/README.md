@@ -15,7 +15,7 @@ This enrichment service suite provides:
 ### ✅ Comprehensive Data Coverage
 - **Accounts, Leads, Contacts**: Enriches companies across all entity types
 - **Revenue Data**: Real annual revenue ranges from CoreSignal
-- **Employee Counts**: Accurate headcount and size classifications
+- **Total Employees**: Accurate headcount and size classifications
 - **Growth Metrics**: Year-over-year employee growth/decline
 - **Industry Classification**: NAICS/SIC codes and detailed industry data
 - **Leadership Changes**: Executive arrivals and departures
@@ -43,7 +43,7 @@ This enrichment service suite provides:
   industry: string,           // Industry classification
   size: string,              // Employee count range (e.g., "51-200 employees")
   revenue: number,           // Annual revenue (average of range)
-  country: string,           // Headquarters country
+  country: string,           // HQ Location country
   notes: string              // Enrichment metadata and audit trail
 }
 ```

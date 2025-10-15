@@ -281,6 +281,12 @@ export async function PATCH(
 
     const { id } = await params;
     const body = await request.json();
+    
+    console.log(`🔍 [COMPANY API AUDIT] PATCH request received:`, {
+      companyId: id,
+      requestBody: body,
+      authUser: authUser.id
+    });
 
     // Clean and validate website URL if provided
     if (body.website && typeof body.website === 'string' && body.website.trim().length > 0) {
@@ -329,6 +335,13 @@ export async function PATCH(
     const updateData = Object.keys(body)
       .filter(key => ALLOWED_COMPANY_FIELDS.includes(key))
       .reduce((obj, key) => ({ ...obj, [key]: body[key] }), {});
+
+    console.log(`🔍 [COMPANY API AUDIT] Database update preparation:`, {
+      companyId: id,
+      updateData,
+      allowedFields: ALLOWED_COMPANY_FIELDS,
+      filteredFields: Object.keys(updateData)
+    });
 
     // Update company (partial update)
     const updatedCompany = await prisma.companies.update({
@@ -391,6 +404,19 @@ export async function PATCH(
       console.error('Failed to log company data update action:', actionError);
       // Don't fail the main update if action logging fails
     }
+
+    console.log(`🔍 [COMPANY API AUDIT] Database update completed:`, {
+      companyId: id,
+      updatedCompany,
+      updateData,
+      responseData: {
+        success: true,
+        data: updatedCompany,
+        meta: {
+          message: 'Company updated successfully',
+        },
+      }
+    });
 
     return NextResponse.json({
       success: true,

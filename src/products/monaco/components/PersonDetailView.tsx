@@ -2033,7 +2033,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                   </div>
                   <div>
                     <label className="text-sm font-medium text-[var(--muted)]">
-                      Employee Count
+                      Total Employees
                     </label>
                     <p className="text-lg text-[var(--foreground)]">
                       {enhancedPerson.employeeCount ? `${enhancedPerson.employeeCount.toLocaleString()}+ employees` :
@@ -2058,7 +2058,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                 <div className="space-y-3">
                   <div>
                     <label className="text-sm font-medium text-[var(--muted)]">
-                      Headquarters
+                      HQ Location
                     </label>
                     <p className="text-lg text-[var(--foreground)]">
                       {person['company'] === "ADP" ? "Roseland, New Jersey, USA" :

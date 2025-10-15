@@ -169,6 +169,14 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     }
   }
 
+  // Utility function to standardize empty value display
+  const formatEmptyValue = (value: any): string => {
+    if (!value || value === '' || value === 'null' || value === 'undefined') {
+      return '-';
+    }
+    return value;
+  };
+
   // Helper component for displaying values with proper empty state
   const DisplayValue = ({ value, children, className = "text-sm font-medium text-[var(--foreground)]" }: { 
     value: any, 
@@ -178,7 +186,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     if (value) {
       return <span className={className}>{children || value}</span>;
     }
-    return <span className="text-sm italic text-[var(--muted)]">No data available</span>;
+    return <span className="text-sm italic text-[var(--muted)]">-</span>;
   };
 
   // Extract CoreSignal data from the correct location (same as PersonOverviewTab)
@@ -198,6 +206,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     phone: record?.phone || coresignalData.phone || null,
     linkedin: record?.linkedin || coresignalData.linkedin_url || null,
     linkedinNavigatorUrl: record?.linkedinNavigatorUrl || null,
+    bio: record?.bio || null,
     linkedinConnectionDate: record?.linkedinConnectionDate || null,
     
     // Company Information - Database fields first, then CoreSignal fallback
@@ -500,6 +509,18 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
             <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
+                <InlineEditField
+                  value={formatEmptyValue(prospectData.bio)}
+                  field="bio"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Email:</span>
                 <InlineEditField
                   value={prospectData.email}
@@ -525,39 +546,41 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {prospectData.linkedin && prospectData.linkedin !== '-' ? (
-                    <a 
-                      href={prospectData.linkedin.startsWith('http') ? prospectData.linkedin : `https://${prospectData.linkedin}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      {prospectData.linkedin.replace(/^https?:\/\//, '').replace(/^www\./, '')}
-                    </a>
-                  ) : (
-                    prospectData.linkedin
-                  )}
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <InlineEditField
+                  value={formatEmptyValue(prospectData.linkedin)}
+                  field="linkedinUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">LinkedIn Navigator:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {prospectData.linkedinNavigatorUrl && prospectData.linkedinNavigatorUrl !== '-' ? (
-                    <a 
-                      href={prospectData.linkedinNavigatorUrl.startsWith('http') ? prospectData.linkedinNavigatorUrl : `https://${prospectData.linkedinNavigatorUrl}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      {prospectData.linkedinNavigatorUrl.replace(/^https?:\/\//, '').replace(/^www\./, '')}
-                    </a>
-                  ) : (
-                    prospectData.linkedinNavigatorUrl || '-'
-                  )}
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
+                <InlineEditField
+                  value={formatEmptyValue(prospectData.linkedinNavigatorUrl)}
+                  field="linkedinNavigatorUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
+                <InlineEditField
+                  value={formatEmptyValue(prospectData.bio)}
+                  field="bio"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">LinkedIn Connection Date:</span>

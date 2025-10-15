@@ -1144,7 +1144,7 @@ class CorePipeline {
                 { id: 'companyName', title: 'Company Name' },
                 { id: 'website', title: 'Website' },
                 { id: 'industry', title: 'Industry' },
-                { id: 'employeeCount', title: 'Employee Count' },
+                { id: 'employeeCount', title: 'Total Employees' },
                 { id: 'headquarters', title: 'Headquarters' },
                 { id: 'isPublic', title: 'Public/Private' },
                 { id: 'parentCompany', title: 'Parent Company' },

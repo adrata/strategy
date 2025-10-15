@@ -255,7 +255,7 @@ TARGET COMPANY DATA:
 - Description: ${company.description || 'No description available'}
 - Website: ${company.website || 'No website'}
 - Domain: ${company.domain || 'No domain'}
-- Employee Count: ${company.employeeCount || 'Unknown'}
+- Total Employees: ${company.employeeCount || 'Unknown'}
 - Founded Year: ${company.foundedYear || 'Unknown'}
 - Revenue: ${company.revenue || 'Unknown'}
 - Location: ${company.city || 'Unknown'}, ${company.state || 'Unknown'}, ${company.country || 'Unknown'}

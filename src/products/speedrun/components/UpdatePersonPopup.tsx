@@ -43,6 +43,8 @@ export function UpdatePersonPopup({
     nextAction: person.nextAction || "",
     relationship: person.relationship || "",
     bio: person.bio || "",
+    linkedinNavigatorUrl: person.linkedinNavigatorUrl || "",
+    linkedinConnectionDate: person.linkedinConnectionDate || "",
     notes: person.bio || "",
   });
 
@@ -60,6 +62,8 @@ export function UpdatePersonPopup({
       nextAction: person.nextAction || "",
       relationship: person.relationship || "",
       bio: person.bio || "",
+      linkedinNavigatorUrl: person.linkedinNavigatorUrl || "",
+      linkedinConnectionDate: person.linkedinConnectionDate || "",
       notes: person.bio || "",
     });
   }, [person]);
@@ -79,6 +83,8 @@ export function UpdatePersonPopup({
       nextAction: formData.nextAction,
       relationship: formData.relationship,
       bio: formData.bio,
+      linkedinNavigatorUrl: formData.linkedinNavigatorUrl,
+      linkedinConnectionDate: formData.linkedinConnectionDate,
     };
 
     onSave(updatedData);
@@ -299,14 +305,39 @@ export function UpdatePersonPopup({
     <div className="space-y-6">
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Notes
+          Bio URL
         </label>
-        <textarea
+        <input
+          type="url"
           value={formData.bio}
           onChange={(e) => handleChange("bio", e.target.value)}
-          rows={6}
           placeholder={person.bio || "-"}
-          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white resize-none"
+          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          LinkedIn Navigator URL
+        </label>
+        <input
+          type="url"
+          value={formData.linkedinNavigatorUrl}
+          onChange={(e) => handleChange("linkedinNavigatorUrl", e.target.value)}
+          placeholder={person.linkedinNavigatorUrl || "-"}
+          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          LinkedIn Connection Date
+        </label>
+        <input
+          type="date"
+          value={formData.linkedinConnectionDate}
+          onChange={(e) => handleChange("linkedinConnectionDate", e.target.value)}
+          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
         />
       </div>
     </div>

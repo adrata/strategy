@@ -16,6 +16,8 @@ export interface SpeedrunPerson {
   mobilePhone?: string;
   linkedin?: string;
   linkedinUrl?: string;
+  linkedinNavigatorUrl?: string;
+  linkedinConnectionDate?: string;
   location?: string;
   photo: string | null;
   priority: string;
