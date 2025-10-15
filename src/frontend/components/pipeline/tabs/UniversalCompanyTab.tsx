@@ -42,21 +42,35 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     });
   }
 
-  // Use real company data from record
+  // Helper function to get value or null (no fallback to '-')
+  const getValue = (value: any) => value || null;
+  
+  // Helper component for displaying values with proper empty state
+  const DisplayValue = ({ value, children, className = "text-sm font-medium text-[var(--foreground)]" }: { 
+    value: any, 
+    children?: React.ReactNode, 
+    className?: string 
+  }) => {
+    if (value) {
+      return <span className={className}>{children || value}</span>;
+    }
+    return <span className="text-sm italic text-[var(--muted)]">No data available</span>;
+  };
+  
+  // Use real company data from record - no fallback to '-'
   const companyData = {
-    name: record.name || '-',
-    industry: record.industry || '-',
-    size: record.size || record.employeeCount || '-',
-    revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : '-',
-    location: record.city && record.state ? `${record.city}, ${record.state}` : record.address || '-',
-    website: record.website || '-',
-    linkedin: record?.customFields?.linkedinUrl || 
+    name: getValue(record.name),
+    industry: getValue(record.industry),
+    size: getValue(record.size || record.employeeCount),
+    revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : null,
+    location: record.city && record.state ? `${record.city}, ${record.state}` : getValue(record.address),
+    website: getValue(record.website),
+    linkedin: getValue(record?.customFields?.linkedinUrl || 
               record?.customFields?.linkedin || 
               record?.linkedinUrl || 
-              record?.linkedin || 
-              '-',
-    founded: record.foundedYear || record.founded || '-',
-    ceo: record.ceo || '-',
+              record?.linkedin),
+    founded: getValue(record.foundedYear || record.founded),
+    ceo: getValue(record.ceo),
     description: (() => {
       // Prioritize the longer, more detailed description for better seller context
       const originalDesc = record.description && record.description.trim() !== '' ? record.description : '';
@@ -74,8 +88,8 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
       // Fallback to basic description if no data
       return 'No description available';
     })(),
-    marketCap: record.marketCap || '-',
-    employees: record.employeeCount || record.size || '-',
+    marketCap: getValue(record.marketCap),
+    employees: getValue(record.employeeCount || record.size),
     headquarters: (() => {
       // Try enriched CoreSignal data first
       const hqLocation = record.hqLocation || '';
@@ -104,23 +118,23 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
       } else if (city) {
         return city;
       }
-      return '-';
+      return null;
     })(),
-    businessModel: record.businessModel || '-',
+    businessModel: getValue(record.businessModel),
     keyProducts: record.keyProducts || [],
     competitors: record.competitors || [],
     recentNews: record.recentNews || [],
     financials: {
-      revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : '-',
-      growth: record.growth || '-',
-      profitMargin: record.profitMargin || '-',
-      debtToEquity: record.debtToEquity || '-',
-      peRatio: record.peRatio || '-'
+      revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : null,
+      growth: getValue(record.growth),
+      profitMargin: getValue(record.profitMargin),
+      debtToEquity: getValue(record.debtToEquity),
+      peRatio: getValue(record.peRatio)
     },
     technology: {
-      cloudAdoption: record.cloudAdoption || '-',
-      aiUsage: record.aiUsage || '-',
-      securityRating: record.securityRating || '-',
+      cloudAdoption: getValue(record.cloudAdoption),
+      aiUsage: getValue(record.aiUsage),
+      securityRating: getValue(record.securityRating),
       compliance: record.compliance || []
     }
   };
@@ -143,7 +157,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     
     // Use real activity data
     const lastActivity = companyUpdates?.length > 0 ? 
-      new Date(companyUpdates[0].date).toLocaleDateString() : '-';
+      new Date(companyUpdates[0].date).toLocaleDateString() : null;
     
     // Use more realistic calculations based on actual company data
     const totalContacts = companyUpdates?.length > 0 ? Math.min(companyUpdates.length * 2, 50) : 0;
@@ -175,7 +189,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
       return [{
         type: 'No recent activity',
         contact: 'Company Updates',
-        time: '-',
+        time: null,
         description: 'No recent company updates available',
         color: 'gray'
       }];
@@ -257,28 +271,26 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Founded:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
+                <DisplayValue value={record?.foundedYear}>
                   {(() => {
                     if (record?.foundedYear) {
                       const currentYear = new Date().getFullYear();
                       const yearsInBusiness = currentYear - record.foundedYear;
                       return `${yearsInBusiness} years ago (${record.foundedYear})`;
                     }
-                    return '-';
+                    return null;
                   })()}
-                </span>
+                </DisplayValue>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Company Type:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {record?.isPublic ? 'Public Company' : record?.isPublic === false ? 'Private Company' : '-'}
-                </span>
+                <DisplayValue value={record?.isPublic !== undefined}>
+                  {record?.isPublic ? 'Public Company' : record?.isPublic === false ? 'Private Company' : null}
+                </DisplayValue>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Phone:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">
-                  {record?.phone || '-'}
-                </span>
+                <DisplayValue value={record?.phone} />
               </div>
             </div>
           </div>
@@ -303,7 +315,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">LinkedIn:</span>
                 <span className="text-sm font-medium">
-                  {companyData.linkedin && companyData.linkedin !== '-' ? (
+                  {companyData.linkedin ? (
                     <a 
                       href={companyData.linkedin.startsWith('http') ? companyData.linkedin : `https://${companyData.linkedin}`}
                       target="_blank" 
@@ -317,13 +329,13 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                       })()}
                     </a>
                   ) : (
-                    <span className="text-gray-800">-</span>
+                    <span className="text-sm italic text-[var(--muted)]">No data available</span>
                   )}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Market:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{record?.industry || '-'}</span>
+                <DisplayValue value={record?.industry} />
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Category:</span>

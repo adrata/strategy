@@ -406,7 +406,7 @@ describe('InlineEditField Component', () => {
       await user.click(saveButton);
       
       await waitFor(() => {
-        expect(mockOnSuccess).toHaveBeenCalledWith('Testfield updated successfully!');
+        expect(mockOnSuccess).toHaveBeenCalledWith('TestField updated successfully!');
       });
     });
 

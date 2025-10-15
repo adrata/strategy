@@ -88,6 +88,18 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
 
   // Debug logging removed for performance optimization
 
+  // Helper component for displaying values with proper empty state
+  const DisplayValue = ({ value, children, className = "text-sm font-medium text-[var(--foreground)]" }: { 
+    value: any, 
+    children?: React.ReactNode, 
+    className?: string 
+  }) => {
+    if (value) {
+      return <span className={className}>{children || value}</span>;
+    }
+    return <span className="text-sm italic text-[var(--muted)]">No data available</span>;
+  };
+
   // Memoize data extraction to prevent expensive recalculations on every render
   const { coresignalData, coresignalProfile, enrichedData, personData } = useMemo(() => {
     // Extract CoreSignal data from the correct location
@@ -95,15 +107,15 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     const coresignalProfile = record?.customFields?.coresignalProfile || {};
     const enrichedData = record?.customFields?.enrichedData || {};
     
-    // Extract comprehensive person data from database first, then CoreSignal fallback
+    // Extract comprehensive person data from database first, then CoreSignal fallback - no fallback to '-'
     const personData = {
     // Basic info - Database fields first, then CoreSignal fallback
-    name: String(record?.fullName || record?.name || coresignalData.full_name || '-'),
-    title: String(record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || '-'),
-    email: String(record?.email || coresignalData.primary_professional_email || '-'),
+    name: record?.fullName || record?.name || coresignalData.full_name || null,
+    title: record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || null,
+    email: record?.email || coresignalData.primary_professional_email || null,
     phone: getPhoneDisplayValue(record?.phone || coresignalData.phone || coresignalData.mobile_phone || coresignalData.work_phone),
-    linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
-    linkedinNavigatorUrl: String(record?.linkedinNavigatorUrl || '-'),
+    linkedin: record?.linkedin || coresignalData.linkedin_url || null,
+    linkedinNavigatorUrl: record?.linkedinNavigatorUrl || null,
     linkedinConnectionDate: record?.linkedinConnectionDate || null,
     
     // Company info - Database fields first, then CoreSignal fallback
@@ -113,17 +125,17 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
       const recordCompany = typeof record?.company === 'string' 
         ? record.company 
         : (record?.company?.name || record?.companyName);
-      return String(coresignalCompany || recordCompany || '-');
+      return coresignalCompany || recordCompany || null;
     })(),
-    industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || '-'),
-    department: String(coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || '-'),
+    industry: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || null,
+    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || null,
     
     // Location info - Coresignal data only
-    location: String(coresignalData.location_full || coresignalData.city || coresignalData.state || coresignalData.country || '-'),
+    location: coresignalData.location_full || coresignalData.city || coresignalData.state || coresignalData.country || null,
     
     // CoreSignal intelligence - use customFields directly
-    influenceLevel: String(record.customFields?.influenceLevel || '-'),
-    engagementStrategy: String(record.customFields?.engagementStrategy || '-'),
+    influenceLevel: record.customFields?.influenceLevel || null,
+    engagementStrategy: record.customFields?.engagementStrategy || null,
     isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
     buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
     
@@ -143,13 +155,13 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     enrichedAt: coresignalData.lastEnrichedAt || coresignalData.enrichedAt || new Date().toISOString(),
     
     // Contact history
-    lastContact: record.lastActionDate || record.updatedAt || '-',
-    lastAction: record.lastAction || '-',
-    nextAction: record.nextAction || '-',
-    nextActionDate: record.nextActionDate || '-',
+    lastContact: record.lastActionDate || record.updatedAt || null,
+    lastAction: record.lastAction || null,
+    nextAction: record.nextAction || null,
+    nextActionDate: record.nextActionDate || null,
     
     // Notes
-    notes: record.notes || '-',
+    notes: record.notes || null,
     
     // Metadata
     lastEnrichedAt: record.customFields?.lastEnrichedAt || record.updatedAt || new Date().toISOString(),

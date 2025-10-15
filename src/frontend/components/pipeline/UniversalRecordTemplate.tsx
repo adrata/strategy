@@ -32,7 +32,7 @@ import {
   UniversalCompanyTab,
   UniversalProfileTab,
   UniversalPainValueTab,
-  UniversalTimelineTab,
+  UniversalActionsTab,
   UniversalIndustryIntelTab,
   UniversalOutreachTab,
   UniversalEngagementTab,
@@ -258,11 +258,15 @@ export function UniversalRecordTemplate({
   const [activeReport, setActiveReport] = useState<DeepValueReport | null>(null);
   const [localRecord, setLocalRecord] = useState(record);
   const [isPending, startTransition] = useTransition();
+  const [pendingSaves, setPendingSaves] = useState<Set<string>>(new Set());
   
-  // Update local record state when prop changes
+  // Update local record state when prop changes, but not during pending saves
   useEffect(() => {
-    setLocalRecord(record);
-  }, [record]);
+    // Only sync if there are no pending saves for any field
+    if (pendingSaves.size === 0) {
+      setLocalRecord(record);
+    }
+  }, [record, pendingSaves]);
   
   // Ref for content container to reset scroll position
   const contentRef = useRef<HTMLDivElement>(null);
@@ -459,6 +463,34 @@ export function UniversalRecordTemplate({
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [record, recordType]);
+
+  // Keyboard shortcut handler for inline edit modal
+  useEffect(() => {
+    if (!isEditRecordModalOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        console.log('⌨️ [UniversalRecordTemplate] Inline edit modal keyboard shortcut triggered');
+        
+        // Trigger the save function
+        handleSaveRecord();
+      }
+    };
+
+    // Use both capture and bubble phases to ensure we get the event
+    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
+    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [isEditRecordModalOpen]);
 
   // Get record display name with fallbacks
   const getDisplayName = () => {
@@ -792,40 +824,47 @@ export function UniversalRecordTemplate({
           console.log('🏢 [UNIVERSAL] Looking up company:', updatePayload['companyName']);
           
           // Search for existing company by name
-          const companySearchResponse = await authFetch(`/api/v1/companies?search=${encodeURIComponent(updatePayload['companyName'])}&limit=1`);
+          // authFetch returns parsed JSON, not Response object
+          const companySearchResult = await authFetch(`/api/v1/companies?search=${encodeURIComponent(updatePayload['companyName'])}&limit=1`);
           
-          if (companySearchResponse.ok) {
-            const companySearchResult = await companySearchResponse.json();
-            if (companySearchResult.success && companySearchResult.data && companySearchResult.data.length > 0) {
-              const foundCompany = companySearchResult.data[0];
-              updatePayload['companyId'] = foundCompany.id;
-              console.log('✅ [UNIVERSAL] Found existing company:', foundCompany.id, foundCompany.name);
+          console.log('🔍 [UNIVERSAL] Company search result:', companySearchResult);
+          
+          if (companySearchResult.success && companySearchResult.data && companySearchResult.data.length > 0) {
+            const foundCompany = companySearchResult.data[0];
+            updatePayload['companyId'] = foundCompany.id;
+            console.log('✅ [UNIVERSAL] Found existing company:', foundCompany.id, foundCompany.name);
+          } else {
+            console.log('🏢 [UNIVERSAL] Company not found, creating new one');
+            const companyCreatePayload = {
+              name: updatePayload['companyName'],
+              status: 'ACTIVE',
+              priority: 'MEDIUM'
+            };
+            console.log('🔍 [UNIVERSAL] Company creation payload:', companyCreatePayload);
+            
+            const createResult = await authFetch('/api/v1/companies', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(companyCreatePayload)
+            });
+            
+            console.log('🔍 [UNIVERSAL] Company creation result:', createResult);
+            
+            if (createResult.success && createResult.data) {
+              updatePayload['companyId'] = createResult.data.id;
+              console.log('✅ [UNIVERSAL] Created new company:', createResult.data.id);
             } else {
-              console.log('🏢 [UNIVERSAL] Company not found, creating new one');
-              const createResponse = await authFetch('/api/v1/companies', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  name: updatePayload['companyName'],
-                  status: 'ACTIVE',
-                  priority: 'MEDIUM'
-                })
-              });
-              
-              if (createResponse.ok) {
-                const createResult = await createResponse.json();
-                if (createResult.success && createResult.data) {
-                  updatePayload['companyId'] = createResult.data.id;
-                  console.log('✅ [UNIVERSAL] Created new company:', createResult.data.id);
-                }
-              } else {
-                console.error('❌ [UNIVERSAL] Failed to create company:', await createResponse.text());
-              }
+              // Show error to user instead of silent failure
+              const errorMsg = createResult?.error || createResult?.message || 'Failed to create company';
+              console.error('❌ [UNIVERSAL] Failed to create company:', errorMsg);
+              showMessage(`Failed to create company: ${errorMsg}`, 'error');
+              throw new Error(`Company creation failed: ${errorMsg}`);
             }
           }
         } catch (companyError) {
-          console.error('⚠️ [UNIVERSAL] Error looking up company:', companyError);
-          // Continue with update even if company lookup fails
+          console.error('⚠️ [UNIVERSAL] Error looking up/creating company:', companyError);
+          // Re-throw the error to prevent the update from proceeding without proper company linking
+          throw new Error(`Company linking failed: ${companyError instanceof Error ? companyError.message : 'Unknown error'}`);
         }
       }
       
@@ -1062,6 +1101,9 @@ export function UniversalRecordTemplate({
 
   // Handle inline field save
   const handleInlineFieldSave = async (field: string, value: string, recordId?: string, recordTypeParam?: string) => {
+    // Track this field as having a pending save
+    setPendingSaves(prev => new Set(prev).add(field));
+    
     try {
       console.log(`🔄 [UNIVERSAL] Saving ${field} = ${value} for ${recordType} ${recordId}`);
       
@@ -1223,6 +1265,32 @@ export function UniversalRecordTemplate({
         console.warn(`⚠️ [UNIVERSAL] Field ${field} value mismatch: expected ${value}, got ${result.data[field]}`);
       }
       
+      // Update local record state optimistically
+      setLocalRecord((prev: any) => ({
+        ...prev,
+        [field]: value,
+        // If updating person fields, update the person object as well
+        ...(personalFields.includes(field) && prev.person ? {
+          person: {
+            ...prev.person,
+            [field]: value
+          }
+        } : {}),
+        // If updating company fields, update the company object as well
+        ...(companyFields.includes(field) && prev.company ? {
+          company: {
+            ...prev.company,
+            [field]: value
+          }
+        } : {}),
+        // Update related fields if name was changed
+        ...(field === 'name' || field === 'fullName' ? {
+          firstName: updateData['firstName'],
+          lastName: updateData['lastName'],
+          fullName: updateData['fullName']
+        } : {})
+      }));
+      
       // Update local record state with the new value
       if (onRecordUpdate && result.data) {
         const updatedRecord = { ...record, ...result.data };
@@ -1286,6 +1354,13 @@ export function UniversalRecordTemplate({
       const errorMessage = error instanceof Error ? error.message : 'Failed to save changes';
       alert(`Failed to save ${field}: ${errorMessage}`);
       throw error; // Re-throw to let InlineEditField handle the error state
+    } finally {
+      // Remove this field from pending saves
+      setPendingSaves(prev => {
+        const next = new Set(prev);
+        next.delete(field);
+        return next;
+      });
     }
   };
 
@@ -1600,12 +1675,12 @@ export function UniversalRecordTemplate({
         if (result.success) {
           showMessage('Action logged successfully!');
         
-        // Clear timeline cache to force refresh
-        const cacheKey = `timeline-${record.id}`;
+        // Clear actions cache to force refresh
+        const cacheKey = `actions-${record.id}`;
         localStorage.removeItem(cacheKey);
-        console.log('🗑️ [UNIVERSAL] Cleared timeline cache for record:', record.id);
+        console.log('🗑️ [UNIVERSAL] Cleared actions cache for record:', record.id);
         
-        // Dispatch event to trigger timeline refresh
+        // Dispatch event to trigger actions refresh
         document.dispatchEvent(new CustomEvent('actionCreated', {
           detail: {
             recordId: record.id,
@@ -1766,6 +1841,18 @@ export function UniversalRecordTemplate({
         influenceScore: getFormNumber('influenceScore'),
         decisionPowerScore: getFormNumber('decisionPowerScore'),
         relationshipWarmth: getFormValue('relationshipWarmth'),
+        
+        // Company-specific fields (when recordType === 'companies')
+        ...(recordType === 'companies' ? {
+          name: getFormValue('name'),
+          legalName: getFormValue('legalName'),
+          website: getFormValue('website'),
+          phone: getFormValue('phone'),
+          description: getFormValue('description'),
+          industry: getFormValue('industry'),
+          size: getFormValue('size'),
+          foundedYear: getFormNumber('foundedYear'),
+        } : {})
       };
 
       console.log('📝 [DEBUG] Raw form data collected:', rawPayload);
@@ -1991,7 +2078,7 @@ export function UniversalRecordTemplate({
     buttons.push(
       <button
         key="update-record"
-        onClick={() => setIsEditRecordModalOpen(true)}
+        onClick={() => setIsUpdateModalOpen(true)}
         className="px-3 py-1.5 text-sm bg-[var(--background)] text-gray-700 border border-[var(--border)] rounded-md hover:bg-[var(--panel-background)] transition-colors"
       >
         {updateButtonText}
@@ -2336,19 +2423,19 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'people' ? 
               <UniversalHistoryTab key={activeTab} recordType={recordType} /> :
-              <UniversalTimelineTab key={activeTab} record={record} recordType={recordType} />
+              <UniversalActionsTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'actions':
           return renderTabWithErrorBoundary(
-            <UniversalTimelineTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalActionsTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'timeline':
           return renderTabWithErrorBoundary(
-            <UniversalTimelineTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalActionsTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'notes':
           return renderTabWithErrorBoundary(
-            <NotesTab record={record} recordType={recordType} />
+            <NotesTab key="notes" record={record} recordType={recordType} />
           );
         default:
           console.warn(`🔄 [UNIVERSAL] Unknown tab: ${activeTab}, falling back to overview`);
@@ -2605,7 +2692,7 @@ export function UniversalRecordTemplate({
             <Loader size="lg" />
           </div>
         ) : (
-          <div key={`${activeTab}-${record?.id}`} className="px-1 min-h-[400px]">
+          <div key={record?.id} className="px-1 min-h-[400px]">
             {renderTabContent}
           </div>
         )}
@@ -2730,6 +2817,7 @@ export function UniversalRecordTemplate({
         isLoading={loading}
       />
 
+
       {/* Edit Record Modal */}
       {isEditRecordModalOpen && (
         <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
@@ -2803,7 +2891,7 @@ export function UniversalRecordTemplate({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
                             <input
                               type="text"
-                              name="companyName"
+                              name="name"
                               defaultValue={formatFieldValue(record?.name || record?.companyName, '')}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="Enter company name"
@@ -2898,7 +2986,7 @@ export function UniversalRecordTemplate({
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                             <select
-                              name="companyStatus"
+                              name="status"
                               defaultValue={record?.status || 'ACTIVE'}
                               className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
@@ -4134,7 +4222,9 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
   const [notes, setNotes] = React.useState<string>(getInitialNotes);
   const [saveStatus, setSaveStatus] = React.useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSavedAt, setLastSavedAt] = React.useState<Date | null>(
-    record?.updatedAt ? new Date(record.updatedAt) : null
+    (record?.updatedAt && getInitialNotes().trim().length > 0) 
+      ? new Date(record.updatedAt) 
+      : null
   );
   const [lastSavedNotes, setLastSavedNotes] = React.useState<string>(getInitialNotes);
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState<boolean>(false);
@@ -4303,7 +4393,7 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
             <span>{getCharacterCount(notes)} characters</span>
           </div>
           <div className="text-[var(--muted)]">
-            {notes.length > 0 && (
+            {getWordCount(notes) > 0 && (
               <span>
                 {Math.ceil(getWordCount(notes) / 200)} min read
               </span>

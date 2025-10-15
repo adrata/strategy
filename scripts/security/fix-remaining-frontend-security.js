@@ -15,7 +15,7 @@ console.log('🔐 Starting frontend security fixes...');
 // Files that need security fixes
 const filesToFix = [
   'src/frontend/components/pipeline/PipelineDetailPage.tsx',
-  'src/frontend/components/pipeline/tabs/UniversalTimelineTab.tsx',
+  'src/frontend/components/pipeline/tabs/UniversalActionsTab.tsx',
   'src/frontend/components/pipeline/tabs/EnhancedTimelineTab.tsx',
   'src/frontend/components/pipeline/tabs/UniversalBuyerGroupsTab.tsx',
   'src/products/pipeline/components/PipelineLeftPanelStandalone.tsx',

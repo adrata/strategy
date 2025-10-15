@@ -126,14 +126,26 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     });
   }
   
+  // Helper component for displaying values with proper empty state
+  const DisplayValue = ({ value, children, className = "text-sm font-medium text-[var(--foreground)]" }: { 
+    value: any, 
+    children?: React.ReactNode, 
+    className?: string 
+  }) => {
+    if (value) {
+      return <span className={className}>{children || value}</span>;
+    }
+    return <span className="text-sm italic text-[var(--muted)]">No data available</span>;
+  };
+
   // Extract comprehensive record data from CoreSignal with database fallback
   const recordData = {
-    // Basic info - Database fields first, then CoreSignal fallback
-    name: String(record?.fullName || record?.name || coresignalData.full_name || '-'),
-    title: String(record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || '-'),
-    email: String(record?.email || coresignalData.primary_professional_email || '-'),
-    phone: String(record?.phone || coresignalData.phone || '-'),
-    linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
+    // Basic info - Database fields first, then CoreSignal fallback - no fallback to '-'
+    name: record?.fullName || record?.name || coresignalData.full_name || null,
+    title: record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || null,
+    email: record?.email || coresignalData.primary_professional_email || null,
+    phone: record?.phone || coresignalData.phone || null,
+    linkedin: record?.linkedin || coresignalData.linkedin_url || null,
     
     // Company info - Coresignal data with database fallback
     company: (() => {
@@ -142,14 +154,14 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       const recordCompany = typeof record?.company === 'string' 
         ? record.company 
         : (record?.company?.name || record?.companyName);
-      return String(coresignalCompany || recordCompany || '-');
+      return coresignalCompany || recordCompany || null;
     })(),
-    industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || '-'),
-    department: String(coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || '-'),
+    industry: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || null,
+    department: coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || record?.department || null,
     
     // CoreSignal intelligence - use customFields directly
-    influenceLevel: String(record.customFields?.influenceLevel || '-'),
-    engagementStrategy: String(record.customFields?.engagementStrategy || '-'),
+    influenceLevel: record.customFields?.influenceLevel || null,
+    engagementStrategy: record.customFields?.engagementStrategy || null,
     isBuyerGroupMember: record.isBuyerGroupMember || !!record.buyerGroupRole, // Defensive: show Yes if has role, even if flag is false
     buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
     

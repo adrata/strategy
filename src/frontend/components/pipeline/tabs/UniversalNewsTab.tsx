@@ -18,6 +18,8 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dataSource, setDataSource] = useState<string>('unknown');
+  const [warning, setWarning] = useState<string | null>(null);
 
   const companyName = record?.name || 'Company';
 
@@ -33,14 +35,45 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     try {
       setLoading(true);
       setError(null);
+      setWarning(null);
 
+      // First, check if we have companyUpdates from CoreSignal database
+      const companyUpdates = record?.companyUpdates || [];
+      
+      if (companyUpdates.length > 0) {
+        console.log('📰 [NEWS TAB] Using companyUpdates from database:', companyUpdates.length, 'updates');
+        
+        // Transform companyUpdates to news article format
+        const articles = companyUpdates.map((update: any, index: number) => ({
+          title: update.title || update.description?.substring(0, 100) || `Company Update ${index + 1}`,
+          description: update.description || update.content || 'Company update from CoreSignal data',
+          source: update.source || 'Company Updates',
+          publishedAt: update.date || update.publishedAt || new Date().toISOString(),
+          url: update.url || '#',
+          content: update.description || update.content || ''
+        }));
+
+        setNewsArticles(articles);
+        setDataSource('database_companyUpdates');
+        setLoading(false);
+        return;
+      }
+
+      // If no companyUpdates, try Perplexity API
+      console.log('📰 [NEWS TAB] No companyUpdates found, trying Perplexity API');
       const response = await fetch(`/api/news/company/${encodeURIComponent(companyName)}`);
       const data = await response.json();
 
       if (data.success && data.articles) {
         setNewsArticles(data.articles);
+        setDataSource(data.dataSource || 'perplexity_api');
+        
+        // Show warning if using fallback data
+        if (data.warning) {
+          setWarning(data.warning);
+        }
       } else {
-        setError('Failed to fetch news data');
+        setError(data.error || 'Failed to fetch news data');
       }
     } catch (err) {
       console.error('Error fetching company news:', err);
@@ -93,17 +126,101 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     );
   }
 
-  if (newsArticles.length === 0) {
+  // Show warning if using fallback data
+  if (warning) {
     return (
       <div className="space-y-8">
         <div className="space-y-4">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
-            <div className="text-[var(--muted)]">
-              <div className="text-lg font-medium mb-2">No Recent News</div>
-              <div className="text-sm">No company updates available for {companyName}</div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="flex items-center">
+              <div className="text-yellow-600 mr-2">⚠️</div>
+              <div className="text-yellow-800">
+                <strong>Notice:</strong> {warning}
+              </div>
             </div>
           </div>
         </div>
+        {renderNewsContent()}
+      </div>
+    );
+  }
+
+  return renderNewsContent();
+
+  function renderNewsContent() {
+    return (
+      <div className="space-y-8">
+        {/* Data Source Indicator */}
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-[var(--foreground)]">Company News</h3>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-[var(--muted)]">Data Source:</span>
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+              dataSource === 'database_companyUpdates' 
+                ? 'bg-green-100 text-green-800' 
+                : dataSource === 'perplexity_api'
+                ? 'bg-blue-100 text-blue-800'
+                : dataSource === 'external_api' 
+                ? 'bg-green-100 text-green-800' 
+                : dataSource === 'fallback_generated'
+                ? 'bg-yellow-100 text-yellow-800'
+                : 'bg-gray-100 text-gray-800'
+            }`}>
+              {dataSource === 'database_companyUpdates' ? 'Database' : 
+               dataSource === 'perplexity_api' ? 'Perplexity' :
+               dataSource === 'external_api' ? 'Real News' : 
+               dataSource === 'fallback_generated' ? 'Generated' : 
+               'Unknown'}
+            </span>
+          </div>
+        </div>
+
+        {newsArticles.length === 0 ? (
+          <div className="space-y-4">
+            <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
+              <div className="text-[var(--muted)]">
+                <div className="text-lg font-medium mb-2">No Recent News</div>
+                <div className="text-sm">No company updates available for {companyName}</div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {newsArticles.map((article, index) => (
+              <div key={index} className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="text-lg font-semibold text-[var(--foreground)] line-clamp-2">
+                    {article.title}
+                  </h4>
+                  <span className="text-xs text-[var(--muted)] ml-2 flex-shrink-0">
+                    {formatDate(article.publishedAt)}
+                  </span>
+                </div>
+                
+                <div className="flex items-center mb-3">
+                  <span className="text-sm text-[var(--muted)] bg-[var(--hover)] px-2 py-1 rounded">
+                    {article.source}
+                  </span>
+                </div>
+                
+                <p className="text-[var(--muted)] mb-3 line-clamp-3">
+                  {article.description}
+                </p>
+                
+                {article.url && (
+                  <a 
+                    href={article.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
+                    Read Full Article →
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
@@ -120,82 +237,4 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     }
   };
 
-  return (
-    <div className="space-y-8">
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Recent Company News</h3>
-        <div className="space-y-4">
-          {newsArticles.map((article: NewsArticle, index: number) => (
-            <div key={index} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-sm transition-shadow">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-100 border border-blue-200 rounded-2xl flex items-center justify-center">
-                    <span className="text-blue-600 font-semibold text-sm">
-                      {companyName.charAt(0)}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="font-medium text-[var(--foreground)]">
-                      {companyName}
-                    </div>
-                    <div className="text-sm text-[var(--muted)]">
-                      {formatDate(article.publishedAt)} • {article.source}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-xs text-[var(--muted)]">
-                  #{index + 1}
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
-                  {article.title}
-                </h4>
-                <p className="text-gray-800 leading-relaxed mb-3">
-                  {article.description}
-                </p>
-                <p className="text-[var(--muted)] text-sm leading-relaxed">
-                  {article.content}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between text-sm text-[var(--muted)]">
-                <div className="flex items-center space-x-4">
-                  <span className="flex items-center space-x-1">
-                    <span className="text-blue-500">📰</span>
-                    <span>News Article</span>
-                  </span>
-                  <span className="flex items-center space-x-1">
-                    <span className="text-green-500">📅</span>
-                    <span>{formatDate(article.publishedAt)}</span>
-                  </span>
-                </div>
-                <div className="text-xs">
-                  <a 
-                    href={article.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    Read More →
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {newsArticles.length > 10 && (
-        <div className="space-y-4">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
-            <div className="text-sm text-[var(--muted)]">
-              Showing {newsArticles.length} recent news articles
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
 }

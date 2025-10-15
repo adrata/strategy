@@ -15,11 +15,13 @@ import {
   EnvelopeIcon, 
   PhoneIcon, 
   BuildingOfficeIcon,
-  TagIcon
+  TagIcon,
+  TrashIcon
 } from '@heroicons/react/24/solid';
 import { CompanySelector } from './CompanySelector';
 import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
 import { UniversalBuyerGroupsTab } from './tabs/UniversalBuyerGroupsTab';
+import { UniversalActionsTab } from './tabs/UniversalActionsTab';
 
 interface UpdateModalProps {
   isOpen: boolean;
@@ -440,6 +442,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   // Keyboard shortcut for Update Record when modal is open
   useEffect(() => {
+    // Only attach event listeners when modal is open
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -451,11 +454,14 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         
         console.log('⌨️ [UpdateModal] Update Record keyboard shortcut triggered');
         
-        // Trigger the form submission
-        const form = document.querySelector('form');
-        if (form) {
-          const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-          form.dispatchEvent(submitEvent);
+        // Call handleSubmit directly with a synthetic event
+        if (!loading) {
+          const syntheticEvent = {
+            preventDefault: () => {},
+            stopPropagation: () => {},
+            stopImmediatePropagation: () => {}
+          } as React.FormEvent;
+          handleSubmit(syntheticEvent);
         }
       }
     };
@@ -467,7 +473,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       document.removeEventListener('keydown', handleKeyDown, true);
       document.removeEventListener('keydown', handleKeyDown, false);
     };
-  }, [isOpen]);
+  }, [isOpen, loading, onUpdate]);
 
   if (!isOpen) return null;
 
@@ -502,7 +508,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       onClose();
     } catch (error) {
       console.error('Error updating record:', error);
-      alert("Failed to update record. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update record';
+      alert(`${errorMessage}. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -776,11 +783,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   );
 
   const renderTimelineTab = () => (
-    <div className="p-6 space-y-4">
-      <div className="text-center py-12 text-[var(--muted)]">
-        <p className="text-sm">Company timeline activities will appear here when available.</p>
-        <p className="text-xs text-[var(--muted)] mt-2">This is a read-only view of company-related activities and events.</p>
-      </div>
+    <div className="p-6">
+      <UniversalActionsTab record={record} recordType={recordType} />
     </div>
   );
 
@@ -1929,7 +1933,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   );
 
   return (
-    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
+    <div data-testid="update-modal" className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
               <div className="bg-[var(--background)] rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">

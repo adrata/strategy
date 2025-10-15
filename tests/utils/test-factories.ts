@@ -511,3 +511,59 @@ export const validateApiResponse = {
     expect(response.meta.pagination).toHaveProperty('totalPages');
   },
 };
+
+/**
+ * Generate test buyer group member data
+ */
+export function createTestBuyerGroupMember(overrides: Partial<any> = {}) {
+  const timestamp = Date.now();
+  return {
+    id: `person-${timestamp}`,
+    name: `Test Person ${timestamp}`,
+    title: 'VP of Sales',
+    email: `test${timestamp}@company.com`,
+    phone: `+1-555-${timestamp.toString().slice(-4)}`,
+    role: 'Decision Maker',
+    buyerGroupStatus: 'in',
+    influence: 'high',
+    company: 'Test Company',
+    isPrimary: false,
+    isExternalData: false,
+    externalId: null,
+    rank: 1,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    ...overrides
+  };
+}
+
+/**
+ * Generate test company with buyer group data
+ */
+export function createTestCompanyWithBuyerGroup(overrides: Partial<any> = {}) {
+  const company = createTestCompany(overrides);
+  const buyerGroup = [
+    createTestBuyerGroupMember({ 
+      name: 'Decision Maker 1', 
+      role: 'Decision Maker',
+      title: 'CEO',
+      influence: 'high',
+      rank: 1
+    }),
+    createTestBuyerGroupMember({ 
+      name: 'Champion 1', 
+      role: 'Champion',
+      title: 'VP of Engineering',
+      influence: 'high',
+      rank: 2
+    }),
+    createTestBuyerGroupMember({ 
+      name: 'Stakeholder 1', 
+      role: 'Stakeholder',
+      title: 'Manager',
+      influence: 'medium',
+      rank: 3
+    })
+  ];
+  return { company, buyerGroup };
+}

@@ -564,6 +564,7 @@ export function PipelineHeader({
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event['key'] === 'g') {
         event.preventDefault();
+        event.stopPropagation();
         handleAction();
       }
     };

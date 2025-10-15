@@ -4,7 +4,7 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, DocumentTextIcon, PhoneIcon, CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
 
-interface TimelineEvent {
+interface ActionEvent {
   id: string;
   type: 'created' | 'activity' | 'email' | 'note' | 'status_change' | 'updated' | 'field_update';
   date: Date;
@@ -15,13 +15,13 @@ interface TimelineEvent {
   metadata?: any;
 }
 
-interface UniversalTimelineTabProps {
+interface UniversalActionsTabProps {
   record: any;
   recordType: string;
 }
 
-export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTabProps) {
-  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
+export function UniversalActionsTab({ record, recordType }: UniversalActionsTabProps) {
+  const [actionEvents, setActionEvents] = useState<ActionEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -97,13 +97,13 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     }
   };
 
-  const hasExpandableContent = (event: TimelineEvent) => {
+  const hasExpandableContent = (event: ActionEvent) => {
     return event.content && event.content.length > 150;
   };
 
-  const loadTimelineFromAPI = useCallback(async () => {
+  const loadActionsFromAPI = useCallback(async () => {
     if (!record?.id) {
-      console.log('🚨 [TIMELINE] No record ID, skipping API load');
+      console.log('🚨 [ACTIONS] No record ID, skipping API load');
       setLoading(false);
       return;
     }
@@ -112,7 +112,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     const workspaceId = record.workspaceId || '01K5D01YCQJ9TJ7CT4DZDE79T1'; // TOP Engineering Plus workspace
     const userId = record.assignedUserId || '01K1VBYZG41K9QA0D9CF06KNRG'; // Ross Sylvester user ID
     
-    console.log('🔍 [TIMELINE] Loading timeline for record:', {
+    console.log('🔍 [ACTIONS] Loading actions for record:', {
       id: record.id,
       type: recordType,
       workspaceId: workspaceId,
@@ -124,11 +124,11 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     setLoading(true);
     try {
       // ⚡ PERFORMANCE: Check cache first to avoid unnecessary API calls
-      const cacheKey = `timeline-${record.id}`;
+      const cacheKey = `actions-${record.id}`;
       const cachedData = localStorage.getItem(cacheKey);
       
-      let activityEvents: TimelineEvent[] = [];
-      let noteEvents: TimelineEvent[] = [];
+      let activityEvents: ActionEvent[] = [];
+      let noteEvents: ActionEvent[] = [];
       
       if (cachedData) {
         try {
@@ -136,19 +136,19 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
           if (parsed.timestamp && Date.now() - parsed.timestamp < 180000) { // 3 minute cache
             activityEvents = parsed.activities || [];
             noteEvents = parsed.notes || [];
-            console.log('⚡ [TIMELINE] Using cached timeline data');
+            console.log('⚡ [ACTIONS] Using cached actions data');
           }
         } catch (e) {
-          console.log('Timeline cache parse error, fetching fresh data');
+          console.log('Actions cache parse error, fetching fresh data');
         }
       }
       
       // Only fetch if no cache or cache is stale
       if (activityEvents.length === 0 && noteEvents.length === 0) {
-        console.log('🔍 [TIMELINE] Fetching fresh timeline data');
+        console.log('🔍 [ACTIONS] Fetching fresh actions data');
         
         // Load activities for this specific record using v1 APIs
-        console.log('🔍 [TIMELINE] Fetching actions for record:', {
+        console.log('🔍 [ACTIONS] Fetching actions for record:', {
           recordId: record.id,
           recordType: recordType,
           record: record,
@@ -168,8 +168,8 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
           actionsQuery = `personId=${record.id}&companyId=${record.id}`;
         }
         
-        console.log('🔍 [TIMELINE] Actions query:', actionsQuery);
-        console.log('🔍 [TIMELINE] Full API URL:', `/api/v1/actions?${actionsQuery}`);
+        console.log('🔍 [ACTIONS] Actions query:', actionsQuery);
+        console.log('🔍 [ACTIONS] Full API URL:', `/api/v1/actions?${actionsQuery}`);
         
         const [actionsResponse, peopleResponse, companiesResponse] = await Promise.all([
           authFetch(`/api/v1/actions?${actionsQuery}`),
@@ -177,14 +177,14 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
           authFetch(`/api/v1/companies?id=${record.id}`)
         ]);
         
-        console.log('🔍 [TIMELINE] API responses received:', {
+        console.log('🔍 [ACTIONS] API responses received:', {
           actionsResponse: actionsResponse,
           peopleResponse: peopleResponse,
           companiesResponse: companiesResponse
         });
         
         // Debug the actions response in detail
-        console.log('🔍 [TIMELINE] Actions response details:', {
+        console.log('🔍 [ACTIONS] Actions response details:', {
           success: actionsResponse?.success,
           data: actionsResponse?.data,
           error: actionsResponse?.error,
@@ -193,7 +193,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         });
         
         if (actionsResponse) {
-          console.log('🔍 [TIMELINE] Actions response details:', {
+          console.log('🔍 [ACTIONS] Actions response details:', {
             success: actionsResponse.success,
             data: actionsResponse.data,
             dataType: typeof actionsResponse.data,
@@ -202,26 +202,26 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
             message: actionsResponse.message
           });
         } else {
-          console.log('❌ [TIMELINE] No actions response received');
+          console.log('❌ [ACTIONS] No actions response received');
         }
         
         const allActivities: any[] = [];
         
         // Process actions - authFetch returns parsed data directly
         if (actionsResponse && actionsResponse.success && Array.isArray(actionsResponse.data)) {
-          console.log('📅 [TIMELINE] Found actions:', actionsResponse.data.length);
+          console.log('📅 [ACTIONS] Found actions:', actionsResponse.data.length);
           allActivities.push(...actionsResponse.data.map((action: any) => ({
             ...action,
             type: 'action',
             timestamp: action.completedAt || action.createdAt || action.scheduledAt
           })));
         } else {
-          console.log('📅 [TIMELINE] No actions found or invalid response:', actionsResponse);
+          console.log('📅 [ACTIONS] No actions found or invalid response:', actionsResponse);
         }
         
         // Process people (if this is a company record)
         if (peopleResponse && peopleResponse.success && Array.isArray(peopleResponse.data) && recordType === 'companies') {
-          console.log('📅 [TIMELINE] Found people:', peopleResponse.data.length);
+          console.log('📅 [ACTIONS] Found people:', peopleResponse.data.length);
           allActivities.push(...peopleResponse.data.map((person: any) => ({
             ...person,
             type: 'person',
@@ -229,7 +229,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
           })));
         }
         
-        console.log('📅 [TIMELINE] Total activities found:', allActivities.length);
+        console.log('📅 [ACTIONS] Total activities found:', allActivities.length);
         
         // Filter activities for this specific record
         const recordActivities = allActivities.filter((activity: any) => {
@@ -246,14 +246,14 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
           );
         });
         
-        console.log('📅 [TIMELINE] Filtered activities for record:', recordActivities.length);
+        console.log('📅 [ACTIONS] Filtered activities for record:', recordActivities.length);
 
         // Only show real actions from the database - no fallback data
         if (recordActivities.length === 0) {
           console.log('📅 [ACTIONS] No real actions found for this record');
           activityEvents = [];
         } else {
-          // Convert activities to timeline events
+          // Convert activities to action events
           activityEvents = recordActivities.map((activity: any) => ({
             id: activity.id,
             type: 'activity' as const,
@@ -282,7 +282,7 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
       }
 
       // Only show real actions from the database
-      setTimelineEvents(prev => {
+      setActionEvents(prev => {
         const combined = [...activityEvents, ...noteEvents];
         console.log('🔄 [ACTIONS] Setting real actions only:', {
           activities: activityEvents.length,
@@ -306,28 +306,17 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
         return sortedEvents;
       });
     } catch (error) {
-      console.error('Error loading timeline from API:', error);
+      console.error('Error loading actions from API:', error);
     } finally {
       setLoading(false);
     }
-  }, [record, recordType, getUserName]);
+  }, [record?.id, recordType, getUserName]);
 
-  const generateTimelineFromRecord = useCallback(() => {
-    // Only show real actions from the database - no fallback data
-    console.log('🔄 [ACTIONS] Initializing actions tab for record:', {
-      record: record,
-      recordType: recordType,
-      createdAt: record?.createdAt
-    });
-    
-    // Start with empty events - only real actions will be loaded from API
-    setTimelineEvents([]);
-  }, [record, recordType]);
 
-  // Listen for action creation events to refresh timeline
+  // Listen for action creation events to refresh actions
   useEffect(() => {
     const handleActionCreated = (event: CustomEvent) => {
-      console.log('🔄 [TIMELINE] Action created event received:', {
+      console.log('🔄 [ACTIONS] Action created event received:', {
         eventDetail: event.detail,
         currentRecordId: record?.id,
         currentRecordType: recordType,
@@ -337,20 +326,20 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
       
       const { recordId, recordType: eventRecordType } = event.detail;
       if (recordId === record?.id && eventRecordType === recordType) {
-        console.log('🔄 [TIMELINE] Action created event matches current record, refreshing timeline');
+        console.log('🔄 [ACTIONS] Action created event matches current record, refreshing actions');
         // Clear cache and reload
-        const cacheKey = `timeline-${record.id}`;
+        const cacheKey = `actions-${record.id}`;
         localStorage.removeItem(cacheKey);
-        console.log('🗑️ [TIMELINE] Cleared cache and calling loadTimelineFromAPI');
+        console.log('🗑️ [ACTIONS] Cleared cache and calling loadActionsFromAPI');
         // Trigger refresh with both function call and state update
-        loadTimelineFromAPI();
+        loadActionsFromAPI();
         setRefreshTrigger(prev => prev + 1);
       } else {
-        console.log('🔄 [TIMELINE] Action created event does not match current record, ignoring');
+        console.log('🔄 [ACTIONS] Action created event does not match current record, ignoring');
       }
     };
 
-    console.log('🔄 [TIMELINE] Setting up actionCreated event listener for record:', {
+    console.log('🔄 [ACTIONS] Setting up actionCreated event listener for record:', {
       recordId: record?.id,
       recordType: recordType
     });
@@ -358,17 +347,19 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
     document.addEventListener('actionCreated', handleActionCreated as EventListener);
     
     return () => {
-      console.log('🔄 [TIMELINE] Removing actionCreated event listener');
+      console.log('🔄 [ACTIONS] Removing actionCreated event listener');
       document.removeEventListener('actionCreated', handleActionCreated as EventListener);
     };
-  }, [record?.id, recordType, loadTimelineFromAPI]);
+  }, [record?.id, recordType]);
 
   useEffect(() => {
-    if (record) {
-      generateTimelineFromRecord();
-      loadTimelineFromAPI();
+    if (record?.id) {
+      // Initialize with empty events
+      setActionEvents([]);
+      // Load actions from API
+      loadActionsFromAPI();
     }
-  }, [record, users, generateTimelineFromRecord, loadTimelineFromAPI, refreshTrigger]);
+  }, [record?.id, recordType, refreshTrigger]);
 
   const isPastEvent = (date: Date) => date <= new Date();
 
@@ -379,30 +370,30 @@ export function UniversalTimelineTab({ record, recordType }: UniversalTimelineTa
           <div className="text-lg font-medium text-[var(--foreground)]">Actions</div>
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 bg-[var(--hover)] text-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
-              {timelineEvents.length}
+              {actionEvents.length}
             </span>
             <span className="text-sm text-[var(--muted)]">
-              {timelineEvents['length'] === 1 ? 'Action' : 'Actions'}
+              {actionEvents['length'] === 1 ? 'Action' : 'Actions'}
             </span>
           </div>
         </div>
       </div>
 
-      {timelineEvents['length'] === 0 ? (
+      {actionEvents['length'] === 0 ? (
         <div className="text-center py-12">
           <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No actions yet</h3>
           <p className="text-[var(--muted)]">Real actions and activities will appear here when logged</p>
         </div>
       ) : (
         <div className="space-y-6">
-          {timelineEvents.map((event, index) => (
+          {actionEvents.map((event, index) => (
             <div key={event.id} className="flex items-start gap-4">
-              {/* Timeline indicator */}
+              {/* Action indicator */}
               <div className="flex flex-col items-center pt-1">
                 <div className="w-8 h-8 rounded bg-[var(--background)] border-2 border-[var(--border)] flex items-center justify-center">
                   {getEventIcon(event.type)}
                 </div>
-                {index < timelineEvents.length - 1 && (
+                {index < actionEvents.length - 1 && (
                   <div className="w-px h-12 bg-[var(--loading-bg)] mt-2" />
                 )}
               </div>

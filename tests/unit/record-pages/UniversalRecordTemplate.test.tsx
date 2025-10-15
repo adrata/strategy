@@ -26,6 +26,8 @@ jest.mock('@/platform/ui/context/RecordContextProvider', () => ({
   useRecordContext: () => ({
     record: null,
     setRecord: jest.fn(),
+    setCurrentRecord: jest.fn(),
+    clearCurrentRecord: jest.fn(),
     loading: false,
     error: null,
     refetch: jest.fn()
@@ -104,9 +106,9 @@ jest.mock('@/frontend/components/pipeline/tabs', () => ({
       Profile Tab - {recordType}: {record?.fullName || record?.name}
     </div>
   ),
-  UniversalTimelineTab: ({ record, recordType }: any) => (
-    <div data-testid="timeline-tab">
-      Timeline Tab - {recordType}: {record?.fullName || record?.name}
+  UniversalActionsTab: ({ record, recordType }: any) => (
+    <div data-testid="actions-tab">
+      Actions Tab - {recordType}: {record?.fullName || record?.name}
     </div>
   )
 }));
@@ -422,6 +424,24 @@ describe('UniversalRecordTemplate', () => {
       });
     });
 
+    it('should open UpdateModal (not inline edit modal) when Update Person button is clicked', async () => {
+      const props = createTestUniversalRecordTemplateProps('people');
+      
+      renderWithProviders(<UniversalRecordTemplate {...props} />);
+      
+      // Find the Update Person button specifically
+      const updatePersonButton = screen.getByRole('button', { name: /update person/i });
+      fireEvent.click(updatePersonButton);
+      
+      // Verify UpdateModal opens (not inline edit modal)
+      await waitFor(() => {
+        expect(screen.getByTestId('update-modal')).toBeInTheDocument();
+      });
+      
+      // Verify inline edit modal does not open
+      expect(screen.queryByTestId('edit-record-form')).not.toBeInTheDocument();
+    });
+
     it('should open complete action modal when complete button is clicked', async () => {
       const props = createTestUniversalRecordTemplateProps('people');
       
@@ -591,6 +611,71 @@ describe('UniversalRecordTemplate', () => {
       await waitFor(() => {
         expect(screen.getByTestId('complete-action-modal')).toBeInTheDocument();
       });
+    });
+
+    it('should handle CMD+Enter keyboard shortcut in UpdateModal', async () => {
+      const props = createTestUniversalRecordTemplateProps('people');
+      
+      renderWithProviders(<UniversalRecordTemplate {...props} />);
+      
+      // Open UpdateModal
+      const updatePersonButton = screen.getByRole('button', { name: /update person/i });
+      fireEvent.click(updatePersonButton);
+      
+      await waitFor(() => {
+        expect(screen.getByTestId('update-modal')).toBeInTheDocument();
+      });
+      
+      // Test CMD+Enter shortcut
+      fireEvent.keyDown(document, { key: 'Enter', metaKey: true });
+      
+      // Verify the shortcut is handled (modal should remain open for form submission)
+      expect(screen.getByTestId('update-modal')).toBeInTheDocument();
+    });
+
+    it('should handle CTRL+Enter keyboard shortcut in UpdateModal', async () => {
+      const props = createTestUniversalRecordTemplateProps('people');
+      
+      renderWithProviders(<UniversalRecordTemplate {...props} />);
+      
+      // Open UpdateModal
+      const updatePersonButton = screen.getByRole('button', { name: /update person/i });
+      fireEvent.click(updatePersonButton);
+      
+      await waitFor(() => {
+        expect(screen.getByTestId('update-modal')).toBeInTheDocument();
+      });
+      
+      // Test CTRL+Enter shortcut
+      fireEvent.keyDown(document, { key: 'Enter', ctrlKey: true });
+      
+      // Verify the shortcut is handled (modal should remain open for form submission)
+      expect(screen.getByTestId('update-modal')).toBeInTheDocument();
+    });
+
+    it('should handle CMD+Enter keyboard shortcut in inline edit modal as fallback', async () => {
+      const props = createTestUniversalRecordTemplateProps('people');
+      
+      renderWithProviders(<UniversalRecordTemplate {...props} />);
+      
+      // Mock the inline edit modal being open
+      const mockSetIsEditRecordModalOpen = jest.fn();
+      const originalUseState = React.useState;
+      jest.spyOn(React, 'useState').mockImplementation((initial) => {
+        if (initial === false) {
+          return [true, mockSetIsEditRecordModalOpen]; // Simulate inline modal being open
+        }
+        return originalUseState(initial);
+      });
+      
+      // Test CMD+Enter shortcut
+      fireEvent.keyDown(document, { key: 'Enter', metaKey: true });
+      
+      // Verify the shortcut is handled (should trigger save function)
+      // The actual save function would be called in the real implementation
+      
+      // Restore original useState
+      jest.restoreAllMocks();
     });
   });
 

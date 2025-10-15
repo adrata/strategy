@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface InlineEditFieldProps {
-  value: string;
+  value: string | null;
   field: string;
   onSave: (field: string, value: string, recordId: string, recordType: string) => Promise<void>;
   className?: string;
@@ -33,11 +33,14 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Sync editValue with value prop when it changes
+  // Sync editValue with value prop when it changes, but not while saving
   useEffect(() => {
-    setEditValue(value);
-  }, [value]);
+    if (!isSaving) {
+      setEditValue(value);
+    }
+  }, [value, isSaving]);
 
   const handleEditStart = () => {
     setEditValue(value);
@@ -51,6 +54,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
     }
 
     setIsLoading(true);
+    setIsSaving(true);
     try {
       // Pass all required parameters to onSave
       await onSave(field, editValue, recordId || '', recordType || '');
@@ -65,6 +69,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
       onSuccess?.('Failed to update. Please try again.');
     } finally {
       setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -139,7 +144,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
 
   // Get the display value - for select fields, show the label instead of the value
   const getDisplayValue = () => {
-    if (!value || value.trim() === '') return '-';
+    if (!value || (typeof value === 'string' && value.trim() === '')) return 'No data available';
     
     if (inputType === 'select' && options) {
       const option = options.find(opt => opt['value'] === value);
@@ -151,7 +156,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
 
   return (
     <div className="group flex flex-1 items-center gap-2 cursor-pointer p-1 rounded hover:bg-[var(--panel-background)] transition-colors min-w-0">
-      <span className={`${className} ${!value || value.trim() === '' ? 'text-[var(--muted)]' : ''}`}>
+      <span className={`${className} ${!value || (typeof value === 'string' && value.trim() === '') ? 'text-[var(--muted)] italic' : ''}`}>
         {getDisplayValue()}
       </span>
       <button

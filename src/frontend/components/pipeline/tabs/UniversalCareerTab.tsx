@@ -180,7 +180,9 @@ export function UniversalCareerTab({ recordType, record: recordProp }: Universal
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-sm text-[var(--muted)]">Title:</span>
-              <span className="text-sm font-medium text-[var(--foreground)]">{record?.jobTitle || record?.title || '-'}</span>
+              <span className="text-sm font-medium text-[var(--foreground)]">
+                {record?.jobTitle || record?.title || <span className="text-sm italic text-[var(--muted)]">No data available</span>}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-[var(--muted)]">Company:</span>

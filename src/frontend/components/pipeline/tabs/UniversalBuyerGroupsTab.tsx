@@ -68,16 +68,26 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
 
   // Calculate risk assessment for a person
   const calculatePersonRisk = (person: any): RiskAssessment => {
-    // Mock career data - in real implementation, this would come from the person's profile
+    // Use real career data from CoreSignal profile
+    const coresignalData = person?.customFields?.coresignal || person?.customFields?.coresignalData || {};
+    const experience = coresignalData.experience || [];
+    
+    // Extract real career data from CoreSignal experience
+    const currentRole = experience.find((exp: any) => exp.active_experience === 1) || experience[0];
+    const previousRoles = experience
+      .filter((exp: any) => !exp.active_experience)
+      .map((exp: any) => ({
+        title: exp.position_title || exp.title || 'Unknown Role',
+        startDate: exp.start_date || exp.startDate || 'Unknown',
+        endDate: exp.end_date || exp.endDate || 'Unknown',
+        duration: exp.duration_months || 0
+      }));
+
     const careerData: CareerData = {
-      currentRoleStartDate: person.currentRoleStartDate || '2023-01-01',
-      previousRoles: person.previousRoles || [
-        { title: 'Senior Manager', startDate: '2021-06-01', endDate: '2022-12-31', duration: 18 },
-        { title: 'Manager', startDate: '2020-01-01', endDate: '2021-05-31', duration: 17 },
-        { title: 'Senior Analyst', startDate: '2018-03-01', endDate: '2019-12-31', duration: 22 }
-      ],
-      totalCareerDuration: person.totalCareerDuration || 60,
-      averageRoleDuration: person.averageRoleDuration || 19
+      currentRoleStartDate: currentRole?.start_date || currentRole?.startDate || person.currentRoleStartDate || null,
+      previousRoles: previousRoles.length > 0 ? previousRoles : person.previousRoles || [],
+      totalCareerDuration: coresignalData.total_experience_duration_months || person.totalCareerDuration || 0,
+      averageRoleDuration: coresignalData.average_role_duration_months || person.averageRoleDuration || 0
     };
 
     return calculateRiskAssessment(careerData);
@@ -101,7 +111,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       console.log('🔍 [BUYER GROUPS DEBUG] Record ID:', record?.id);
       
       if (!record?.id) {
-        // console.log('🔍 [BUYER GROUPS DEBUG] No record ID, setting loading to false');
+        console.log('🔍 [BUYER GROUPS DEBUG] No record ID, clearing state and setting loading to false');
+        setBuyerGroups([]); // Clear state immediately
         setLoading(false);
         return;
       }
@@ -137,8 +148,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       
       // If company changed, clear stale cache and reset state
       if (companyIdChanged) {
-        console.log('🔄 [BUYER GROUPS] Company changed, clearing stale cache and resetting state');
-        setBuyerGroups([]);
+        console.log('🔄 [BUYER GROUPS] Company changed, clearing state immediately and invalidating cache');
+        setBuyerGroups([]); // Clear immediately before any async work
         setLastFetchTime(null); // Reset fetch throttle to allow immediate re-fetch
         setIsFetching(false);
         
@@ -149,6 +160,12 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           localStorage.removeItem(previousCacheKey);
           console.log('🗑️ [BUYER GROUPS] Cleared cache for previous company:', previousCacheKey);
         }
+        
+        // Also clear current company cache to force fresh fetch
+        const workspaceId = record.workspaceId || '01K7DNYR5VZ7JY36KGKKN76XZ1';
+        const currentCacheKey = `buyer-groups-${companyId}-${workspaceId}`;
+        localStorage.removeItem(currentCacheKey);
+        console.log('🗑️ [BUYER GROUPS] Cleared current company cache to force fresh fetch:', currentCacheKey);
       }
       
       // Update the ref with current companyId
@@ -493,7 +510,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
     return () => {
       setIsFetching(false);
     };
-  }, [record?.id, recordType]); // Depend on both record ID and record type to ensure proper re-fetching
+  }, [record?.id, record, recordType]); // Depend on record ID, full record object, and record type to ensure proper re-fetching
 
   const handleInlineSave = async (field: string, value: string, recordId?: string, recordTypeParam?: string) => {
     if (onSave) {
@@ -596,16 +613,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           <h3 className="text-lg font-semibold text-[var(--foreground)]">Buyer Group Members</h3>
           <div className="space-y-3">
             {buyerGroups.map((member, index) => {
-              const riskAssessment = riskAssessments[member.id] || calculateRiskAssessment({
-                name: member.name,
-                title: member.title,
-                company: member.company,
-                tenure: '2-5 years', // Placeholder
-                jobChanges: 2, // Placeholder
-                industryExperience: '5-10 years', // Placeholder
-                education: 'Bachelor\'s', // Placeholder
-                location: 'San Francisco, CA' // Placeholder
-              } as CareerData);
+              const riskAssessment = riskAssessments[member.id] || calculatePersonRisk(member);
 
               return (
                 <div key={member.id || index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-[var(--panel-background)] cursor-pointer transition-colors" onClick={() => handleMemberClick(member)}>

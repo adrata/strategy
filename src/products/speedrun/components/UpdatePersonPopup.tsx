@@ -5,6 +5,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { SpeedrunPerson } from "../types/SpeedrunTypes";
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { CompanySelector } from '@/frontend/components/pipeline/CompanySelector';
+import { UniversalActionsTab } from '@/frontend/components/pipeline/tabs/UniversalActionsTab';
 
 interface UpdatePersonPopupProps {
   isOpen: boolean;
@@ -36,7 +37,7 @@ export function UpdatePersonPopup({
     email: person.email || "",
     phone: person.phone || "",
     company: typeof person.company === 'object' ? person.company?.name || "" : person.company || "",
-    companyId: person.companyId || "",
+      companyId: typeof person.company === 'object' ? person.company?.id || "" : "",
     status: person.status || "Active",
     priority: person.priority || "Medium",
     nextAction: person.nextAction || "",
@@ -53,7 +54,7 @@ export function UpdatePersonPopup({
       email: person.email || "",
       phone: person.phone || "",
       company: typeof person.company === 'object' ? person.company?.name || "" : person.company || "",
-      companyId: person.companyId || "",
+      companyId: typeof person.company === 'object' ? person.company?.id || "" : "",
       status: person.status || "Active",
       priority: person.priority || "Medium",
       nextAction: person.nextAction || "",
@@ -72,7 +73,7 @@ export function UpdatePersonPopup({
       email: formData.email,
       phone: formData.phone,
       company: formData.company,
-      companyId: formData.companyId,
+      // companyId: formData.companyId, // Remove this line as it's not part of SpeedrunPerson
       status: formData.status,
       priority: formData.priority,
       nextAction: formData.nextAction,
@@ -139,7 +140,7 @@ export function UpdatePersonPopup({
             type="text"
             value={formData.name}
             onChange={(e) => handleChange("name", e.target.value)}
-            placeholder={getDisplayValue(person.name)}
+            placeholder={person.name || "-"}
             className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
             required
           />
@@ -152,7 +153,7 @@ export function UpdatePersonPopup({
             type="text"
             value={formData.title}
             onChange={(e) => handleChange("title", e.target.value)}
-            placeholder={getDisplayValue(person.title)}
+            placeholder={person.title || "-"}
             className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
           />
         </div>
@@ -167,7 +168,7 @@ export function UpdatePersonPopup({
             type="email"
             value={formData.email}
             onChange={(e) => handleChange("email", e.target.value)}
-            placeholder={getDisplayValue(person.email)}
+            placeholder={person.email || "-"}
             className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
           />
         </div>
@@ -179,7 +180,7 @@ export function UpdatePersonPopup({
             type="tel"
             value={formData.phone}
             onChange={(e) => handleChange("phone", e.target.value)}
-            placeholder={getDisplayValue(person.phone)}
+            placeholder={person.phone || "-"}
             className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
           />
         </div>
@@ -205,53 +206,66 @@ export function UpdatePersonPopup({
   );
 
   const renderActionsTab = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Status
-          </label>
-          <select
-            value={formData.status}
-            onChange={(e) => handleChange("status", e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
-          >
-            <option value="New">New</option>
-            <option value="Contacted">Contacted</option>
-            <option value="Qualified">Qualified</option>
-            <option value="Opportunity">Opportunity</option>
-            <option value="Customer">Customer</option>
-            <option value="Closed">Closed</option>
-          </select>
+    <div className="space-y-6 max-h-[600px] overflow-y-auto">
+      {/* Form Fields Section */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium text-[var(--foreground)]">Action Settings</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Status
+            </label>
+            <select
+              value={formData.status}
+              onChange={(e) => handleChange("status", e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+            >
+              <option value="New">New</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Qualified">Qualified</option>
+              <option value="Opportunity">Opportunity</option>
+              <option value="Customer">Customer</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Priority
+            </label>
+            <select
+              value={formData.priority}
+              onChange={(e) => handleChange("priority", e.target.value)}
+              className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Urgent">Urgent</option>
+            </select>
+          </div>
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Priority
+            Next Action
           </label>
-          <select
-            value={formData.priority}
-            onChange={(e) => handleChange("priority", e.target.value)}
+          <input
+            type="text"
+            value={formData.nextAction}
+            onChange={(e) => handleChange("nextAction", e.target.value)}
+            placeholder={person.nextAction || "-"}
             className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
-          >
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-            <option value="Urgent">Urgent</option>
-          </select>
+          />
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Next Action
-        </label>
-        <input
-          type="text"
-          value={formData.nextAction}
-          onChange={(e) => handleChange("nextAction", e.target.value)}
-          placeholder={getDisplayValue(person.nextAction)}
-          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
-        />
+      {/* Divider */}
+      <div className="border-t border-[var(--border)]"></div>
+
+      {/* Actions List Section */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium text-[var(--foreground)]">Existing Actions</h3>
+        <UniversalActionsTab record={person} recordType="people" />
       </div>
     </div>
   );
@@ -266,7 +280,7 @@ export function UpdatePersonPopup({
           type="text"
           value={formData.relationship}
           onChange={(e) => handleChange("relationship", e.target.value)}
-          placeholder={getDisplayValue(person.relationship)}
+          placeholder={person.relationship || "-"}
           className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white"
         />
       </div>
@@ -291,7 +305,7 @@ export function UpdatePersonPopup({
           value={formData.bio}
           onChange={(e) => handleChange("bio", e.target.value)}
           rows={6}
-          placeholder={getDisplayValue(person.bio)}
+          placeholder={person.bio || "-"}
           className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--background)] text-[var(--foreground)] dark:text-white resize-none"
         />
       </div>

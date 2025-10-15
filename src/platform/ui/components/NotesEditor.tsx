@@ -179,8 +179,8 @@ export function NotesEditor({
           color: 'text-gray-400'
         };
       case 'saved':
-        // Show "Last saved" message when successfully saved
-        if (lastSavedAt) {
+        // Show "Last saved" message when successfully saved and content exists
+        if (lastSavedAt && localValue && localValue.trim().length > 0) {
           const now = new Date();
           const diffMs = now.getTime() - lastSavedAt.getTime();
           const diffSeconds = Math.floor(diffMs / 1000);
@@ -203,10 +203,19 @@ export function NotesEditor({
             color: 'text-green-500'
           };
         }
+        // Show helpful hint when there's no content
+        if (!localValue || localValue.trim().length === 0) {
+          return {
+            icon: null,
+            text: 'Start typing—auto-saved',
+            color: 'text-gray-400'
+          };
+        }
+        
         return {
-          icon: <CheckIcon className="w-4 h-4 text-green-500" />,
-          text: 'Saved',
-          color: 'text-green-500'
+          icon: null,
+          text: '',
+          color: 'text-transparent'
         };
       case 'error':
         return {
@@ -224,8 +233,8 @@ export function NotesEditor({
           };
         }
         
-        // Show "Last saved" message when idle and there's a lastSavedAt time
-        if (lastSavedAt) {
+        // Show "Last saved" message when idle and there's a lastSavedAt time AND content exists
+        if (lastSavedAt && localValue && localValue.trim().length > 0) {
           const now = new Date();
           const diffMs = now.getTime() - lastSavedAt.getTime();
           const diffSeconds = Math.floor(diffMs / 1000);
@@ -246,6 +255,15 @@ export function NotesEditor({
             icon: <CheckIcon className="w-4 h-4 text-green-500" />,
             text: `Last saved ${timeText}`,
             color: 'text-green-500'
+          };
+        }
+        
+        // Show helpful hint when there are no notes yet
+        if (!localValue || localValue.trim().length === 0) {
+          return {
+            icon: null,
+            text: 'Start typing—auto-saved',
+            color: 'text-gray-400'
           };
         }
         

@@ -274,6 +274,7 @@ export const PipelineContent = React.memo(function PipelineContent({
         const isInput = target['tagName'] === "INPUT" || target['tagName'] === "TEXTAREA" || target.isContentEditable;
         if (!isInput && isSlideUpVisible) {
           event.preventDefault();
+          event.stopPropagation();
           if (activeSignal) {
             acceptSignal();
             setIsSlideUpVisible(false);

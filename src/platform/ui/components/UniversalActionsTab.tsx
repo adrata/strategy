@@ -11,7 +11,7 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 
-interface TimelineEvent {
+interface ActionEvent {
   id: string;
   type: 'record_created' | 'activity' | 'email' | 'note' | 'status_change' | 'assignment_change';
   date: Date;
@@ -28,34 +28,34 @@ interface TimelineEvent {
 interface EmailThread {
   threadId: string;
   subject: string;
-  emails: TimelineEvent[];
+  emails: ActionEvent[];
   lastActivity: Date;
   participantCount: number;
   buyingSignals: number;
 }
 
-interface UniversalTimelineTabProps {
+interface UniversalActionsTabProps {
   entityType: 'lead' | 'prospect' | 'opportunity' | 'account' | 'contact';
   entityId: string;
   entityData: any;
 }
 
-export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
+export const UniversalActionsTab: React.FC<UniversalActionsTabProps> = ({
   entityType,
   entityId,
   entityData
 }) => {
-  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
+  const [actionEvents, setActionEvents] = useState<ActionEvent[]>([]);
   const [emailThreads, setEmailThreads] = useState<EmailThread[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEmail, setSelectedEmail] = useState<any>(null);
   const [viewMode, setViewMode] = useState<'unified' | 'threaded'>('unified');
 
   useEffect(() => {
-    fetchTimelineData();
+    fetchActionsData();
   }, [entityType, entityId]);
 
-  const fetchTimelineData = async () => {
+  const fetchActionsData = async () => {
     try {
       setLoading(true);
       
@@ -63,7 +63,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
       const workspaceId = entityData?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
       const userId = entityData?.assignedUserId || '01K1VBYZMWTCT09FWEKBDMCXZM';
       
-      console.log('🔍 [PLATFORM TIMELINE] Fetching timeline for:', {
+      console.log('🔍 [PLATFORM ACTIONS] Fetching actions for:', {
         entityType,
         entityId,
         workspaceId,
@@ -74,26 +74,26 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
       const activitiesUrl = `/api/data/unified?type=activities&action=get&workspaceId=${workspaceId}&userId=${userId}`;
       const notesUrl = `/api/data/unified?type=notes&action=get&workspaceId=${workspaceId}&userId=${userId}`;
       
-      console.log('🔍 [PLATFORM TIMELINE] Fetching activities from:', activitiesUrl);
-      console.log('🔍 [PLATFORM TIMELINE] Fetching notes from:', notesUrl);
+      console.log('🔍 [PLATFORM ACTIONS] Fetching activities from:', activitiesUrl);
+      console.log('🔍 [PLATFORM ACTIONS] Fetching notes from:', notesUrl);
       
       const [activitiesResponse, notesResponse] = await Promise.all([
         fetch(activitiesUrl),
         fetch(notesUrl)
       ]);
       
-      console.log('📅 [PLATFORM TIMELINE] Activities response status:', activitiesResponse.status);
-      console.log('📅 [PLATFORM TIMELINE] Notes response status:', notesResponse.status);
+      console.log('📅 [PLATFORM ACTIONS] Activities response status:', activitiesResponse.status);
+      console.log('📅 [PLATFORM ACTIONS] Notes response status:', notesResponse.status);
       
-      const timelineEvents: any[] = [];
+      const actionEvents: any[] = [];
       
       // Process activities
       if (activitiesResponse.ok) {
         const activitiesData = await activitiesResponse.json();
-        console.log('📅 [PLATFORM TIMELINE] Activities data:', activitiesData);
+        console.log('📅 [PLATFORM ACTIONS] Activities data:', activitiesData);
         
         if (activitiesData.success && activitiesData.data) {
-          console.log('📅 [PLATFORM TIMELINE] Found activities:', activitiesData.data.length);
+          console.log('📅 [PLATFORM ACTIONS] Found activities:', activitiesData.data.length);
           // Filter activities for this entity
           const entityActivities = activitiesData.data.filter((activity: any) => {
             return (
@@ -106,9 +106,9 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
             );
           });
           
-          console.log('📅 [PLATFORM TIMELINE] Filtered activities for entity:', entityActivities.length);
+          console.log('📅 [PLATFORM ACTIONS] Filtered activities for entity:', entityActivities.length);
           
-          // Convert to timeline events
+          // Convert to action events
           const activityEvents = entityActivities.map((activity: any) => ({
             id: activity.id,
             type: 'activity',
@@ -125,17 +125,17 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
             }
           }));
           
-          timelineEvents.push(...activityEvents);
+          actionEvents.push(...activityEvents);
         }
       }
       
       // Process notes
       if (notesResponse.ok) {
         const notesData = await notesResponse.json();
-        console.log('📅 [PLATFORM TIMELINE] Notes data:', notesData);
+        console.log('📅 [PLATFORM ACTIONS] Notes data:', notesData);
         
         if (notesData.success && notesData.data) {
-          console.log('📅 [PLATFORM TIMELINE] Found notes:', notesData.data.length);
+          console.log('📅 [PLATFORM ACTIONS] Found notes:', notesData.data.length);
           // Filter notes for this entity
           const entityNotes = notesData.data.filter((note: any) => {
             return (
@@ -148,9 +148,9 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
             );
           });
           
-          console.log('📅 [PLATFORM TIMELINE] Filtered notes for entity:', entityNotes.length);
+          console.log('📅 [PLATFORM ACTIONS] Filtered notes for entity:', entityNotes.length);
           
-          // Convert to timeline events
+          // Convert to action events
           const noteEvents = entityNotes.map((note: any) => ({
             id: note.id,
             type: 'note',
@@ -167,12 +167,12 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
             }
           }));
           
-          timelineEvents.push(...noteEvents);
+          actionEvents.push(...noteEvents);
         }
       }
       
       // Add record creation event
-      console.log('📅 [PLATFORM TIMELINE] Entity data for creation event:', {
+      console.log('📅 [PLATFORM ACTIONS] Entity data for creation event:', {
         entityData,
         createdAt: entityData?.createdAt,
         entityType
@@ -191,47 +191,47 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
           source: 'system',
           priority: 'normal'
         };
-        timelineEvents.push(creationEvent);
-        console.log('📅 [PLATFORM TIMELINE] Added creation event:', creationEvent);
+        actionEvents.push(creationEvent);
+        console.log('📅 [PLATFORM ACTIONS] Added creation event:', creationEvent);
       } else {
-        console.log('📅 [PLATFORM TIMELINE] No createdAt found, skipping creation event');
+        console.log('📅 [PLATFORM ACTIONS] No createdAt found, skipping creation event');
       }
       
       // Sort by date (newest first)
-      timelineEvents.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      actionEvents.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       
-      // If no events found, add a fallback event to show the timeline is working
-      if (timelineEvents.length === 0) {
-        timelineEvents.push({
+      // If no events found, add a fallback event to show the actions are working
+      if (actionEvents.length === 0) {
+        actionEvents.push({
           id: 'no_events',
           type: 'record_created',
           date: new Date(),
-          title: 'Timeline initialized',
-          description: 'Timeline is working but no events found yet',
+          title: 'Actions initialized',
+          description: 'Actions are working but no events found yet',
           user: 'System',
           source: 'system',
           priority: 'normal'
         });
-        console.log('📅 [PLATFORM TIMELINE] No events found, added fallback event');
+        console.log('📅 [PLATFORM ACTIONS] No events found, added fallback event');
       }
       
-      console.log('📅 [PLATFORM TIMELINE] Final timeline events:', timelineEvents.length, 'events');
-      console.log('📅 [PLATFORM TIMELINE] Timeline events details:', timelineEvents);
-      setTimelineEvents(timelineEvents);
+      console.log('📅 [PLATFORM ACTIONS] Final action events:', actionEvents.length, 'events');
+      console.log('📅 [PLATFORM ACTIONS] Action events details:', actionEvents);
+      setActionEvents(actionEvents);
 
-      const emailEvents = timelineEvents.filter((e: any) => e['type'] === 'email');
+      const emailEvents = actionEvents.filter((e: any) => e['type'] === 'email');
       const threads = groupEmailsIntoThreads(emailEvents);
       setEmailThreads(threads);
 
     } catch (error) {
-      console.error('❌ [PLATFORM TIMELINE] Error fetching timeline data:', error);
-      setTimelineEvents([]); // Set empty array on error
+      console.error('❌ [PLATFORM ACTIONS] Error fetching actions data:', error);
+      setActionEvents([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
   };
 
-  const groupEmailsIntoThreads = (emailEvents: TimelineEvent[]): EmailThread[] => {
+  const groupEmailsIntoThreads = (emailEvents: ActionEvent[]): EmailThread[] => {
     const threadMap = new Map<string, EmailThread>();
 
     emailEvents.forEach(email => {
@@ -348,20 +348,20 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
     }
   };
 
-  const renderUnifiedTimeline = () => (
+  const renderUnifiedActions = () => (
     <div className="space-y-4">
-      {timelineEvents['length'] === 0 ? (
+      {actionEvents['length'] === 0 ? (
         <div className="text-center py-12">
-          <div className="text-[var(--muted)] text-sm">No timeline events yet</div>
+          <div className="text-[var(--muted)] text-sm">No action events yet</div>
         </div>
       ) : (
-        timelineEvents.map((event, index) => (
+        actionEvents.map((event, index) => (
           <div key={event.id} className="flex items-start gap-4">
             <div className="flex flex-col items-center pt-1">
               <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${getEventColor(event.type)}`}>
                 {getEventIcon(event.type)}
               </div>
-              {index < timelineEvents.length - 1 && (
+              {index < actionEvents.length - 1 && (
                 <div className="w-px h-8 bg-[var(--loading-bg)] mt-2" />
               )}
             </div>
@@ -461,7 +461,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
   if (loading) {
     return (
       <div className="py-8">
-        <PipelineSkeleton message="Loading timeline..." />
+        <PipelineSkeleton message="Loading actions..." />
       </div>
     );
   }
@@ -470,9 +470,9 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <h3 className="text-sm font-medium text-[var(--foreground)]">Timeline</h3>
+          <h3 className="text-sm font-medium text-[var(--foreground)]">Actions</h3>
           <span className="text-xs text-[var(--muted)]">
-            {timelineEvents.length} events • {timelineEvents.filter(e => e['type'] === 'email').length} emails
+            {actionEvents.length} events • {actionEvents.filter(e => e['type'] === 'email').length} emails
           </span>
         </div>
         
@@ -501,7 +501,7 @@ export const UniversalTimelineTab: React.FC<UniversalTimelineTabProps> = ({
       </div>
 
       <div className="max-h-[600px] overflow-y-auto">
-        {viewMode === 'unified' ? renderUnifiedTimeline() : renderThreadedView()}
+        {viewMode === 'unified' ? renderUnifiedActions() : renderThreadedView()}
       </div>
 
       {selectedEmail && (

@@ -661,6 +661,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
       // ⌘+Enter to mark as completed (only in Speedrun mode)
       if (sourceSection === "rtp" && (event.metaKey || event.ctrlKey) && event['key'] === 'Enter') {
         event.preventDefault();
+        event.stopPropagation();
         if (onMarkCompleted) {
           onMarkCompleted();
           console.log('⌘+Enter pressed, speedrunng as completed');

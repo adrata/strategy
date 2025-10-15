@@ -387,8 +387,8 @@ export function RecordDetailModal({ record, recordType, isOpen, onClose }: Recor
 
   const renderTimelineTab = () => {
     // Import the timeline component dynamically
-    const UniversalTimelineTab = React.lazy(() => 
-      import('@/platform/ui/components/UniversalTimelineTab').then(module => ({ default: module.UniversalTimelineTab }))
+    const UniversalActionsTab = React.lazy(() => 
+      import('@/platform/ui/components/UniversalActionsTab').then(module => ({ default: module.UniversalActionsTab }))
     );
 
     return (
@@ -397,7 +397,7 @@ export function RecordDetailModal({ record, recordType, isOpen, onClose }: Recor
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       }>
-        <UniversalTimelineTab
+        <UniversalActionsTab
           entityType={recordType === 'customer' ? 'account' : recordType === 'partner' ? 'account' : recordType}
           entityId={record.id}
           entityData={record}

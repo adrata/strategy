@@ -429,8 +429,22 @@ export function SpeedrunSprintView() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save action log');
+        let errorMessage = 'Failed to save action log';
+        try {
+          // Check if response has json method and is a proper Response object
+          if (response && typeof response.json === 'function') {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } else {
+            // Fallback for non-JSON responses
+            errorMessage = `HTTP ${response.status}: ${response.statusText || 'Unknown error'}`;
+          }
+        } catch (jsonError) {
+          // If JSON parsing fails, use status text or fallback message
+          console.error('Failed to parse error response as JSON:', jsonError);
+          errorMessage = `HTTP ${response.status}: ${response.statusText || 'Unknown error'}`;
+        }
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();

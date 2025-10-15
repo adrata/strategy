@@ -144,6 +144,7 @@ export class LeadDetailsUtilities {
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event['key'] === "Enter") {
         event.preventDefault();
+        event.stopPropagation();
         
         // Call the speedrun completion handler
         onComplete(personId);

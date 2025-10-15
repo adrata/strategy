@@ -290,6 +290,7 @@ export function PipelineTable({
         
         if (!isInput && data.length > 0) {
           event.preventDefault();
+          event.stopPropagation();
           // Open Add Action modal with the first record as context
           setSelectedRecord(data[0]);
           setAddActionModalOpen(true);

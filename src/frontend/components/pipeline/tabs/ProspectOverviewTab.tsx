@@ -169,6 +169,18 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     }
   }
 
+  // Helper component for displaying values with proper empty state
+  const DisplayValue = ({ value, children, className = "text-sm font-medium text-[var(--foreground)]" }: { 
+    value: any, 
+    children?: React.ReactNode, 
+    className?: string 
+  }) => {
+    if (value) {
+      return <span className={className}>{children || value}</span>;
+    }
+    return <span className="text-sm italic text-[var(--muted)]">No data available</span>;
+  };
+
   // Extract CoreSignal data from the correct location (same as PersonOverviewTab)
   const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
   const coresignalProfile = record?.customFields?.coresignalProfile || {};
@@ -177,15 +189,15 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
   // Use database fields first, then CoreSignal fallback
   const prospectData = {
     // Basic Information - Database fields first, then CoreSignal fallback
-    name: String(record?.fullName || record?.name || coresignalData.full_name || '-'),
-    title: String(record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || '-'),
-    department: String(record?.department || coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || '-'),
+    name: record?.fullName || record?.name || coresignalData.full_name || null,
+    title: record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || null,
+    department: record?.department || coresignalData.active_experience_department || coresignalData.experience?.find(exp => exp.active_experience === 1)?.department || coresignalData.experience?.[0]?.department || null,
     
     // Contact Information - Database fields first, then CoreSignal fallback
-    email: String(record?.email || coresignalData.primary_professional_email || '-'),
-    phone: String(record?.phone || coresignalData.phone || '-'),
-    linkedin: String(record?.linkedin || coresignalData.linkedin_url || '-'),
-    linkedinNavigatorUrl: String(record?.linkedinNavigatorUrl || '-'),
+    email: record?.email || coresignalData.primary_professional_email || null,
+    phone: record?.phone || coresignalData.phone || null,
+    linkedin: record?.linkedin || coresignalData.linkedin_url || null,
+    linkedinNavigatorUrl: record?.linkedinNavigatorUrl || null,
     linkedinConnectionDate: record?.linkedinConnectionDate || null,
     
     // Company Information - Database fields first, then CoreSignal fallback
@@ -195,35 +207,35 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
       const recordCompany = typeof record?.company === 'string' 
         ? record.company 
         : (record?.company?.name || record?.companyName);
-      return String(coresignalCompany || recordCompany || '-');
+      return coresignalCompany || recordCompany || null;
     })(),
     companyId: record.companyId || null,
-    industry: String(coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || '-'),
+    industry: coresignalData.experience?.find(exp => exp.active_experience === 1)?.company_industry || coresignalData.experience?.[0]?.company_industry || record?.company?.industry || record?.industry || null,
     
     // Buyer Group and Influence (existing fields) - Enhanced mapping
-    buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || '-',
-    influenceLevel: record?.influenceLevel || record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.customFields?.influence || '-',
-    engagementPriority: record?.priority || record?.customFields?.priority || record?.customFields?.enrichedData?.overview?.priority || '-',
+    buyerGroupRole: record?.buyerGroupRole || record?.customFields?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.buyerGroupRole || record?.customFields?.enrichedData?.overview?.role || null,
+    influenceLevel: record?.influenceLevel || record?.customFields?.influenceLevel || record?.customFields?.enrichedData?.overview?.influenceLevel || record?.customFields?.influence || null,
+    engagementPriority: record?.priority || record?.customFields?.priority || record?.customFields?.enrichedData?.overview?.priority || null,
     
     // Engagement History (existing fields) - Enhanced mapping
-    lastContact: record.lastContactDate || record.lastContact || record.lastActionDate || record?.customFields?.lastContact || record?.customFields?.lastContactDate || '-',
-    nextAction: record.nextAction || record?.customFields?.nextAction || '-',
+    lastContact: record.lastContactDate || record.lastContact || record.lastActionDate || record?.customFields?.lastContact || record?.customFields?.lastContactDate || null,
+    nextAction: record.nextAction || record?.customFields?.nextAction || null,
     nextActionDate: record.nextActionDate || record?.customFields?.nextActionDate || null,
     
     // Status (existing fields) - Enhanced mapping
-    status: record.status || record?.customFields?.status || '-',
-    priority: record.priority || record?.customFields?.priority || '-',
+    status: record.status || record?.customFields?.status || null,
+    priority: record.priority || record?.customFields?.priority || null,
     
     // Notes and Tags (existing fields) - Enhanced mapping
-    notes: record.notes || record?.customFields?.notes || '-',
+    notes: record.notes || record?.customFields?.notes || null,
     tags: record.tags || record?.customFields?.tags || [],
     
     // Intelligence and Insights (existing fields) - Enhanced mapping
-    painIntelligence: record.painIntelligence || record?.customFields?.painIntelligence || '-',
+    painIntelligence: record.painIntelligence || record?.customFields?.painIntelligence || null,
     wants: record.wants || record?.customFields?.wants || [],
     needs: record.needs || record?.customFields?.needs || [],
-    psychographicProfile: record.psychographicProfile || record?.customFields?.psychographicProfile || '-',
-    communicationStyleRecommendations: record.communicationStyleRecommendations || record?.customFields?.communicationStyleRecommendations || '-'
+    psychographicProfile: record.psychographicProfile || record?.customFields?.psychographicProfile || null,
+    communicationStyleRecommendations: record.communicationStyleRecommendations || record?.customFields?.communicationStyleRecommendations || null
   };
 
   // Debug: Log the final prospectData values for Shannon Hegland

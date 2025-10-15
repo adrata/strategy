@@ -73,7 +73,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp }: Univers
       connectionsCount: coresignalData.connections_count || coresignalData.connectionsCount || 0,
       isDecisionMaker: coresignalData.is_decision_maker || coresignalData.isDecisionMaker || 0,
       totalExperienceMonths: coresignalData.total_experience_duration_months || coresignalData.totalExperienceMonths || 0,
-      enrichedAt: coresignalData.lastEnrichedAt || coresignalData.enrichedAt || '-',
+      enrichedAt: coresignalData.lastEnrichedAt || coresignalData.enrichedAt || null,
       skills: coresignalData.inferred_skills || coresignalData.skills || [],
       education: coresignalData.education || [],
       experience: coresignalData.experience || []

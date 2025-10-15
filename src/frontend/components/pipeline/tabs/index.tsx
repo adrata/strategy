@@ -6,7 +6,7 @@ export { UniversalInsightsTab } from './UniversalInsightsTab';
 export { UniversalCompanyTab } from './UniversalCompanyTab';
 export { UniversalProfileTab } from './UniversalProfileTab';
 export { UniversalPainValueTab } from './UniversalPainValueTab';
-export { UniversalTimelineTab } from './UniversalTimelineTab';
+export { UniversalActionsTab } from './UniversalActionsTab';
 export { UniversalIndustryIntelTab } from './UniversalIndustryIntelTab';
 export { UniversalOutreachTab } from './UniversalOutreachTab';
 export { UniversalEngagementTab } from './UniversalEngagementTab';
