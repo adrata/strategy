@@ -443,40 +443,6 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     }
   }, [isOpen, record, initialTab, recordType]);
 
-  // Keyboard shortcut for Update Record when modal is open
-  useEffect(() => {
-    // Only attach event listeners when modal is open
-    if (!isOpen) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
-      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        
-        console.log('⌨️ [UpdateModal] Update Record keyboard shortcut triggered');
-        
-        // Call handleSubmit directly with a synthetic event
-        if (!loading) {
-          const syntheticEvent = {
-            preventDefault: () => {},
-            stopPropagation: () => {},
-            stopImmediatePropagation: () => {}
-          } as React.FormEvent;
-          handleSubmit(syntheticEvent);
-        }
-      }
-    };
-
-    // Use both capture and bubble phases to ensure we get the event
-    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
-    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown, true);
-      document.removeEventListener('keydown', handleKeyDown, false);
-    };
-  }, [isOpen, loading, onUpdate]);
 
   if (!isOpen) return null;
 
@@ -517,6 +483,41 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       setLoading(false);
     }
   };
+
+  // Keyboard shortcut for Update Record when modal is open
+  useEffect(() => {
+    // Only attach event listeners when modal is open
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Cmd+Enter (⌘⏎) on Mac or Ctrl+Enter on Windows/Linux
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        
+        console.log('⌨️ [UpdateModal] Update Record keyboard shortcut triggered');
+        
+        // Call handleSubmit directly with a synthetic event
+        if (!loading) {
+          const syntheticEvent = {
+            preventDefault: () => {},
+            stopPropagation: () => {},
+            stopImmediatePropagation: () => {}
+          } as React.FormEvent;
+          handleSubmit(syntheticEvent);
+        }
+      }
+    };
+
+    // Use both capture and bubble phases to ensure we get the event
+    document.addEventListener('keydown', handleKeyDown, true); // Capture phase
+    document.addEventListener('keydown', handleKeyDown, false); // Bubble phase
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, false);
+    };
+  }, [isOpen, loading, handleSubmit]);
 
   const handleClose = () => {
     onClose();

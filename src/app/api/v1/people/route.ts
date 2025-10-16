@@ -365,7 +365,7 @@ export async function GET(request: NextRequest) {
           tags: ['people', section, context.workspaceId, context.userId]
         });
         console.log(`⚡ [PEOPLE API] Cache hit - returning cached data`);
-        return result;
+        return NextResponse.json(result);
       } catch (error) {
         console.warn('⚠️ [PEOPLE API] Cache read failed, proceeding with database query:', error);
         // Clear corrupted cache entry
