@@ -11,34 +11,35 @@
             .page-break { page-break-before: always; }
             .no-print { display: none; }
         }
-        .card { @apply bg-white rounded-lg shadow-sm p-6 border border-gray-200; }
-        .flow-arrow { @apply text-gray-400 text-2xl font-bold my-3 text-center; }
-        .section-header { @apply text-2xl font-semibold text-gray-900 mb-4; }
-        .subsection-header { @apply text-lg font-medium text-gray-800 mb-3; }
+        .card { @apply bg-white rounded-lg border border-gray-200 p-6; }
+        .section-header { @apply text-2xl font-semibold text-gray-900 mb-6; }
+        .subsection-header { @apply text-lg font-medium text-gray-800 mb-4; }
+        .code-block { @apply bg-gray-50 border border-gray-200 rounded p-3 text-sm font-mono; }
+        .flow-arrow { @apply text-gray-400 text-center my-4; }
     </style>
 </head>
-<body class="bg-gray-50 p-6">
+<body class="bg-white p-8">
     <!-- Cover Page -->
     <div class="min-h-screen flex items-center justify-center">
         <div class="text-center max-w-4xl mx-auto">
-            <div class="bg-white p-12 rounded-lg shadow-lg border border-gray-200">
+            <div class="border border-gray-200 p-12 rounded-lg">
                 <h1 class="text-4xl font-bold mb-4 text-gray-900">V1 Intelligence Platform</h1>
                 <p class="text-xl mb-8 text-gray-600">Technical Architecture Guide</p>
                 
                 <div class="grid grid-cols-2 gap-6 text-left mt-8">
-                    <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="border border-gray-200 p-4 rounded-lg">
                         <h3 class="font-semibold mb-2 text-gray-800">Buyer Group Discovery</h3>
                         <p class="text-sm text-gray-600">Find complete buyer groups with AI insights</p>
                     </div>
-                    <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="border border-gray-200 p-4 rounded-lg">
                         <h3 class="font-semibold mb-2 text-gray-800">Role Discovery</h3>
                         <p class="text-sm text-gray-600">Find people by role across companies</p>
                     </div>
-                    <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="border border-gray-200 p-4 rounded-lg">
                         <h3 class="font-semibold mb-2 text-gray-800">Person Research</h3>
                         <p class="text-sm text-gray-600">Deep intelligence on specific people</p>
                     </div>
-                    <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="border border-gray-200 p-4 rounded-lg">
                         <h3 class="font-semibold mb-2 text-gray-800">Company Discovery</h3>
                         <p class="text-sm text-gray-600">Find companies matching your ICP</p>
                     </div>
@@ -71,21 +72,21 @@
 
             <!-- 4 Main Pipelines -->
             <div class="grid grid-cols-4 gap-3 mb-4">
-                <div class="bg-blue-600 text-white p-3 rounded text-center">
+                <div class="bg-gray-900 text-white p-3 rounded text-center">
                     <div class="font-semibold text-sm">Role Discovery</div>
-                    <div class="text-xs mt-1 opacity-90">/role/discover</div>
+                    <div class="text-xs mt-1 text-gray-300">/role/discover</div>
                 </div>
-                <div class="bg-green-600 text-white p-3 rounded text-center">
+                <div class="bg-gray-900 text-white p-3 rounded text-center">
                     <div class="font-semibold text-sm">Buyer Group</div>
-                    <div class="text-xs mt-1 opacity-90">/buyer-group</div>
+                    <div class="text-xs mt-1 text-gray-300">/buyer-group</div>
                 </div>
-                <div class="bg-orange-600 text-white p-3 rounded text-center">
+                <div class="bg-gray-900 text-white p-3 rounded text-center">
                     <div class="font-semibold text-sm">Person Research</div>
-                    <div class="text-xs mt-1 opacity-90">/person/research</div>
+                    <div class="text-xs mt-1 text-gray-300">/person/research</div>
                 </div>
-                <div class="bg-red-600 text-white p-3 rounded text-center">
+                <div class="bg-gray-900 text-white p-3 rounded text-center">
                     <div class="font-semibold text-sm">Company Discovery</div>
-                    <div class="text-xs mt-1 opacity-90">/company/discover</div>
+                    <div class="text-xs mt-1 text-gray-300">/company/discover</div>
                 </div>
             </div>
 
@@ -95,23 +96,23 @@
             <div class="bg-gray-50 p-4 rounded-lg mb-4">
                 <h3 class="font-semibold text-center mb-3 text-gray-800">External Data Sources</h3>
                 <div class="grid grid-cols-5 gap-2">
-                    <div class="bg-white p-2 rounded text-center text-xs">
+                    <div class="bg-white border border-gray-200 p-2 rounded text-center text-xs">
                         <div class="font-medium">CoreSignal</div>
                         <div class="text-gray-500">B2B Data</div>
                     </div>
-                    <div class="bg-white p-2 rounded text-center text-xs">
+                    <div class="bg-white border border-gray-200 p-2 rounded text-center text-xs">
                         <div class="font-medium">Lusha</div>
                         <div class="text-gray-500">Contacts</div>
                     </div>
-                    <div class="bg-white p-2 rounded text-center text-xs">
+                    <div class="bg-white border border-gray-200 p-2 rounded text-center text-xs">
                         <div class="font-medium">PDL</div>
                         <div class="text-gray-500">People Data</div>
                     </div>
-                    <div class="bg-white p-2 rounded text-center text-xs">
+                    <div class="bg-white border border-gray-200 p-2 rounded text-center text-xs">
                         <div class="font-medium">Perplexity</div>
                         <div class="text-gray-500">AI Research</div>
                     </div>
-                    <div class="bg-white p-2 rounded text-center text-xs">
+                    <div class="bg-white border border-gray-200 p-2 rounded text-center text-xs">
                         <div class="font-medium">Claude AI</div>
                         <div class="text-gray-500">Intelligence</div>
                     </div>
@@ -121,27 +122,27 @@
             <div class="flow-arrow">↓</div>
 
             <!-- Database -->
-            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h3 class="font-semibold text-center mb-3 text-blue-900">PostgreSQL Database (JSONB Optimized)</h3>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <h3 class="font-semibold text-center mb-3 text-gray-800">PostgreSQL Database (JSONB Optimized)</h3>
                 <div class="grid grid-cols-3 gap-3">
-                    <div class="bg-white p-3 rounded shadow-sm">
-                        <div class="font-semibold text-blue-900 text-sm">People Table</div>
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-gray-900 text-sm">People Table</div>
                         <div class="text-xs text-gray-600 mt-1">
                             aiIntelligence (JSONB)<br>
                             dataQualityScore<br>
                             buyerGroupRole
                         </div>
                     </div>
-                    <div class="bg-white p-3 rounded shadow-sm">
-                        <div class="font-semibold text-blue-900 text-sm">Companies Table</div>
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-gray-900 text-sm">Companies Table</div>
                         <div class="text-xs text-gray-600 mt-1">
                             aiIntelligence (JSONB)<br>
                             employeeCountChange<br>
                             fundingRounds
                         </div>
                     </div>
-                    <div class="bg-white p-3 rounded shadow-sm">
-                        <div class="font-semibold text-blue-900 text-sm">Cost Tracking</div>
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-gray-900 text-sm">Cost Tracking</div>
                         <div class="text-xs text-gray-600 mt-1">
                             api_cost_tracking<br>
                             research_data<br>
@@ -157,53 +158,48 @@
     <div class="page-break"></div>
 
     <!-- Pipeline 1: Buyer Group Discovery -->
-    <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-gray-900">Pipeline 1: Buyer Group Discovery 🎯</h1>
+    <div class="max-w-6xl mx-auto">
+        <h1 class="section-header">Pipeline 1: Buyer Group Discovery</h1>
         
         <div class="card mb-8">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="gradient-green text-white w-16 h-16 rounded-xl flex items-center justify-center text-3xl">🎯</div>
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Find Complete Buyer Groups</h2>
-                    <p class="text-gray-600">Discover and analyze the complete buying committee for any company</p>
-                </div>
-            </div>
+            <h2 class="subsection-header">Find Complete Buyer Groups</h2>
+            <p class="text-gray-600 mb-6">Discover and analyze the complete buying committee for any company</p>
 
             <!-- Progressive Enrichment Levels -->
-            <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-xl mb-6">
-                <h3 class="font-bold mb-4 text-gray-800">Progressive Enrichment Levels</h3>
+            <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-800">Progressive Enrichment Levels</h3>
                 <div class="grid grid-cols-3 gap-4">
-                    <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="font-bold text-green-600">Level 1: IDENTIFY</span>
-                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">~$0.10</span>
+                            <span class="font-semibold text-gray-700">Level 1: IDENTIFY</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">~$0.10</span>
                         </div>
                         <div class="text-sm text-gray-600 space-y-1">
-                            <div>⚡ Speed: &lt;5 seconds</div>
-                            <div>📊 Data: Names, titles, departments</div>
-                            <div>🎯 Use: "Show me the buyer group"</div>
+                            <div>Speed: &lt;5 seconds</div>
+                            <div>Data: Names, titles, departments</div>
+                            <div>Use: "Show me the buyer group"</div>
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="font-bold text-blue-600">Level 2: ENRICH</span>
-                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">~$2-3</span>
+                            <span class="font-semibold text-gray-700">Level 2: ENRICH</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">~$2-3</span>
                         </div>
                         <div class="text-sm text-gray-600 space-y-1">
-                            <div>⚡ Speed: &lt;30 seconds</div>
-                            <div>📊 Data: + Verified contacts</div>
-                            <div>🎯 Use: "I need to reach them"</div>
+                            <div>Speed: &lt;30 seconds</div>
+                            <div>Data: + Verified contacts</div>
+                            <div>Use: "I need to reach them"</div>
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="font-bold text-purple-600">Level 3: DEEP RESEARCH</span>
-                            <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">~$5-8</span>
+                            <span class="font-semibold text-gray-700">Level 3: DEEP RESEARCH</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">~$5-8</span>
                         </div>
                         <div class="text-sm text-gray-600 space-y-1">
-                            <div>⚡ Speed: &lt;2 minutes</div>
-                            <div>📊 Data: + AI insights & intelligence</div>
-                            <div>🎯 Use: "Tell me everything"</div>
+                            <div>Speed: &lt;2 minutes</div>
+                            <div>Data: + AI insights & intelligence</div>
+                            <div>Use: "Tell me everything"</div>
                         </div>
                     </div>
                 </div>
@@ -212,17 +208,17 @@
             <!-- Workflow Steps -->
             <div class="space-y-4">
                 <div class="flex items-start gap-4">
-                    <div class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">1</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Input Request</h4>
-                        <div class="bg-gray-50 p-3 rounded-lg mt-2 text-sm">
-                            <code>{ companyName: "Nike", enrichmentLevel: "enrich" }</code>
+                        <div class="code-block mt-2">
+                            { companyName: "Nike", enrichmentLevel: "enrich" }
                         </div>
                     </div>
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">2</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Progressive Enrichment Engine</h4>
                         <p class="text-sm text-gray-600 mt-1">Routes to appropriate enrichment level and fetches data from CoreSignal</p>
@@ -230,7 +226,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">3</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Contact Enrichment (Levels 2-3)</h4>
                         <p class="text-sm text-gray-600 mt-1">Enriches with verified emails, phones from Lusha/PDL</p>
@@ -238,7 +234,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">4</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">4</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">AI Intelligence (Level 3)</h4>
                         <p class="text-sm text-gray-600 mt-1">Generates wants, pains, outreach strategy using Perplexity AI & Claude</p>
@@ -246,11 +242,11 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">5</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">5</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Database Storage</h4>
-                        <div class="bg-indigo-50 p-3 rounded-lg mt-2 text-sm">
-                            <div class="font-semibold text-indigo-900 mb-2">Stores in People Table:</div>
+                        <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg mt-2 text-sm">
+                            <div class="font-semibold text-gray-900 mb-2">Stores in People Table:</div>
                             <div class="space-y-1 text-xs">
                                 <div>• buyerGroupRole: "CFO"</div>
                                 <div>• influenceScore: 0.92</div>
@@ -262,11 +258,11 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">6</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">6</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Cost Tracking</h4>
-                        <div class="bg-yellow-50 p-3 rounded-lg mt-2 text-sm">
-                            <div>💰 Tracks: API calls, costs, budget usage</div>
+                        <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg mt-2 text-sm">
+                            <div>Tracks: API calls, costs, budget usage</div>
                             <div class="text-xs text-gray-600 mt-1">Auto-blocks at 100% budget, alerts at 80% & 95%</div>
                         </div>
                     </div>
@@ -274,9 +270,9 @@
             </div>
 
             <!-- Output Example -->
-            <div class="bg-green-50 p-6 rounded-xl mt-6">
-                <h3 class="font-bold mb-4 text-green-900">Output Example</h3>
-                <div class="bg-white p-4 rounded-lg shadow-sm">
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Output Example</h3>
+                <div class="bg-white border border-gray-200 p-4 rounded">
                     <pre class="text-xs text-gray-800 overflow-x-auto">{
   "success": true,
   "buyerGroup": {
@@ -311,24 +307,19 @@
     <div class="page-break"></div>
 
     <!-- Pipeline 2: Role Discovery -->
-    <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-gray-900">Pipeline 2: Role Discovery 👤</h1>
+    <div class="max-w-6xl mx-auto">
+        <h1 class="section-header">Pipeline 2: Role Discovery</h1>
         
         <div class="card mb-8">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="gradient-blue text-white w-16 h-16 rounded-xl flex items-center justify-center text-3xl">👤</div>
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Find People by Role</h2>
-                    <p class="text-gray-600">AI-powered role discovery across multiple companies</p>
-                </div>
-            </div>
+            <h2 class="subsection-header">Find People by Role</h2>
+            <p class="text-gray-600 mb-6">AI-powered role discovery across multiple companies</p>
 
             <!-- AI Role Variation Generation -->
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl mb-6">
-                <h3 class="font-bold mb-4 text-gray-800">🤖 AI-Powered Role Variations</h3>
+            <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-800">AI-Powered Role Variations</h3>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="text-sm font-semibold text-blue-600 mb-2">Input: "CFO"</div>
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
+                        <div class="text-sm font-semibold text-gray-700 mb-2">Input: "CFO"</div>
                         <div class="text-xs text-gray-600 space-y-1">
                             <div>→ Chief Financial Officer</div>
                             <div>→ VP Finance</div>
@@ -337,8 +328,8 @@
                             <div>→ Financial Controller</div>
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="text-sm font-semibold text-blue-600 mb-2">Input: "CRO"</div>
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
+                        <div class="text-sm font-semibold text-gray-700 mb-2">Input: "CRO"</div>
                         <div class="text-xs text-gray-600 space-y-1">
                             <div>→ Chief Revenue Officer</div>
                             <div>→ VP Sales & Revenue</div>
@@ -353,7 +344,7 @@
             <!-- Workflow Steps -->
             <div class="space-y-4">
                 <div class="flex items-start gap-4">
-                    <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">1</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">AI Role Variation Generation</h4>
                         <p class="text-sm text-gray-600 mt-1">Uses Claude AI to generate role variations for better search coverage</p>
@@ -361,7 +352,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">2</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">People Discovery</h4>
                         <p class="text-sm text-gray-600 mt-1">Searches PDL, CoreSignal, Lusha using all role variations</p>
@@ -369,7 +360,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">3</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Contact Enrichment</h4>
                         <p class="text-sm text-gray-600 mt-1">Enriches with verified emails, phones, LinkedIn URLs</p>
@@ -377,7 +368,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">4</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">4</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Role Intelligence Scoring</h4>
                         <p class="text-sm text-gray-600 mt-1">Scores each person based on title relevance, seniority, company fit</p>
@@ -385,7 +376,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">5</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">5</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Filtering & Sorting</h4>
                         <p class="text-sm text-gray-600 mt-1">Filters by minimum score, sorts by relevance</p>
@@ -394,9 +385,9 @@
             </div>
 
             <!-- Output Example -->
-            <div class="bg-blue-50 p-6 rounded-xl mt-6">
-                <h3 class="font-bold mb-4 text-blue-900">Output Example</h3>
-                <div class="bg-white p-4 rounded-lg shadow-sm">
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Output Example</h3>
+                <div class="bg-white border border-gray-200 p-4 rounded">
                     <pre class="text-xs text-gray-800 overflow-x-auto">{
   "success": true,
   "people": [
@@ -426,25 +417,19 @@
     <div class="page-break"></div>
 
     <!-- Pipeline 3: Person Research -->
-    <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-gray-900">Pipeline 3: Person Research 🔍</h1>
+    <div class="max-w-6xl mx-auto">
+        <h1 class="section-header">Pipeline 3: Person Research</h1>
         
         <div class="card mb-8">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="gradient-orange text-white w-16 h-16 rounded-xl flex items-center justify-center text-3xl">🔍</div>
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Deep Person Intelligence</h2>
-                    <p class="text-gray-600">Comprehensive research and AI insights on specific individuals</p>
-                </div>
-            </div>
+            <h2 class="subsection-header">Deep Person Intelligence</h2>
+            <p class="text-gray-600 mb-6">Comprehensive research and AI insights on specific individuals</p>
 
             <!-- AI Intelligence Components -->
-            <div class="bg-gradient-to-r from-orange-50 to-red-50 p-6 rounded-xl mb-6">
-                <h3 class="font-bold mb-4 text-gray-800">🤖 AI Intelligence Generated</h3>
+            <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-800">AI Intelligence Generated</h3>
                 <div class="grid grid-cols-3 gap-4">
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="text-lg mb-2">💭</div>
-                        <div class="font-semibold text-orange-600 mb-2">Wants</div>
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
+                        <div class="font-semibold text-gray-700 mb-2">Wants</div>
                         <div class="text-xs text-gray-600">
                             • Career aspirations<br>
                             • Professional goals<br>
@@ -452,9 +437,8 @@
                             • Opportunities of interest
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="text-lg mb-2">😟</div>
-                        <div class="font-semibold text-orange-600 mb-2">Pains</div>
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
+                        <div class="font-semibold text-gray-700 mb-2">Pains</div>
                         <div class="text-xs text-gray-600">
                             • Current challenges<br>
                             • Frustrations<br>
@@ -462,9 +446,8 @@
                             • Urgency level
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="text-lg mb-2">📧</div>
-                        <div class="font-semibold text-orange-600 mb-2">Outreach</div>
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
+                        <div class="font-semibold text-gray-700 mb-2">Outreach</div>
                         <div class="text-xs text-gray-600">
                             • Best approach<br>
                             • Value propositions<br>
@@ -478,17 +461,17 @@
             <!-- Workflow Steps -->
             <div class="space-y-4">
                 <div class="flex items-start gap-4">
-                    <div class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">1</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Input Validation</h4>
-                        <div class="bg-gray-50 p-3 rounded-lg mt-2 text-sm">
-                            <code>{ name: "John Smith", company: "Nike", linkedinUrl: "..." }</code>
+                        <div class="code-block mt-2">
+                            { name: "John Smith", company: "Nike", linkedinUrl: "..." }
                         </div>
                     </div>
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">2</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Person Resolution (PDL)</h4>
                         <p class="text-sm text-gray-600 mt-1">Fetches complete profile from People Data Labs</p>
@@ -496,7 +479,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">3</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Intelligence Analysis</h4>
                         <p class="text-sm text-gray-600 mt-1">Analyzes career history, relationships, behavioral signals</p>
@@ -504,7 +487,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">4</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">4</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">AI Intelligence Generation</h4>
                         <p class="text-sm text-gray-600 mt-1">Uses Claude AI to generate wants, pains, personalized outreach</p>
@@ -512,11 +495,11 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">5</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">5</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Database Storage</h4>
-                        <div class="bg-indigo-50 p-3 rounded-lg mt-2 text-sm">
-                            <div class="font-semibold text-indigo-900 mb-2">Stores AI Intelligence:</div>
+                        <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg mt-2 text-sm">
+                            <div class="font-semibold text-gray-900 mb-2">Stores AI Intelligence:</div>
                             <div class="space-y-1 text-xs">
                                 <div>• aiIntelligence: {"{wants, pains, outreach}"}</div>
                                 <div>• aiConfidence: 0.91</div>
@@ -528,9 +511,9 @@
             </div>
 
             <!-- Output Example -->
-            <div class="bg-orange-50 p-6 rounded-xl mt-6">
-                <h3 class="font-bold mb-4 text-orange-900">Output Example: AI Intelligence</h3>
-                <div class="bg-white p-4 rounded-lg shadow-sm">
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Output Example: AI Intelligence</h3>
+                <div class="bg-white border border-gray-200 p-4 rounded">
                     <pre class="text-xs text-gray-800 overflow-x-auto">{
   "aiIntelligence": {
     "wants": {
@@ -559,40 +542,31 @@
     <div class="page-break"></div>
 
     <!-- Pipeline 4: Company Discovery -->
-    <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-gray-900">Pipeline 4: Company Discovery 🏢</h1>
+    <div class="max-w-6xl mx-auto">
+        <h1 class="section-header">Pipeline 4: Company Discovery</h1>
         
         <div class="card mb-8">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="gradient-red text-white w-16 h-16 rounded-xl flex items-center justify-center text-3xl">🏢</div>
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Find Companies by ICP</h2>
-                    <p class="text-gray-600">People-centric company discovery with fit scoring</p>
-                </div>
-            </div>
+            <h2 class="subsection-header">Find Companies by ICP</h2>
+            <p class="text-gray-600 mb-6">People-centric company discovery with fit scoring</p>
 
             <!-- ICP Criteria -->
-            <div class="bg-gradient-to-r from-red-50 to-pink-50 p-6 rounded-xl mb-6">
-                <h3 class="font-bold mb-4 text-gray-800">🎯 ICP Matching Criteria</h3>
+            <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-800">ICP Matching Criteria</h3>
                 <div class="grid grid-cols-4 gap-4">
-                    <div class="bg-white p-3 rounded-lg shadow text-center">
-                        <div class="text-2xl mb-1">🏭</div>
-                        <div class="text-xs font-semibold">Industry</div>
+                    <div class="bg-white border border-gray-200 p-3 rounded-lg text-center">
+                        <div class="font-semibold text-sm text-gray-700">Industry</div>
                         <div class="text-xs text-gray-600 mt-1">Tech, Healthcare</div>
                     </div>
-                    <div class="bg-white p-3 rounded-lg shadow text-center">
-                        <div class="text-2xl mb-1">👥</div>
-                        <div class="text-xs font-semibold">Company Size</div>
+                    <div class="bg-white border border-gray-200 p-3 rounded-lg text-center">
+                        <div class="font-semibold text-sm text-gray-700">Company Size</div>
                         <div class="text-xs text-gray-600 mt-1">51-200, 201-500</div>
                     </div>
-                    <div class="bg-white p-3 rounded-lg shadow text-center">
-                        <div class="text-2xl mb-1">📍</div>
-                        <div class="text-xs font-semibold">Location</div>
+                    <div class="bg-white border border-gray-200 p-3 rounded-lg text-center">
+                        <div class="font-semibold text-sm text-gray-700">Location</div>
                         <div class="text-xs text-gray-600 mt-1">US, Canada</div>
                     </div>
-                    <div class="bg-white p-3 rounded-lg shadow text-center">
-                        <div class="text-2xl mb-1">💻</div>
-                        <div class="text-xs font-semibold">Technologies</div>
+                    <div class="bg-white border border-gray-200 p-3 rounded-lg text-center">
+                        <div class="font-semibold text-sm text-gray-700">Technologies</div>
                         <div class="text-xs text-gray-600 mt-1">Salesforce, HubSpot</div>
                     </div>
                 </div>
@@ -601,7 +575,7 @@
             <!-- Workflow Steps -->
             <div class="space-y-4">
                 <div class="flex items-start gap-4">
-                    <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">1</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Criteria Validation</h4>
                         <p class="text-sm text-gray-600 mt-1">Validates ICP criteria (industries, size, location, tech stack)</p>
@@ -609,7 +583,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">2</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Company Discovery</h4>
                         <p class="text-sm text-gray-600 mt-1">Searches CoreSignal, PDL, and other company databases</p>
@@ -617,7 +591,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">3</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Firmographic Filtering</h4>
                         <p class="text-sm text-gray-600 mt-1">Filters by employee count, revenue, industry classification</p>
@@ -625,30 +599,30 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">4</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">4</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Fit Score Calculation</h4>
-                        <div class="bg-white p-3 rounded-lg mt-2 border border-gray-200">
+                        <div class="bg-white border border-gray-200 p-3 rounded-lg mt-2">
                             <div class="text-xs space-y-1">
                                 <div class="flex justify-between">
                                     <span>Industry Match:</span>
-                                    <span class="font-semibold text-red-600">90/100</span>
+                                    <span class="font-semibold text-gray-700">90/100</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span>Size Match:</span>
-                                    <span class="font-semibold text-red-600">80/100</span>
+                                    <span class="font-semibold text-gray-700">80/100</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span>Technology Match:</span>
-                                    <span class="font-semibold text-red-600">85/100</span>
+                                    <span class="font-semibold text-gray-700">85/100</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span>Location Match:</span>
-                                    <span class="font-semibold text-red-600">90/100</span>
+                                    <span class="font-semibold text-gray-700">90/100</span>
                                 </div>
                                 <div class="border-t pt-1 mt-1 flex justify-between font-bold">
                                     <span>Overall Fit Score:</span>
-                                    <span class="text-red-600">85/100</span>
+                                    <span class="text-gray-700">85/100</span>
                                 </div>
                             </div>
                         </div>
@@ -656,7 +630,7 @@
                 </div>
 
                 <div class="flex items-start gap-4">
-                    <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">5</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">5</div>
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Sorting & Limiting</h4>
                         <p class="text-sm text-gray-600 mt-1">Sorts by fit score (highest first), applies result limits</p>
@@ -665,9 +639,9 @@
             </div>
 
             <!-- Output Example -->
-            <div class="bg-red-50 p-6 rounded-xl mt-6">
-                <h3 class="font-bold mb-4 text-red-900">Output Example</h3>
-                <div class="bg-white p-4 rounded-lg shadow-sm">
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Output Example</h3>
+                <div class="bg-white border border-gray-200 p-4 rounded">
                     <pre class="text-xs text-gray-800 overflow-x-auto">{
   "success": true,
   "companies": [
@@ -702,23 +676,23 @@
     <div class="page-break"></div>
 
     <!-- Cost Protection System -->
-    <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-gray-900">Cost Protection System 💰</h1>
+    <div class="max-w-6xl mx-auto">
+        <h1 class="section-header">Cost Protection System</h1>
         
         <div class="card mb-8">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Enterprise-Grade Budget Enforcement</h2>
+            <h2 class="subsection-header">Enterprise-Grade Budget Enforcement</h2>
             
             <!-- Budget Limits -->
-            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-xl mb-6">
-                <h3 class="font-bold mb-4 text-gray-800">Default Budget Limits</h3>
+            <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-800">Default Budget Limits</h3>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <div class="text-4xl font-bold text-yellow-600 mb-2">$50</div>
+                    <div class="bg-white border border-gray-200 p-6 rounded-lg">
+                        <div class="text-4xl font-bold text-gray-900 mb-2">$50</div>
                         <div class="text-sm font-semibold text-gray-700">Daily Limit</div>
                         <div class="text-xs text-gray-600 mt-2">Resets every 24 hours</div>
                     </div>
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <div class="text-4xl font-bold text-orange-600 mb-2">$1,000</div>
+                    <div class="bg-white border border-gray-200 p-6 rounded-lg">
+                        <div class="text-4xl font-bold text-gray-900 mb-2">$1,000</div>
                         <div class="text-sm font-semibold text-gray-700">Monthly Limit</div>
                         <div class="text-xs text-gray-600 mt-2">Resets on 1st of month</div>
                     </div>
@@ -726,27 +700,27 @@
             </div>
 
             <!-- Alert Thresholds -->
-            <div class="bg-gray-50 p-6 rounded-xl mb-6">
-                <h3 class="font-bold mb-4 text-gray-800">Alert Thresholds</h3>
+            <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-800">Alert Thresholds</h3>
                 <div class="space-y-3">
                     <div class="flex items-center gap-4">
-                        <div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg font-semibold w-24 text-center">80%</div>
+                        <div class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold w-24 text-center">80%</div>
                         <div class="flex-1">
-                            <div class="font-semibold text-gray-800">⚠️ Warning Alert</div>
+                            <div class="font-semibold text-gray-800">Warning Alert</div>
                             <div class="text-sm text-gray-600">Log warning, continue operation</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <div class="bg-orange-100 text-orange-800 px-4 py-2 rounded-lg font-semibold w-24 text-center">95%</div>
+                        <div class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold w-24 text-center">95%</div>
                         <div class="flex-1">
-                            <div class="font-semibold text-gray-800">🚨 Critical Alert</div>
+                            <div class="font-semibold text-gray-800">Critical Alert</div>
                             <div class="text-sm text-gray-600">Log critical alert, continue with caution</div>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <div class="bg-red-100 text-red-800 px-4 py-2 rounded-lg font-semibold w-24 text-center">100%</div>
+                        <div class="bg-gray-900 text-white px-4 py-2 rounded-lg font-semibold w-24 text-center">100%</div>
                         <div class="flex-1">
-                            <div class="font-semibold text-gray-800">🛑 Emergency Block</div>
+                            <div class="font-semibold text-gray-800">Emergency Block</div>
                             <div class="text-sm text-gray-600">Block all requests, return HTTP 429</div>
                         </div>
                     </div>
@@ -754,39 +728,39 @@
             </div>
 
             <!-- Cost Tracking Flow -->
-            <div class="bg-indigo-50 p-6 rounded-xl">
-                <h3 class="font-bold mb-4 text-indigo-900">Cost Tracking Flow</h3>
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <h3 class="font-semibold mb-4 text-gray-800">Cost Tracking Flow</h3>
                 <div class="space-y-3">
-                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
                         <div class="flex items-center gap-3">
-                            <div class="bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                            <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">1</div>
                             <div>
                                 <div class="font-semibold text-gray-800">Check Budget (Before API Call)</div>
                                 <code class="text-xs text-gray-600">const budget = await costTracker.checkBudget(workspaceId)</code>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
                         <div class="flex items-center gap-3">
-                            <div class="bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                            <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">2</div>
                             <div>
                                 <div class="font-semibold text-gray-800">Execute API Call (If Allowed)</div>
                                 <code class="text-xs text-gray-600">const result = await externalAPI.call()</code>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
                         <div class="flex items-center gap-3">
-                            <div class="bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                            <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">3</div>
                             <div>
                                 <div class="font-semibold text-gray-800">Track Cost (After API Call)</div>
                                 <code class="text-xs text-gray-600">await costTracker.trackCost({"{...}"})</code>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
                         <div class="flex items-center gap-3">
-                            <div class="bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">4</div>
+                            <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">4</div>
                             <div>
                                 <div class="font-semibold text-gray-800">Store in Database</div>
                                 <code class="text-xs text-gray-600">api_cost_tracking table</code>
@@ -799,8 +773,8 @@
 
         <!-- Cost Tracking Table Schema -->
         <div class="card">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Cost Tracking Database Schema</h2>
-            <div class="bg-gray-50 p-4 rounded-lg">
+            <h2 class="subsection-header">Cost Tracking Database Schema</h2>
+            <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg">
                 <pre class="text-xs text-gray-800 overflow-x-auto">model api_cost_tracking {
   id            String     // Unique ID
   workspaceId   String     // Which workspace
@@ -822,250 +796,83 @@
     <!-- Page Break -->
     <div class="page-break"></div>
 
-    <!-- Data Quality & AI Intelligence -->
-    <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-gray-900">Data Quality & AI Intelligence 🎯</h1>
-        
-        <!-- Data Quality Scoring -->
-        <div class="card mb-8">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Data Quality Scoring System</h2>
-            
-            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl mb-6">
-                <h3 class="font-bold mb-4 text-gray-800">Quality Score Components (0-100)</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="font-semibold text-green-600 mb-3">Email Confidence</div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
-                            </div>
-                            <span class="text-xs font-semibold">95%</span>
-                        </div>
-                        <div class="text-xs text-gray-600">A+ grade from Lusha</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="font-semibold text-green-600 mb-3">Phone Confidence</div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full" style="width: 87%"></div>
-                            </div>
-                            <span class="text-xs font-semibold">87%</span>
-                        </div>
-                        <div class="text-xs text-gray-600">Verified mobile number</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="font-semibold text-green-600 mb-3">LinkedIn Confidence</div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full" style="width: 92%"></div>
-                            </div>
-                            <span class="text-xs font-semibold">92%</span>
-                        </div>
-                        <div class="text-xs text-gray-600">Active profile match</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="font-semibold text-green-600 mb-3">Data Completeness</div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full" style="width: 89%"></div>
-                            </div>
-                            <span class="text-xs font-semibold">89%</span>
-                        </div>
-                        <div class="text-xs text-gray-600">Most fields populated</div>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow mt-4">
-                    <div class="flex items-center justify-between">
-                        <div class="font-bold text-gray-800">Overall Data Quality Score</div>
-                        <div class="text-3xl font-bold text-green-600">91.2</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Data Sources Tracking -->
-            <div class="bg-blue-50 p-6 rounded-xl">
-                <h3 class="font-bold mb-4 text-blue-900">Data Source Tracking</h3>
-                <div class="bg-white p-4 rounded-lg shadow">
-                    <div class="text-sm mb-3 text-gray-700">All data sources are tracked for provenance and quality:</div>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">CoreSignal</span>
-                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Lusha</span>
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold">PDL</span>
-                        <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold">Perplexity AI</span>
-                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-semibold">Claude AI</span>
-                    </div>
-                    <div class="mt-3 text-xs text-gray-600">
-                        <code>dataSources: ["coresignal", "lusha", "pdl"]</code>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- AI Intelligence Storage -->
-        <div class="card">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">AI Intelligence Storage (JSONB)</h2>
-            
-            <div class="grid grid-cols-2 gap-6">
-                <!-- People Table -->
-                <div class="bg-indigo-50 p-6 rounded-xl">
-                    <h3 class="font-bold mb-4 text-indigo-900">People Table AI Fields</h3>
-                    <div class="bg-white p-4 rounded-lg shadow-sm">
-                        <pre class="text-xs text-gray-800 overflow-x-auto">{
-  aiIntelligence: {
-    wants: {
-      careerAspirations: [...],
-      professionalGoals: [...],
-      confidence: 0.89
-    },
-    pains: {
-      currentChallenges: [...],
-      urgencyLevel: "high",
-      confidence: 0.92
-    },
-    outreach: {
-      personalizedMessage: "..."
-    }
-  },
-  aiConfidence: 0.91,
-  aiLastUpdated: "2025-01-16"
-}</pre>
-                    </div>
-                </div>
-
-                <!-- Companies Table -->
-                <div class="bg-purple-50 p-6 rounded-xl">
-                    <h3 class="font-bold mb-4 text-purple-900">Companies Table AI Fields</h3>
-                    <div class="bg-white p-4 rounded-lg shadow-sm">
-                        <pre class="text-xs text-gray-800 overflow-x-auto">{
-  aiIntelligence: {
-    marketPosition: "...",
-    opportunities: [
-      "Digital transformation",
-      "International expansion"
-    ],
-    threats: [
-      "Supply chain disruption"
-    ],
-    strategicInsights: "..."
-  },
-  aiConfidence: 0.88,
-  dataQualityScore: 92.1
-}</pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- JSONB Performance -->
-            <div class="bg-yellow-50 p-6 rounded-xl mt-6">
-                <h3 class="font-bold mb-4 text-yellow-900">⚡ JSONB Performance Benefits</h3>
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="bg-white p-4 rounded-lg shadow text-center">
-                        <div class="text-3xl font-bold text-yellow-600 mb-2">10-50x</div>
-                        <div class="text-sm font-semibold text-gray-700">Faster Queries</div>
-                        <div class="text-xs text-gray-600 mt-1">vs regular JSON</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow text-center">
-                        <div class="text-3xl font-bold text-yellow-600 mb-2">GIN</div>
-                        <div class="text-sm font-semibold text-gray-700">Index Support</div>
-                        <div class="text-xs text-gray-600 mt-1">Sub-second searches</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow text-center">
-                        <div class="text-3xl font-bold text-yellow-600 mb-2">Binary</div>
-                        <div class="text-sm font-semibold text-gray-700">Storage</div>
-                        <div class="text-xs text-gray-600 mt-1">More efficient</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Page Break -->
-    <div class="page-break"></div>
-
     <!-- Complete Example: "Find the CFO of Nike" -->
-    <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-gray-900">Complete Example: "Find the CFO of Nike" 🎯</h1>
+    <div class="max-w-6xl mx-auto">
+        <h1 class="section-header">Complete Example: "Find the CFO of Nike"</h1>
         
         <div class="card">
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-6 rounded-xl mb-6">
-                <h2 class="text-2xl font-bold mb-2">End-to-End Intelligence Flow</h2>
-                <p class="opacity-90">How the AI panel routes and processes a natural language query</p>
+            <div class="bg-gray-900 text-white p-6 rounded-lg mb-6">
+                <h2 class="text-xl font-semibold mb-2">End-to-End Intelligence Flow</h2>
+                <p class="text-gray-300">How the AI panel routes and processes a natural language query</p>
             </div>
 
             <!-- Complete Flow -->
             <div class="space-y-4">
                 <!-- Step 1 -->
-                <div class="bg-blue-50 p-6 rounded-xl">
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">1</div>
-                        <h3 class="text-xl font-bold text-blue-900">User Input (AI Chat Panel)</h3>
+                        <div class="bg-gray-900 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">1</div>
+                        <h3 class="text-lg font-semibold text-gray-900">User Input (AI Chat Panel)</h3>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="flex items-center gap-3">
-                            <div class="text-3xl">💬</div>
-                            <div class="flex-1">
-                                <div class="text-lg font-semibold text-gray-800">"Find the CFO of Nike"</div>
-                                <div class="text-sm text-gray-600 mt-1">Natural language query from user</div>
-                            </div>
-                        </div>
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
+                        <div class="text-lg font-semibold text-gray-800">"Find the CFO of Nike"</div>
+                        <div class="text-sm text-gray-600 mt-1">Natural language query from user</div>
                     </div>
                 </div>
 
                 <!-- Step 2 -->
-                <div class="bg-green-50 p-6 rounded-xl">
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="bg-green-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">2</div>
-                        <h3 class="text-xl font-bold text-green-900">AI Intent Detection</h3>
+                        <div class="bg-gray-900 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">2</div>
+                        <h3 class="text-lg font-semibold text-gray-900">AI Intent Detection</h3>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
                         <div class="text-sm text-gray-700 mb-2">IntelligenceWorkflowHandler analyzes query:</div>
-                        <div class="bg-gray-50 p-3 rounded">
-                            <code class="text-xs">
-                                Intent: "find_people"<br>
-                                Entity: "CFO"<br>
-                                Company: "Nike"<br>
-                                → Routes to Role Discovery Pipeline
-                            </code>
+                        <div class="code-block">
+                            Intent: "find_people"<br>
+                            Entity: "CFO"<br>
+                            Company: "Nike"<br>
+                            → Routes to Role Discovery Pipeline
                         </div>
                     </div>
                 </div>
 
                 <!-- Step 3 -->
-                <div class="bg-purple-50 p-6 rounded-xl">
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="bg-purple-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">3</div>
-                        <h3 class="text-xl font-bold text-purple-900">Role Discovery Pipeline Execution</h3>
+                        <div class="bg-gray-900 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">3</div>
+                        <h3 class="text-lg font-semibold text-gray-900">Role Discovery Pipeline Execution</h3>
                     </div>
                     <div class="space-y-3">
-                        <div class="bg-white p-3 rounded-lg shadow-sm">
-                            <div class="font-semibold text-sm text-purple-900">3a. AI Role Variation Generation</div>
+                        <div class="bg-white border border-gray-200 p-3 rounded-lg">
+                            <div class="font-semibold text-sm text-gray-900">3a. AI Role Variation Generation</div>
                             <div class="text-xs text-gray-600 mt-1">CFO → ["Chief Financial Officer", "VP Finance", "Finance Director"]</div>
                         </div>
-                        <div class="bg-white p-3 rounded-lg shadow-sm">
-                            <div class="font-semibold text-sm text-purple-900">3b. People Discovery</div>
+                        <div class="bg-white border border-gray-200 p-3 rounded-lg">
+                            <div class="font-semibold text-sm text-gray-900">3b. People Discovery</div>
                             <div class="text-xs text-gray-600 mt-1">Search PDL, CoreSignal, Lusha for CFOs at Nike</div>
                         </div>
-                        <div class="bg-white p-3 rounded-lg shadow-sm">
-                            <div class="font-semibold text-sm text-purple-900">3c. Contact Enrichment</div>
+                        <div class="bg-white border border-gray-200 p-3 rounded-lg">
+                            <div class="font-semibold text-sm text-gray-900">3c. Contact Enrichment</div>
                             <div class="text-xs text-gray-600 mt-1">Get verified email, phone, LinkedIn from Lusha</div>
                         </div>
-                        <div class="bg-white p-3 rounded-lg shadow-sm">
-                            <div class="font-semibold text-sm text-purple-900">3d. AI Intelligence Generation</div>
+                        <div class="bg-white border border-gray-200 p-3 rounded-lg">
+                            <div class="font-semibold text-sm text-gray-900">3d. AI Intelligence Generation</div>
                             <div class="text-xs text-gray-600 mt-1">Generate wants, pains, personalized outreach with Claude AI</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Step 4 -->
-                <div class="bg-orange-50 p-6 rounded-xl">
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="bg-orange-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">4</div>
-                        <h3 class="text-xl font-bold text-orange-900">Database Storage</h3>
+                        <div class="bg-gray-900 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">4</div>
+                        <h3 class="text-lg font-semibold text-gray-900">Database Storage</h3>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="text-sm font-semibold text-orange-900 mb-3">Stored in People Table (JSONB):</div>
-                        <div class="bg-gray-50 p-3 rounded">
-                            <pre class="text-xs text-gray-800">{
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
+                        <div class="text-sm font-semibold text-gray-900 mb-3">Stored in People Table (JSONB):</div>
+                        <div class="code-block">
+                            {
   name: "John Smith",
   title: "CFO",
   company: "Nike",
@@ -1078,28 +885,28 @@
   },
   dataQualityScore: 91.2,
   dataSources: ["pdl", "lusha", "coresignal"]
-}</pre>
+}
                         </div>
                     </div>
                 </div>
 
                 <!-- Step 5 -->
-                <div class="bg-yellow-50 p-6 rounded-xl">
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="bg-yellow-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">5</div>
-                        <h3 class="text-xl font-bold text-yellow-900">Cost Tracking</h3>
+                        <div class="bg-gray-900 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">5</div>
+                        <h3 class="text-lg font-semibold text-gray-900">Cost Tracking</h3>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="text-sm font-semibold text-yellow-900 mb-3">Stored in api_cost_tracking:</div>
-                        <div class="bg-gray-50 p-3 rounded">
-                            <pre class="text-xs text-gray-800">{
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
+                        <div class="text-sm font-semibold text-gray-900 mb-3">Stored in api_cost_tracking:</div>
+                        <div class="code-block">
+                            {
   apiProvider: "lusha",
   operation: "enrich_person",
   cost: 0.15,
   entityType: "person",
   success: true,
   workspaceId: "ws123"
-}</pre>
+}
                         </div>
                         <div class="mt-3 text-sm text-gray-600">
                             Total cost: $0.35 (PDL: $0.12 + Lusha: $0.15 + Claude: $0.08)
@@ -1108,54 +915,49 @@
                 </div>
 
                 <!-- Step 6 -->
-                <div class="bg-indigo-50 p-6 rounded-xl">
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="bg-indigo-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">6</div>
-                        <h3 class="text-xl font-bold text-indigo-900">AI Response to User</h3>
+                        <div class="bg-gray-900 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">6</div>
+                        <h3 class="text-lg font-semibold text-gray-900">AI Response to User</h3>
                     </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <div class="flex items-start gap-3">
-                            <div class="text-3xl">🤖</div>
-                            <div class="flex-1">
-                                <div class="text-sm text-gray-800 leading-relaxed">
-                                    <p class="mb-2"><strong>I found the CFO of Nike:</strong></p>
-                                    <p class="mb-2"><strong>John Smith</strong> - Chief Financial Officer</p>
-                                    <p class="mb-2">📧 john.smith@nike.com<br>📱 +1-555-0123</p>
-                                    <p class="mb-2"><strong>Key Insights:</strong></p>
-                                    <ul class="list-disc list-inside text-xs space-y-1">
-                                        <li>Wants: Cost optimization, process efficiency</li>
-                                        <li>Pains: Budget constraints, manual processes</li>
-                                        <li>Best approach: Focus on ROI and automation benefits</li>
-                                    </ul>
-                                    <p class="mt-2 text-xs bg-green-50 p-2 rounded">
-                                        <strong>Suggested outreach:</strong> "Hi John, I noticed Nike is focused on cost optimization. Our platform helps CFOs reduce manual processes by 80% and improve ROI tracking..."
-                                    </p>
-                                </div>
-                            </div>
+                    <div class="bg-white border border-gray-200 p-4 rounded-lg">
+                        <div class="text-sm text-gray-800 leading-relaxed">
+                            <p class="mb-2"><strong>I found the CFO of Nike:</strong></p>
+                            <p class="mb-2"><strong>John Smith</strong> - Chief Financial Officer</p>
+                            <p class="mb-2">john.smith@nike.com • +1-555-0123</p>
+                            <p class="mb-2"><strong>Key Insights:</strong></p>
+                            <ul class="list-disc list-inside text-xs space-y-1">
+                                <li>Wants: Cost optimization, process efficiency</li>
+                                <li>Pains: Budget constraints, manual processes</li>
+                                <li>Best approach: Focus on ROI and automation benefits</li>
+                            </ul>
+                            <p class="mt-2 text-xs bg-gray-50 p-2 rounded">
+                                <strong>Suggested outreach:</strong> "Hi John, I noticed Nike is focused on cost optimization. Our platform helps CFOs reduce manual processes by 80% and improve ROI tracking..."
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Summary Stats -->
-            <div class="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-6 rounded-xl mt-6">
-                <h3 class="font-bold mb-4">Complete Flow Summary</h3>
+            <div class="bg-gray-900 text-white p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4">Complete Flow Summary</h3>
                 <div class="grid grid-cols-4 gap-4">
                     <div class="text-center">
                         <div class="text-3xl font-bold">2.1s</div>
-                        <div class="text-sm opacity-90">Total Time</div>
+                        <div class="text-sm text-gray-300">Total Time</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold">$0.35</div>
-                        <div class="text-sm opacity-90">Total Cost</div>
+                        <div class="text-sm text-gray-300">Total Cost</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold">3</div>
-                        <div class="text-sm opacity-90">APIs Called</div>
+                        <div class="text-sm text-gray-300">APIs Called</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold">91%</div>
-                        <div class="text-sm opacity-90">Data Quality</div>
+                        <div class="text-sm text-gray-300">Data Quality</div>
                     </div>
                 </div>
             </div>
@@ -1166,75 +968,62 @@
     <div class="page-break"></div>
 
     <!-- Summary & Next Steps -->
-    <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-8 text-gray-900">Summary & Production Readiness ✅</h1>
+    <div class="max-w-6xl mx-auto">
+        <h1 class="section-header">Summary & Production Readiness</h1>
         
         <div class="card mb-8">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Complete V1 Intelligence Platform</h2>
+            <h2 class="subsection-header">Complete V1 Intelligence Platform</h2>
             
             <!-- 4 Pipelines Summary -->
             <div class="grid grid-cols-2 gap-6 mb-8">
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="text-3xl">👤</div>
-                        <h3 class="text-xl font-bold text-blue-900">Role Discovery</h3>
-                    </div>
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Role Discovery</h3>
                     <ul class="text-sm text-gray-700 space-y-1">
-                        <li>✅ AI-powered role variations</li>
-                        <li>✅ Multi-source people search</li>
-                        <li>✅ Contact enrichment</li>
-                        <li>✅ Role intelligence scoring</li>
+                        <li>AI-powered role variations</li>
+                        <li>Multi-source people search</li>
+                        <li>Contact enrichment</li>
+                        <li>Role intelligence scoring</li>
                     </ul>
                 </div>
 
-                <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="text-3xl">🎯</div>
-                        <h3 class="text-xl font-bold text-green-900">Buyer Group Discovery</h3>
-                    </div>
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Buyer Group Discovery</h3>
                     <ul class="text-sm text-gray-700 space-y-1">
-                        <li>✅ Progressive enrichment (3 levels)</li>
-                        <li>✅ Complete buyer group analysis</li>
-                        <li>✅ AI intelligence generation</li>
-                        <li>✅ Cost-optimized execution</li>
+                        <li>Progressive enrichment (3 levels)</li>
+                        <li>Complete buyer group analysis</li>
+                        <li>AI intelligence generation</li>
+                        <li>Cost-optimized execution</li>
                     </ul>
                 </div>
 
-                <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="text-3xl">🔍</div>
-                        <h3 class="text-xl font-bold text-orange-900">Person Research</h3>
-                    </div>
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Person Research</h3>
                     <ul class="text-sm text-gray-700 space-y-1">
-                        <li>✅ Deep person intelligence</li>
-                        <li>✅ Career & relationship analysis</li>
-                        <li>✅ AI wants/pains/outreach</li>
-                        <li>✅ Data quality scoring</li>
+                        <li>Deep person intelligence</li>
+                        <li>Career & relationship analysis</li>
+                        <li>AI wants/pains/outreach</li>
+                        <li>Data quality scoring</li>
                     </ul>
                 </div>
 
-                <div class="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="text-3xl">🏢</div>
-                        <h3 class="text-xl font-bold text-red-900">Company Discovery</h3>
-                    </div>
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Company Discovery</h3>
                     <ul class="text-sm text-gray-700 space-y-1">
-                        <li>✅ ICP-based discovery</li>
-                        <li>✅ Firmographic filtering</li>
-                        <li>✅ Fit score calculation</li>
-                        <li>✅ People-centric matching</li>
+                        <li>ICP-based discovery</li>
+                        <li>Firmographic filtering</li>
+                        <li>Fit score calculation</li>
+                        <li>People-centric matching</li>
                     </ul>
                 </div>
             </div>
 
             <!-- Production Ready Features -->
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-8 rounded-xl">
-                <h3 class="text-2xl font-bold mb-6">🚀 Production-Ready Features</h3>
+            <div class="bg-gray-900 text-white p-8 rounded-lg">
+                <h3 class="text-xl font-semibold mb-6">Production-Ready Features</h3>
                 <div class="grid grid-cols-3 gap-6">
                     <div>
-                        <div class="text-3xl mb-2">💰</div>
-                        <div class="font-bold mb-2">Cost Protection</div>
-                        <ul class="text-sm opacity-90 space-y-1">
+                        <div class="font-semibold mb-2">Cost Protection</div>
+                        <ul class="text-sm text-gray-300 space-y-1">
                             <li>• Budget enforcement</li>
                             <li>• Real-time tracking</li>
                             <li>• Auto-blocking at 100%</li>
@@ -1242,9 +1031,8 @@
                         </ul>
                     </div>
                     <div>
-                        <div class="text-3xl mb-2">🎯</div>
-                        <div class="font-bold mb-2">AI Intelligence</div>
-                        <ul class="text-sm opacity-90 space-y-1">
+                        <div class="font-semibold mb-2">AI Intelligence</div>
+                        <ul class="text-sm text-gray-300 space-y-1">
                             <li>• Wants/pains analysis</li>
                             <li>• Personalized outreach</li>
                             <li>• Claude & Perplexity</li>
@@ -1252,9 +1040,8 @@
                         </ul>
                     </div>
                     <div>
-                        <div class="text-3xl mb-2">📊</div>
-                        <div class="font-bold mb-2">Data Quality</div>
-                        <ul class="text-sm opacity-90 space-y-1">
+                        <div class="font-semibold mb-2">Data Quality</div>
+                        <ul class="text-sm text-gray-300 space-y-1">
                             <li>• Quality scoring (0-100)</li>
                             <li>• Source tracking</li>
                             <li>• Confidence metrics</li>
@@ -1267,24 +1054,24 @@
 
         <!-- Database Schema Updates -->
         <div class="card mb-8">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Database Schema Updates (Zero Data Loss)</h2>
+            <h2 class="subsection-header">Database Schema Updates (Zero Data Loss)</h2>
             <div class="grid grid-cols-2 gap-6">
-                <div class="bg-indigo-50 p-6 rounded-xl">
-                    <h3 class="font-bold text-indigo-900 mb-4">New Fields Added</h3>
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                    <h3 class="font-semibold text-gray-900 mb-4">New Fields Added</h3>
                     <div class="space-y-2 text-sm">
-                        <div>✅ <strong>People Table:</strong> 19 new fields</div>
-                        <div>✅ <strong>Companies Table:</strong> 16 new fields</div>
-                        <div>✅ <strong>New Tables:</strong> api_cost_tracking, research_data</div>
-                        <div>✅ <strong>Indexes:</strong> 11 new GIN indexes for JSONB</div>
+                        <div><strong>People Table:</strong> 19 new fields</div>
+                        <div><strong>Companies Table:</strong> 16 new fields</div>
+                        <div><strong>New Tables:</strong> api_cost_tracking, research_data</div>
+                        <div><strong>Indexes:</strong> 11 new GIN indexes for JSONB</div>
                     </div>
                 </div>
-                <div class="bg-green-50 p-6 rounded-xl">
-                    <h3 class="font-bold text-green-900 mb-4">Migration Safety</h3>
+                <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                    <h3 class="font-semibold text-gray-900 mb-4">Migration Safety</h3>
                     <div class="space-y-2 text-sm">
-                        <div>✅ All changes additive (ADD COLUMN)</div>
-                        <div>✅ All new fields nullable</div>
-                        <div>✅ Existing data preserved (21,450+ records)</div>
-                        <div>✅ Used safe <code>prisma db push</code></div>
+                        <div>All changes additive (ADD COLUMN)</div>
+                        <div>All new fields nullable</div>
+                        <div>Existing data preserved (21,450+ records)</div>
+                        <div>Used safe <code>prisma db push</code></div>
                     </div>
                 </div>
             </div>
@@ -1292,31 +1079,31 @@
 
         <!-- Next Steps -->
         <div class="card">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Next Steps</h2>
+            <h2 class="subsection-header">Next Steps</h2>
             <div class="space-y-4">
                 <div class="flex items-start gap-4">
-                    <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">1</div>
                     <div>
                         <div class="font-semibold text-gray-800">Restart Dev Server</div>
                         <div class="text-sm text-gray-600">Prisma client will auto-regenerate with new types</div>
                     </div>
                 </div>
                 <div class="flex items-start gap-4">
-                    <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">2</div>
                     <div>
                         <div class="font-semibold text-gray-800">Integration Testing</div>
                         <div class="text-sm text-gray-600">Test all 4 pipelines with mocked APIs</div>
                     </div>
                 </div>
                 <div class="flex items-start gap-4">
-                    <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">3</div>
                     <div>
                         <div class="font-semibold text-gray-800">Monitor Performance</div>
                         <div class="text-sm text-gray-600">Track JSONB query performance and API costs</div>
                     </div>
                 </div>
                 <div class="flex items-start gap-4">
-                    <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">4</div>
+                    <div class="bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0 text-sm">4</div>
                     <div>
                         <div class="font-semibold text-gray-800">Production Deployment</div>
                         <div class="text-sm text-gray-600">Deploy with confidence - all safeguards in place!</div>
@@ -1330,59 +1117,71 @@
     <div class="page-break"></div>
     <div class="min-h-screen flex items-center justify-center">
         <div class="text-center">
-            <div class="gradient-bg text-white p-16 rounded-3xl shadow-2xl max-w-4xl">
-                <h1 class="text-6xl font-bold mb-6">✅ All Systems Ready!</h1>
-                <div class="text-2xl mb-8 opacity-90">V1 Intelligence Platform is Production Ready</div>
+            <div class="border border-gray-200 p-16 rounded-lg max-w-4xl">
+                <h1 class="text-4xl font-bold mb-6 text-gray-900">All Systems Ready</h1>
+                <div class="text-xl mb-8 text-gray-600">V1 Intelligence Platform is Production Ready</div>
                 <div class="grid grid-cols-2 gap-8 text-left">
                     <div class="space-y-4">
                         <div class="flex items-center gap-3">
-                            <div class="text-3xl">✅</div>
+                            <div class="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                                <div class="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
                             <div>
-                                <div class="font-bold">4 Intelligence Pipelines</div>
-                                <div class="text-sm opacity-90">All operational & tested</div>
+                                <div class="font-semibold">4 Intelligence Pipelines</div>
+                                <div class="text-sm text-gray-600">All operational & tested</div>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <div class="text-3xl">✅</div>
+                            <div class="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                                <div class="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
                             <div>
-                                <div class="font-bold">Cost Protection</div>
-                                <div class="text-sm opacity-90">Budget enforcement active</div>
+                                <div class="font-semibold">Cost Protection</div>
+                                <div class="text-sm text-gray-600">Budget enforcement active</div>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <div class="text-3xl">✅</div>
+                            <div class="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                                <div class="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
                             <div>
-                                <div class="font-bold">AI Intelligence</div>
-                                <div class="text-sm opacity-90">Claude & Perplexity integrated</div>
+                                <div class="font-semibold">AI Intelligence</div>
+                                <div class="text-sm text-gray-600">Claude & Perplexity integrated</div>
                             </div>
                         </div>
                     </div>
                     <div class="space-y-4">
                         <div class="flex items-center gap-3">
-                            <div class="text-3xl">✅</div>
+                            <div class="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                                <div class="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
                             <div>
-                                <div class="font-bold">Database Schema</div>
-                                <div class="text-sm opacity-90">Optimized with JSONB</div>
+                                <div class="font-semibold">Database Schema</div>
+                                <div class="text-sm text-gray-600">Optimized with JSONB</div>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <div class="text-3xl">✅</div>
+                            <div class="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                                <div class="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
                             <div>
-                                <div class="font-bold">Data Quality</div>
-                                <div class="text-sm opacity-90">Real-time scoring & tracking</div>
+                                <div class="font-semibold">Data Quality</div>
+                                <div class="text-sm text-gray-600">Real-time scoring & tracking</div>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <div class="text-3xl">✅</div>
+                            <div class="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                                <div class="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
                             <div>
-                                <div class="font-bold">Zero Data Loss</div>
-                                <div class="text-sm opacity-90">Safe migration complete</div>
+                                <div class="font-semibold">Zero Data Loss</div>
+                                <div class="text-sm text-gray-600">Safe migration complete</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="mt-12 pt-8 border-t border-white/20">
-                    <p class="text-lg">Enterprise-Grade Intelligence • Cost Protected • AI-Powered</p>
+                <div class="mt-12 pt-8 border-t border-gray-200">
+                    <p class="text-lg text-gray-600">Enterprise-Grade Intelligence • Cost Protected • AI-Powered</p>
                 </div>
             </div>
         </div>

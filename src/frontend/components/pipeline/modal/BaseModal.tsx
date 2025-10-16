@@ -1,5 +1,6 @@
 import React from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useEscapeKey } from '@/platform/hooks/useEscapeKey';
 
 /**
  * BaseModal - Reusable modal component with configurable tabs
@@ -44,6 +45,9 @@ export function BaseModal({
   children
 }: BaseModalProps) {
   const [activeTab, setActiveTab] = React.useState(defaultTab || tabs?.[0]?.id || '');
+
+  // Handle ESC key to close modal
+  useEscapeKey(isOpen, onClose);
 
   // Reset active tab when modal opens
   React.useEffect(() => {
