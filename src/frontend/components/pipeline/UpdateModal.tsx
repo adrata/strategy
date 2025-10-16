@@ -443,9 +443,6 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     }
   }, [isOpen, record, initialTab, recordType]);
 
-
-  if (!isOpen) return null;
-
   const getSectionTitle = () => {
     switch (recordType) {
       case "leads":
@@ -518,6 +515,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       document.removeEventListener('keydown', handleKeyDown, false);
     };
   }, [isOpen, loading, handleSubmit]);
+
+  if (!isOpen) return null;
 
   const handleClose = () => {
     onClose();
