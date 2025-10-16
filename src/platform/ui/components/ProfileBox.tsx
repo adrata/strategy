@@ -1019,25 +1019,30 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 5. Grand Central - Available for all users */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={() => {
-            console.log("🚉 Grand Central clicked - navigating to grand-central");
-            setIsProfileOpen(false);
-            handleNavigation("./grand-central");
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e['key'] === "Enter") {
+        {/* 5. Grand Central - Restricted to admin users */}
+        {(() => {
+          const isAuthorized = authUser?.email && ADMIN_EMAILS.includes(authUser.email);
+          return isAuthorized;
+        })() && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+            onClick={() => {
+              console.log("🚉 Grand Central clicked - navigating to grand-central");
               setIsProfileOpen(false);
               handleNavigation("./grand-central");
-            }
-          }}
-        >
-          Grand Central
-        </div>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e['key'] === "Enter") {
+                setIsProfileOpen(false);
+                handleNavigation("./grand-central");
+              }
+            }}
+          >
+            Grand Central
+          </div>
+        )}
         
         {/* 6. Speedrun Engine Configuration - Available for all users */}
         {onSpeedrunEngineClick && (

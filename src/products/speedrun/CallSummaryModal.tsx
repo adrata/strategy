@@ -7,6 +7,7 @@ import {
   ChatBubbleLeftRightIcon,
   CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
+import { useEscapeKey } from '@/platform/hooks/useEscapeKey';
 
 interface CallSummaryModalProps {
   isOpen: boolean;
@@ -123,6 +124,9 @@ export function CallSummaryModal({
   );
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Handle ESC key to close modal
+  useEscapeKey(isOpen, onClose);
 
   const handleSubmit = async () => {
     if (!selectedOutcome) return;

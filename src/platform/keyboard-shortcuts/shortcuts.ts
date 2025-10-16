@@ -84,6 +84,19 @@ export const UNIVERSAL_SHORTCUTS: KeyboardShortcut[] = [
     ergonomics: 0.9,
   },
 
+  // Focus Search Input
+  {
+    id: "focus-search",
+    keys: ["/"],
+    description: "Focus search input",
+    category: "search",
+    context: ["global"],
+    platform: ["web", "desktop"],
+    action: "focus-search-input",
+    confidence: 0.95,
+    ergonomics: 0.95,
+  },
+
   // Panel Controls
   {
     id: "toggle-left-panel",

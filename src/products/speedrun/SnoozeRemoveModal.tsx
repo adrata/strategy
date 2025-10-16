@@ -7,6 +7,7 @@ import {
   TrashIcon,
   CalendarIcon,
 } from "@heroicons/react/24/outline";
+import { useEscapeKey } from '@/platform/hooks/useEscapeKey';
 import {
   SNOOZE_OPTIONS,
   type SnoozeOption,
