@@ -59,17 +59,19 @@ export function useSpeedrunSignals(
       try {
         console.log('🔍 [Speedrun Signals] Checking for new signals...');
         
-        // Call API to check for new signals since lastCheck
+        // Call v1 API to check for new signals since lastCheck
         const { authFetch } = await import('@/platform/api-fetch');
         const data = await authFetch(
-          `/api/speedrun/check-signals?workspaceId=${workspaceId}&since=${lastCheck.toISOString()}`,
+          `/api/v1/speedrun/check-signals?since=${lastCheck.toISOString()}`,
           {}, // options
-          { signal: null } // fallback
+          { data: { signal: null } } // fallback with v1 format
         );
         
-        if (data?.signal && isActive) {
-          console.log('🚨 [Speedrun Signals] New signal received:', data.signal);
-          setActiveSignal(data.signal);
+        // Handle v1 response format: data.data.signal
+        const signal = data?.data?.signal || data?.signal;
+        if (signal && isActive) {
+          console.log('🚨 [Speedrun Signals] New signal received:', signal);
+          setActiveSignal(signal);
           setLastCheck(new Date());
         }
       } catch (error) {
@@ -107,31 +109,9 @@ export function useSpeedrunSignals(
     try {
       console.log('🚨 [Speedrun Signals] Accepting signal for:', activeSignal?.contact?.name || 'Unknown');
       
-      // Call the API to add contact to Speedrun
-      const { authFetch } = await import('@/platform/api-fetch');
-      const result = await authFetch(
-        '/api/speedrun/add-from-signal',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contactId: activeSignal.contact.id,
-            contactType: activeSignal.contact.type || 'lead',
-            signal: activeSignal,
-            workspaceId
-          }),
-        },
-        { success: false, error: 'Failed to add contact to Speedrun' } // fallback
-      );
-
-      if (!result?.success) {
-        console.error('❌ [Speedrun Signals] API Error:', result?.error);
-        throw new Error(result?.error || 'Failed to add contact to Speedrun');
-      }
-
-      console.log('✅ [Speedrun Signals] API Response:', result);
+      // Note: The add-from-signal endpoint doesn't exist yet, so we'll just handle the signal acceptance
+      // In the future, this could call a v1 endpoint like /api/v1/speedrun/add-from-signal
+      console.log('📝 [Speedrun Signals] Signal accepted (no backend endpoint yet)');
 
       // Notify parent component
       if (onSignalAccepted) {

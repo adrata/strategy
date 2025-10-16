@@ -94,6 +94,10 @@ model workspaces {
   valuePropositions         String[]                    @default([])
   speedrunDailyTarget       Int?                        @default(50)
   speedrunWeeklyTarget      Int?                        @default(250)
+  // News feature configuration
+  newsEnabled               Boolean                     @default(false)
+  newsIndustries            String[]                    @default([])
+  newsSources               String[]                    @default([])
   oasis_channels            OasisChannel[]
   oasis_direct_messages     OasisDirectMessage[]
   stacks_projects           StacksProject[]
@@ -104,6 +108,7 @@ model workspaces {
   companies                 companies[]
   grand_central_connections grand_central_connections[]
   grand_central_workflows   grand_central_workflows[]
+  news_articles             news_articles[]
   people                    people[]
   user_roles                user_roles[]
   users                     users[]
@@ -317,6 +322,7 @@ model companies {
   nextActionUpdatedAt    DateTime?
   actions                actions[]
   mainSeller             users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
+  news_articles          news_articles[]
   workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   people                 people[]
 
@@ -459,6 +465,7 @@ model people {
   actions                actions[]
   company                companies?          @relation(fields: [companyId], references: [id])
   mainSeller             users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
+  news_articles          news_articles[]
   workspace              workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   coSellers              person_co_sellers[]
 
@@ -976,4 +983,50 @@ enum ChronicleReportType {
 enum MessageType {
   USER
   ASSISTANT
+}
+
+enum NewsCategory {
+  INDUSTRY
+  COMPANY
+  PERSON
+  GENERAL
+}
+
+/// News articles for workspace-specific news aggregation
+model news_articles {
+  id              String        @id @default(ulid())
+  workspaceId     String        @db.VarChar(30)
+  title           String
+  description     String?       @db.Text
+  content         String?       @db.Text
+  url             String
+  imageUrl        String?
+  publishedAt     DateTime
+  source          String        @db.VarChar(100)
+  author          String?
+  category        NewsCategory
+  relevanceScore  Float         @default(0)
+  
+  // Tagging for prioritization
+  relatedCompanyId String?      @db.VarChar(30)
+  relatedPersonId  String?      @db.VarChar(30)
+  industries      String[]      @default([])
+  tags            String[]      @default([])
+  
+  // Tracking
+  isRead          Boolean       @default(false)
+  isFavorite      Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime
+  
+  workspace       workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  company         companies?    @relation(fields: [relatedCompanyId], references: [id], onDelete: SetNull)
+  person          people?       @relation(fields: [relatedPersonId], references: [id], onDelete: SetNull)
+  
+  @@index([workspaceId, publishedAt])
+  @@index([workspaceId, category, relevanceScore])
+  @@index([relatedCompanyId])
+  @@index([relatedPersonId])
+  @@index([workspaceId, isRead])
+  @@index([workspaceId, isFavorite])
 }

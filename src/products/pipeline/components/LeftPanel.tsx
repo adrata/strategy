@@ -613,6 +613,15 @@ function PipelineSections({
       visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true)
     },
     {
+      id: "news",
+      name: "News",
+      description: "Stay informed",
+      count: loading ? (
+        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+      ) : productionCounts.news || 0,
+      visible: false // Hidden for now
+    },
+    {
       id: "leads",
       name: "Leads",
       description: "Cold relationships",

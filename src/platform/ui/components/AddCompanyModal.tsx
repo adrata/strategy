@@ -7,6 +7,7 @@ import { XMarkIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { authFetch } from '@/platform/api-fetch';
 import { getCategoryColors } from '@/platform/config/color-palette';
 import { useUnifiedAuth } from '@/platform/auth';
+import { CompanySelector } from '@/frontend/components/pipeline/CompanySelector';
 
 interface AddCompanyModalProps {
   isOpen: boolean;
@@ -31,6 +32,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
       });
     }
   }, [isOpen, section, user?.id, user?.email]);
+  const [selectedCompany, setSelectedCompany] = useState<any>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     website: "",
@@ -46,6 +49,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
       // Reset when closing
       console.log('🔄 [AddCompanyModal] Resetting state on modal close');
       setIsSubmitting(false);
+      setSelectedCompany(null);
+      setShowCreateForm(false);
       setFormData({
         name: "",
         website: "",
@@ -102,6 +107,14 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
     return () => document.removeEventListener('keydown', handleKeyDown, true);
   }, [isOpen, isSubmitting, formData.name]);
 
+  // Handle company selection from search
+  const handleCompanySelect = (company: any) => {
+    console.log('✅ [AddCompanyModal] Company selected from search:', company);
+    setSelectedCompany(company);
+    // Immediately call the callback with the selected company
+    onCompanyAdded(company);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -140,10 +153,13 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
       
       // Check if the response indicates success
       if (result && result.success && result.data) {
-        console.log('✅ [AddCompanyModal] Company created successfully', {
+        const isExisting = result.isExisting || false;
+        console.log('✅ [AddCompanyModal] Company operation successful:', {
+          isExisting,
           companyId: result.data.id,
           companyName: result.data.name,
-          mainSellerId: result.data.mainSellerId
+          mainSellerId: result.data.mainSellerId,
+          message: result.meta?.message
         });
         
         // Reset form
@@ -230,8 +246,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">Add New Company</h2>
-              <p className="text-sm text-[var(--muted)]">Create a new company</p>
+              <h2 className="text-xl font-bold text-[var(--foreground)]">Add Company</h2>
+              <p className="text-sm text-[var(--muted)]">Search or add a new company</p>
             </div>
           </div>
           <button
@@ -257,11 +273,47 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
             </div>
           )}
 
-          {/* Company Name */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Company Name *
-            </label>
+          {/* Company Search */}
+          {!showCreateForm && (
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                Search for Company
+              </label>
+              <CompanySelector
+                value={selectedCompany}
+                onChange={handleCompanySelect}
+                placeholder="Search or add company"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCreateForm(true)}
+                className="mt-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              >
+                Or create a new company →
+              </button>
+            </div>
+          )}
+
+          {/* Create New Company Form */}
+          {showCreateForm && (
+            <>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-[var(--foreground)]">Create New Company</h3>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateForm(false)}
+                  className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center gap-1"
+                >
+                  <ArrowLeftIcon className="w-3 h-3" />
+                  Back to search
+                </button>
+              </div>
+
+              {/* Company Name */}
+              <div>
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  Company Name *
+                </label>
             <input
               ref={nameInputRef}
               type="text"
@@ -295,22 +347,25 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
             />
           </div>
 
-          {/* Notes */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Notes
-            </label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder="Additional notes about this company"
-              rows={3}
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
-            />
-          </div>
+              {/* Notes */}
+              <div>
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  Notes
+                </label>
+                <textarea
+                  value={formData.notes}
+                  onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                  placeholder="Additional notes about this company"
+                  rows={3}
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+                />
+              </div>
+            </>
+          )}
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-3 pt-4">
+          {showCreateForm && (
+            <div className="flex items-center gap-3 pt-4">
             <button
               type="button"
               onClick={handleClose}
@@ -336,7 +391,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
             >
               {isSubmitting ? 'Adding...' : `Complete (${getCommonShortcut('SUBMIT')})`}
             </button>
-          </div>
+            </div>
+          )}
         </form>
       </div>
     </div>

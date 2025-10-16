@@ -148,7 +148,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   const profileBoxStyle: React.CSSProperties = {
     width: "320px",
     // Remove positioning - let parent container handle it
-    zIndex: 1000,
+    zIndex: 9999,
   };
 
   // Documentation items organized by category

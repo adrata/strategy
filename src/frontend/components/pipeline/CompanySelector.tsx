@@ -108,6 +108,13 @@ export function CompanySelector({
       currentResultsCount: searchResults.length
     });
     setSearchQuery(query);
+    
+    // Clear results immediately when query becomes empty
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    
     searchCompanies(query);
   };
 
@@ -118,6 +125,7 @@ export function CompanySelector({
     setSearchResults([]);
     setIsOpen(false);
     setShowAddForm(false);
+    setCreateError('');
   };
 
   // Handle adding new company
@@ -153,13 +161,20 @@ export function CompanySelector({
       console.log('🏢 [CompanySelector] Company creation response:', data);
 
       if (data.success && data.data) {
-        console.log('✅ [CompanySelector] Company created successfully, calling onChange:', data.data);
+        const isExisting = data.isExisting || false;
+        console.log('✅ [CompanySelector] Company operation successful:', {
+          isExisting,
+          company: data.data,
+          message: data.meta?.message
+        });
         onChange(data.data);
         setNewCompanyName('');
         setNewCompanyWebsite('');
         setShowAddForm(false);
         setIsOpen(false);
         setCreateError('');
+        setSearchQuery('');
+        setSearchResults([]);
         console.log('✅ [CompanySelector] Company selector state reset, dropdown closed');
       } else {
         const errorMsg = data.error || 'Failed to create company';
@@ -408,7 +423,7 @@ export function CompanySelector({
           {/* No Results */}
           {!isSearching && searchQuery.trim() && searchResults.length === 0 && !showAddForm && (
             <div className="px-4 py-2 text-sm text-[var(--muted)]">
-              No companies found. Click to add new company.
+              No companies found
             </div>
           )}
         </div>

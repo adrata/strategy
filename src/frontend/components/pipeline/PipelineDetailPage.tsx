@@ -48,6 +48,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const [directRecordError, setDirectRecordError] = useState<string | null>(null);
   const [lastLoadAttempt, setLastLoadAttempt] = useState<string | null>(null);
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
+  const [navigationTargetIndex, setNavigationTargetIndex] = useState<number | null>(null);
   
   // 🚀 UNIFIED LOADING: Track page transitions for smooth UX
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -631,6 +632,9 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         toIndex: currentIndex - 1
       });
       
+      // 🎯 FIX: Set navigation target index BEFORE navigation to prevent count flash
+      setNavigationTargetIndex(currentIndex - 1);
+      
       // Navigate to the previous record using URL (like the back arrow does)
       const recordName = previousRecord.fullName || previousRecord.name || previousRecord.firstName || 'record';
       navigateToPipelineItem(section, previousRecord.id, recordName);
@@ -668,6 +672,9 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         toIndex: currentIndex + 1
       });
       
+      // 🎯 FIX: Set navigation target index BEFORE navigation to prevent count flash
+      setNavigationTargetIndex(currentIndex + 1);
+      
       // Navigate to the next record using URL (like the back arrow does)
       const recordName = nextRecord.fullName || nextRecord.name || nextRecord.firstName || 'record';
       navigateToPipelineItem(section, nextRecord.id, recordName);
@@ -675,6 +682,23 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       console.log(`❌ [NAVIGATION] Cannot go next - already at last record (index: ${currentIndex}, total: ${data.length})`);
     }
   }, [data, selectedRecord, section, navigateToPipelineItem]);
+
+  // 🎯 FIX: Clear navigation target when record loads to prevent stale state
+  useEffect(() => {
+    if (selectedRecord && navigationTargetIndex !== null) {
+      // Verify the loaded record matches our expectation
+      const actualIndex = data.findIndex((r: any) => r.id === selectedRecord.id);
+      if (actualIndex >= 0) {
+        console.log(`🔍 [NAVIGATION CLEANUP] Clearing navigation target:`, {
+          selectedRecordId: selectedRecord.id,
+          actualIndex,
+          navigationTargetIndex,
+          recordName: selectedRecord.name || selectedRecord.fullName
+        });
+        setNavigationTargetIndex(null); // Clear once loaded
+      }
+    }
+  }, [selectedRecord, navigationTargetIndex, data]);
 
   // 🚀 LOADING SKELETON: Show skeleton during navigation transitions for better UX
   if (loading && !selectedRecord && !previousRecord) {
@@ -699,6 +723,18 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         record={recordToShow}
         recordType={section as any}
         recordIndex={(() => {
+          // 🎯 FIX: Use navigation target index if set to prevent count flash during transitions
+          if (navigationTargetIndex !== null) {
+            const targetIndex = navigationTargetIndex + 1; // +1 for 1-based display
+            console.log(`🔍 [NAVIGATION TARGET] Using target index:`, {
+              navigationTargetIndex,
+              targetIndex,
+              recordId: recordToShow?.id,
+              recordName: recordToShow?.name
+            });
+            return targetIndex;
+          }
+          
           // 🚀 SPEEDRUN FIX: For speedrun records, always use sequential position in the list
           // instead of database rank to ensure navigation works correctly
           if (section === 'speedrun') {
@@ -811,11 +847,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           return shouldRender;
         })() && profileAnchor && (
           <div
+            ref={profilePopupRef}
             style={{
               position: "fixed",
               left: profileAnchor.getBoundingClientRect().left,
               bottom: window.innerHeight - profileAnchor.getBoundingClientRect().top + 5,
-              zIndex: 1000,
+              zIndex: 9999,
             }}
           >
             <ProfileBox
@@ -874,11 +911,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
             return shouldRender;
           })() && profileAnchor && (
             <div
+              ref={profilePopupRef}
               style={{
                 position: "fixed",
                 left: profileAnchor.getBoundingClientRect().left,
                 bottom: window.innerHeight - profileAnchor.getBoundingClientRect().top + 5,
-                zIndex: 1000,
+                zIndex: 9999,
               }}
             >
               <ProfileBox

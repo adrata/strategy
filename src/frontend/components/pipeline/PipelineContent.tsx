@@ -346,9 +346,10 @@ export const PipelineContent = React.memo(function PipelineContent({
         return record.status || '';
       
       case 'rank':
+      case 'globalRank':
         // Handle rank field - prioritize winningScore.rank for alphanumeric display
         const winningRank = record.winningScore?.rank;
-        const fallbackRank = record.rank || record.stableIndex || 0;
+        const fallbackRank = record.rank || record.globalRank || record.stableIndex || 0;
         
         // 🎯 STRATEGIC RANKING: Use full alphanumeric rank for display and sorting
         if (winningRank && typeof winningRank === 'string') {
@@ -769,6 +770,8 @@ export const PipelineContent = React.memo(function PipelineContent({
   }, [section, sortField, sortDirection]);
 
   const handleColumnSort = useCallback((columnName: string) => {
+    console.log(`🔧 [PipelineContent] handleColumnSort called for section: ${section}, column: ${columnName}`);
+    
     // Map column display names to actual data field names (section-specific)
     const getFieldMapping = () => {
       const baseMap: Record<string, string> = {
@@ -785,7 +788,8 @@ export const PipelineContent = React.memo(function PipelineContent({
         'Last Action': 'lastActionDate',
         'Next Action': 'nextAction',
         'Amount': 'amount',
-        'Stage': 'stage'
+        'Stage': 'stage',
+        'Value': 'value' // Add Value mapping for opportunities
       };
 
       // Section-specific field mappings
@@ -801,6 +805,13 @@ export const PipelineContent = React.memo(function PipelineContent({
           'Amount': 'amount',
           'Stage': 'stage',
           'Last Action': 'lastActionDate',
+          'Value': 'value',
+        };
+      } else if (section === 'companies') {
+        return {
+          ...baseMap,
+          'Rank': 'globalRank', // Companies use globalRank instead of rank
+          'Company': 'name', // Companies use name field
         };
       } else {
         return {
@@ -813,7 +824,7 @@ export const PipelineContent = React.memo(function PipelineContent({
     const fieldMap = getFieldMapping();
     const field = fieldMap[columnName as keyof typeof fieldMap] || columnName.toLowerCase().replace(/\s+/g, '');
     
-    console.log(`🔧 Column sort: ${columnName} -> ${field}`);
+    console.log(`🔧 [PipelineContent] Column sort mapping: ${columnName} -> ${field}`);
     handleSortChange(field);
   }, [handleSortChange, section]);
 
@@ -1176,7 +1187,7 @@ export const PipelineContent = React.memo(function PipelineContent({
               position: "fixed",
               left: profileAnchor.getBoundingClientRect().left,
               bottom: window.innerHeight - profileAnchor.getBoundingClientRect().top + 5,
-              zIndex: 1000,
+              zIndex: 9999,
             }}
           >
             <ProfileBox

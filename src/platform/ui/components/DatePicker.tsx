@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { CalendarIcon, ClockIcon } from '@heroicons/react/24/outline';
 
 export interface DateOption {
@@ -68,6 +69,57 @@ export function DatePicker({
   const [selectedOption, setSelectedOption] = useState<DateOption | null>(null);
   const [customDate, setCustomDate] = useState('');
   const [customTime, setCustomTime] = useState('09:00');
+  const [isClient, setIsClient] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, positionAbove: false });
+  
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Client-side rendering check
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Calculate dropdown position
+  const calculatePosition = () => {
+    if (!triggerRef.current || !isClient) return;
+
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+    
+    // Estimate dropdown height (will be measured after render)
+    const estimatedDropdownHeight = 300; // Conservative estimate
+    const spaceBelow = viewportHeight - triggerRect.bottom;
+    const spaceAbove = triggerRect.top;
+    
+    // Determine if we should position above or below
+    const positionAbove = spaceBelow < estimatedDropdownHeight && spaceAbove > spaceBelow;
+    
+    // Calculate vertical position
+    const top = positionAbove 
+      ? triggerRect.top - estimatedDropdownHeight - 4
+      : triggerRect.bottom + 4;
+    
+    // Calculate horizontal position (center align, but keep within viewport)
+    let left = triggerRect.left;
+    const dropdownWidth = 280; // Estimated width
+    if (left + dropdownWidth > viewportWidth) {
+      left = viewportWidth - dropdownWidth - 16; // 16px margin from edge
+    }
+    if (left < 16) {
+      left = 16; // 16px margin from edge
+    }
+    
+    setDropdownPosition({ top, left, positionAbove });
+  };
+
+  // Recalculate position when dropdown opens
+  useEffect(() => {
+    if (isOpen && isClient) {
+      calculatePosition();
+    }
+  }, [isOpen, isClient]);
 
   // Format the display value
   const formatDisplayValue = (date: string | Date | undefined): string => {
@@ -126,6 +178,7 @@ export function DatePicker({
     <div className={`relative ${className}`}>
       {/* Clickable date display */}
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
@@ -146,8 +199,15 @@ export function DatePicker({
       </button>
 
       {/* Dropdown menu */}
-      {isOpen && !disabled && (
-        <div className="absolute z-50 mt-1 w-full bg-[var(--background)] border border-[var(--border)] rounded-md shadow-lg">
+      {isOpen && !disabled && isClient && createPortal(
+        <div 
+          ref={dropdownRef}
+          className="fixed z-[9999] w-72 bg-[var(--background)] border border-[var(--border)] rounded-md shadow-lg max-h-80 overflow-y-auto"
+          style={{
+            top: dropdownPosition.top,
+            left: dropdownPosition.left,
+          }}
+        >
           {/* Quick options */}
           <div className="p-2">
             <div className="text-xs font-medium text-[var(--muted)] mb-2 px-2">Quick Options</div>
@@ -218,15 +278,17 @@ export function DatePicker({
               className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Backdrop to close dropdown */}
-      {isOpen && (
+      {isOpen && isClient && createPortal(
         <div
-          className="fixed inset-0 z-40"
+          className="fixed inset-0 z-[9998]"
           onClick={() => setIsOpen(false)}
-        />
+        />,
+        document.body
       )}
     </div>
   );

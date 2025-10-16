@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-10-15T19:02:58.429Z",
+  "workspace": {
+    "id": "01K75ZD7DWHG1XF16HAF2YVKCK",
+    "name": "TOP Engineering Plus",
+    "slug": "top-engineering-plus"
+  },
+  "newsEnabled": true,
+  "configuration": {
+    "newsEnabled": true,
+    "newsIndustries": [
+      "Title Insurance",
+      "Real Estate",
+      "Legal Services",
+      "Property Management",
+      "Mortgage Services",
+      "Real Estate Technology"
+    ],
+    "newsSources": [
+      "perplexity",
+      "newsapi"
+    ]
+  },
+  "errors": [
+    "Failed to populate initial news: Cannot find package '@/lib' imported from C:\\Users\\ross\\Development\\adrata\\src\\platform\\services\\NewsAggregationService.ts"
+  ],
+  "success": false
+}

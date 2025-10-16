@@ -120,205 +120,181 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       return;
     }
     
-    // Get workspace and user IDs with fallbacks
-    const workspaceId = record.workspaceId || '01K5D01YCQJ9TJ7CT4DZDE79T1'; // TOP Engineering Plus workspace
-    const userId = record.assignedUserId || '01K1VBYZG41K9QA0D9CF06KNRG'; // Ross Sylvester user ID
-    
     console.log('🔍 [ACTIONS] Loading actions for record:', {
       id: record.id,
-      type: recordType,
-      workspaceId: workspaceId,
-      assignedUserId: userId,
-      recordWorkspaceId: record.workspaceId,
-      recordAssignedUserId: record.assignedUserId
+      type: recordType
     });
     
+    // ⚡ CACHE-FIRST: Check cache BEFORE setting loading state
+    const cacheKey = `actions-${record.id}`;
+    const cachedData = localStorage.getItem(cacheKey);
+    
+    let activityEvents: ActionEvent[] = [];
+    let noteEvents: ActionEvent[] = [];
+    
+    if (cachedData) {
+      try {
+        const parsed = JSON.parse(cachedData);
+        if (parsed.timestamp && Date.now() - parsed.timestamp < 180000) { // 3 minute cache
+          activityEvents = parsed.activities || [];
+          noteEvents = parsed.notes || [];
+          console.log('⚡ [ACTIONS] Using cached actions data');
+          
+          // Set cached data immediately and return - NO LOADING STATE
+          const combined = [...activityEvents, ...noteEvents];
+          const uniqueEvents = combined.filter((event, index, self) => 
+            index === self.findIndex(e => e.id === event.id)
+          );
+          const sortedEvents = uniqueEvents.sort((a, b) => {
+            const dateA = a.date instanceof Date ? a.date : new Date(a.date || 0);
+            const dateB = b.date instanceof Date ? b.date : new Date(b.date || 0);
+            return dateB.getTime() - dateA.getTime();
+          });
+          
+          console.log('⚡ [ACTIONS] Setting cached data immediately:', {
+            count: sortedEvents.length,
+            events: sortedEvents.map(e => ({ id: e.id, title: e.title, date: e.date }))
+          });
+          
+          setActionEvents(sortedEvents);
+          setLoading(false);
+          return; // Skip loading entirely when cache exists
+        }
+      } catch (e) {
+        console.log('Actions cache parse error, fetching fresh data');
+      }
+    }
+    
+    // Only reach here if no valid cache - now set loading state
     setLoading(true);
     try {
-      // ⚡ PERFORMANCE: Check cache first to avoid unnecessary API calls
-      const cacheKey = `actions-${record.id}`;
-      const cachedData = localStorage.getItem(cacheKey);
+      // Fetch fresh data since no valid cache exists
+      console.log('🔍 [ACTIONS] Fetching fresh actions data');
       
-      let activityEvents: ActionEvent[] = [];
-      let noteEvents: ActionEvent[] = [];
-      
-      if (cachedData) {
-        try {
-          const parsed = JSON.parse(cachedData);
-          if (parsed.timestamp && Date.now() - parsed.timestamp < 180000) { // 3 minute cache
-            activityEvents = parsed.activities || [];
-            noteEvents = parsed.notes || [];
-            console.log('⚡ [ACTIONS] Using cached actions data');
-          }
-        } catch (e) {
-          console.log('Actions cache parse error, fetching fresh data');
-        }
+      // Build the correct query parameters based on record type
+      let actionsQuery = '';
+      if (recordType === 'leads' || recordType === 'people' || recordType === 'prospects' || recordType === 'speedrun' || recordType === 'actions') {
+        actionsQuery = `personId=${record.id}`;
+      } else if (recordType === 'companies') {
+        actionsQuery = `companyId=${record.id}`;
+      } else {
+        // For other types, try both
+        actionsQuery = `personId=${record.id}&companyId=${record.id}`;
       }
       
-      // Only fetch if no cache or cache is stale
-      if (activityEvents.length === 0 && noteEvents.length === 0) {
-        console.log('🔍 [ACTIONS] Fetching fresh actions data');
-        
-        // Load activities for this specific record using v1 APIs
-        console.log('🔍 [ACTIONS] Fetching actions for record:', {
-          recordId: record.id,
-          recordType: recordType,
-          record: record,
-          recordKeys: Object.keys(record || {}),
-          recordWorkspaceId: record?.workspaceId,
-          recordAssignedUserId: record?.assignedUserId
-        });
-        
-        // Build the correct query parameters based on record type
-        let actionsQuery = '';
-        if (recordType === 'leads' || recordType === 'people' || recordType === 'prospects' || recordType === 'speedrun' || recordType === 'actions') {
-          actionsQuery = `personId=${record.id}`;
-        } else if (recordType === 'companies') {
-          actionsQuery = `companyId=${record.id}`;
-        } else {
-          // For other types, try both
-          actionsQuery = `personId=${record.id}&companyId=${record.id}`;
-        }
-        
-        console.log('🔍 [ACTIONS] Actions query:', actionsQuery);
-        console.log('🔍 [ACTIONS] Full API URL:', `/api/v1/actions?${actionsQuery}`);
-        
-        const [actionsResponse, peopleResponse, companiesResponse] = await Promise.all([
-          authFetch(`/api/v1/actions?${actionsQuery}`),
-          authFetch(`/api/v1/people?companyId=${record.id}`),
-          authFetch(`/api/v1/companies?id=${record.id}`)
-        ]);
-        
-        console.log('🔍 [ACTIONS] API responses received:', {
-          actionsResponse: actionsResponse,
-          peopleResponse: peopleResponse,
-          companiesResponse: companiesResponse
-        });
-        
-        // Debug the actions response in detail
-        console.log('🔍 [ACTIONS] Actions response details:', {
-          success: actionsResponse?.success,
-          data: actionsResponse?.data,
-          error: actionsResponse?.error,
-          actionsCount: actionsResponse?.data?.length || 0,
-          fullResponse: actionsResponse
-        });
-        
-        if (actionsResponse) {
-          console.log('🔍 [ACTIONS] Actions response details:', {
-            success: actionsResponse.success,
-            data: actionsResponse.data,
-            dataType: typeof actionsResponse.data,
-            dataLength: Array.isArray(actionsResponse.data) ? actionsResponse.data.length : 'not array',
-            error: actionsResponse.error,
-            message: actionsResponse.message
-          });
-        } else {
-          console.log('❌ [ACTIONS] No actions response received');
-        }
-        
-        const allActivities: any[] = [];
-        
-        // Process actions - authFetch returns parsed data directly
-        if (actionsResponse && actionsResponse.success && Array.isArray(actionsResponse.data)) {
-          console.log('📅 [ACTIONS] Found actions:', actionsResponse.data.length);
-          allActivities.push(...actionsResponse.data.map((action: any) => ({
-            ...action,
-            type: 'action',
-            timestamp: action.completedAt || action.createdAt || action.scheduledAt
-          })));
-        } else {
-          console.log('📅 [ACTIONS] No actions found or invalid response:', actionsResponse);
-        }
-        
-        // Process people (if this is a company record)
-        if (peopleResponse && peopleResponse.success && Array.isArray(peopleResponse.data) && recordType === 'companies') {
-          console.log('📅 [ACTIONS] Found people:', peopleResponse.data.length);
-          allActivities.push(...peopleResponse.data.map((person: any) => ({
-            ...person,
-            type: 'person',
-            timestamp: person.createdAt
-          })));
-        }
-        
-        console.log('📅 [ACTIONS] Total activities found:', allActivities.length);
-        
-        // Filter activities for this specific record
-        const recordActivities = allActivities.filter((activity: any) => {
-          // Check if this activity is related to our record
-          return (
-            activity['leadId'] === record.id ||
-            activity['prospectId'] === record.id ||
-            activity['opportunityId'] === record.id ||
-            activity['contactId'] === record.id ||
-            activity['accountId'] === record.id ||
-            activity['companyId'] === record.id ||
-            activity['personId'] === record.id || // For speedrun actions
-            activity['id'] === record.id // Also check if the activity itself matches our record
-          );
-        });
-        
-        console.log('📅 [ACTIONS] Filtered activities for record:', recordActivities.length);
-
-        // Only show real actions from the database - no fallback data
-        if (recordActivities.length === 0) {
-          console.log('📅 [ACTIONS] No real actions found for this record');
-          activityEvents = [];
-        } else {
-          // Convert activities to action events
-          activityEvents = recordActivities.map((activity: any) => ({
-            id: activity.id,
-            type: 'activity' as const,
-            date: new Date(activity.completedAt || activity.createdAt || Date.now()),
-            title: activity.subject || activity.type || 'Activity',
-            description: activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : '',
-            content: activity.description || activity.outcome || '', // Full content for expansion
-            user: getUserName(activity.userId || 'System'),
-            metadata: {
-              type: activity.type,
-              status: activity.status,
-              priority: activity.priority
-            }
-          }));
-        }
-
-        // TODO: Load notes for this specific record using v1 API when available
-        // Notes functionality will be implemented when the notes API is ready
-        
-        // Cache the data
-        localStorage.setItem(cacheKey, JSON.stringify({
-          activities: activityEvents,
-          notes: noteEvents,
-          timestamp: Date.now()
-        }));
+      console.log('🔍 [ACTIONS] Actions query:', actionsQuery);
+      
+      // 🚀 OPTIMIZED API CALLS: Only fetch what we need based on record type
+      const apiCalls: Promise<any>[] = [
+        authFetch(`/api/v1/actions?${actionsQuery}`)
+      ];
+      
+      // Only fetch people for company records
+      if (recordType === 'companies') {
+        apiCalls.push(authFetch(`/api/v1/people?companyId=${record.id}`));
       }
-
-      // Only show real actions from the database
-      setActionEvents(prev => {
-        const combined = [...activityEvents, ...noteEvents];
-        console.log('🔄 [ACTIONS] Setting real actions only:', {
-          activities: activityEvents.length,
-          notes: noteEvents.length,
-          combined: combined.length
-        });
-        
-        // Remove duplicates based on ID
-        const uniqueEvents = combined.filter((event, index, self) => 
-          index === self.findIndex(e => e['id'] === event.id)
-        );
-        
-        const sortedEvents = uniqueEvents.sort((a, b) => {
-          // Handle undefined dates safely
-          const dateA = a.date instanceof Date ? a.date : new Date(a.date || 0);
-          const dateB = b.date instanceof Date ? b.date : new Date(b.date || 0);
-          return dateB.getTime() - dateA.getTime();
-        });
-        console.log('🔄 [ACTIONS] Final actions events:', sortedEvents);
-        
-        return sortedEvents;
+      
+      const responses = await Promise.allSettled(apiCalls);
+      
+      const [actionsResponse] = responses;
+      const peopleResponse = responses[1];
+      
+      console.log('🔍 [ACTIONS] API responses received:', {
+        actionsStatus: actionsResponse.status,
+        peopleStatus: peopleResponse?.status,
+        actionsData: actionsResponse.status === 'fulfilled' ? actionsResponse.value : null
       });
+      
+      const allActivities: any[] = [];
+      
+      // Process actions - handle both fulfilled and rejected promises
+      if (actionsResponse.status === 'fulfilled' && actionsResponse.value?.success && Array.isArray(actionsResponse.value.data)) {
+        console.log('📅 [ACTIONS] Found actions:', actionsResponse.value.data.length);
+        allActivities.push(...actionsResponse.value.data.map((action: any) => ({
+          ...action,
+          type: 'action',
+          timestamp: action.completedAt || action.createdAt || action.scheduledAt
+        })));
+      } else {
+        console.log('📅 [ACTIONS] No actions found or API error:', {
+          status: actionsResponse.status,
+          reason: actionsResponse.status === 'rejected' ? actionsResponse.reason : 'No data'
+        });
+      }
+      
+      // Process people (if this is a company record and call succeeded)
+      if (peopleResponse?.status === 'fulfilled' && peopleResponse.value?.success && Array.isArray(peopleResponse.value.data) && recordType === 'companies') {
+        console.log('📅 [ACTIONS] Found people:', peopleResponse.value.data.length);
+        allActivities.push(...peopleResponse.value.data.map((person: any) => ({
+          ...person,
+          type: 'person',
+          timestamp: person.createdAt
+        })));
+      }
+      
+      console.log('📅 [ACTIONS] Total activities found:', allActivities.length);
+      
+      // 🎯 SIMPLIFIED FILTERING: Only check relevant IDs based on record type
+      const recordActivities = allActivities.filter((activity: any) => {
+        if (recordType === 'companies') {
+          return activity.companyId === record.id || activity.id === record.id;
+        } else {
+          return activity.personId === record.id || activity.id === record.id;
+        }
+      });
+      
+      console.log('📅 [ACTIONS] Filtered activities for record:', {
+        total: allActivities.length,
+        filtered: recordActivities.length,
+        recordType,
+        recordId: record.id
+      });
+
+      // Convert activities to action events
+      activityEvents = recordActivities.map((activity: any) => ({
+        id: activity.id,
+        type: 'activity' as const,
+        date: new Date(activity.completedAt || activity.createdAt || Date.now()),
+        title: activity.subject || activity.type || 'Activity',
+        description: activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : '',
+        content: activity.description || activity.outcome || '',
+        user: getUserName(activity.userId || 'System'),
+        metadata: {
+          type: activity.type,
+          status: activity.status,
+          priority: activity.priority
+        }
+      }));
+      
+      // Cache the data
+      localStorage.setItem(cacheKey, JSON.stringify({
+        activities: activityEvents,
+        notes: noteEvents,
+        timestamp: Date.now()
+      }));
+
+      // Update state with fresh data from API
+      const combined = [...activityEvents, ...noteEvents];
+      
+      // Remove duplicates based on ID
+      const uniqueEvents = combined.filter((event, index, self) => 
+        index === self.findIndex(e => e.id === event.id)
+      );
+      
+      const sortedEvents = uniqueEvents.sort((a, b) => {
+        const dateA = a.date instanceof Date ? a.date : new Date(a.date || 0);
+        const dateB = b.date instanceof Date ? b.date : new Date(b.date || 0);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      console.log('🔄 [ACTIONS] Final actions events from API:', {
+        count: sortedEvents.length,
+        events: sortedEvents.map(e => ({ id: e.id, title: e.title, date: e.date }))
+      });
+      
+      setActionEvents(sortedEvents);
     } catch (error) {
-      console.error('Error loading actions from API:', error);
+      console.error('❌ [ACTIONS] Error loading actions from API:', error);
     } finally {
       setLoading(false);
     }
@@ -328,50 +304,29 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
   // Listen for action creation events to refresh actions
   useEffect(() => {
     const handleActionCreated = (event: CustomEvent) => {
-      console.log('🔄 [ACTIONS] Action created event received:', {
-        eventDetail: event.detail,
-        currentRecordId: record?.id,
-        currentRecordType: recordType,
-        eventRecordId: event.detail?.recordId,
-        eventRecordType: event.detail?.recordType
-      });
-      
-      const { recordId, recordType: eventRecordType } = event.detail;
+      const { recordId, recordType: eventRecordType } = event.detail || {};
       if (recordId === record?.id && eventRecordType === recordType) {
         console.log('🔄 [ACTIONS] Action created event matches current record, refreshing actions');
         // Clear cache and reload
         const cacheKey = `actions-${record.id}`;
         localStorage.removeItem(cacheKey);
-        console.log('🗑️ [ACTIONS] Cleared cache and calling loadActionsFromAPI');
-        // Trigger refresh with both function call and state update
         loadActionsFromAPI();
-        setRefreshTrigger(prev => prev + 1);
-      } else {
-        console.log('🔄 [ACTIONS] Action created event does not match current record, ignoring');
       }
     };
-
-    console.log('🔄 [ACTIONS] Setting up actionCreated event listener for record:', {
-      recordId: record?.id,
-      recordType: recordType
-    });
 
     document.addEventListener('actionCreated', handleActionCreated as EventListener);
     
     return () => {
-      console.log('🔄 [ACTIONS] Removing actionCreated event listener');
       document.removeEventListener('actionCreated', handleActionCreated as EventListener);
     };
-  }, [record?.id, recordType]);
+  }, [record?.id, recordType, loadActionsFromAPI]);
 
   useEffect(() => {
     if (record?.id) {
-      // Initialize with empty events
-      setActionEvents([]);
-      // Load actions from API
+      // Load actions from API (cache-first approach handles initial state)
       loadActionsFromAPI();
     }
-  }, [record?.id, recordType, refreshTrigger]);
+  }, [record?.id, recordType, refreshTrigger, loadActionsFromAPI]);
 
   const isPastEvent = (date: Date) => date <= new Date();
 
@@ -385,16 +340,36 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
               {actionEvents.length}
             </span>
             <span className="text-sm text-[var(--muted)]">
-              {actionEvents['length'] === 1 ? 'Action' : 'Actions'}
+              {actionEvents.length === 1 ? 'Action' : 'Actions'}
             </span>
           </div>
         </div>
       </div>
 
-      {actionEvents['length'] === 0 ? (
+      {loading ? (
+        <div className="space-y-4">
+          <div className="animate-pulse">
+            <div className="flex items-start gap-4">
+              <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-full"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4"></div>
+                <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2"></div>
+                <div className="h-3 bg-[var(--loading-bg)] rounded w-1/4"></div>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 mt-4">
+              <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-full"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-2/3"></div>
+                <div className="h-3 bg-[var(--loading-bg)] rounded w-1/3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : actionEvents.length === 0 ? (
         <div className="text-center py-12">
           <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No actions yet</h3>
-          <p className="text-[var(--muted)]">Real actions and activities will appear here when logged</p>
+          <p className="text-[var(--muted)]">Actions and activities will appear here when logged</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -515,7 +490,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                           return 'Unknown time';
                         }
                       })()}</span>
-                      {event['user'] && <span>by {event.user}</span>}
+                      {event.user && <span>by {event.user}</span>}
                       <span>•</span>
                       <span>{(() => {
                         try {

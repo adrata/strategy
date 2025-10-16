@@ -303,7 +303,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-[var(--foreground)]">Bio</h2>
+        <h2 className="text-xl font-semibold text-[var(--foreground)]">Overview</h2>
       </div>
 
       {/* Who are they */}

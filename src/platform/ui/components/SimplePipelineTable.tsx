@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { PipelineSkeleton } from '@/platform/ui/components/Loader';
+import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
 interface SimplePipelineTableProps {
   section: string;
@@ -13,10 +14,42 @@ export function SimplePipelineTable({ section, workspaceId, userId }: SimplePipe
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<string>('name');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     loadData();
   }, [section, workspaceId, userId]);
+
+  // Handle column sorting
+  const handleColumnSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  // Sort data based on current sort field and direction
+  const sortedData = useMemo(() => {
+    if (!data || data.length === 0) return data;
+    
+    return [...data].sort((a, b) => {
+      let aValue = a[sortField] || '';
+      let bValue = b[sortField] || '';
+      
+      // Handle string comparison
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+      
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [data, sortField, sortDirection]);
 
   const loadData = async () => {
     setLoading(true);
@@ -109,22 +142,74 @@ export function SimplePipelineTable({ section, workspaceId, userId }: SimplePipe
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-[var(--panel-background)] sticky top-0 z-10">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                  Name
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleColumnSort('name');
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Name</span>
+                    {sortField === 'name' && (
+                      sortDirection === 'asc' ? 
+                        <ChevronUpIcon className="w-4 h-4" /> : 
+                        <ChevronDownIcon className="w-4 h-4" />
+                    )}
+                  </div>
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                  Company
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleColumnSort('company');
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Company</span>
+                    {sortField === 'company' && (
+                      sortDirection === 'asc' ? 
+                        <ChevronUpIcon className="w-4 h-4" /> : 
+                        <ChevronDownIcon className="w-4 h-4" />
+                    )}
+                  </div>
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                  Email
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleColumnSort('email');
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Email</span>
+                    {sortField === 'email' && (
+                      sortDirection === 'asc' ? 
+                        <ChevronUpIcon className="w-4 h-4" /> : 
+                        <ChevronDownIcon className="w-4 h-4" />
+                    )}
+                  </div>
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                  Status
+                <th 
+                  className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider cursor-pointer hover:bg-[var(--hover)] transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleColumnSort('status');
+                  }}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Status</span>
+                    {sortField === 'status' && (
+                      sortDirection === 'asc' ? 
+                        <ChevronUpIcon className="w-4 h-4" /> : 
+                        <ChevronDownIcon className="w-4 h-4" />
+                    )}
+                  </div>
                 </th>
               </tr>
             </thead>
             <tbody className="bg-[var(--background)] divide-y divide-gray-200">
-              {data.map((record, index) => (
+              {sortedData.map((record, index) => (
                 <tr key={record.id || index} className="hover:bg-[var(--panel-background)]">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
                     {record.fullName || record.name || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown'}

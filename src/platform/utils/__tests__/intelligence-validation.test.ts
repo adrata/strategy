@@ -72,6 +72,66 @@ describe('Intelligence Validation', () => {
       expect(result.missingFields).toContain('name');
       expect(result.fallbackData.name).toBe('This professional');
     });
+
+    it('should handle company as object with name property', () => {
+      const data = {
+        name: 'John Doe',
+        title: 'VP of Operations',
+        company: { name: 'Acme Corp' }
+      };
+      
+      const result = validatePersonData(data);
+      
+      expect(result.isValid).toBe(true);
+      expect(result.hasCompleteData).toBe(true);
+      expect(result.missingFields).toEqual([]);
+      expect(result.fallbackData.company).toBe('Acme Corp');
+    });
+
+    it('should handle company as object with empty name', () => {
+      const data = {
+        name: 'John Doe',
+        title: 'VP of Operations',
+        company: { name: '' }
+      };
+      
+      const result = validatePersonData(data);
+      
+      expect(result.isValid).toBe(false);
+      expect(result.hasCompleteData).toBe(false);
+      expect(result.missingFields).toContain('company');
+      expect(result.fallbackData.company).toBe('their organization');
+    });
+
+    it('should handle company as object with undefined name', () => {
+      const data = {
+        name: 'John Doe',
+        title: 'VP of Operations',
+        company: { name: undefined }
+      };
+      
+      const result = validatePersonData(data);
+      
+      expect(result.isValid).toBe(false);
+      expect(result.hasCompleteData).toBe(false);
+      expect(result.missingFields).toContain('company');
+      expect(result.fallbackData.company).toBe('their organization');
+    });
+
+    it('should handle company as empty object', () => {
+      const data = {
+        name: 'John Doe',
+        title: 'VP of Operations',
+        company: {}
+      };
+      
+      const result = validatePersonData(data);
+      
+      expect(result.isValid).toBe(false);
+      expect(result.hasCompleteData).toBe(false);
+      expect(result.missingFields).toContain('company');
+      expect(result.fallbackData.company).toBe('their organization');
+    });
   });
 
   describe('generatePersonSentence', () => {
@@ -111,6 +171,18 @@ describe('Intelligence Validation', () => {
       
       expect(result).toBe('John Doe works at Acme Corp.');
     });
+
+    it('should generate complete sentence with company as object', () => {
+      const data = {
+        name: 'John Doe',
+        title: 'VP of Operations',
+        company: { name: 'Acme Corp' }
+      };
+      
+      const result = generatePersonSentence(data);
+      
+      expect(result).toBe('John Doe is a VP of Operations at Acme Corp.');
+    });
   });
 
   describe('generateWantsStatement', () => {
@@ -138,6 +210,18 @@ describe('Intelligence Validation', () => {
       expect(result).toBe('As a VP of Operations, John Doe wants to optimize team performance and drive meaningful impact in their role.');
       expect(result).not.toContain('at ,');
     });
+
+    it('should generate complete wants statement with company as object', () => {
+      const data = {
+        name: 'John Doe',
+        title: 'VP of Operations',
+        company: { name: 'Acme Corp' }
+      };
+      
+      const result = generateWantsStatement(data, 'optimize team performance');
+      
+      expect(result).toBe('As a VP of Operations, John Doe wants to optimize team performance and drive meaningful impact at Acme Corp.');
+    });
   });
 
   describe('generateNeedsStatement', () => {
@@ -164,6 +248,18 @@ describe('Intelligence Validation', () => {
       
       expect(result).toBe('John Doe needs operational improvements to optimize operational efficiency in their role.');
       expect(result).not.toContain('at ,');
+    });
+
+    it('should generate complete needs statement with company as object', () => {
+      const data = {
+        name: 'John Doe',
+        title: 'VP of Operations',
+        company: { name: 'Acme Corp' }
+      };
+      
+      const result = generateNeedsStatement(data, 'operational improvements');
+      
+      expect(result).toBe('John Doe needs operational improvements to optimize operational efficiency at Acme Corp.');
     });
   });
 

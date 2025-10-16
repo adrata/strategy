@@ -113,7 +113,11 @@ export function TableHeader({
                 overflow: 'hidden',
                 textOverflow: 'ellipsis'
               }}
-              onClick={() => onColumnSort?.(header)}
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log(`🔧 [TableHeader] Column clicked: ${header}, onColumnSort exists: ${!!onColumnSort}`);
+                onColumnSort?.(header);
+              }}
             >
               <div className="flex items-center justify-between">
                 <span style={{ 

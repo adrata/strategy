@@ -306,7 +306,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
           <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-[var(--foreground)]">Bio</h2>
+        <h2 className="text-xl font-semibold text-[var(--foreground)]">Overview</h2>
       </div>
 
       {/* Overview Summary */}

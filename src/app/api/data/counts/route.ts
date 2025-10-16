@@ -103,8 +103,7 @@ export async function GET(request: NextRequest) {
       prisma.people.groupBy({
         by: ['status'],
         where: {
-          workspaceId,
-          deletedAt: null
+          workspaceId
         },
         _count: { id: true }
       }),
@@ -113,7 +112,6 @@ export async function GET(request: NextRequest) {
         by: ['status'],
         where: {
           workspaceId,
-          deletedAt: null,
           ...(isDemoMode ? {} : {
             OR: [
               { mainSellerId: userId },
@@ -127,7 +125,6 @@ export async function GET(request: NextRequest) {
       prisma.people.count({
         where: {
           workspaceId,
-          deletedAt: null,
           // Remove companyId requirement to match speedrun API logic
           ...(isDemoMode ? {} : {
             OR: [

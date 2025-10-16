@@ -449,7 +449,7 @@ function AcquisitionOSLayoutInner({
                         window.innerHeight -
                         profileAnchor.getBoundingClientRect().top +
                         10, // Position above profile icon
-                      zIndex: 1000,
+                      zIndex: 9999,
                     }}
                   >
                     <ProfileBox

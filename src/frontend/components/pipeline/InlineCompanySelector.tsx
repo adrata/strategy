@@ -24,7 +24,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
   field,
   onSave,
   className = '',
-  placeholder = 'Enter company name',
+  placeholder = 'Search or add company',
   recordId,
   recordType,
   onSuccess,
@@ -88,6 +88,13 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     const query = e.target.value;
     setSearchQuery(query);
     setEditValue(query);
+    
+    // Clear results immediately when query becomes empty
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    
     searchCompanies(query);
   };
 
@@ -97,6 +104,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     setSearchQuery('');
     setSearchResults([]);
     setShowAddForm(false);
+    setCreateError('');
   };
 
   // Handle adding new company
@@ -131,12 +139,19 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
       console.log('🏢 [InlineCompanySelector] Company creation response:', data);
 
       if (data.success && data.data) {
-        console.log('✅ [InlineCompanySelector] Company created successfully');
+        const isExisting = data.isExisting || false;
+        console.log('✅ [InlineCompanySelector] Company operation successful:', {
+          isExisting,
+          company: data.data,
+          message: data.meta?.message
+        });
         setEditValue(data.data.name);
         setNewCompanyName('');
         setNewCompanyWebsite('');
         setShowAddForm(false);
         setCreateError('');
+        setSearchQuery('');
+        setSearchResults([]);
       } else {
         const errorMsg = data.error || 'Failed to create company';
         console.error('❌ [InlineCompanySelector] Failed to create company:', errorMsg);
@@ -193,6 +208,11 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
       const message = `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`;
       onSuccess?.(message);
       
+      // Clear all search state when saving
+      setSearchQuery('');
+      setSearchResults([]);
+      setShowAddForm(false);
+      setCreateError('');
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating field:', error);
@@ -277,7 +297,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
                     )}
                   </div>
                 ))
-              ) : editValue.trim() && !showAddForm ? (
+              ) : editValue.trim() && !showAddForm && !isSearching ? (
                 <div className="px-3 py-2 text-sm text-gray-500">
                   No companies found
                 </div>

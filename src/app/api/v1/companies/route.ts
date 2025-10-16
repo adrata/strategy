@@ -309,6 +309,45 @@ export async function POST(request: NextRequest) {
       userId: context.userId
     });
 
+    // Check for duplicate company before creating
+    const companyName = body.name.trim();
+    const existingCompany = await prisma.companies.findFirst({
+      where: {
+        workspaceId: context.workspaceId,
+        name: {
+          equals: companyName,
+          mode: 'insensitive'
+        },
+        deletedAt: null
+      },
+      include: {
+        mainSeller: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    if (existingCompany) {
+      console.log('🔄 [V1 COMPANIES API] Found existing company, returning it instead of creating duplicate:', {
+        existingCompanyId: existingCompany.id,
+        existingCompanyName: existingCompany.name,
+        requestedName: companyName
+      });
+      
+      return NextResponse.json({
+        success: true,
+        data: existingCompany,
+        isExisting: true,
+        meta: {
+          message: 'Selected existing company',
+        },
+      });
+    }
+
     // Check if current user exists (for mainSellerId assignment)
     let validatedMainSellerId = null;
     try {
@@ -587,10 +626,15 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return createSuccessResponse(company, {
-      message: 'Company created successfully',
-      userId: context.userId,
-      workspaceId: context.workspaceId,
+    return NextResponse.json({
+      success: true,
+      data: company,
+      isExisting: false,
+      meta: {
+        message: 'Company created successfully',
+        userId: context.userId,
+        workspaceId: context.workspaceId,
+      },
     });
 
   } catch (error) {

@@ -69,20 +69,20 @@ export function PanelLayout({
   // Divider logic: always a 1px line, 100% height, with a wider responsive hit area
   const dividerHitArea = 8; // Reduced for more precise cursor alignment
   const dividerLineWidth = 1;
-  const dividerLineColor = dragging ? "#3B82F6" : hovering ? "#6B7280" : "#d1d5db";
+  const dividerLineColor = dragging ? "#3B82F6" : hovering ? "#6B7280" : "#e5e7eb";
   
   // Simple divider styles without visual effects
   const dividerStyle = {
     position: "absolute" as const,
     top: 0,
-    right: -(dividerHitArea / 2),
+    right: 0,
     width: dividerHitArea,
     height: "100%",
     cursor: "col-resize",
     zIndex: 30,
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     background: "transparent",
     pointerEvents: "auto" as const,
   };

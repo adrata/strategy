@@ -299,9 +299,9 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
 
   // Generate wants and needs based on role and industry
   const generateWantsAndNeeds = () => {
-    const role = prospectData.title.toLowerCase();
-    const industry = prospectData.industry.toLowerCase();
-    const department = prospectData.department.toLowerCase();
+    const role = (prospectData.title || '').toLowerCase();
+    const industry = (prospectData.industry || '').toLowerCase();
+    const department = (prospectData.department || '').toLowerCase();
     
     const wants = [];
     const needs = [];
@@ -727,7 +727,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement Strategy</h4>
             <div className="text-sm text-[var(--muted)] leading-relaxed">
-              Focus on {prospectData.engagementPriority.toLowerCase()} priority engagement. 
+              Focus on {(prospectData.engagementPriority || '').toLowerCase()} priority engagement. 
               Last contact was {formatRelativeDate(prospectData.lastContact)}. 
               Next action: {prospectData.nextAction}.
             </div>

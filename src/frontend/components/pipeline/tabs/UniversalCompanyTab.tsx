@@ -227,7 +227,17 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Summary</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-          <div className="text-sm text-[var(--foreground)] leading-relaxed font-medium">{companyData.description}</div>
+          <InlineEditField
+            value={companyData.description}
+            field="description"
+            onSave={onSave || (() => Promise.resolve())}
+            recordId={record.id}
+            recordType={recordType}
+            onSuccess={handleSuccess}
+            type="textarea"
+            className="text-sm text-[var(--foreground)] leading-relaxed font-medium"
+            placeholder="Enter company description..."
+          />
         </div>
       </div>
 
@@ -244,6 +254,42 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={companyData.name}
                   field="name"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Legal Name:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.legalName)}
+                  field="legalName"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Trading Name:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.tradingName)}
+                  field="tradingName"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Local Name:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.localName)}
+                  field="localName"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}
@@ -305,6 +351,31 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Contact & Market</h4>
             <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Email:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.email)}
+                  field="email"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="email"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Fax:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.fax)}
+                  field="fax"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Website:</span>
                 <InlineEditField
@@ -422,6 +493,459 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
         </div>
       </div>
 
+      {/* Location Information */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Location Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column - Basic Location */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Primary Address</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Address:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.address)}
+                  field="address"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">City:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.city)}
+                  field="city"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">State:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.state)}
+                  field="state"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Country:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.country)}
+                  field="country"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Postal Code:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.postalCode)}
+                  field="postalCode"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Headquarters */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Headquarters</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">HQ Street:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.hqStreet)}
+                  field="hqStreet"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">HQ City:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.hqCity)}
+                  field="hqCity"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">HQ State:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.hqState)}
+                  field="hqState"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">HQ Zip:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.hqZipcode)}
+                  field="hqZipcode"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">HQ Full:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.hqFullAddress)}
+                  field="hqFullAddress"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Business Profile */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Business Profile</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column - Business Details */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Business Details</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Industry:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.industry)}
+                  field="industry"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Sector:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.sector)}
+                  field="sector"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Revenue:</span>
+                <InlineEditField
+                  value={record?.revenue ? record.revenue.toString() : ''}
+                  field="revenue"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Currency:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.currency)}
+                  field="currency"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Founded:</span>
+                <InlineEditField
+                  value={record?.foundedYear ? record.foundedYear.toString() : ''}
+                  field="foundedYear"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Employees:</span>
+                <InlineEditField
+                  value={record?.employeeCount ? record.employeeCount.toString() : ''}
+                  field="employeeCount"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Legal & Registration */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Legal & Registration</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Domain:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.domain)}
+                  field="domain"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Reg Number:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.registrationNumber)}
+                  field="registrationNumber"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Tax ID:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.taxId)}
+                  field="taxId"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">VAT Number:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.vatNumber)}
+                  field="vatNumber"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Logo URL:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.logoUrl)}
+                  field="logoUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Social Media & Online Presence */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Social Media & Online Presence</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column - Social URLs */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Social Media URLs</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.linkedinUrl)}
+                  field="linkedinUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Twitter:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.twitterUrl)}
+                  field="twitterUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Facebook:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.facebookUrl)}
+                  field="facebookUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Instagram:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.instagramUrl)}
+                  field="instagramUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">GitHub:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.githubUrl)}
+                  field="githubUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">YouTube:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.youtubeUrl)}
+                  field="youtubeUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Follower Counts */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Follower Counts</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <InlineEditField
+                  value={record?.linkedinFollowers ? record.linkedinFollowers.toString() : ''}
+                  field="linkedinFollowers"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Twitter:</span>
+                <InlineEditField
+                  value={record?.twitterFollowers ? record.twitterFollowers.toString() : ''}
+                  field="twitterFollowers"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Job Postings:</span>
+                <InlineEditField
+                  value={record?.activeJobPostings ? record.activeJobPostings.toString() : ''}
+                  field="activeJobPostings"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Tech Count:</span>
+                <InlineEditField
+                  value={record?.numTechnologiesUsed ? record.numTechnologiesUsed.toString() : ''}
+                  field="numTechnologiesUsed"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Digital Maturity:</span>
+                <InlineEditField
+                  value={record?.digitalMaturity ? record.digitalMaturity.toString() : ''}
+                  field="digitalMaturity"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Seller Intelligence - Key Metrics */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Seller Intelligence</h3>
@@ -506,6 +1030,142 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
         </div>
       </div>
 
+      {/* Market Position & Metadata */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Market Position & Metadata</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column - Market Position */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Market Position</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Market Position:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.marketPosition)}
+                  field="marketPosition"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Stock Symbol:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.stockSymbol)}
+                  field="stockSymbol"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Public Company:</span>
+                <InlineEditField
+                  value={record?.isPublic !== undefined ? (record.isPublic ? 'Yes' : 'No') : ''}
+                  field="isPublic"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'true', label: 'Yes' },
+                    { value: 'false', label: 'No' }
+                  ]}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Key Influencers:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.keyInfluencers)}
+                  field="keyInfluencers"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Status & Priority */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Status & Priority</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Status:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.status)}
+                  field="status"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'ACTIVE', label: 'Active' },
+                    { value: 'INACTIVE', label: 'Inactive' },
+                    { value: 'PROSPECT', label: 'Prospect' },
+                    { value: 'CUSTOMER', label: 'Customer' }
+                  ]}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Priority:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.priority)}
+                  field="priority"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'HIGH', label: 'High' },
+                    { value: 'MEDIUM', label: 'Medium' },
+                    { value: 'LOW', label: 'Low' }
+                  ]}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Tags:</span>
+                <InlineEditField
+                  value={record?.tags ? record.tags.join(', ') : ''}
+                  field="tags"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter tags separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Notes:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.notes)}
+                  field="notes"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Recent Company Activity */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Recent Company Activity</h3>
@@ -529,6 +1189,432 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Action Tracking & Funding */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Action Tracking & Funding</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column - Action Tracking */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Action Tracking</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Last Action:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.lastAction)}
+                  field="lastAction"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Last Action Date:</span>
+                <InlineEditField
+                  value={record?.lastActionDate ? new Date(record.lastActionDate).toISOString().split('T')[0] : ''}
+                  field="lastActionDate"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  variant="date"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Next Action:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.nextAction)}
+                  field="nextAction"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Next Action Date:</span>
+                <InlineEditField
+                  value={record?.nextActionDate ? new Date(record.nextActionDate).toISOString().split('T')[0] : ''}
+                  field="nextActionDate"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  variant="date"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Action Status:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.actionStatus)}
+                  field="actionStatus"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Next Action Type:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.nextActionType)}
+                  field="nextActionType"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Funding & Financial */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Funding & Financial</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Last Funding:</span>
+                <InlineEditField
+                  value={record?.lastFundingAmount ? record.lastFundingAmount.toString() : ''}
+                  field="lastFundingAmount"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Funding Date:</span>
+                <InlineEditField
+                  value={record?.lastFundingDate ? new Date(record.lastFundingDate).toISOString().split('T')[0] : ''}
+                  field="lastFundingDate"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  variant="date"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Opportunity Amount:</span>
+                <InlineEditField
+                  value={record?.opportunityAmount ? record.opportunityAmount.toString() : ''}
+                  field="opportunityAmount"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Opportunity Probability:</span>
+                <InlineEditField
+                  value={record?.opportunityProbability ? record.opportunityProbability.toString() : ''}
+                  field="opportunityProbability"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="number"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Opportunity Stage:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.opportunityStage)}
+                  field="opportunityStage"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Decision Timeline:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.decisionTimeline)}
+                  field="decisionTimeline"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Parent Company & Strategy */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Parent Company & Strategy</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column - Parent Company */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Parent Company</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Parent Name:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.parentCompanyName)}
+                  field="parentCompanyName"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Parent Domain:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.parentCompanyDomain)}
+                  field="parentCompanyDomain"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Business Challenges:</span>
+                <InlineEditField
+                  value={record?.businessChallenges ? record.businessChallenges.join(', ') : ''}
+                  field="businessChallenges"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter challenges separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Business Priorities:</span>
+                <InlineEditField
+                  value={record?.businessPriorities ? record.businessPriorities.join(', ') : ''}
+                  field="businessPriorities"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter priorities separated by commas"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Strategy & Competitive */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Strategy & Competitive</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Competitive Advantages:</span>
+                <InlineEditField
+                  value={record?.competitiveAdvantages ? record.competitiveAdvantages.join(', ') : ''}
+                  field="competitiveAdvantages"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter advantages separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Strategic Initiatives:</span>
+                <InlineEditField
+                  value={record?.strategicInitiatives ? record.strategicInitiatives.join(', ') : ''}
+                  field="strategicInitiatives"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter initiatives separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Growth Opportunities:</span>
+                <InlineEditField
+                  value={record?.growthOpportunities ? record.growthOpportunities.join(', ') : ''}
+                  field="growthOpportunities"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter opportunities separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Success Metrics:</span>
+                <InlineEditField
+                  value={record?.successMetrics ? record.successMetrics.join(', ') : ''}
+                  field="successMetrics"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter metrics separated by commas"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Classification Codes */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Classification Codes</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column - Industry Codes */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Industry Codes</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">NAICS Codes:</span>
+                <InlineEditField
+                  value={record?.naicsCodes ? record.naicsCodes.join(', ') : ''}
+                  field="naicsCodes"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter NAICS codes separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">SIC Codes:</span>
+                <InlineEditField
+                  value={record?.sicCodes ? record.sicCodes.join(', ') : ''}
+                  field="sicCodes"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter SIC codes separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Sources:</span>
+                <InlineEditField
+                  value={record?.sources ? record.sources.join(', ') : ''}
+                  field="sources"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter sources separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Competitors:</span>
+                <InlineEditField
+                  value={record?.competitors ? record.competitors.join(', ') : ''}
+                  field="competitors"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter competitors separated by commas"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Technology & Additional */}
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <h4 className="font-medium text-[var(--foreground)] mb-3">Technology & Additional</h4>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Tech Stack:</span>
+                <InlineEditField
+                  value={record?.techStack ? record.techStack.join(', ') : ''}
+                  field="techStack"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter technologies separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Technologies Used:</span>
+                <InlineEditField
+                  value={record?.technologiesUsed ? record.technologiesUsed.join(', ') : ''}
+                  field="technologiesUsed"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter technologies separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Market Threats:</span>
+                <InlineEditField
+                  value={record?.marketThreats ? record.marketThreats.join(', ') : ''}
+                  field="marketThreats"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  type="textarea"
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter threats separated by commas"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">HQ Region:</span>
+                <InlineEditField
+                  value={record?.hqRegion ? record.hqRegion.join(', ') : ''}
+                  field="hqRegion"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="Enter regions separated by commas"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -25,6 +25,8 @@ interface UsePipelineDataProps {
   disableSorting?: boolean; // Add option to disable sorting
   searchQuery?: string; // Allow external search query to be passed in
   totalCount?: number; // Add totalCount for correct pagination
+  externalSortField?: string; // Allow external sort field to be passed in
+  externalSortDirection?: 'asc' | 'desc'; // Allow external sort direction to be passed in
 }
 
 interface UsePipelineDataReturn {
@@ -191,7 +193,9 @@ export function usePipelineData({
   pageSize = 50,
   disableSorting = false,
   searchQuery: externalSearchQuery = '',
-  totalCount
+  totalCount,
+  externalSortField,
+  externalSortDirection
 }: UsePipelineDataProps): UsePipelineDataReturn {
   // Filter state - use external search query if provided
   const [internalSearchQuery, setSearchQuery] = useState('');
@@ -203,9 +207,12 @@ export function usePipelineData({
   const [lastContactedFilter, setLastContactedFilter] = useState('all');
   const [timezoneFilter, setTimezoneFilter] = useState('all');
   
-  // Sort state
-  const [sortField, setSortField] = useState('rank');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  // Sort state - use external values if provided, otherwise use internal state
+  const [internalSortField, setInternalSortField] = useState('rank');
+  const [internalSortDirection, setInternalSortDirection] = useState<'asc' | 'desc'>('asc');
+  
+  const sortField = externalSortField || internalSortField;
+  const sortDirection = externalSortDirection || internalSortDirection;
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -319,8 +326,8 @@ export function usePipelineData({
     setRevenueFilter,
     setLastContactedFilter,
     setTimezoneFilter,
-    setSortField,
-    setSortDirection,
+    setSortField: setInternalSortField,
+    setSortDirection: setInternalSortDirection,
     setCurrentPage,
     
     // Utilities

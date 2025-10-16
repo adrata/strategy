@@ -8,7 +8,7 @@
 export interface PersonData {
   name?: string;
   title?: string;
-  company?: string;
+  company?: string | { name?: string };
   industry?: string;
   department?: string;
 }
@@ -38,9 +38,16 @@ export function validatePersonData(data: PersonData): ValidationResult {
     fallbackData.title = 'Professional';
   }
 
-  if (!data.company || data.company.trim() === '') {
+  // Normalize company field - handle both string and object formats
+  const companyValue = typeof data.company === 'string' 
+    ? data.company 
+    : (data.company?.name || '');
+
+  if (!companyValue || companyValue.trim() === '') {
     missingFields.push('company');
     fallbackData.company = 'their organization';
+  } else {
+    fallbackData.company = companyValue;
   }
 
   const isValid = missingFields.length === 0;

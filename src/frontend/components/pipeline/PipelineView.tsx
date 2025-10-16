@@ -1796,7 +1796,7 @@ export const PipelineView = React.memo(function PipelineView({
           position: "fixed",
           left: profileAnchor.getBoundingClientRect().left,
           bottom: window.innerHeight - profileAnchor.getBoundingClientRect().top + 5,
-          zIndex: 1000,
+          zIndex: 9999,
         }}
       >
         <ProfileBox

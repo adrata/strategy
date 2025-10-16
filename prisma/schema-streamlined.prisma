@@ -96,6 +96,9 @@ model workspaces {
   salesMethodology          String?                     @db.VarChar(200)  // How they sell
   speedrunDailyTarget       Int?                        @default(50)
   speedrunWeeklyTarget      Int?                        @default(250)
+  newsEnabled               Boolean?                    @default(false)
+  newsIndustries            String[]                    @default([])
+  newsSources               String[]                    @default([])
   oasis_channels            OasisChannel[]
   oasis_direct_messages     OasisDirectMessage[]
   stacks_projects           StacksProject[]
@@ -111,6 +114,8 @@ model workspaces {
   workspace_users           workspace_users[]
   ai_conversations          ai_conversations[]
   emails                    email_messages[]
+  api_cost_tracking         api_cost_tracking[]
+  research_data             research_data[]
 
   @@index([slug])
   @@index([isActive])
@@ -132,6 +137,7 @@ model users {
   isActive                  Boolean                     @default(true)
   activeWorkspaceId         String?                     @db.VarChar(30)
   username                  String?                     @unique @db.VarChar(50)
+  speedrunRankingMode       String?                     @db.VarChar(50)
   oasis_channel_members     OasisChannelMember[]
   oasis_dm_participants     OasisDMParticipant[]
   oasis_messages            OasisMessage[]
@@ -151,6 +157,7 @@ model users {
   workspaces                workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
   workspace_users           workspace_users[]
   ai_conversations          ai_conversations[]
+  api_cost_tracking         api_cost_tracking[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -270,7 +277,7 @@ model companies {
   opportunityStage       String?          @db.VarChar(50)
   
   // 🧠 COMPANY INTELLIGENCE DATA (CRITICAL SBI FIELDS)
-  companyIntelligence    Json?            // Company analysis data
+  companyIntelligence    Json?            @db.JsonB  // Company analysis data
   businessChallenges     String[]         @default([])
   businessPriorities     String[]         @default([])
   competitiveAdvantages  String[]         @default([])
@@ -315,7 +322,7 @@ model companies {
   hqCountryIso3          String?          @db.VarChar(3)
   
   // 📊 COMPANY UPDATES & ACTIVITY
-  companyUpdates         Json?            // Company activity data
+  companyUpdates         Json?            @db.JsonB  // Company activity data
   activeJobPostings      Int?             @default(0)
   numTechnologiesUsed    Int?             @default(0)
   technologiesUsed       String[]         @default([])
@@ -327,6 +334,32 @@ model companies {
   lastVerified           DateTime?
   parentCompanyName      String?          @db.VarChar(200)
   parentCompanyDomain    String?          @db.VarChar(200)
+  
+  // 📈 GROWTH & CHANGE METRICS (NEW - from CoreSignal)
+  employeeCountChange    Json?               @db.JsonB  // Monthly/quarterly/yearly changes
+  executiveDepartures    Json?               @db.JsonB  // Key executive departures
+  executiveArrivals      Json?               @db.JsonB  // Key executive hires
+  jobPostingsChange      Json?               @db.JsonB  // Hiring trends
+  
+  // 💰 FINANCIAL INTELLIGENCE (NEW - from CoreSignal)
+  fundingRounds          Json?               @db.JsonB  // Funding history
+  acquisitionHistory     Json?               @db.JsonB  // M&A activity
+  revenueRange           Json?               @db.JsonB  // Revenue estimates
+  
+  // ⭐ REPUTATION METRICS (NEW - from CoreSignal)
+  employeeReviewsScore   Json?               @db.JsonB  // Employee satisfaction trends
+  productReviewsScore    Json?               @db.JsonB  // Product review trends
+  
+  // 🤖 AI INTELLIGENCE (NEW)
+  aiIntelligence         Json?               @db.JsonB  // AI-generated insights
+  aiConfidence           Float?              @default(0)
+  aiLastUpdated          DateTime?
+  
+  // 📊 DATA QUALITY (NEW)
+  dataQualityScore       Float?              @default(0)
+  dataQualityBreakdown   Json?               @db.JsonB
+  dataSources            String[]            @default([])
+  dataLastVerified       DateTime?
   
   actions                actions[]
   mainSeller             users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
@@ -349,6 +382,11 @@ model companies {
   @@index([acquisitionDate])
   @@index([marketPosition])
   @@index([digitalMaturity])
+  @@index([companyIntelligence], type: Gin)
+  @@index([aiIntelligence], type: Gin)
+  @@index([employeeCountChange], type: Gin)
+  @@index([workspaceId, dataQualityScore])
+  @@index([dataSources], type: Gin)
 }
 
 /// Contact/person records
@@ -419,6 +457,7 @@ model people {
   yearsInRole                Int?
   yearsAtCompany             Int?
   totalExperience            Int?                // years
+  yearsExperience            Int?                // Alternative field name
   industryExperience         String?             @db.VarChar(100)
   leadershipExperience       String?             @db.VarChar(100)
   budgetResponsibility       String?             @db.VarChar(100)
@@ -429,7 +468,7 @@ model people {
   speakingEngagements        String[]            @default([])
   
   // 🎓 EDUCATION DATA (CRITICAL SBI FIELDS)
-  degrees                    Json?               // Array of education records
+  degrees                    Json?               @db.JsonB  // Array of education records
   institutions               String[]            @default([])
   fieldsOfStudy              String[]            @default([])
   graduationYears            Int[]               @default([])
@@ -441,13 +480,14 @@ model people {
   languages                  String[]            @default([])
   
   // 📈 EXPERIENCE & CAREER TIMELINE (CRITICAL SBI FIELDS)
-  previousRoles              Json?               // Array of role records
-  careerTimeline             Json?               // Chronological career data
-  roleHistory                Json?               // Detailed role information
+  previousRoles              Json?               @db.JsonB  // Array of role records
+  careerTimeline             Json?               @db.JsonB  // Chronological career data
+  roleHistory                Json?               @db.JsonB  // Detailed role information
   
   // 👑 BUYER GROUP & DECISION MAKING (CRITICAL SBI FIELDS)
   buyerGroupRole             String?             @db.VarChar(50)
   decisionPower              Int?                @default(0)
+  decisionPowerScore         Int?                @default(0)
   influenceLevel             String?             @db.VarChar(50)
   influenceScore             Float?              @default(0)
   engagementLevel            String?             @db.VarChar(50)
@@ -463,8 +503,31 @@ model people {
   enrichmentSources          String[]            @default([])
   lastEnriched               DateTime?
   enrichmentVersion          String?             @db.VarChar(20)
-  coresignalData             Json?               // Coresignal enrichment data
-  enrichedData               Json?               // General enrichment data
+  coresignalData             Json?               @db.JsonB  // Coresignal enrichment data
+  enrichedData               Json?               @db.JsonB  // General enrichment data
+  
+  // 🤖 AI-GENERATED INTELLIGENCE (NEW)
+  aiIntelligence         Json?               @db.JsonB  // AI analysis: wants, pains, outreach
+  aiConfidence           Float?              @default(0)
+  aiLastUpdated          DateTime?
+  
+  // 📊 DATA QUALITY TRACKING (NEW)
+  dataQualityScore       Float?              @default(0)  // 0-100 overall quality
+  dataQualityBreakdown   Json?               @db.JsonB    // Per-field quality scores
+  dataSources            String[]            @default([]) // ["coresignal", "lusha", "pdl"]
+  dataLastVerified       DateTime?
+  
+  // 📧 ENHANCED CONTACT QUALITY (NEW - from Lusha)
+  emailQualityGrade      String?             @db.VarChar(10)  // A+, A, B, C, D
+  phoneQualityScore      Float?              @default(0)      // 0-100
+  
+  // 🌐 PROFESSIONAL NETWORK (NEW - from CoreSignal)
+  linkedinConnections    Int?
+  linkedinFollowers      Int?
+  totalExperienceMonths  Int?                // More granular than totalExperience years
+  
+  // 💰 SALARY INSIGHTS (NEW - from CoreSignal)
+  salaryProjections      Json?               @db.JsonB  // {p25, median, p75, currency}
   
   // 📞 CONTACT & VERIFICATION DATA
   emailConfidence            Float?              @default(0)
@@ -478,7 +541,7 @@ model people {
   statusReason               String?             @db.VarChar(200)
   statusUpdateDate           DateTime?
   hiddenFromSections         String[]            @default([])
-  rolePromoted               Json?               // Role promotion data
+  rolePromoted               Json?               @db.JsonB  // Role promotion data
   
   actions           actions[]
   company           companies?          @relation(fields: [companyId], references: [id])
@@ -504,6 +567,12 @@ model people {
   @@index([influenceLevel])
   @@index([enrichmentScore])
   @@index([lastEnriched])
+  @@index([coresignalData], type: Gin)
+  @@index([enrichedData], type: Gin)
+  @@index([aiIntelligence], type: Gin)
+  @@index([workspaceId, emailQualityGrade])
+  @@index([workspaceId, dataQualityScore])
+  @@index([dataSources], type: Gin)
 }
 
 /// Multi-player sales: Co-seller relationships
@@ -581,6 +650,61 @@ model audit_logs {
   @@index([workspaceId, entityType, timestamp])
   @@index([workspaceId, action, timestamp])
   @@index([success])
+}
+
+/// Track API costs for intelligence operations
+model api_cost_tracking {
+  id            String     @id @default(ulid()) @db.VarChar(30)
+  workspaceId   String     @db.VarChar(30)
+  userId        String?    @db.VarChar(30)
+  apiProvider   String     @db.VarChar(50)   // 'coresignal', 'lusha', 'perplexity'
+  endpoint      String?    @db.VarChar(100)
+  operation     String?    @db.VarChar(50)   // 'enrich_person', 'buyer_group'
+  cost          Decimal    @db.Decimal(10, 4)
+  tokensUsed    Int?
+  entityType    String?    @db.VarChar(20)   // 'person', 'company'
+  entityId      String?    @db.VarChar(30)
+  requestData   Json?      @db.JsonB
+  success       Boolean    @default(true)
+  errorMessage  String?
+  createdAt     DateTime   @default(now())
+  
+  workspace     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user          users?     @relation(fields: [userId], references: [id])
+  
+  @@index([workspaceId])
+  @@index([apiProvider])
+  @@index([createdAt])
+  @@index([workspaceId, apiProvider])
+  @@index([entityType, entityId])
+}
+
+/// Store Perplexity AI and other research data
+model research_data {
+  id              String     @id @default(ulid()) @db.VarChar(30)
+  workspaceId     String     @db.VarChar(30)
+  entityType      String     @db.VarChar(20)   // 'person', 'company'
+  entityId        String     @db.VarChar(30)
+  researchType    String     @db.VarChar(50)   // 'executive_research', 'news'
+  content         String?    @db.Text
+  sources         Json?      @db.JsonB         // Citation sources
+  extractedData   Json?      @db.JsonB         // Structured extraction
+  confidence      Float?     @default(0)
+  model           String?    @db.VarChar(100)  // AI model used
+  tokensUsed      Int?
+  processingTime  Int?                         // milliseconds
+  cost            Decimal?   @db.Decimal(10, 4)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  expiresAt       DateTime?                    // Cache expiration
+  
+  workspace       workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  @@index([workspaceId])
+  @@index([entityType, entityId])
+  @@index([researchType])
+  @@index([createdAt])
+  @@index([expiresAt])
 }
 
 /// Grand Central Integration Hub Models
