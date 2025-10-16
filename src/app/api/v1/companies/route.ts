@@ -75,13 +75,17 @@ async function validateCompaniesSchema(): Promise<{ hasMainSellerId: boolean; ha
 // GET /api/v1/companies - List companies with search and pagination
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
+  let context: any = null; // Declare context outside try block for error handler access
   
   try {
     // Authenticate and authorize user using unified auth system
-    const { context, response } = await getSecureApiContext(request, {
+    const authResult = await getSecureApiContext(request, {
       requireAuth: true,
       requireWorkspaceAccess: true
     });
+    
+    const { context: authContext, response } = authResult;
+    context = authContext; // Assign to outer scope variable
 
     if (response) {
       return response; // Return error response if authentication failed
@@ -220,27 +224,32 @@ export async function GET(request: NextRequest) {
         prisma.companies.count({ where }),
       ]);
 
-      result = createSuccessResponse(companies, {
-        pagination: {
-          page,
-          limit,
-          totalCount,
-          totalPages: Math.ceil(totalCount / limit),
-        },
-        // Add compatibility fields for useFastSectionData hook
-        count: totalCount,
-        totalCount: totalCount,
-        filters: { search, status, priority, industry, sortBy, sortOrder },
-        userId: context.userId,
-        workspaceId: context.workspaceId,
-      });
+      result = {
+        success: true,
+        data: companies,
+        meta: {
+          timestamp: new Date().toISOString(),
+          pagination: {
+            page,
+            limit,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+          // Add compatibility fields for useFastSectionData hook
+          count: totalCount,
+          totalCount: totalCount,
+          filters: { search, status, priority, industry, sortBy, sortOrder },
+          userId: context.userId,
+          workspaceId: context.workspaceId,
+        }
+      };
     }
 
     // Cache the result
     responseCache.set(cacheKey, { data: result, timestamp: Date.now() });
     
     
-    return result;
+    return NextResponse.json(result);
 
   } catch (error) {
     console.error('❌ [V1 COMPANIES API] Error:', error);
