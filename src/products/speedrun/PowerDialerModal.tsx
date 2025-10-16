@@ -7,6 +7,7 @@ import {
   PauseIcon,
   PhoneIcon,
 } from "@heroicons/react/24/outline";
+import { useEscapeKey } from '@/platform/hooks/useEscapeKey';
 
 interface PowerDialerModalProps {
   isOpen: boolean;
@@ -24,6 +25,9 @@ export function PowerDialerModal({
   readyContactsCount,
 }: PowerDialerModalProps) {
   const [isLoading, setIsLoading] = useState(false);
+
+  // Handle ESC key to close modal
+  useEscapeKey(isOpen, onClose);
 
   const handleConfirm = async () => {
     setIsLoading(true);

@@ -113,6 +113,28 @@ export function useKeyboardShortcuts(
         case "open-preferences":
           router.push("./grand-central/profile");
           break;
+        case "focus-search-input":
+          // Find and focus the first visible search input
+          const searchInputs = document.querySelectorAll('input[type="text"]');
+          for (const input of searchInputs) {
+            const element = input as HTMLInputElement;
+            const placeholder = element.placeholder?.toLowerCase() || '';
+            const ariaLabel = element.getAttribute('aria-label')?.toLowerCase() || '';
+            const dataSearch = element.getAttribute('data-search');
+            
+            // Check if this is a search input and is visible
+            if (
+              (placeholder.includes('search') || 
+               ariaLabel.includes('search') || 
+               dataSearch !== null) &&
+              element.offsetParent !== null // Check if element is visible
+            ) {
+              element.focus();
+              element.select(); // Select all text for easy replacement
+              break;
+            }
+          }
+          break;
         default:
           console.log(`Shortcut action not implemented: ${shortcut.action}`);
       }

@@ -12,7 +12,8 @@ import {
   EyeSlashIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
-  SparklesIcon
+  SparklesIcon,
+  BellIcon
 } from '@heroicons/react/24/outline';
 
 interface SettingsPopupProps {
@@ -33,6 +34,9 @@ interface UserSettings {
   quota: number;
   territory: string;
   dailyActivityTarget: number;
+  emailNotifications?: boolean;
+  pushNotifications?: boolean;
+  weeklyReports?: boolean;
 }
 
 interface WorkspaceContext {
@@ -45,7 +49,7 @@ interface WorkspaceContext {
 
 export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
   const { user } = useUnifiedAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'ai-context'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications'>('profile');
   const [loading, setLoading] = useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   
@@ -61,7 +65,10 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
     preferredDetailLevel: 'detailed',
     quota: 1000000,
     territory: '',
-    dailyActivityTarget: 25
+    dailyActivityTarget: 25,
+    emailNotifications: false,
+    pushNotifications: false,
+    weeklyReports: false
   });
 
   const [workspaceContext, setWorkspaceContext] = useState<WorkspaceContext>({

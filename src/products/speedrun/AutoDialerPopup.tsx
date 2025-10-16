@@ -9,6 +9,7 @@ import {
   RocketLaunchIcon,
   ChartBarIcon,
 } from "@heroicons/react/24/outline";
+import { useEscapeKey } from '@/platform/hooks/useEscapeKey';
 
 interface SpeedrunPerson {
   id: number;
@@ -54,6 +55,9 @@ export function AutoDialerPopup({
   const [hoveredOption, setHoveredOption] = useState<"auto" | "single" | null>(
     null,
   );
+
+  // Handle ESC key to close popup
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen) return null;
 
