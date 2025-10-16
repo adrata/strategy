@@ -30,6 +30,7 @@ import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useUnifiedAuth } from "@/platform/auth";
 import { CompanyDetailView } from "@/platform/ui/components/CompanyDetailView";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
+import { AddCompanyModal } from "@/platform/ui/components/AddCompanyModal";
 
 export function SpeedrunRecordTemplate({
   person,
@@ -75,6 +76,9 @@ export function SpeedrunRecordTemplate({
   // Success message state
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Add Company modal state
+  const [isAddCompanyModalOpen, setIsAddCompanyModalOpen] = useState(false);
 
   // Show success message with auto-hide
   const showSuccessMessage = (message: string) => {
