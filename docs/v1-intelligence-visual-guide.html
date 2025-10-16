@@ -269,6 +269,141 @@
                 </div>
             </div>
 
+            <!-- File Architecture -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">File Architecture</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">API Endpoints</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>POST /api/v1/intelligence/buyer-group/route.ts</div>
+                            <div>GET /api/v1/intelligence/buyer-group/route.ts</div>
+                            <div>POST /api/v1/intelligence/buyer-group/discover/route.ts</div>
+                            <div>POST /api/v1/intelligence/buyer-group/bulk/route.ts</div>
+                            <div>POST /api/v1/intelligence/buyer-group/refresh/route.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Core Pipeline Files</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/intelligence/buyer-group/buyer-group-engine.ts</div>
+                            <div>src/platform/intelligence/buyer-group/progressive-enrichment.ts</div>
+                            <div>src/platform/intelligence/buyer-group/function-based-pipeline.ts</div>
+                            <div>src/platform/pipelines/orchestrators/BuyerGroupDiscoveryPipeline.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Supporting Services</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/intelligence/services/CoreBuyerGroupAnalyzer.ts</div>
+                            <div>src/platform/intelligence/services/PeopleDiscoveryEngine.ts</div>
+                            <div>src/platform/intelligence/shared/orchestration.ts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Functions -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Key Functions</h3>
+                <div class="space-y-3">
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">BuyerGroupEngine.discover()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            async discover(request: EnrichmentRequest): Promise&lt;EnrichmentResult&gt;
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Main discovery method with caching and progressive enrichment</div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">ProgressiveEnrichmentEngine.enrich()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            async enrich(request: EnrichmentRequest): Promise&lt;EnrichmentResult&gt;
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Handles 3 enrichment levels: identify, enrich, deep_research</div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">BuyerGroupEngine.saveToDatabase()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            private async saveToDatabase(result: EnrichmentResult, workspaceId: string): Promise&lt;string&gt;
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Saves buyer group members to people table with buyerGroupRole</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Flow Details -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Data Flow & Database Operations</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Database Operations</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Read:</strong> people table (existing buyer group members)</div>
+                            <div>• <strong>Write:</strong> people.buyerGroupRole, people.isBuyerGroupMember, people.influenceScore</div>
+                            <div>• <strong>Create:</strong> New people records for discovered members</div>
+                            <div>• <strong>Update:</strong> Existing people with buyer group roles</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Cost Tracking Points</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• CoreSignal API calls for company data</div>
+                            <div>• PDL API calls for contact enrichment</div>
+                            <div>• Claude API calls for AI intelligence (deep_research level)</div>
+                            <div>• Perplexity API calls for company research</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Caching Strategy</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Memory Cache:</strong> BuyerGroupEngine.cache (Map&lt;string, EnrichmentResult&gt;)</div>
+                            <div>• <strong>Cache Key:</strong> companyName:enrichmentLevel</div>
+                            <div>• <strong>Cache Upgrade:</strong> Can upgrade from lower to higher enrichment levels</div>
+                            <div>• <strong>Database Cache:</strong> Saved buyer groups in people table</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Examples -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Code Examples</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">EnrichmentRequest Type</h4>
+                        <pre class="text-xs text-gray-600 bg-gray-50 p-2 rounded overflow-x-auto">interface EnrichmentRequest {
+  companyName: string;
+  website?: string;
+  enrichmentLevel: 'identify' | 'enrich' | 'deep_research';
+  workspaceId: string;
+  options?: {
+    saveToDatabase?: boolean;
+  };
+}</pre>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Database Save Operation</h4>
+                        <pre class="text-xs text-gray-600 bg-gray-50 p-2 rounded overflow-x-auto">// Update existing person with buyer group role
+await prisma.people.update({
+  where: { id: existing.id },
+  data: {
+    buyerGroupRole: member.role,
+    isBuyerGroupMember: true,
+    influenceScore: member.influenceScore || 0,
+    updatedAt: new Date(),
+  },
+});</pre>
+                    </div>
+                </div>
+            </div>
+
             <!-- Output Example -->
             <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
                 <h3 class="font-semibold mb-4 text-gray-900">Output Example</h3>
@@ -380,6 +515,142 @@
                     <div class="flex-1">
                         <h4 class="font-semibold text-gray-800">Filtering & Sorting</h4>
                         <p class="text-sm text-gray-600 mt-1">Filters by minimum score, sorts by relevance</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Architecture -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">File Architecture</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">API Endpoints</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>POST /api/v1/intelligence/role/route.ts</div>
+                            <div>POST /api/v1/intelligence/role/discover/route.ts</div>
+                            <div>POST /api/v1/intelligence/role/bulk/route.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Core Pipeline Files</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/pipelines/orchestrators/RoleDiscoveryPipeline.ts</div>
+                            <div>src/platform/pipelines/functions/roles/generateRoleVariations.ts</div>
+                            <div>src/platform/pipelines/functions/roles/roleIntelligence.ts</div>
+                            <div>src/platform/pipelines/functions/roles/roleVariationCache.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Discovery & Validation</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/pipelines/functions/discovery/discoverPeople.ts</div>
+                            <div>src/platform/pipelines/functions/validation/validateRoleCriteria.ts</div>
+                            <div>src/platform/pipelines/functions/providers/pdl-service.ts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Functions -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Key Functions</h3>
+                <div class="space-y-3">
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">generateRoleVariations()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            async generateRoleVariations(baseRole: string, apis: APIClients): Promise&lt;RoleVariations&gt;
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">AI-powered role variation generation using Perplexity API</div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">discoverPeople()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            async discoverPeople(roles: string[], companies: string[], apis: APIClients): Promise&lt;PeopleDiscoveryResult&gt;
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Searches CoreSignal and PDL for people matching role variations</div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">scoreRoleCandidates()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            scoreRoleCandidates(people: EnrichedPerson[], targetRole: string, roleVariations: RoleVariations): ScoredCandidate[]
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Scores and ranks people by role relevance and seniority</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Flow Details -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Data Flow & Database Operations</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Database Operations</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Read:</strong> people table (existing contacts)</div>
+                            <div>• <strong>Write:</strong> people table (new discovered contacts)</div>
+                            <div>• <strong>Update:</strong> people.dataQualityScore, people.dataSources</div>
+                            <div>• <strong>Cache:</strong> roleVariationCache (in-memory role variations)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Cost Tracking Points</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• Perplexity API calls for role variation generation</div>
+                            <div>• CoreSignal API calls for people discovery</div>
+                            <div>• PDL API calls for contact enrichment</div>
+                            <div>• Lusha API calls for phone/email verification</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Caching Strategy</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Role Cache:</strong> roleVariationCache (Map&lt;string, RoleVariations&gt;)</div>
+                            <div>• <strong>Fallback Cache:</strong> commonRoleDefinitions.ts (static fallbacks)</div>
+                            <div>• <strong>AI Cache:</strong> Perplexity API responses cached by role</div>
+                            <div>• <strong>PDL Cache:</strong> People Data Labs responses cached by query</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Examples -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Code Examples</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">RoleVariations Type</h4>
+                        <pre class="text-xs text-gray-600 bg-gray-50 p-2 rounded overflow-x-auto">interface RoleVariations {
+  baseRole: string;
+  variations: string[];
+  tiers: {
+    tier1: string[];  // C-level
+    tier2: string[];  // VP-level
+    tier3: string[];  // Director-level
+    tier4: string[];  // Manager-level
+  };
+  totalVariations: number;
+  generatedBy: 'ai' | 'fallback';
+}</pre>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">AI Role Generation</h4>
+                        <pre class="text-xs text-gray-600 bg-gray-50 p-2 rounded overflow-x-auto">// Generate variations using Perplexity AI
+const prompt = buildAIPrompt(baseRole, options);
+const response = await perplexity.query(prompt);
+const variations = parseAIResponse(response.answer, baseRole);
+
+return {
+  ...variations,
+  generatedBy: 'ai',
+  generatedAt: new Date().toISOString()
+};</pre>
                     </div>
                 </div>
             </div>
@@ -506,6 +777,139 @@
                                 <div>• dataQualityScore: 94.2</div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Architecture -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">File Architecture</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">API Endpoints</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>POST /api/v1/intelligence/person/route.ts</div>
+                            <div>POST /api/v1/intelligence/person/research/route.ts</div>
+                            <div>POST /api/v1/intelligence/person/enrich/route.ts</div>
+                            <div>POST /api/v1/intelligence/person/ai-analysis/route.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Core Pipeline Files</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/pipelines/orchestrators/PersonResearchPipeline.ts</div>
+                            <div>src/platform/intelligence/modules/ExecutiveResearchEnhanced.ts</div>
+                            <div>src/platform/pipelines/functions/intelligence/ai-person-intelligence.ts</div>
+                            <div>src/platform/pipelines/functions/analysis/analyzePersonIntelligence.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Validation & Providers</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/pipelines/functions/validation/validatePersonInput.ts</div>
+                            <div>src/platform/pipelines/functions/providers/pdl-service.ts</div>
+                            <div>src/platform/pipelines/functions/enrichment/enrichContacts.ts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Functions -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Key Functions</h3>
+                <div class="space-y-3">
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">PersonResearchPipeline.research()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            async research(request: PersonResearchRequest): Promise&lt;PersonResearchResult&gt;
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Main research orchestrator with AI intelligence generation</div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">createAIPersonIntelligence()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            async createAIPersonIntelligence(personData: EnhancedPersonData, companyContext: CompanyContext, apis: APIClients): Promise&lt;AIPersonIntelligence&gt;
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Generates complete AI intelligence using Claude API</div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">analyzePersonIntelligence()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            async analyzePersonIntelligence(person: EnrichedPerson, options: AnalysisOptions, apis: APIClients): Promise&lt;PersonIntelligence&gt;
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Analyzes career history, relationships, and behavioral signals</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Flow Details -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Data Flow & Database Operations</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Database Operations</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Read:</strong> people table (existing person data)</div>
+                            <div>• <strong>Write:</strong> people.aiIntelligence, people.aiConfidence, people.dataQualityScore</div>
+                            <div>• <strong>Update:</strong> people.dataLastVerified, people.dataSources</div>
+                            <div>• <strong>Create:</strong> research_data table (Perplexity AI research)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Cost Tracking Points</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• PDL API calls for person enrichment</div>
+                            <div>• Claude API calls for AI intelligence generation</div>
+                            <div>• Perplexity API calls for web research</div>
+                            <div>• CoreSignal API calls for career history</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">AI Intelligence Storage</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Wants:</strong> Career aspirations, professional goals, motivations</div>
+                            <div>• <strong>Pains:</strong> Current challenges, frustrations, pressure points</div>
+                            <div>• <strong>Outreach:</strong> Best approach, value propositions, conversation starters</div>
+                            <div>• <strong>Confidence:</strong> AI confidence score (0-100)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Examples -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Code Examples</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">AIPersonIntelligence Type</h4>
+                        <pre class="text-xs text-gray-600 bg-gray-50 p-2 rounded overflow-x-auto">interface AIPersonIntelligence {
+  person: { name: string; title: string; company: string; };
+  wants: PersonWantsAnalysis;
+  pains: PersonPainsAnalysis;
+  outreach: OutreachStrategy;
+  overallInsight: string;
+  confidence: number;
+  generatedAt: string;
+  model: string;
+}</pre>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Claude AI Prompt</h4>
+                        <pre class="text-xs text-gray-600 bg-gray-50 p-2 rounded overflow-x-auto">const prompt = `You are an expert executive coach. 
+Analyze this professional profile:
+- Name: ${person.name}
+- Role: ${person.title} at ${person.company}
+- Seniority: ${person.seniorityLevel}
+
+Based on this data, analyze their wants, pains, and 
+optimal outreach strategy. Return ONLY valid JSON.`;</pre>
                     </div>
                 </div>
             </div>
@@ -638,6 +1042,139 @@
                 </div>
             </div>
 
+            <!-- File Architecture -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">File Architecture</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">API Endpoints</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>POST /api/v1/intelligence/company/discover/route.ts</div>
+                            <div>POST /api/v1/intelligence/company/score/route.ts</div>
+                            <div>POST /api/v1/intelligence/company/analytics/route.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Core Pipeline Files</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/pipelines/orchestrators/CompanyDiscoveryPipeline.ts</div>
+                            <div>src/platform/pipelines/functions/discovery/discoverCompanies.ts</div>
+                            <div>src/platform/pipelines/functions/scoring/calculateCompanyFitScore.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Validation & Filtering</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/pipelines/functions/validation/validateCompanyDiscoveryCriteria.ts</div>
+                            <div>src/platform/pipelines/functions/company/resolve-company.ts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Functions -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Key Functions</h3>
+                <div class="space-y-3">
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">CompanyDiscoveryPipeline.discover()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            async discover(criteria: CompanyDiscoveryCriteria): Promise&lt;CompanyDiscoveryResult&gt;
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Main discovery orchestrator with firmographic filtering and scoring</div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">discoverCompanies()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            async discoverCompanies(criteria: CompanyDiscoveryCriteria, apis: APIClients): Promise&lt;CompanyDiscoveryResult&gt;
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Searches CoreSignal and other sources for companies matching criteria</div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-3 rounded">
+                        <div class="font-semibold text-sm text-gray-800">calculateCompanyFitScore()</div>
+                        <div class="text-xs font-mono text-gray-600 mt-1">
+                            calculateCompanyFitScore(company: Company, criteria: CompanyDiscoveryCriteria): CompanyFitScore
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Calculates multi-dimensional fit score based on firmographics and criteria</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Flow Details -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Data Flow & Database Operations</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Database Operations</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Read:</strong> companies table (existing company data)</div>
+                            <div>• <strong>Write:</strong> companies table (new discovered companies)</div>
+                            <div>• <strong>Update:</strong> companies.dataQualityScore, companies.dataSources</div>
+                            <div>• <strong>Query:</strong> Filter by industry, size, location, technology stack</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Cost Tracking Points</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• CoreSignal API calls for company discovery</div>
+                            <div>• Perplexity API calls for company research</div>
+                            <div>• Google Custom Search API calls for company data</div>
+                            <div>• Database query costs for filtering and scoring</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Fit Score Calculation</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Industry Match:</strong> 0-100 based on criteria match</div>
+                            <div>• <strong>Size Match:</strong> 0-100 based on employee count range</div>
+                            <div>• <strong>Technology Match:</strong> 0-100 based on tech stack overlap</div>
+                            <div>• <strong>Location Match:</strong> 0-100 based on geographic criteria</div>
+                            <div>• <strong>Overall Score:</strong> Weighted average of all factors</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Examples -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Code Examples</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">CompanyDiscoveryCriteria Type</h4>
+                        <pre class="text-xs text-gray-600 bg-gray-50 p-2 rounded overflow-x-auto">interface CompanyDiscoveryCriteria {
+  firmographics?: {
+    industry?: string[];
+    employeeRange?: { min?: number; max?: number };
+    revenueRange?: { min?: number; max?: number };
+  };
+  innovationProfile?: {
+    segment?: InnovationSegment;
+  };
+  painSignals?: string[];
+  minCompanyFitScore?: number;
+  limit?: number;
+}</pre>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Fit Score Calculation</h4>
+                        <pre class="text-xs text-gray-600 bg-gray-50 p-2 rounded overflow-x-auto">const fitScore = {
+  industry: calculateIndustryMatch(company.industry, criteria.firmographics?.industry),
+  size: calculateSizeMatch(company.employeeCount, criteria.firmographics?.employeeRange),
+  technology: calculateTechMatch(company.techStack, criteria.technologyStack),
+  location: calculateLocationMatch(company.location, criteria.location),
+  overall: calculateWeightedScore(fitScore)
+};</pre>
+                    </div>
+                </div>
+            </div>
+
             <!-- Output Example -->
             <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mt-6">
                 <h3 class="font-semibold mb-4 text-gray-900">Output Example</h3>
@@ -667,6 +1204,163 @@
     "averageFitScore": 78
   }
 }</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Break -->
+    <div class="page-break"></div>
+
+    <!-- Shared Infrastructure -->
+    <div class="max-w-6xl mx-auto">
+        <h1 class="section-header">Shared Infrastructure</h1>
+        
+        <div class="card mb-8">
+            <h2 class="subsection-header">Core Services & Middleware</h2>
+            <p class="text-gray-600 mb-6">Shared components that power all intelligence pipelines</p>
+
+            <!-- Cost Tracking -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Cost Tracking System</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Core Files</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/services/v1/IntelligenceCostTracker.ts</div>
+                            <div>src/platform/middleware/cost-limit-guard.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Key Functions</h4>
+                        <div class="space-y-2">
+                            <div class="text-xs font-mono text-gray-600">
+                                trackCost(workspaceId: string, provider: string, cost: number): Promise&lt;void&gt;
+                            </div>
+                            <div class="text-xs font-mono text-gray-600">
+                                checkBudget(workspaceId: string): Promise&lt;BudgetStatus&gt;
+                            </div>
+                            <div class="text-xs font-mono text-gray-600">
+                                withCostTracking&lt;T&gt;(operation: () => Promise&lt;T&gt;): Promise&lt;T&gt;
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Database Operations</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Write:</strong> api_cost_tracking table (every API call)</div>
+                            <div>• <strong>Read:</strong> api_cost_tracking table (budget calculations)</div>
+                            <div>• <strong>Indexes:</strong> workspaceId, createdAt, apiProvider</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- External API Providers -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-900">External API Providers</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Data Sources</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/pipelines/functions/providers/pdl-service.ts (People Data Labs)</div>
+                            <div>src/platform/pipelines/functions/providers/coresignal-multisource.ts (CoreSignal)</div>
+                            <div>src/platform/pipelines/functions/providers/coresignal-jobs.ts (CoreSignal Jobs)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">AI Services</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>Claude API (Anthropic) - Person intelligence generation</div>
+                            <div>Perplexity API - Role variation generation</div>
+                            <div>OpenRouter - Model routing and fallbacks</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Cost Tracking Per Provider</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>PDL:</strong> $0.10 per contact enrichment</div>
+                            <div>• <strong>CoreSignal:</strong> $0.05 per company lookup</div>
+                            <div>• <strong>Claude:</strong> $0.03 per 1K tokens</div>
+                            <div>• <strong>Perplexity:</strong> $0.20 per query</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Schema -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Database Schema</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Core Models</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>prisma/schema-streamlined.prisma</div>
+                            <div>• people (with aiIntelligence, buyerGroupRole, dataQualityScore)</div>
+                            <div>• companies (with aiIntelligence, dataQualityScore)</div>
+                            <div>• api_cost_tracking (cost monitoring)</div>
+                            <div>• research_data (Perplexity AI research storage)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Key Fields</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• aiIntelligence: JsonB - AI-generated insights</div>
+                            <div>• dataQualityScore: Float - Data quality metrics</div>
+                            <div>• buyerGroupRole: String - Role in buyer group</div>
+                            <div>• dataSources: String[] - Source tracking</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Indexes & Performance</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>GIN Indexes:</strong> aiIntelligence, dataQualityBreakdown, dataSources</div>
+                            <div>• <strong>Composite Indexes:</strong> workspaceId + dataQualityScore</div>
+                            <div>• <strong>Cost Tracking Indexes:</strong> workspaceId + createdAt + apiProvider</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Chat Integration -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-900">AI Chat Integration</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Natural Language Processing</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/ui/components/chat/IntelligenceWorkflowHandler.tsx</div>
+                            <div>src/platform/ui/components/chat/RightPanel.tsx</div>
+                            <div>src/app/api/ai-chat/route.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Query Processing Flow</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>1. <strong>Parse Intent:</strong> IntelligenceWorkflowHandler.processQuery()</div>
+                            <div>2. <strong>Route Pipeline:</strong> Based on intent classification</div>
+                            <div>3. <strong>Execute Pipeline:</strong> Call appropriate V1 API endpoint</div>
+                            <div>4. <strong>Format Response:</strong> Convert to natural language</div>
+                            <div>5. <strong>Display Results:</strong> RightPanel with formatted output</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Query Examples</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• "Find the CFO of Nike" → Role Discovery Pipeline</div>
+                            <div>• "Research John Smith at Nike" → Person Research Pipeline</div>
+                            <div>• "Find buyer group for Nike" → Buyer Group Discovery Pipeline</div>
+                            <div>• "Find tech companies in SF" → Company Discovery Pipeline</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -958,6 +1652,196 @@
                     <div class="text-center">
                         <div class="text-3xl font-bold">91%</div>
                         <div class="text-sm text-gray-300">Data Quality</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Break -->
+    <div class="page-break"></div>
+
+    <!-- Page Break -->
+    <div class="page-break"></div>
+
+    <!-- Cross-Reference Index -->
+    <div class="max-w-6xl mx-auto">
+        <h1 class="section-header">Cross-Reference Index</h1>
+        
+        <div class="card mb-8">
+            <h2 class="subsection-header">Complete File & Function Mapping</h2>
+            <p class="text-gray-600 mb-6">Comprehensive index for auditing every component</p>
+
+            <!-- File to Functions Mapping -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-900">File → Functions Mapping</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Buyer Group Engine</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/intelligence/buyer-group/buyer-group-engine.ts</div>
+                            <div>  • discover(request: EnrichmentRequest): Promise&lt;EnrichmentResult&gt;</div>
+                            <div>  • discoverBatch(requests: EnrichmentRequest[]): Promise&lt;EnrichmentResult[]&gt;</div>
+                            <div>  • saveToDatabase(result: EnrichmentResult, workspaceId: string): Promise&lt;string&gt;</div>
+                            <div>  • retrieve(companyName: string, workspaceId: string): Promise&lt;EnrichmentResult | null&gt;</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Role Discovery Pipeline</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/pipelines/orchestrators/RoleDiscoveryPipeline.ts</div>
+                            <div>  • discover(criteria: RoleCriteria): Promise&lt;RoleDiscoveryResult&gt;</div>
+                            <div>src/platform/pipelines/functions/roles/generateRoleVariations.ts</div>
+                            <div>  • generateRoleVariations(baseRole: string, apis: APIClients): Promise&lt;RoleVariations&gt;</div>
+                            <div>  • generateWithAI(baseRole: string, perplexity: PerplexityAPI): Promise&lt;RoleVariations&gt;</div>
+                            <div>  • generateWithPatterns(baseRole: string): RoleVariations</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Person Research Pipeline</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/pipelines/orchestrators/PersonResearchPipeline.ts</div>
+                            <div>  • research(request: PersonResearchRequest): Promise&lt;PersonResearchResult&gt;</div>
+                            <div>  • resolvePerson(request: PersonResearchRequest): Promise&lt;EnrichedPerson&gt;</div>
+                            <div>  • generateAIIntelligence(person: EnrichedPerson, company: string): Promise&lt;AIPersonIntelligence&gt;</div>
+                            <div>src/platform/pipelines/functions/intelligence/ai-person-intelligence.ts</div>
+                            <div>  • createAIPersonIntelligence(personData: EnhancedPersonData, companyContext: CompanyContext, apis: APIClients): Promise&lt;AIPersonIntelligence&gt;</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Company Discovery Pipeline</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>src/platform/pipelines/orchestrators/CompanyDiscoveryPipeline.ts</div>
+                            <div>  • discover(criteria: CompanyDiscoveryCriteria): Promise&lt;CompanyDiscoveryResult&gt;</div>
+                            <div>src/platform/pipelines/functions/discovery/discoverCompanies.ts</div>
+                            <div>  • discoverCompanies(criteria: CompanyDiscoveryCriteria, apis: APIClients): Promise&lt;CompanyDiscoveryResult&gt;</div>
+                            <div>src/platform/pipelines/functions/scoring/calculateCompanyFitScore.ts</div>
+                            <div>  • calculateCompanyFitScore(company: Company, criteria: CompanyDiscoveryCriteria): CompanyFitScore</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline to Files Mapping -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Pipeline → Files Mapping</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Buyer Group Discovery</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>API: /api/v1/intelligence/buyer-group/route.ts</div>
+                            <div>Engine: src/platform/intelligence/buyer-group/buyer-group-engine.ts</div>
+                            <div>Enrichment: src/platform/intelligence/buyer-group/progressive-enrichment.ts</div>
+                            <div>Pipeline: src/platform/pipelines/orchestrators/BuyerGroupDiscoveryPipeline.ts</div>
+                            <div>Services: src/platform/intelligence/services/CoreBuyerGroupAnalyzer.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Role Discovery</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>API: /api/v1/intelligence/role/discover/route.ts</div>
+                            <div>Pipeline: src/platform/pipelines/orchestrators/RoleDiscoveryPipeline.ts</div>
+                            <div>Role Gen: src/platform/pipelines/functions/roles/generateRoleVariations.ts</div>
+                            <div>Discovery: src/platform/pipelines/functions/discovery/discoverPeople.ts</div>
+                            <div>Validation: src/platform/pipelines/functions/validation/validateRoleCriteria.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Person Research</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>API: /api/v1/intelligence/person/research/route.ts</div>
+                            <div>Pipeline: src/platform/pipelines/orchestrators/PersonResearchPipeline.ts</div>
+                            <div>AI Intel: src/platform/pipelines/functions/intelligence/ai-person-intelligence.ts</div>
+                            <div>Analysis: src/platform/pipelines/functions/analysis/analyzePersonIntelligence.ts</div>
+                            <div>Validation: src/platform/pipelines/functions/validation/validatePersonInput.ts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Company Discovery</h4>
+                        <div class="text-xs font-mono text-gray-600 space-y-1">
+                            <div>API: /api/v1/intelligence/company/discover/route.ts</div>
+                            <div>Pipeline: src/platform/pipelines/orchestrators/CompanyDiscoveryPipeline.ts</div>
+                            <div>Discovery: src/platform/pipelines/functions/discovery/discoverCompanies.ts</div>
+                            <div>Scoring: src/platform/pipelines/functions/scoring/calculateCompanyFitScore.ts</div>
+                            <div>Validation: src/platform/pipelines/functions/validation/validateCompanyDiscoveryCriteria.ts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database to Pipeline Mapping -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-900">Database → Pipeline Mapping</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">people table</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Buyer Group:</strong> buyerGroupRole, isBuyerGroupMember, influenceScore</div>
+                            <div>• <strong>Person Research:</strong> aiIntelligence, aiConfidence, dataQualityScore</div>
+                            <div>• <strong>Role Discovery:</strong> title, company, email, phone, dataQualityScore</div>
+                            <div>• <strong>All Pipelines:</strong> dataSources, dataLastVerified, dataQualityBreakdown</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">companies table</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Company Discovery:</strong> industry, employeeCount, revenue, website, dataQualityScore</div>
+                            <div>• <strong>Buyer Group:</strong> companyName, website, industry, companySize</div>
+                            <div>• <strong>All Pipelines:</strong> aiIntelligence, dataSources, dataLastVerified</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">api_cost_tracking table</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>All Pipelines:</strong> workspaceId, apiProvider, endpoint, cost, tokensUsed</div>
+                            <div>• <strong>Cost Monitoring:</strong> operation, entityType, entityId, success</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">research_data table</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Person Research:</strong> Perplexity AI research content</div>
+                            <div>• <strong>Role Discovery:</strong> AI-generated role variations</div>
+                            <div>• <strong>Company Discovery:</strong> Company research and analysis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API to Cost Mapping -->
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
+                <h3 class="font-semibold mb-4 text-gray-900">API → Cost Mapping</h3>
+                <div class="space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">External API Costs</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>People Data Labs (PDL):</strong> $0.10 per contact enrichment</div>
+                            <div>• <strong>CoreSignal:</strong> $0.05 per company lookup, $0.03 per person lookup</div>
+                            <div>• <strong>Claude API:</strong> $0.03 per 1K input tokens, $0.15 per 1K output tokens</div>
+                            <div>• <strong>Perplexity API:</strong> $0.20 per query (role variations, research)</div>
+                            <div>• <strong>Lusha:</strong> $0.15 per contact verification</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 p-4 rounded">
+                        <h4 class="font-semibold text-sm text-gray-800 mb-2">Pipeline Cost Estimates</h4>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>• <strong>Buyer Group (identify):</strong> $0.50 - $1.00 per company</div>
+                            <div>• <strong>Buyer Group (enrich):</strong> $1.50 - $3.00 per company</div>
+                            <div>• <strong>Buyer Group (deep_research):</strong> $3.00 - $6.00 per company</div>
+                            <div>• <strong>Role Discovery:</strong> $0.20 - $0.50 per role + $0.10 per person found</div>
+                            <div>• <strong>Person Research:</strong> $0.30 - $0.80 per person + AI intelligence costs</div>
+                            <div>• <strong>Company Discovery:</strong> $0.10 - $0.30 per company + scoring costs</div>
+                        </div>
                     </div>
                 </div>
             </div>

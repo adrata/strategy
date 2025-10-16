@@ -844,7 +844,8 @@ export function UniversalRecordTemplate({
             const companyCreatePayload = {
               name: updatePayload['companyName'],
               status: 'ACTIVE',
-              priority: 'MEDIUM'
+              priority: 'MEDIUM',
+              workspaceId: record?.workspaceId || localRecord?.workspaceId
             };
             console.log('🔍 [UNIVERSAL] Company creation payload:', companyCreatePayload);
             
@@ -856,13 +857,17 @@ export function UniversalRecordTemplate({
             
             console.log('🔍 [UNIVERSAL] Company creation result:', createResult);
             
-            if (createResult.success && createResult.data) {
+            if (createResult && createResult.success && createResult.data) {
               updatePayload['companyId'] = createResult.data.id;
               console.log('✅ [UNIVERSAL] Created new company:', createResult.data.id);
             } else {
               // Show error to user instead of silent failure
               const errorMsg = createResult?.error || createResult?.message || 'Failed to create company';
-              console.error('❌ [UNIVERSAL] Failed to create company:', errorMsg);
+              console.error('❌ [UNIVERSAL] Failed to create company:', {
+                errorMsg,
+                createResult,
+                payload: companyCreatePayload
+              });
               showMessage(`Failed to create company: ${errorMsg}`, 'error');
               throw new Error(`Company creation failed: ${errorMsg}`);
             }
@@ -4577,7 +4582,18 @@ export function NotesTab({ record, recordType }: { record: any; recordType: stri
   // Sync notes state when record.notes prop changes
   React.useEffect(() => {
     const newNotes = getInitialNotes;
-    if (newNotes !== notes && !isFocused && saveStatus !== 'saving' && !hasUnsavedChanges) {
+    // Only sync if:
+    // 1. Notes have actually changed
+    // 2. User is not currently focused on the textarea
+    // 3. Not currently saving
+    // 4. No unsaved changes
+    // 5. Initial mount is complete (prevents overwriting during component initialization)
+    if (newNotes !== notes && 
+        !isFocused && 
+        saveStatus !== 'saving' && 
+        !hasUnsavedChanges &&
+        !isInitialMountRef.current) {
+      console.log('🔄 [NOTES] Syncing notes from prop:', { newNotes, currentNotes: notes });
       setNotes(newNotes);
       setLastSavedNotes(newNotes);
     }
