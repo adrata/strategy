@@ -18,21 +18,22 @@ export function useChronicleCount() {
       return;
     }
 
-    // Check if this is Notary Everyday workspace (check both old and new IDs)
+    // Check if this is Notary Everyday workspace AND Ryan Serrato user
     const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1';
-    console.log('🔍 [useChronicleCount] isNotaryEveryday:', isNotaryEveryday, 'workspaceId:', workspaceId);
+    const isRyanSerrato = user?.id === 'cmf0kew2z0000pcsexylorpxp';
+    console.log('🔍 [useChronicleCount] isNotaryEveryday:', isNotaryEveryday, 'isRyanSerrato:', isRyanSerrato, 'workspaceId:', workspaceId, 'userId:', user?.id);
     
-    if (isNotaryEveryday) {
-      // Return 3 immediately for Notary Everyday (mock reports)
-      console.log('🔍 [useChronicleCount] Setting count to 3 for Notary Everyday');
+    if (isNotaryEveryday && isRyanSerrato) {
+      // Return 3 immediately for Ryan Serrato in Notary Everyday (mock reports)
+      console.log('🔍 [useChronicleCount] Setting count to 3 for Ryan Serrato in Notary Everyday');
       setCount(3);
       return;
     }
 
-    // For other workspaces, return 0
-    console.log('🔍 [useChronicleCount] Setting count to 0 for other workspace');
+    // For all other users/workspaces, return 0
+    console.log('🔍 [useChronicleCount] Setting count to 0 for other user/workspace');
     setCount(0);
-  }, [workspaceId]);
+  }, [workspaceId, user?.id]);
 
   return { count };
 }

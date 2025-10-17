@@ -121,6 +121,9 @@ function PipelineSections({
   const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || 
                           workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' ||
                           (typeof window !== "undefined" && window.location.pathname.startsWith('/ne/'));
+  
+  // Check if this is Ryan Serrato user
+  const isRyanSerrato = user?.id === 'cmf0kew2z0000pcsexylorpxp';
   console.log('🔍 [LEFT PANEL] Notary Everyday check:', { 
     isNotaryEveryday, 
     workspaceId,
@@ -644,8 +647,8 @@ function PipelineSections({
       id: "chronicle",
       name: "Chronicle",
       description: "Business Intelligence Reports",
-      count: isNotaryEveryday ? chronicleCount : 0, // Show count immediately for Notary Everyday
-      visible: isNotaryEveryday // Only show for Notary Everyday
+      count: (isNotaryEveryday && isRyanSerrato) ? chronicleCount : 0, // Show count only for Ryan Serrato in Notary Everyday
+      visible: (isNotaryEveryday && isRyanSerrato) // Only show for Ryan Serrato in Notary Everyday
     },
     {
       id: "news",
@@ -729,8 +732,8 @@ function PipelineSections({
       id: "metrics",
       name: "Metrics",
       description: "Sales Activity Dashboard",
-      count: isNotaryEveryday ? metricsCount : 0, // Show count immediately for Notary Everyday
-      visible: isNotaryEveryday // Only show for Notary Everyday
+      count: (isNotaryEveryday && isRyanSerrato) ? metricsCount : 0, // Show count only for Ryan Serrato in Notary Everyday
+      visible: (isNotaryEveryday && isRyanSerrato) // Only show for Ryan Serrato in Notary Everyday
     },
     // SELLERS: Show only for demo workspace
     {

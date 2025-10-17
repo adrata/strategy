@@ -118,7 +118,7 @@ interface MetricsData {
 }
 
 export function MetricsEnhanced() {
-  const { acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useAcquisitionOS();
   const { user } = useUnifiedAuth();
   const [metrics, setMetrics] = useState<MetricsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -204,10 +204,11 @@ export function MetricsEnhanced() {
       } catch (err) {
         console.error('Error fetching metrics:', err);
         
-        // Fall back to mock data for Notary Everyday (check both old and new IDs)
+        // Fall back to mock data for Ryan Serrato in Notary Everyday only
         const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1';
-        if (isNotaryEveryday) {
-          console.log('Error occurred, using mock data for Notary Everyday');
+        const isRyanSerrato = user?.id === 'cmf0kew2z0000pcsexylorpxp';
+        if (isNotaryEveryday && isRyanSerrato) {
+          console.log('Error occurred, using mock data for Ryan Serrato in Notary Everyday');
           setMetrics({
             todayPeopleActions: 18,
             yesterdayPeopleActions: 16,

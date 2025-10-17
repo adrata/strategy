@@ -14,6 +14,15 @@ export async function GET(
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Check if this is Ryan Serrato in Notary Everyday
+    const workspaceId = session.user.activeWorkspaceId;
+    const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1';
+    const isRyanSerrato = session.user.id === 'cmf0kew2z0000pcsexylorpxp';
+    
+    if (!(isNotaryEveryday && isRyanSerrato)) {
+      return NextResponse.json({ success: false, error: 'Access denied' }, { status: 403 });
+    }
+
     const { id } = params;
 
     // For now, return sample data. In production, this would query the database

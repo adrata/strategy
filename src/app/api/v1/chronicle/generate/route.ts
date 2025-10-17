@@ -18,6 +18,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Workspace ID required' }, { status: 400 });
     }
 
+    // Check if this is Ryan Serrato in Notary Everyday
+    const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1';
+    const isRyanSerrato = session.user.id === 'cmf0kew2z0000pcsexylorpxp';
+    
+    if (!(isNotaryEveryday && isRyanSerrato)) {
+      return NextResponse.json({ success: false, error: 'Access denied' }, { status: 403 });
+    }
+
     // Generate report date
     const reportDate = new Date();
     const title = `${reportType} Chronicle Report - ${reportDate.toLocaleDateString()}`;

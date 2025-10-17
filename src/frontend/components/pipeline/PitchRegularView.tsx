@@ -92,15 +92,15 @@ export function PitchRegularView({ slideData, onPresent, onBack, hideHeader = fa
       )}
 
       {/* Content - Stacked Slides */}
-      <div className="p-8 overflow-y-auto invisible-scrollbar max-w-8xl mx-auto bg-[var(--background)]">
-        <div className="space-y-16">
+      <div className="p-8 overflow-y-auto invisible-scrollbar max-w-6xl mx-auto bg-[var(--background)]">
+        <div className="space-y-12">
           {slides.map((slide, index) => {
             const SlideComponent = slide.component;
             const slideDataForSlide = slideData.slides[slide.key];
             
             return (
               <div key={index} className="w-full flex justify-center">
-                <div className="w-full max-w-7xl aspect-[16/9] bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
+                <div className="w-full max-w-5xl aspect-[16/9] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
                   <SlideComponent data={slideDataForSlide} />
                 </div>
               </div>

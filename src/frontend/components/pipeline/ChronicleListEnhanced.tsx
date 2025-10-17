@@ -55,10 +55,11 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
         });
         
         if (!response.ok) {
-          // Fall back to mock data for Notary Everyday (check both old and new IDs)
+          // Fall back to mock data for Ryan Serrato in Notary Everyday only
           const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1';
-          if (isNotaryEveryday) {
-            console.log('API failed, using mock data for Notary Everyday');
+          const isRyanSerrato = user?.id === 'cmf0kew2z0000pcsexylorpxp';
+          if (isNotaryEveryday && isRyanSerrato) {
+            console.log('API failed, using mock data for Ryan Serrato in Notary Everyday');
             // Convert sample data to match the expected interface
             const convertedReports = sampleChronicleReports.map(report => ({
               id: report.id,
@@ -74,8 +75,8 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
             setLoading(false);
             return;
           }
-          // For other workspaces, just set empty array instead of throwing error
-          console.log('API failed for non-Notary Everyday workspace, setting empty reports');
+          // For all other users/workspaces, just set empty array instead of throwing error
+          console.log('API failed for non-Ryan Serrato user, setting empty reports');
           setReports([]);
           setLoading(false);
           return;
