@@ -906,8 +906,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </>
         )}
         
-        {/* 1. Themes - Ross only */}
-        {isAdminUser && (
+        {/* 1. Themes - Hidden from all users */}
+        {/* {isAdminUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={(e) => {
@@ -937,7 +937,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           >
             Themes
           </div>
-        )}
+        )} */}
         
         {/* 2. Settings */}
         <div
@@ -1064,8 +1064,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
 
-        {/* 7. Theme Picker - Available for all users */}
-        <div
+        {/* 7. Theme Picker - Hidden from all users */}
+        {/* <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center gap-2"
           onClick={() => {
             console.log("🎨 Theme picker clicked - opening theme picker");
@@ -1080,7 +1080,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
           </svg>
           Themes
-        </div>
+        </div> */}
         
         {/* 8. Sign Out */}
         <div
