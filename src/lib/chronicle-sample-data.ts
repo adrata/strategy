@@ -144,7 +144,7 @@ export const sampleChronicleReports: ChronicleReportData[] = [
     reportDate: '2025-10-31', // October 2025 Progress Report
     reportType: 'PITCH',
     content: {
-      purpose: 'We help notaries scale their business with technology',
+      purpose: 'We help title leaders scale their business with technology',
       summary: {
         weekProgress: 'Executive presentation for October 2025 progress review and strategic updates',
         executiveSummary: 'Comprehensive pitch covering company purpose, mission, values, progress, stories, understanding, frameworks, direction, and inspiration for the Notary Everyday team.'
@@ -188,7 +188,7 @@ export const sampleChronicleReports: ChronicleReportData[] = [
         },
         purpose: {
           title: 'Our Purpose',
-          content: 'We help notaries scale their business with technology',
+          content: 'We help title leaders scale their business with technology',
           description: 'Empowering notaries nationwide with innovative tools and services that streamline document authentication and expand their reach beyond traditional limitations.'
         },
         mission: {

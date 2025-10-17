@@ -23,9 +23,9 @@ export function useChronicleCount() {
     console.log('🔍 [useChronicleCount] isNotaryEveryday:', isNotaryEveryday, 'workspaceId:', workspaceId);
     
     if (isNotaryEveryday) {
-      // Return 2 immediately for Notary Everyday (mock reports)
-      console.log('🔍 [useChronicleCount] Setting count to 2 for Notary Everyday');
-      setCount(2);
+      // Return 3 immediately for Notary Everyday (mock reports)
+      console.log('🔍 [useChronicleCount] Setting count to 3 for Notary Everyday');
+      setCount(3);
       return;
     }
 

@@ -894,12 +894,12 @@ export const PipelineContent = React.memo(function PipelineContent({
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-md">
                   <img src="/download.jpg" alt="Dano" className="w-6 h-6 rounded-lg object-cover" />
-                  <span className="text-sm font-medium text-gray-600">Dano Smith</span>
+                  <span className="text-sm font-medium text-gray-600">John Dano</span>
                   <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded-full">S:2300</span>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-md">
                   <img src="/ryan.jpg" alt="Ryan" className="w-6 h-6 rounded-lg object-cover" />
-                  <span className="text-sm font-medium text-gray-600">Ryan Johnson</span>
+                  <span className="text-sm font-medium text-gray-600">Ryan Serrato</span>
                   <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">S:1100</span>
                 </div>
               </div>
