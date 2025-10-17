@@ -176,7 +176,7 @@ export function getAppThemeFromPath(pathname: string): AppTheme {
   const pipelineApps = [
     '/speedrun', '/opportunities', '/leads', '/prospects', 
     '/companies', '/people', '/clients', '/sellers', 
-    '/chronicle', '/stacks', '/oasis'
+    '/chronicle', '/stacks', '/oasis', '/metrics', '/dashboard'
   ];
   
   for (const app of pipelineApps) {

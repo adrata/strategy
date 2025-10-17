@@ -326,9 +326,28 @@ export async function PATCH(
       'foundedYear', 'registrationNumber', 'taxId', 'vatNumber', 'domain', 
       'logoUrl', 'status', 'priority', 'tags', 'customFields', 'notes', 
       'lastAction', 'lastActionDate', 'nextAction', 'nextActionDate', 
+      'nextActionReasoning', 'nextActionPriority', 'nextActionType',
       'actionStatus', 'globalRank', 'entityId', 'mainSellerId', 'actualCloseDate',
       'expectedCloseDate', 'opportunityAmount', 'opportunityProbability', 
-      'opportunityStage', 'acquisitionDate', 'competitors'
+      'opportunityStage', 'acquisitionDate', 'competitors',
+      // Intelligence fields
+      'businessChallenges', 'businessPriorities', 'competitiveAdvantages', 
+      'growthOpportunities', 'strategicInitiatives', 'successMetrics', 
+      'marketThreats', 'keyInfluencers', 'decisionTimeline', 'marketPosition', 
+      'digitalMaturity', 'techStack',
+      // Social media fields
+      'linkedinUrl', 'linkedinFollowers', 'twitterUrl', 'twitterFollowers', 
+      'facebookUrl', 'instagramUrl', 'youtubeUrl', 'githubUrl',
+      // HQ Location fields
+      'hqLocation', 'hqFullAddress', 'hqCity', 'hqState', 'hqStreet', 
+      'hqZipcode', 'hqRegion', 'hqCountryIso2', 'hqCountryIso3',
+      // Business fields
+      'lastFundingAmount', 'lastFundingDate', 'stockSymbol', 'isPublic', 
+      'naicsCodes', 'sicCodes',
+      // Tech fields
+      'activeJobPostings', 'numTechnologiesUsed', 'technologiesUsed',
+      // SBI fields
+      'confidence', 'sources', 'lastVerified', 'parentCompanyName', 'parentCompanyDomain'
     ];
 
     // Filter body to only allowed fields
@@ -340,8 +359,25 @@ export async function PATCH(
       companyId: id,
       updateData,
       allowedFields: ALLOWED_COMPANY_FIELDS,
-      filteredFields: Object.keys(updateData)
+      filteredFields: Object.keys(updateData),
+      originalRequestBody: body,
+      fieldsInRequest: Object.keys(body),
+      fieldsFilteredOut: Object.keys(body).filter(key => !ALLOWED_COMPANY_FIELDS.includes(key)),
+      fieldTypes: Object.keys(updateData).reduce((acc, key) => {
+        acc[key] = typeof updateData[key];
+        return acc;
+      }, {} as Record<string, string>)
     });
+
+    // Check for empty updates
+    if (Object.keys(updateData).length === 0) {
+      console.warn('⚠️ [COMPANY API] No fields to update - updateData is empty');
+      return NextResponse.json({
+        success: false,
+        error: 'No valid fields to update',
+        details: 'All fields were filtered out or empty'
+      }, { status: 400 });
+    }
 
     // Update company (partial update)
     const updatedCompany = await prisma.companies.update({
@@ -373,6 +409,30 @@ export async function PATCH(
           },
         },
       },
+    });
+
+    // Log what actually got updated in the database
+    console.log(`✅ [COMPANY API AUDIT] Database update completed:`, {
+      companyId: id,
+      updatedFields: Object.keys(updateData),
+      updatedValues: updateData,
+      prismaResult: {
+        id: updatedCompany.id,
+        name: updatedCompany.name,
+        website: updatedCompany.website,
+        industry: updatedCompany.industry,
+        status: updatedCompany.status,
+        priority: updatedCompany.priority,
+        updatedAt: updatedCompany.updatedAt
+      },
+      changes: Object.keys(updateData).reduce((acc, key) => {
+        const oldValue = (existingCompany as any)[key];
+        const newValue = (updatedCompany as any)[key];
+        if (oldValue !== newValue) {
+          acc[key] = { old: oldValue, new: newValue };
+        }
+        return acc;
+      }, {} as Record<string, { old: any; new: any }>)
     });
 
     // Log data update as an action
@@ -427,7 +487,20 @@ export async function PATCH(
     });
 
   } catch (error) {
-    console.error('Error updating company:', error);
+    console.error('❌ [COMPANIES API] Error updating company:', {
+      companyId: id,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+      // Include Prisma-specific error details if available
+      ...(error && typeof error === 'object' && 'code' in error && {
+        prismaCode: error.code,
+        prismaMessage: 'message' in error ? error.message : undefined,
+        meta: 'meta' in error ? error.meta : undefined
+      })
+    });
     
     // Handle unique constraint violations
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
@@ -437,8 +510,13 @@ export async function PATCH(
       );
     }
     
+    const errorMessage = error instanceof Error ? error.message : 'Failed to update company';
     return NextResponse.json(
-      { success: false, error: 'Failed to update company' },
+      { 
+        success: false, 
+        error: 'Failed to update company',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }

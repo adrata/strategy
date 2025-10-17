@@ -49,7 +49,23 @@ export const PipelineContent = React.memo(function PipelineContent({
   title, 
   subtitle 
 }: PipelineContentProps) {
+  const [showHeader, setShowHeader] = useState(true);
   // console.log('🔍 [PipelineContent] Component rendered for section:', section, 'sellerId:', sellerId, 'companyId:', companyId);
+  
+  // Keyboard shortcut to toggle header (only for metrics section)
+  useEffect(() => {
+    if (section !== 'metrics') return;
+    
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'h' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setShowHeader(prev => !prev);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [section]);
   
   const router = useRouter();
   const { navigateToPipeline, navigateToPipelineItem } = useWorkspaceNavigation();
@@ -866,12 +882,14 @@ export const PipelineContent = React.memo(function PipelineContent({
   // Create the middle panel content
   const middlePanel = section === 'metrics' ? (
     <div className="h-full flex flex-col">
-      <StandardHeader
-        title="Metrics"
-        subtitle="Sales performance and KPIs"
-      />
+      {showHeader && (
+        <StandardHeader
+          title="Metrics"
+          subtitle="Sales performance and KPIs"
+        />
+      )}
       <div className="flex-1 overflow-auto">
-        <MetricsWall />
+        <MetricsDashboard />
       </div>
     </div>
   ) : section === 'chronicle' ? (

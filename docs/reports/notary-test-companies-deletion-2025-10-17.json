@@ -1,0 +1,80 @@
+{
+  "workspaceId": "01K7DNYR5VZ7JY36KGKKN76XZ1",
+  "isDryRun": false,
+  "startTime": "2025-10-17T02:54:12.289Z",
+  "companies": [
+    {
+      "id": "01K7JA8GM10HYN4DEECKSH0TGX",
+      "name": "asdfsad",
+      "peopleCount": 0,
+      "actionsCount": 1,
+      "deleted": true,
+      "errors": []
+    },
+    {
+      "id": "01K7M92YM8N776X7A7M6VKHXD4",
+      "name": "Ross",
+      "peopleCount": 0,
+      "actionsCount": 2,
+      "deleted": true,
+      "errors": []
+    },
+    {
+      "id": "01K7QZWGTSYH1TZTC53VFPM9G6",
+      "name": "New Company",
+      "peopleCount": 1,
+      "actionsCount": 1,
+      "deleted": true,
+      "errors": []
+    },
+    {
+      "id": "01K7JGTPC05G1H1AWRX5TPTY3M",
+      "name": "ASDF",
+      "peopleCount": 0,
+      "actionsCount": 1,
+      "deleted": true,
+      "errors": []
+    },
+    {
+      "id": "01K7MKM2CVJ9E2K4W0D2A9NT2V",
+      "name": "Drigg",
+      "peopleCount": 0,
+      "actionsCount": 1,
+      "deleted": true,
+      "errors": []
+    },
+    {
+      "id": "01K7MKMGNP1XQ47AHCZKM446FH",
+      "name": "Driggdd",
+      "peopleCount": 1,
+      "actionsCount": 1,
+      "deleted": true,
+      "errors": []
+    },
+    {
+      "id": "01K7JN1VBJE2KPF8WXWJ9KDJ0R",
+      "name": "test company inc",
+      "peopleCount": 0,
+      "actionsCount": 1,
+      "deleted": true,
+      "errors": []
+    },
+    {
+      "id": "01K7JN41K56ZQQQCMGJMF9XP1C",
+      "name": "Adrata",
+      "peopleCount": 0,
+      "actionsCount": 1,
+      "deleted": true,
+      "errors": []
+    }
+  ],
+  "summary": {
+    "companiesFound": 8,
+    "companiesDeleted": 8,
+    "peopleDeleted": 2,
+    "actionsDeleted": 9,
+    "errors": []
+  },
+  "endTime": "2025-10-17T02:54:18.027Z",
+  "duration": 5738
+}

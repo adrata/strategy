@@ -16,7 +16,11 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let id: string | undefined;
   try {
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+    
     // Simple authentication check
     const authUser = await getV1AuthUser(request);
     if (!authUser) {
@@ -26,12 +30,11 @@ export async function GET(
       );
     }
 
-    const { id } = await params;
-
     const person = await prisma.people.findUnique({
       where: { 
         id,
-        deletedAt: null // Only show non-deleted records
+        deletedAt: null, // Only show non-deleted records
+        workspaceId: authUser.workspaceId // Ensure person belongs to user's workspace
       },
       include: {
         company: {
@@ -105,15 +108,39 @@ export async function GET(
       mainSellerData: person.mainSeller
     };
 
+    console.log(`🔍 [PEOPLE API GET] Returning person data:`, {
+      personId: id,
+      email: transformedPerson.email,
+      workEmail: transformedPerson.workEmail,
+      hasEmail: !!transformedPerson.email
+    });
+
     return NextResponse.json({
       success: true,
       data: transformedPerson,
     });
 
   } catch (error) {
-    console.error('Error fetching person:', error);
+    console.error('❌ [PEOPLE API] Error fetching person:', {
+      personId: id,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+      // Include Prisma-specific error details if available
+      prismaCode: error && typeof error === 'object' && 'code' in error ? error.code : undefined,
+      prismaMessage: error && typeof error === 'object' && 'message' in error ? error.message : undefined,
+      prismaMeta: error && typeof error === 'object' && 'meta' in error ? error.meta : undefined
+    });
+    
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch person';
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch person' },
+      { 
+        success: false, 
+        error: 'Failed to fetch person',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
@@ -124,7 +151,11 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let id: string | undefined;
   try {
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+    
     // Simple authentication check
     const authUser = await getV1AuthUser(request);
     if (!authUser) {
@@ -134,14 +165,14 @@ export async function PUT(
       );
     }
 
-    const { id } = await params;
     const body = await request.json();
 
-    // Check if person exists
+    // Check if person exists and belongs to user's workspace
     const existingPerson = await prisma.people.findUnique({
       where: { 
         id,
-        deletedAt: null // Only update non-deleted records
+        deletedAt: null, // Only update non-deleted records
+        workspaceId: authUser.workspaceId // Ensure person belongs to user's workspace
       },
     });
 
@@ -197,7 +228,7 @@ export async function PUT(
     });
 
     // Generate a slug for updated person name; not persisted, returned for client navigation
-    const updatedDisplayName = updatedPerson.fullName || `${updatedPerson.firstName ?? ''} ${updatedPerson.lastName ?? ''}`.trim() || updatedPerson.name || '-';
+    const updatedDisplayName = updatedPerson.fullName || `${updatedPerson.firstName ?? ''} ${updatedPerson.lastName ?? ''}`.trim() || '-';
     const generatedSlug = `${(updatedDisplayName || '-')
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
@@ -224,7 +255,18 @@ export async function PUT(
     });
 
   } catch (error) {
-    console.error('Error updating person:', error);
+    console.error('❌ [PEOPLE API] Error in PUT updating person:', {
+      personId: id,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+      // Include Prisma-specific error details if available
+      prismaCode: error && typeof error === 'object' && 'code' in error ? error.code : undefined,
+      prismaMessage: error && typeof error === 'object' && 'message' in error ? error.message : undefined,
+      prismaMeta: error && typeof error === 'object' && 'meta' in error ? error.meta : undefined
+    });
     
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return NextResponse.json(
@@ -233,8 +275,14 @@ export async function PUT(
       );
     }
     
+    // Return more specific error message for debugging
+    const errorMessage = error instanceof Error ? error.message : 'Failed to update person';
     return NextResponse.json(
-      { success: false, error: 'Failed to update person' },
+      { 
+        success: false, 
+        error: 'Failed to update person',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
@@ -245,7 +293,13 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let id: string | undefined;
+  let body: any;
+  let updateData: any;
   try {
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+    
     // Simple authentication check
     const authUser = await getV1AuthUser(request);
     if (!authUser) {
@@ -255,20 +309,21 @@ export async function PATCH(
       );
     }
 
-    const { id } = await params;
-    const body = await request.json();
+    body = await request.json();
     
     console.log(`🔍 [PEOPLE API AUDIT] PATCH request received:`, {
       personId: id,
       requestBody: body,
-      authUser: authUser.id
+      authUser: authUser.id,
+      timestamp: new Date().toISOString()
     });
 
-    // Check if person exists
+    // Check if person exists and belongs to user's workspace
     const existingPerson = await prisma.people.findUnique({
       where: { 
         id,
-        deletedAt: null // Only update non-deleted records
+        deletedAt: null, // Only update non-deleted records
+        workspaceId: authUser.workspaceId // Ensure person belongs to user's workspace
       },
     });
 
@@ -286,24 +341,6 @@ export async function PATCH(
       body.fullName = `${firstName} ${lastName}`;
     }
 
-    // Handle company linking if company name is provided without companyId
-    if (body.company && typeof body.company === 'string' && body.company.trim() && !body.companyId) {
-      try {
-        console.log(`🏢 [PEOPLE API PATCH] Auto-linking company: "${body.company}"`);
-        const companyResult = await findOrCreateCompany(
-          body.company,
-          existingPerson.workspaceId
-        );
-        body.companyId = companyResult.id;
-        delete body.company; // Remove string field, we're using companyId
-        console.log(`✅ [PEOPLE API PATCH] ${companyResult.isNew ? 'Created' : 'Found'} company: ${companyResult.name} (${companyResult.id})`);
-      } catch (error) {
-        console.error('⚠️ [PEOPLE API PATCH] Failed to link company:', error);
-        // Continue without company linking rather than failing the entire request
-        delete body.company; // Remove the string field to avoid schema issues
-      }
-    }
-
     // Special handling for globalRank updates
     let isRankUpdate = false;
     let oldRank = existingPerson.globalRank;
@@ -316,14 +353,16 @@ export async function PATCH(
 
     // Whitelist of allowed fields for people updates
     const ALLOWED_PEOPLE_FIELDS = [
-      'firstName', 'lastName', 'fullName', 'jobTitle', 'department', 'status',
-      'priority', 'email', 'workEmail', 'phone', 'mobilePhone', 'linkedinUrl',
-      'linkedinNavigatorUrl', 'linkedinConnectionDate', 'city', 'nextAction', 'nextActionDate', 'notes', 'tags', 'seniority',
+      'firstName', 'lastName', 'fullName', 'displayName', 'salutation', 'suffix',
+      'jobTitle', 'title', 'department', 'status', 'priority', 
+      'email', 'workEmail', 'personalEmail', 'phone', 'mobilePhone', 'workPhone', 
+      'linkedinUrl', 'linkedinNavigatorUrl', 'linkedinConnectionDate', 
+      'city', 'nextAction', 'nextActionDate', 'notes', 'tags', 'seniority',
       'engagementScore', 'engagementLevel', 'influenceLevel', 'decisionPower',
       'isBuyerGroupMember', 'engagementStrategy', 'buyerGroupOptimized',
-      'communicationStyle', 'decisionPowerScore', 'relationshipWarmth',
-      'yearsExperience', 'educationLevel', 'skills', 'certifications',
-      'valueDriver', 'bestContactTime', 'industry', 'globalRank', 'companyRank',
+      'communicationStyle', 'decisionPowerScore',
+      'yearsExperience', 'certifications',
+      'globalRank', 'companyRank',
       'vertical', 'achievements', 'budgetResponsibility', 'buyerGroupRole',
       'buyerGroupStatus', 'careerTimeline', 'coresignalData', 'currentCompany',
       'currentRole', 'dataCompleteness', 'decisionMaking', 'degrees',
@@ -337,22 +376,91 @@ export async function PATCH(
       'yearsInRole', 'address', 'state', 'country', 'postalCode', 'bio',
       'profilePictureUrl', 'source', 'customFields', 'preferredLanguage',
       'timezone', 'emailVerified', 'phoneVerified', 'lastAction', 'lastActionDate',
-      'actionStatus', 'entityId', 'mainSellerId'
+      'actionStatus', 'entityId', 'mainSellerId', 'companyId', 'company'
     ];
 
-    // Filter body to only allowed fields
-    const updateData = Object.keys(body)
+    // Filter body to only allowed fields FIRST
+    updateData = Object.keys(body)
       .filter(key => ALLOWED_PEOPLE_FIELDS.includes(key))
       .reduce((obj, key) => ({ ...obj, [key]: body[key] }), {});
+
+    // Handle company linking if company is provided
+    if (updateData.company && !updateData.companyId) {
+      try {
+        let companyName: string;
+        
+        if (typeof updateData.company === 'string') {
+          // String company name - find or create company
+          companyName = updateData.company.trim();
+          if (companyName) {
+            console.log(`🏢 [PEOPLE API PATCH] Auto-linking company: "${companyName}"`);
+            const companyResult = await findOrCreateCompany(
+              companyName,
+              existingPerson.workspaceId
+            );
+            updateData.companyId = companyResult.id;
+            delete updateData.company; // Remove string field, we're using companyId
+            console.log(`✅ [PEOPLE API PATCH] ${companyResult.isNew ? 'Created' : 'Found'} company: ${companyResult.name} (${companyResult.id})`);
+          }
+        } else if (typeof updateData.company === 'object' && updateData.company.id) {
+          // Company object with ID - use the existing company
+          console.log(`🏢 [PEOPLE API PATCH] Using existing company: ${updateData.company.name} (${updateData.company.id})`);
+          updateData.companyId = updateData.company.id;
+          delete updateData.company; // Remove object field, we're using companyId
+        } else if (typeof updateData.company === 'object' && updateData.company.name) {
+          // Company object without ID - find or create company
+          companyName = updateData.company.name.trim();
+          if (companyName) {
+            console.log(`🏢 [PEOPLE API PATCH] Auto-linking company from object: "${companyName}"`);
+            const companyResult = await findOrCreateCompany(
+              companyName,
+              existingPerson.workspaceId
+            );
+            updateData.companyId = companyResult.id;
+            delete updateData.company; // Remove object field, we're using companyId
+            console.log(`✅ [PEOPLE API PATCH] ${companyResult.isNew ? 'Created' : 'Found'} company: ${companyResult.name} (${companyResult.id})`);
+          }
+        }
+      } catch (error) {
+        console.error('⚠️ [PEOPLE API PATCH] Failed to link company:', error);
+        // Continue without company linking rather than failing the entire request
+        delete updateData.company; // Remove the field to avoid schema issues
+      }
+    }
 
     console.log(`🔍 [PEOPLE API AUDIT] Database update preparation:`, {
       personId: id,
       updateData,
       allowedFields: ALLOWED_PEOPLE_FIELDS,
-      filteredFields: Object.keys(updateData)
+      filteredFields: Object.keys(updateData),
+      originalRequestBody: body,
+      fieldsInRequest: Object.keys(body),
+      fieldsFilteredOut: Object.keys(body).filter(key => !ALLOWED_PEOPLE_FIELDS.includes(key)),
+      // Show field types for debugging
+      fieldTypes: Object.keys(updateData).reduce((acc, key) => {
+        acc[key] = typeof updateData[key];
+        return acc;
+      }, {} as Record<string, string>)
     });
 
+    // Check for empty updates
+    if (Object.keys(updateData).length === 0) {
+      console.warn('⚠️ [PEOPLE API] No fields to update - updateData is empty');
+      return NextResponse.json({
+        success: false,
+        error: 'No valid fields to update',
+        details: 'All fields were filtered out or empty'
+      }, { status: 400 });
+    }
+
     // Update person with partial data
+    console.log(`🔍 [PEOPLE API AUDIT] About to execute Prisma update with data:`, {
+      personId: id,
+      updateData,
+      updateDataKeys: Object.keys(updateData),
+      updateDataValues: updateData
+    });
+
     const updatedPerson = await prisma.people.update({
       where: { id },
       data: {
@@ -389,11 +497,38 @@ export async function PATCH(
       },
     });
 
+    // Log what actually got updated in the database
+    console.log(`✅ [PEOPLE API AUDIT] Database update completed:`, {
+      personId: id,
+      updatedFields: Object.keys(updateData),
+      updatedValues: updateData,
+      prismaResult: {
+        id: updatedPerson.id,
+        fullName: updatedPerson.fullName,
+        email: updatedPerson.email,
+        status: updatedPerson.status,
+        priority: updatedPerson.priority,
+        companyId: updatedPerson.companyId,
+        updatedAt: updatedPerson.updatedAt
+      },
+      // Compare old vs new values for key fields
+      changes: Object.keys(updateData).reduce((acc, key) => {
+        const oldValue = (existingPerson as any)[key];
+        const newValue = (updatedPerson as any)[key];
+        if (oldValue !== newValue) {
+          acc[key] = { old: oldValue, new: newValue };
+        }
+        return acc;
+      }, {} as Record<string, { old: any; new: any }>)
+    });
+
     // Log data update as an action
     try {
-      const updatedFields = Object.keys(updateData).filter(key => 
-        updateData[key] !== existingPerson[key]
-      );
+      const updatedFields = Object.keys(updateData).filter(key => {
+        const newValue = updateData[key as keyof typeof updateData];
+        const oldValue = (existingPerson as any)[key];
+        return newValue !== oldValue;
+      });
       
       if (updatedFields.length > 0) {
         await prisma.actions.create({
@@ -402,11 +537,10 @@ export async function PATCH(
             type: 'data_update',
             subject: `Updated ${updatedFields.join(', ')}`,
             description: `Data fields updated by ${authUser.name || authUser.email}`,
-            status: 'completed',
+            status: 'COMPLETED',
             completedAt: new Date(),
             workspaceId: existingPerson.workspaceId,
             userId: authUser.id,
-            ownerId: authUser.id,
             createdAt: new Date(),
             updatedAt: new Date()
           }
@@ -415,7 +549,7 @@ export async function PATCH(
         console.log(`📝 [PEOPLE API] Logged data update action for person ${id}: ${updatedFields.join(', ')}`);
       }
     } catch (actionError) {
-      console.error('Failed to log data update action:', actionError);
+      console.error('❌ [PEOPLE API] Failed to log data update action:', actionError);
       // Don't fail the main update if action logging fails
     }
 
@@ -442,13 +576,32 @@ export async function PATCH(
       personId: id,
       updatedPerson,
       updateData,
-      responseData
+      responseData,
+      // Specifically check email field
+      emailInUpdateData: (updateData as any).email,
+      emailInUpdatedPerson: updatedPerson.email,
+      emailInResponseData: (responseData.data as any).email
     });
 
     return NextResponse.json(responseData);
 
   } catch (error) {
-    console.error('Error updating person:', error);
+    console.error('❌ [PEOPLE API] Error updating person:', {
+      personId: id,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+      // Include Prisma-specific error details if available
+      prismaCode: error && typeof error === 'object' && 'code' in error ? error.code : undefined,
+      prismaMessage: error && typeof error === 'object' && 'message' in error ? error.message : undefined,
+      prismaMeta: error && typeof error === 'object' && 'meta' in error ? error.meta : undefined,
+      prismaClientVersion: error && typeof error === 'object' && 'clientVersion' in error ? error.clientVersion : undefined,
+      // Include request context for debugging
+      requestBody: body || 'Not available - error occurred before body parsing',
+      updateData: updateData || 'Not available - error occurred before updateData creation'
+    });
     
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
       return NextResponse.json(
@@ -457,8 +610,14 @@ export async function PATCH(
       );
     }
     
+    // Return more specific error message for debugging
+    const errorMessage = error instanceof Error ? error.message : 'Failed to update person';
     return NextResponse.json(
-      { success: false, error: 'Failed to update person' },
+      { 
+        success: false, 
+        error: 'Failed to update person',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
@@ -469,7 +628,11 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let id: string | undefined;
   try {
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+    
     // Simple authentication check
     const authUser = await getV1AuthUser(request);
     if (!authUser) {
@@ -479,15 +642,15 @@ export async function DELETE(
       );
     }
 
-    const { id } = await params;
     const { searchParams } = new URL(request.url);
     const mode = searchParams.get('mode') || 'soft'; // Default to soft delete
 
-    // Check if person exists
+    // Check if person exists and belongs to user's workspace
     const existingPerson = await prisma.people.findUnique({
       where: { 
         id,
-        deletedAt: null // Only delete non-deleted records
+        deletedAt: null, // Only delete non-deleted records
+        workspaceId: authUser.workspaceId // Ensure person belongs to user's workspace
       },
       include: {
         _count: {
@@ -543,9 +706,26 @@ export async function DELETE(
     });
 
   } catch (error) {
-    console.error('Error deleting person:', error);
+    console.error('❌ [PEOPLE API] Error deleting person:', {
+      personId: id,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+      // Include Prisma-specific error details if available
+      prismaCode: error && typeof error === 'object' && 'code' in error ? error.code : undefined,
+      prismaMessage: error && typeof error === 'object' && 'message' in error ? error.message : undefined,
+      prismaMeta: error && typeof error === 'object' && 'meta' in error ? error.meta : undefined
+    });
+    
+    const errorMessage = error instanceof Error ? error.message : 'Failed to delete person';
     return NextResponse.json(
-      { success: false, error: 'Failed to delete person' },
+      { 
+        success: false, 
+        error: 'Failed to delete person',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }

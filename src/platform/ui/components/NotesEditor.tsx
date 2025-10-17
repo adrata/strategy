@@ -51,12 +51,18 @@ export function NotesEditor({
   // Sync with external value changes - only when not actively editing
   useEffect(() => {
     // Only sync if the external value is different AND we're not currently editing
-    if (value !== localValue && !isFocused && saveStatus !== 'saving' && !isSavingRef.current) {
+    // AND it's different from what we last saved (prevents stale cache overwrites)
+    if (value !== localValue && 
+        value !== lastSavedValue &&
+        !isFocused && 
+        saveStatus !== 'saving' && 
+        !isSavingRef.current) {
+      console.log('🔄 [NotesEditor] Syncing external value:', { value, localValue, lastSavedValue });
       setLocalValue(value);
       setLastSavedValue(value);
       pendingValueRef.current = value;
     }
-  }, [value, isFocused, saveStatus, localValue]);
+  }, [value, isFocused, saveStatus, localValue, lastSavedValue]);
 
   // Update time display every 10 seconds to keep "Last saved X ago" current
   useEffect(() => {

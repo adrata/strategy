@@ -56,7 +56,7 @@ export function useOpportunitiesData(): UseOpportunitiesDataReturn {
       const json = await response.json();
       const data = Array.isArray(json) ? json : (json?.data || []);
       
-      // Transform companies data to Opportunity format
+      // Transform company data to Opportunity format
       const transformedOpportunities: Opportunity[] = (data || []).map((company: any) => ({
         id: company.id,
         name: company.name || '-',

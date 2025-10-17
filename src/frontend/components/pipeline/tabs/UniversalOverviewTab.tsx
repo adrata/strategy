@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
-import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
+import { CompanyDetailSkeleton, Skeleton } from '@/platform/ui/components/Loader';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 import { authFetch } from '@/platform/api-fetch';
 
@@ -143,7 +143,17 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     // Basic info - Database fields first, then CoreSignal fallback - no fallback to '-'
     name: record?.fullName || record?.name || coresignalData.full_name || null,
     title: record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || null,
-    email: record?.email || coresignalData.primary_professional_email || null,
+    email: (() => {
+      const emailValue = record?.email || record?.workEmail || coresignalData.primary_professional_email || null;
+      console.log(`🔍 [OVERVIEW TAB] Email extraction:`, {
+        recordId: record?.id,
+        recordEmail: record?.email,
+        recordWorkEmail: record?.workEmail,
+        coresignalEmail: coresignalData.primary_professional_email,
+        finalEmail: emailValue
+      });
+      return emailValue;
+    })(),
     phone: record?.phone || coresignalData.phone || null,
     linkedin: record?.linkedin || coresignalData.linkedin_url || null,
     linkedinNavigatorUrl: record?.linkedinNavigatorUrl || null,
@@ -312,7 +322,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       {/* Overview Summary */}
       <div className="space-y-4">
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-          <div className="text-sm text-[var(--muted)]">
+          <div className="text-sm text-[var(--foreground)]">
             {generateBioText()}
           </div>
         </div>
@@ -417,15 +427,22 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Intelligence Snapshot</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Buyer Group Member:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  recordData.isBuyerGroupMember 
-                    ? (recordType === 'speedrun' ? 'bg-[var(--success-bg)] text-[var(--success-text)]' : 'bg-[var(--info-bg)] text-[var(--info-text)]')
-                    : 'bg-[var(--hover)] text-[var(--foreground)]'
-                }`}>
-                  {recordData.isBuyerGroupMember ? 'Yes' : 'No'}
-                </span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Buyer Group Member:</span>
+                <InlineEditField
+                  value={recordData.isBuyerGroupMember ? 'Yes' : 'No'}
+                  field="isBuyerGroupMember"
+                  inputType="select"
+                  options={[
+                    { value: 'Yes', label: 'Yes' },
+                    { value: 'No', label: 'No' }
+                  ]}
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Role:</span>
@@ -554,10 +571,19 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement History</h4>
                 <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Last Contact:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{formatRelativeDate(recordData.lastContact)}</span>
-                  </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Last Contact:</span>
+                <InlineEditField
+                  value={recordData.lastContact}
+                  field="lastActionDate"
+                  variant="date"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Next Action:</span>
                 <InlineEditField
@@ -593,10 +619,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Last Actions</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           {actionsLoading ? (
-            <div className="text-center py-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--accent)] mx-auto mb-2"></div>
-              <p className="text-sm text-[var(--muted)]">Loading actions...</p>
-            </div>
+            <Skeleton lines={3} className="py-4" />
           ) : actionsError ? (
             <div className="text-center py-4">
               <p className="text-sm text-[var(--error)] mb-3">Error loading actions</p>
@@ -605,7 +628,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
           ) : lastActions.length > 0 ? (
             <ul className="space-y-2">
               {lastActions.map((action, index) => (
-                <li key={index} className="text-sm text-[var(--muted)]">
+                <li key={index} className="text-sm text-[var(--foreground)]">
                   • {action.action} - {action.date}
                 </li>
               ))}
@@ -625,15 +648,21 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Recent Notes Summary</h4>
-            <div className="text-sm text-[var(--muted)] leading-relaxed">
-              {record.notes && record.notes !== 'No notes available' && record.notes.trim() !== '' ? record.notes : 
-                `No recent notes available`
-              }
-                  </div>
+            <InlineEditField
+              value={record.notes && record.notes !== 'No notes available' && record.notes.trim() !== '' ? record.notes : ''}
+              field="notes"
+              type="textarea"
+              onSave={onSave || (() => Promise.resolve())}
+              recordId={record.id}
+              recordType={recordType}
+              onSuccess={handleSuccess}
+              className="text-sm text-[var(--foreground)] leading-relaxed"
+              placeholder="Add notes about this contact..."
+            />
                 </div>
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement Strategy</h4>
-            <div className="text-sm text-[var(--muted)] leading-relaxed">
+            <div className="text-sm text-[var(--foreground)] leading-relaxed">
               Focus on {(recordData.engagementPriority || '').toLowerCase()} priority engagement. 
               Last contact was {formatRelativeDate(recordData.lastContact)}. 
               Next action: {recordData.nextAction}.

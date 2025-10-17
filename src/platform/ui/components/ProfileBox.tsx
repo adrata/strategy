@@ -1063,8 +1063,26 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
             Speedrun Engine
           </div>
         )}
+
+        {/* 7. Theme Picker - Available for all users */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center gap-2"
+          onClick={() => {
+            console.log("🎨 Theme picker clicked - opening theme picker");
+            setIsProfileOpen(false);
+            setIsSettingsOpen(true);
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e['key'] === "Enter" && setIsSettingsOpen(true)}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
+          </svg>
+          Themes
+        </div>
         
-        {/* 7. Sign Out */}
+        {/* 8. Sign Out */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={handleSignOut}

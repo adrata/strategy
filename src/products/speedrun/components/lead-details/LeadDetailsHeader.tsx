@@ -28,6 +28,7 @@ export function LeadDetailsHeader({
   onUpdate,
   onSnooze,
   onRemove,
+  onAddCompany,
   canNavigatePrevious,
   canNavigateNext,
 }: LeadDetailsHeaderProps) {
@@ -127,6 +128,17 @@ export function LeadDetailsHeader({
           <span className="text-sm opacity-70">↵</span>
           Complete
         </button>
+
+        {/* Add Company button - only show when person doesn't have a company */}
+        {onAddCompany && !person.companyId && (!person.company || (typeof person.company === 'string' && !person.company)) && (
+          <button
+            onClick={onAddCompany}
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)] rounded-lg font-medium hover:bg-[var(--panel-background)] transition-colors"
+          >
+            <BuildingOfficeIcon className="w-4 h-4" />
+            Add Company
+          </button>
+        )}
 
         {/* More Actions Menu */}
         <div className="relative">

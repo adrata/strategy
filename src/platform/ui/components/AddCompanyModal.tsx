@@ -111,8 +111,15 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
   const handleCompanySelect = (company: any) => {
     console.log('✅ [AddCompanyModal] Company selected from search:', company);
     setSelectedCompany(company);
-    // Immediately call the callback with the selected company
-    onCompanyAdded(company);
+    // Don't immediately call the callback - wait for user to click Save
+  };
+
+  // Handle saving the selected company
+  const handleSaveSelectedCompany = () => {
+    if (selectedCompany) {
+      console.log('💾 [AddCompanyModal] Saving selected company:', selectedCompany);
+      onCompanyAdded(selectedCompany);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -274,13 +281,13 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
           )}
 
           {/* Company Search */}
-          {!showCreateForm && (
+          {!showCreateForm && !selectedCompany && (
             <div>
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Search for Company
               </label>
               <CompanySelector
-                value={selectedCompany}
+                value={null}
                 onChange={handleCompanySelect}
                 placeholder="Search or add company"
               />
@@ -291,6 +298,63 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               >
                 Or create a new company →
               </button>
+            </div>
+          )}
+
+          {/* Selected Company Preview */}
+          {!showCreateForm && selectedCompany && (
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                Selected Company
+              </label>
+              <div className="p-4 border border-[var(--border)] rounded-lg bg-[var(--panel-background)]">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium text-[var(--foreground)]">{selectedCompany.name}</h4>
+                    {selectedCompany.website && (
+                      <p className="text-sm text-[var(--muted)]">{selectedCompany.website}</p>
+                    )}
+                    {selectedCompany.industry && (
+                      <p className="text-sm text-[var(--muted)]">{selectedCompany.industry}</p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCompany(null)}
+                    className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                  >
+                    Change
+                  </button>
+                </div>
+              </div>
+              
+              {/* Action Buttons for Selected Company */}
+              <div className="flex items-center gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="flex-1 px-4 py-2 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveSelectedCompany}
+                  className="flex-1 px-4 py-2 text-white rounded-lg transition-colors font-medium text-sm"
+                  style={{
+                    backgroundColor: colors.primary,
+                    '--tw-bg-opacity': '1'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.dark;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary;
+                  }}
+                >
+                  Save Company
+                </button>
+              </div>
             </div>
           )}
 

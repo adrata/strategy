@@ -295,7 +295,7 @@ export function CompanySelector({
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute z-20 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-64 overflow-y-auto">
+        <div className={`absolute z-50 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg overflow-y-auto ${showAddForm ? 'max-h-[500px]' : 'max-h-64'}`}>
           {/* Search Results */}
           {searchResults.length > 0 && (
             <div className="py-1">

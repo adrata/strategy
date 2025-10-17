@@ -51,6 +51,7 @@ export interface LeadDetailsHeaderProps {
   onUpdate?: () => void;
   onSnooze: (personId: number) => void;
   onRemove: (personId: number) => void;
+  onAddCompany?: () => void;
   canNavigatePrevious: () => boolean;
   canNavigateNext: () => boolean;
 }

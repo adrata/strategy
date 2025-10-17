@@ -696,7 +696,7 @@ function PipelineSections({
       description: "Sales performance wall",
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : "16",
+      ) : productionCounts.metrics || 16,
       visible: false
     },
     {

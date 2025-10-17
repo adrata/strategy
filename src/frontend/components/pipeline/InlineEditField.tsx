@@ -99,10 +99,15 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
       const message = successMessage || `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`;
       onSuccess?.(message);
       
+      // Only close edit mode on successful save
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating field:', error);
-      onSuccess?.('Failed to update. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update. Please try again.';
+      onSuccess?.(`Error: ${errorMessage}`);
+      
+      // Keep edit mode open on error so user can retry or cancel
+      // Don't close the edit mode here
     } finally {
       setIsLoading(false);
       setIsSaving(false);
@@ -262,10 +267,15 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
       const message = `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`;
       onSuccess?.(message);
       
+      // Only close edit mode on successful save
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating date field:', error);
-      onSuccess?.('Failed to update. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update. Please try again.';
+      onSuccess?.(`Error: ${errorMessage}`);
+      
+      // Keep edit mode open on error so user can retry or cancel
+      // Don't close the edit mode here
     } finally {
       setIsLoading(false);
       setIsSaving(false);

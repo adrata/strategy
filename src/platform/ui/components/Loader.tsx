@@ -161,7 +161,7 @@ export const CompanyDetailSkeleton: React.FC<{ message?: string }> = ({ message 
     <div className="bg-[var(--background)] border-b border-[var(--border)] px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="h-6 w-6 bg-[var(--loading-bg)] rounded-full animate-pulse"></div>
+          <div className="h-12 w-12 bg-[var(--loading-bg)] rounded-full animate-pulse"></div>
           <div>
             <div className="h-8 w-48 bg-[var(--loading-bg)] rounded animate-pulse mb-2"></div>
             <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
@@ -183,41 +183,31 @@ export const CompanyDetailSkeleton: React.FC<{ message?: string }> = ({ message 
     {/* Content */}
     <div className="flex-1 px-6 py-6 min-h-0">
       <div className="space-y-8">
-        {/* Company Summary Section */}
+        {/* Summary Section */}
         <div className="space-y-4">
           <div className="h-6 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-          <div className="space-y-3">
-            <div className="h-4 w-full bg-[var(--loading-bg)] rounded animate-pulse"></div>
-            <div className="h-4 w-3/4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-            <div className="h-4 w-5/6 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-            <div className="h-4 w-2/3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-            <div className="h-4 w-4/5 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-          </div>
+          <Skeleton lines={5} className="py-2" />
         </div>
         
-        {/* Company Information Section */}
+        {/* Information Section */}
         <div className="space-y-4">
           <div className="h-6 w-40 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left Column */}
             <div className="space-y-4">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                  <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                </div>
-              ))}
+              <Skeleton lines={6} className="py-2" />
             </div>
             {/* Right Column */}
             <div className="space-y-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="h-4 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                  <div className="h-4 w-28 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                </div>
-              ))}
+              <Skeleton lines={5} className="py-2" />
             </div>
           </div>
+        </div>
+        
+        {/* Additional Section */}
+        <div className="space-y-4">
+          <div className="h-6 w-36 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+          <Skeleton lines={4} className="py-2" />
         </div>
       </div>
     </div>

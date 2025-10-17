@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { XMarkIcon, UserPlusIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { authFetch } from "@/platform/api-fetch";
+import { getCategoryColors } from "@/platform/config/color-palette";
+import { getCommonShortcut } from "@/platform/utils/keyboard-shortcuts";
 
 interface AddPersonToCompanyModalProps {
   isOpen: boolean;
@@ -37,6 +39,9 @@ export function AddPersonToCompanyModal({
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+  
+  // Get section-specific colors
+  const colors = getCategoryColors('people');
   
   // Form data for creating new person
   const [formData, setFormData] = useState({
@@ -324,19 +329,24 @@ export function AddPersonToCompanyModal({
                   <button
                     onClick={handleLinkExistingPerson}
                     disabled={isCreating}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                    className="px-6 py-2 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      backgroundColor: !isCreating ? colors.bgHover : colors.bg,
+                      color: colors.primary,
+                      borderColor: colors.border
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isCreating) {
+                        e.currentTarget.style.backgroundColor = colors.bgHover;
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isCreating) {
+                        e.currentTarget.style.backgroundColor = colors.bgHover;
+                      }
+                    }}
                   >
-                    {isCreating ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Linking...
-                      </>
-                    ) : (
-                      <>
-                        <UserPlusIcon className="w-4 h-4" />
-                        Link Person
-                      </>
-                    )}
+                    {isCreating ? 'Saving...' : `Complete (${getCommonShortcut('SUBMIT')})`}
                   </button>
                 )}
               </div>
@@ -435,19 +445,24 @@ export function AddPersonToCompanyModal({
                   <button
                     type="submit"
                     disabled={isCreating}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                    className="px-6 py-2 border rounded-lg transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      backgroundColor: !isCreating ? colors.bgHover : colors.bg,
+                      color: colors.primary,
+                      borderColor: colors.border
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isCreating) {
+                        e.currentTarget.style.backgroundColor = colors.bgHover;
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isCreating) {
+                        e.currentTarget.style.backgroundColor = colors.bgHover;
+                      }
+                    }}
                   >
-                    {isCreating ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <UserPlusIcon className="w-4 h-4" />
-                        Create Person
-                      </>
-                    )}
+                    {isCreating ? 'Saving...' : `Complete (${getCommonShortcut('SUBMIT')})`}
                   </button>
                 </div>
               </form>

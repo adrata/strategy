@@ -615,9 +615,18 @@ export const PipelineView = React.memo(function PipelineView({
     
     // Listen for pipeline data refresh events (from drag and drop operations)
     const handleDataRefresh = (event: CustomEvent) => {
-      const { section: refreshSection } = event.detail;
+      const { section: refreshSection, fromSection } = event.detail;
+      
+      // Always refresh the current section
       if (refreshSection === section) {
         console.log(`🔄 Refreshing ${section} data after operation`);
+        refresh();
+      }
+      
+      // Also refresh if this is a cross-section operation (e.g., lead → prospect)
+      // This ensures that when a record moves between sections, both sections get refreshed
+      if (fromSection === section && refreshSection !== section) {
+        console.log(`🔄 Cross-section operation detected: ${fromSection} → ${refreshSection}, refreshing current section: ${section}`);
         refresh();
       }
     };
@@ -1132,7 +1141,11 @@ export const PipelineView = React.memo(function PipelineView({
       'people': 'People',
       'clients': 'Customers',
       'partners': 'Partners',
-      'sellers': 'Sellers'
+      'sellers': 'Sellers',
+      'metrics': 'Metrics',
+      'dashboard': 'Dashboard',
+      'speedrun': 'Speedrun',
+      'chronicle': 'Chronicle'
     };
     const sectionLabel = sectionLabels[newSection] || newSection;
     document.title = sectionLabel;

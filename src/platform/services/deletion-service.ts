@@ -56,24 +56,47 @@ export class DeletionService {
     try {
       const deletedAt = new Date();
       
+      // First, get the user's workspace to ensure proper filtering
+      const user = await prisma.users.findUnique({
+        where: { id: userId },
+        select: { workspaceId: true }
+      });
+      
+      if (!user) {
+        console.error(`❌ [DELETION] User not found: ${userId}`);
+        return false;
+      }
+      
       switch (entityType) {
         case 'companies':
           await prisma.companies.update({
-            where: { id },
+            where: { 
+              id,
+              workspaceId: user.workspaceId,
+              deletedAt: null // Only delete non-deleted records
+            },
             data: { deletedAt },
           });
           break;
           
         case 'people':
           await prisma.people.update({
-            where: { id },
+            where: { 
+              id,
+              workspaceId: user.workspaceId,
+              deletedAt: null // Only delete non-deleted records
+            },
             data: { deletedAt },
           });
           break;
           
         case 'actions':
           await prisma.actions.update({
-            where: { id },
+            where: { 
+              id,
+              workspaceId: user.workspaceId,
+              deletedAt: null // Only delete non-deleted records
+            },
             data: { deletedAt },
           });
           break;
@@ -95,24 +118,47 @@ export class DeletionService {
    */
   async restore(entityType: 'companies' | 'people' | 'actions', id: string, userId: string): Promise<boolean> {
     try {
+      // First, get the user's workspace to ensure proper filtering
+      const user = await prisma.users.findUnique({
+        where: { id: userId },
+        select: { workspaceId: true }
+      });
+      
+      if (!user) {
+        console.error(`❌ [DELETION] User not found: ${userId}`);
+        return false;
+      }
+      
       switch (entityType) {
         case 'companies':
           await prisma.companies.update({
-            where: { id },
+            where: { 
+              id,
+              workspaceId: user.workspaceId,
+              deletedAt: { not: null } // Only restore soft-deleted records
+            },
             data: { deletedAt: null },
           });
           break;
           
         case 'people':
           await prisma.people.update({
-            where: { id },
+            where: { 
+              id,
+              workspaceId: user.workspaceId,
+              deletedAt: { not: null } // Only restore soft-deleted records
+            },
             data: { deletedAt: null },
           });
           break;
           
         case 'actions':
           await prisma.actions.update({
-            where: { id },
+            where: { 
+              id,
+              workspaceId: user.workspaceId,
+              deletedAt: { not: null } // Only restore soft-deleted records
+            },
             data: { deletedAt: null },
           });
           break;
@@ -134,22 +180,42 @@ export class DeletionService {
    */
   async hardDelete(entityType: 'companies' | 'people' | 'actions', id: string, userId: string): Promise<boolean> {
     try {
+      // First, get the user's workspace to ensure proper filtering
+      const user = await prisma.users.findUnique({
+        where: { id: userId },
+        select: { workspaceId: true }
+      });
+      
+      if (!user) {
+        console.error(`❌ [DELETION] User not found: ${userId}`);
+        return false;
+      }
+      
       switch (entityType) {
         case 'companies':
           await prisma.companies.delete({
-            where: { id },
+            where: { 
+              id,
+              workspaceId: user.workspaceId
+            },
           });
           break;
           
         case 'people':
           await prisma.people.delete({
-            where: { id },
+            where: { 
+              id,
+              workspaceId: user.workspaceId
+            },
           });
           break;
           
         case 'actions':
           await prisma.actions.delete({
-            where: { id },
+            where: { 
+              id,
+              workspaceId: user.workspaceId
+            },
           });
           break;
       }

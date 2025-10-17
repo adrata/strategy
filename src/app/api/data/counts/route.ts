@@ -103,7 +103,8 @@ export async function GET(request: NextRequest) {
       prisma.people.groupBy({
         by: ['status'],
         where: {
-          workspaceId
+          workspaceId,
+          deletedAt: null // Only count non-deleted records
         },
         _count: { id: true }
       }),
@@ -112,6 +113,7 @@ export async function GET(request: NextRequest) {
         by: ['status'],
         where: {
           workspaceId,
+          deletedAt: null, // Only count non-deleted records
           ...(isDemoMode ? {} : {
             OR: [
               { mainSellerId: userId },
@@ -125,7 +127,8 @@ export async function GET(request: NextRequest) {
       prisma.people.count({
         where: {
           workspaceId,
-          // Remove companyId requirement to match speedrun API logic
+          deletedAt: null, // Only count non-deleted records
+          companyId: { not: null }, // Only people with companies (matches speedrun API)
           ...(isDemoMode ? {} : {
             OR: [
               { mainSellerId: userId },
@@ -134,6 +137,8 @@ export async function GET(request: NextRequest) {
           })
         }
       })
+      // Note: sellers table doesn't exist in current schema
+      // If needed in future, add: prisma.sellers.count({ ... })
     ]);
 
     // Convert groupBy results to count objects
@@ -155,7 +160,8 @@ export async function GET(request: NextRequest) {
     const peopleCount = Object.values(peopleCountsMap).reduce((sum: number, count: any) => sum + count, 0);
     const clientsCount = companiesCountsMap.CLIENT || 0;
     const partnersCount = companiesCountsMap.ACTIVE || 0; // Use ACTIVE as fallback for partners
-    const sellersCount = peopleCountsMap.CLIENT || 0; // Use CLIENT status as fallback for sellers
+    // Note: sellers table doesn't exist yet - set to 0 for now
+    const sellersCount = 0;
     // Use speedrun count limited to 50 (since speedrun shows "top 50 people to go after")
     const actualSpeedrunCount = Math.min(50, speedrunCount);
     

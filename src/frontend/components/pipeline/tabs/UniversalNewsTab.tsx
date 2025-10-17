@@ -145,6 +145,19 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     );
   }
 
+  // Format date helper function
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
   return renderNewsContent();
 
   function renderNewsContent() {
@@ -224,17 +237,4 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
       </div>
     );
   }
-
-  const formatDate = (dateString: string) => {
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch {
-      return dateString;
-    }
-  };
-
 }

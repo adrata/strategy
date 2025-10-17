@@ -234,6 +234,37 @@ export function SpeedrunRecordTemplate({
     }
   };
 
+  // Handle company added and associate with speedrun person
+  const handleCompanyAdded = async (newCompany: any) => {
+    console.log('🏢 [SPEEDRUN] Company added, associating with person:', newCompany);
+    setIsAddCompanyModalOpen(false);
+    
+    try {
+      const updateData = {
+        companyId: newCompany.id,
+        company: newCompany.name
+      };
+      
+      const response = await fetch(`/api/v1/people/${person.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(updateData),
+      });
+      
+      if (!response.ok) throw new Error('Failed to associate company');
+      
+      // Update the person object locally to reflect changes immediately
+      (person as any).companyId = newCompany.id;
+      (person as any).company = newCompany.name;
+      
+      showSuccessMessage('✅ Company added and associated successfully!');
+    } catch (error) {
+      console.error('❌ [SPEEDRUN] Error associating company:', error);
+      showErrorMessage('❌ Failed to associate company');
+    }
+  };
+
   // Handle tab changes
   const handleTabClick = (tab: string) => {
     console.log(`🔄 [SPEEDRUN] Switching to tab: ${tab} for person: ${person.name}`);
@@ -371,6 +402,7 @@ export function SpeedrunRecordTemplate({
               setState((prev) => ({ ...prev, showSnoozeRemoveModal: true }))
             }
             onRemove={onRemove}
+            onAddCompany={() => setIsAddCompanyModalOpen(true)}
             canNavigatePrevious={canNavigatePrevious}
             canNavigateNext={canNavigateNext}
           />
@@ -455,6 +487,14 @@ export function SpeedrunRecordTemplate({
         onStartAutoDialer={handleStartAutoDialer}
         onDialSingle={handleDialSingle}
         onCallComplete={handleCallComplete}
+      />
+
+      {/* Add Company Modal */}
+      <AddCompanyModal
+        isOpen={isAddCompanyModalOpen}
+        onClose={() => setIsAddCompanyModalOpen(false)}
+        onCompanyAdded={handleCompanyAdded}
+        section="speedrun"
       />
     </div>
   );

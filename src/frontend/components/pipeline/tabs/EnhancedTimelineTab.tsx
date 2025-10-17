@@ -108,10 +108,9 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
       let noteEvents: TimelineEvent[] = [];
 
       // Fetch activities/actions using v1 API
-      const activitiesResponse = await authFetch(`/api/v1/actions?personId=${record.id}&limit=50`);
+      const activitiesData = await authFetch(`/api/v1/actions?personId=${record.id}&limit=50`);
       
-      if (activitiesResponse.ok) {
-        const activitiesData = await activitiesResponse.json();
+      if (activitiesData.success) {
         if (activitiesData['success'] && activitiesData.data) {
           // Handle dashboard data structure - extract activities from all sections
           const allActivities: any[] = [];
@@ -160,10 +159,9 @@ export function EnhancedTimelineTab({ record, recordType }: EnhancedTimelineTabP
       }
 
       // Fetch notes using unified API
-      const notesResponse = await authFetch(`/api/data/unified`);
+      const notesData = await authFetch(`/api/data/unified`);
       
-      if (notesResponse.ok) {
-        const notesData = await notesResponse.json();
+      if (notesData.success) {
         if (notesData['success'] && notesData.data) {
           // Handle dashboard data structure - extract notes from all sections
           const allNotes: any[] = [];

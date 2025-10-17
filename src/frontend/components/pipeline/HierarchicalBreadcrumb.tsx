@@ -19,13 +19,44 @@ export function HierarchicalBreadcrumb({
 }: HierarchicalBreadcrumbProps) {
   const router = useRouter();
 
+  // Debug logging for record data
+  console.log(`🔍 [BREADCRUMB] Record data for ${recordType}:`, {
+    recordId: record?.id,
+    recordKeys: Object.keys(record || {}),
+    recordName: record?.name,
+    recordFullName: record?.fullName,
+    recordFirstName: record?.firstName,
+    recordLastName: record?.lastName,
+    recordCompany: record?.company,
+    recordCompanyId: record?.companyId
+  });
+
   // Get record display name with fallbacks
   const getDisplayName = () => {
-    return record?.name || 
-           record?.fullName || 
-           record?.firstName + ' ' + record?.lastName ||
-           getCompanyName() ||
-           'Unknown';
+    // Try to get person's name first - prioritize person-specific fields over generic 'name'
+    const personName = record?.fullName || 
+                      (record?.firstName && record?.lastName ? `${record.firstName} ${record.lastName}` : null) ||
+                      record?.firstName ||
+                      record?.lastName ||
+                      record?.name; // Only use generic 'name' as last resort
+    
+    // Debug logging
+    console.log(`🔍 [BREADCRUMB] getDisplayName for record ${record?.id}:`, {
+      recordName: record?.name,
+      recordFullName: record?.fullName,
+      recordFirstName: record?.firstName,
+      recordLastName: record?.lastName,
+      computedPersonName: personName,
+      recordCompany: record?.company
+    });
+    
+    // Only fall back to company name if we have no person name at all
+    if (personName && personName.trim() !== '') {
+      return personName;
+    }
+    
+    // Last resort fallbacks
+    return 'Unknown Person';
   };
 
   // Get company name

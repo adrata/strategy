@@ -94,8 +94,7 @@ model workspaces {
   valuePropositions         String[]                    @default([])
   speedrunDailyTarget       Int?                        @default(50)
   speedrunWeeklyTarget      Int?                        @default(250)
-  // News feature configuration
-  newsEnabled               Boolean                     @default(false)
+  newsEnabled               Boolean?                    @default(false)
   newsIndustries            String[]                    @default([])
   newsSources               String[]                    @default([])
   oasis_channels            OasisChannel[]
@@ -103,13 +102,15 @@ model workspaces {
   stacks_projects           StacksProject[]
   actions                   actions[]
   ai_conversations          ai_conversations[]
+  api_cost_tracking         api_cost_tracking[]
   audit_logs                audit_logs[]
   auth_sessions             auth_sessions[]
   companies                 companies[]
+  email_messages            email_messages[]
   grand_central_connections grand_central_connections[]
   grand_central_workflows   grand_central_workflows[]
-  news_articles             news_articles[]
   people                    people[]
+  research_data             research_data[]
   user_roles                user_roles[]
   users                     users[]
   workspace_users           workspace_users[]
@@ -134,8 +135,7 @@ model users {
   isActive                  Boolean                     @default(true)
   activeWorkspaceId         String?                     @db.VarChar(30)
   username                  String?                     @unique @db.VarChar(50)
-  speedrunRankingMode       String?                     @default("global") @db.VarChar(20)
-  stateRankingOrder         Json?
+  speedrunRankingMode       String?                     @db.VarChar(50)
   oasis_channel_members     OasisChannelMember[]
   oasis_dm_participants     OasisDMParticipant[]
   oasis_messages            OasisMessage[]
@@ -144,6 +144,7 @@ model users {
   stacks_task_assignees     StacksTask[]
   assigned_actions          actions[]                   @relation("AssignedActions")
   ai_conversations          ai_conversations[]
+  api_cost_tracking         api_cost_tracking[]
   audit_logs                audit_logs[]
   auth_sessions             auth_sessions[]
   main_seller_companies     companies[]                 @relation("MainSellerCompanies")
@@ -209,7 +210,6 @@ model reset_tokens {
   expiresAt DateTime
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
-  metadata  Json?
   user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([expiresAt])
@@ -320,10 +320,26 @@ model companies {
   nextActionPriority     String?          @db.VarChar(20)
   nextActionType         String?          @db.VarChar(50)
   nextActionUpdatedAt    DateTime?
+  acquisitionHistory     Json?
+  aiConfidence           Float?           @default(0)
+  aiIntelligence         Json?
+  aiLastUpdated          DateTime?
+  dataLastVerified       DateTime?
+  dataQualityBreakdown   Json?
+  dataQualityScore       Float?           @default(0)
+  dataSources            String[]         @default([])
+  employeeCountChange    Json?
+  employeeReviewsScore   Json?
+  executiveArrivals      Json?
+  executiveDepartures    Json?
+  fundingRounds          Json?
+  jobPostingsChange      Json?
+  productReviewsScore    Json?
+  revenueRange           Json?
   actions                actions[]
   mainSeller             users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
-  news_articles          news_articles[]
   workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  email_messages         email_messages[]
   people                 people[]
 
   @@index([workspaceId])
@@ -341,6 +357,11 @@ model companies {
   @@index([digitalMaturity])
   @@index([lastVerified])
   @@index([marketPosition])
+  @@index([aiIntelligence], type: Gin)
+  @@index([companyIntelligence], type: Gin)
+  @@index([dataSources], type: Gin)
+  @@index([employeeCountChange], type: Gin)
+  @@index([workspaceId, dataQualityScore])
 }
 
 /// Contact/person records
@@ -455,17 +476,25 @@ model people {
   nextActionUpdatedAt    DateTime?
   linkedinConnectionDate DateTime?           @db.Timestamp(6)
   linkedinNavigatorUrl   String?             @db.VarChar(500)
-  bestContactTime        String?             @db.VarChar(50)
   decisionPowerScore     Int?                @default(0)
-  educationLevel         String?             @db.VarChar(100)
-  relationshipWarmth     String?             @db.VarChar(50)
-  skills                 String?
-  valueDriver            String?
   yearsExperience        Int?
+  aiConfidence           Float?              @default(0)
+  aiIntelligence         Json?
+  aiLastUpdated          DateTime?
+  dataLastVerified       DateTime?
+  dataQualityBreakdown   Json?
+  dataQualityScore       Float?              @default(0)
+  dataSources            String[]            @default([])
+  emailQualityGrade      String?             @db.VarChar(10)
+  linkedinConnections    Int?
+  linkedinFollowers      Int?
+  phoneQualityScore      Float?              @default(0)
+  salaryProjections      Json?
+  totalExperienceMonths  Int?
   actions                actions[]
+  email_messages         email_messages[]
   company                companies?          @relation(fields: [companyId], references: [id])
   mainSeller             users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
-  news_articles          news_articles[]
   workspace              workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   coSellers              person_co_sellers[]
 
@@ -486,6 +515,12 @@ model people {
   @@index([enrichmentScore])
   @@index([influenceLevel])
   @@index([lastEnriched])
+  @@index([aiIntelligence], type: Gin)
+  @@index([coresignalData], type: Gin)
+  @@index([dataSources], type: Gin)
+  @@index([enrichedData], type: Gin)
+  @@index([workspaceId, dataQualityScore])
+  @@index([workspaceId, emailQualityGrade])
 }
 
 /// Multi-player sales: Co-seller relationships
@@ -892,6 +927,92 @@ model ai_messages {
   @@index([conversationId, type])
 }
 
+model api_cost_tracking {
+  id           String     @id @db.VarChar(30)
+  workspaceId  String     @db.VarChar(30)
+  userId       String?    @db.VarChar(30)
+  apiProvider  String     @db.VarChar(50)
+  endpoint     String?    @db.VarChar(100)
+  operation    String?    @db.VarChar(50)
+  cost         Decimal    @db.Decimal(10, 4)
+  tokensUsed   Int?
+  entityType   String?    @db.VarChar(20)
+  entityId     String?    @db.VarChar(30)
+  requestData  Json?
+  success      Boolean    @default(true)
+  errorMessage String?
+  createdAt    DateTime   @default(now())
+  users        users?     @relation(fields: [userId], references: [id])
+  workspaces   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([apiProvider])
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@index([workspaceId, apiProvider])
+  @@index([workspaceId])
+}
+
+model email_messages {
+  id          String     @id
+  workspaceId String     @db.VarChar(30)
+  provider    String     @db.VarChar(50)
+  messageId   String
+  threadId    String?
+  subject     String
+  body        String
+  bodyHtml    String?
+  from        String     @db.VarChar(300)
+  to          String[]   @default([])
+  cc          String[]   @default([])
+  bcc         String[]   @default([])
+  sentAt      DateTime
+  receivedAt  DateTime
+  isRead      Boolean    @default(false)
+  isImportant Boolean    @default(false)
+  attachments Json?
+  labels      String[]   @default([])
+  companyId   String?    @db.VarChar(30)
+  personId    String?    @db.VarChar(30)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime
+  companies   companies? @relation(fields: [companyId], references: [id])
+  people      people?    @relation(fields: [personId], references: [id])
+  workspaces  workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, messageId, workspaceId])
+  @@index([companyId])
+  @@index([from])
+  @@index([personId])
+  @@index([workspaceId])
+  @@index([workspaceId, receivedAt])
+}
+
+model research_data {
+  id             String     @id @db.VarChar(30)
+  workspaceId    String     @db.VarChar(30)
+  entityType     String     @db.VarChar(20)
+  entityId       String     @db.VarChar(30)
+  researchType   String     @db.VarChar(50)
+  content        String?
+  sources        Json?
+  extractedData  Json?
+  confidence     Float?     @default(0)
+  model          String?    @db.VarChar(100)
+  tokensUsed     Int?
+  processingTime Int?
+  cost           Decimal?   @db.Decimal(10, 4)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime
+  expiresAt      DateTime?
+  workspaces     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@index([expiresAt])
+  @@index([researchType])
+  @@index([workspaceId])
+}
+
 enum UserRole {
   SUPER_ADMIN
   WORKSPACE_ADMIN
@@ -983,50 +1104,4 @@ enum ChronicleReportType {
 enum MessageType {
   USER
   ASSISTANT
-}
-
-enum NewsCategory {
-  INDUSTRY
-  COMPANY
-  PERSON
-  GENERAL
-}
-
-/// News articles for workspace-specific news aggregation
-model news_articles {
-  id              String        @id @default(ulid())
-  workspaceId     String        @db.VarChar(30)
-  title           String
-  description     String?       @db.Text
-  content         String?       @db.Text
-  url             String
-  imageUrl        String?
-  publishedAt     DateTime
-  source          String        @db.VarChar(100)
-  author          String?
-  category        NewsCategory
-  relevanceScore  Float         @default(0)
-  
-  // Tagging for prioritization
-  relatedCompanyId String?      @db.VarChar(30)
-  relatedPersonId  String?      @db.VarChar(30)
-  industries      String[]      @default([])
-  tags            String[]      @default([])
-  
-  // Tracking
-  isRead          Boolean       @default(false)
-  isFavorite      Boolean       @default(false)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime
-  
-  workspace       workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  company         companies?    @relation(fields: [relatedCompanyId], references: [id], onDelete: SetNull)
-  person          people?       @relation(fields: [relatedPersonId], references: [id], onDelete: SetNull)
-  
-  @@index([workspaceId, publishedAt])
-  @@index([workspaceId, category, relevanceScore])
-  @@index([relatedCompanyId])
-  @@index([relatedPersonId])
-  @@index([workspaceId, isRead])
-  @@index([workspaceId, isFavorite])
 }

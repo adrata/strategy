@@ -17,7 +17,7 @@ import { ProfileBox } from '@/platform/ui/components/ProfileBox';
 import { SpeedrunEngineModal } from '@/platform/ui/components/SpeedrunEngineModal';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
 import { usePipeline } from '@/products/pipeline/context/PipelineContext';
-import { PanelLoader } from '@/platform/ui/components/Loader';
+import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 import { RecordContextProvider } from '@/platform/ui/context/RecordContextProvider';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 
@@ -162,11 +162,18 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const userId = getUserIdForWorkspace(workspaceId || '');
   
   // 🚀 NAVIGATION FIX: Load section data for navigation for all sections
-  const { data: speedrunData, loading: speedrunLoading } = useFastSectionData('speedrun', 30, workspaceId, userId);
-  const { data: peopleData, loading: peopleLoading } = useFastSectionData('people', 1000, workspaceId, userId);
-  const { data: companiesData, loading: companiesLoading } = useFastSectionData('companies', 500, workspaceId, userId);
-  const { data: leadsData, loading: leadsLoading } = useFastSectionData('leads', 2000, workspaceId, userId);
-  const { data: prospectsData, loading: prospectsLoading } = useFastSectionData('prospects', 1000, workspaceId, userId);
+  const speedrunHook = useFastSectionData('speedrun', 30, workspaceId, userId);
+  const peopleHook = useFastSectionData('people', 1000, workspaceId, userId);
+  const companiesHook = useFastSectionData('companies', 500, workspaceId, userId);
+  const leadsHook = useFastSectionData('leads', 2000, workspaceId, userId);
+  const prospectsHook = useFastSectionData('prospects', 1000, workspaceId, userId);
+  
+  // Extract data for compatibility
+  const { data: speedrunData, loading: speedrunLoading } = speedrunHook;
+  const { data: peopleData, loading: peopleLoading } = peopleHook;
+  const { data: companiesData, loading: companiesLoading } = companiesHook;
+  const { data: leadsData, loading: leadsLoading } = leadsHook;
+  const { data: prospectsData, loading: prospectsLoading } = prospectsHook;
   
   // Map acquisition data to pipeline format for compatibility (same as working leads page)
   const getSectionData = (section: string) => {
@@ -381,15 +388,23 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       }
     }
     
-    // 🎯 SECOND: Try to find record in already-loaded data (no API call needed)
-    const allData = acquisitionData?.acquireData || acquisitionData || {};
-    const sectionData = allData[section] || [];
-    
-    const existingRecord = sectionData.find((record: any) => record['id'] === recordId);
-    if (existingRecord) {
-      console.log(`⚡ [SMART LOAD] Found record in cache - no API call needed:`, existingRecord.name || existingRecord.fullName || recordId);
-      setSelectedRecord(existingRecord);
-      return;
+    // Check if we should force a fresh API call (after update)
+    const forceRefresh = sessionStorage.getItem(`force-refresh-${section}-${recordId}`) === 'true';
+    if (forceRefresh) {
+      console.log(`🔄 [FORCE REFRESH] Skipping cache, fetching fresh from API for ${section} record ${recordId}`);
+      sessionStorage.removeItem(`force-refresh-${section}-${recordId}`);
+      // Skip to the API call section below
+    } else {
+      // 🎯 SECOND: Try to find record in already-loaded data (no API call needed)
+      const allData = acquisitionData?.acquireData || acquisitionData || {};
+      const sectionData = allData[section] || [];
+      
+      const existingRecord = sectionData.find((record: any) => record['id'] === recordId);
+      if (existingRecord) {
+        console.log(`⚡ [SMART LOAD] Found record in cache - no API call needed:`, existingRecord.name || existingRecord.fullName || recordId);
+        setSelectedRecord(existingRecord);
+        return;
+      }
     }
 
     // 🎯 FALLBACK: Only make API call if record not found in cache
@@ -702,11 +717,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
 
   // 🚀 LOADING SKELETON: Show skeleton during navigation transitions for better UX
   if (loading && !selectedRecord && !previousRecord) {
-    return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
-        <PanelLoader />
-      </div>
-    );
+    return <CompanyDetailSkeleton message="Loading record details..." />;
   }
 
   // Show record details if found (or use previous record as fallback during transitions)
@@ -776,11 +787,46 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           console.log('Snooze action for:', recordId, duration);
           // TODO: Implement complete functionality
         }}
-        onRecordUpdate={(updatedRecord) => {
+        onRecordUpdate={async (updatedRecord) => {
           console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
           setSelectedRecord(updatedRecord);
           
-          console.log('✅ [PIPELINE] Record updated in UI');
+          // Trigger refresh of data hooks to ensure parent components get updated data
+          // Since records can move between sections (e.g., lead → prospect), refresh multiple hooks
+          try {
+            const refreshPromises = [];
+            
+            // Always refresh the current section
+            if (section === 'leads') {
+              refreshPromises.push(leadsHook.refresh());
+            } else if (section === 'prospects') {
+              refreshPromises.push(prospectsHook.refresh());
+            } else if (section === 'people') {
+              refreshPromises.push(peopleHook.refresh());
+            } else if (section === 'companies') {
+              refreshPromises.push(companiesHook.refresh());
+            } else if (section === 'speedrun') {
+              refreshPromises.push(speedrunHook.refresh());
+            }
+            
+            // For people-related records (leads, prospects, opportunities, speedrun), 
+            // also refresh related sections since records can move between them
+            if (['leads', 'prospects', 'opportunities', 'speedrun', 'people'].includes(section)) {
+              // Refresh all people-related sections to catch status changes
+              if (section !== 'leads') refreshPromises.push(leadsHook.refresh());
+              if (section !== 'prospects') refreshPromises.push(prospectsHook.refresh());
+              if (section !== 'people') refreshPromises.push(peopleHook.refresh());
+              if (section !== 'speedrun') refreshPromises.push(speedrunHook.refresh());
+            }
+            
+            // Wait for all refreshes to complete
+            await Promise.all(refreshPromises);
+            console.log('🔄 [PIPELINE] Refreshed all relevant data hooks');
+          } catch (error) {
+            console.error('⚠️ [PIPELINE] Error refreshing data after update:', error);
+          }
+          
+          console.log('✅ [PIPELINE] Record updated in UI and data refreshed');
         }}
         profilePopupContext={{
           isProfileOpen,
