@@ -12,6 +12,7 @@ interface UpdatePersonPopupProps {
   onClose: () => void;
   person: SpeedrunPerson;
   onSave: (updatedPerson: Partial<SpeedrunPerson>) => void;
+  onDelete?: (personId: string) => Promise<void>;
 }
 
 const TABS = [
@@ -20,6 +21,7 @@ const TABS = [
   "Intelligence",
   "Career",
   "Notes",
+  "Delete",
 ] as const;
 
 type TabType = (typeof TABS)[number];
@@ -29,8 +31,11 @@ export function UpdatePersonPopup({
   onClose,
   person,
   onSave,
+  onDelete,
 }: UpdatePersonPopupProps) {
   const [activeTab, setActiveTab] = useState<TabType>("Overview");
+  const [deleteConfirmName, setDeleteConfirmName] = useState('');
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: person.name || "",
     title: person.title || "",
@@ -343,6 +348,122 @@ export function UpdatePersonPopup({
     </div>
   );
 
+  // Handle delete with Vercel-style confirmation
+  const handleDelete = async () => {
+    if (!person?.id) return;
+    
+    const personName = person.name || 'Unknown Person';
+    
+    if (deleteConfirmName !== personName) {
+      alert(`Please type "${personName}" to confirm deletion.`);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Perform soft delete via new v1 deletion API
+      const response = await fetch('/api/v1/deletion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'soft_delete',
+          entityType: 'people',
+          entityId: person.id,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete person');
+      }
+
+      // Close the modal first
+      onClose();
+      
+      // Call the onDelete callback if provided (this should handle navigation and success message)
+      if (onDelete) {
+        await onDelete(person.id);
+      }
+    } catch (error) {
+      console.error('Error deleting person:', error);
+      alert('Failed to delete person. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderDeleteTab = () => {
+    const personName = person.name || 'Unknown Person';
+    
+    return (
+      <div className="p-6 space-y-6">
+        <div>
+          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+            Delete Person
+          </h3>
+          <p className="text-sm text-[var(--muted)] mb-6">
+            This action cannot be undone. This will soft delete the person and remove them from your active lists.
+          </p>
+        </div>
+
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">
+                Are you sure you want to delete this person?
+              </h3>
+              <div className="mt-2 text-sm text-red-700">
+                <p>
+                  To confirm, type <strong>"{personName}"</strong> in the box below:
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="delete-confirm" className="block text-sm font-medium text-gray-700 mb-2">
+            Type the name to confirm deletion
+          </label>
+          <input
+            id="delete-confirm"
+            type="text"
+            value={deleteConfirmName}
+            onChange={(e) => setDeleteConfirmName(e.target.value)}
+            placeholder={personName}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+          />
+        </div>
+
+        <div className="flex justify-end space-x-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={loading || deleteConfirmName !== personName}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? 'Deleting...' : 'Delete Person'}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "Overview":
@@ -355,6 +476,8 @@ export function UpdatePersonPopup({
         return renderCareerTab();
       case "Notes":
         return renderNotesTab();
+      case "Delete":
+        return renderDeleteTab();
       default:
         return renderOverviewTab();
     }

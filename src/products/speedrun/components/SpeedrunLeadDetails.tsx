@@ -476,6 +476,12 @@ export function SpeedrunLeadDetails({
         onClose={() => setState((prev) => ({ ...prev, showUpdatePopup: false }))}
         person={person}
         onSave={handlePersonUpdate}
+        onDelete={async (personId: string) => {
+          // Close the update popup first
+          setState((prev) => ({ ...prev, showUpdatePopup: false }));
+          // Call the onRemove function to handle navigation and cleanup
+          onRemove(parseInt(personId));
+        }}
       />
     </div>
   );
