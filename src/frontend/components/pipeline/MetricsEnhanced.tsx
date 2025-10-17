@@ -205,7 +205,7 @@ export function MetricsEnhanced() {
         console.error('Error fetching metrics:', err);
         
         // Fall back to mock data for Ryan Serrato in Notary Everyday only
-        const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1';
+        const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
         const isRyanSerrato = user?.id === 'cmf0kew2z0000pcsexylorpxp';
         if (isNotaryEveryday && isRyanSerrato) {
           console.log('Error occurred, using mock data for Ryan Serrato in Notary Everyday');

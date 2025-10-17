@@ -120,10 +120,11 @@ function PipelineSections({
   // Check if we're in Notary Everyday workspace (check both old and new IDs)
   const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || 
                           workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' ||
+                          workspaceId === 'cmezxb1ez0001pc94yry3ntjk' ||
                           (typeof window !== "undefined" && window.location.pathname.startsWith('/ne/'));
   
   // Check if this is Ryan Serrato user
-  const isRyanSerrato = user?.id === 'cmf0kew2z0000pcsexylorpxp';
+  const isRyanSerrato = authUser?.id === 'cmf0kew2z0000pcsexylorpxp';
   console.log('🔍 [LEFT PANEL] Notary Everyday check:', { 
     isNotaryEveryday, 
     workspaceId,
