@@ -12,6 +12,9 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useFastCounts } from "@/platform/hooks/useFastCounts";
+import { getWorkspaceBySlug } from "@/platform/config/workspace-mapping";
+import { useChronicleCount } from "@/platform/hooks/useChronicleCount";
+import { useMetricsCount } from "@/platform/hooks/useMetricsCount";
 
 
 // Utility function to convert hex color to CSS filter for SVG recoloring
@@ -113,6 +116,16 @@ function PipelineSections({
     workspaceId,
     pathname: typeof window !== "undefined" ? window.location.pathname : 'server' 
   });
+
+  // Check if we're in Notary Everyday workspace (check both old and new IDs)
+  const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || 
+                          workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' ||
+                          (typeof window !== "undefined" && window.location.pathname.startsWith('/ne/'));
+  console.log('🔍 [LEFT PANEL] Notary Everyday check:', { 
+    isNotaryEveryday, 
+    workspaceId,
+    pathname: typeof window !== "undefined" ? window.location.pathname : 'server'
+  });
   
   // For demo mode, override visibility to only show the 4 required sections
   const demoModeVisibility = {
@@ -136,6 +149,20 @@ function PipelineSections({
   // Use fastCounts from useFastCounts hook as primary source, with fallbacks
   const finalCounts = fastCounts && Object.keys(fastCounts).length > 0 ? fastCounts : 
                      (actualCounts && Object.keys(actualCounts).length > 0 ? actualCounts : fallbackCounts);
+
+  // Get chronicle count for Notary Everyday
+  const { count: chronicleCount } = useChronicleCount();
+  
+  // Get metrics count for Notary Everyday
+  const { count: metricsCount } = useMetricsCount();
+  
+  // 🔍 DEBUG: Log counts after hooks are called
+  console.log('🔍 [LEFT PANEL] Metrics and Chronicle counts:', {
+    isNotaryEveryday,
+    metricsCount,
+    chronicleCount,
+    workspaceId
+  });
   
   // 🔍 DEBUG: Log counts for debugging
   console.log('🔍 [LEFT PANEL DEBUG] Counts sources:', {
@@ -144,7 +171,8 @@ function PipelineSections({
     fallbackCounts,
     finalCounts,
     fastCountsLoading,
-    authLoading
+    authLoading,
+    loading: fastCountsLoading || authLoading || false
   });
   
   
@@ -613,6 +641,13 @@ function PipelineSections({
       visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true)
     },
     {
+      id: "chronicle",
+      name: "Chronicle",
+      description: "Business Intelligence Reports",
+      count: isNotaryEveryday ? chronicleCount : 0, // Show count immediately for Notary Everyday
+      visible: isNotaryEveryday // Only show for Notary Everyday
+    },
+    {
       id: "news",
       name: "News",
       description: "Stay informed",
@@ -693,20 +728,9 @@ function PipelineSections({
     {
       id: "metrics",
       name: "Metrics",
-      description: "Sales performance wall",
-      count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : productionCounts.metrics || 16,
-      visible: false
-    },
-    {
-      id: "chronicle",
-      name: "Chronicle",
-      description: "Weekly reports",
-      count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : productionCounts.chronicle || 0,
-      visible: false
+      description: "Sales Activity Dashboard",
+      count: isNotaryEveryday ? metricsCount : 0, // Show count immediately for Notary Everyday
+      visible: isNotaryEveryday // Only show for Notary Everyday
     },
     // SELLERS: Show only for demo workspace
     {
@@ -772,9 +796,9 @@ function PipelineSections({
           key={section.id}
           onClick={() => handleSectionClick(section.id)}
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-            activeSection === section.id
-              ? 'bg-[var(--hover)] text-[var(--foreground)]'
-              : 'hover:bg-[var(--panel-background)] text-gray-700'
+                activeSection === section.id
+                  ? 'bg-[var(--background)] text-gray-800 border-l-2 border-[var(--accent)]'
+                  : 'hover:bg-[var(--panel-background)] text-gray-700'
           }`}
         >
           <div className="flex items-center justify-between">
@@ -961,7 +985,7 @@ export function PipelineLeftPanelStandalone({
         <div className="mx-2 mt-4 mb-2">
           {/* Company Icon */}
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--background)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200 overflow-hidden" style={{ filter: 'none' }}>
               <span className="text-lg font-bold text-black">
                 {(() => {
                   const companyName = (workspace || "Sales Acceleration").trim();
@@ -989,7 +1013,7 @@ export function PipelineLeftPanelStandalone({
                     return companyName.length > 7 ? `${companyName.slice(0, 7)}...` : companyName;
                   })()}
                 </h3>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white text-gray-800 border border-gray-200">
                   Pro
                 </span>
               </div>
@@ -1001,7 +1025,7 @@ export function PipelineLeftPanelStandalone({
         </div>
 
         {/* Executive Performance Dashboard */}
-        <div className="mx-2 mb-4 p-3 bg-[var(--hover)] rounded-lg border border-[var(--border)]">
+        <div className="mx-2 mb-4 p-3 bg-white rounded-lg border border-gray-200">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs font-medium text-[var(--muted)]">Revenue</span>

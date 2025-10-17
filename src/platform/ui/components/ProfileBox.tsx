@@ -27,6 +27,7 @@ import { GrandCentralModal } from "./GrandCentralModal";
 import { DemoScenarioNavigationService } from "@/platform/services/DemoScenarioNavigationService";
 import { useSettingsPopup } from "./SettingsPopupContext";
 import { AdminPanel } from "./AdminPanel";
+import { ThemePickerModal } from "./ThemePickerModal";
 
 // Theme keys that should be preserved during sign-out to prevent theme flash
 const THEME_KEYS_TO_PRESERVE = [
@@ -939,7 +940,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )} */}
         
-        {/* 2. Settings */}
+
+        {/* 3. Settings */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={() => {
@@ -960,7 +962,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           Settings
         </div>
 
-        {/* 3. Admin Panel - Show only for admin users */}
+        {/* 4. Admin Panel - Show only for admin users */}
         {isAdminUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center"
@@ -1106,6 +1108,12 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
       <AdminPanel
         isOpen={isAdminPanelOpen}
         onClose={() => setIsAdminPanelOpen(false)}
+      />
+
+      {/* Theme Picker Modal */}
+      <ThemePickerModal
+        isOpen={isThemePickerOpen || false}
+        onClose={() => setIsThemePickerOpen?.(false)}
       />
 
     </div>

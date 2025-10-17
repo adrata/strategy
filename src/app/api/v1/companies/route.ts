@@ -124,13 +124,20 @@ export async function GET(request: NextRequest) {
 
     // Enhanced where clause for pipeline management
     console.log(`🔍 [V1 COMPANIES API] Querying with workspace: ${context.workspaceId}, user: ${context.userId}`);
+    
+    // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
+    const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
+                      context.workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1'; // Notary Everyday
+    
     const where: any = {
       workspaceId: context.workspaceId, // Filter by user's workspace
       deletedAt: null, // Only show non-deleted records
-      OR: [
-        { mainSellerId: context.userId },
-        { mainSellerId: null }
-      ]
+      ...(isDemoMode ? {} : {
+        OR: [
+          { mainSellerId: context.userId },
+          { mainSellerId: null }
+        ]
+      })
     };
     console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);
     
