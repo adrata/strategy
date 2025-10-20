@@ -1269,10 +1269,14 @@ export class UnifiedCache {
   static async shutdown(): Promise<void> {
     if (this['redisClient'] && this.isRedisConnected) {
       try {
+        this.isRedisConnected = false; // Prevent duplicate disconnects
         await this.redisClient.disconnect();
         console.log('👋 [UNIFIED CACHE] Redis disconnected gracefully');
       } catch (error) {
-        console.warn('🔴 [UNIFIED CACHE] Redis disconnect error:', error);
+        // Ignore "client is closed" errors during shutdown
+        if (!error.message?.includes('client is closed')) {
+          console.warn('🔴 [UNIFIED CACHE] Redis disconnect error:', error);
+        }
       }
     }
   }
