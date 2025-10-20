@@ -609,31 +609,17 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            City
-          </label>
-          <input
-            type="text"
-            value={formData.city || ''}
-            onChange={(e) => handleInputChange('city', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter city"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            State
-          </label>
-          <input
-            type="text"
-            value={formData.state || ''}
-            onChange={(e) => handleInputChange('state', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Enter state"
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          City
+        </label>
+        <input
+          type="text"
+          value={formData.city || ''}
+          onChange={(e) => handleInputChange('city', e.target.value)}
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Enter city"
+        />
       </div>
 
       <div>
@@ -1102,7 +1088,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.legalName || ''}
                   onChange={(e) => handleInputChange('legalName', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
             </div>
@@ -1116,7 +1102,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.tradingName || ''}
                   onChange={(e) => handleInputChange('tradingName', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
               <div>
@@ -1128,7 +1114,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.website || ''}
                   onChange={(e) => handleInputChange('website', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
             </div>
@@ -1142,7 +1128,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.email || ''}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
               <div>
@@ -1154,7 +1140,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.phone || ''}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
             </div>
@@ -1167,7 +1153,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 rows={3}
                 className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="-"
+                placeholder=""
               />
             </div>
           </div>
@@ -1185,7 +1171,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.industry || ''}
                   onChange={(e) => handleInputChange('industry', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
               <div>
@@ -1197,7 +1183,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.sector || ''}
                   onChange={(e) => handleInputChange('sector', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
             </div>
@@ -1229,7 +1215,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.employeeCount || ''}
                   onChange={(e) => handleInputChange('employeeCount', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
             </div>
@@ -1244,7 +1230,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.revenue || ''}
                   onChange={(e) => handleInputChange('revenue', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
               <div>
@@ -1274,7 +1260,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 value={formData.foundedYear || ''}
                 onChange={(e) => handleInputChange('foundedYear', e.target.value)}
                 className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="-"
+                placeholder=""
               />
             </div>
           </div>
@@ -1291,7 +1277,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 onChange={(e) => handleInputChange('address', e.target.value)}
                 rows={2}
                 className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="-"
+                placeholder=""
               />
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
@@ -1304,7 +1290,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.city || ''}
                   onChange={(e) => handleInputChange('city', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
               <div>
@@ -1316,7 +1302,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.state || ''}
                   onChange={(e) => handleInputChange('state', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
             </div>
@@ -1330,7 +1316,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.country || ''}
                   onChange={(e) => handleInputChange('country', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
               <div>
@@ -1342,7 +1328,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   value={formData.postalCode || ''}
                   onChange={(e) => handleInputChange('postalCode', e.target.value)}
                   className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="-"
+                  placeholder=""
                 />
               </div>
             </div>
@@ -1392,7 +1378,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 value={Array.isArray(formData.tags) ? formData.tags.join(', ') : ''}
                 onChange={(e) => handleInputChange('tags', e.target.value.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag))}
                 className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="-"
+                placeholder=""
               />
             </div>
           </div>
@@ -1409,7 +1395,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 value={formData.lastAction || ''}
                 onChange={(e) => handleInputChange('lastAction', e.target.value)}
                 className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="-"
+                placeholder=""
               />
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
@@ -1445,7 +1431,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 value={formData.nextAction || ''}
                 onChange={(e) => handleInputChange('nextAction', e.target.value)}
                 className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="-"
+                placeholder=""
               />
             </div>
           </div>
@@ -1479,7 +1465,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
               value={formData.jobTitle || ''}
               onChange={(e) => handleInputChange('jobTitle', e.target.value)}
               className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="-"
+              placeholder=""
             />
           </div>
         </div>
@@ -1494,7 +1480,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
               value={formData.email || ''}
               onChange={(e) => handleInputChange('email', e.target.value)}
               className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="-"
+              placeholder=""
             />
           </div>
           <div>
@@ -1506,7 +1492,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
               value={formData.phone || ''}
               onChange={(e) => handleInputChange('phone', e.target.value)}
               className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="-"
+              placeholder=""
             />
           </div>
         </div>
@@ -1695,7 +1681,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.company || ''}
             onChange={(e) => handleInputChange('company', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="-"
+            placeholder=""
           />
         </div>
       </div>
@@ -1733,7 +1719,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.department || ''}
             onChange={(e) => handleInputChange('department', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="-"
+            placeholder=""
           />
         </div>
       </div>
@@ -1747,7 +1733,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={formData.linkedinUrl || ''}
           onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="-"
+          placeholder=""
         />
       </div>
 
@@ -1760,7 +1746,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={formData.linkedinNavigatorUrl || ''}
           onChange={(e) => handleInputChange('linkedinNavigatorUrl', e.target.value)}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="-"
+          placeholder=""
         />
       </div>
 
@@ -1785,7 +1771,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={formData.bio || ''}
           onChange={(e) => handleInputChange('bio', e.target.value)}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="-"
+          placeholder=""
         />
       </div>
 
@@ -1799,7 +1785,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.city || ''}
             onChange={(e) => handleInputChange('city', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="-"
+            placeholder=""
           />
         </div>
         <div>
@@ -1811,7 +1797,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.state || ''}
             onChange={(e) => handleInputChange('state', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="-"
+            placeholder=""
           />
         </div>
         <div>
@@ -1823,7 +1809,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             value={formData.country || ''}
             onChange={(e) => handleInputChange('country', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="-"
+            placeholder=""
           />
         </div>
       </div>
@@ -1841,7 +1827,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           value={formData.nextAction || ''}
           onChange={(e) => handleInputChange('nextAction', e.target.value)}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="-"
+          placeholder=""
         />
       </div>
 
