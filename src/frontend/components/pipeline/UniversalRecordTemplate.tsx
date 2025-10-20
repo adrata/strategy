@@ -1959,7 +1959,7 @@ export function UniversalRecordTemplate({
     setIsAddCompanyModalOpen(false);
     
     try {
-      // Try simpler approach - just use company name, let the API handle the linking
+      // Use the same approach as handleUpdateSubmit - just use company name, let the API handle the linking
       const updateData = {
         company: newCompany.name
       };
@@ -1996,24 +1996,7 @@ export function UniversalRecordTemplate({
         throw new Error('No response data received from server');
       }
       
-      // Update local record with the complete response data
-      if (responseData.success && responseData.data) {
-        setLocalRecord((prev: any) => ({
-          ...prev,
-          ...responseData.data
-        }));
-        
-        // Note: Cache invalidation is handled by the API response
-        // The API will return fresh data and the UI will update accordingly
-        
-        // Force a record refresh to ensure data consistency
-        if (onRecordUpdate) {
-          console.log('🔄 [UNIVERSAL] Triggering record update after company association');
-          await onRecordUpdate(record.id);
-        }
-        
-        showMessage('Company added and associated successfully!', 'success');
-      } else {
+      if (!responseData.success) {
         console.error('❌ [UNIVERSAL] API returned error:', {
           success: responseData.success,
           error: responseData.error,
@@ -2022,6 +2005,111 @@ export function UniversalRecordTemplate({
         });
         throw new Error(responseData.error || 'Invalid response from server');
       }
+      
+      // Update local record state with API response data (same pattern as handleUpdateSubmit)
+      const updatedRecord = {
+        ...localRecord,
+        ...updateData,
+        ...responseData.data // Include any additional data from API response
+      };
+      
+      console.log('🔄 [UNIVERSAL] Updated local record state:', {
+        originalRecord: localRecord,
+        updateData: updateData,
+        apiResponse: responseData.data,
+        finalRecord: updatedRecord
+      });
+      
+      // Update local state immediately for UI refresh
+      setLocalRecord(updatedRecord);
+      
+      // Call onRecordUpdate with the updated record (same as handleUpdateSubmit)
+      if (onRecordUpdate) {
+        console.log('🔄 [UNIVERSAL] Triggering record update after company association');
+        onRecordUpdate(updatedRecord);
+      }
+      
+      // Invalidate all caches for this record to ensure fresh data on refresh (same as handleUpdateSubmit)
+      if (typeof window !== 'undefined') {
+        // Clear sessionStorage caches
+        sessionStorage.removeItem(`cached-${recordType}-${localRecord.id}`);
+        sessionStorage.removeItem(`current-record-${recordType}`);
+        
+        // Clear all relevant localStorage caches to force refresh
+        const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
+        
+        // Clear all data caches that might contain this record
+        localStorage.removeItem(`adrata-people-${workspaceId}`);        // people, leads, prospects, opportunities, speedrun
+        localStorage.removeItem(`adrata-prospects-${workspaceId}`);     // prospects
+        localStorage.removeItem(`adrata-leads-${workspaceId}`);         // leads  
+        localStorage.removeItem(`adrata-opportunities-${workspaceId}`); // opportunities
+        localStorage.removeItem(`adrata-companies-${workspaceId}`);     // companies
+        localStorage.removeItem(`adrata-speedrun-${workspaceId}`);      // speedrun
+        localStorage.removeItem(`adrata-fast-counts-${workspaceId}`);   // all record types affect counts
+        
+        // Clear acquisition OS cache (used by PipelineDetailPage)
+        const cacheKeys = Object.keys(localStorage);
+        cacheKeys.forEach(key => {
+          if (key.startsWith('adrata-cache-acquisition-os:') && key.includes(workspaceId)) {
+            localStorage.removeItem(key);
+            console.log(`🗑️ [CACHE] Cleared unified cache: ${key}`);
+          }
+        });
+        
+        // Also clear SWR cache if available (used by useAdrataData)
+        if ((window as any).__SWR_CACHE__) {
+          const swrCache = (window as any).__SWR_CACHE__;
+          const swrKeys = Array.from(swrCache.keys()) as string[];
+          swrKeys.forEach((key: string) => {
+            if (key.includes('acquisition-os') && key.includes(workspaceId)) {
+              swrCache.delete(key);
+              console.log(`🗑️ [CACHE] Cleared SWR cache: ${key}`);
+            }
+          });
+        }
+        
+        console.log('🗑️ [CACHE] Invalidated all caches after company association:', {
+          workspaceId,
+          recordType,
+          recordId: localRecord.id,
+          clearedCaches: [
+            `adrata-people-${workspaceId}`,
+            `adrata-prospects-${workspaceId}`,
+            `adrata-leads-${workspaceId}`,
+            `adrata-opportunities-${workspaceId}`,
+            `adrata-companies-${workspaceId}`,
+            `adrata-speedrun-${workspaceId}`,
+            `adrata-fast-counts-${workspaceId}`,
+            'acquisition-os:*'
+          ]
+        });
+        
+        // Force next page load to bypass cache and fetch fresh from API
+        sessionStorage.setItem(`force-refresh-${recordType}-${localRecord.id}`, 'true');
+        console.log(`🔄 [FORCE REFRESH] Set force refresh flag for ${recordType} record ${localRecord.id}`);
+      }
+      
+      // Dispatch custom events to notify other components of the update (same as handleUpdateSubmit)
+      window.dispatchEvent(new CustomEvent('record-updated', {
+        detail: {
+          recordType,
+          recordId: localRecord.id,
+          updatedRecord,
+          updateData: updateData
+        }
+      }));
+      
+      // Dispatch cache invalidation event for other components
+      window.dispatchEvent(new CustomEvent('cache-invalidated', {
+        detail: {
+          recordType,
+          recordId: localRecord.id,
+        }
+      }));
+      
+      // Show success message
+      showMessage('Company added and associated successfully!', 'success');
+      
     } catch (error) {
       console.error('❌ [UNIVERSAL] Error associating company:', {
         error: error instanceof Error ? error.message : String(error),
