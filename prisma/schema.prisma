@@ -664,7 +664,7 @@ model OasisChannel {
   name        String               @db.VarChar(100)
   description String?              @db.VarChar(500)
   createdAt   DateTime             @default(now())
-  updatedAt   DateTime @updatedAt             @updatedAt
+  updatedAt   DateTime @updatedAt
   workspace   workspaces           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   members     OasisChannelMember[]
   messages    OasisMessage[]
@@ -751,7 +751,7 @@ model StacksProject {
   name        String        @db.VarChar(200)
   description String?
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime @updatedAt      @updatedAt
+  updatedAt   DateTime @updatedAt
   epics       StacksEpic[]
   workspace   workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   stories     StacksStory[]
@@ -769,7 +769,7 @@ model StacksEpic {
   status      String        @default("todo") @db.VarChar(20)
   priority    String        @default("medium") @db.VarChar(20)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime @updatedAt      @updatedAt
+  updatedAt   DateTime @updatedAt
   project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
   stories     StacksStory[]
 
@@ -787,7 +787,7 @@ model StacksStory {
   priority    String        @default("medium") @db.VarChar(20)
   assigneeId  String?       @db.VarChar(30)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime @updatedAt      @updatedAt
+  updatedAt   DateTime @updatedAt
   assignee    users?        @relation(fields: [assigneeId], references: [id])
   epic        StacksEpic?   @relation(fields: [epicId], references: [id])
   project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -810,7 +810,7 @@ model StacksTask {
   type        String        @default("task") @db.VarChar(20)
   assigneeId  String?       @db.VarChar(30)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime @updatedAt      @updatedAt
+  updatedAt   DateTime @updatedAt
   assignee    users?        @relation(fields: [assigneeId], references: [id])
   project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
   story       StacksStory?  @relation(fields: [storyId], references: [id])
