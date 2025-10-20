@@ -426,6 +426,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
       { value: 'rank', label: 'Rank', icon: '🏅' },
       { value: 'company', label: 'Company', icon: '🏢' },
       { value: 'name', label: 'Name', icon: '👤' },
+      { value: 'state', label: 'State', icon: '📍' },
       { value: 'title', label: 'Title', icon: '💼' },
       { value: 'nextAction', label: 'Next Action', icon: '⏭️' },
       { value: 'lastAction', label: 'Last Action', icon: '📅' },
@@ -438,7 +439,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     // Filter based on section
     if (section === 'leads') {
       return baseOptions.filter(option => 
-        ['all', 'rank', 'company', 'name', 'title', 'nextAction', 'lastAction'].includes(option.value)
+        ['all', 'rank', 'company', 'name', 'state', 'title', 'nextAction', 'lastAction'].includes(option.value)
       );
     }
     

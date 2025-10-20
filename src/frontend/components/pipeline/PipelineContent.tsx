@@ -339,7 +339,17 @@ export const PipelineContent = React.memo(function PipelineContent({
         return (record['firstName'] && record['lastName'] ? `${record['firstName']} ${record['lastName']}` : '') || record['fullName'] || record.name || '';
       
       case 'company':
-        return record.company || record.companyName || '';
+        // Handle both string and object company data
+        const company = record['company'];
+        let companyName = '';
+        
+        if (typeof company === 'object' && company !== null) {
+          companyName = company.name || company.companyName || '';
+        } else {
+          companyName = company || record['companyName'] || '';
+        }
+        
+        return companyName;
       
       case 'title':
         return record.title || 
@@ -555,6 +565,7 @@ export const PipelineContent = React.memo(function PipelineContent({
       filtered = [...filtered].sort((a: any, b: any) => {
         let aVal = getSortableValue(a, sortField);
         let bVal = getSortableValue(b, sortField);
+
 
         // Handle null/undefined values
         if (aVal == null && bVal == null) return 0;
@@ -840,7 +851,7 @@ export const PipelineContent = React.memo(function PipelineContent({
     const fieldMap = getFieldMapping();
     const field = fieldMap[columnName as keyof typeof fieldMap] || columnName.toLowerCase().replace(/\s+/g, '');
     
-    console.log(`🔧 [PipelineContent] Column sort mapping: ${columnName} -> ${field}`);
+    console.log(`🔧 [PipelineContent] Column sort mapping: ${columnName} -> ${field} (section: ${section})`);
     handleSortChange(field);
   }, [handleSortChange, section]);
 

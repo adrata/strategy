@@ -9,15 +9,99 @@ declare global {
   }
 }
 
-// ⚡ LAZY IMPORTS: Optimize bundle size by lazy loading report components
-const IndustryDeepReport = React.lazy(() => import("@/platform/reports/industry-deep"));
-const CompetitiveDeepReport = React.lazy(() => import("@/platform/reports/competitive-deep"));
-const GrowthDeepReport = React.lazy(() => import("@/platform/reports/growth-deep"));
-const TechDeepReport = React.lazy(() => import("@/platform/reports/tech-deep"));
-const IndustryMiniReport = React.lazy(() => import("@/platform/reports/industry-mini"));
-const CompetitiveMiniReport = React.lazy(() => import("@/platform/reports/competitive-mini"));
-const GrowthMiniReport = React.lazy(() => import("@/platform/reports/growth-mini"));
-const TechMiniReport = React.lazy(() => import("@/platform/reports/tech-mini"));
+// Error boundary for lazy-loaded components
+class LazyLoadErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('LazyLoadErrorBoundary caught error:', error, errorInfo);
+    
+    // Check if it's a ChunkLoadError
+    if (error.name === 'ChunkLoadError' || error.message.includes('Loading chunk')) {
+      console.warn('ChunkLoadError detected, attempting page reload...');
+      // Auto-reload on chunk load errors
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+      
+      return (
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <div className="text-red-600 mb-2">Failed to load report component</div>
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Enhanced lazy imports with error handling and retry logic
+const createLazyComponent = (importFn: () => Promise<any>, componentName: string) => {
+  return React.lazy(() => 
+    importFn().catch((error) => {
+      console.error(`Failed to load ${componentName}:`, error);
+      
+      // If it's a chunk load error, try to reload the page
+      if (error.name === 'ChunkLoadError' || error.message.includes('Loading chunk')) {
+        console.warn(`ChunkLoadError for ${componentName}, reloading page...`);
+        setTimeout(() => window.location.reload(), 500);
+      }
+      
+      // Return a fallback component
+      return {
+        default: () => (
+          <div className="flex items-center justify-center p-8">
+            <div className="text-center">
+              <div className="text-red-600 mb-2">Failed to load {componentName}</div>
+              <button 
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Reload Page
+              </button>
+            </div>
+          </div>
+        )
+      };
+    })
+  );
+};
+
+// ⚡ LAZY IMPORTS: Optimize bundle size by lazy loading report components with error handling
+const IndustryDeepReport = createLazyComponent(() => import("@/platform/reports/industry-deep"), "IndustryDeepReport");
+const CompetitiveDeepReport = createLazyComponent(() => import("@/platform/reports/competitive-deep"), "CompetitiveDeepReport");
+const GrowthDeepReport = createLazyComponent(() => import("@/platform/reports/growth-deep"), "GrowthDeepReport");
+const TechDeepReport = createLazyComponent(() => import("@/platform/reports/tech-deep"), "TechDeepReport");
+const IndustryMiniReport = createLazyComponent(() => import("@/platform/reports/industry-mini"), "IndustryMiniReport");
+const CompetitiveMiniReport = createLazyComponent(() => import("@/platform/reports/competitive-mini"), "CompetitiveMiniReport");
+const GrowthMiniReport = createLazyComponent(() => import("@/platform/reports/growth-mini"), "GrowthMiniReport");
+const TechMiniReport = createLazyComponent(() => import("@/platform/reports/tech-mini"), "TechMiniReport");
 
 const reportComponents = {
   IndustryDeepReport,

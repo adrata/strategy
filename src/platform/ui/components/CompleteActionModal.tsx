@@ -12,6 +12,8 @@ interface CompleteActionModalProps {
   onSubmit: (actionData: ActionLogData) => void;
   personName?: string; // Optional - if not provided, will show search
   companyName?: string; // Optional company name for auto-fill
+  personId?: string; // Optional person ID for auto-fill
+  companyId?: string; // Optional company ID for auto-fill
   isLoading?: boolean;
   section?: string; // The section type to determine color scheme
   initialData?: ActionLogData; // For undo functionality
@@ -34,6 +36,8 @@ export function CompleteActionModal({
   onSubmit,
   personName,
   companyName,
+  personId,
+  companyId,
   isLoading = false,
   section = 'speedrun',
   initialData
@@ -78,9 +82,9 @@ export function CompleteActionModal({
       company: companyName || initialData.company // Use provided company or keep existing
     } : {
       person: personName || '',
-      personId: '',
+      personId: personId || '',
       company: companyName || '',
-      companyId: '',
+      companyId: companyId || '',
       type: 'LinkedIn Connection',
       time: 'Now',
       action: '',
@@ -90,6 +94,8 @@ export function CompleteActionModal({
     console.log('🔍 [CompleteActionModal] Initial formData:', {
       personName,
       companyName,
+      personId,
+      companyId,
       initialFormData
     });
     
@@ -108,10 +114,12 @@ export function CompleteActionModal({
       setFormData(prev => ({
         ...prev,
         person: personName || prev.person,
-        company: companyName || prev.company
+        personId: personId || prev.personId,
+        company: companyName || prev.company,
+        companyId: companyId || prev.companyId
       }));
     }
-  }, [initialData, personName, companyName]);
+  }, [initialData, personName, companyName, personId, companyId]);
 
   // Auto-focus notes field when modal opens (only if person is already selected)
   useEffect(() => {

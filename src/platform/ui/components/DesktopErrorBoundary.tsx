@@ -223,7 +223,12 @@ export class DesktopErrorBoundary extends Component<Props, State> {
     // Analyze common error patterns
     const message = error.message || "";
     const stack = error.stack || "";
+    const errorName = error.name || "";
 
+    // ChunkLoadError - specific handling for webpack chunk loading failures
+    if (errorName === "ChunkLoadError" || message.includes("Loading chunk") || message.includes("Failed to fetch dynamically imported module")) {
+      return "ChunkLoadError";
+    }
     if (
       message.includes("Cannot read property") ||
       message.includes("Cannot read properties")
@@ -260,7 +265,15 @@ export class DesktopErrorBoundary extends Component<Props, State> {
     if (!error) return [];
 
     const message = error.message || "";
+    const errorName = error.name || "";
     const solutions = [];
+
+    // ChunkLoadError - specific solutions for webpack chunk loading failures
+    if (errorName === "ChunkLoadError" || message.includes("Loading chunk") || message.includes("Failed to fetch dynamically imported module")) {
+      solutions.push("Reloading the page will fix this issue");
+      solutions.push("This happens when code updates while the app is running");
+      return solutions; // Return early for ChunkLoadError
+    }
 
     if (message.includes("localStorage")) {
       solutions.push("Try clearing browser data");
@@ -290,12 +303,45 @@ export class DesktopErrorBoundary extends Component<Props, State> {
       console.error("🚨 DesktopErrorBoundary: Rendering error UI");
       console.error("🚨 Current error state:", this.state.error?.message);
 
+      const errorSummary = this.getErrorSummary();
+      
+      // Auto-reload on ChunkLoadError
+      if (errorSummary === "ChunkLoadError") {
+        console.warn("🔄 ChunkLoadError detected - auto-reloading page in 2 seconds...");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+        
+        return (
+          <div className="min-h-screen bg-[var(--panel-background)] flex flex-col items-center justify-center p-8">
+            <div className="max-w-2xl w-full bg-[var(--background)] rounded-lg shadow-lg p-6">
+              <div className="text-center">
+                <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                  <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </div>
+                <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+                  Loading Updated Code
+                </h2>
+                <p className="text-[var(--muted)] mb-4">
+                  The application has been updated. Reloading...
+                </p>
+                <div className="text-sm text-[var(--muted)]">
+                  If the page doesn't reload automatically, please refresh manually.
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
       // Custom error UI for desktop
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      const errorSummary = this.getErrorSummary();
       const solutions = this.getPossibleSolutions();
 
       return (

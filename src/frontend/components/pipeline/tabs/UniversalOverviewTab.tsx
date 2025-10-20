@@ -155,7 +155,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       return emailValue;
     })(),
     phone: record?.phone || coresignalData.phone || null,
-    linkedin: record?.linkedin || coresignalData.linkedin_url || null,
+    linkedin: record?.linkedin || record?.linkedinUrl || coresignalData.linkedin_url || null,
     linkedinNavigatorUrl: record?.linkedinNavigatorUrl || null,
     bio: record?.bio || null,
     
@@ -385,22 +385,10 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <span className="text-sm text-[var(--muted)] w-24">State:</span>
                 <InlineEditField
-                  value={formatEmptyValue(recordData.linkedin)}
-                  field="linkedinUrl"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
-                <InlineEditField
-                  value={formatEmptyValue(recordData.linkedinNavigatorUrl)}
-                  field="linkedinNavigatorUrl"
+                  value={record.state || record.company?.hqState || ''}
+                  field="state"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}
@@ -504,18 +492,6 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
                 <div className="space-y-2">
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
-                <InlineEditField
-                  value={formatEmptyValue(recordData.bio)}
-                  field="bio"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Email:</span>
                 <InlineEditField

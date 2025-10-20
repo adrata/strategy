@@ -1,6 +1,58 @@
 import React from "react";
 import { SpeedrunPerson } from "../types/SpeedrunTypes";
 
+// Error boundary for lazy-loaded components
+class LazyLoadErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('LazyLoadErrorBoundary caught error:', error, errorInfo);
+    
+    // Check if it's a ChunkLoadError
+    if (error.name === 'ChunkLoadError' || error.message.includes('Loading chunk')) {
+      console.warn('ChunkLoadError detected, attempting page reload...');
+      // Auto-reload on chunk load errors
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+      
+      return (
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <div className="text-red-600 mb-2">Failed to load report component</div>
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 // Import report components - ensuring we use the aos versions
 import IndustryDeepReport from "../../reports/industry-deep";
 import CompetitiveDeepReport from "../../reports/competitive-deep";
@@ -190,12 +242,14 @@ export function SpeedrunLeadDetailsReportRenderer({
             ],
       };
       return (
-        <IndustryDeepReport
-          company={person.company}
-          title={originalTitle}
-          data={industryDeepData}
-          onBack={onReportBack}
-        />
+        <LazyLoadErrorBoundary>
+          <IndustryDeepReport
+            company={person.company}
+            title={originalTitle}
+            data={industryDeepData}
+            onBack={onReportBack}
+          />
+        </LazyLoadErrorBoundary>
       );
     } else if (reportType === "industry" && !isDeepReport) {
       const industryMiniData = {
@@ -235,11 +289,13 @@ export function SpeedrunLeadDetailsReportRenderer({
         ],
       };
       return (
-        <IndustryMiniReport
-          company={person.company}
-          data={industryMiniData}
-          onBack={onReportBack}
-        />
+        <LazyLoadErrorBoundary>
+          <IndustryMiniReport
+            company={person.company}
+            data={industryMiniData}
+            onBack={onReportBack}
+          />
+        </LazyLoadErrorBoundary>
       );
     } else if (reportType === "competitive" && isDeepReport) {
       const competitiveDeepData = {
@@ -265,11 +321,13 @@ export function SpeedrunLeadDetailsReportRenderer({
         },
       };
       return (
-        <CompetitiveDeepReport
-          company={person.company}
-          data={competitiveDeepData}
-          onBack={onReportBack}
-        />
+        <LazyLoadErrorBoundary>
+          <CompetitiveDeepReport
+            company={person.company}
+            data={competitiveDeepData}
+            onBack={onReportBack}
+          />
+        </LazyLoadErrorBoundary>
       );
     } else if (reportType === "competitive" && !isDeepReport) {
       const competitiveMiniData = {
@@ -302,11 +360,13 @@ export function SpeedrunLeadDetailsReportRenderer({
         ],
       };
       return (
-        <CompetitiveMiniReport
-          company={person.company}
-          data={competitiveMiniData}
-          onBack={onReportBack}
-        />
+        <LazyLoadErrorBoundary>
+          <CompetitiveMiniReport
+            company={person.company}
+            data={competitiveMiniData}
+            onBack={onReportBack}
+          />
+        </LazyLoadErrorBoundary>
       );
     } else if (reportType === "growth" && isDeepReport) {
       const growthDeepData = {
@@ -348,12 +408,14 @@ export function SpeedrunLeadDetailsReportRenderer({
       }
       
       return (
-        <GrowthDeepReport
-          company={person.company}
-          title={reportTitle}
-          data={growthDeepData}
-          onBack={onReportBack}
-        />
+        <LazyLoadErrorBoundary>
+          <GrowthDeepReport
+            company={person.company}
+            title={reportTitle}
+            data={growthDeepData}
+            onBack={onReportBack}
+          />
+        </LazyLoadErrorBoundary>
       );
     } else if (reportType === "growth" && !isDeepReport) {
       const growthMiniData = {
@@ -374,11 +436,13 @@ export function SpeedrunLeadDetailsReportRenderer({
         ],
       };
       return (
-        <GrowthMiniReport
-          company={person.company}
-          data={growthMiniData}
-          onBack={onReportBack}
-        />
+        <LazyLoadErrorBoundary>
+          <GrowthMiniReport
+            company={person.company}
+            data={growthMiniData}
+            onBack={onReportBack}
+          />
+        </LazyLoadErrorBoundary>
       );
     } else if (reportType === "tech" && isDeepReport) {
       const techDeepData = {
@@ -394,11 +458,13 @@ export function SpeedrunLeadDetailsReportRenderer({
         ],
       };
       return (
-        <TechDeepReport
-          company={person.company}
-          data={techDeepData}
-          onBack={onReportBack}
-        />
+        <LazyLoadErrorBoundary>
+          <TechDeepReport
+            company={person.company}
+            data={techDeepData}
+            onBack={onReportBack}
+          />
+        </LazyLoadErrorBoundary>
       );
     } else if (reportType === "tech" && !isDeepReport) {
       const techMiniData = {
@@ -410,11 +476,13 @@ export function SpeedrunLeadDetailsReportRenderer({
           reportData.automationLevel || Math.floor(Math.random() * 40) + 60,
       };
       return (
-        <TechMiniReport
-          company={person.company}
-          data={techMiniData}
-          onBack={onReportBack}
-        />
+        <LazyLoadErrorBoundary>
+          <TechMiniReport
+            company={person.company}
+            data={techMiniData}
+            onBack={onReportBack}
+          />
+        </LazyLoadErrorBoundary>
       );
     }
   } catch (error) {

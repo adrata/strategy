@@ -3084,15 +3084,15 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'people' ? 
               <UniversalHistoryTab key={activeTab} recordType={recordType} /> :
-              <UniversalActionsTab key={activeTab} record={record} recordType={recordType} />
+              <UniversalActionsTab key={activeTab} record={localRecord} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'actions':
           return renderTabWithErrorBoundary(
-            <UniversalActionsTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalActionsTab key={activeTab} record={localRecord} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'timeline':
           return renderTabWithErrorBoundary(
-            <UniversalActionsTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalActionsTab key={activeTab} record={localRecord} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'notes':
           return renderTabWithErrorBoundary(
@@ -3463,6 +3463,8 @@ export function UniversalRecordTemplate({
         onSubmit={handleActionSubmit}
         personName={record?.fullName || record?.name || 'Unknown'}
         companyName={record?.company?.name || record?.company || ''}
+        personId={['leads', 'people', 'prospects', 'speedrun'].includes(recordType) ? record?.id : undefined}
+        companyId={recordType === 'companies' ? record?.id : (record?.companyId || record?.company?.id)}
         section={recordType}
         isLoading={loading}
       />

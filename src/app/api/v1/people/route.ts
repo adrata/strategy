@@ -286,6 +286,7 @@ export async function GET(request: NextRequest) {
             engagementStrategy: true,
             buyerGroupStatus: true,
             isBuyerGroupMember: true,
+            state: true,
             company: {
               select: {
                 id: true,

@@ -427,6 +427,18 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
+                <InlineEditField
+                  value={formatEmptyValue(prospectData.bio)}
+                  field="bio"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
             </div>
           </div>
 
@@ -509,18 +521,6 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
             <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
-                <InlineEditField
-                  value={formatEmptyValue(prospectData.bio)}
-                  field="bio"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
-              <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Email:</span>
                 <InlineEditField
                   value={prospectData.email}
@@ -563,18 +563,6 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={formatEmptyValue(prospectData.linkedinNavigatorUrl)}
                   field="linkedinNavigatorUrl"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
-                <InlineEditField
-                  value={formatEmptyValue(prospectData.bio)}
-                  field="bio"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}

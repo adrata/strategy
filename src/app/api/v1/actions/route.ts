@@ -267,8 +267,8 @@ export async function POST(request: NextRequest) {
 
     console.log('💾 [ACTIONS API] Creating action in database...');
     
-    // Prepare action data - only include valid foreign key references
-    const actionData = {
+    // Prepare action data - include all fields with proper typing
+    const actionData: any = {
       type: body.type,
       subject: body.subject,
       description: body.description,
@@ -281,15 +281,10 @@ export async function POST(request: NextRequest) {
       userId: context.userId,
       createdAt: new Date(),
       updatedAt: new Date(),
+      // Conditionally include foreign key references if validated
+      ...(body.companyId && { companyId: body.companyId }),
+      ...(body.personId && { personId: body.personId })
     };
-
-    // Only include foreign key references if they were validated
-    if (body.companyId) {
-      actionData.companyId = body.companyId;
-    }
-    if (body.personId) {
-      actionData.personId = body.personId;
-    }
 
     console.log('📝 [ACTIONS API] Action data prepared:', {
       type: actionData.type,

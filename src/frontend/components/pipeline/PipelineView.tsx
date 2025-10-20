@@ -128,7 +128,7 @@ export const PipelineView = React.memo(function PipelineView({
       case 'companies':
         return ['Company', 'Last Action', 'Next Action'];
       case 'leads':
-        return ['Name', 'Company', 'Title', 'Email', 'Last Action', 'Next Action'];
+        return ['Name', 'Company', 'State', 'Title', 'Email', 'Last Action', 'Next Action'];
       case 'prospects':
         return ['Name', 'Company', 'Title', 'Last Action', 'Next Action'];
       case 'opportunities':
@@ -663,7 +663,17 @@ export const PipelineView = React.memo(function PipelineView({
         return (record['firstName'] && record['lastName'] ? `${record['firstName']} ${record['lastName']}` : '') || record['fullName'] || record.name || '';
       
       case 'company':
-        return record.company || record.companyName || '';
+        // Handle both string and object company data
+        const company = record['company'];
+        let companyName = '';
+        
+        if (typeof company === 'object' && company !== null) {
+          companyName = company.name || company.companyName || '';
+        } else {
+          companyName = company || record['companyName'] || '';
+        }
+        
+        return companyName;
       
       case 'title':
         return record.title || 

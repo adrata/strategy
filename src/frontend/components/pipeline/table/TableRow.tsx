@@ -236,7 +236,7 @@ export function TableRow({
               case 'state':
                 return (
                   <td key="state" className={textClasses}>
-                    <div className="truncate max-w-32">{record['state'] || record['location'] || '-'}</div>
+                    <div className="truncate max-w-32">{record.state || record.company?.hqState || '-'}</div>
                   </td>
                 );
               case 'title':

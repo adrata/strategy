@@ -362,6 +362,18 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
+                <InlineEditField
+                  value={formatEmptyValue(personData.bio)}
+                  field="bio"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
             </div>
           </div>
 
@@ -431,18 +443,6 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
             <div className="space-y-2">
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
-                <InlineEditField
-                  value={formatEmptyValue(personData.bio)}
-                  field="bio"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Email:</span>
                 <InlineEditField

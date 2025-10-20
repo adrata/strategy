@@ -412,6 +412,22 @@ export function OverviewTab({
             </div>
             <div>
               <label className="block text-sm font-medium text-[var(--muted)]">
+                State
+              </label>
+              <div className="mt-1">
+                <InlineEditField
+                  value={person.state || person.company?.hqState || ''}
+                  field="state"
+                  recordId={person.id?.toString() || ''}
+                  recordType="speedrun"
+                  placeholder="Enter state"
+                  onSave={handleSpeedrunInlineFieldSave}
+                  className="text-lg text-[var(--foreground)]"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[var(--muted)]">
                 LinkedIn Profile
               </label>
               {(() => {

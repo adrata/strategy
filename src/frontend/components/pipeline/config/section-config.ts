@@ -29,8 +29,8 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
     id: 'leads',
     label: 'Leads',
     dataSource: 'leads',
-    defaultColumns: ['name', 'company', 'title', 'email', 'phone', 'status', 'priority', 'lastActionDate', 'timezone'],
-    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastActionDate', 'timezone'],
+    defaultColumns: ['name', 'company', 'state', 'title', 'email', 'phone', 'status', 'priority', 'lastActionDate', 'timezone'],
+    availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastActionDate', 'timezone', 'state'],
     sortOptions: [
       { value: 'name', label: 'Name' },
       { value: 'company', label: 'Company' },

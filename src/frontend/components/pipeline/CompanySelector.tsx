@@ -167,6 +167,24 @@ export function CompanySelector({
           company: data.data,
           message: data.meta?.message
         });
+        
+        // Clear companies cache to ensure fresh data
+        if (typeof window !== 'undefined') {
+          const workspaceId = data.data.workspaceId || 'default';
+          const cacheKey = `adrata-companies-${workspaceId}`;
+          localStorage.removeItem(cacheKey);
+          console.log('🧹 [CompanySelector] Cleared companies cache:', cacheKey);
+          
+          // Dispatch cache invalidation event
+          window.dispatchEvent(new CustomEvent('cache-invalidate', {
+            detail: { 
+              pattern: 'companies-*', 
+              reason: 'new_company_created',
+              section: 'companies'
+            }
+          }));
+        }
+        
         onChange(data.data);
         setNewCompanyName('');
         setNewCompanyWebsite('');
