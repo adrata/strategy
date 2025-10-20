@@ -129,7 +129,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           url = `/api/v1/people?limit=${Math.max(limit, 10000)}${refreshParam}`;
           break;
         case 'companies':
-          // For companies, always fetch all records to support proper pagination
+          // For companies, use v1 API with increased limit (now supports up to 10000 records)
           url = `/api/v1/companies?limit=${Math.max(limit, 10000)}${refreshParam}`;
           break;
         default:
@@ -154,18 +154,37 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       // Check if the response is ok before trying to parse JSON
       if (!response.ok) {
         const errorText = await response.text();
+        console.error(`❌ [FAST SECTION DATA] HTTP error for ${section}:`, {
+          status: response.status,
+          statusText: response.statusText,
+          url,
+          errorText,
+          headers: Object.fromEntries(response.headers.entries())
+        });
         throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
       }
       
       let result;
       try {
         result = await response.json();
+        console.log(`📡 [FAST SECTION DATA] Raw response for ${section}:`, {
+          url,
+          status: response.status,
+          resultKeys: Object.keys(result || {}),
+          hasSuccess: 'success' in (result || {}),
+          successValue: result?.success,
+          hasData: 'data' in (result || {}),
+          dataType: typeof result?.data,
+          dataIsArray: Array.isArray(result?.data),
+          dataHasData: result?.data && typeof result.data === 'object' && 'data' in result.data,
+          dataDataIsArray: Array.isArray(result?.data?.data)
+        });
       } catch (jsonError) {
         console.error(`❌ [FAST SECTION DATA] JSON parsing error for ${section}:`, {
           jsonError,
           responseStatus: response.status,
           responseHeaders: Object.fromEntries(response.headers.entries()),
-          responseText: await response.text()
+          url
         });
         throw new Error(`Failed to parse JSON response: ${jsonError}`);
       }
@@ -222,11 +241,22 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         throw new Error(errorMsg);
       }
 
-      // If success field is missing, check for data directly (some APIs don't use success wrapper)
-      if (result.success === true || (result.data && Array.isArray(result.data))) {
-        // 🚀 V1 API RESPONSE: Handle both v1 and legacy section API responses
-        const responseData = result.data || [];
-        const responseCount = result.meta?.count || result.meta?.totalCount || responseData.length;
+      // Handle both v1 API format (data is array) and data/section format (data.data is array)
+      if (result.success === true || result.data) {
+        let responseData: any[];
+        let responseCount: number;
+        
+        if (Array.isArray(result.data)) {
+          // V1 API format: { success: true, data: [...], meta: { count } }
+          responseData = result.data;
+          responseCount = result.meta?.count || result.meta?.totalCount || responseData.length;
+        } else if (result.data && Array.isArray(result.data.data)) {
+          // data/section API format: { success: true, data: { data: [...], count, totalCount }, meta }
+          responseData = result.data.data;
+          responseCount = result.data.totalCount || result.data.count || responseData.length;
+        } else {
+          throw new Error('Invalid API response format - data is not an array');
+        }
         
         setData(responseData);
         setCount(responseCount);

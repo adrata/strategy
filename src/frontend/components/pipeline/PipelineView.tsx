@@ -276,8 +276,8 @@ export const PipelineView = React.memo(function PipelineView({
   
   // 🚀 PERFORMANCE: Use fast section data hook exclusively
   // Load all data at once for client-side pagination
-  // Use higher limit for people section to ensure all records are loaded
-  const limit = section === 'people' ? 10000 : 1000;
+  // Use higher limit for people and companies sections to ensure all records are loaded
+  const limit = section === 'people' || section === 'companies' ? 10000 : 1000;
   const fastSectionData = useFastSectionData(section, limit);
   
   console.log('🔍 [PIPELINE VIEW DEBUG] Final context:', { workspaceId, userId, section });
