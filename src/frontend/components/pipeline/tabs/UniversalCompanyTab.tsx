@@ -32,6 +32,57 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     return value;
   };
 
+  const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
+    if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') return 'Never';
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Never';
+      
+      const now = new Date();
+      const diffInMs = now.getTime() - date.getTime();
+      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+      const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    
+    if (diffInHours < 1) {
+      return 'Just now';
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    } else if (diffInDays === 1) {
+      return 'Yesterday';
+    } else if (diffInDays < 7) {
+      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    } else if (diffInDays < 30) {
+      const weeks = Math.floor(diffInDays / 7);
+      return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+    } else {
+      return date.toLocaleDateString();
+    }
+    } catch {
+      return 'Never';
+    }
+  };
+
+  const formatFullDate = (dateString: string | Date | null | undefined): string => {
+    if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') return 'Never';
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Never';
+      
+      return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      return 'Never';
+    }
+  };
+
   // Show skeleton loader while data is loading
   if (!record) {
     return <CompanyDetailSkeleton message="Loading company details..." />;
@@ -1615,6 +1666,25 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 />
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Record Information */}
+      <div className="mt-8 pt-6 border-t border-[var(--border)]">
+        <h3 className="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-4">Record Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex items-center space-x-3">
+            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Created:</span>
+            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.createdAt)}>
+              {formatRelativeDate(record?.createdAt)}
+            </span>
+          </div>
+          <div className="flex items-center space-x-3">
+            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Last Updated:</span>
+            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.updatedAt)}>
+              {formatRelativeDate(record?.updatedAt)}
+            </span>
           </div>
         </div>
       </div>

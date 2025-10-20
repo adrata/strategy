@@ -218,13 +218,8 @@ export function PipelineHeader({
         }
       }));
       
-      // For companies, also clear specific cache keys
-      if (section === 'companies') {
-        const workspaceId = data?.workspaceId || 'default';
-        const cacheKey = `adrata-companies-${workspaceId}`;
-        localStorage.removeItem(cacheKey);
-        console.log('🧹 [PipelineHeader] Cleared companies cache:', cacheKey);
-      }
+      // Note: Cache invalidation is handled by the existing cache-invalidate event
+      // No need for additional cache clearing here
     }
     
     // Add delay to ensure API has processed the new record

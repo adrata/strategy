@@ -297,6 +297,26 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     }
   };
 
+  const formatFullDate = (dateString: string | Date | null | undefined): string => {
+    if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') return 'Never';
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Never';
+      
+      return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      return 'Never';
+    }
+  };
+
   // Generate wants and needs based on role and industry
   const generateWantsAndNeeds = () => {
     const role = (prospectData.title || '').toLowerCase();
@@ -719,6 +739,25 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
               Last contact was {formatRelativeDate(prospectData.lastContact)}. 
               Next action: {prospectData.nextAction}.
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Record Information */}
+      <div className="mt-8 pt-6 border-t border-[var(--border)]">
+        <h3 className="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-4">Record Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex items-center space-x-3">
+            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Created:</span>
+            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.createdAt)}>
+              {formatRelativeDate(record?.createdAt)}
+            </span>
+          </div>
+          <div className="flex items-center space-x-3">
+            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Last Updated:</span>
+            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.updatedAt)}>
+              {formatRelativeDate(record?.updatedAt)}
+            </span>
           </div>
         </div>
       </div>

@@ -390,7 +390,7 @@ export function PipelineTable({
                         cellContent = record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || record.name || '-';
                         break;
                       case 'state':
-                        cellContent = record['state'] || record['status'] || record['location'] || '-';
+                        cellContent = record['hqState'] || record['state'] || record['location'] || '-';
                         break;
                       case 'title':
                         const title = record['title'] || 

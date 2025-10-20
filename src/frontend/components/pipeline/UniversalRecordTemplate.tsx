@@ -1977,7 +1977,24 @@ export function UniversalRecordTemplate({
         body: JSON.stringify(updateData),
       });
       
+      // Additional debugging for the API call
+      console.log('🔍 [UNIVERSAL] API call details:', {
+        url: `/api/v1/people/${record.id}`,
+        method: 'PATCH',
+        updateData,
+        responseData,
+        responseType: typeof responseData,
+        hasSuccess: 'success' in responseData,
+        hasData: 'data' in responseData
+      });
+      
       console.log('✅ [UNIVERSAL] Company association response:', responseData);
+      
+      // Check if the response is valid
+      if (!responseData) {
+        console.error('❌ [UNIVERSAL] No response data received');
+        throw new Error('No response data received from server');
+      }
       
       // Update local record with the complete response data
       if (responseData.success && responseData.data) {
@@ -1986,21 +2003,8 @@ export function UniversalRecordTemplate({
           ...responseData.data
         }));
         
-        // Clear caches to ensure fresh data
-        if (typeof window !== 'undefined') {
-          const workspaceId = record?.workspaceId || 'default';
-          localStorage.removeItem(`adrata-companies-${workspaceId}`);
-          localStorage.removeItem(`adrata-people-${workspaceId}`);
-          
-          // Dispatch cache invalidation event
-          window.dispatchEvent(new CustomEvent('cache-invalidate', {
-            detail: { 
-              pattern: 'companies-*', 
-              reason: 'company_associated',
-              section: 'companies'
-            }
-          }));
-        }
+        // Note: Cache invalidation is handled by the API response
+        // The API will return fresh data and the UI will update accordingly
         
         // Force a record refresh to ensure data consistency
         if (onRecordUpdate) {
@@ -2024,9 +2028,17 @@ export function UniversalRecordTemplate({
         stack: error instanceof Error ? error.stack : undefined,
         recordId: record.id,
         recordType: recordType,
-        newCompany: newCompany
+        newCompany: newCompany,
+        errorType: typeof error,
+        errorConstructor: error?.constructor?.name
       });
-      showMessage(`Failed to associate company: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+      
+      // Show error message to user
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      showMessage(`Failed to associate company: ${errorMessage}`, 'error');
+      
+      // Re-throw to ensure we know something went wrong
+      throw error;
     }
   };
 

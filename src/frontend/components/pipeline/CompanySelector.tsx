@@ -236,22 +236,8 @@ export function CompanySelector({
           message: data.meta?.message
         });
         
-        // Clear companies cache to ensure fresh data
-        if (typeof window !== 'undefined') {
-          const workspaceId = data.data.workspaceId || 'default';
-          const cacheKey = `adrata-companies-${workspaceId}`;
-          localStorage.removeItem(cacheKey);
-          console.log('🧹 [CompanySelector] Cleared companies cache:', cacheKey);
-          
-          // Dispatch cache invalidation event
-          window.dispatchEvent(new CustomEvent('cache-invalidate', {
-            detail: { 
-              pattern: 'companies-*', 
-              reason: 'new_company_created',
-              section: 'companies'
-            }
-          }));
-        }
+        // Note: Cache invalidation is handled by the parent component
+        // The company creation will trigger a refresh in the parent context
         
         onChange(data.data);
         setNewCompanyName('');
