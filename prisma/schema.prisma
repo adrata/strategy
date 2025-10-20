@@ -15,7 +15,7 @@ model roles {
   description      String?            @db.VarChar(255)
   isActive         Boolean            @default(true)
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime @updatedAt
+  updatedAt        DateTime           @updatedAt
   role_permissions role_permissions[]
   user_roles       user_roles[]
 
@@ -30,7 +30,7 @@ model permissions {
   action           String             @db.VarChar(50)
   isActive         Boolean            @default(true)
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime @updatedAt
+  updatedAt        DateTime           @updatedAt
   role_permissions role_permissions[]
 
   @@index([resource, action])
@@ -79,7 +79,7 @@ model workspaces {
   timezone                  String                      @default("UTC") @db.VarChar(50)
   description               String?
   createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime @updatedAt
+  updatedAt                 DateTime                    @updatedAt
   isActive                  Boolean                     @default(true)
   deletedAt                 DateTime?
   businessModel             String?                     @db.VarChar(100)
@@ -105,6 +105,7 @@ model workspaces {
   api_cost_tracking         api_cost_tracking[]
   audit_logs                audit_logs[]
   auth_sessions             auth_sessions[]
+  chronicle_reports         chronicle_reports[]
   companies                 companies[]
   email_messages            email_messages[]
   grand_central_connections grand_central_connections[]
@@ -114,7 +115,6 @@ model workspaces {
   user_roles                user_roles[]
   users                     users[]
   workspace_users           workspace_users[]
-  chronicle_reports         chronicle_reports[]
 
   @@index([slug])
   @@index([isActive])
@@ -131,7 +131,7 @@ model users {
   lastName                  String?
   timezone                  String?                     @db.VarChar(50)
   createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime @updatedAt
+  updatedAt                 DateTime                    @updatedAt
   lastLoginAt               DateTime?
   isActive                  Boolean                     @default(true)
   activeWorkspaceId         String?                     @db.VarChar(30)
@@ -169,7 +169,7 @@ model workspace_users {
   userId      String     @db.VarChar(30)
   role        UserRole   @default(VIEWER)
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime   @updatedAt
   isActive    Boolean    @default(true)
   joinedAt    DateTime   @default(now())
   user        users      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -555,7 +555,7 @@ model actions {
   status      ActionStatus   @default(PLANNED)
   priority    ActionPriority @default(NORMAL)
   createdAt   DateTime       @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime       @updatedAt
   deletedAt   DateTime?
   company     companies?     @relation(fields: [companyId], references: [id])
   person      people?        @relation(fields: [personId], references: [id])
@@ -664,7 +664,7 @@ model OasisChannel {
   name        String               @db.VarChar(100)
   description String?              @db.VarChar(500)
   createdAt   DateTime             @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime             @updatedAt
   workspace   workspaces           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   members     OasisChannelMember[]
   messages    OasisMessage[]
@@ -751,7 +751,7 @@ model StacksProject {
   name        String        @db.VarChar(200)
   description String?
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime      @updatedAt
   epics       StacksEpic[]
   workspace   workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   stories     StacksStory[]
@@ -769,7 +769,7 @@ model StacksEpic {
   status      String        @default("todo") @db.VarChar(20)
   priority    String        @default("medium") @db.VarChar(20)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime      @updatedAt
   project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
   stories     StacksStory[]
 
@@ -787,7 +787,7 @@ model StacksStory {
   priority    String        @default("medium") @db.VarChar(20)
   assigneeId  String?       @db.VarChar(30)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime      @updatedAt
   assignee    users?        @relation(fields: [assigneeId], references: [id])
   epic        StacksEpic?   @relation(fields: [epicId], references: [id])
   project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -810,7 +810,7 @@ model StacksTask {
   type        String        @default("task") @db.VarChar(20)
   assigneeId  String?       @db.VarChar(30)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime      @updatedAt
   assignee    users?        @relation(fields: [assigneeId], references: [id])
   project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
   story       StacksStory?  @relation(fields: [storyId], references: [id])
@@ -975,7 +975,7 @@ model email_messages {
   companyId   String?    @db.VarChar(30)
   personId    String?    @db.VarChar(30)
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime   @updatedAt
   companies   companies? @relation(fields: [companyId], references: [id])
   people      people?    @relation(fields: [personId], references: [id])
   workspaces  workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -1012,6 +1012,45 @@ model research_data {
   @@index([expiresAt])
   @@index([researchType])
   @@index([workspaceId])
+}
+
+/// Chronicle reports for weekly/daily business intelligence
+model chronicle_reports {
+  id          String             @id @default(ulid())
+  workspaceId String             @db.VarChar(30)
+  title       String             @db.VarChar(255)
+  reportDate  DateTime
+  reportType  String             @db.VarChar(20)
+  content     Json
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  createdBy   String             @db.VarChar(30)
+  deletedAt   DateTime?
+  workspace   workspaces         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  shares      chronicle_shares[]
+
+  @@index([workspaceId])
+  @@index([reportDate])
+  @@index([reportType])
+  @@index([createdBy])
+  @@index([deletedAt])
+}
+
+/// Shareable links for chronicle reports
+model chronicle_shares {
+  id            String            @id @default(ulid())
+  reportId      String
+  shareToken    String            @unique @db.VarChar(100)
+  shareUrl      String            @db.VarChar(500)
+  viewCount     Int               @default(0)
+  createdAt     DateTime          @default(now())
+  expiresAt     DateTime?
+  allowedEmails String[]          @default([])
+  report        chronicle_reports @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId])
+  @@index([shareToken])
+  @@index([expiresAt])
 }
 
 enum UserRole {
@@ -1105,45 +1144,4 @@ enum ChronicleReportType {
 enum MessageType {
   USER
   ASSISTANT
-}
-
-/// Chronicle reports for weekly/daily business intelligence
-model chronicle_reports {
-  id          String   @id @default(ulid())
-  workspaceId String   @db.VarChar(30)
-  title       String   @db.VarChar(255)
-  reportDate  DateTime
-  reportType  String   @db.VarChar(20) // 'DAILY' | 'WEEKLY' | 'MONTHLY'
-  content     Json     // Full report data structure
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdBy   String   @db.VarChar(30)
-  deletedAt   DateTime?
-  
-  workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  shares      chronicle_shares[]
-  
-  @@index([workspaceId])
-  @@index([reportDate])
-  @@index([reportType])
-  @@index([createdBy])
-  @@index([deletedAt])
-}
-
-/// Shareable links for chronicle reports
-model chronicle_shares {
-  id          String   @id @default(ulid())
-  reportId    String
-  shareToken  String   @unique @db.VarChar(100)
-  shareUrl    String   @db.VarChar(500)
-  viewCount   Int      @default(0)
-  createdAt   DateTime @default(now())
-  expiresAt   DateTime?
-  allowedEmails String[] @default([])
-  
-  report      chronicle_reports @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  
-  @@index([reportId])
-  @@index([shareToken])
-  @@index([expiresAt])
 }
