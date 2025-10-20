@@ -3,15 +3,9 @@ import { ChronicleSharedView } from "@/frontend/components/pipeline/ChronicleSha
 
 export const metadata: Metadata = {
   title: "Shared Chronicle Report",
-  description: "View shared Chronicle report",
+  description: "Publicly shared chronicle report",
 };
 
-interface ChronicleSharedPageProps {
-  params: {
-    token: string;
-  };
-}
-
-export default function ChronicleSharedPage({ params }: ChronicleSharedPageProps) {
-  return <ChronicleSharedView token={params.token} />;
+export default function ChronicleSharedPage() {
+  return <ChronicleSharedView />;
 }

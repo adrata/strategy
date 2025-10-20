@@ -166,8 +166,8 @@ function PipelineLayoutContent({
     }
   };
 
-  // Conditional left panel visibility: Show only for admins on chronicle pages
-  const shouldShowLeftPanel = isAdminUser || !(currentSection === 'chronicle');
+  // Always show left panel for all sections (including Chronicle)
+  const shouldShowLeftPanel = true;
   const isLeftPanelVisible = shouldShowLeftPanel && ui.isLeftPanelVisible;
 
   return (

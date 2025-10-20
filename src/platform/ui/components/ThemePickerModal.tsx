@@ -75,7 +75,7 @@ const ThemePreviewCard: React.FC<ThemePreviewCardProps> = ({
         group relative p-4 rounded-lg border cursor-pointer transition-all duration-200
         focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2
         ${isActive 
-          ? 'border-[var(--accent)] bg-[var(--accent)]/5 shadow-md ring-1 ring-[var(--accent)]/20' 
+          ? 'border-[var(--accent)]/60 bg-[var(--accent)]/3 shadow-sm' 
           : isSelected 
             ? 'border-[var(--border)] bg-[var(--panel-background)] shadow-sm' 
             : 'border-[var(--border)] hover:border-[var(--accent)]/50 hover:bg-[var(--hover)] hover:shadow-sm'
