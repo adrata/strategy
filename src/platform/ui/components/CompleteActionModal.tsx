@@ -346,11 +346,11 @@ export function CompleteActionModal({
     if (!isOpen) return;
 
     const handleDocumentKeyDown = (event: KeyboardEvent) => {
-      // Handle action type shortcuts (1-5) with cycling
+      // Handle action type shortcuts (1-6) with cycling
       // Check both key and code for better cross-platform compatibility
-      const isNumberKey = (event.key >= '1' && event.key <= '5') || 
-                         (event.code >= 'Digit1' && event.code <= 'Digit5') ||
-                         (event.code >= 'Numpad1' && event.code <= 'Numpad5');
+      const isNumberKey = (event.key >= '1' && event.key <= '6') || 
+                         (event.code >= 'Digit1' && event.code <= 'Digit6') ||
+                         (event.code >= 'Numpad1' && event.code <= 'Numpad6');
       
       if (isNumberKey) {
         event.preventDefault();
@@ -362,12 +362,13 @@ export function CompleteActionModal({
           'LinkedIn InMail', 
           'LinkedIn Message',
           'Phone',
-          'Email'
+          'Email',
+          'Meeting'
         ];
         
         // Extract number from key or code
         let pressedNumber: number;
-        if (event.key >= '1' && event.key <= '5') {
+        if (event.key >= '1' && event.key <= '6') {
           pressedNumber = parseInt(event.key);
         } else if (event.code.includes('Digit')) {
           pressedNumber = parseInt(event.code.replace('Digit', ''));
@@ -702,6 +703,7 @@ export function CompleteActionModal({
                 <option value="LinkedIn Message">3. LinkedIn Message</option>
                 <option value="Phone">4. Phone</option>
                 <option value="Email">5. Email</option>
+                <option value="Meeting">6. Meeting</option>
               </select>
               <p className="text-xs text-[var(--muted)] mt-1">
                 Press 1-5 to select, press same number to cycle through options
