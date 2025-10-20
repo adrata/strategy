@@ -401,6 +401,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     // Map fetched actions to display format
     return actions.map(action => ({
       action: action.subject || action.title || 'Action',
+      type: action.type || null,
       date: formatRelativeDate(action.completedAt || action.scheduledAt || action.createdAt)
     }));
   };
@@ -724,8 +725,14 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
           ) : lastActions.length > 0 ? (
             <ul className="space-y-2">
               {lastActions.map((action, index) => (
-                <li key={index} className="text-sm text-[var(--muted)]">
-                  • {action.action} - {action.date}
+                <li key={index} className="text-sm text-[var(--muted)] flex items-center gap-2">
+                  <span>•</span>
+                  {action.type && (
+                    <span className="px-2 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full">
+                      {action.type}
+                    </span>
+                  )}
+                  <span>{action.action} - {action.date}</span>
                 </li>
               ))}
             </ul>

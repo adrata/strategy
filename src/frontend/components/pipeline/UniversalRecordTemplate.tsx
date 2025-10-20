@@ -59,7 +59,8 @@ import {
   UniversalStrategyTab,
   UniversalBuyerGroupsTab,
   UniversalCompetitorsTab,
-  UniversalSellerCompaniesTab
+  UniversalSellerCompaniesTab,
+  UniversalPeopleTab
 } from './tabs';
 import { UniversalNewsTab } from './tabs/UniversalNewsTab';
 
@@ -3071,6 +3072,11 @@ export function UniversalRecordTemplate({
             recordType === 'companies' ? 
               <UniversalBuyerGroupsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               <UniversalBuyerGroupsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+          );
+        case 'people':
+          console.log(`👥 [UNIVERSAL] Rendering people tab for ${recordType}`);
+          return renderTabWithErrorBoundary(
+            <UniversalPeopleTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'competitors':
           console.log(`🏢 [UNIVERSAL] Rendering competitors tab for ${recordType}`);

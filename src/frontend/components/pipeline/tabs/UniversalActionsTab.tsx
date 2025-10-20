@@ -330,11 +330,28 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
 
   const isPastEvent = (date: Date) => date <= new Date();
 
+  // Group actions by type
+  const groupedActions = actionEvents.reduce((groups, event) => {
+    const type = event.metadata?.type || 'Other';
+    if (!groups[type]) {
+      groups[type] = [];
+    }
+    groups[type].push(event);
+    return groups;
+  }, {} as Record<string, ActionEvent[]>);
+
+  // Sort action types by count (most common first)
+  const sortedActionTypes = Object.keys(groupedActions).sort((a, b) => 
+    groupedActions[b].length - groupedActions[a].length
+  );
+
   return (
     <div className="space-y-6">
       <div>
         <div className="flex items-center justify-between">
-          <div className="text-lg font-medium text-[var(--foreground)]">Actions</div>
+          <div className="text-lg font-medium text-[var(--foreground)]">
+            {actionEvents.length} All Actions
+          </div>
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 bg-[var(--hover)] text-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
               {actionEvents.length}
@@ -345,6 +362,23 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
           </div>
         </div>
       </div>
+
+      {/* Action Type Summary */}
+      {!loading && actionEvents.length > 0 && (
+        <div className="bg-[var(--panel-background)] rounded-lg p-4 border border-[var(--border)]">
+          <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Action Breakdown</h4>
+          <div className="flex flex-wrap gap-2">
+            {sortedActionTypes.map((actionType) => (
+              <div key={actionType} className="flex items-center gap-2 px-3 py-2 bg-[var(--background)] rounded-lg border border-[var(--border)]">
+                <span className="text-sm font-medium text-[var(--foreground)]">{actionType}</span>
+                <span className="px-2 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full">
+                  {groupedActions[actionType].length}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="space-y-4">
@@ -372,24 +406,44 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
           <p className="text-[var(--muted)]">Actions and activities will appear here when logged</p>
         </div>
       ) : (
-        <div className="space-y-6">
-          {actionEvents.map((event, index) => (
-            <div key={event.id} className="flex items-start gap-4">
-              {/* Action indicator */}
-              <div className="flex flex-col items-center pt-1">
-                <div className="w-8 h-8 rounded bg-[var(--background)] border-2 border-[var(--border)] flex items-center justify-center">
-                  {getEventIcon(event.type)}
-                </div>
-                {index < actionEvents.length - 1 && (
-                  <div className="w-px h-12 bg-[var(--loading-bg)] mt-2" />
-                )}
+        <div className="space-y-8">
+          {sortedActionTypes.map((actionType, typeIndex) => (
+            <div key={actionType} className="space-y-4">
+              {/* Action Type Header */}
+              <div className="flex items-center gap-3">
+                <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                  {actionType}
+                </h3>
+                <span className="px-3 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-sm font-medium rounded-full">
+                  {groupedActions[actionType].length}
+                </span>
               </div>
+              
+              {/* Actions for this type */}
+              <div className="space-y-4">
+                {groupedActions[actionType].map((event, index) => (
+                  <div key={event.id} className="flex items-start gap-4">
+                    {/* Action indicator */}
+                    <div className="flex flex-col items-center pt-1">
+                      <div className="w-8 h-8 rounded bg-[var(--background)] border-2 border-[var(--border)] flex items-center justify-center">
+                        {getEventIcon(event.type)}
+                      </div>
+                      {index < groupedActions[actionType].length - 1 && (
+                        <div className="w-px h-12 bg-[var(--loading-bg)] mt-2" />
+                      )}
+                    </div>
 
-              {/* Event content */}
-              <div className="flex-1 min-w-0 pb-6">
+                    {/* Event content */}
+                    <div className="flex-1 min-w-0 pb-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
+                      {/* Action Type Badge - Show prominently */}
+                      {event.metadata?.type && (
+                        <span className="px-3 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full whitespace-nowrap border border-[var(--accent-border)]">
+                          {event.metadata.type}
+                        </span>
+                      )}
                       <InlineEditField
                         value={event.title}
                         field="title"
@@ -453,15 +507,9 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                     )}
                     
                     {/* Business Context */}
-                    {event.metadata && (
+                    {event.metadata && (event.metadata.priority || (event.metadata.status && event.metadata.status !== 'completed')) && (
                       <div className="bg-[var(--panel-background)] rounded-lg p-3 mb-2">
                         <div className="grid grid-cols-2 gap-4 text-xs">
-                          {event.metadata.type && (
-                            <div>
-                              <span className="font-medium text-gray-700">Type:</span>
-                              <span className="ml-1 text-[var(--muted)] capitalize">{event.metadata.type}</span>
-                            </div>
-                          )}
                           {event.metadata.priority && (
                             <div>
                               <span className="font-medium text-gray-700">Priority:</span>
@@ -506,6 +554,9 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          ))}
               </div>
             </div>
           ))}

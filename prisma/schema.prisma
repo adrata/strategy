@@ -15,7 +15,7 @@ model roles {
   description      String?            @db.VarChar(255)
   isActive         Boolean            @default(true)
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime
+  updatedAt        DateTime @updatedAt
   role_permissions role_permissions[]
   user_roles       user_roles[]
 
@@ -30,7 +30,7 @@ model permissions {
   action           String             @db.VarChar(50)
   isActive         Boolean            @default(true)
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime
+  updatedAt        DateTime @updatedAt
   role_permissions role_permissions[]
 
   @@index([resource, action])
@@ -79,7 +79,7 @@ model workspaces {
   timezone                  String                      @default("UTC") @db.VarChar(50)
   description               String?
   createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime
+  updatedAt                 DateTime @updatedAt
   isActive                  Boolean                     @default(true)
   deletedAt                 DateTime?
   businessModel             String?                     @db.VarChar(100)
@@ -131,7 +131,7 @@ model users {
   lastName                  String?
   timezone                  String?                     @db.VarChar(50)
   createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime
+  updatedAt                 DateTime @updatedAt
   lastLoginAt               DateTime?
   isActive                  Boolean                     @default(true)
   activeWorkspaceId         String?                     @db.VarChar(30)
@@ -169,7 +169,7 @@ model workspace_users {
   userId      String     @db.VarChar(30)
   role        UserRole   @default(VIEWER)
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
   isActive    Boolean    @default(true)
   joinedAt    DateTime   @default(now())
   user        users      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -555,7 +555,7 @@ model actions {
   status      ActionStatus   @default(PLANNED)
   priority    ActionPriority @default(NORMAL)
   createdAt   DateTime       @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
   deletedAt   DateTime?
   company     companies?     @relation(fields: [companyId], references: [id])
   person      people?        @relation(fields: [personId], references: [id])
@@ -664,7 +664,7 @@ model OasisChannel {
   name        String               @db.VarChar(100)
   description String?              @db.VarChar(500)
   createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  updatedAt   DateTime @updatedAt             @updatedAt
   workspace   workspaces           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   members     OasisChannelMember[]
   messages    OasisMessage[]
@@ -751,7 +751,7 @@ model StacksProject {
   name        String        @db.VarChar(200)
   description String?
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  updatedAt   DateTime @updatedAt      @updatedAt
   epics       StacksEpic[]
   workspace   workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   stories     StacksStory[]
@@ -769,7 +769,7 @@ model StacksEpic {
   status      String        @default("todo") @db.VarChar(20)
   priority    String        @default("medium") @db.VarChar(20)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  updatedAt   DateTime @updatedAt      @updatedAt
   project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
   stories     StacksStory[]
 
@@ -787,7 +787,7 @@ model StacksStory {
   priority    String        @default("medium") @db.VarChar(20)
   assigneeId  String?       @db.VarChar(30)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  updatedAt   DateTime @updatedAt      @updatedAt
   assignee    users?        @relation(fields: [assigneeId], references: [id])
   epic        StacksEpic?   @relation(fields: [epicId], references: [id])
   project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -810,7 +810,7 @@ model StacksTask {
   type        String        @default("task") @db.VarChar(20)
   assigneeId  String?       @db.VarChar(30)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  updatedAt   DateTime @updatedAt      @updatedAt
   assignee    users?        @relation(fields: [assigneeId], references: [id])
   project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
   story       StacksStory?  @relation(fields: [storyId], references: [id])
@@ -975,7 +975,7 @@ model email_messages {
   companyId   String?    @db.VarChar(30)
   personId    String?    @db.VarChar(30)
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
   companies   companies? @relation(fields: [companyId], references: [id])
   people      people?    @relation(fields: [personId], references: [id])
   workspaces  workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -1116,7 +1116,7 @@ model chronicle_reports {
   reportType  String   @db.VarChar(20) // 'DAILY' | 'WEEKLY' | 'MONTHLY'
   content     Json     // Full report data structure
   createdAt   DateTime @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
   createdBy   String   @db.VarChar(30)
   deletedAt   DateTime?
   

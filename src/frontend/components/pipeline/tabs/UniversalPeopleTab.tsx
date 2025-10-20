@@ -2,29 +2,16 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { authFetch } from '@/platform/api-fetch';
-import { BuildingOfficeIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
-import { InlineEditField } from '../InlineEditField';
+import { BuildingOfficeIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { safeSetItem, safeGetItem } from '@/platform/utils/storage/safeLocalStorage';
-import { calculateRiskAssessment, getRiskPillStyles, generateRiskDescription, CareerData, RiskAssessment } from '@/platform/utils/riskAssessment';
+import { calculateRiskAssessment, getRiskPillStyles, CareerData, RiskAssessment } from '@/platform/utils/riskAssessment';
 import { generateSlug } from '@/platform/utils/url-utils';
 
 interface UniversalPeopleTabProps {
   record: any;
   recordType: string;
   onSave?: (field: string, value: string) => Promise<void>;
-}
-
-interface Person {
-  id: string;
-  name: string;
-  title: string;
-  email: string;
-  phone?: string;
-  role: string;
-  influence: string;
-  isPrimary: boolean;
-  company: string;
 }
 
 export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeopleTabProps) {
@@ -424,48 +411,8 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
     }
   };
 
-
-  // Calculate stats from people
-  const totalPeople = people.length;
-  const decisionMakers = people.filter(p => p.role === 'Decision Maker').length;
-  const champions = people.filter(p => p.role === 'Champion').length;
-  const stakeholders = people.filter(p => p.role === 'Stakeholder').length;
-  const blockers = people.filter(p => p.role === 'Blocker').length;
-  const introducers = people.filter(p => p.role === 'Introducer').length;
-
   return (
     <div className="space-y-8">
-      {/* Overview Stats */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Overview</h3>
-        <div className="grid grid-cols-6 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{totalPeople}</div>
-            <div className="text-sm text-[var(--muted)]">Total</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{decisionMakers}</div>
-            <div className="text-sm text-[var(--muted)]">Decision Makers</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{champions}</div>
-            <div className="text-sm text-[var(--muted)]">Champions</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{stakeholders}</div>
-            <div className="text-sm text-[var(--muted)]">Stakeholders</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{blockers}</div>
-            <div className="text-sm text-[var(--muted)]">Blockers</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{introducers}</div>
-            <div className="text-sm text-[var(--muted)]">Introducers</div>
-          </div>
-        </div>
-      </div>
-
       {/* Loading State */}
       {loading && (
         <div className="space-y-4">

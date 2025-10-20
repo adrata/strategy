@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, CheckIcon, XMarkIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { InlineCompanySelector } from './InlineCompanySelector';
 import { DatePicker } from '@/platform/ui/components/DatePicker';
 
@@ -183,6 +183,22 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
     );
   }
 
+  // Helper function to check if field is a URL field
+  const isUrlField = () => {
+    const urlFields = ['linkedinUrl', 'linkedinNavigatorUrl', 'twitterUrl', 'facebookUrl', 'instagramUrl', 'youtubeUrl', 'githubUrl', 'website'];
+    return urlFields.includes(field) || inputType === 'url';
+  };
+
+  // Helper function to validate if a string is a valid URL
+  const isValidUrl = (string: string) => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
   // Get the display value - for select fields, show the label instead of the value
   const getDisplayValue = () => {
     if (!value || (typeof value === 'string' && value.trim() === '')) return '-';
@@ -195,11 +211,31 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
     return value;
   };
 
-  return (
-    <div className="group flex flex-1 items-center gap-2 cursor-pointer p-1 rounded hover:bg-[var(--panel-background)] transition-colors min-w-0">
+  // Render URL as clickable link if it's a URL field and has a valid URL
+  const renderUrlContent = () => {
+    if (isUrlField() && value && typeof value === 'string' && value.trim() !== '' && isValidUrl(value)) {
+      return (
+        <a
+          href={value}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${className} text-[var(--accent)] hover:text-[var(--accent-text)] hover:underline transition-colors`}
+          onClick={(e) => e.stopPropagation()} // Prevent triggering edit mode when clicking link
+        >
+          {getDisplayValue()}
+        </a>
+      );
+    }
+    return (
       <span className={`${className} ${!value || (typeof value === 'string' && value.trim() === '') ? 'text-[var(--muted)]' : ''}`}>
         {getDisplayValue()}
       </span>
+    );
+  };
+
+  return (
+    <div className="group flex flex-1 items-center gap-2 cursor-pointer p-1 rounded hover:bg-[var(--panel-background)] transition-colors min-w-0">
+      {renderUrlContent()}
       <button
         onClick={handleEditStart}
         className="opacity-0 group-hover:opacity-100 p-1 text-[var(--muted)] hover:text-[var(--accent)] transition-all duration-200 hover:bg-[var(--hover)] rounded"
@@ -207,6 +243,18 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
       >
         <PencilIcon className="w-4 h-4" />
       </button>
+      {isUrlField() && value && typeof value === 'string' && value.trim() !== '' && isValidUrl(value) && (
+        <a
+          href={value}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="opacity-0 group-hover:opacity-100 p-1 text-[var(--muted)] hover:text-[var(--accent)] transition-all duration-200 hover:bg-[var(--hover)] rounded"
+          title="Open in new tab"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+        </a>
+      )}
     </div>
   );
 };

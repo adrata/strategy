@@ -25,10 +25,55 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   const [actionsLoading, setActionsLoading] = useState(false);
   const [actionsError, setActionsError] = useState<string | null>(null);
   
+  // LinkedIn fields state for persistence
+  const [linkedinUrl, setLinkedinUrl] = useState<string | null>(null);
+  const [linkedinNavigatorUrl, setLinkedinNavigatorUrl] = useState<string | null>(null);
+  
+  // Initialize LinkedIn fields from record data and sync with record updates
+  useEffect(() => {
+    if (record) {
+      const newLinkedinUrl = record?.linkedin || record?.linkedinUrl || null;
+      const newLinkedinNavigatorUrl = record?.linkedinNavigatorUrl || null;
+      
+      // Only update state if values have changed to avoid unnecessary re-renders
+      if (newLinkedinUrl !== linkedinUrl) {
+        setLinkedinUrl(newLinkedinUrl);
+      }
+      if (newLinkedinNavigatorUrl !== linkedinNavigatorUrl) {
+        setLinkedinNavigatorUrl(newLinkedinNavigatorUrl);
+      }
+    }
+  }, [record, linkedinUrl, linkedinNavigatorUrl]);
+
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
+
+  // Enhanced success handler that updates local state for specific fields
+  const handleFieldSuccess = (field: string, value: string, message: string) => {
+    // Update local state for LinkedIn fields
+    if (field === 'linkedinUrl') {
+      setLinkedinUrl(value);
+    } else if (field === 'linkedinNavigatorUrl') {
+      setLinkedinNavigatorUrl(value);
+    }
+    
+    handleSuccess(message);
+  };
+
+  // Create field-specific success handlers
+  const handleLinkedinSuccess = (message: string) => {
+    // The value will be updated by the parent component's onSave handler
+    // We'll update our local state when the record prop changes
+    handleSuccess(message);
+  };
+
+  const handleLinkedinNavigatorSuccess = (message: string) => {
+    // The value will be updated by the parent component's onSave handler
+    // We'll update our local state when the record prop changes
+    handleSuccess(message);
   };
 
   // Fetch actions from API
@@ -173,8 +218,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       return emailValue;
     })(),
     phone: record?.phone || coresignalData.phone || null,
-    linkedin: record?.linkedin || record?.linkedinUrl || coresignalData.linkedin_url || null,
-    linkedinNavigatorUrl: record?.linkedinNavigatorUrl || null,
+    linkedin: linkedinUrl || record?.linkedin || record?.linkedinUrl || coresignalData.linkedin_url || null,
+    linkedinNavigatorUrl: linkedinNavigatorUrl || record?.linkedinNavigatorUrl || null,
     bio: record?.bio || null,
     
     // Company info - Coresignal data with database fallback
@@ -348,6 +393,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     // Map fetched actions to display format
     return actions.map(action => ({
       action: action.subject || action.title || 'Action',
+      type: action.type || null,
       date: formatRelativeDate(action.completedAt || action.scheduledAt || action.createdAt)
     }));
   };
@@ -578,7 +624,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}
-                  onSuccess={handleSuccess}
+                  onSuccess={handleLinkedinSuccess}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
@@ -590,7 +636,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}
-                  onSuccess={handleSuccess}
+                  onSuccess={handleLinkedinNavigatorSuccess}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
@@ -658,8 +704,14 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
           ) : lastActions.length > 0 ? (
             <ul className="space-y-2">
               {lastActions.map((action, index) => (
-                <li key={index} className="text-sm text-[var(--foreground)]">
-                  • {action.action} - {action.date}
+                <li key={index} className="text-sm text-[var(--foreground)] flex items-center gap-2">
+                  <span>•</span>
+                  {action.type && (
+                    <span className="px-2 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full">
+                      {action.type}
+                    </span>
+                  )}
+                  <span>{action.action} - {action.date}</span>
                 </li>
               ))}
             </ul>
