@@ -265,6 +265,20 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
           priority: activity.priority
         }
       }));
+
+      // Filter to core action types only
+      const CORE_ACTION_TYPES = [
+        'LinkedIn Connection',
+        'LinkedIn InMail', 
+        'LinkedIn Message',
+        'Phone',
+        'Email',
+        'Meeting'
+      ];
+
+      activityEvents = activityEvents.filter(event => 
+        event.metadata?.type && CORE_ACTION_TYPES.includes(event.metadata.type)
+      );
       
       // Cache the data
       localStorage.setItem(cacheKey, JSON.stringify({

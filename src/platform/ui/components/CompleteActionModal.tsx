@@ -706,7 +706,7 @@ export function CompleteActionModal({
                 <option value="Meeting">6. Meeting</option>
               </select>
               <p className="text-xs text-[var(--muted)] mt-1">
-                Press 1-5 to select, press same number to cycle through options
+                Press 1-6 to select, press same number to cycle through options
               </p>
             </div>
 
