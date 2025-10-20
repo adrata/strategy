@@ -577,28 +577,6 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         </div>
       )}
 
-      {/* Data Sources */}
-      <div className="pt-6 border-t border-[var(--border)]">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">Data Sources</h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-          <div className="bg-[var(--panel-background)] rounded-lg p-3">
-            <div className="font-medium text-[var(--foreground)]">System Records</div>
-            <div className="text-[var(--muted)]">Created, Updated</div>
-          </div>
-          <div className="bg-[var(--panel-background)] rounded-lg p-3">
-            <div className="font-medium text-[var(--foreground)]">Activities</div>
-            <div className="text-[var(--muted)]">Calls, Emails, Meetings</div>
-          </div>
-          <div className="bg-[var(--panel-background)] rounded-lg p-3">
-            <div className="font-medium text-[var(--foreground)]">Email Data</div>
-            <div className="text-[var(--muted)]">Connected email threads</div>
-          </div>
-          <div className="bg-[var(--panel-background)] rounded-lg p-3">
-            <div className="font-medium text-[var(--foreground)]">Notes</div>
-            <div className="text-[var(--muted)]">Manual entries</div>
-          </div>
-        </div>
-      </div>
 
       {/* Success Toast */}
       {showSuccessMessage && (
