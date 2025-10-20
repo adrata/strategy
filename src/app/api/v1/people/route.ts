@@ -190,9 +190,9 @@ export async function GET(request: NextRequest) {
             );
           }
           
-          // Name contains (only for search terms that look like real names/words)
-          // This filters out random character sequences
-          const isLikelyName = /^[a-zA-Z\s\-']+$/.test(searchTerm) && searchTerm.length >= 3;
+          // Name contains (for search terms that look like real names/words)
+          // Allow contains matching for 2+ character searches to fix "Ni" → "Nike" issue
+          const isLikelyName = /^[a-zA-Z\s\-']+$/.test(searchTerm) && searchTerm.length >= 2;
           if (isLikelyName) {
             searchConditions.push(
               { fullName: { contains: searchTerm, mode: 'insensitive' } },

@@ -41,6 +41,7 @@ import {
   UniversalOpportunitiesTab,
   UniversalStrategyTab,
   UniversalBuyerGroupsTab,
+  UniversalPeopleTab,
   UniversalCompetitorsTab,
   UniversalSellerCompaniesTab
 } from '../tabs';
@@ -90,6 +91,7 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
   // Strategy and business tabs
   'strategy': UniversalStrategyTab,
   'buyer-groups': UniversalBuyerGroupsTab,
+  'people': UniversalPeopleTab,
   'competitors': UniversalCompetitorsTab,
   'companies': UniversalSellerCompaniesTab,
   
@@ -178,6 +180,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
     { id: 'overview', label: 'Overview', component: UniversalCompanyTab },
     { id: 'news', label: 'News', component: UniversalNewsTab },
     { id: 'intelligence', label: 'Intelligence', component: UniversalCompanyIntelTab },
+    { id: 'people', label: 'People', component: UniversalPeopleTab },
     { id: 'value', label: 'Value', component: ValueTab },
     { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
     { id: 'opportunities', label: 'Opportunities', component: UniversalOpportunitiesTab },

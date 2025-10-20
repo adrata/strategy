@@ -696,9 +696,10 @@ export const PipelineView = React.memo(function PipelineView({
         return record.status || '';
       
       case 'rank':
+      case 'globalRank':
         // Handle rank field - prioritize winningScore.rank for alphanumeric display
         const winningRank = record.winningScore?.rank;
-        const fallbackRank = record.rank || record.stableIndex || 0;
+        const fallbackRank = record.rank || record.globalRank || record.stableIndex || 0;
         
         // 🎯 STRATEGIC RANKING: Use full alphanumeric rank for display and sorting
         if (winningRank && typeof winningRank === 'string') {
@@ -768,6 +769,10 @@ export const PipelineView = React.memo(function PipelineView({
       
       case 'updated_at':
         return record.updatedAt || record.updated_at || record.updatedDate || new Date(0);
+      
+      case 'state':
+      case 'hqState':
+        return record.hqState || record.state || record.company?.hqState || record.company?.state || '';
       
       default:
         // Fallback to direct property access
@@ -948,9 +953,6 @@ export const PipelineView = React.memo(function PipelineView({
         const bRank = parseInt(b.winningScore?.rank || b.rank || '999', 10);
         return aRank - bRank; // Lower rank number first (1, 2, 3...)
       });
-    } else if (section === 'companies') {
-      // For companies, preserve API ranking order - no additional sorting
-      // The search filter has already been applied above
     } else if (sortField === 'smart_rank' || (verticalFilter !== 'all' || revenueFilter !== 'all' || lastContactedFilter !== 'all')) {
       // Smart combined ranking based on multiple criteria
       filtered = [...filtered].sort((a: any, b: any) => {
@@ -1313,6 +1315,13 @@ export const PipelineView = React.memo(function PipelineView({
           'Amount': 'amount',
           'Stage': 'stage',
           'Last Action': 'lastActionDate',
+        };
+      } else if (section === 'companies') {
+        return {
+          ...baseMap,
+          'Rank': 'globalRank', // Companies use globalRank instead of rank
+          'Company': 'name', // Companies use name field
+          'State': 'state', // Add State mapping for companies
         };
       } else {
         return {

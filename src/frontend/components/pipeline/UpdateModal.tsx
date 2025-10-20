@@ -21,6 +21,7 @@ import {
 import { CompanySelector } from './CompanySelector';
 import { formatFieldValue, getCompanyName, formatDateValue, formatArrayValue } from './utils/field-formatters';
 import { UniversalBuyerGroupsTab } from './tabs/UniversalBuyerGroupsTab';
+import { UniversalPeopleTab } from './tabs/UniversalPeopleTab';
 import { UniversalActionsTab } from './tabs/UniversalActionsTab';
 import { UniversalNewsTab } from './tabs/UniversalNewsTab';
 import { UniversalCompanyIntelTab } from './tabs/UniversalCompanyIntelTab';
@@ -980,6 +981,12 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   await onUpdate(updatedData);
                 }} 
               />
+            </div>
+          );
+        case 'people':
+          return (
+            <div className="p-6">
+              <UniversalPeopleTab record={record} recordType={recordType} />
             </div>
           );
         case 'buyer-groups':

@@ -210,14 +210,14 @@ export function PipelineTable({
   } = usePipelineData({ 
     data, 
     pageSize,
-        disableSorting: section === 'companies' || section === 'people' || section === 'leads' || section === 'prospects' || section === 'speedrun', // Disable sorting for companies, people, leads, and prospects to preserve API ranking
+        disableSorting: section === 'people' || section === 'leads' || section === 'prospects' || section === 'speedrun', // Disable sorting for people, leads, and prospects to preserve API ranking
     searchQuery, // Pass search query to hook
     totalCount, // Pass totalCount for correct pagination
     externalSortField: sortField, // Pass external sort field
     externalSortDirection: sortDirection // Pass external sort direction
   });
   
-  console.log(`🔧 [PipelineTableRefactored] Section: ${section}, disableSorting: ${section === 'companies' || section === 'people' || section === 'leads' || section === 'prospects' || section === 'speedrun'}`);
+  console.log(`🔧 [PipelineTableRefactored] Section: ${section}, disableSorting: ${section === 'people' || section === 'leads' || section === 'prospects' || section === 'speedrun'}`);
   
   
   // Action handling

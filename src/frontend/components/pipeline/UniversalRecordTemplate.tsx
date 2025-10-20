@@ -163,6 +163,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         { id: 'actions', label: 'Actions' },
         { id: 'news', label: 'News' },
         { id: 'intelligence', label: 'Intelligence' },
+        { id: 'people', label: 'People' },
         { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'notes', label: 'Notes' }
       ];
@@ -1958,12 +1959,17 @@ export function UniversalRecordTemplate({
     setIsAddCompanyModalOpen(false);
     
     try {
+      // Try simpler approach - just use company name, let the API handle the linking
       const updateData = {
-        companyId: newCompany.id,
         company: newCompany.name
       };
       
-      console.log('🔄 [UNIVERSAL] Updating record with company:', updateData);
+      console.log('🔄 [UNIVERSAL] Updating record with company:', {
+        recordId: record.id,
+        recordType: recordType,
+        updateData,
+        newCompany
+      });
       
       const responseData = await authFetch(`/api/v1/people/${record.id}`, {
         method: 'PATCH',
@@ -1977,10 +1983,24 @@ export function UniversalRecordTemplate({
       if (responseData.success && responseData.data) {
         setLocalRecord((prev: any) => ({
           ...prev,
-          ...responseData.data,
-          companyId: newCompany.id,
-          company: newCompany.name
+          ...responseData.data
         }));
+        
+        // Clear caches to ensure fresh data
+        if (typeof window !== 'undefined') {
+          const workspaceId = record?.workspaceId || 'default';
+          localStorage.removeItem(`adrata-companies-${workspaceId}`);
+          localStorage.removeItem(`adrata-people-${workspaceId}`);
+          
+          // Dispatch cache invalidation event
+          window.dispatchEvent(new CustomEvent('cache-invalidate', {
+            detail: { 
+              pattern: 'companies-*', 
+              reason: 'company_associated',
+              section: 'companies'
+            }
+          }));
+        }
         
         // Force a record refresh to ensure data consistency
         if (onRecordUpdate) {
@@ -1990,11 +2010,23 @@ export function UniversalRecordTemplate({
         
         showMessage('Company added and associated successfully!', 'success');
       } else {
+        console.error('❌ [UNIVERSAL] API returned error:', {
+          success: responseData.success,
+          error: responseData.error,
+          details: responseData.details,
+          data: responseData.data
+        });
         throw new Error(responseData.error || 'Invalid response from server');
       }
     } catch (error) {
-      console.error('❌ [UNIVERSAL] Error associating company:', error);
-      showMessage('Failed to associate company', 'error');
+      console.error('❌ [UNIVERSAL] Error associating company:', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        recordId: record.id,
+        recordType: recordType,
+        newCompany: newCompany
+      });
+      showMessage(`Failed to associate company: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
     }
   };
 

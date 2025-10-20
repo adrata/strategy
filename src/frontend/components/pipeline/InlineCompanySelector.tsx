@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { authFetch } from '@/platform/api-fetch';
 
@@ -41,9 +41,11 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
   const [newCompanyWebsite, setNewCompanyWebsite] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Get current company name for display
   const getCurrentCompanyName = (): string => {
@@ -59,8 +61,8 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     }
   }, [value, isSaving]);
 
-  // Search companies
-  const searchCompanies = async (query: string) => {
+  // Search companies with debouncing
+  const searchCompanies = useCallback(async (query: string) => {
     if (!query.trim()) {
       setSearchResults([]);
       return;
@@ -81,13 +83,27 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     } finally {
       setIsSearching(false);
     }
-  };
+  }, []);
 
-  // Handle search input change
+  // Debounced search function
+  const debouncedSearch = useCallback((query: string) => {
+    // Clear existing timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Set new timeout for debounced search
+    searchTimeoutRef.current = setTimeout(() => {
+      searchCompanies(query);
+    }, 300); // 300ms debounce
+  }, [searchCompanies]);
+
+  // Handle search input change with debouncing
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
     setEditValue(query);
+    setSelectedIndex(-1); // Reset selection when typing
     
     // Clear results immediately when query becomes empty
     if (!query.trim()) {
@@ -95,7 +111,8 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
       return;
     }
     
-    searchCompanies(query);
+    // Use debounced search
+    debouncedSearch(query);
   };
 
   // Handle company selection
@@ -105,6 +122,75 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     setSearchResults([]);
     setShowAddForm(false);
     setCreateError('');
+    setSelectedIndex(-1);
+  };
+
+  // Highlight matching text in search results
+  const highlightText = (text: string, query: string) => {
+    if (!query.trim()) return text;
+    
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    
+    return parts.map((part, index) => 
+      regex.test(part) ? (
+        <mark key={index} className="bg-yellow-200 dark:bg-yellow-800 px-0.5 rounded">
+          {part}
+        </mark>
+      ) : part
+    );
+  };
+
+  // Handle keyboard navigation and form submission
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isEditing) return;
+
+    // Handle form submission (Enter key)
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (showAddForm) {
+        handleAddCompany();
+      } else if (selectedIndex >= 0 && selectedIndex < searchResults.length) {
+        handleCompanySelect(searchResults[selectedIndex]);
+      } else if (selectedIndex === searchResults.length && searchQuery.trim() && !showAddForm) {
+        // Trigger "Add new" action
+        setShowAddForm(true);
+        setNewCompanyName(searchQuery.trim());
+        setCreateError('');
+      } else {
+        handleEditSave();
+      }
+      return;
+    }
+
+    // Handle escape key
+    if (e.key === 'Escape') {
+      if (showAddForm) {
+        setShowAddForm(false);
+        setCreateError('');
+      } else {
+        setIsEditing(false);
+        setShowAddForm(false);
+        setSelectedIndex(-1);
+      }
+      return;
+    }
+
+    // Handle arrow key navigation (only when not in add form)
+    if (!showAddForm) {
+      const totalItems = searchResults.length + (searchQuery.trim() ? 1 : 0); // +1 for "Add new" option
+
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          setSelectedIndex(prev => (prev + 1) % totalItems);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setSelectedIndex(prev => prev <= 0 ? totalItems - 1 : prev - 1);
+          break;
+      }
+    }
   };
 
   // Handle adding new company
@@ -234,18 +320,6 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     setIsEditing(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (showAddForm) {
-        handleAddCompany();
-      } else {
-        handleEditSave();
-      }
-    } else if (e.key === 'Escape') {
-      handleEditCancel();
-    }
-  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -261,6 +335,15 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isEditing]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (isEditing) {
     return (
@@ -285,15 +368,17 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
                   Searching...
                 </div>
               ) : searchResults.length > 0 ? (
-                searchResults.map((company) => (
+                searchResults.map((company, index) => (
                   <div
                     key={company.id}
                     onClick={() => handleCompanySelect(company)}
-                    className="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                    className={`px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 ${
+                      selectedIndex === index ? 'bg-gray-50' : ''
+                    }`}
                   >
-                    <div className="font-medium text-sm">{company.name}</div>
+                    <div className="font-medium text-sm">{highlightText(company.name, searchQuery)}</div>
                     {company.website && (
-                      <div className="text-xs text-gray-500">{company.website}</div>
+                      <div className="text-xs text-gray-500">{highlightText(company.website, searchQuery)}</div>
                     )}
                   </div>
                 ))

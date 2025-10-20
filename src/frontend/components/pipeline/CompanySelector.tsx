@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronDownIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { formatFieldValue } from './utils/field-formatters';
 import { authFetch } from '@/platform/api-fetch';
@@ -36,9 +36,11 @@ export function CompanySelector({
   const [newCompanyWebsite, setNewCompanyWebsite] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Get current company name for display
   const getCurrentCompanyName = (): string => {
@@ -47,8 +49,8 @@ export function CompanySelector({
     return value.name || '';
   };
 
-  // Search companies
-  const searchCompanies = async (query: string) => {
+  // Search companies with debouncing
+  const searchCompanies = useCallback(async (query: string) => {
     console.log('🔍 [CompanySelector] searchCompanies called with query:', query);
     
     if (!query.trim()) {
@@ -77,7 +79,20 @@ export function CompanySelector({
     } finally {
       setIsSearching(false);
     }
-  };
+  }, []);
+
+  // Debounced search function
+  const debouncedSearch = useCallback((query: string) => {
+    // Clear existing timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Set new timeout for debounced search
+    searchTimeoutRef.current = setTimeout(() => {
+      searchCompanies(query);
+    }, 300); // 300ms debounce
+  }, [searchCompanies]);
 
   // Load initial companies when dropdown opens
   const loadInitialCompanies = async () => {
@@ -99,7 +114,7 @@ export function CompanySelector({
     }
   };
 
-  // Handle search input change
+  // Handle search input change with debouncing
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     console.log('🔍 [CompanySelector] Search input changed:', {
@@ -108,6 +123,7 @@ export function CompanySelector({
       currentResultsCount: searchResults.length
     });
     setSearchQuery(query);
+    setSelectedIndex(-1); // Reset selection when typing
     
     // Clear results immediately when query becomes empty
     if (!query.trim()) {
@@ -115,7 +131,8 @@ export function CompanySelector({
       return;
     }
     
-    searchCompanies(query);
+    // Use debounced search
+    debouncedSearch(query);
   };
 
   // Handle company selection
@@ -126,6 +143,57 @@ export function CompanySelector({
     setIsOpen(false);
     setShowAddForm(false);
     setCreateError('');
+    setSelectedIndex(-1);
+  };
+
+  // Highlight matching text in search results
+  const highlightText = (text: string, query: string) => {
+    if (!query.trim()) return text;
+    
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    
+    return parts.map((part, index) => 
+      regex.test(part) ? (
+        <mark key={index} className="bg-yellow-200 dark:bg-yellow-800 px-0.5 rounded">
+          {part}
+        </mark>
+      ) : part
+    );
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen) return;
+
+    const totalItems = searchResults.length + (searchQuery.trim() && !showAddForm ? 1 : 0); // +1 for "Add new" option
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => (prev + 1) % totalItems);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => prev <= 0 ? totalItems - 1 : prev - 1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedIndex >= 0 && selectedIndex < searchResults.length) {
+          handleCompanySelect(searchResults[selectedIndex]);
+        } else if (selectedIndex === searchResults.length && searchQuery.trim() && !showAddForm) {
+          // Trigger "Add new" action
+          setShowAddForm(true);
+          setNewCompanyName(searchQuery.trim());
+          setCreateError('');
+        }
+        break;
+      case 'Escape':
+        setIsOpen(false);
+        setShowAddForm(false);
+        setSelectedIndex(-1);
+        break;
+    }
   };
 
   // Handle adding new company
@@ -258,6 +326,15 @@ export function CompanySelector({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       {/* Input Field */}
@@ -269,6 +346,7 @@ export function CompanySelector({
           onChange={handleSearchChange}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
@@ -317,19 +395,21 @@ export function CompanySelector({
           {/* Search Results */}
           {searchResults.length > 0 && (
             <div className="py-1">
-              {searchResults.map((company) => (
+              {searchResults.map((company, index) => (
                 <button
                   key={company.id}
                   type="button"
                   onClick={() => handleCompanySelect(company)}
-                  className="w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] focus:bg-[var(--panel-background)] focus:outline-none"
+                  className={`w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] focus:bg-[var(--panel-background)] focus:outline-none ${
+                    selectedIndex === index ? 'bg-[var(--panel-background)]' : ''
+                  }`}
                 >
                   <div className="font-medium text-[var(--foreground)]">
-                    {company.name}
+                    {highlightText(company.name, searchQuery)}
                   </div>
                   {company.domain && (
                     <div className="text-sm text-[var(--muted)]">
-                      {company.domain}
+                      {highlightText(company.domain, searchQuery)}
                     </div>
                   )}
                 </button>
@@ -347,7 +427,9 @@ export function CompanySelector({
                   setNewCompanyName(searchQuery.trim());
                   setCreateError('');
                 }}
-                className="w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] focus:bg-[var(--panel-background)] focus:outline-none text-blue-600"
+                className={`w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] focus:bg-[var(--panel-background)] focus:outline-none text-blue-600 ${
+                  selectedIndex === searchResults.length ? 'bg-[var(--panel-background)]' : ''
+                }`}
               >
                 <div className="flex items-center gap-2">
                   <PlusIcon className="w-4 h-4" />

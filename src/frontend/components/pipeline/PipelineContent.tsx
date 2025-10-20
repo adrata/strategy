@@ -418,6 +418,10 @@ export const PipelineContent = React.memo(function PipelineContent({
         }
         return typeof amount === 'number' ? amount : 0;
       
+      case 'state':
+      case 'hqState':
+        return record.hqState || record.state || record.company?.hqState || record.company?.state || '';
+      
       default:
         // Fallback to direct property access
         return record[field] || '';
@@ -806,47 +810,73 @@ export const PipelineContent = React.memo(function PipelineContent({
     const getFieldMapping = () => {
       const baseMap: Record<string, string> = {
         'Rank': 'rank',
+        'rank': 'rank',
         'Company': 'company',
+        'company': 'company',
         'Person': 'name',
+        'person': 'name',
         'Name': 'name',
+        'name': 'name',
         'Title': 'title',
+        'title': 'title',
         'Status': 'status',
+        'status': 'status',
         'Priority': 'priority',
+        'priority': 'priority',
         'Industry': 'industry',
+        'industry': 'industry',
         'Email': 'email',
+        'email': 'email',
         'Phone': 'phone',
+        'phone': 'phone',
         'Last Action': 'lastActionDate',
+        'lastAction': 'lastActionDate',
         'Next Action': 'nextAction',
+        'nextAction': 'nextAction',
         'Amount': 'amount',
+        'amount': 'amount',
         'Stage': 'stage',
-        'Value': 'value' // Add Value mapping for opportunities
+        'stage': 'stage',
+        'Value': 'value',
+        'value': 'value',
+        'State': 'state',
+        'state': 'state'
       };
 
       // Section-specific field mappings
       if (section === 'speedrun') {
         return {
           ...baseMap,
-          'Last Action': 'lastActionDate', // Speedrun uses 'lastActionDate' for consistency
+          'Last Action': 'lastActionDate',
+          'lastAction': 'lastActionDate',
           'Advice': 'nextAction',
+          'advice': 'nextAction',
         };
       } else if (section === 'opportunities') {
         return {
           ...baseMap,
           'Amount': 'amount',
+          'amount': 'amount',
           'Stage': 'stage',
+          'stage': 'stage',
           'Last Action': 'lastActionDate',
+          'lastAction': 'lastActionDate',
           'Value': 'value',
+          'value': 'value',
         };
       } else if (section === 'companies') {
         return {
           ...baseMap,
-          'Rank': 'globalRank', // Companies use globalRank instead of rank
-          'Company': 'name', // Companies use name field
+          'Rank': 'globalRank',
+          'rank': 'globalRank',
+          'Company': 'name',
+          'company': 'name',
+          'State': 'hqState',
+          'state': 'hqState',
         };
       } else {
         return {
           ...baseMap,
-          // Base map already includes Last Action and Next Action
         };
       }
     };

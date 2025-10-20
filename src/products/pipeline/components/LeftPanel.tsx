@@ -123,7 +123,7 @@ function PipelineSections({
                           (typeof window !== "undefined" && window.location.pathname.startsWith('/ne/'));
   
   // Check if this is Ryan Serrato user
-  const isRyanSerrato = user?.id === 'cmf0kew2z0000pcsexylorpxp';
+  const isRyanSerrato = authUser?.id === 'cmf0kew2z0000pcsexylorpxp';
   console.log('🔍 [LEFT PANEL] Notary Everyday check:', { 
     isNotaryEveryday, 
     workspaceId,

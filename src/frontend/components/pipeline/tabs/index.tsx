@@ -26,6 +26,7 @@ export { UniversalDocumentsTab } from './UniversalDocumentsTab';
 export { UniversalStrategyTab } from './UniversalStrategyTab';
 export { UniversalContactsTab } from './UniversalContactsTab';
 export { UniversalBuyerGroupsTab } from './UniversalBuyerGroupsTab';
+export { UniversalPeopleTab } from './UniversalPeopleTab';
 export { UniversalBuyerGroupTab } from './UniversalBuyerGroupTab';
 export { UniversalCompetitorsTab } from './UniversalCompetitorsTab';
 export { UniversalIndustryTab } from './UniversalIndustryTab';

@@ -6,7 +6,7 @@
  * Simple filters for pipeline sections
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
 // import { usePipelineData } from '@/platform/stores/PipelineDataStore';
@@ -98,6 +98,21 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const [companySizeFilter, setCompanySizeFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
   const [technologyFilter, setTechnologyFilter] = useState('all');
+  
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounced search function
+  const debouncedSearch = useCallback((query: string) => {
+    // Clear existing timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Set new timeout for debounced search
+    searchTimeoutRef.current = setTimeout(() => {
+      onSearchChange?.(query);
+    }, 300); // 300ms debounce
+  }, [onSearchChange]);
 
   // Get filter options based on section
   const getStatusOptions = () => {
@@ -400,6 +415,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
       return [
         { value: 'rank', label: 'Rank' },
         { value: 'company', label: 'Company' },
+        { value: 'state', label: 'State' },
         { value: 'lastContact', label: 'Last Action' },
         { value: 'nextAction', label: 'Next Action' }
       ];
@@ -451,7 +467,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     
     if (section === 'companies') {
       return baseOptions.filter(option => 
-        ['all', 'rank', 'company', 'lastAction', 'nextAction', 'actions'].includes(option.value)
+        ['all', 'rank', 'company', 'state', 'lastAction', 'nextAction', 'actions'].includes(option.value)
       );
     }
     
@@ -547,7 +563,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
-    onSearchChange?.(value);
+    debouncedSearch(value);
   };
 
   const selectedOption = verticalOptions.find(option => option['value'] === verticalFilter) || verticalOptions[0];
