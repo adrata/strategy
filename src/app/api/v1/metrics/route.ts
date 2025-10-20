@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 1);
 
     // Get actions data for today and yesterday
-    const [todayActions, yesterdayActions, allActions] = await Promise.all([
+    const [todayActions, yesterdayActions, allActions, scheduledMeetings] = await Promise.all([
       // Today's actions
       prisma.actions.findMany({
         where: {
@@ -79,6 +79,34 @@ export async function GET(request: NextRequest) {
           person: true,
           company: true
         }
+      }),
+
+      // Scheduled meetings (today and future)
+      prisma.actions.findMany({
+        where: {
+          workspaceId,
+          type: {
+            in: ['meeting_scheduled', 'meeting_completed', 'demo_meeting', 'discovery_meeting']
+          },
+          OR: [
+            {
+              scheduledAt: {
+                gte: today
+              }
+            },
+            {
+              status: 'PLANNED',
+              scheduledAt: {
+                gte: today
+              }
+            }
+          ],
+          deletedAt: null
+        },
+        include: {
+          person: true,
+          company: true
+        }
       })
     ]);
 
@@ -115,10 +143,15 @@ export async function GET(request: NextRequest) {
       return actions.filter(action => actionTypes[type as keyof typeof actionTypes].includes(action.type)).length;
     };
 
+    // Calculate meeting count including scheduled meetings
+    const todayMeetingActions = getActionTypeCount(todayActions, 'meeting');
+    const scheduledMeetingCount = scheduledMeetings.length;
+    const totalMeetingCount = todayMeetingActions + scheduledMeetingCount;
+
     const todayActionTypes = {
       call: getActionTypeCount(todayActions, 'call'),
       email: getActionTypeCount(todayActions, 'email'),
-      meeting: getActionTypeCount(todayActions, 'meeting'),
+      meeting: totalMeetingCount, // Include both today's meetings and scheduled meetings
       proposal: getActionTypeCount(todayActions, 'proposal'),
       other: getActionTypeCount(todayActions, 'other')
     };

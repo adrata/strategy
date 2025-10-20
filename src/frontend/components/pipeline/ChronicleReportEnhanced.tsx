@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ChartContainer, ChartTooltip } from '@/frontend/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { ChroniclePresentationView } from './ChroniclePresentationView';
-import { Kbd, formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
+import { formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
 
 interface ChronicleReportEnhancedProps {
   report: {
@@ -141,17 +141,6 @@ export function ChronicleReportEnhanced({ report, onBack }: ChronicleReportEnhan
     });
   };
 
-  // Chart configuration
-  const chartConfig = {
-    actual: {
-      label: "Actual",
-      color: "hsl(var(--chart-1))",
-    },
-    target: {
-      label: "Target",
-      color: "hsl(var(--chart-2))",
-    },
-  };
 
   // Performance vs targets data
   const performanceData = [
@@ -220,10 +209,9 @@ export function ChronicleReportEnhanced({ report, onBack }: ChronicleReportEnhan
             )}
             <button
               onClick={handlePresent}
-              className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors border border-blue-200 flex items-center gap-2"
+              className="px-3 py-1.5 text-sm bg-blue-100 text-blue-700 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors flex items-center gap-1"
             >
-              Present
-              <Kbd variant="blue" size="sm">{formatShortcutForDisplay(['⌘⏎', 'Ctrl+Enter'])}</Kbd>
+              Present ({formatShortcutForDisplay(['⌘⏎', 'Ctrl+Enter'])})
             </button>
           </div>
         </div>
@@ -242,11 +230,11 @@ export function ChronicleReportEnhanced({ report, onBack }: ChronicleReportEnhan
       </div>
 
       {/* Content */}
-      <div className="p-8 overflow-y-auto invisible-scrollbar max-w-5xl mx-auto bg-[var(--background)]">
+      <div className="px-6 py-8 overflow-y-auto invisible-scrollbar max-w-5xl mx-auto bg-[var(--background)]">
         <div className="space-y-8">
           {/* Purpose */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Purpose</h2>
+            <h2 className="text-xl font-medium text-gray-900 mb-4">Purpose</h2>
             <div className="border border-[var(--border)] rounded-lg p-6">
               <p className="text-gray-700 leading-relaxed">
                 {report.content.purpose}
@@ -275,42 +263,39 @@ export function ChronicleReportEnhanced({ report, onBack }: ChronicleReportEnhan
 
           {/* Performance vs Targets */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Performance vs Targets</h2>
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <ChartContainer config={chartConfig} className="h-[300px]">
-                <BarChart data={performanceData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="metric" />
-                  <YAxis />
-                  <ChartTooltip />
-                  <Bar dataKey="actual" fill={chartConfig.actual.color} name="Actual" />
-                  <Bar dataKey="target" fill={chartConfig.target.color} name="Target" />
-                </BarChart>
-              </ChartContainer>
-              
-              {/* Performance indicators */}
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                {performanceData.map((item, index) => (
-                  <div key={index} className="text-center">
-                    <div className={`text-2xl font-bold ${
+            <h2 className="text-xl font-medium text-gray-900 mb-4">Performance vs Targets</h2>
+            <div className="space-y-4">
+              {performanceData.map((item, index) => (
+                <div key={index} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-700">{item.metric}</span>
+                    <span className="text-sm text-gray-600">{item.actual} / {item.target}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${
+                        item.percentage >= 90 ? 'bg-green-600' : 
+                        item.percentage >= 70 ? 'bg-gray-500' : 'bg-red-600'
+                      }`}
+                      style={{ width: `${Math.min(item.percentage, 100)}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-medium ${
                       item.percentage >= 90 ? 'text-green-600' : 
-                      item.percentage >= 70 ? 'text-yellow-600' : 'text-red-600'
+                      item.percentage >= 70 ? 'text-gray-600' : 'text-red-600'
                     }`}>
                       {item.percentage}%
-                    </div>
-                    <div className="text-sm text-gray-600">{item.metric}</div>
-                    <div className="text-xs text-gray-500">
-                      {item.actual} / {item.target}
-                    </div>
+                    </span>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </section>
 
           {/* This Month & Quarter */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">This Month & Quarter</h2>
+            <h2 className="text-xl font-medium text-gray-900 mb-4">This Month & Quarter</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="border border-[var(--border)] rounded-lg p-6">
                 <h3 className="font-medium text-[var(--foreground)] mb-3">This Month</h3>
@@ -329,12 +314,12 @@ export function ChronicleReportEnhanced({ report, onBack }: ChronicleReportEnhan
 
           {/* Key Wins & Highlights */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Key Wins & Highlights</h2>
+            <h2 className="text-xl font-medium text-gray-900 mb-4">Key Wins & Highlights</h2>
             <div className="border border-[var(--border)] rounded-lg p-6">
               <ul className="space-y-3">
                 {report.content.keyWins.map((win, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
                     <span className="text-[var(--muted)] leading-relaxed">{win}</span>
                   </li>
                 ))}
@@ -344,12 +329,12 @@ export function ChronicleReportEnhanced({ report, onBack }: ChronicleReportEnhan
 
           {/* Lowlights & Challenges */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Lowlights & Challenges</h2>
+            <h2 className="text-xl font-medium text-gray-900 mb-4">Lowlights & Challenges</h2>
             <div className="border border-[var(--border)] rounded-lg p-6">
               <ul className="space-y-3">
                 {report.content.lowlights.map((lowlight, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
                     <span className="text-[var(--muted)] leading-relaxed">{lowlight}</span>
                   </li>
                 ))}
@@ -359,7 +344,7 @@ export function ChronicleReportEnhanced({ report, onBack }: ChronicleReportEnhan
 
           {/* Activity Metrics */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Activity Metrics</h2>
+            <h2 className="text-xl font-medium text-gray-900 mb-4">Activity Metrics</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div className="border border-[var(--border)] rounded-lg p-4 text-center">
                 <div className="text-2xl font-bold text-[var(--foreground)]">
@@ -389,42 +374,42 @@ export function ChronicleReportEnhanced({ report, onBack }: ChronicleReportEnhan
                 <div className="text-2xl font-bold text-[var(--foreground)]">
                   {report.content.activityMetrics.newProspects}
                 </div>
-                <div className="text-sm text-[var(--muted)]">New Prospects</div>
+                <div className="text-sm text-[var(--muted)]">New Clients</div>
               </div>
               <div className="border border-[var(--border)] rounded-lg p-4 text-center">
                 <div className="text-2xl font-bold text-[var(--foreground)]">
                   {report.content.activityMetrics.newOpportunities}
                 </div>
-                <div className="text-sm text-[var(--muted)]">New Opportunities</div>
+                <div className="text-sm text-[var(--muted)]">New Clients</div>
               </div>
             </div>
           </section>
 
           {/* Conversion Funnel */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Conversion Funnel</h2>
+            <h2 className="text-xl font-medium text-gray-900 mb-4">Conversion Funnel</h2>
             <div className="border border-[var(--border)] rounded-lg p-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600">
+                  <div className="text-3xl font-bold text-gray-600">
                     {report.content.conversionFunnel.leads}
                   </div>
                   <div className="text-sm text-[var(--muted)]">Leads</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600">
+                  <div className="text-3xl font-bold text-gray-600">
                     {report.content.conversionFunnel.prospects}
                   </div>
                   <div className="text-sm text-[var(--muted)]">Prospects</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-yellow-600">
+                  <div className="text-3xl font-bold text-gray-600">
                     {report.content.conversionFunnel.opportunities}
                   </div>
                   <div className="text-sm text-[var(--muted)]">Opportunities</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-600">
+                  <div className="text-3xl font-bold text-gray-600">
                     {report.content.conversionFunnel.clients}
                   </div>
                   <div className="text-sm text-[var(--muted)]">Clients</div>

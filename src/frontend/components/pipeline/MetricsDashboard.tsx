@@ -214,17 +214,17 @@ export function MetricsDashboard() {
             color={metrics.raw?.emailsToday > 20 ? 'success' : metrics.raw?.emailsToday > 10 ? 'warning' : 'danger'}
           />
 
-          {/* Meetings Today */}
+          {/* Meetings Today + Scheduled */}
           <MetricCard
-            title="Meetings Today"
+            title="Meetings Today + Scheduled"
             value={metrics.meetingsToday || 0}
             subtitle="Face-to-face"
             color={metrics.raw?.meetingsToday > 5 ? 'success' : metrics.raw?.meetingsToday > 2 ? 'warning' : 'danger'}
           />
 
-          {/* New Opportunities Today */}
+          {/* New Clients Today */}
           <MetricCard
-            title="New Opportunities"
+            title="New Clients"
             value={metrics.newOpportunitiesToday || 0}
             subtitle="Today"
             color={metrics.raw?.newOpportunitiesToday > 3 ? 'success' : metrics.raw?.newOpportunitiesToday > 1 ? 'warning' : 'danger'}

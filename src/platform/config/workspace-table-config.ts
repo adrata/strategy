@@ -21,24 +21,24 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
   workspaceName: 'Default',
   sections: {
     people: {
-      columns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'],
-      columnOrder: ['name', 'company', 'title', 'lastAction', 'nextAction']
+      columns: ['Name', 'Company', 'Title', 'Actions', 'Last Action', 'Next Action'],
+      columnOrder: ['name', 'company', 'title', 'actions', 'lastAction', 'nextAction']
     },
     companies: {
-      columns: ['Company', 'Last Action', 'Next Action'],
-      columnOrder: ['company', 'lastAction', 'nextAction']
+      columns: ['Company', 'Actions', 'Last Action', 'Next Action'],
+      columnOrder: ['company', 'actions', 'lastAction', 'nextAction']
     },
     speedrun: {
-      columns: ['Rank', 'Name', 'Company', 'Status', 'MAIN-SELLER', 'CO-SELLERS', 'LAST ACTION', 'NEXT ACTION'],
-      columnOrder: ['rank', 'name', 'company', 'status', 'mainSeller', 'coSellers', 'lastAction', 'nextAction']
+      columns: ['Rank', 'Name', 'Company', 'Status', 'Actions', 'MAIN-SELLER', 'CO-SELLERS', 'LAST ACTION', 'NEXT ACTION'],
+      columnOrder: ['rank', 'name', 'company', 'status', 'actions', 'mainSeller', 'coSellers', 'lastAction', 'nextAction']
     },
     prospects: {
-      columns: ['Name', 'Company', 'Title', 'Last Action', 'Next Action'],
-      columnOrder: ['name', 'company', 'title', 'lastAction', 'nextAction']
+      columns: ['Name', 'Company', 'Title', 'Actions', 'Last Action', 'Next Action'],
+      columnOrder: ['name', 'company', 'title', 'actions', 'lastAction', 'nextAction']
     },
     leads: {
-      columns: ['Name', 'Company', 'Title', 'Email', 'Last Action', 'Next Action'],
-      columnOrder: ['name', 'company', 'title', 'email', 'lastAction', 'nextAction']
+      columns: ['Name', 'Company', 'Title', 'Email', 'Actions', 'Last Action', 'Next Action'],
+      columnOrder: ['name', 'company', 'title', 'email', 'actions', 'lastAction', 'nextAction']
     },
     opportunities: {
       columns: ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action'],

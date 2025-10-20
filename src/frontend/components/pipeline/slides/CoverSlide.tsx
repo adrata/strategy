@@ -13,29 +13,23 @@ interface CoverSlideProps {
 export function CoverSlide({ data }: CoverSlideProps) {
   return (
     <div className="h-full w-full flex items-center justify-center bg-white">
-      <div className="w-full max-w-6xl mx-8">
-        <div className="p-24 text-center">
-          <div className="space-y-20">
-            <div className="space-y-8">
-              <div className="w-32 h-1.5 bg-black mx-auto"></div>
-              <h1 className="text-8xl font-light text-black tracking-tight leading-tight">
-                {data.title}
-              </h1>
-              <h2 className="text-3xl text-gray-600 font-light tracking-wide leading-loose">
-                {data.subtitle}
-              </h2>
-            </div>
-            
-            <div className="space-y-6 pt-16">
-              <div className="w-20 h-1 bg-gray-300 mx-auto"></div>
-              <p className="text-xl text-gray-500 font-light leading-loose">
-                {data.date}
-              </p>
-              <p className="text-lg text-gray-400 font-light leading-loose">
-                {data.presenter}
-              </p>
-            </div>
-          </div>
+      <div className="text-center space-y-16 px-20">
+        <div className="space-y-12">
+          <div className="w-12 h-0.5 bg-gray-400 mx-auto"></div>
+          <h1 className="text-8xl font-extralight text-gray-900 tracking-tight leading-none">
+            {data.title}
+          </h1>
+          <p className="text-2xl font-light text-gray-500 tracking-wide">
+            {data.subtitle}
+          </p>
+        </div>
+        <div className="pt-16 space-y-6">
+          <p className="text-lg font-light text-gray-400">
+            {data.date}
+          </p>
+          <p className="text-base font-light text-gray-400">
+            {data.presenter}
+          </p>
         </div>
       </div>
     </div>

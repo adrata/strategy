@@ -251,6 +251,14 @@ export function TableRow({
                     </div>
                   </td>
                 );
+              case 'actions':
+                return (
+                  <td key="actions" className={textClasses}>
+                    <div className="text-right">
+                      {record._count?.actions || 0}
+                    </div>
+                  </td>
+                );
               case 'nextAction':
                 return (
                   <td key="nextAction" className={textClasses}>
@@ -611,6 +619,14 @@ export function TableRow({
                     </div>
                   </td>
                 );
+              case 'actions':
+                return (
+                  <td key="actions" className={textClasses}>
+                    <div className="text-right">
+                      {record._count?.actions || 0}
+                    </div>
+                  </td>
+                );
               case 'nextAction':
                 return (
                   <td key="nextAction" className={textClasses}>
@@ -732,6 +748,14 @@ export function TableRow({
                   <td key="healthScore" className={textClasses}>
                     <div className="truncate max-w-32">
                       {healthScore ? `${healthScore}%` : '-'}
+                    </div>
+                  </td>
+                );
+              case 'actions':
+                return (
+                  <td key="actions" className={textClasses}>
+                    <div className="text-right">
+                      {record._count?.actions || 0}
                     </div>
                   </td>
                 );

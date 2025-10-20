@@ -110,7 +110,7 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
       borderColor: 'border-orange-200'
     },
     'new-opportunities': {
-      title: 'New Opportunities',
+      title: 'New Clients',
       icon: ArrowTrendingUpIcon,
       apiEndpoint: '/api/opportunities/new',
       emptyMessage: 'No new opportunities this week',
@@ -298,7 +298,7 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
               extractedActivities = [{
                 id: '1',
                 type: 'opportunity',
-                subject: `New Opportunities: ${dashboardData.newOpportunities}`,
+                subject: `New Clients: ${dashboardData.newOpportunities}`,
                 createdAt: new Date().toISOString(),
                 description: `New opportunities created this week: ${dashboardData.newOpportunities}`
               }];

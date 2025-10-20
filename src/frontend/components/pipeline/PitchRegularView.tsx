@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect } from 'react';
-import { Button } from '@/frontend/components/ui/button';
-import { Kbd, formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
+import { formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
 import { 
   CoverSlide, 
   PurposeSlide, 
@@ -79,33 +78,38 @@ export function PitchRegularView({ slideData, onPresent, onBack, hideHeader = fa
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button 
+              <button
                 onClick={onPresent}
-                className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors border border-blue-200 flex items-center gap-2"
+                className="px-3 py-1.5 text-sm bg-blue-100 text-blue-700 border border-blue-200 rounded-md hover:bg-blue-200 transition-colors flex items-center gap-1"
               >
-                Present
-                <Kbd variant="blue" size="sm">{formatShortcutForDisplay(['⌘⏎', 'Ctrl+Enter'])}</Kbd>
-              </Button>
+                Present ({formatShortcutForDisplay(['⌘⏎', 'Ctrl+Enter'])})
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Content - Stacked Slides */}
-      <div className="p-8 overflow-y-auto invisible-scrollbar max-w-6xl mx-auto bg-[var(--background)]">
-        <div className="space-y-12">
-          {slides.map((slide, index) => {
-            const SlideComponent = slide.component;
-            const slideDataForSlide = slideData.slides[slide.key];
-            
-            return (
-              <div key={index} className="w-full flex justify-center">
-                <div className="w-full max-w-5xl aspect-[16/9] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                  <SlideComponent data={slideDataForSlide} />
+      {/* Content - Properly Sized Slides */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide bg-white">
+        <div className="py-16">
+          <div className="space-y-24">
+            {slides.map((slide, index) => {
+              const SlideComponent = slide.component;
+              const slideDataForSlide = slideData.slides[slide.key];
+              
+              return (
+                <div key={index} className="w-full flex justify-center px-8">
+                  <div className="w-full max-w-7xl">
+                    <div className="relative w-full" style={{ paddingBottom: '56.25%' /* 16:9 */ }}>
+                      <div className="absolute inset-0 bg-white rounded-lg border border-gray-200 overflow-hidden">
+                        <SlideComponent data={slideDataForSlide} />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

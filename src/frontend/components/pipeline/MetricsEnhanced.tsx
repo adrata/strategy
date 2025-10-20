@@ -204,11 +204,10 @@ export function MetricsEnhanced() {
       } catch (err) {
         console.error('Error fetching metrics:', err);
         
-        // Fall back to mock data for Ryan Serrato in Notary Everyday only
+        // Fall back to mock data for Notary Everyday
         const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
-        const isRyanSerrato = user?.id === 'cmf0kew2z0000pcsexylorpxp';
-        if (isNotaryEveryday && isRyanSerrato) {
-          console.log('Error occurred, using mock data for Ryan Serrato in Notary Everyday');
+        if (isNotaryEveryday) {
+          console.log('Error occurred, using mock data for Notary Everyday');
           setMetrics({
             todayPeopleActions: 18,
             yesterdayPeopleActions: 16,
@@ -342,9 +341,9 @@ export function MetricsEnhanced() {
             trendValue={`${metrics?.trends?.emails?.change || 0}%`}
           />
 
-          {/* Meetings Today */}
+          {/* Meetings Today + Scheduled */}
           <MetricCard
-            title="Meetings Today"
+            title="Meetings Today + Scheduled"
             value={metrics?.actionTypes?.meeting || 0}
             subtitle={`Daily face-to-face (+${(metrics?.actionTypes?.meeting || 0) - (metrics?.trends?.meetings?.comparison || 0)} from yesterday)`}
             color={(metrics?.actionTypes?.meeting || 0) > 5 ? 'success' : (metrics?.actionTypes?.meeting || 0) > 2 ? 'default' : 'danger'}
@@ -368,18 +367,18 @@ export function MetricsEnhanced() {
           <MetricCard
             title="New Opportunities"
             value={metrics?.conversionMetrics?.opportunities || 0}
-            subtitle={`This week (+${(metrics?.conversionMetrics?.opportunities || 0) - (metrics?.trends?.opportunities?.comparison || 0)} from last week)`}
-            color={(metrics?.conversionMetrics?.opportunities || 0) > 3 ? 'success' : (metrics?.conversionMetrics?.opportunities || 0) > 1 ? 'default' : 'danger'}
-            status={(metrics?.conversionMetrics?.opportunities || 0) > 3 ? 'ahead' : (metrics?.conversionMetrics?.opportunities || 0) > 1 ? 'on-track' : 'behind'}
+            subtitle={`This month (+${(metrics?.conversionMetrics?.opportunities || 0) - (metrics?.trends?.opportunities?.comparison || 0)} from last month)`}
+            color={(metrics?.conversionMetrics?.opportunities || 0) > 10 ? 'success' : (metrics?.conversionMetrics?.opportunities || 0) > 5 ? 'default' : 'danger'}
+            status={(metrics?.conversionMetrics?.opportunities || 0) > 10 ? 'ahead' : (metrics?.conversionMetrics?.opportunities || 0) > 5 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.opportunities?.direction}
             trendValue={`${metrics?.trends?.opportunities?.change || 0}%`}
           />
 
-          {/* Clients */}
+          {/* New Clients */}
           <MetricCard
-            title="Clients"
+            title="New Clients"
             value={metrics?.conversionMetrics?.clients || 0}
-            subtitle={`This quarter (+${(metrics?.conversionMetrics?.clients || 0) - (metrics?.trends?.clients?.comparison || 0)} from last quarter)`}
+            subtitle={`This month (+${(metrics?.conversionMetrics?.clients || 0) - (metrics?.trends?.clients?.comparison || 0)} from last month)`}
             color={(metrics?.conversionMetrics?.clients || 0) > 5 ? 'success' : (metrics?.conversionMetrics?.clients || 0) > 2 ? 'default' : 'danger'}
             status={(metrics?.conversionMetrics?.clients || 0) > 5 ? 'ahead' : (metrics?.conversionMetrics?.clients || 0) > 2 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.clients?.direction}

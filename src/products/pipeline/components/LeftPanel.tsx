@@ -127,7 +127,9 @@ function PipelineSections({
   const isRyanSerrato = authUser?.id === 'cmf0kew2z0000pcsexylorpxp';
   console.log('🔍 [LEFT PANEL] Notary Everyday check:', { 
     isNotaryEveryday, 
+    isRyanSerrato,
     workspaceId,
+    userId: authUser?.id,
     pathname: typeof window !== "undefined" ? window.location.pathname : 'server'
   });
   
@@ -163,9 +165,11 @@ function PipelineSections({
   // 🔍 DEBUG: Log counts after hooks are called
   console.log('🔍 [LEFT PANEL] Metrics and Chronicle counts:', {
     isNotaryEveryday,
+    isRyanSerrato,
     metricsCount,
     chronicleCount,
-    workspaceId
+    workspaceId,
+    userId: authUser?.id
   });
   
   // 🔍 DEBUG: Log counts for debugging
@@ -648,8 +652,8 @@ function PipelineSections({
       id: "chronicle",
       name: "Chronicle",
       description: "Business Intelligence Reports",
-      count: (isNotaryEveryday && isRyanSerrato) ? chronicleCount : 0, // Show count only for Ryan Serrato in Notary Everyday
-      visible: (isNotaryEveryday && isRyanSerrato) // Only show for Ryan Serrato in Notary Everyday
+      count: isNotaryEveryday ? chronicleCount : 0, // Show count for Notary Everyday
+      visible: isNotaryEveryday // Show for Notary Everyday
     },
     {
       id: "news",
@@ -733,8 +737,8 @@ function PipelineSections({
       id: "metrics",
       name: "Metrics",
       description: "Sales Activity Dashboard",
-      count: (isNotaryEveryday && isRyanSerrato) ? metricsCount : 0, // Show count only for Ryan Serrato in Notary Everyday
-      visible: (isNotaryEveryday && isRyanSerrato) // Only show for Ryan Serrato in Notary Everyday
+      count: isNotaryEveryday ? metricsCount : 0, // Show count for Notary Everyday
+      visible: isNotaryEveryday // Show for Notary Everyday
     },
     // SELLERS: Show only for demo workspace
     {

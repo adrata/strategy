@@ -314,6 +314,16 @@ export async function GET(request: NextRequest) {
                 name: true,
                 email: true
               }
+            },
+            _count: {
+              select: {
+                actions: {
+                  where: {
+                    deletedAt: null,
+                    status: 'COMPLETED'
+                  }
+                }
+              }
             }
           }
         }),

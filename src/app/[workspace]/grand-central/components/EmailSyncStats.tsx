@@ -32,7 +32,18 @@ export function EmailSyncStats({ workspaceId, connectionId }: EmailSyncStatsProp
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Don't render if no workspaceId
+  if (!workspaceId) {
+    return null;
+  }
+
   useEffect(() => {
+    // Don't fetch if workspaceId is empty
+    if (!workspaceId) {
+      setIsLoading(false);
+      return;
+    }
+
     const fetchStats = async () => {
       try {
         setIsLoading(true);
@@ -40,6 +51,7 @@ export function EmailSyncStats({ workspaceId, connectionId }: EmailSyncStatsProp
         
         const params = new URLSearchParams();
         if (connectionId) params.append('connectionId', connectionId);
+        if (workspaceId) params.append('workspaceId', workspaceId);
         
         const response = await fetch(`/api/grand-central/stats?${params}`);
         

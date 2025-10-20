@@ -42,6 +42,23 @@ export async function GET(request: NextRequest) {
       }
     });
 
+    // If no reports in database, fall back to sample data
+    if (reports.length === 0) {
+      console.log('No reports in database, using sample data');
+      const sampleReports = sampleChronicleReports.map(report => ({
+        ...report,
+        shares: [] // Mock shares for now
+      }));
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          reports: sampleReports.slice(0, limit),
+          total: sampleReports.length
+        }
+      });
+    }
+
     return NextResponse.json({
       success: true,
       data: {

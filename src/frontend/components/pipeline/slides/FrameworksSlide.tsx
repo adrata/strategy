@@ -26,36 +26,30 @@ const departmentColors = [
 
 export function FrameworksSlide({ data }: FrameworksSlideProps) {
   return (
-    <div className="h-full w-full flex items-center justify-center bg-white">
-      <div className="w-full max-w-7xl mx-8">
-        <div className="p-24">
-          <div className="space-y-20">
-            <div className="text-center">
-              <div className="w-24 h-1.5 bg-black mx-auto mb-10"></div>
-              <h1 className="text-6xl font-light text-black tracking-tight leading-tight">
-                {data.title}
-              </h1>
+    <div className="h-full w-full flex items-center bg-white px-20">
+      <div className="max-w-5xl space-y-12">
+        <div>
+          <div className="w-12 h-0.5 bg-gray-400 mb-6"></div>
+          <h2 className="text-4xl font-light text-gray-900">
+            {data.title}
+          </h2>
+        </div>
+        
+        <div className="space-y-6">
+          {data.departments.map((dept, index) => (
+            <div key={index} className="flex gap-10 py-4 border-b border-gray-100 last:border-0">
+              <div className="w-1/3">
+                <h3 className="text-2xl font-light text-gray-900">
+                  {dept.name}
+                </h3>
+              </div>
+              <div className="w-2/3">
+                <p className="text-lg font-light text-gray-500 leading-relaxed">
+                  {dept.framework}
+                </p>
+              </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-              {data.departments.map((dept, index) => (
-                <div key={index} className="bg-gray-100 p-10 border-l-[6px] border-black shadow-sm">
-                  <div className="space-y-8">
-                    <div className="flex justify-center">
-                      <span className="px-6 py-3 text-lg font-light tracking-wide bg-black text-white">
-                        {dept.name}
-                      </span>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-gray-700 font-light leading-loose text-lg">
-                        {dept.framework}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

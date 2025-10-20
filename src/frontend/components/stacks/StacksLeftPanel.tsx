@@ -13,7 +13,10 @@ import {
   ClipboardDocumentListIcon, 
   CubeIcon, 
   DocumentTextIcon, 
-  BugAntIcon 
+  BugAntIcon,
+  BookOpenIcon,
+  ChartBarIcon,
+  LightBulbIcon
 } from '@heroicons/react/24/outline';
 
 interface StacksLeftPanelProps {
@@ -34,6 +37,12 @@ const navigationItems: NavigationItem[] = [
     label: 'Stacks',
     icon: QueueListIcon,
     description: 'Project overview and management'
+  },
+  {
+    id: 'chronicle',
+    label: 'Chronicle',
+    icon: BookOpenIcon,
+    description: 'Business intelligence reports'
   },
   {
     id: 'backlog',
@@ -58,6 +67,18 @@ const navigationItems: NavigationItem[] = [
     label: 'Bugs',
     icon: BugAntIcon,
     description: 'Issue tracking and resolution'
+  },
+  {
+    id: 'futures',
+    label: 'Futures',
+    icon: LightBulbIcon,
+    description: 'Future ideas and concepts'
+  },
+  {
+    id: 'metrics',
+    label: 'Metrics',
+    icon: ChartBarIcon,
+    description: 'Product & engineering KPIs'
   }
 ];
 
