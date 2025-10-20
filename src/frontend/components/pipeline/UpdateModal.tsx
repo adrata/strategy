@@ -1775,7 +1775,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             City
@@ -1784,18 +1784,6 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             type="text"
             value={formData.city || ''}
             onChange={(e) => handleInputChange('city', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder=""
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            State
-          </label>
-          <input
-            type="text"
-            value={formData.state || ''}
-            onChange={(e) => handleInputChange('state', e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder=""
           />

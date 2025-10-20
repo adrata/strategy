@@ -1648,7 +1648,8 @@ export function UniversalRecordTemplate({
       console.log(`🔍 [INLINE EDIT AUDIT] Update data prepared:`, updateData);
       
       // Handle name field specially - split into firstName/lastName/fullName
-      if (field === 'name' || field === 'fullName') {
+      // BUT ONLY for people-related records, NOT for companies
+      if ((field === 'name' || field === 'fullName') && targetModel !== 'companies') {
         const nameParts = value.trim().split(' ');
         updateData['firstName'] = nameParts[0] || '';
         updateData['lastName'] = nameParts.slice(1).join(' ') || '';
@@ -4951,18 +4952,6 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 recordId={record?.id || ''}
                 recordType="universal"
                 placeholder="Enter city"
-                onSave={handleInlineSave}
-                className="text-sm"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">State</label>
-              <InlineEditField
-                value={record?.state || ''}
-                field="state"
-                recordId={record?.id || ''}
-                recordType="universal"
-                placeholder="Enter state"
                 onSave={handleInlineSave}
                 className="text-sm"
               />

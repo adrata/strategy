@@ -738,9 +738,11 @@ export const PipelineContent = React.memo(function PipelineContent({
   };
 
   // Handle cache clear
-  const handleClearCache = () => {
+  const handleClearCache = async () => {
     console.log(`🧹 Clearing ${section} cache...`);
     fastSectionData.clearCache();
+    // Also refresh data to show new records immediately
+    await fastSectionData.refresh();
   };
 
   // Handle add record

@@ -75,6 +75,24 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     fetchActions();
   }, [fetchActions]);
 
+  // Listen for action creation events to refresh actions
+  useEffect(() => {
+    const handleActionCreated = (event: CustomEvent) => {
+      const { recordId, recordType: eventRecordType } = event.detail || {};
+      if (recordId === record?.id && eventRecordType === recordType) {
+        console.log('🔄 [OVERVIEW] Action created event matches current record, refreshing actions');
+        // Refresh actions immediately
+        fetchActions();
+      }
+    };
+
+    document.addEventListener('actionCreated', handleActionCreated as EventListener);
+    
+    return () => {
+      document.removeEventListener('actionCreated', handleActionCreated as EventListener);
+    };
+  }, [record?.id, recordType, fetchActions]);
+
   // Show skeleton loader while data is loading
   if (!record) {
     return <CompanyDetailSkeleton message="Loading record details..." />;
@@ -584,7 +602,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
             <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement History</h4>
                 <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Last Contact:</span>
+                <span className="text-sm text-[var(--muted)] w-24">Last Action:</span>
                 <InlineEditField
                   value={recordData.lastContact}
                   field="lastActionDate"
@@ -628,7 +646,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
 
       {/* Last Actions */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Last Actions</h3>
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Top Recent Actions</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           {actionsLoading ? (
             <Skeleton lines={3} className="py-4" />

@@ -75,6 +75,24 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     fetchActions();
   }, [fetchActions]);
 
+  // Listen for action creation events to refresh actions
+  useEffect(() => {
+    const handleActionCreated = (event: CustomEvent) => {
+      const { recordId, recordType: eventRecordType } = event.detail || {};
+      if (recordId === record?.id && eventRecordType === recordType) {
+        console.log('🔄 [OVERVIEW] Action created event matches current record, refreshing actions');
+        // Refresh actions immediately
+        fetchActions();
+      }
+    };
+
+    document.addEventListener('actionCreated', handleActionCreated as EventListener);
+    
+    return () => {
+      document.removeEventListener('actionCreated', handleActionCreated as EventListener);
+    };
+  }, [record?.id, recordType, fetchActions]);
+
   // Show skeleton loader while data is loading
   if (!record) {
     return <CompanyDetailSkeleton message="Loading prospect details..." />;
