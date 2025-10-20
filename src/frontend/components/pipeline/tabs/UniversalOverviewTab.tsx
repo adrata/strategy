@@ -122,6 +122,9 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
 
   // Listen for action creation events to refresh actions
   useEffect(() => {
+    // Only add event listeners on client side
+    if (typeof window === 'undefined') return;
+    
     const handleActionCreated = (event: CustomEvent) => {
       const { recordId, recordType: eventRecordType } = event.detail || {};
       if (recordId === record?.id && eventRecordType === recordType) {
