@@ -11,6 +11,8 @@ import { createPortal } from 'react-dom';
 // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
 // import { usePipelineData } from '@/platform/stores/PipelineDataStore';
 import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useUnifiedAuth } from '@/platform/auth';
+import { useTablePreferences } from '@/platform/hooks/useTablePreferences';
 import { 
   FunnelIcon, 
   Bars3BottomLeftIcon, 
@@ -40,6 +42,10 @@ interface PipelineFiltersProps {
 }
 
 export function PipelineFilters({ section, totalCount, onSearchChange, onVerticalChange, onStatusChange, onPriorityChange, onRevenueChange, onLastContactedChange, onTimezoneChange, onSortChange, onAddRecord, onColumnVisibilityChange, visibleColumns: externalVisibleColumns, onCompanySizeChange, onLocationChange, onTechnologyChange }: PipelineFiltersProps) {
+  // Get workspace context for persistence
+  const { user } = useUnifiedAuth();
+  const workspaceId = user?.activeWorkspaceId || 'default';
+  
   // 🚀 PERFORMANCE: Use single data source from useAcquisitionOS with aggressive caching
   const { data: acquisitionData } = useAcquisitionOS();
   
@@ -87,17 +93,99 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     console.log(`🔍 [OPPORTUNITIES DATA DEBUG] Full data:`, data);
   }
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [verticalFilter, setVerticalFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [priorityFilter, setPriorityFilter] = useState('all');
-  const [revenueFilter, setRevenueFilter] = useState('all');
-  const [lastContactedFilter, setLastContactedFilter] = useState('all');
-  const [timezoneFilter, setTimezoneFilter] = useState('all');
-  // New seller-specific filter states
-  const [companySizeFilter, setCompanySizeFilter] = useState('all');
-  const [locationFilter, setLocationFilter] = useState('all');
-  const [technologyFilter, setTechnologyFilter] = useState('all');
+  // Column options - optimized for leads section
+  const getColumnOptions = () => {
+    const baseOptions = [
+      { value: 'all', label: 'All Columns', icon: '📋' },
+      { value: 'rank', label: 'Rank', icon: '🏅' },
+      { value: 'company', label: 'Company', icon: '🏢' },
+      { value: 'name', label: 'Name', icon: '👤' },
+      { value: 'state', label: 'State', icon: '📍' },
+      { value: 'title', label: 'Title', icon: '💼' },
+      { value: 'nextAction', label: 'Next Action', icon: '⏭️' },
+      { value: 'lastAction', label: 'Last Action', icon: '📅' },
+      { value: 'status', label: section === 'opportunities' ? 'Stage' : section === 'speedrun' ? 'Stage' : 'Status', icon: '📊' },
+      { value: 'industry', label: 'Industry', icon: '🏭' },
+      { value: 'email', label: 'Email', icon: '📧' },
+      { value: 'phone', label: 'Phone', icon: '📞' }
+    ];
+
+    // Filter based on section
+    if (section === 'leads') {
+      return baseOptions.filter(option => 
+        ['all', 'rank', 'company', 'name', 'state', 'title', 'nextAction', 'lastAction'].includes(option.value)
+      );
+    }
+    
+    if (section === 'people') {
+      return baseOptions.filter(option => 
+        ['all', 'rank', 'company', 'title', 'role', 'lastAction', 'nextAction'].includes(option.value)
+      );
+    }
+    
+    if (section === 'companies') {
+      return baseOptions.filter(option => 
+        ['all', 'rank', 'company', 'state', 'lastAction', 'nextAction', 'actions'].includes(option.value)
+      );
+    }
+    
+    if (section === 'speedrun') {
+      return baseOptions.filter(option => 
+        ['all', 'rank', 'company', 'name', 'status', 'nextAction', 'lastAction', 'actions'].includes(option.value)
+      );
+    }
+    
+    return baseOptions;
+  };
+
+  // Get column options first (needed for default columns)
+  const columnOptions = getColumnOptions();
+  
+  // Get default columns for the section
+  const getAllAvailableColumns = () => {
+    return columnOptions.filter(option => option.value !== 'all').map(option => option.value);
+  };
+  
+  // Initialize persistence hook with section-specific defaults
+  const defaultColumns = externalVisibleColumns || getAllAvailableColumns();
+  const defaultSortField = section === 'prospects' ? 'lastContactDate' : 'rank';
+  const defaultSortDirection = section === 'prospects' ? 'asc' : 'asc';
+  
+  const {
+    preferences,
+    setSearchQuery,
+    setStatusFilter,
+    setPriorityFilter,
+    setVerticalFilter,
+    setRevenueFilter,
+    setLastContactedFilter,
+    setTimezoneFilter,
+    setCompanySizeFilter,
+    setLocationFilter,
+    setTechnologyFilter,
+    setSortField,
+    setSortDirection,
+    setVisibleColumns,
+    activeFilterCount,
+    hasNonDefaultSort,
+    hasNonDefaultColumns
+  } = useTablePreferences(workspaceId, section, defaultColumns, defaultSortField, defaultSortDirection);
+  
+  // Extract values from preferences for easier access
+  const {
+    searchQuery,
+    statusFilter,
+    priorityFilter,
+    verticalFilter,
+    revenueFilter,
+    lastContactedFilter,
+    timezoneFilter,
+    companySizeFilter,
+    locationFilter,
+    technologyFilter,
+    sortField: sortBy,
+    visibleColumns
+  } = preferences;
   
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -304,7 +392,6 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   // Show priority filter for relevant sections
   const showPriorityFilter = ['leads', 'prospects', 'opportunities', 'speedrun'].includes(section);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [sortBy, setSortBy] = useState('rank');
   const [previousSortBy, setPreviousSortBy] = useState('rank');
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isColumnsDropdownOpen, setIsColumnsDropdownOpen] = useState(false);
@@ -435,60 +522,6 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
 
   const sortOptions = getSortOptions();
 
-  // Column options - optimized for leads section
-  const getColumnOptions = () => {
-    const baseOptions = [
-      { value: 'all', label: 'All Columns', icon: '📋' },
-      { value: 'rank', label: 'Rank', icon: '🏅' },
-      { value: 'company', label: 'Company', icon: '🏢' },
-      { value: 'name', label: 'Name', icon: '👤' },
-      { value: 'state', label: 'State', icon: '📍' },
-      { value: 'title', label: 'Title', icon: '💼' },
-      { value: 'nextAction', label: 'Next Action', icon: '⏭️' },
-      { value: 'lastAction', label: 'Last Action', icon: '📅' },
-      { value: 'status', label: section === 'opportunities' ? 'Stage' : section === 'speedrun' ? 'Stage' : 'Status', icon: '📊' },
-      { value: 'industry', label: 'Industry', icon: '🏭' },
-      { value: 'email', label: 'Email', icon: '📧' },
-      { value: 'phone', label: 'Phone', icon: '📞' }
-    ];
-
-    // Filter based on section
-    if (section === 'leads') {
-      return baseOptions.filter(option => 
-        ['all', 'rank', 'company', 'name', 'state', 'title', 'nextAction', 'lastAction'].includes(option.value)
-      );
-    }
-    
-    if (section === 'people') {
-      return baseOptions.filter(option => 
-        ['all', 'rank', 'company', 'title', 'role', 'lastAction', 'nextAction'].includes(option.value)
-      );
-    }
-    
-    if (section === 'companies') {
-      return baseOptions.filter(option => 
-        ['all', 'rank', 'company', 'state', 'lastAction', 'nextAction', 'actions'].includes(option.value)
-      );
-    }
-    
-    if (section === 'speedrun') {
-      return baseOptions.filter(option => 
-        ['all', 'rank', 'company', 'name', 'status', 'nextAction', 'lastAction', 'actions'].includes(option.value)
-      );
-    }
-    
-    return baseOptions;
-  };
-
-  const columnOptions = getColumnOptions();
-
-  // Get all available columns for the current section
-  const getAllAvailableColumns = () => {
-    return columnOptions.filter(option => option.value !== 'all').map(option => option.value);
-  };
-
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(externalVisibleColumns || getAllAvailableColumns());
-
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -518,7 +551,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const handleSortSelect = (value: string) => {
     // Store current value as previous before changing
     setPreviousSortBy(sortBy);
-    setSortBy(value);
+    setSortField(value);
     // Apply sort immediately for real-time feedback
     onSortChange?.(value);
     console.log(`🔧 [SORT FIX] Real-time sort applied: ${value} (previous: ${sortBy})`);
@@ -661,6 +694,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
           <span className="block truncate text-[var(--foreground)]">
             Filter
           </span>
+          {activeFilterCount > 0 && (
+            <span className="ml-1.5 bg-blue-600 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
+              {activeFilterCount}
+            </span>
+          )}
         </button>
 
         {/* Enhanced Filter Dropdown Menu - Status and Last Contacted */}
@@ -797,6 +835,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                   <span className="block truncate text-[var(--foreground)]">
                     Sort
                   </span>
+                  {hasNonDefaultSort && (
+                    <span className="ml-1.5 bg-blue-600 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
+                      1
+                    </span>
+                  )}
                 </button>
 
                 {/* Sort Dropdown Menu - Match Filter styling */}
@@ -900,6 +943,11 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                   <span className="block truncate text-[var(--foreground)]">
                     {section === 'opportunities' ? 'Show' : 'Columns'}
                   </span>
+                  {hasNonDefaultColumns && (
+                    <span className="ml-1.5 bg-blue-600 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
+                      1
+                    </span>
+                  )}
                 </button>
 
                 {/* Columns Dropdown Menu - Match Filter/Sort styling */}

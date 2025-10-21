@@ -9,7 +9,6 @@ import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-t
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
 import { usePipelineActions } from '@/platform/hooks/usePipelineActions';
 import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
-import { getLeadsNextAction } from '@/platform/utils/actionUtils';
 import { TableHeader } from './table/TableHeader';
 import { TableRow } from './table/TableRow';
 import { Pagination } from './table/Pagination';
@@ -411,8 +410,10 @@ export function PipelineTable({
                         break;
                       case 'next action':
                         // Format next action with timing badge and description
-                        const nextAction = getLeadsNextAction(record, index);
-                        cellContent = `${nextAction.timing} | ${nextAction.action}`;
+                        const nextActionText = record['nextAction'] || record['next_action'] || 'No action planned';
+                        const nextActionDate = record['nextActionDate'] || record['next_action_date'];
+                        const timing = nextActionDate ? getRealtimeActionTiming(nextActionDate) : 'No date';
+                        cellContent = `${timing} | ${nextActionText}`;
                         break;
                       case 'stage':
                         cellContent = record['stage'] || record['status'] || '-';

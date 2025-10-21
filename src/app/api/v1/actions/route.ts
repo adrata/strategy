@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 import { cache } from '@/platform/services/unified-cache';
+import { isEngagementAction } from '@/platform/utils/actionUtils';
 
 const prisma = new PrismaClient();
 
@@ -342,8 +343,8 @@ export async function POST(request: NextRequest) {
       console.error('⚠️ [ACTIONS API] Background next action generation failed:', error);
     });
 
-    // Update person's lastAction fields if action is completed
-    if (action.personId && action.status === 'COMPLETED') {
+    // Update person's lastAction fields if action is completed AND is a real engagement action
+    if (action.personId && action.status === 'COMPLETED' && isEngagementAction(action.type)) {
       try {
         await prisma.people.update({
           where: { id: action.personId },
@@ -353,18 +354,25 @@ export async function POST(request: NextRequest) {
             actionStatus: action.status
           }
         });
-        console.log('✅ [ACTIONS API] Updated person lastAction fields:', {
+        console.log('✅ [ACTIONS API] Updated person lastAction fields for engagement action:', {
           personId: action.personId,
+          actionType: action.type,
           lastAction: action.subject,
           lastActionDate: action.completedAt || action.createdAt
         });
       } catch (error) {
         console.error('❌ [ACTIONS API] Failed to update person lastAction fields:', error);
       }
+    } else if (action.personId && action.status === 'COMPLETED' && !isEngagementAction(action.type)) {
+      console.log('⏭️ [ACTIONS API] Skipping lastAction update for system action:', {
+        personId: action.personId,
+        actionType: action.type,
+        subject: action.subject
+      });
     }
 
-    // Update company's lastAction fields if action is completed
-    if (action.companyId && action.status === 'COMPLETED') {
+    // Update company's lastAction fields if action is completed AND is a real engagement action
+    if (action.companyId && action.status === 'COMPLETED' && isEngagementAction(action.type)) {
       try {
         await prisma.companies.update({
           where: { id: action.companyId },
@@ -374,14 +382,21 @@ export async function POST(request: NextRequest) {
             actionStatus: action.status
           }
         });
-        console.log('✅ [ACTIONS API] Updated company lastAction fields:', {
+        console.log('✅ [ACTIONS API] Updated company lastAction fields for engagement action:', {
           companyId: action.companyId,
+          actionType: action.type,
           lastAction: action.subject,
           lastActionDate: action.completedAt || action.createdAt
         });
       } catch (error) {
         console.error('❌ [ACTIONS API] Failed to update company lastAction fields:', error);
       }
+    } else if (action.companyId && action.status === 'COMPLETED' && !isEngagementAction(action.type)) {
+      console.log('⏭️ [ACTIONS API] Skipping lastAction update for system action:', {
+        companyId: action.companyId,
+        actionType: action.type,
+        subject: action.subject
+      });
     }
 
     // Invalidate speedrun cache if action is for a person

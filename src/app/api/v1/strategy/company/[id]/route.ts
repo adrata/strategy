@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getSecureApiContext } from '@/platform/services/security-service';
-import { createErrorResponse } from '@/platform/services/error-service';
+import { getSecureApiContext, createErrorResponse } from '@/platform/services/secure-api-helper';
 import { companyStrategyService, CompanyStrategyRequest } from '@/platform/services/company-strategy-service';
 
 /**

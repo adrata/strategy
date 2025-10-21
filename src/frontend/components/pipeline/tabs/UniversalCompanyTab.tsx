@@ -315,7 +315,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Legal Name:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.legalName)}
+                  value={record?.legalName || ''}
                   field="legalName"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -327,7 +327,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Trading Name:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.tradingName)}
+                  value={record?.tradingName || ''}
                   field="tradingName"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -339,7 +339,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Local Name:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.localName)}
+                  value={record?.localName || ''}
                   field="localName"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -386,7 +386,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Phone:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.phone)}
+                  value={record?.phone || ''}
                   field="phone"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -405,7 +405,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Email:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.email)}
+                  value={record?.email || ''}
                   field="email"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -418,7 +418,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Fax:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.fax)}
+                  value={record?.fax || ''}
                   field="fax"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -443,7 +443,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
                 <InlineEditField
-                  value={formatEmptyValue(companyData.linkedin)}
+                  value={companyData.linkedin || ''}
                   field="linkedinUrl"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -555,7 +555,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Address:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.address)}
+                  value={record?.address || ''}
                   field="address"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -567,7 +567,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">City:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.city)}
+                  value={record?.city || ''}
                   field="city"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -579,7 +579,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">State:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.state)}
+                  value={record?.state || ''}
                   field="state"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -591,7 +591,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Country:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.country)}
+                  value={record?.country || ''}
                   field="country"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -603,7 +603,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Postal Code:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.postalCode)}
+                  value={record?.postalCode || ''}
                   field="postalCode"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -622,7 +622,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">HQ Street:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.hqStreet)}
+                  value={record?.hqStreet || ''}
                   field="hqStreet"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -634,7 +634,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">HQ City:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.hqCity)}
+                  value={record?.hqCity || ''}
                   field="hqCity"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -646,7 +646,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">HQ State:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.hqState)}
+                  value={record?.hqState || ''}
                   field="hqState"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -658,7 +658,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">HQ Zip:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.hqZipcode)}
+                  value={record?.hqZipcode || ''}
                   field="hqZipcode"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -670,7 +670,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">HQ Full:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.hqFullAddress)}
+                  value={record?.hqFullAddress || ''}
                   field="hqFullAddress"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -696,7 +696,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Industry:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.industry)}
+                  value={record?.industry || ''}
                   field="industry"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -708,7 +708,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Target Industry:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.customFields?.targetIndustry)}
+                  value={record?.customFields?.targetIndustry || ''}
                   field="targetIndustry"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -721,7 +721,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Sector:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.sector)}
+                  value={record?.sector || ''}
                   field="sector"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -746,7 +746,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Currency:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.currency)}
+                  value={record?.currency || ''}
                   field="currency"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -791,7 +791,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Domain:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.domain)}
+                  value={record?.domain || ''}
                   field="domain"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -803,7 +803,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Reg Number:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.registrationNumber)}
+                  value={record?.registrationNumber || ''}
                   field="registrationNumber"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -815,7 +815,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Tax ID:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.taxId)}
+                  value={record?.taxId || ''}
                   field="taxId"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -827,7 +827,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">VAT Number:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record?.vatNumber)}
+                  value={record?.vatNumber || ''}
                   field="vatNumber"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}

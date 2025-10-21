@@ -2,6 +2,8 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
+import { StrategySkeleton } from '@/frontend/components/strategy/StrategySkeleton';
+import { StrategySummaryCard } from '@/frontend/components/strategy/StrategySummaryCard';
 // import { useDeepValueReports } from '../hooks/useDeepValueReports'; // Temporarily disabled
 
 interface UniversalInsightsTabProps {
@@ -37,6 +39,20 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
     }
   }, [record?.id]);
 
+  // Auto-generate strategy if no data exists
+  useEffect(() => {
+    if (record?.id && !strategyData && !isGeneratingStrategy) {
+      // Check if strategy fields exist in customFields
+      const hasStrategy = record.customFields?.strategySituation && 
+                         record.customFields?.strategyComplication && 
+                         record.customFields?.strategyFutureState;
+      
+      if (!hasStrategy) {
+        handleGenerateStrategy();
+      }
+    }
+  }, [record?.id, strategyData, isGeneratingStrategy]);
+
   const loadStrategyData = async () => {
     try {
       const response = await fetch(`/api/v1/strategy/generate?personId=${record.id}`);
@@ -44,6 +60,22 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
       
       if (data.success && data.data.hasStrategy) {
         setStrategyData(data.data);
+      } else {
+        // If no strategy exists, check if we have data in customFields
+        const customFields = record.customFields || {};
+        if (customFields.strategySituation && customFields.strategyComplication && customFields.strategyFutureState) {
+          setStrategyData({
+            situation: customFields.strategySituation,
+            complication: customFields.strategyComplication,
+            futureState: customFields.strategyFutureState,
+            strategySummary: customFields.strategySummary || '',
+            archetype: customFields.buyerGroupArchetype ? {
+              id: customFields.buyerGroupArchetype,
+              name: customFields.archetypeName || '',
+              role: customFields.archetypeRole || ''
+            } : null
+          });
+        }
       }
     } catch (error) {
       console.error('Failed to load strategy data:', error);
@@ -81,6 +113,38 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
       setStrategyError('Failed to generate strategy summary. Please try again.');
     } finally {
       setIsGeneratingStrategy(false);
+    }
+  };
+
+  const handleStrategySave = async (field: string, content: string) => {
+    try {
+      const response = await fetch('/api/v1/strategy/update', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          personId: record.id,
+          field,
+          content
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Update local state
+        setStrategyData(prev => ({
+          ...prev,
+          [field]: content
+        }));
+        handleSuccess(`${field} updated successfully!`);
+      } else {
+        throw new Error(data.message || 'Failed to update strategy');
+      }
+    } catch (error) {
+      console.error('Strategy update failed:', error);
+      throw error;
     }
   };
   
@@ -240,89 +304,48 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-[var(--foreground)]">Strategy Summary</h3>
-          <button
-            onClick={handleGenerateStrategy}
-            disabled={isGeneratingStrategy}
-            className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-          >
-            {isGeneratingStrategy ? 'Generating...' : 'Generate Strategy'}
-          </button>
         </div>
         
         {/* Strategy Summary Content */}
-        {strategyData ? (
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
-            <div className="text-sm text-[var(--foreground)] leading-relaxed mb-4">
-              {strategyData.strategySummary}
-            </div>
-            
-            {/* Archetype Badge */}
-            {strategyData.archetype && (
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                  {strategyData.archetype.role}
-                </span>
-                <span className="text-sm text-[var(--muted)]">
-                  {strategyData.archetype.name}
-                </span>
-              </div>
-            )}
-            
-            {/* Three Column Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Situation */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  Situation
-                </h4>
-                <div className="text-sm text-[var(--muted)] leading-relaxed">
-                  {strategyData.situation}
-                </div>
-              </div>
-              
-              {/* Complication */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  Complication
-                </h4>
-                <div className="text-sm text-[var(--muted)] leading-relaxed">
-                  {strategyData.complication}
-                </div>
-              </div>
-              
-              {/* Future State */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  Future State
-                </h4>
-                <div className="text-sm text-[var(--muted)] leading-relaxed">
-                  {strategyData.futureState}
-                </div>
-              </div>
-            </div>
-          </div>
+        {isGeneratingStrategy ? (
+          <StrategySkeleton />
         ) : (
           <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
-            <div className="text-center py-8">
-              <div className="text-sm text-[var(--muted)] mb-4">
-                No strategy summary available. Click "Generate Strategy" to create a personalized strategy summary.
-              </div>
-              <button
-                onClick={handleGenerateStrategy}
-                disabled={isGeneratingStrategy}
-                className="px-6 py-3 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-              >
-                {isGeneratingStrategy ? 'Generating Strategy...' : 'Generate Strategy Summary'}
-              </button>
-              {strategyError && (
-                <div className="mt-4 text-sm text-red-600">
-                  {strategyError}
-                </div>
-              )}
+            {/* Three Column Layout with Intelligence Boxes */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <StrategySummaryCard
+                title="Situation"
+                content={strategyData?.situation || record?.customFields?.strategySituation || ''}
+                color="green"
+              />
+              
+              <StrategySummaryCard
+                title="Complication"
+                content={strategyData?.complication || record?.customFields?.strategyComplication || ''}
+                color="orange"
+              />
+              
+              <StrategySummaryCard
+                title="Future State"
+                content={strategyData?.futureState || record?.customFields?.strategyFutureState || ''}
+                color="blue"
+              />
             </div>
+            
+            {/* Show error if generation failed */}
+            {strategyError && (
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="text-sm text-red-600 mb-2">
+                  Strategy generation failed: {strategyError}
+                </div>
+                <button
+                  onClick={handleGenerateStrategy}
+                  className="px-4 py-2 bg-red-100 text-red-700 border border-red-200 rounded-lg hover:bg-red-200 text-sm font-medium"
+                >
+                  Retry Generation
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

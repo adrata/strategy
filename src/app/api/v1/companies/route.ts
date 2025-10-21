@@ -231,9 +231,41 @@ export async function GET(request: NextRequest) {
         prisma.companies.count({ where }),
       ]);
 
+      // 🚀 COMPUTE LAST ACTION: Enrich with actual last action from actions table
+      const enrichedCompanies = await Promise.all(companies.map(async (company) => {
+        try {
+          const lastAction = await prisma.actions.findFirst({
+            where: { 
+              companyId: company.id, 
+              deletedAt: null,
+              status: 'COMPLETED'
+            },
+            orderBy: { completedAt: 'desc' },
+            select: { 
+              subject: true, 
+              completedAt: true, 
+              type: true,
+              createdAt: true
+            }
+          });
+          
+          return {
+            ...company,
+            // Use computed lastAction if available, otherwise fall back to stored fields
+            lastAction: lastAction?.subject || company.lastAction,
+            lastActionDate: lastAction?.completedAt || company.lastActionDate,
+            lastActionType: lastAction?.type || null
+          };
+        } catch (error) {
+          console.error(`❌ [COMPANIES API] Error computing lastAction for company ${company.id}:`, error);
+          // Return original company data if computation fails
+          return company;
+        }
+      }));
+
       result = {
         success: true,
-        data: companies,
+        data: enrichedCompanies,
         meta: {
           timestamp: new Date().toISOString(),
           pagination: {
@@ -438,8 +470,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Clean and validate website URL format if provided
-    if (body.website && typeof body.website === 'string' && body.website.trim().length > 0) {
+    // Clean and validate website URL only if it's being explicitly provided as a non-empty value
+    if (body.website !== undefined && typeof body.website === 'string' && body.website.trim().length > 0) {
       const cleanedWebsite = cleanWebsiteUrl(body.website);
       try {
         new URL(cleanedWebsite);

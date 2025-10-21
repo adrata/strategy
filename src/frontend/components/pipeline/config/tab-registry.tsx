@@ -58,6 +58,7 @@ import { UniversalHistoryTab } from '../tabs/UniversalHistoryTab';
 import { UniversalBuyerGroupTab } from '../tabs/UniversalBuyerGroupTab';
 import { UniversalProfileTab as ComprehensiveProfileTab } from '../tabs/UniversalProfileTab';
 import { UniversalCompanyTab as ComprehensiveCompanyTab } from '../tabs/UniversalCompanyTab';
+import { CompanyOverviewTab } from '../tabs/CompanyOverviewTab';
 
 // Tab configuration interface
 export interface TabConfig {
@@ -116,7 +117,8 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
   // Industry and company tabs
   'industry': UniversalIndustryTab,
   'industry-intel': UniversalIndustryIntelTab,
-  'company': ComprehensiveCompanyTab,
+  'company': CompanyOverviewTab,
+  'company-info': CompanyOverviewTab,
   'company-intel': UniversalCompanyIntelTab,
   
   // Communication and engagement tabs
@@ -148,24 +150,25 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
 export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   leads: [
     { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'strategy', label: 'Strategy', component: UniversalInsightsTab },
-    { id: 'value', label: 'Value', component: ValueTab },
+    { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
-    { id: 'notes', label: 'Notes', component: UniversalActionsTab },
-    { id: 'timeline', label: 'Timeline', component: UniversalActionsTab }
+    { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
   prospects: [
     { id: 'overview', label: 'Overview', component: ProspectOverviewTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'strategy', label: 'Strategy', component: UniversalInsightsTab },
-    { id: 'value', label: 'Value', component: ValueTab },
+    { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
-    { id: 'notes', label: 'Notes', component: UniversalActionsTab },
-    { id: 'timeline', label: 'Timeline', component: UniversalActionsTab }
+    { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
   opportunities: [
     { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'deal-intel', label: 'Deal Intel', component: UniversalDealIntelTab },
     { id: 'stakeholders', label: 'Stakeholders', component: UniversalStakeholdersTab },
     { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
@@ -178,30 +181,31 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   companies: [
     { id: 'overview', label: 'Overview', component: UniversalCompanyTab },
     { id: 'strategy', label: 'Strategy', component: UniversalCompanyIntelTab },
+    { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'news', label: 'News', component: UniversalNewsTab },
     { id: 'people', label: 'People', component: UniversalPeopleTab },
     { id: 'value', label: 'Value', component: ValueTab },
     { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
     { id: 'opportunities', label: 'Opportunities', component: UniversalOpportunitiesTab },
-    { id: 'notes', label: 'Notes', component: UniversalActionsTab },
-    { id: 'timeline', label: 'Timeline', component: UniversalActionsTab }
+    { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
   people: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'strategy', label: 'Strategy', component: ComprehensiveInsightsTab },
-    { id: 'value', label: 'Value', component: ValueTab },
+    { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
-    { id: 'notes', label: 'Notes', component: UniversalActionsTab },
-    { id: 'timeline', label: 'Timeline', component: UniversalActionsTab }
+    { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
   speedrun: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'strategy', label: 'Strategy', component: ComprehensiveInsightsTab },
+    { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
-    { id: 'notes', label: 'Notes', component: UniversalActionsTab },
-    { id: 'timeline', label: 'Timeline', component: UniversalActionsTab }
+    { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
   clients: [

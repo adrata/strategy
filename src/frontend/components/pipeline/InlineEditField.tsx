@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PencilIcon, CheckIcon, XMarkIcon, ArrowTopRightOnSquareIcon, ClipboardIcon } from '@heroicons/react/24/outline';
 import { InlineCompanySelector } from './InlineCompanySelector';
 import { DatePicker } from '@/platform/ui/components/DatePicker';
+import { formatUrlForDisplay, getUrlDisplayName } from '@/platform/utils/urlFormatter';
 
 interface InlineEditFieldProps {
   value: string | null;
@@ -80,7 +81,9 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   }, [value, isSaving]);
 
   const handleEditStart = () => {
-    setEditValue(value ?? '');
+    // Clear dash placeholder when starting edit
+    const initialValue = value === '-' ? '' : (value ?? '');
+    setEditValue(initialValue);
     setIsEditing(true);
   };
 
@@ -257,6 +260,11 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
       return option ? option.label : value;
     }
     
+    // For URL fields, format for display
+    if (isUrlField() && value && typeof value === 'string' && value.trim() !== '' && value !== '-') {
+      return formatUrlForDisplay(value, { maxLength: 60, preserveEnding: 20 });
+    }
+    
     return value;
   };
 
@@ -270,6 +278,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
           rel="noopener noreferrer"
           className={`${className} text-blue-600 hover:text-blue-700 hover:underline transition-colors`}
           onClick={(e) => e.stopPropagation()} // Prevent triggering edit mode when clicking link
+          title={value} // Show full URL on hover
         >
           {getDisplayValue()}
         </a>
@@ -396,25 +405,60 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
     setIsEditing(false);
   };
 
+  const handleQuickDate = (dateType: 'today' | 'yesterday') => {
+    const today = new Date();
+    let targetDate: Date;
+    
+    if (dateType === 'today') {
+      targetDate = new Date(today);
+    } else {
+      targetDate = new Date(today);
+      targetDate.setDate(today.getDate() - 1);
+    }
+    
+    handleSave(targetDate.toISOString());
+  };
+
   if (isEditing) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="flex-1">
-          <DatePicker
-            value={value ? new Date(value) : undefined}
-            onChange={handleDateChange}
-            placeholder={placeholder}
-            className={className}
-          />
+      <div className="flex flex-col gap-2">
+        {/* Quick action buttons */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleQuickDate('today')}
+            disabled={isLoading}
+            className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50"
+          >
+            Today
+          </button>
+          <button
+            onClick={() => handleQuickDate('yesterday')}
+            disabled={isLoading}
+            className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50"
+          >
+            Yesterday
+          </button>
         </div>
-        <button
-          onClick={handleEditCancel}
-          disabled={isLoading}
-          className="p-1 text-[var(--error)] hover:text-[var(--error-text)] disabled:opacity-50"
-          title="Cancel"
-        >
-          <XMarkIcon className="h-4 w-4" />
-        </button>
+        
+        {/* Date picker */}
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <DatePicker
+              value={value ? new Date(value) : undefined}
+              onChange={handleDateChange}
+              placeholder={placeholder}
+              className={className}
+            />
+          </div>
+          <button
+            onClick={handleEditCancel}
+            disabled={isLoading}
+            className="p-1 text-[var(--error)] hover:text-[var(--error-text)] disabled:opacity-50"
+            title="Cancel"
+          >
+            <XMarkIcon className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     );
   }

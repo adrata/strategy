@@ -474,12 +474,6 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      {/* Action Type Badge - Show prominently */}
-                      {event.metadata?.type && (
-                        <span className="px-3 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full whitespace-nowrap border border-[var(--accent-border)]">
-                          {event.metadata.type}
-                        </span>
-                      )}
                       <InlineEditField
                         value={event.title}
                         field="title"

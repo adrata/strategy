@@ -511,11 +511,42 @@ Focus on the most strategic next move that will advance the relationship toward 
       // Update nextAction for person if action has personId
       if (action.personId) {
         await this.generateNextAction(action.personId, 'person');
+        
+        // 🚀 COMPANY-PEOPLE LINKAGE: Also update company if person has one
+        try {
+          const person = await prisma.people.findUnique({
+            where: { id: action.personId },
+            select: { companyId: true }
+          });
+          if (person?.companyId) {
+            await this.generateNextAction(person.companyId, 'company');
+            console.log(`✅ [NEXT ACTION] Updated company nextAction due to person action: ${person.companyId}`);
+          }
+        } catch (error) {
+          console.error('⚠️ [NEXT ACTION] Failed to update company from person action:', error);
+        }
       }
 
       // Update nextAction for company if action has companyId
       if (action.companyId) {
         await this.generateNextAction(action.companyId, 'company');
+        
+        // 🚀 COMPANY-PEOPLE LINKAGE: Also update key people at the company
+        try {
+          const keyPeople = await prisma.people.findMany({
+            where: { companyId: action.companyId },
+            orderBy: { globalRank: 'asc' },
+            take: 3, // Top 3 people at company
+            select: { id: true }
+          });
+          
+          for (const person of keyPeople) {
+            await this.generateNextAction(person.id, 'person');
+          }
+          console.log(`✅ [NEXT ACTION] Updated ${keyPeople.length} key people nextActions due to company action: ${action.companyId}`);
+        } catch (error) {
+          console.error('⚠️ [NEXT ACTION] Failed to update people from company action:', error);
+        }
       }
 
     } catch (error) {

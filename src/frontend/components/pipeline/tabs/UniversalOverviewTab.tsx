@@ -6,6 +6,7 @@ import { CompanyDetailSkeleton, Skeleton } from '@/platform/ui/components/Loader
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 import { authFetch } from '@/platform/api-fetch';
 import { useUnifiedAuth } from '@/platform/auth';
+import { formatUrlForDisplay, getUrlDisplayName } from '@/platform/utils/urlFormatter';
 
 interface UniversalOverviewTabProps {
   recordType: string;
@@ -238,6 +239,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     phone: record?.phone || coresignalData.phone || null,
     linkedin: linkedinUrl || record?.linkedin || record?.linkedinUrl || coresignalData.linkedin_url || null,
     linkedinNavigatorUrl: linkedinNavigatorUrl || record?.linkedinNavigatorUrl || null,
+    linkedinConnectionDate: record?.linkedinConnectionDate || null,
     bio: record?.bio || null,
     
     // Company info - Coresignal data with database fallback
@@ -811,6 +813,19 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleLinkedinNavigatorSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Connection Date:</span>
+                <InlineEditField
+                  value={recordData.linkedinConnectionDate}
+                  field="linkedinConnectionDate"
+                  variant="date"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>

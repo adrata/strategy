@@ -414,7 +414,7 @@ export async function PATCH(
       'buyerGroupStatus', 'careerTimeline', 'coresignalData', 'currentCompany',
       'currentRole', 'dataCompleteness', 'decisionMaking', 'degrees',
       'emailConfidence', 'enrichedData', 'enrichmentScore', 'enrichmentSources',
-      'fieldsOfStudy', 'graduationYears', 'industryExperience', 'industrySkills',
+      'engagementPriority', 'fieldsOfStudy', 'graduationYears', 'industryExperience', 'industrySkills',
       'influenceScore', 'institutions', 'languages', 'leadershipExperience',
       'mobileVerified', 'phoneConfidence', 'preferredContact', 'previousRoles',
       'publications', 'responseTime', 'roleHistory', 'rolePromoted',

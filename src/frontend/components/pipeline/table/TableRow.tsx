@@ -219,10 +219,28 @@ export function TableRow({
                 }
                 
                 const truncatedName = companyName.length > 10 ? companyName.substring(0, 10) + '...' : companyName;
+                
+                const handleCompanyClick = (e: React.MouseEvent) => {
+                  e.stopPropagation(); // Prevent row click
+                  if (companyName && companyName !== '-') {
+                    // Navigate to company record
+                    window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
+                  }
+                };
+                
                 return (
                   <td key="company" className={textClasses}>
                     <div className="truncate max-w-20" title={companyName}>
-                      {truncatedName}
+                      {companyName && companyName !== '-' ? (
+                        <button
+                          onClick={handleCompanyClick}
+                          className="text-[#2563EB] hover:text-[#1d4ed8] hover:underline cursor-pointer transition-colors"
+                        >
+                          {truncatedName}
+                        </button>
+                      ) : (
+                        <span className="text-[var(--muted)]">{truncatedName}</span>
+                      )}
                     </div>
                   </td>
                 );

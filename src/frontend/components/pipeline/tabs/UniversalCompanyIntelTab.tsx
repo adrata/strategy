@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { InlineEditField } from '../InlineEditField';
+import { StrategySkeleton } from '@/frontend/components/strategy/StrategySkeleton';
 
 interface UniversalCompanyIntelTabProps {
   record: any;
@@ -51,6 +52,8 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
   
   // Strategy state
   const [strategyData, setStrategyData] = useState<CompanyStrategyData | null>(null);
+  const [isGeneratingStrategy, setIsGeneratingStrategy] = useState(false);
+  const [strategyError, setStrategyError] = useState<string | null>(null);
 
   // Load existing strategy data on component mount
   useEffect(() => {
@@ -58,6 +61,16 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
       loadStrategyData();
     }
   }, [record?.id]);
+
+  // Auto-generate strategy if no data exists
+  useEffect(() => {
+    if (record?.id && !strategyData && !isGeneratingStrategy) {
+      const hasStrategy = record.customFields?.strategyData;
+      if (!hasStrategy) {
+        handleGenerateStrategy();
+      }
+    }
+  }, [record?.id, strategyData, isGeneratingStrategy]);
 
   const loadStrategyData = async () => {
     if (!record?.id) return;
@@ -83,6 +96,30 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     }
   };
 
+  const handleGenerateStrategy = async () => {
+    setIsGeneratingStrategy(true);
+    setStrategyError(null);
+    
+    try {
+      const response = await fetch(`/api/v1/strategy/company/${record.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ forceRegenerate: false })
+      });
+      
+      const data = await response.json();
+      if (data.success && data.data) {
+        setStrategyData(data.data);
+      } else {
+        setStrategyError(data.error || 'Failed to generate strategy');
+      }
+    } catch (error) {
+      setStrategyError('Failed to generate strategy');
+    } finally {
+      setIsGeneratingStrategy(false);
+    }
+  };
+
 
   if (!record) {
     return (
@@ -101,7 +138,9 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
         </div>
         
         {/* Strategy Summary Content */}
-        {strategyData ? (
+        {isGeneratingStrategy ? (
+          <StrategySkeleton />
+        ) : strategyData ? (
           <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
             <div className="text-sm text-[var(--foreground)] leading-relaxed mb-4">
               {strategyData.strategySummary}
@@ -202,6 +241,20 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                 </div>
               </div>
             )}
+          </div>
+        ) : strategyError ? (
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+            <div className="text-center py-8">
+              <div className="text-sm text-red-600 mb-4">
+                Failed to generate strategy: {strategyError}
+              </div>
+              <button 
+                onClick={handleGenerateStrategy}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
           </div>
         ) : (
           <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">

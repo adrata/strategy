@@ -15,7 +15,7 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, subtitle, trend, trendValue, color = 'default' }: MetricCardProps) {
   const colorClasses = {
-    default: 'border-[var(--border)] bg-[var(--background)]',
+    default: 'border-[var(--border)] bg-white',
     success: 'border-green-500 bg-green-100',
     warning: 'border-[var(--border)] bg-white',
     danger: 'border-red-500 bg-red-100'
@@ -195,7 +195,7 @@ export function MetricsDashboard() {
             subtitle="Total outreach"
             trend={contactsTrend}
             trendValue={`vs yesterday: ${contactsChange > 0 ? '+' : ''}${contactsChange}`}
-            color={metrics.raw?.contactsToday > 30 ? 'success' : metrics.raw?.contactsToday > 15 ? 'warning' : 'danger'}
+            color={metrics.smartStatus?.totalActions?.color || 'default'}
           />
 
           {/* Calls Today */}
@@ -203,7 +203,7 @@ export function MetricsDashboard() {
             title="Calls Today"
             value={metrics.callsToday || 0}
             subtitle="Phone activity"
-            color={metrics.raw?.callsToday > 10 ? 'success' : metrics.raw?.callsToday > 5 ? 'warning' : 'danger'}
+            color={metrics.smartStatus?.phone?.color || 'default'}
           />
 
           {/* Emails Today */}
@@ -211,7 +211,7 @@ export function MetricsDashboard() {
             title="Emails Today"
             value={metrics.emailsToday || 0}
             subtitle="Email outreach"
-            color={metrics.raw?.emailsToday > 20 ? 'success' : metrics.raw?.emailsToday > 10 ? 'warning' : 'danger'}
+            color={metrics.smartStatus?.emails?.color || 'default'}
           />
 
           {/* Meetings Today */}
@@ -219,7 +219,7 @@ export function MetricsDashboard() {
             title="Meetings Today"
             value={metrics.meetingsToday || 0}
             subtitle="Face-to-face"
-            color={metrics.raw?.meetingsToday > 5 ? 'success' : metrics.raw?.meetingsToday > 2 ? 'warning' : 'danger'}
+            color={metrics.smartStatus?.meetings?.color || 'default'}
           />
 
           {/* New Opportunities Today */}
@@ -227,7 +227,7 @@ export function MetricsDashboard() {
             title="New Opportunities"
             value={metrics.newOpportunitiesToday || 0}
             subtitle="Today"
-            color={metrics.raw?.newOpportunitiesToday > 3 ? 'success' : metrics.raw?.newOpportunitiesToday > 1 ? 'warning' : 'danger'}
+            color={metrics.smartStatus?.opportunities?.color || 'default'}
           />
 
           {/* Deals Closed This Week */}
@@ -235,7 +235,7 @@ export function MetricsDashboard() {
             title="Deals Closed"
             value={metrics.dealsClosedThisWeek || 0}
             subtitle="This week"
-            color={metrics.raw?.dealsClosedThisWeek > 2 ? 'success' : metrics.raw?.dealsClosedThisWeek > 0 ? 'warning' : 'danger'}
+            color={metrics.smartStatus?.clients?.color || 'default'}
           />
 
           {/* Win Rate */}
@@ -243,7 +243,7 @@ export function MetricsDashboard() {
             title="Win Rate"
             value={metrics.winRate || '0%'}
             subtitle="Close rate"
-            color={metrics.raw?.winRate > 50 ? 'success' : metrics.raw?.winRate > 30 ? 'warning' : 'danger'}
+            color={metrics.smartStatus?.conversionRate?.color || 'default'}
           />
 
           {/* Pipeline Value */}
@@ -251,7 +251,7 @@ export function MetricsDashboard() {
             title="Pipeline Value"
             value={metrics.totalPipelineValue || '$0M'}
             subtitle="Total pipeline"
-            color={metrics.raw?.totalPipelineValue > 5000000 ? 'success' : metrics.raw?.totalPipelineValue > 2000000 ? 'warning' : 'danger'}
+            color={metrics.smartStatus?.pipeline?.color || 'default'}
           />
 
           {/* Average Response Time - 9th Metric */}
@@ -259,7 +259,7 @@ export function MetricsDashboard() {
             title="Response Time"
             value={metrics.avgResponseTime || '2.5 hrs'}
             subtitle="Average response"
-            color={metrics.raw?.avgResponseTime < 2 ? 'success' : metrics.raw?.avgResponseTime < 4 ? 'warning' : 'danger'}
+            color={metrics.smartStatus?.responseTime?.color || 'default'}
           />
         </div>
 

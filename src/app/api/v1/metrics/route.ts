@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
       const progress = expected > 0 ? (actual / expected) * 100 : 0;
       
       if (progress >= 110) return { color: 'success', status: 'ahead' };
-      if (progress >= 90) return { color: 'default', status: 'on-track' };
+      if (progress >= 40) return { color: 'default', status: 'on-track' };
       return { color: 'danger', status: 'behind' };
     };
 
@@ -185,10 +185,12 @@ export async function GET(request: NextRequest) {
       })
     ]);
 
-    // Calculate metrics
+    // Calculate metrics - only count the 6 core action types
     console.log('🔍 [METRICS] Calculating metrics...');
-    const thisWeekPeopleActions = thisWeekActions.length;
-    const lastWeekPeopleActions = lastWeekActions.length;
+    const thisWeekPeopleActions = thisWeekActionTypes.phone + thisWeekActionTypes.email + thisWeekActionTypes.meeting + 
+                                  thisWeekActionTypes.linkedinConnection + thisWeekActionTypes.linkedinInMail + thisWeekActionTypes.linkedinMessage;
+    const lastWeekPeopleActions = lastWeekActionTypes.phone + lastWeekActionTypes.email + lastWeekActionTypes.meeting + 
+                                 lastWeekActionTypes.linkedinConnection + lastWeekActionTypes.linkedinInMail + lastWeekActionTypes.linkedinMessage;
     
     // Debug: Log actual action types being stored
     console.log('🔍 [METRICS] This week action types found:', 
@@ -198,43 +200,24 @@ export async function GET(request: NextRequest) {
       lastWeekActions.map(a => a.type).filter(Boolean)
     );
     
-    // Action types breakdown - using actual database values from action modals
+    // Action types breakdown - only count the 6 core action types from CompleteActionModal
     const getActionTypeCount = (actions: any[], type: string) => {
       return actions.filter(action => {
-        const actionType = action.type?.toLowerCase() || '';
+        const actionType = action.type || '';
+        // Exact string matching for the 6 core action types
         switch (type) {
-          case 'call':
-            return actionType === 'call' || 
-                   actionType === 'phone' || 
-                   actionType.includes('phone call') ||
-                   actionType.includes('linkedin connection') ||
-                   actionType.includes('linkedin message');
+          case 'phone':
+            return actionType === 'Phone';
           case 'email':
-            return actionType === 'email' || 
-                   actionType === 'email sent' ||
-                   actionType.includes('linkedin inmail') ||
-                   actionType.includes('inmail');
+            return actionType === 'Email';
           case 'meeting':
-            return actionType === 'meeting';
-          case 'demo':
-            return actionType === 'demo';
-          case 'proposal':
-            return actionType === 'proposal' || 
-                   actionType.includes('proposal sent');
-          case 'followUp':
-            return actionType === 'follow-up' ||
-                   actionType === 'follow up';
-          case 'other':
-            return actionType === 'other' || 
-                   (!actionType.includes('call') && 
-                    !actionType.includes('phone') && 
-                    !actionType.includes('email') && 
-                    !actionType.includes('inmail') && 
-                    !actionType.includes('meeting') &&
-                    !actionType.includes('demo') &&
-                    !actionType.includes('proposal') &&
-                    !actionType.includes('follow-up') &&
-                    !actionType.includes('follow up'));
+            return actionType === 'Meeting';
+          case 'linkedinConnection':
+            return actionType === 'LinkedIn Connection';
+          case 'linkedinInMail':
+            return actionType === 'LinkedIn InMail';
+          case 'linkedinMessage':
+            return actionType === 'LinkedIn Message';
           default:
             return false;
         }
@@ -242,23 +225,21 @@ export async function GET(request: NextRequest) {
     };
 
     const thisWeekActionTypes = {
-      call: getActionTypeCount(thisWeekActions, 'call'),
+      phone: getActionTypeCount(thisWeekActions, 'phone'),
       email: getActionTypeCount(thisWeekActions, 'email'),
       meeting: getActionTypeCount(thisWeekActions, 'meeting'),
-      demo: getActionTypeCount(thisWeekActions, 'demo'),
-      proposal: getActionTypeCount(thisWeekActions, 'proposal'),
-      followUp: getActionTypeCount(thisWeekActions, 'followUp'),
-      other: getActionTypeCount(thisWeekActions, 'other')
+      linkedinConnection: getActionTypeCount(thisWeekActions, 'linkedinConnection'),
+      linkedinInMail: getActionTypeCount(thisWeekActions, 'linkedinInMail'),
+      linkedinMessage: getActionTypeCount(thisWeekActions, 'linkedinMessage')
     };
 
     const lastWeekActionTypes = {
-      call: getActionTypeCount(lastWeekActions, 'call'),
+      phone: getActionTypeCount(lastWeekActions, 'phone'),
       email: getActionTypeCount(lastWeekActions, 'email'),
       meeting: getActionTypeCount(lastWeekActions, 'meeting'),
-      demo: getActionTypeCount(lastWeekActions, 'demo'),
-      proposal: getActionTypeCount(lastWeekActions, 'proposal'),
-      followUp: getActionTypeCount(lastWeekActions, 'followUp'),
-      other: getActionTypeCount(lastWeekActions, 'other')
+      linkedinConnection: getActionTypeCount(lastWeekActions, 'linkedinConnection'),
+      linkedinInMail: getActionTypeCount(lastWeekActions, 'linkedinInMail'),
+      linkedinMessage: getActionTypeCount(lastWeekActions, 'linkedinMessage')
     };
     
     // Debug: Log calculated action type counts
@@ -403,12 +384,12 @@ export async function GET(request: NextRequest) {
     const trends = {
       thisWeekPeopleActions: calculateTrend(thisWeekPeopleActions, lastWeekPeopleActions),
       lastWeekPeopleActions: calculateTrend(lastWeekPeopleActions, 0), // No comparison for last week
-      calls: calculateTrend(thisWeekActionTypes.call, lastWeekActionTypes.call),
+      phone: calculateTrend(thisWeekActionTypes.phone, lastWeekActionTypes.phone),
       emails: calculateTrend(thisWeekActionTypes.email, lastWeekActionTypes.email),
       meetings: calculateTrend(thisWeekActionTypes.meeting, lastWeekActionTypes.meeting),
-      demos: calculateTrend(thisWeekActionTypes.demo, lastWeekActionTypes.demo),
-      proposals: calculateTrend(thisWeekActionTypes.proposal, lastWeekActionTypes.proposal),
-      followUps: calculateTrend(thisWeekActionTypes.followUp, lastWeekActionTypes.followUp),
+      linkedinConnections: calculateTrend(thisWeekActionTypes.linkedinConnection, lastWeekActionTypes.linkedinConnection),
+      linkedinInMails: calculateTrend(thisWeekActionTypes.linkedinInMail, lastWeekActionTypes.linkedinInMail),
+      linkedinMessages: calculateTrend(thisWeekActionTypes.linkedinMessage, lastWeekActionTypes.linkedinMessage),
       prospects: calculateTrend(thisWeekProspects, lastWeekProspects),
       opportunities: calculateTrend(thisWeekOpportunities, lastWeekOpportunities),
       clients: calculateTrend(thisWeekClients, lastWeekClients),
@@ -436,12 +417,12 @@ export async function GET(request: NextRequest) {
       // Smart status calculations for each action type
       smartStatus: {
         totalActions: getSmartStatus(thisWeekPeopleActions, WEEKLY_TARGETS.totalActions, getBusinessDayOfWeek(today)),
-        calls: getSmartStatus(thisWeekActionTypes.call, WEEKLY_TARGETS.calls, getBusinessDayOfWeek(today)),
+        phone: getSmartStatus(thisWeekActionTypes.phone, WEEKLY_TARGETS.calls, getBusinessDayOfWeek(today)),
         emails: getSmartStatus(thisWeekActionTypes.email, WEEKLY_TARGETS.emails, getBusinessDayOfWeek(today)),
         meetings: getSmartStatus(thisWeekActionTypes.meeting, WEEKLY_TARGETS.meetings, getBusinessDayOfWeek(today)),
-        demos: getSmartStatus(thisWeekActionTypes.demo, WEEKLY_TARGETS.demos, getBusinessDayOfWeek(today)),
-        proposals: getSmartStatus(thisWeekActionTypes.proposal, WEEKLY_TARGETS.proposals, getBusinessDayOfWeek(today)),
-        followUps: getSmartStatus(thisWeekActionTypes.followUp, WEEKLY_TARGETS.followUps, getBusinessDayOfWeek(today))
+        linkedinConnections: getSmartStatus(thisWeekActionTypes.linkedinConnection, 10, getBusinessDayOfWeek(today)), // 2/day target
+        linkedinInMails: getSmartStatus(thisWeekActionTypes.linkedinInMail, 5, getBusinessDayOfWeek(today)), // 1/day target
+        linkedinMessages: getSmartStatus(thisWeekActionTypes.linkedinMessage, 10, getBusinessDayOfWeek(today)) // 2/day target
       },
       
       // Progress calculations for subtitles
@@ -460,9 +441,12 @@ export async function GET(request: NextRequest) {
       
       // Raw data for debugging
       raw: {
-        thisWeekActions: thisWeekActions.length,
-        lastWeekActions: lastWeekActions.length,
-        totalActions: allActions.length,
+        thisWeekActions: thisWeekPeopleActions,
+        lastWeekActions: lastWeekPeopleActions,
+        totalActions: allActions.filter(action => {
+          const actionType = action.type || '';
+          return ['Phone', 'Email', 'Meeting', 'LinkedIn Connection', 'LinkedIn InMail', 'LinkedIn Message'].includes(actionType);
+        }).length,
         totalPeople: people.length,
         totalCompanies: companies.length
       }

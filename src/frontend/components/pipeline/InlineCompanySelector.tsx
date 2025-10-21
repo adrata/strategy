@@ -473,11 +473,23 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     );
   }
 
+  const handleCompanyClick = () => {
+    const companyName = getCurrentCompanyName();
+    if (companyName && companyName !== '-') {
+      // Navigate to company record
+      window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
+    }
+  };
+
   return (
     <div className="group flex items-center gap-2">
-      <span className={`${className} ${!getCurrentCompanyName() ? 'text-[var(--muted)]' : ''}`}>
+      <button
+        onClick={handleCompanyClick}
+        className={`${className} ${!getCurrentCompanyName() ? 'text-[var(--muted)]' : 'text-[#2563EB] hover:text-[#1d4ed8] hover:underline cursor-pointer'} transition-colors`}
+        title={getCurrentCompanyName() ? `View ${getCurrentCompanyName()} company details` : ''}
+      >
         {getCurrentCompanyName() || '-'}
-      </span>
+      </button>
       <button
         onClick={handleEditStart}
         className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] opacity-0 group-hover:opacity-100 transition-opacity"

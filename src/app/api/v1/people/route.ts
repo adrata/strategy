@@ -343,8 +343,40 @@ export async function GET(request: NextRequest) {
         } : null
       });
 
+      // 🚀 COMPUTE LAST ACTION: Enrich with actual last action from actions table
+      const enrichedPeople = await Promise.all(people.map(async (person) => {
+        try {
+          const lastAction = await prisma.actions.findFirst({
+            where: { 
+              personId: person.id, 
+              deletedAt: null,
+              status: 'COMPLETED'
+            },
+            orderBy: { completedAt: 'desc' },
+            select: { 
+              subject: true, 
+              completedAt: true, 
+              type: true,
+              createdAt: true
+            }
+          });
+          
+          return {
+            ...person,
+            // Use computed lastAction if available, otherwise fall back to stored fields
+            lastAction: lastAction?.subject || person.lastAction,
+            lastActionDate: lastAction?.completedAt || person.lastActionDate,
+            lastActionType: lastAction?.type || null
+          };
+        } catch (error) {
+          console.error(`❌ [PEOPLE API] Error computing lastAction for person ${person.id}:`, error);
+          // Return original person data if computation fails
+          return person;
+        }
+      }));
+
       // Transform to use mainSeller terminology like speedrun
-      const transformedPeople = people.map((person) => ({
+      const transformedPeople = enrichedPeople.map((person) => ({
         ...person,
         mainSellerId: person.mainSellerId,
         mainSeller: person.mainSeller 
@@ -651,6 +683,33 @@ export async function POST(request: NextRequest) {
       } catch (error) {
         console.error('⚠️ [PEOPLE API] Failed to generate initial next action:', error);
         // Don't fail the request if next action generation fails
+      }
+    });
+
+    // Generate strategy data for new person (async, don't await)
+    setImmediate(async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/v1/strategy/generate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': request.headers.get('Authorization') || '',
+            'x-request-id': request.headers.get('x-request-id') || ''
+          },
+          body: JSON.stringify({
+            personId: person.id,
+            recordType: 'person'
+          })
+        });
+        
+        if (response.ok) {
+          console.log('✅ [PEOPLE API] Generated strategy data for new person', person.id);
+        } else {
+          console.warn('⚠️ [PEOPLE API] Strategy generation returned non-200 status:', response.status);
+        }
+      } catch (error) {
+        console.error('⚠️ [PEOPLE API] Failed to generate strategy data:', error);
+        // Don't fail the request if strategy generation fails
       }
     });
 

@@ -176,8 +176,8 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
-    // Clean and validate website URL if provided
-    if (body.website && typeof body.website === 'string' && body.website.trim().length > 0) {
+    // Clean and validate website URL only if it's being explicitly updated to a non-empty value
+    if (body.website !== undefined && typeof body.website === 'string' && body.website.trim().length > 0) {
       const cleanedWebsite = cleanWebsiteUrl(body.website);
       try {
         new URL(cleanedWebsite);
@@ -288,8 +288,8 @@ export async function PATCH(
       authUser: authUser.id
     });
 
-    // Clean and validate website URL if provided
-    if (body.website && typeof body.website === 'string' && body.website.trim().length > 0) {
+    // Clean and validate website URL only if it's being explicitly updated to a non-empty value
+    if (body.website !== undefined && typeof body.website === 'string' && body.website.trim().length > 0) {
       const cleanedWebsite = cleanWebsiteUrl(body.website);
       try {
         new URL(cleanedWebsite);
@@ -347,7 +347,9 @@ export async function PATCH(
       // Tech fields
       'activeJobPostings', 'numTechnologiesUsed', 'technologiesUsed',
       // SBI fields
-      'confidence', 'sources', 'lastVerified', 'parentCompanyName', 'parentCompanyDomain'
+      'confidence', 'sources', 'lastVerified', 'parentCompanyName', 'parentCompanyDomain',
+      // Additional fields found in UI
+      'targetIndustry'
     ];
 
     // Filter body to only allowed fields

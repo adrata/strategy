@@ -14,6 +14,7 @@ import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel'
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
 import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
+import { useTablePreferences } from '@/platform/hooks/useTablePreferences';
 // Removed usePipelineData import - using useFastSectionData exclusively
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/LeftPanel';
@@ -91,21 +92,8 @@ export const PipelineView = React.memo(function PipelineView({
   const [isCustomersVisible, setIsCustomersVisible] = useState(false); // Hidden for this workspace
   const [isPartnersVisible, setIsPartnersVisible] = useState(!isDemoMode); // true for production, false for demo
   // Panel visibility is now managed by useAcquisitionOSUI context
-  const [searchQuery, setSearchQuery] = useState('');
-  const [verticalFilter, setVerticalFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [priorityFilter, setPriorityFilter] = useState('all');
-  const [revenueFilter, setRevenueFilter] = useState('all');
-  const [lastContactedFilter, setLastContactedFilter] = useState('all');
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
-  // Default sorting: prospects by oldest Last Action, others by rank
-  const [sortField, setSortField] = useState<string>(section === 'prospects' ? 'lastContactDate' : 'rank');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(section === 'prospects' ? 'asc' : 'desc');
   const [timeframeFilter, setTimeframeFilter] = useState<string>('now');
-  const [timezoneFilter, setTimezoneFilter] = useState<string>('all');
-  // 🎯 NEW SELLER FILTERS
-  const [companySizeFilter, setCompanySizeFilter] = useState<string>('all');
-  const [locationFilter, setLocationFilter] = useState<string>('all');
   
   // Get workspace context at component level
   const workspaceName = user?.workspaces?.find(w => w['id'] === user?.activeWorkspaceId)?.['name'] || '';
@@ -144,20 +132,42 @@ export const PipelineView = React.memo(function PipelineView({
     }
   };
   
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(getDefaultVisibleColumns(section));
+  // Initialize persistence hook with section-specific defaults
+  const defaultColumns = getDefaultVisibleColumns(section);
+  const defaultSortField = section === 'prospects' ? 'lastContactDate' : 'rank';
+  const defaultSortDirection = section === 'prospects' ? 'asc' : 'asc';
   
-  // Update visible columns and sort when section changes
-  useEffect(() => {
-    setVisibleColumns(getDefaultVisibleColumns(section));
-    // Reset sort to default for new section
-    if (section === 'prospects') {
-      setSortField('lastActionDate');
-      setSortDirection('asc'); // Oldest first
-    } else {
-      setSortField('rank');
-      setSortDirection('asc'); // Lowest rank first (1, 2, 3...)
-    }
-  }, [section]);
+  const {
+    preferences,
+    setSearchQuery,
+    setStatusFilter,
+    setPriorityFilter,
+    setVerticalFilter,
+    setRevenueFilter,
+    setLastContactedFilter,
+    setTimezoneFilter,
+    setCompanySizeFilter,
+    setLocationFilter,
+    setSortField,
+    setSortDirection,
+    setVisibleColumns
+  } = useTablePreferences(user?.activeWorkspaceId || 'default', section, defaultColumns, defaultSortField, defaultSortDirection);
+  
+  // Extract values from preferences for easier access
+  const {
+    searchQuery,
+    statusFilter,
+    priorityFilter,
+    verticalFilter,
+    revenueFilter,
+    lastContactedFilter,
+    timezoneFilter,
+    companySizeFilter,
+    locationFilter,
+    sortField,
+    sortDirection,
+    visibleColumns
+  } = preferences;
   
   // Monaco Signal popup state for Speedrun section
   const [isSlideUpVisible, setIsSlideUpVisible] = useState(false);
@@ -1078,6 +1088,47 @@ export const PipelineView = React.memo(function PipelineView({
       const workspaceSlug = currentWorkspace?.name === 'Demo Workspace' ? 'demo' : 
                            currentWorkspace?.name?.toLowerCase().replace(/\s+/g, '-') || 'demo';
       window['location']['href'] = `/${workspaceSlug}/sellers/${sellerId}/companies/${companyId}/buyer-group/${personSlug}`;
+    } else if (section === 'people' && record.status) {
+      // 🎯 FIX: Status-based navigation for people records
+      // Check person's status and navigate to appropriate pipeline record
+      const { generateSlug } = require('@/platform/utils/url-utils');
+      const personSlug = generateSlug(recordName, recordId);
+      
+      // Get current workspace from URL
+      const currentPath = window.location.pathname;
+      const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
+      
+      if (workspaceMatch) {
+        const workspaceSlug = workspaceMatch[1];
+        
+        // Navigate to appropriate pipeline record based on person status
+        let personUrl: string;
+        const status = record.status;
+        
+        switch (status) {
+          case 'LEAD':
+            personUrl = `/${workspaceSlug}/leads/${personSlug}`;
+            break;
+          case 'PROSPECT':
+            personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
+            break;
+          case 'OPPORTUNITY':
+            personUrl = `/${workspaceSlug}/opportunities/${personSlug}`;
+            break;
+          default:
+            // CLIENT, SUPERFAN, or any other status
+            personUrl = `/${workspaceSlug}/people/${personSlug}`;
+            break;
+        }
+        
+        console.log(`🔗 [PipelineView] Navigating to ${status} record: ${personUrl}`);
+        window.location.href = personUrl;
+      } else {
+        // Fallback to non-workspace URL
+        const personUrl = `/people/${personSlug}`;
+        console.log(`🔗 [PipelineView] Navigating to: ${personUrl}`);
+        window.location.href = personUrl;
+      }
     } else {
       navigateToPipelineItem(section, recordId, recordName);
     }

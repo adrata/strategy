@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSecureApiContext } from '@/platform/services/security-service';
-import { createErrorResponse } from '@/platform/services/error-service';
+import { getSecureApiContext, createErrorResponse } from '@/platform/services/secure-api-helper';
 import { autoStrategyPopulationService } from '@/platform/services/auto-strategy-population-service';
 
 /**

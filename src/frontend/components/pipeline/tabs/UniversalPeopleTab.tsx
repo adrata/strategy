@@ -39,8 +39,50 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
     
     if (workspaceMatch) {
       const workspaceSlug = workspaceMatch[1];
-      const personUrl = `/${workspaceSlug}/people/${personSlug}`;
-      console.log(`🔗 [PEOPLE] Navigating to: ${personUrl}`);
+      
+      // Navigate to appropriate pipeline record based on person status
+      let personUrl: string;
+      const status = person.status;
+      
+      switch (status) {
+        case 'LEAD':
+          personUrl = `/${workspaceSlug}/leads/${personSlug}`;
+          break;
+        case 'PROSPECT':
+          personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
+          break;
+        case 'OPPORTUNITY':
+          // For OPPORTUNITY status, navigate to the company's opportunity record
+          // Get company information from the record prop
+          let companyName = '';
+          let companyId = '';
+          
+          if (recordType === 'people') {
+            // For person records, get company from companyId or company object
+            companyId = record.companyId;
+            companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                         record.companyName || 'Company';
+          } else {
+            // For company records, use the record name as company name
+            companyName = record.name || 
+                         (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                         record.companyName ||
+                         'Company';
+            companyId = record.id; // For company records, the record ID is the company ID
+          }
+          
+          // Generate company slug for opportunity navigation
+          const companySlug = generateSlug(companyName, companyId);
+          personUrl = `/${workspaceSlug}/opportunities/${companySlug}`;
+          console.log(`🔗 [PEOPLE] OPPORTUNITY person - navigating to company opportunity: ${companyName} (${companyId})`);
+          break;
+        default:
+          // CLIENT, SUPERFAN, or any other status
+          personUrl = `/${workspaceSlug}/people/${personSlug}`;
+          break;
+      }
+      
+      console.log(`🔗 [PEOPLE] Navigating to ${status} record: ${personUrl}`);
       router.push(personUrl);
     } else {
       // Fallback to non-workspace URL

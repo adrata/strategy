@@ -79,6 +79,7 @@ import { UniversalHistoryTab } from './tabs/UniversalHistoryTab';
 import { UniversalBuyerGroupTab } from './tabs/UniversalBuyerGroupTab';
 import { UniversalProfileTab as ComprehensiveProfileTab } from './tabs/UniversalProfileTab';
 import { UniversalCompanyTab as ComprehensiveCompanyTab } from './tabs/UniversalCompanyTab';
+import { CompanyOverviewTab } from './tabs/CompanyOverviewTab';
 import { HierarchicalBreadcrumb } from './HierarchicalBreadcrumb';
 import { URLFixer } from './URLFixer';
 
@@ -135,6 +136,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         case 'leads':
           return [
             { id: 'overview', label: 'Overview' },
+            { id: 'company', label: 'Company' },
             { id: 'strategy', label: 'Strategy' },
             { id: 'actions', label: 'Actions' },
             { id: 'career', label: 'Career' },
@@ -143,6 +145,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'prospects':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'company', label: 'Company' },
         { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
         { id: 'career', label: 'Career' },
@@ -171,6 +174,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'people':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'company', label: 'Company' },
         { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
         { id: 'career', label: 'Career' },
@@ -179,6 +183,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'speedrun':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'company', label: 'Company' },
         { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
         { id: 'career', label: 'Career' },
@@ -263,6 +268,7 @@ export function UniversalRecordTemplate({
   const [localRecord, setLocalRecord] = useState(record);
   const [isPending, startTransition] = useTransition();
   const [pendingSaves, setPendingSaves] = useState<Set<string>>(new Set());
+  const [recentlyUpdatedFields, setRecentlyUpdatedFields] = useState<Set<string>>(new Set());
   
   // Update local record state when prop changes, but not during pending saves
   useEffect(() => {
@@ -272,17 +278,38 @@ export function UniversalRecordTemplate({
         recordId: record?.id,
         recordName: record?.name || record?.fullName,
         pendingSaves: Array.from(pendingSaves),
+        recentlyUpdatedFields: Array.from(recentlyUpdatedFields),
         hasRecord: !!record,
         linkedinUrl: record?.linkedinUrl,
         linkedin: record?.linkedin,
         createdAt: record?.createdAt,
         updatedAt: record?.updatedAt
       });
-      setLocalRecord(record);
+      
+      // If there are recently updated fields, merge carefully to avoid overwriting local changes
+      if (recentlyUpdatedFields.size > 0) {
+        console.log(`🔄 [UNIVERSAL] Merging record prop with local changes, preserving recently updated fields:`, Array.from(recentlyUpdatedFields));
+        setLocalRecord(prevLocalRecord => {
+          const mergedRecord = { ...record };
+          
+          // Preserve recently updated fields from local record
+          recentlyUpdatedFields.forEach(field => {
+            if (prevLocalRecord && prevLocalRecord[field] !== undefined) {
+              mergedRecord[field] = prevLocalRecord[field];
+              console.log(`🔄 [UNIVERSAL] Preserving recently updated field '${field}': ${prevLocalRecord[field]}`);
+            }
+          });
+          
+          return mergedRecord;
+        });
+      } else {
+        // No recently updated fields, safe to sync completely
+        setLocalRecord(record);
+      }
     } else {
       console.log(`⏸️ [UNIVERSAL] Skipping record sync due to pending saves:`, Array.from(pendingSaves));
     }
-  }, [record, pendingSaves]);
+  }, [record, pendingSaves, recentlyUpdatedFields]);
   
   // Ref for content container to reset scroll position
   const contentRef = useRef<HTMLDivElement>(null);
@@ -808,12 +835,15 @@ export function UniversalRecordTemplate({
       
       // Company-specific fields (only for company records)
       if (recordType === 'companies') {
+        // Basic company fields
+        addField('name', updatedData['name']);
         addField('legalName', updatedData['legalName']);
         addField('tradingName', updatedData['tradingName']);
         addField('localName', updatedData['localName']);
         addField('description', updatedData['description']);
         addField('website', updatedData['website']);
         addField('fax', updatedData['fax']);
+        addField('industry', updatedData['industry']);
         addField('sector', updatedData['sector']);
         addField('size', updatedData['size']);
         addField('revenue', updatedData['revenue']);
@@ -829,6 +859,8 @@ export function UniversalRecordTemplate({
         addField('nextActionReasoning', updatedData['nextActionReasoning']);
         addField('nextActionPriority', updatedData['nextActionPriority']);
         addField('nextActionType', updatedData['nextActionType']);
+        addField('status', updatedData['status']);
+        addField('priority', updatedData['priority']);
         
         // Intelligence fields
         addField('businessChallenges', updatedData['businessChallenges']);
@@ -1359,6 +1391,16 @@ export function UniversalRecordTemplate({
             company: value.name
           }));
           
+          // Track company field as recently updated
+          setRecentlyUpdatedFields(prev => new Set(prev).add('company'));
+          setTimeout(() => {
+            setRecentlyUpdatedFields(prev => {
+              const next = new Set(prev);
+              next.delete('company');
+              return next;
+            });
+          }, 3000);
+          
           if (onRecordUpdate && result.data) {
             const updatedRecord = { ...record, ...result.data };
             onRecordUpdate(updatedRecord);
@@ -1419,6 +1461,16 @@ export function UniversalRecordTemplate({
               ...prev,
               company: value
             }));
+            
+            // Track company field as recently updated
+            setRecentlyUpdatedFields(prev => new Set(prev).add('company'));
+            setTimeout(() => {
+              setRecentlyUpdatedFields(prev => {
+                const next = new Set(prev);
+                next.delete('company');
+                return next;
+              });
+            }, 3000);
             
             if (onRecordUpdate && result.data) {
               const updatedRecord = { ...record, ...result.data, company: value };
@@ -1519,6 +1571,16 @@ export function UniversalRecordTemplate({
                 companyId: createResult.data.id,
                 company: createResult.data.name
               }));
+              
+              // Track company field as recently updated
+              setRecentlyUpdatedFields(prev => new Set(prev).add('company'));
+              setTimeout(() => {
+                setRecentlyUpdatedFields(prev => {
+                  const next = new Set(prev);
+                  next.delete('company');
+                  return next;
+                });
+              }, 3000);
               
               if (onRecordUpdate && linkResult.data) {
                 const updatedRecord = { ...record, ...linkResult.data };
@@ -1668,23 +1730,44 @@ export function UniversalRecordTemplate({
         console.log(`🎯 [MODEL TARGETING] Record-specific field ${field} -> ${recordType} model`);
       }
       
-      // Map field names to match API expectations
-      const fieldMapping: Record<string, string> = {
-        'name': 'fullName',
-        'fullName': 'fullName',  // Ensure fullName maps to fullName
-        'title': 'jobTitle',     // Map title to jobTitle for people API
-        'jobTitle': 'jobTitle',  // Keep jobTitle as jobTitle
-        'workEmail': 'workEmail',
-        'personalEmail': 'personalEmail',
-        'mobilePhone': 'mobilePhone',
-        'company': 'company',    // Keep company as company for database
-        'companyName': 'company', // Map companyName to company
-        'bio': 'bio',            // Keep bio as bio
-        'linkedinUrl': 'linkedinUrl', // Keep linkedinUrl as linkedinUrl
-        'linkedinNavigatorUrl': 'linkedinNavigatorUrl', // Keep linkedinNavigatorUrl as linkedinNavigatorUrl
-        'address': 'address',
-        'postalCode': 'postalCode'
-      };
+      // Map field names to match API expectations based on target model
+      let fieldMapping: Record<string, string>;
+
+      if (targetModel === 'companies') {
+        // Company-specific field mapping
+        fieldMapping = {
+          'name': 'name',  // Keep name as name for companies
+          'companyName': 'name',
+          'title': 'jobTitle',  // Not used for companies but kept for consistency
+          'workEmail': 'workEmail',
+          'personalEmail': 'personalEmail',
+          'mobilePhone': 'mobilePhone',
+          'company': 'company',
+          'bio': 'bio',
+          'linkedinUrl': 'linkedinUrl',
+          'linkedinNavigatorUrl': 'linkedinNavigatorUrl',
+          'address': 'address',
+          'postalCode': 'postalCode'
+        };
+      } else {
+        // People/leads/prospects field mapping
+        fieldMapping = {
+          'name': 'fullName',  // Map name to fullName for people
+          'fullName': 'fullName',
+          'title': 'jobTitle',
+          'jobTitle': 'jobTitle',
+          'workEmail': 'workEmail',
+          'personalEmail': 'personalEmail',
+          'mobilePhone': 'mobilePhone',
+          'company': 'company',
+          'companyName': 'company',
+          'bio': 'bio',
+          'linkedinUrl': 'linkedinUrl',
+          'linkedinNavigatorUrl': 'linkedinNavigatorUrl',
+          'address': 'address',
+          'postalCode': 'postalCode'
+        };
+      }
       
       const apiField = fieldMapping[field] || field;
       
@@ -1692,8 +1775,16 @@ export function UniversalRecordTemplate({
         originalField: field,
         mappedField: apiField,
         fieldMapping,
-        value
+        value,
+        targetModel,
+        targetId,
+        recordType
       });
+      
+      // Validate that the mapped field is appropriate for the target model
+      if (targetModel === 'companies' && !['name', 'legalName', 'tradingName', 'localName', 'description', 'website', 'email', 'phone', 'fax', 'address', 'city', 'state', 'country', 'postalCode', 'industry', 'sector', 'size', 'revenue', 'currency', 'employeeCount', 'foundedYear', 'registrationNumber', 'taxId', 'vatNumber', 'domain', 'logoUrl', 'status', 'priority', 'tags', 'customFields', 'notes', 'lastAction', 'lastActionDate', 'nextAction', 'nextActionDate', 'nextActionReasoning', 'nextActionPriority', 'nextActionType', 'actionStatus', 'globalRank', 'entityId', 'mainSellerId', 'actualCloseDate', 'expectedCloseDate', 'opportunityAmount', 'opportunityProbability', 'opportunityStage', 'acquisitionDate', 'competitors', 'businessChallenges', 'businessPriorities', 'competitiveAdvantages', 'growthOpportunities', 'strategicInitiatives', 'successMetrics', 'marketThreats', 'keyInfluencers', 'decisionTimeline', 'marketPosition', 'digitalMaturity', 'techStack', 'linkedinUrl', 'linkedinFollowers', 'twitterUrl', 'twitterFollowers', 'facebookUrl', 'instagramUrl', 'youtubeUrl', 'githubUrl', 'hqLocation', 'hqFullAddress', 'hqCity', 'hqState', 'hqStreet', 'hqZipcode', 'hqRegion', 'hqCountryIso2', 'hqCountryIso3', 'lastFundingAmount', 'lastFundingDate', 'stockSymbol', 'isPublic', 'naicsCodes', 'sicCodes', 'activeJobPostings', 'numTechnologiesUsed', 'technologiesUsed', 'confidence', 'sources', 'lastVerified', 'parentCompanyName', 'parentCompanyDomain', 'targetIndustry'].includes(apiField)) {
+        console.warn(`⚠️ [FIELD MAPPING] Field '${apiField}' may not be valid for companies model`);
+      }
       
       // Prepare update data
       const updateData: Record<string, any> = {
@@ -1798,28 +1889,28 @@ export function UniversalRecordTemplate({
         console.warn(`⚠️ [UNIVERSAL] Mapped field ${apiField} value mismatch: expected ${value}, got ${result.data[apiField]}`);
       }
       
-      // 🚀 DATA CONSISTENCY CHECK: Verify the save was successful
-      // Skip for complex fields that may have transformations
-      const complexFields = ['company', 'companyName', 'name', 'fullName'];
-      const shouldSkipCheck = complexFields.includes(field);
+      // 🚀 ENHANCED DATA CONSISTENCY CHECK: Verify the save was successful
+      const actualSavedValue = result.data?.[apiField] ?? result.data?.[field];
+      const isValueConsistent = actualSavedValue === value || actualSavedValue === undefined;
       
-      if (!shouldSkipCheck) {
-        const actualSavedValue = result.data?.[apiField] ?? result.data?.[field];
-        if (actualSavedValue !== value && actualSavedValue !== undefined) {
-          console.warn(`⚠️ [UNIVERSAL] Data consistency check mismatch for field ${field}:`, {
-            expectedValue: value,
-            actualSavedValue,
-            apiField,
-            resultData: result.data,
-            fieldInResult: result.data?.[field],
-            apiFieldInResult: result.data?.[apiField],
-            note: 'This may indicate a server-side transformation or validation'
-          });
-        } else {
-          console.log(`✅ [UNIVERSAL] Data consistency check passed for field ${field}: ${value}`);
+      if (!isValueConsistent) {
+        console.warn(`⚠️ [UNIVERSAL] Data consistency check FAILED for field ${field}:`, {
+          expectedValue: value,
+          actualSavedValue,
+          apiField,
+          resultData: result.data,
+          fieldInResult: result.data?.[field],
+          apiFieldInResult: result.data?.[apiField],
+          note: 'This may indicate a server-side transformation or validation'
+        });
+        
+        // For critical fields, show user warning
+        const criticalFields = ['name', 'fullName', 'email', 'phone', 'legalName', 'company'];
+        if (criticalFields.includes(field)) {
+          console.error(`🚨 [UNIVERSAL] CRITICAL: Field ${field} save verification failed!`);
         }
       } else {
-        console.log(`⏭️ [UNIVERSAL] Skipping consistency check for complex field: ${field}`);
+        console.log(`✅ [UNIVERSAL] Data consistency check PASSED for field ${field}: ${value}`);
       }
       
       // Update local record state optimistically with proper field mapping
@@ -1950,6 +2041,18 @@ export function UniversalRecordTemplate({
       
       showMessage(`Updated ${field} successfully`);
       
+      // Track this field as recently updated to prevent stale prop overwrites
+      setRecentlyUpdatedFields(prev => new Set(prev).add(field));
+      
+      // Remove from recently updated fields after 3 seconds
+      setTimeout(() => {
+        setRecentlyUpdatedFields(prev => {
+          const next = new Set(prev);
+          next.delete(field);
+          return next;
+        });
+      }, 3000);
+      
       // 🚀 CACHE INVALIDATION & REVALIDATION: Update cache with new data
       const updatedRecord = onRecordUpdate && result.data ? { ...record, ...result.data } : { ...record, [field]: value };
       
@@ -1978,6 +2081,67 @@ export function UniversalRecordTemplate({
         console.log(`🔄 [UNIVERSAL] Triggering server revalidation for ${field} update`);
         router.refresh();
       }, 500);
+      
+      // 🗑️ COMPREHENSIVE CACHE INVALIDATION: Clear all caches to ensure fresh data on next load
+      if (typeof window !== 'undefined') {
+        const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
+        
+        // Clear all relevant localStorage caches
+        localStorage.removeItem(`adrata-people-${workspaceId}`);
+        localStorage.removeItem(`adrata-prospects-${workspaceId}`);
+        localStorage.removeItem(`adrata-leads-${workspaceId}`);
+        localStorage.removeItem(`adrata-opportunities-${workspaceId}`);
+        localStorage.removeItem(`adrata-companies-${workspaceId}`);
+        localStorage.removeItem(`adrata-speedrun-${workspaceId}`);
+        localStorage.removeItem(`adrata-fast-counts-${workspaceId}`);
+        
+        // Clear unified cache system
+        const cacheKeys = Object.keys(localStorage);
+        cacheKeys.forEach(key => {
+          if (key.startsWith('adrata-cache-acquisition-os:') && key.includes(workspaceId)) {
+            localStorage.removeItem(key);
+          }
+        });
+        
+        // Clear SWR cache if available
+        if ((window as any).__SWR_CACHE__) {
+          const swrCache = (window as any).__SWR_CACHE__;
+          const swrKeys = Array.from(swrCache.keys()) as string[];
+          swrKeys.forEach((key: string) => {
+            if (key.includes('acquisition-os') && key.includes(workspaceId)) {
+              swrCache.delete(key);
+            }
+          });
+        }
+        
+        // Force next page load to bypass cache and fetch fresh from API
+        sessionStorage.setItem(`force-refresh-${recordType}-${record.id}`, 'true');
+        
+        console.log('🗑️ [CACHE] Invalidated all caches after inline field update:', {
+          workspaceId,
+          recordType,
+          recordId: record.id,
+          field,
+          clearedCaches: [
+            `adrata-people-${workspaceId}`,
+            `adrata-prospects-${workspaceId}`,
+            `adrata-leads-${workspaceId}`,
+            `adrata-opportunities-${workspaceId}`,
+            `adrata-companies-${workspaceId}`,
+            `adrata-speedrun-${workspaceId}`,
+            `adrata-fast-counts-${workspaceId}`,
+            'acquisition-os:*'
+          ]
+        });
+      }
+      
+      // Dispatch cache invalidation event for other components
+      window.dispatchEvent(new CustomEvent('cache-invalidated', {
+        detail: {
+          recordType,
+          recordId: record.id,
+        }
+      }));
       
       // 🚀 CACHE INVALIDATION: Trigger data refresh if status field was updated
       if (field === 'status') {
@@ -2463,6 +2627,8 @@ export function UniversalRecordTemplate({
         type: actionData.type,
         subject: actionData.action.length > 100 ? actionData.action.substring(0, 100) + '...' : actionData.action,
         description: actionData.action,
+        status: 'COMPLETED',
+        completedAt: new Date().toISOString(),
         // Only include personId/companyId if they are valid (not empty strings or undefined)
         ...(actionData.personId && actionData.personId.trim() !== '' && { personId: actionData.personId }),
         ...(actionData.companyId && actionData.companyId.trim() !== '' && { companyId: actionData.companyId })
@@ -3393,6 +3559,11 @@ export function UniversalRecordTemplate({
               localRecord={localRecord}
               onRecordUpdate={onRecordUpdate}
             />
+          );
+        case 'company':
+          console.log(`🏢 [UNIVERSAL] Rendering company tab for ${recordType}`);
+          return renderTabWithErrorBoundary(
+            <CompanyOverviewTab key={activeTab} record={localRecord} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         default:
           console.warn(`🔄 [UNIVERSAL] Unknown tab: ${activeTab}, falling back to overview`);

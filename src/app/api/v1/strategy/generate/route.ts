@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSecureApiContext, createErrorResponse, logAndCreateErrorResponse, SecureApiContext } from '@/platform/services/secure-api-helper';
 import { StrategyPersonalizationService, PersonData } from '@/platform/services/strategy-personalization-service';
 import { determineArchetype } from '@/platform/services/buyer-group-archetypes';
+import { inferSeniority } from '@/platform/utils/normalization';
 import { prisma } from '@/platform/database/prisma-client';
 
 /**
@@ -247,24 +248,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * Helper function to infer seniority from job title
- */
-function inferSeniority(title: string): string {
-  const lowerTitle = title.toLowerCase();
-  
-  if (lowerTitle.includes('senior') || lowerTitle.includes('principal') || lowerTitle.includes('lead')) {
-    return 'senior';
-  }
-  if (lowerTitle.includes('junior') || lowerTitle.includes('associate') || lowerTitle.includes('entry')) {
-    return 'junior';
-  }
-  if (lowerTitle.includes('director') || lowerTitle.includes('vp') || lowerTitle.includes('c-level')) {
-    return 'executive';
-  }
-  
-  return 'mid';
-}
 
 /**
  * Helper function to get archetype name by ID
