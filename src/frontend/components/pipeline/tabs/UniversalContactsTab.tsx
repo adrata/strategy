@@ -88,7 +88,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
         <button
           onClick={handleAddContact}
           disabled={!newContact.name.trim()}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm font-medium"
+          className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm font-medium"
         >
           Add Contact
         </button>

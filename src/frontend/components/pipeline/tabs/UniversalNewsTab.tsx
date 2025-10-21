@@ -116,7 +116,7 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
             <div className="text-red-600">Error loading news: {error}</div>
             <button 
               onClick={fetchCompanyNews}
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="mt-2 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100"
             >
               Try Again
             </button>

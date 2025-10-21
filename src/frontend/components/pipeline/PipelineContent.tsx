@@ -909,7 +909,7 @@ export const PipelineContent = React.memo(function PipelineContent({
           <div className="space-x-3">
             <button
               onClick={handleRefresh}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
             >
               Try Again
             </button>

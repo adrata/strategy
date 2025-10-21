@@ -96,13 +96,22 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
            'Unknown Record';
   };
 
+  // Normalize string for comparison (remove punctuation, normalize whitespace, lowercase)
+  const normalizeString = (str: string): string => {
+    return str
+      .toLowerCase()
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ') // Replace punctuation with spaces
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
+  };
+
   // Handle delete with Vercel-style confirmation
   const handleDelete = async () => {
     if (!record?.id) return;
     
     const recordName = getDisplayName();
     
-    if (deleteConfirmName !== recordName) {
+    if (normalizeString(deleteConfirmName) !== normalizeString(recordName)) {
       alert(`Please type "${recordName}" to confirm deletion.`);
       return;
     }
@@ -304,7 +313,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             <button
               type="button"
               onClick={handleDelete}
-              disabled={loading || deleteConfirmName.trim() !== recordName.trim()}
+              disabled={loading || normalizeString(deleteConfirmName) !== normalizeString(recordName)}
               className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Deleting...' : 'Delete Record'}
@@ -2005,7 +2014,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? 'Updating...' : `Update ${recordType === 'leads' ? 'Lead' : 
                                                         recordType === 'prospects' ? 'Prospect' :
@@ -2136,7 +2145,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   }
                 }}
                 disabled={loading}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? 'Saving...' : 'Save Action'}
               </button>

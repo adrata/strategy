@@ -479,7 +479,7 @@ export function CompanySelector({
                     type="button"
                     onClick={(e) => handleAddCompany(e)}
                     disabled={!newCompanyName.trim() || isCreating}
-                    className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isCreating ? 'Adding...' : 'Add Company'}
                   </button>

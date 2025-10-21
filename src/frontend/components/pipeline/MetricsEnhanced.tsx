@@ -224,7 +224,7 @@ export function MetricsEnhanced() {
   return (
     <div className="h-full overflow-y-auto invisible-scrollbar">
       <div className="p-6 bg-[var(--background)] min-h-full">
-        {/* 3x3 Grid Layout */}
+        {/* 3x4 Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1400px]">
           {/* Actions Last Week */}
           <MetricCard
@@ -241,9 +241,9 @@ export function MetricsEnhanced() {
           <MetricCard
             title="Actions This Week"
             value={metrics?.thisWeekPeopleActions || 0}
-            subtitle={`Weekly outreach (+${(metrics?.thisWeekPeopleActions || 0) - (metrics?.trends?.thisWeekPeopleActions?.comparison || 0)} from last week)`}
-            color={(metrics?.thisWeekPeopleActions || 0) >= 75 ? 'success' : (metrics?.thisWeekPeopleActions || 0) < 40 ? 'danger' : 'default'}
-            status={(metrics?.thisWeekPeopleActions || 0) >= 75 ? 'ahead' : (metrics?.thisWeekPeopleActions || 0) < 40 ? 'behind' : 'on-track'}
+            subtitle={`${metrics?.progress?.dailyRate || 17}/day target • ${metrics?.progress?.weekProgress || 0}% through week`}
+            color={metrics?.smartStatus?.totalActions?.color || 'default'}
+            status={metrics?.smartStatus?.totalActions?.status || 'on-track'}
             trend={metrics?.trends?.thisWeekPeopleActions?.direction}
             trendValue={`${metrics?.trends?.thisWeekPeopleActions?.change || 0}%`}
           />
@@ -252,9 +252,9 @@ export function MetricsEnhanced() {
           <MetricCard
             title="Calls This Week"
             value={metrics?.actionTypes?.call || 0}
-            subtitle={`Weekly phone activity (+${(metrics?.actionTypes?.call || 0) - (metrics?.trends?.calls?.comparison || 0)} from last week)`}
-            color={(metrics?.actionTypes?.call || 0) > 100 ? 'success' : (metrics?.actionTypes?.call || 0) > 50 ? 'default' : 'danger'}
-            status={(metrics?.actionTypes?.call || 0) > 100 ? 'ahead' : (metrics?.actionTypes?.call || 0) > 50 ? 'on-track' : 'behind'}
+            subtitle={`3/day target • ${metrics?.progress?.weekProgress || 0}% through week`}
+            color={metrics?.smartStatus?.calls?.color || 'default'}
+            status={metrics?.smartStatus?.calls?.status || 'on-track'}
             trend={metrics?.trends?.calls?.direction}
             trendValue={`${metrics?.trends?.calls?.change || 0}%`}
           />
@@ -263,9 +263,9 @@ export function MetricsEnhanced() {
           <MetricCard
             title="Emails This Week"
             value={metrics?.actionTypes?.email || 0}
-            subtitle={`Weekly email outreach (+${(metrics?.actionTypes?.email || 0) - (metrics?.trends?.emails?.comparison || 0)} from last week)`}
-            color={(metrics?.actionTypes?.email || 0) > 100 ? 'success' : (metrics?.actionTypes?.email || 0) > 50 ? 'default' : 'danger'}
-            status={(metrics?.actionTypes?.email || 0) > 100 ? 'ahead' : (metrics?.actionTypes?.email || 0) > 50 ? 'on-track' : 'behind'}
+            subtitle={`7/day target • ${metrics?.progress?.weekProgress || 0}% through week`}
+            color={metrics?.smartStatus?.emails?.color || 'default'}
+            status={metrics?.smartStatus?.emails?.status || 'on-track'}
             trend={metrics?.trends?.emails?.direction}
             trendValue={`${metrics?.trends?.emails?.change || 0}%`}
           />
@@ -274,11 +274,44 @@ export function MetricsEnhanced() {
           <MetricCard
             title="Meetings This Week"
             value={metrics?.actionTypes?.meeting || 0}
-            subtitle={`Weekly face-to-face (+${(metrics?.actionTypes?.meeting || 0) - (metrics?.trends?.meetings?.comparison || 0)} from last week)`}
-            color={(metrics?.actionTypes?.meeting || 0) > 25 ? 'success' : (metrics?.actionTypes?.meeting || 0) > 10 ? 'default' : 'danger'}
-            status={(metrics?.actionTypes?.meeting || 0) > 25 ? 'ahead' : (metrics?.actionTypes?.meeting || 0) > 10 ? 'on-track' : 'behind'}
+            subtitle={`2.4/day target • ${metrics?.progress?.weekProgress || 0}% through week`}
+            color={metrics?.smartStatus?.meetings?.color || 'default'}
+            status={metrics?.smartStatus?.meetings?.status || 'on-track'}
             trend={metrics?.trends?.meetings?.direction}
             trendValue={`${metrics?.trends?.meetings?.change || 0}%`}
+          />
+
+          {/* Demos This Week */}
+          <MetricCard
+            title="Demos This Week"
+            value={metrics?.actionTypes?.demo || 0}
+            subtitle={`1.4/day target • ${metrics?.progress?.weekProgress || 0}% through week`}
+            color={metrics?.smartStatus?.demos?.color || 'default'}
+            status={metrics?.smartStatus?.demos?.status || 'on-track'}
+            trend={metrics?.trends?.demos?.direction}
+            trendValue={`${metrics?.trends?.demos?.change || 0}%`}
+          />
+
+          {/* Proposals This Week */}
+          <MetricCard
+            title="Proposals This Week"
+            value={metrics?.actionTypes?.proposal || 0}
+            subtitle={`0.8/day target • ${metrics?.progress?.weekProgress || 0}% through week`}
+            color={metrics?.smartStatus?.proposals?.color || 'default'}
+            status={metrics?.smartStatus?.proposals?.status || 'on-track'}
+            trend={metrics?.trends?.proposals?.direction}
+            trendValue={`${metrics?.trends?.proposals?.change || 0}%`}
+          />
+
+          {/* Follow Ups This Week */}
+          <MetricCard
+            title="Follow Ups This Week"
+            value={metrics?.actionTypes?.followUp || 0}
+            subtitle={`5/day target • ${metrics?.progress?.weekProgress || 0}% through week`}
+            color={metrics?.smartStatus?.followUps?.color || 'default'}
+            status={metrics?.smartStatus?.followUps?.status || 'on-track'}
+            trend={metrics?.trends?.followUps?.direction}
+            trendValue={`${metrics?.trends?.followUps?.change || 0}%`}
           />
 
           {/* New Prospects */}

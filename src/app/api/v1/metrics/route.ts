@@ -24,6 +24,38 @@ export async function GET(request: NextRequest) {
     const workspaceId = context.workspaceId;
     console.log('🔍 [METRICS] Using workspaceId:', workspaceId);
 
+    // Intelligent Weekly Targets (based on sales best practices)
+    const WEEKLY_TARGETS = {
+      totalActions: 85,      // 17/day
+      calls: 15,             // 3/day
+      emails: 35,            // 7/day  
+      meetings: 12,          // 2.4/day
+      demos: 7,              // 1.4/day
+      proposals: 4,          // 0.8/day
+      followUps: 25          // 5/day
+    };
+
+    // Helper functions for day-aware calculations
+    const getBusinessDayOfWeek = (date: Date) => {
+      const day = date.getDay();
+      // Convert to business days (Mon=1, Tue=2, Wed=3, Thu=4, Fri=5)
+      return day === 0 ? 0 : day === 6 ? 0 : day;
+    };
+
+    const calculateExpectedProgress = (weeklyTarget: number, currentDay: number) => {
+      if (currentDay === 0 || currentDay === 6) return weeklyTarget; // Weekend - compare against full week
+      return (currentDay / 5) * weeklyTarget;
+    };
+
+    const getSmartStatus = (actual: number, weeklyTarget: number, currentDay: number) => {
+      const expected = calculateExpectedProgress(weeklyTarget, currentDay);
+      const progress = expected > 0 ? (actual / expected) * 100 : 0;
+      
+      if (progress >= 110) return { color: 'success', status: 'ahead' };
+      if (progress >= 90) return { color: 'default', status: 'on-track' };
+      return { color: 'danger', status: 'behind' };
+    };
+
     // Calculate weekly date ranges (Monday-Friday business days)
     const now = new Date();
     const today = new Date(now);
@@ -183,22 +215,26 @@ export async function GET(request: NextRequest) {
                    actionType.includes('linkedin inmail') ||
                    actionType.includes('inmail');
           case 'meeting':
-            return actionType === 'meeting' || 
-                   actionType === 'demo';
+            return actionType === 'meeting';
+          case 'demo':
+            return actionType === 'demo';
           case 'proposal':
             return actionType === 'proposal' || 
                    actionType.includes('proposal sent');
+          case 'followUp':
+            return actionType === 'follow-up' ||
+                   actionType === 'follow up';
           case 'other':
             return actionType === 'other' || 
-                   actionType === 'follow-up' ||
-                   actionType === 'follow up' ||
                    (!actionType.includes('call') && 
                     !actionType.includes('phone') && 
                     !actionType.includes('email') && 
                     !actionType.includes('inmail') && 
                     !actionType.includes('meeting') &&
                     !actionType.includes('demo') &&
-                    !actionType.includes('proposal'));
+                    !actionType.includes('proposal') &&
+                    !actionType.includes('follow-up') &&
+                    !actionType.includes('follow up'));
           default:
             return false;
         }
@@ -209,7 +245,9 @@ export async function GET(request: NextRequest) {
       call: getActionTypeCount(thisWeekActions, 'call'),
       email: getActionTypeCount(thisWeekActions, 'email'),
       meeting: getActionTypeCount(thisWeekActions, 'meeting'),
+      demo: getActionTypeCount(thisWeekActions, 'demo'),
       proposal: getActionTypeCount(thisWeekActions, 'proposal'),
+      followUp: getActionTypeCount(thisWeekActions, 'followUp'),
       other: getActionTypeCount(thisWeekActions, 'other')
     };
 
@@ -217,7 +255,9 @@ export async function GET(request: NextRequest) {
       call: getActionTypeCount(lastWeekActions, 'call'),
       email: getActionTypeCount(lastWeekActions, 'email'),
       meeting: getActionTypeCount(lastWeekActions, 'meeting'),
+      demo: getActionTypeCount(lastWeekActions, 'demo'),
       proposal: getActionTypeCount(lastWeekActions, 'proposal'),
+      followUp: getActionTypeCount(lastWeekActions, 'followUp'),
       other: getActionTypeCount(lastWeekActions, 'other')
     };
     
@@ -366,6 +406,9 @@ export async function GET(request: NextRequest) {
       calls: calculateTrend(thisWeekActionTypes.call, lastWeekActionTypes.call),
       emails: calculateTrend(thisWeekActionTypes.email, lastWeekActionTypes.email),
       meetings: calculateTrend(thisWeekActionTypes.meeting, lastWeekActionTypes.meeting),
+      demos: calculateTrend(thisWeekActionTypes.demo, lastWeekActionTypes.demo),
+      proposals: calculateTrend(thisWeekActionTypes.proposal, lastWeekActionTypes.proposal),
+      followUps: calculateTrend(thisWeekActionTypes.followUp, lastWeekActionTypes.followUp),
       prospects: calculateTrend(thisWeekProspects, lastWeekProspects),
       opportunities: calculateTrend(thisWeekOpportunities, lastWeekOpportunities),
       clients: calculateTrend(thisWeekClients, lastWeekClients),
@@ -388,6 +431,25 @@ export async function GET(request: NextRequest) {
         clients: thisWeekClients,
         prospectsToOpportunitiesRate: Math.round(prospectsToOpportunitiesRate),
         opportunitiesToClientsRate: Math.round(opportunitiesToClientsRate)
+      },
+      
+      // Smart status calculations for each action type
+      smartStatus: {
+        totalActions: getSmartStatus(thisWeekPeopleActions, WEEKLY_TARGETS.totalActions, getBusinessDayOfWeek(today)),
+        calls: getSmartStatus(thisWeekActionTypes.call, WEEKLY_TARGETS.calls, getBusinessDayOfWeek(today)),
+        emails: getSmartStatus(thisWeekActionTypes.email, WEEKLY_TARGETS.emails, getBusinessDayOfWeek(today)),
+        meetings: getSmartStatus(thisWeekActionTypes.meeting, WEEKLY_TARGETS.meetings, getBusinessDayOfWeek(today)),
+        demos: getSmartStatus(thisWeekActionTypes.demo, WEEKLY_TARGETS.demos, getBusinessDayOfWeek(today)),
+        proposals: getSmartStatus(thisWeekActionTypes.proposal, WEEKLY_TARGETS.proposals, getBusinessDayOfWeek(today)),
+        followUps: getSmartStatus(thisWeekActionTypes.followUp, WEEKLY_TARGETS.followUps, getBusinessDayOfWeek(today))
+      },
+      
+      // Progress calculations for subtitles
+      progress: {
+        currentDay: getBusinessDayOfWeek(today),
+        weekProgress: getBusinessDayOfWeek(today) > 0 ? Math.round((getBusinessDayOfWeek(today) / 5) * 100) : 0,
+        expectedActions: calculateExpectedProgress(WEEKLY_TARGETS.totalActions, getBusinessDayOfWeek(today)),
+        dailyRate: Math.round(WEEKLY_TARGETS.totalActions / 5)
       },
       
       // Trends for week-over-week comparison

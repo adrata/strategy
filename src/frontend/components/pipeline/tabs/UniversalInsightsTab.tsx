@@ -243,7 +243,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
           <button
             onClick={handleGenerateStrategy}
             disabled={isGeneratingStrategy}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+            className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
           >
             {isGeneratingStrategy ? 'Generating...' : 'Generate Strategy'}
           </button>
@@ -313,7 +313,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
               <button
                 onClick={handleGenerateStrategy}
                 disabled={isGeneratingStrategy}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                className="px-6 py-3 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
                 {isGeneratingStrategy ? 'Generating Strategy...' : 'Generate Strategy Summary'}
               </button>

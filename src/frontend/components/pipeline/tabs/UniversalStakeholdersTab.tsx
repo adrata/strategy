@@ -52,7 +52,7 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
           <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No stakeholders yet</h3>
           <p className="text-[var(--muted)]">Add stakeholders to track who's involved in this opportunity</p>
           
-          <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button className="mt-4 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
             Add Stakeholder
           </button>
         </div>

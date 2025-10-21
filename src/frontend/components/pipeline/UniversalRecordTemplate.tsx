@@ -522,6 +522,15 @@ export function UniversalRecordTemplate({
            'Unknown Record';
   };
 
+  // Normalize string for comparison (remove punctuation, normalize whitespace, lowercase)
+  const normalizeString = (str: string): string => {
+    return str
+      .toLowerCase()
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ') // Replace punctuation with spaces
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
+  };
+
   // Get first initial for squircle
   const getFirstInitial = () => {
     const name = getDisplayName();
@@ -2197,7 +2206,7 @@ export function UniversalRecordTemplate({
 
   const handleDeleteConfirm = async () => {
     const recordName = getDisplayName();
-    if (deleteConfirmName.trim() !== recordName) {
+    if (normalizeString(deleteConfirmName) !== normalizeString(recordName)) {
       alert('Name does not match. Please enter the exact record name to confirm deletion.');
       return;
     }
@@ -2804,7 +2813,7 @@ export function UniversalRecordTemplate({
     
     const recordName = getDisplayName();
     
-    if (deleteConfirmName !== recordName) {
+    if (normalizeString(deleteConfirmName) !== normalizeString(recordName)) {
       alert(`Please type "${recordName}" to confirm deletion.`);
       return;
     }
@@ -3373,7 +3382,7 @@ export function UniversalRecordTemplate({
             </details>
             <button 
               onClick={() => setActiveTab('overview')}
-              className="mt-3 px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+              className="mt-3 px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 text-xs rounded hover:bg-blue-100"
             >
               Go to Overview Tab
             </button>
@@ -3648,7 +3657,7 @@ export function UniversalRecordTemplate({
                   setIsAddNoteModalOpen(false);
                   showMessage('Note added successfully!');
                 }}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
               >
                 Add Note
               </button>
@@ -3688,9 +3697,9 @@ export function UniversalRecordTemplate({
               </button>
               <button
                 onClick={handleDeleteConfirm}
-                disabled={loading || deleteConfirmName.trim() !== getDisplayName()}
+                disabled={loading || normalizeString(deleteConfirmName) !== normalizeString(getDisplayName())}
                 className={`px-4 py-2 text-sm rounded-md transition-colors ${
-                  loading || deleteConfirmName.trim() !== getDisplayName()
+                  loading || normalizeString(deleteConfirmName) !== normalizeString(getDisplayName())
                     ? 'bg-gray-300 text-[var(--muted)] cursor-not-allowed'
                     : 'bg-red-600 text-white hover:bg-red-700'
                 }`}
@@ -4525,7 +4534,7 @@ export function UniversalRecordTemplate({
                       value={deleteConfirmName}
                       onChange={(e) => setDeleteConfirmName(e.target.value)}
                       className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      placeholder={`Type "${record?.fullName || record?.name || 'this record'}" to confirm`}
+                      placeholder={`Type "${getDisplayName()}" to confirm`}
                     />
                   </div>
                 </div>
@@ -4547,7 +4556,7 @@ export function UniversalRecordTemplate({
                   </button>
                   <button
                     onClick={handleDeleteRecordFromModal}
-                    disabled={loading || deleteConfirmName !== (record?.fullName || record?.name || 'this record')}
+                    disabled={loading || normalizeString(deleteConfirmName) !== normalizeString(getDisplayName())}
                     className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {loading ? 'Deleting...' : 'Delete Record'}

@@ -219,7 +219,7 @@ export function PipelineFiltersRefactored({
         {/* Add record button - Full width on mobile, auto width on desktop */}
         <button
           onClick={onAddRecord}
-          className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium min-h-[2.5rem] sm:min-h-0"
+          className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium min-h-[2.5rem] sm:min-h-0"
         >
           Add {sectionConfig?.displayName?.slice(0, -1) || section.slice(0, -1)}
         </button>

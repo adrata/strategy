@@ -180,7 +180,7 @@ export function EmptyStateDashboard({ section, onAddRecord, onAddAction }: Empty
           {/* Action Button */}
           <button
             onClick={onAddRecord}
-            className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 border border-blue-200 px-6 py-3 rounded-lg font-medium hover:bg-blue-100 transition-colors"
           >
             <PlusIcon className="w-5 h-5" />
             Add Your First {section.slice(0, -1)}

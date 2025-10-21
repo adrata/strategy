@@ -226,7 +226,7 @@ export function PipelineContentRefactored({
               {config?.showAddButton && (
                 <button
                   onClick={handleAddRecord}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
                 >
                   {config.addButtonText || `Add ${section.slice(0, -1)}`}
                 </button>

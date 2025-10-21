@@ -140,6 +140,15 @@ export function UpdateModalRefactored({
     }
   };
 
+  // Normalize string for comparison (remove punctuation, normalize whitespace, lowercase)
+  const normalizeString = (str: string): string => {
+    return str
+      .toLowerCase()
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ') // Replace punctuation with spaces
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
+  };
+
   // Handle delete
   const handleDelete = async () => {
     if (!onDelete || !record?.id) return;
@@ -263,7 +272,7 @@ export function UpdateModalRefactored({
             </button>
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50"
               disabled={loading}
             >
               {loading ? 'Saving...' : 'Save Changes'}
@@ -305,7 +314,7 @@ export function UpdateModalRefactored({
                 </button>
                 <button
                   onClick={handleDelete}
-                  disabled={deleteConfirmName !== (formData.name || formData.fullName || '') || loading}
+                  disabled={normalizeString(deleteConfirmName) !== normalizeString(formData.name || formData.fullName || '') || loading}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                 >
                   {loading ? 'Deleting...' : 'Delete'}
