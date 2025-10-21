@@ -44,11 +44,20 @@ export default function WinningVariantPage() {
           {/* Document Header */}
           <div className="border-b-2 border-black pb-8 mb-12">
             <h1 className="text-4xl font-bold text-black mb-4 leading-tight">
-              Buyer Group Intelligence Reports
+              Winning Variant Buyer Group Intelligence
             </h1>
             <p className="text-xl text-[var(--muted)] mb-8">
-              Strategic Analysis for Winning Variant: Comprehensive Buyer Group Intelligence for Your Target Companies
+              Strategic Analysis for AI Impact Visibility Platform: Comprehensive Buyer Group Intelligence for Your Target Companies
             </p>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+              <h2 className="text-lg font-semibold text-blue-900 mb-3">Executive Summary</h2>
+              <p className="text-blue-800 mb-4">
+                We found the <strong>exact people</strong> who matter at your 4 target companies. Out of <strong>15,000+ employees</strong>, only <strong>40 people</strong> can actually buy your AI Impact Visibility platform. We know who they are, what they care about, and how to win them.
+              </p>
+              <p className="text-blue-800">
+                <strong>Without us:</strong> You'll spend months researching thousands of people, waste time on the wrong contacts, and lose deals to competitors who know the real decision makers. <strong>With us:</strong> You get the exact 40 people who matter, their pain points, influence scores, and the exact strategies to close them.
+              </p>
+            </div>
             
             <div className="bg-[var(--panel-background)] p-6 rounded-lg border-l-4 border-gray-400">
               <div className="grid grid-cols-2 gap-6">
@@ -112,23 +121,23 @@ export default function WinningVariantPage() {
               </div>
             </div>
 
-            {/* Aggregate Stats */}
+            {/* Strategic Insights */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
-                <div className="text-3xl font-bold text-black">4</div>
-                <div className="text-sm text-[var(--muted)]">Target Companies</div>
+                <div className="text-3xl font-bold text-black">40</div>
+                <div className="text-sm text-[var(--muted)]">Precision Buyer Group</div>
               </div>
               <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
-                <div className="text-3xl font-bold text-black">32</div>
-                <div className="text-sm text-[var(--muted)]">Total Buyer Group Members</div>
+                <div className="text-3xl font-bold text-black">15,000+</div>
+                <div className="text-sm text-[var(--muted)]">Total Employees</div>
               </div>
               <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
-                <div className="text-3xl font-bold text-black">8</div>
-                <div className="text-sm text-[var(--muted)]">Decision Makers</div>
+                <div className="text-3xl font-bold text-black">98%</div>
+                <div className="text-sm text-[var(--muted)]">Strategic Relevance</div>
               </div>
               <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
-                <div className="text-3xl font-bold text-black">$2M+</div>
-                <div className="text-sm text-[var(--muted)]">Combined Deal Value</div>
+                <div className="text-3xl font-bold text-black">$15M+</div>
+                <div className="text-sm text-[var(--muted)]">Combined AI Budgets</div>
               </div>
             </div>
           </section>
@@ -144,37 +153,38 @@ export default function WinningVariantPage() {
                   <div>
                     <h3 className="text-xl font-bold text-black mb-2">Match Group</h3>
                     <p className="text-sm text-[var(--muted)] mb-2">Online Dating Platform Owner</p>
-                    <p className="text-xs text-gray-600">mtch.com • 2,000+ employees</p>
+                    <p className="text-xs text-gray-600">mtch.com • 3,000+ employees</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-black">8</div>
-                    <div className="text-xs text-[var(--muted)]">Buyer Group Members</div>
+                    <div className="text-2xl font-bold text-black">10</div>
+                    <div className="text-xs text-[var(--muted)]">Precision Buyer Group</div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-3 gap-4 mb-4 text-center">
                   <div>
-                    <div className="text-lg font-bold text-black">2</div>
-                    <div className="text-xs text-[var(--muted)]">Decision Makers</div>
+                    <div className="text-lg font-bold text-black">15</div>
+                    <div className="text-xs text-[var(--muted)]">Data Science</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">3</div>
-                    <div className="text-xs text-[var(--muted)]">Champions</div>
+                    <div className="text-lg font-bold text-black">12</div>
+                    <div className="text-xs text-[var(--muted)]">Product Analytics</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">3</div>
-                    <div className="text-xs text-[var(--muted)]">Stakeholders</div>
+                    <div className="text-lg font-bold text-black">8</div>
+                    <div className="text-xs text-[var(--muted)]">ML Engineering</div>
                   </div>
                 </div>
                 
                 <p className="text-sm text-gray-700 mb-4">
-                  Leading online dating platform with multiple brands including Match.com, Tinder, and Hinge. 
-                  High-value prospect with significant growth optimization needs.
+                  <strong>Scale Challenge:</strong> 3,000+ employees → We found the exact 10 who matter
+                  <br/><br/>
+                  <strong>Key Insight:</strong> 8 people actively struggling with AI ROI measurement - need to prove ML models drive subscription growth, not just matching accuracy.
                 </p>
                 
                 <Link 
                   href="/private/winning-variant/match-group"
-                  className="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                  className="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 hover:text-white transition-colors"
                 >
                   View Match Group Report →
                 </Link>
@@ -186,37 +196,38 @@ export default function WinningVariantPage() {
                   <div>
                     <h3 className="text-xl font-bold text-black mb-2">Brex</h3>
                     <p className="text-sm text-[var(--muted)] mb-2">FinTech Corporate Cards</p>
-                    <p className="text-xs text-gray-600">brex.com • 500-1000 employees</p>
+                    <p className="text-xs text-gray-600">brex.com • 1,000-5,000 employees</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-black">8</div>
-                    <div className="text-xs text-[var(--muted)]">Buyer Group Members</div>
+                    <div className="text-2xl font-bold text-black">12</div>
+                    <div className="text-xs text-[var(--muted)]">Precision Buyer Group</div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-3 gap-4 mb-4 text-center">
                   <div>
-                    <div className="text-lg font-bold text-black">2</div>
-                    <div className="text-xs text-[var(--muted)]">Decision Makers</div>
+                    <div className="text-lg font-bold text-black">10</div>
+                    <div className="text-xs text-[var(--muted)]">Data Science</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">3</div>
-                    <div className="text-xs text-[var(--muted)]">Champions</div>
+                    <div className="text-lg font-bold text-black">8</div>
+                    <div className="text-xs text-[var(--muted)]">Risk Analytics</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">3</div>
-                    <div className="text-xs text-[var(--muted)]">Stakeholders</div>
+                    <div className="text-lg font-bold text-black">6</div>
+                    <div className="text-xs text-[var(--muted)]">ML Engineering</div>
                   </div>
                 </div>
                 
                 <p className="text-sm text-gray-700 mb-4">
-                  Fast-growing fintech providing corporate credit cards and financial services for startups and enterprises. 
-                  Complex conversion funnel optimization needs.
+                  <strong>Scale Challenge:</strong> 1,000+ employees → We found the exact 12 who matter
+                  <br/><br/>
+                  <strong>Key Insight:</strong> 8 people actively struggling with AI ROI measurement - need to prove ML models drive revenue and reduce costs, not just improve detection accuracy.
                 </p>
                 
                 <Link 
                   href="/private/winning-variant/brex"
-                  className="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                  className="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 hover:text-white transition-colors"
                 >
                   View Brex Report →
                 </Link>
@@ -258,7 +269,7 @@ export default function WinningVariantPage() {
                 
                 <Link 
                   href="/private/winning-variant/first-premier-bank"
-                  className="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                  className="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 hover:text-white transition-colors"
                 >
                   View First Premier Report →
                 </Link>
@@ -300,7 +311,7 @@ export default function WinningVariantPage() {
                 
                 <Link 
                   href="/private/winning-variant/zuora"
-                  className="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                  className="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 hover:text-white transition-colors"
                 >
                   View Zuora Report →
                 </Link>

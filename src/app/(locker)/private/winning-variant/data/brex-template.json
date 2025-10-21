@@ -1,0 +1,283 @@
+{
+  "company": {
+    "companyId": "21428731",
+    "companyName": "Brex, Inc.",
+    "website": "https://brex.com",
+    "industry": "FinTech",
+    "size": "1,000-5,000 employees",
+    "snowflakeRelevance": "High - Uses Snowflake for financial analytics and ML model training",
+    "aiMaturity": "Advanced - AI-driven fraud detection, credit scoring, customer acquisition optimization",
+    "context": "Brex uses AI for fraud detection and credit scoring. They need to prove these AI initiatives drive revenue and reduce costs, not just improve detection accuracy."
+  },
+  "departmentBreakdown": {
+    "Data Science": 10,
+    "Risk Analytics": 8,
+    "ML Engineering": 6,
+    "Data Engineering": 12,
+    "Product Management": 8,
+    "Engineering": 20,
+    "Executive": 5
+  },
+  "buyerGroup": {
+    "totalMembers": 69,
+    "cohesionScore": 82,
+    "strategicRelevance": "Perfect fit for AI Impact Visibility platform",
+    "keyInsight": "18 people actively struggling with AI ROI measurement - need to prove ML models drive revenue and reduce costs, not just improve detection accuracy",
+    "roles": {
+      "decision": [
+        {
+          "name": "Henrique Dubugras",
+          "title": "Co-Founder & CEO",
+          "email": "henrique.dubugras@brex.com",
+          "linkedin": "https://linkedin.com/in/henriquedubugras",
+          "phone": "+1-415-555-0123",
+          "archetype": {
+            "id": "visionary-decider",
+            "name": "Visionary Decider",
+            "role": "Decision Maker",
+            "description": "Strategic leader focused on long-term vision and market position"
+          },
+          "winningVariantStrategy": {
+            "situation": "Henrique leads Brex's strategic vision, including significant investments in AI for fraud detection and credit scoring, but needs to demonstrate that these AI initiatives drive business growth and competitive advantage.",
+            "complication": "While the team can show sophisticated AI models and improved fraud detection, Henrique struggles to prove that these technical achievements translate to measurable business impact like increased revenue or reduced operational costs.",
+            "futureState": "With Winning Variant's Snowflake-native experimentation platform, Henrique can prove that AI fraud detection reduces losses by $3M annually and AI credit scoring increases approval rates by 8% ($5M in additional revenue). He transforms the narrative from 'our AI is accurate' to 'our AI drives $8M in business impact annually.'",
+            "keyMessage": "Turn AI innovation into competitive advantage and measurable business impact",
+            "tailoredApproach": "Focus on competitive advantage and market position. Show how AI drives business growth and reduces costs. Emphasize strategic value and market differentiation."
+          },
+          "painPoints": [
+            "Need to prove AI investments drive business growth",
+            "Competitive pressure to show AI advantage",
+            "Board questions AI ROI and strategic value",
+            "Need to justify AI budget allocation"
+          ],
+          "influenceScore": 98,
+          "confidence": 95,
+          "flightRisk": {
+            "score": 5,
+            "category": "ROOTED",
+            "reasoning": "Co-founder and CEO, equity holder, strong company performance, long-term vision"
+          }
+        },
+        {
+          "name": "Michael Tannenbaum",
+          "title": "Chief Financial Officer",
+          "email": "michael.tannenbaum@brex.com",
+          "linkedin": "https://linkedin.com/in/michaeltannenbaum",
+          "phone": "+1-415-555-0124",
+          "archetype": {
+            "id": "economic-buyer",
+            "name": "Economic Buyer",
+            "role": "Decision Maker",
+            "description": "Senior executive with budget authority focused on ROI and financial impact"
+          },
+          "winningVariantStrategy": {
+            "situation": "Michael oversees Brex's financial strategy, including significant investments in AI for fraud detection and credit scoring, but needs to demonstrate clear ROI on these AI initiatives to justify continued investment.",
+            "complication": "The board questions continued AI investment when the team shows 'fraud detection accuracy improved by 15%' but can't prove it reduced actual losses or increased revenue. This creates pressure to justify the $2M+ annual AI budget.",
+            "futureState": "With Winning Variant's Snowflake-native experimentation platform, Michael can prove that AI fraud detection reduces losses by $2.5M annually and AI credit scoring increases revenue by $3.2M through better approval rates. He transforms the narrative from 'our AI is accurate' to 'our AI saves $5.7M annually.'",
+            "keyMessage": "Turn AI accuracy into measurable financial impact and cost savings",
+            "tailoredApproach": "Lead with financial impact and cost savings. Show direct correlation between AI improvements and financial outcomes. Emphasize board-ready ROI dashboards and financial metrics."
+          },
+          "painPoints": [
+            "Can't prove AI ROI to board and investors",
+            "ML team celebrates accuracy but financial impact unclear",
+            "Board questioning $2M+ annual AI budget allocation",
+            "Need to show AI as profit driver, not cost center"
+          ],
+          "influenceScore": 92,
+          "confidence": 90,
+          "flightRisk": {
+            "score": 15,
+            "category": "ROOTED",
+            "reasoning": "CFO role, long tenure, strong company performance, but may seek opportunities if financial pressure continues"
+          }
+        }
+      ],
+      "champion": [
+        {
+          "name": "Sarah Johnson",
+          "title": "VP Risk Analytics",
+          "email": "sarah.johnson@brex.com",
+          "linkedin": "https://linkedin.com/in/sarahjohnson",
+          "phone": "+1-415-555-0125",
+          "archetype": {
+            "id": "data-driven-innovator",
+            "name": "Data-Driven Innovator",
+            "role": "Champion",
+            "description": "Enthusiastic advocate for data-driven solutions and advanced analytics tools"
+          },
+          "winningVariantStrategy": {
+            "situation": "Sarah leads risk analytics for Brex's fraud detection and credit scoring systems, constantly seeking better ways to measure the impact of AI-powered risk models on business outcomes.",
+            "complication": "Current risk analytics show model performance but can't prove that AI-powered fraud detection actually reduces losses or that credit scoring improvements increase revenue - leaving risk decisions based on incomplete data about AI impact.",
+            "futureState": "With Winning Variant's experimentation platform, Sarah can prove that AI fraud detection reduces losses by 12% and AI credit scoring increases approval rates by 8%, giving her concrete data to optimize risk models for business impact.",
+            "keyMessage": "Turn risk management into revenue optimization with proven AI impact",
+            "tailoredApproach": "Emphasize risk analytics capabilities. Show how to measure AI impact on fraud reduction and credit optimization. Position as essential for data-driven risk management."
+          },
+          "painPoints": [
+            "Can't prove AI risk models reduce actual losses",
+            "Risk decisions based on incomplete AI impact data",
+            "Need better tools to measure AI risk model effectiveness",
+            "Pressure to show ROI of AI risk investments"
+          ],
+          "influenceScore": 85,
+          "confidence": 88,
+          "flightRisk": {
+            "score": 25,
+            "category": "STABLE",
+            "reasoning": "Senior risk role, good performance, but may seek opportunities if analytics capabilities don't improve"
+          }
+        }
+      ],
+      "stakeholder": [
+        {
+          "name": "David Park",
+          "title": "Principal ML Engineer",
+          "email": "david.park@brex.com",
+          "linkedin": "https://linkedin.com/in/davidpark",
+          "phone": "+1-415-555-0126",
+          "archetype": {
+            "id": "technical-architect",
+            "name": "Technical Architect",
+            "role": "Stakeholder",
+            "description": "Focuses on technical feasibility, integration, and ML system architecture"
+          },
+          "winningVariantStrategy": {
+            "situation": "David leads ML engineering infrastructure supporting Brex's fraud detection and credit scoring systems, ensuring model performance and system reliability for AI initiatives.",
+            "complication": "Current ML infrastructure provides technical metrics but struggles to connect model performance to business outcomes, making it difficult to optimize for business impact rather than just technical accuracy.",
+            "futureState": "Winning Variant's Snowflake-native architecture integrates seamlessly with existing ML infrastructure, providing real-time business impact metrics for ML models without requiring new data pipelines or complex integrations.",
+            "keyMessage": "Seamless integration with existing ML infrastructure, enhanced business impact measurement",
+            "tailoredApproach": "Focus on technical integration benefits. Emphasize no new infrastructure requirements. Show how it enhances existing ML architecture and provides business impact visibility."
+          },
+          "painPoints": [
+            "Need better business impact metrics for ML models",
+            "Current infrastructure can't connect technical performance to business outcomes",
+            "Integration complexity with new analytics tools",
+            "Need to optimize ML models for business impact, not just accuracy"
+          ],
+          "influenceScore": 80,
+          "confidence": 85,
+          "flightRisk": {
+            "score": 20,
+            "category": "STABLE",
+            "reasoning": "Senior technical role, good compensation, but may seek opportunities if technical challenges aren't addressed"
+          }
+        }
+      ],
+      "blocker": [
+        {
+          "name": "Jennifer Lee",
+          "title": "VP Engineering",
+          "email": "jennifer.lee@brex.com",
+          "linkedin": "https://linkedin.com/in/jenniferlee",
+          "phone": "+1-415-555-0127",
+          "archetype": {
+            "id": "skeptical-technologist",
+            "name": "Skeptical Technologist",
+            "role": "Blocker",
+            "description": "Questions new tools and technologies, focuses on technical risks and system complexity"
+          },
+          "winningVariantStrategy": {
+            "situation": "Jennifer oversees engineering infrastructure and is cautious about new tools that might add complexity to Brex's already sophisticated ML and data architecture for financial services.",
+            "complication": "Concerned that new experimentation tools will require additional infrastructure, create data silos, or introduce security risks to Brex's financial data environment that must meet strict compliance requirements.",
+            "futureState": "Winning Variant's Snowflake-native approach requires no new infrastructure, integrates with existing security protocols, and actually improves data architecture by providing unified AI impact measurement within the current Snowflake environment while maintaining compliance.",
+            "keyMessage": "No new infrastructure, enhanced security, compliance-friendly architecture",
+            "tailoredApproach": "Address technical and compliance concerns directly. Emphasize Snowflake-native benefits and security advantages. Show compliance-friendly architecture. Provide technical documentation and security reviews."
+          },
+          "painPoints": [
+            "Concerned about infrastructure complexity of new tools",
+            "Security and compliance risks with additional data access",
+            "Integration challenges with existing financial data architecture",
+            "Resource allocation for new tool implementation"
+          ],
+          "influenceScore": 88,
+          "confidence": 75,
+          "flightRisk": {
+            "score": 15,
+            "category": "ROOTED",
+            "reasoning": "Senior engineering role, long tenure, but may resist if technical and compliance concerns aren't addressed"
+          }
+        }
+      ],
+      "introducer": [
+        {
+          "name": "Alex Chen",
+          "title": "Senior Data Scientist",
+          "email": "alex.chen@brex.com",
+          "linkedin": "https://linkedin.com/in/alexchen",
+          "phone": "+1-415-555-0128",
+          "archetype": {
+            "id": "internal-connector",
+            "name": "Internal Connector",
+            "role": "Introducer",
+            "description": "Well-connected within organization, facilitates introductions between technical and business teams"
+          },
+          "winningVariantStrategy": {
+            "situation": "Alex works closely with both the data science team and risk teams, often serving as a bridge between technical ML capabilities and business needs for fraud detection and credit scoring.",
+            "complication": "Frustrated by the disconnect between ML model performance metrics and business outcomes, often caught between celebrating technical achievements and explaining business impact to risk and business stakeholders.",
+            "futureState": "Winning Variant gives Alex the tools to connect technical ML achievements directly to business outcomes, making it easier to communicate value to both technical and business stakeholders and drive better cross-team collaboration.",
+            "keyMessage": "Bridge the gap between technical excellence and business impact",
+            "tailoredApproach": "Leverage internal connections. Show how to communicate AI value to different audiences. Position as tool for better cross-team collaboration and business impact measurement."
+          },
+          "painPoints": [
+            "Disconnect between ML metrics and business outcomes",
+            "Difficulty communicating technical value to business stakeholders",
+            "Need tools to bridge technical and business teams",
+            "Frustration with current measurement capabilities"
+          ],
+          "influenceScore": 70,
+          "confidence": 80,
+          "flightRisk": {
+            "score": 30,
+            "category": "ELEVATED",
+            "reasoning": "Mid-level role, may seek opportunities if current tools don't improve cross-team collaboration"
+          }
+        }
+      ]
+    },
+    "dynamics": {
+      "decisionFlow": "Founder-driven with financial oversight - Henrique and Michael make final decisions based on strategic vision and financial impact",
+      "engagementStrategy": "Start with Sarah (risk champion), leverage Alex (internal connector), address Jennifer's concerns, get technical buy-in, secure Michael's budget approval and Henrique's strategic alignment",
+      "timeline": "3-6 months typical sales cycle for AI experimentation platforms at FinTech companies",
+      "keyInsight": "Strong technical team with significant AI investment but needs better business impact measurement to justify continued AI budget allocation in competitive FinTech market"
+    },
+    "opportunitySignals": [
+      {
+        "signal": "Active AI/ML investment with $2M+ annual budget",
+        "strength": 0.9,
+        "source": "budget_allocation",
+        "confidence": 0.95
+      },
+      {
+        "signal": "Board-level pressure to prove AI ROI",
+        "strength": 0.85,
+        "source": "executive_pressure",
+        "confidence": 0.9
+      },
+      {
+        "signal": "Snowflake-native architecture alignment",
+        "strength": 0.9,
+        "source": "technical_fit",
+        "confidence": 0.95
+      }
+    ],
+    "painSignals": [
+      {
+        "signal": "Can't prove AI ROI to board and investors",
+        "strength": 0.9,
+        "source": "ai_impact_gap",
+        "confidence": 0.95
+      },
+      {
+        "signal": "Gap between technical metrics and business outcomes",
+        "strength": 0.85,
+        "source": "measurement_challenge",
+        "confidence": 0.9
+      },
+      {
+        "signal": "Pressure to justify multi-million dollar AI budgets",
+        "strength": 0.8,
+        "source": "budget_pressure",
+        "confidence": 0.85
+      }
+    ]
+  }
+}

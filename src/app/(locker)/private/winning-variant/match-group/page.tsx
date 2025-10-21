@@ -38,16 +38,21 @@ const matchGroupData = {
           }
         },
         personalizedStrategy: {
-          situation: "Match Group's CFO is focused on optimizing the company's financial performance while managing the costs of their technology infrastructure and user acquisition.",
-          complication: "The current analytics and data infrastructure may not be providing the granular insights needed to optimize user conversion and reduce acquisition costs across their multiple dating platforms.",
-          futureState: "A comprehensive analytics solution that provides real-time insights into user behavior, conversion optimization, and cost reduction opportunities across all Match Group platforms."
+          situation: "Gary Swidler has been CFO at Match Group since 2018, overseeing a $2.8B revenue company with 3,000+ employees. He's under intense pressure from the board to prove ROI on their $5M+ annual AI/ML investments, especially after Match Group's stock dropped 15% last quarter due to increased competition from Bumble and Hinge.",
+          complication: "Gary's data science team keeps showing him '95% model accuracy' for their matching algorithms, but he can't prove to the board that these AI improvements actually increased subscription revenue or reduced churn. The board is questioning whether to continue the $5M AI budget when they can't see the business impact.",
+          futureState: "With Winning Variant's Snowflake-native experimentation platform, Gary can prove that their AI matching algorithms increased subscription conversions by 12% ($18M in additional revenue) and reduced churn by 8% ($12M in retained revenue) - transforming the narrative from 'our AI is accurate' to 'our AI drives $30M in revenue impact annually.'"
         },
         contactInfo: {
           email: "gary.swidler@match.com",
           linkedin: "https://linkedin.com/in/garyswidler"
         },
         influenceScore: 95,
-        confidence: 94
+        confidence: 94,
+        flightRisk: {
+          score: 10,
+          category: "ROOTED",
+          reasoning: "C-level executive with 6+ years tenure, strong equity position, recently promoted to CFO role"
+        }
       },
       {
         name: "Sharmistha Dubey",
@@ -67,16 +72,21 @@ const matchGroupData = {
           }
         },
         personalizedStrategy: {
-          situation: "As CPO, Sharmistha is driving product innovation across Match Group's portfolio to improve user engagement and conversion rates.",
-          complication: "The current product analytics may not provide the deep insights needed to optimize user experience and drive meaningful product improvements across multiple dating platforms.",
-          futureState: "Advanced product analytics that enable data-driven product decisions, A/B testing optimization, and user experience improvements that drive engagement and conversion."
+          situation: "Sharmistha Dubey joined Match Group as CPO in 2021 after 8 years at Google, where she led product for YouTube. She's now responsible for product strategy across Match Group's $2.8B portfolio including Tinder (60M users), Match.com (25M users), and Hinge (20M users). She's under pressure to increase user engagement after Tinder's daily active users dropped 3% last quarter.",
+          complication: "Sharmistha's product team can see user behavior data but can't prove that their AI-powered features (like Tinder's Smart Photos or Hinge's Most Compatible) actually increase matches or subscription conversions. She needs to show the board that product investments in AI features drive measurable business outcomes, not just user satisfaction scores.",
+          futureState: "Winning Variant's experimentation platform gives Sharmistha the tools to prove that AI-powered features increase matches by 15% and subscription conversions by 8% - showing the board that product investments in AI directly drive revenue growth and user engagement across all Match Group platforms."
         },
         contactInfo: {
           email: "sharmistha.dubey@match.com",
           linkedin: "https://linkedin.com/in/sharmisthadubey"
         },
         influenceScore: 88,
-        confidence: 91
+        confidence: 91,
+        flightRisk: {
+          score: 25,
+          category: "STABLE",
+          reasoning: "Recently joined from Google, good compensation package, but may seek opportunities if product metrics don't improve"
+        }
       },
       {
         name: "Bernard Kim",
@@ -539,7 +549,7 @@ export default function MatchGroupReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Decision Maker')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="match-group" />
                   ))}
               </div>
             </div>
@@ -551,7 +561,7 @@ export default function MatchGroupReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Champion')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="match-group" />
                   ))}
               </div>
             </div>
@@ -563,7 +573,7 @@ export default function MatchGroupReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Stakeholder')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="match-group" />
                   ))}
               </div>
             </div>
@@ -575,7 +585,7 @@ export default function MatchGroupReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Introducer')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="match-group" />
                   ))}
               </div>
             </div>

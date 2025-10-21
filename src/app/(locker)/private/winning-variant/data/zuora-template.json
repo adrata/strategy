@@ -1,0 +1,283 @@
+{
+  "company": {
+    "companyId": "10782378",
+    "companyName": "Zuora, Inc.",
+    "website": "https://zuora.com",
+    "industry": "SaaS/Subscription Management",
+    "size": "1,000-5,000 employees",
+    "snowflakeRelevance": "High - Uses Snowflake for subscription analytics and ML model training",
+    "aiMaturity": "Advanced - ML-driven churn prediction, revenue optimization, and subscription analytics",
+    "context": "Zuora uses ML models for churn prediction and subscription optimization. They need to prove these AI initiatives drive revenue, not just improve accuracy."
+  },
+  "departmentBreakdown": {
+    "Data Science": 12,
+    "Product Analytics": 8,
+    "ML Engineering": 6,
+    "Data Engineering": 10,
+    "Product Management": 8,
+    "Engineering": 15,
+    "Executive": 4
+  },
+  "buyerGroup": {
+    "totalMembers": 63,
+    "cohesionScore": 88,
+    "strategicRelevance": "Perfect fit for AI Impact Visibility platform",
+    "keyInsight": "23 people actively struggling with AI ROI measurement - need to prove ML models drive revenue, not just accuracy",
+    "roles": {
+      "decision": [
+        {
+          "name": "Robbie Traube",
+          "title": "President & Chief Revenue Officer",
+          "email": "robbie.traube@zuora.com",
+          "linkedin": "https://linkedin.com/in/robbietraube",
+          "phone": "+1-650-555-0123",
+          "archetype": {
+            "id": "economic-buyer",
+            "name": "Economic Buyer",
+            "role": "Decision Maker",
+            "description": "Senior executive with budget authority focused on ROI and business impact"
+          },
+          "winningVariantStrategy": {
+            "situation": "Robbie leads Zuora's revenue strategy, relying heavily on ML models for churn prediction and subscription optimization. While the data science team celebrates model improvements, Robbie struggles to connect these advances to actual revenue growth when presenting to the board.",
+            "complication": "The board questions continued AI investment when the team shows '95% model accuracy' but can't prove it increased revenue by X or reduced churn by Y%. This creates budget risk for the entire data science organization and limits Robbie's ability to invest in new AI initiatives.",
+            "futureState": "With Winning Variant's Snowflake-native experimentation platform, Robbie can prove that the ML churn model reduced customer attrition by 8% ($2.3M in retained ARR) and the recommendation engine increased upsells by 12% ($1.8M in new revenue). He transforms the narrative from 'our models are accurate' to 'our AI drove $4.1M in revenue impact this quarter.'",
+            "keyMessage": "Turn 'AI is working' into 'AI increased revenue by $4M this quarter'",
+            "tailoredApproach": "Lead with board-ready ROI metrics, not model performance. Show direct line from AI experiments to revenue outcomes. Position Winning Variant as the bridge between data science and CFO language."
+          },
+          "painPoints": [
+            "Can't prove AI ROI to board and CFO",
+            "ML team celebrates accuracy but revenue impact unclear",
+            "Board questioning $3M annual AI budget allocation",
+            "Gap between data science metrics and business outcomes"
+          ],
+          "influenceScore": 98,
+          "confidence": 95,
+          "flightRisk": {
+            "score": 15,
+            "category": "ROOTED",
+            "reasoning": "Long tenure (8 years), executive role with equity, strong company performance"
+          }
+        },
+        {
+          "name": "Sarah Chen",
+          "title": "VP Data Science",
+          "email": "sarah.chen@zuora.com",
+          "linkedin": "https://linkedin.com/in/sarahchen",
+          "phone": "+1-650-555-0124",
+          "archetype": {
+            "id": "technical-visionary",
+            "name": "Technical Visionary",
+            "role": "Decision Maker",
+            "description": "Technical leader who sees both innovation potential and business value"
+          },
+          "winningVariantStrategy": {
+            "situation": "Sarah leads a 12-person data science team shipping sophisticated ML models for churn prediction and subscription optimization, but struggles to translate technical achievements into business language that resonates with executive leadership.",
+            "complication": "The CFO questions the $3M data science budget when Sarah's team shows 'model accuracy improved by 15%' but can't demonstrate how that translates to revenue growth or cost savings that matter to the business.",
+            "futureState": "Winning Variant's Snowflake-native platform gives Sarah the tools to prove that her ML models directly impact key business metrics - showing that the churn prediction model saved $2.1M in customer retention and the recommendation engine increased ARPU by 8%.",
+            "keyMessage": "Transform technical excellence into business impact that executives understand",
+            "tailoredApproach": "Focus on business outcomes, not technical metrics. Show how ML models drive revenue and reduce costs. Emphasize Snowflake-native integration with existing data stack."
+          },
+          "painPoints": [
+            "Team ships great ML models but CFO questions $3M data science budget",
+            "Can't translate technical achievements to business impact",
+            "Pressure to justify ML infrastructure investment",
+            "Need to show AI as profit center, not cost center"
+          ],
+          "influenceScore": 92,
+          "confidence": 88,
+          "flightRisk": {
+            "score": 25,
+            "category": "STABLE",
+            "reasoning": "Strong technical reputation, recently promoted, but may seek opportunities if budget pressure continues"
+          }
+        }
+      ],
+      "champion": [
+        {
+          "name": "Michael Rodriguez",
+          "title": "Senior Manager, Product Analytics",
+          "email": "michael.rodriguez@zuora.com",
+          "linkedin": "https://linkedin.com/in/michaelrodriguez",
+          "phone": "+1-650-555-0125",
+          "archetype": {
+            "id": "data-driven-innovator",
+            "name": "Data-Driven Innovator",
+            "role": "Champion",
+            "description": "Enthusiastic advocate for data-driven solutions and new analytical tools"
+          },
+          "winningVariantStrategy": {
+            "situation": "Michael manages product analytics for Zuora's subscription platform, constantly seeking better ways to measure the impact of AI-powered features on user engagement and subscription growth.",
+            "complication": "Current analytics tools show feature usage but can't prove that AI-powered recommendations actually increase subscription conversions or reduce churn - leaving product decisions based on incomplete data.",
+            "futureState": "With Winning Variant's experimentation platform, Michael can prove that AI-powered features increase subscription conversions by 12% and reduce churn by 8%, giving him concrete data to drive product roadmap decisions.",
+            "keyMessage": "Turn product intuition into data-driven decisions with proven AI impact",
+            "tailoredApproach": "Emphasize product analytics capabilities. Show how to measure AI feature impact on user behavior. Position as essential for data-driven product development."
+          },
+          "painPoints": [
+            "Can't prove AI-powered features actually drive subscription growth",
+            "Product decisions based on incomplete analytics",
+            "Need better tools to measure AI feature impact",
+            "Pressure to show ROI of AI product investments"
+          ],
+          "influenceScore": 78,
+          "confidence": 82,
+          "flightRisk": {
+            "score": 35,
+            "category": "STABLE",
+            "reasoning": "Mid-level role, good performance, but may seek growth opportunities if current tools don't improve"
+          }
+        }
+      ],
+      "stakeholder": [
+        {
+          "name": "Jennifer Liu",
+          "title": "Principal Data Engineer",
+          "email": "jennifer.liu@zuora.com",
+          "linkedin": "https://linkedin.com/in/jenniferliu",
+          "phone": "+1-650-555-0126",
+          "archetype": {
+            "id": "technical-architect",
+            "name": "Technical Architect",
+            "role": "Stakeholder",
+            "description": "Focuses on technical feasibility, integration, and system architecture"
+          },
+          "winningVariantStrategy": {
+            "situation": "Jennifer leads data engineering infrastructure supporting Zuora's ML models and analytics, ensuring data quality and pipeline reliability for AI initiatives.",
+            "complication": "Current data infrastructure struggles to provide real-time metrics for AI model performance, making it difficult to prove business impact and optimize model effectiveness.",
+            "futureState": "Winning Variant's Snowflake-native architecture integrates seamlessly with existing data infrastructure, providing real-time AI impact metrics without requiring new data pipelines or complex integrations.",
+            "keyMessage": "Seamless integration with existing Snowflake infrastructure, no new complexity",
+            "tailoredApproach": "Focus on technical integration benefits. Emphasize no new infrastructure requirements. Show how it enhances existing data architecture."
+          },
+          "painPoints": [
+            "Need better real-time metrics for AI model performance",
+            "Current infrastructure can't provide business impact data",
+            "Integration complexity with new tools",
+            "Data quality issues affecting AI model reliability"
+          ],
+          "influenceScore": 75,
+          "confidence": 80,
+          "flightRisk": {
+            "score": 20,
+            "category": "ROOTED",
+            "reasoning": "Senior technical role, good compensation, but may seek opportunities if technical challenges aren't addressed"
+          }
+        }
+      ],
+      "blocker": [
+        {
+          "name": "David Kim",
+          "title": "VP Engineering",
+          "email": "david.kim@zuora.com",
+          "linkedin": "https://linkedin.com/in/davidkim",
+          "phone": "+1-650-555-0127",
+          "archetype": {
+            "id": "skeptical-technologist",
+            "name": "Skeptical Technologist",
+            "role": "Blocker",
+            "description": "Questions new tools and technologies, focuses on technical risks and complexity"
+          },
+          "winningVariantStrategy": {
+            "situation": "David oversees engineering infrastructure and is cautious about new tools that might add complexity to Zuora's already sophisticated data architecture.",
+            "complication": "Concerned that new experimentation tools will require additional infrastructure, create data silos, or introduce security risks to Zuora's existing Snowflake environment.",
+            "futureState": "Winning Variant's Snowflake-native approach requires no new infrastructure, integrates with existing security protocols, and actually simplifies data architecture by providing unified AI impact measurement within the current Snowflake environment.",
+            "keyMessage": "No new infrastructure, enhanced security, simplified architecture",
+            "tailoredApproach": "Address technical concerns directly. Emphasize Snowflake-native benefits. Show security and architecture advantages. Provide technical documentation and architecture reviews."
+          },
+          "painPoints": [
+            "Concerned about infrastructure complexity of new tools",
+            "Security risks with additional data access",
+            "Integration challenges with existing architecture",
+            "Resource allocation for new tool implementation"
+          ],
+          "influenceScore": 85,
+          "confidence": 70,
+          "flightRisk": {
+            "score": 15,
+            "category": "ROOTED",
+            "reasoning": "Senior engineering role, long tenure, but may resist if technical concerns aren't addressed"
+          }
+        }
+      ],
+      "introducer": [
+        {
+          "name": "Alex Thompson",
+          "title": "Senior Data Scientist",
+          "email": "alex.thompson@zuora.com",
+          "linkedin": "https://linkedin.com/in/alexthompson",
+          "phone": "+1-650-555-0128",
+          "archetype": {
+            "id": "internal-connector",
+            "name": "Internal Connector",
+            "role": "Introducer",
+            "description": "Well-connected within organization, facilitates introductions and information flow"
+          },
+          "winningVariantStrategy": {
+            "situation": "Alex works closely with both the data science team and product teams, often serving as a bridge between technical capabilities and business needs.",
+            "complication": "Frustrated by the disconnect between ML model performance metrics and business outcomes, often caught between celebrating technical achievements and explaining business impact.",
+            "futureState": "Winning Variant gives Alex the tools to connect technical ML achievements directly to business outcomes, making it easier to communicate value to both technical and business stakeholders.",
+            "keyMessage": "Bridge the gap between technical excellence and business impact",
+            "tailoredApproach": "Leverage internal connections. Show how to communicate AI value to different audiences. Position as tool for better cross-team collaboration."
+          },
+          "painPoints": [
+            "Disconnect between ML metrics and business outcomes",
+            "Difficulty communicating technical value to business stakeholders",
+            "Need tools to bridge technical and business teams",
+            "Frustration with current measurement capabilities"
+          ],
+          "influenceScore": 65,
+          "confidence": 75,
+          "flightRisk": {
+            "score": 40,
+            "category": "ELEVATED",
+            "reasoning": "Mid-level role, may seek opportunities if current tools don't improve cross-team collaboration"
+          }
+        }
+      ]
+    },
+    "dynamics": {
+      "decisionFlow": "Data-driven with executive oversight - Robbie and Sarah make final decisions based on business impact metrics",
+      "engagementStrategy": "Start with Sarah (technical champion), leverage Michael (product advocate), address David's concerns, use Alex as internal connector",
+      "timeline": "3-6 months typical sales cycle for AI experimentation platforms",
+      "keyInsight": "Strong technical team but needs better business impact measurement to justify continued AI investment"
+    },
+    "opportunitySignals": [
+      {
+        "signal": "Active AI/ML investment with $3M+ annual budget",
+        "strength": 0.9,
+        "source": "budget_allocation",
+        "confidence": 0.95
+      },
+      {
+        "signal": "Board-level pressure to prove AI ROI",
+        "strength": 0.85,
+        "source": "executive_pressure",
+        "confidence": 0.9
+      },
+      {
+        "signal": "Snowflake-native architecture alignment",
+        "strength": 0.95,
+        "source": "technical_fit",
+        "confidence": 0.98
+      }
+    ],
+    "painSignals": [
+      {
+        "signal": "Can't prove AI ROI to board and CFO",
+        "strength": 0.9,
+        "source": "ai_impact_gap",
+        "confidence": 0.95
+      },
+      {
+        "signal": "Gap between technical metrics and business outcomes",
+        "strength": 0.85,
+        "source": "measurement_challenge",
+        "confidence": 0.9
+      },
+      {
+        "signal": "Pressure to justify multi-million dollar AI budgets",
+        "strength": 0.8,
+        "source": "budget_pressure",
+        "confidence": 0.85
+      }
+    ]
+  }
+}

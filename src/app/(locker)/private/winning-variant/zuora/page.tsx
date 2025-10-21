@@ -527,7 +527,7 @@ export default function ZuoraReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Decision Maker')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="zuora" />
                   ))}
               </div>
             </div>
@@ -539,7 +539,7 @@ export default function ZuoraReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Champion')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="zuora" />
                   ))}
               </div>
             </div>
@@ -551,7 +551,7 @@ export default function ZuoraReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Stakeholder')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="zuora" />
                   ))}
               </div>
             </div>
@@ -563,7 +563,7 @@ export default function ZuoraReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Introducer')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="zuora" />
                   ))}
               </div>
             </div>

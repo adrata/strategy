@@ -11,17 +11,20 @@ import type {
   BuyerGroup,
 } from '../shared/types';
 import { ProgressiveEnrichmentEngine } from './progressive-enrichment';
+import { BuyerGroupPreviewDiscovery } from '../../pipelines/modules/core/BuyerGroupPreviewDiscovery';
 
 export class BuyerGroupEngine {
   private enrichmentEngine: ProgressiveEnrichmentEngine;
+  private previewDiscovery: BuyerGroupPreviewDiscovery;
   private cache: Map<string, EnrichmentResult> = new Map();
 
   constructor() {
     this.enrichmentEngine = new ProgressiveEnrichmentEngine();
+    this.previewDiscovery = new BuyerGroupPreviewDiscovery();
   }
 
   /**
-   * Main discovery method
+   * Main discovery method with Preview API enhancement
    */
   async discover(request: EnrichmentRequest): Promise<EnrichmentResult> {
     console.log(
@@ -54,8 +57,18 @@ export class BuyerGroupEngine {
       }
     }
 
-    // Process the request
-    const result = await this.enrichmentEngine.enrich(request);
+    // Use Preview API for comprehensive discovery
+    console.log(`   🔍 Using Preview API for comprehensive discovery...`);
+    const previewResult = await this.previewDiscovery.discoverBuyerGroup(request.companyName, {
+      enrichmentLevel: request.enrichmentLevel,
+      website: request.website
+    });
+
+    // Process with progressive enrichment
+    const result = await this.enrichmentEngine.enrich({
+      ...request,
+      previewData: previewResult
+    });
 
     // Save to database if requested
     if (request.options?.saveToDatabase !== false && request.workspaceId) {

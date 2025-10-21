@@ -158,7 +158,10 @@ async function auditLastNextActionsDatabase() {
     // Find mismatches between stored lastAction and actual last action
     const lastActionMismatches = peopleWithActions.filter(person => {
       const actualLastAction = person.actions[0];
-      if (!actualLastAction) return person.lastAction !== null;
+      if (!actualLastAction) {
+        // If no completed actions, "Record created" is correct
+        return person.lastAction !== 'Record created';
+      }
       return person.lastAction !== actualLastAction.subject;
     });
     

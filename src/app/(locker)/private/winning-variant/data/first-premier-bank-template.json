@@ -1,0 +1,283 @@
+{
+  "company": {
+    "companyId": "7578901",
+    "companyName": "First PREMIER Bank",
+    "website": "https://firstpremier.com",
+    "industry": "Banking",
+    "size": "1,000-5,000 employees",
+    "snowflakeRelevance": "Medium - Uses Snowflake for risk analytics and customer data analysis",
+    "aiMaturity": "Growing - AI-powered risk assessment, customer onboarding, digital banking optimization",
+    "context": "First PREMIER Bank uses AI for risk assessment and customer onboarding. They need to prove these AI initiatives drive customer retention and reduce operational costs, not just improve risk accuracy."
+  },
+  "departmentBreakdown": {
+    "Risk Analytics": 8,
+    "Data Analytics": 6,
+    "ML Engineering": 4,
+    "Data Engineering": 8,
+    "Digital Banking": 10,
+    "Product Management": 6,
+    "Executive": 5
+  },
+  "buyerGroup": {
+    "totalMembers": 47,
+    "cohesionScore": 75,
+    "strategicRelevance": "Good fit for AI Impact Visibility platform",
+    "keyInsight": "15 people actively struggling with AI ROI measurement - need to prove ML models drive customer retention and reduce costs, not just improve risk accuracy",
+    "roles": {
+      "decision": [
+        {
+          "name": "Miles Beacom",
+          "title": "Chief Executive Officer",
+          "email": "miles.beacom@firstpremier.com",
+          "linkedin": "https://linkedin.com/in/milesbeacom",
+          "phone": "+1-605-555-0123",
+          "archetype": {
+            "id": "visionary-decider",
+            "name": "Visionary Decider",
+            "role": "Decision Maker",
+            "description": "Strategic leader focused on long-term vision and market position"
+          },
+          "winningVariantStrategy": {
+            "situation": "Miles leads First PREMIER Bank's strategic vision, including investments in AI for risk assessment and customer onboarding, but needs to demonstrate that these AI initiatives drive business growth and competitive advantage in the banking sector.",
+            "complication": "While the team can show improved risk assessment accuracy, Miles struggles to prove that these AI achievements translate to measurable business impact like increased customer retention or reduced operational costs in a competitive banking market.",
+            "futureState": "With Winning Variant's Snowflake-native experimentation platform, Miles can prove that AI risk assessment reduces loan defaults by 8% ($2M in reduced losses) and AI customer onboarding increases approval rates by 12% ($3M in additional revenue). He transforms the narrative from 'our AI is accurate' to 'our AI drives $5M in business impact annually.'",
+            "keyMessage": "Turn AI innovation into competitive advantage and measurable business impact",
+            "tailoredApproach": "Focus on competitive advantage and market position. Show how AI drives business growth and reduces costs. Emphasize strategic value and market differentiation in banking."
+          },
+          "painPoints": [
+            "Need to prove AI investments drive business growth",
+            "Competitive pressure to show AI advantage in banking",
+            "Board questions AI ROI and strategic value",
+            "Need to justify AI budget allocation"
+          ],
+          "influenceScore": 96,
+          "confidence": 94,
+          "flightRisk": {
+            "score": 10,
+            "category": "ROOTED",
+            "reasoning": "CEO role, long tenure, strong company performance, equity holder"
+          }
+        },
+        {
+          "name": "David Johnson",
+          "title": "Chief Financial Officer",
+          "email": "david.johnson@firstpremier.com",
+          "linkedin": "https://linkedin.com/in/davidjohnson",
+          "phone": "+1-605-555-0124",
+          "archetype": {
+            "id": "economic-buyer",
+            "name": "Economic Buyer",
+            "role": "Decision Maker",
+            "description": "Senior executive with budget authority focused on ROI and financial impact"
+          },
+          "winningVariantStrategy": {
+            "situation": "David oversees First PREMIER Bank's financial strategy, including investments in AI for risk assessment and customer onboarding, but needs to demonstrate clear ROI on these AI initiatives to justify continued investment.",
+            "complication": "The board questions continued AI investment when the team shows 'risk assessment accuracy improved by 10%' but can't prove it reduced actual loan defaults or increased revenue. This creates pressure to justify the $1.5M+ annual AI budget.",
+            "futureState": "With Winning Variant's Snowflake-native experimentation platform, David can prove that AI risk assessment reduces loan defaults by $1.8M annually and AI customer onboarding increases revenue by $2.2M through better approval rates. He transforms the narrative from 'our AI is accurate' to 'our AI saves $4M annually.'",
+            "keyMessage": "Turn AI accuracy into measurable financial impact and cost savings",
+            "tailoredApproach": "Lead with financial impact and cost savings. Show direct correlation between AI improvements and financial outcomes. Emphasize board-ready ROI dashboards and financial metrics."
+          },
+          "painPoints": [
+            "Can't prove AI ROI to board and investors",
+            "ML team celebrates accuracy but financial impact unclear",
+            "Board questioning $1.5M+ annual AI budget allocation",
+            "Need to show AI as profit driver, not cost center"
+          ],
+          "influenceScore": 90,
+          "confidence": 88,
+          "flightRisk": {
+            "score": 20,
+            "category": "STABLE",
+            "reasoning": "CFO role, long tenure, strong company performance, but may seek opportunities if financial pressure continues"
+          }
+        }
+      ],
+      "champion": [
+        {
+          "name": "Jennifer Lee",
+          "title": "VP Risk Analytics",
+          "email": "jennifer.lee@firstpremier.com",
+          "linkedin": "https://linkedin.com/in/jenniferlee",
+          "phone": "+1-605-555-0125",
+          "archetype": {
+            "id": "data-driven-innovator",
+            "name": "Data-Driven Innovator",
+            "role": "Champion",
+            "description": "Enthusiastic advocate for data-driven solutions and advanced analytics tools"
+          },
+          "winningVariantStrategy": {
+            "situation": "Jennifer leads risk analytics for First PREMIER Bank's risk assessment and customer onboarding systems, constantly seeking better ways to measure the impact of AI-powered risk models on business outcomes.",
+            "complication": "Current risk analytics show model performance but can't prove that AI-powered risk assessment actually reduces loan defaults or that customer onboarding improvements increase revenue - leaving risk decisions based on incomplete data about AI impact.",
+            "futureState": "With Winning Variant's experimentation platform, Jennifer can prove that AI risk assessment reduces loan defaults by 8% and AI customer onboarding increases approval rates by 10%, giving her concrete data to optimize risk models for business impact.",
+            "keyMessage": "Turn risk management into revenue optimization with proven AI impact",
+            "tailoredApproach": "Emphasize risk analytics capabilities. Show how to measure AI impact on risk reduction and revenue optimization. Position as essential for data-driven risk management."
+          },
+          "painPoints": [
+            "Can't prove AI risk models reduce actual loan defaults",
+            "Risk decisions based on incomplete AI impact data",
+            "Need better tools to measure AI risk model effectiveness",
+            "Pressure to show ROI of AI risk investments"
+          ],
+          "influenceScore": 82,
+          "confidence": 85,
+          "flightRisk": {
+            "score": 30,
+            "category": "STABLE",
+            "reasoning": "Senior risk role, good performance, but may seek opportunities if analytics capabilities don't improve"
+          }
+        }
+      ],
+      "stakeholder": [
+        {
+          "name": "Robert Davis",
+          "title": "VP IT Operations",
+          "email": "robert.davis@firstpremier.com",
+          "linkedin": "https://linkedin.com/in/robertdavis",
+          "phone": "+1-605-555-0126",
+          "archetype": {
+            "id": "technical-stakeholder",
+            "name": "Technical Stakeholder",
+            "role": "Stakeholder",
+            "description": "Focuses on technical feasibility, integration, and system stability"
+          },
+          "winningVariantStrategy": {
+            "situation": "Robert leads IT operations supporting First PREMIER Bank's AI systems and data infrastructure, ensuring system stability and reliability for AI initiatives.",
+            "complication": "Current IT infrastructure provides technical metrics but struggles to connect system performance to business outcomes, making it difficult to optimize for business impact rather than just technical performance.",
+            "futureState": "Winning Variant's Snowflake-native architecture integrates seamlessly with existing IT infrastructure, providing real-time business impact metrics for AI systems without requiring new infrastructure or complex integrations.",
+            "keyMessage": "Seamless integration with existing IT infrastructure, enhanced business impact measurement",
+            "tailoredApproach": "Focus on technical integration benefits. Emphasize no new infrastructure requirements. Show how it enhances existing IT architecture and provides business impact visibility."
+          },
+          "painPoints": [
+            "Need better business impact metrics for AI systems",
+            "Current infrastructure can't connect technical performance to business outcomes",
+            "Integration complexity with new analytics tools",
+            "Need to optimize AI systems for business impact, not just performance"
+          ],
+          "influenceScore": 75,
+          "confidence": 80,
+          "flightRisk": {
+            "score": 25,
+            "category": "STABLE",
+            "reasoning": "Senior IT role, good compensation, but may seek opportunities if technical challenges aren't addressed"
+          }
+        }
+      ],
+      "blocker": [
+        {
+          "name": "Emily White",
+          "title": "Legal Counsel",
+          "email": "emily.white@firstpremier.com",
+          "linkedin": "https://linkedin.com/in/emilywhite",
+          "phone": "+1-605-555-0127",
+          "archetype": {
+            "id": "compliance-blocker",
+            "name": "Compliance Blocker",
+            "role": "Blocker",
+            "description": "Primarily concerned with legal, regulatory, and compliance risks"
+          },
+          "winningVariantStrategy": {
+            "situation": "Emily oversees legal and compliance for First PREMIER Bank and is cautious about new tools that might introduce regulatory risks or compliance issues to the bank's data environment.",
+            "complication": "Concerned that new experimentation tools will require additional compliance reviews, create data access issues, or introduce regulatory risks to First PREMIER Bank's financial data environment that must meet strict banking regulations.",
+            "futureState": "Winning Variant's Snowflake-native approach requires no new compliance reviews, integrates with existing security protocols, and actually improves compliance by providing audit trails for AI impact measurement within the current regulated environment.",
+            "keyMessage": "No new compliance requirements, enhanced audit trails, regulatory-friendly architecture",
+            "tailoredApproach": "Address compliance concerns directly. Emphasize Snowflake-native benefits and regulatory advantages. Show compliance-friendly architecture. Provide legal documentation and compliance reviews."
+          },
+          "painPoints": [
+            "Concerned about compliance requirements of new tools",
+            "Regulatory risks with additional data access",
+            "Integration challenges with existing compliance framework",
+            "Resource allocation for new tool compliance reviews"
+          ],
+          "influenceScore": 70,
+          "confidence": 75,
+          "flightRisk": {
+            "score": 15,
+            "category": "ROOTED",
+            "reasoning": "Legal role, long tenure, but may resist if compliance concerns aren't addressed"
+          }
+        }
+      ],
+      "introducer": [
+        {
+          "name": "Chris Green",
+          "title": "Business Analyst",
+          "email": "chris.green@firstpremier.com",
+          "linkedin": "https://linkedin.com/in/chrisgreen",
+          "phone": "+1-605-555-0128",
+          "archetype": {
+            "id": "data-driven-introducer",
+            "name": "Data-Driven Introducer",
+            "role": "Introducer",
+            "Description": "Identifies problems and gathers initial data, often a power user"
+          },
+          "winningVariantStrategy": {
+            "situation": "Chris works closely with both the risk team and business teams, often serving as a bridge between technical AI capabilities and business needs for risk assessment and customer onboarding.",
+            "complication": "Frustrated by the disconnect between AI model performance metrics and business outcomes, often caught between celebrating technical achievements and explaining business impact to business stakeholders.",
+            "futureState": "Winning Variant gives Chris the tools to connect technical AI achievements directly to business outcomes, making it easier to communicate value to both technical and business stakeholders and drive better cross-team collaboration.",
+            "keyMessage": "Bridge the gap between technical excellence and business impact",
+            "tailoredApproach": "Leverage internal connections. Show how to communicate AI value to different audiences. Position as tool for better cross-team collaboration and business impact measurement."
+          },
+          "painPoints": [
+            "Disconnect between AI metrics and business outcomes",
+            "Difficulty communicating technical value to business stakeholders",
+            "Need tools to bridge technical and business teams",
+            "Frustration with current measurement capabilities"
+          ],
+          "influenceScore": 60,
+          "confidence": 65,
+          "flightRisk": {
+            "score": 40,
+            "category": "ELEVATED",
+            "reasoning": "Mid-level role, may seek opportunities if current tools don't improve cross-team collaboration"
+          }
+        }
+      ]
+    },
+    "dynamics": {
+      "decisionFlow": "Executive-driven with compliance oversight - Miles and David make final decisions based on strategic vision and financial impact, with Emily's compliance input",
+      "engagementStrategy": "Start with Jennifer (risk champion), leverage Chris (internal connector), address Emily's compliance concerns, get Robert's technical buy-in, secure David's budget approval and Miles's strategic alignment",
+      "timeline": "4-8 months typical sales cycle for AI experimentation platforms at regional banks",
+      "keyInsight": "Growing technical team with moderate AI investment but needs better business impact measurement to justify continued AI budget allocation in competitive banking market"
+    },
+    "opportunitySignals": [
+      {
+        "signal": "Active AI/ML investment with $1.5M+ annual budget",
+        "strength": 0.8,
+        "source": "budget_allocation",
+        "confidence": 0.85
+      },
+      {
+        "signal": "Board-level pressure to prove AI ROI",
+        "strength": 0.75,
+        "source": "executive_pressure",
+        "confidence": 0.8
+      },
+      {
+        "signal": "Snowflake-native architecture alignment",
+        "strength": 0.7,
+        "source": "technical_fit",
+        "confidence": 0.75
+      }
+    ],
+    "painSignals": [
+      {
+        "signal": "Can't prove AI ROI to board and investors",
+        "strength": 0.8,
+        "source": "ai_impact_gap",
+        "confidence": 0.85
+      },
+      {
+        "signal": "Gap between technical metrics and business outcomes",
+        "strength": 0.75,
+        "source": "measurement_challenge",
+        "confidence": 0.8
+      },
+      {
+        "signal": "Pressure to justify AI budgets in competitive banking market",
+        "strength": 0.7,
+        "source": "budget_pressure",
+        "confidence": 0.75
+      }
+    ]
+  }
+}

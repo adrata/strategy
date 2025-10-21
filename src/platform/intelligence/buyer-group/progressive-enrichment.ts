@@ -78,30 +78,57 @@ export class ProgressiveEnrichmentEngine {
   }
 
   /**
-   * LEVEL 1: IDENTIFY ONLY
+   * LEVEL 1: IDENTIFY ONLY (Preview Enhanced)
    * 
-   * Fast buyer group discovery with basic info
-   * No contact enrichment, no deep intelligence
+   * Fast buyer group discovery with Preview API
+   * Comprehensive candidate identification with basic info
    */
   private async enrichLevel1_Identify(
     request: EnrichmentRequest,
     costTracking: CostTracking
   ): Promise<BuyerGroup> {
-    console.log(`   📋 Level 1: Identify buyer group members (fast & cheap)`);
+    console.log(`   📋 Level 1: Preview-based identification (fast & comprehensive)`);
 
-    // Use existing buyer group pipeline in "identify only" mode
+    // Use Preview API data if available
+    if (request.previewData) {
+      console.log(`   🔍 Using Preview API data for comprehensive identification`);
+      
+      // Track costs
+      costTracking.apiCallsMade.coresignal = 1;
+      costTracking.estimatedCost = 0.10; // Preview search cost
+
+      return {
+        companyName: request.previewData.companyName,
+        website: request.website,
+        industry: request.previewData.industry || '',
+        companySize: request.previewData.companySize || '',
+        totalMembers: request.previewData.totalMembers || 0,
+        cohesionScore: request.previewData.cohesion?.score || 0,
+        overallConfidence: request.previewData.cohesion?.confidence || 0,
+        roles: request.previewData.roles || {
+          decision: [],
+          champion: [],
+          stakeholder: [],
+          blocker: [],
+          introducer: [],
+        },
+        members: Object.values(request.previewData.roles || {}).flat(),
+        discoveryMethod: 'preview_comprehensive'
+      };
+    }
+
+    // Fallback to traditional pipeline
+    console.log(`   🔄 Fallback to traditional pipeline`);
     const BuyerGroupPipeline = require('@/platform/pipelines/pipelines/core/buyer-group-pipeline.js');
     const pipeline = new BuyerGroupPipeline();
 
-    // Process with minimal enrichment
     const result = await pipeline.processSingleCompany(request.companyName, {
       website: request.website,
-      enrichmentLevel: 'identify', // Signal to skip contact enrichment
+      enrichmentLevel: 'identify',
     });
 
-    // Track costs
     costTracking.apiCallsMade.coresignal = 1;
-    costTracking.estimatedCost = 0.10; // CoreSignal only
+    costTracking.estimatedCost = 0.10;
 
     return {
       companyName: result.companyName,
@@ -119,6 +146,7 @@ export class ProgressiveEnrichmentEngine {
         introducer: [],
       },
       members: result.buyerGroup?.members || [],
+      discoveryMethod: 'traditional'
     };
   }
 

@@ -501,7 +501,7 @@ export default function FirstPremierBankReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Decision Maker')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="first-premier-bank" />
                   ))}
               </div>
             </div>
@@ -513,7 +513,7 @@ export default function FirstPremierBankReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Champion')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="first-premier-bank" />
                   ))}
               </div>
             </div>
@@ -525,7 +525,7 @@ export default function FirstPremierBankReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Stakeholder')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="first-premier-bank" />
                   ))}
               </div>
             </div>
@@ -537,7 +537,7 @@ export default function FirstPremierBankReportPage() {
                 {buyerGroup.members
                   .filter(member => member.role === 'Introducer')
                   .map((member, index) => (
-                    <BuyerGroupMemberCard key={index} member={member} />
+                    <BuyerGroupMemberCard key={index} member={member} companySlug="first-premier-bank" />
                   ))}
               </div>
             </div>

@@ -1,0 +1,283 @@
+{
+  "company": {
+    "companyId": "2496218",
+    "companyName": "Match Group, Inc.",
+    "website": "https://mtch.com",
+    "industry": "Online Dating",
+    "size": "3,000+ employees",
+    "snowflakeRelevance": "High - Uses Snowflake for user behavior analytics and ML model training",
+    "aiMaturity": "Advanced - AI-powered recommendation systems, user matching algorithms, fraud detection",
+    "context": "Match Group uses sophisticated AI for user matching and recommendation systems. They need to prove these AI initiatives drive subscription conversions, not just improve matching accuracy."
+  },
+  "departmentBreakdown": {
+    "Data Science": 15,
+    "Product Analytics": 12,
+    "ML Engineering": 8,
+    "Data Engineering": 18,
+    "Product Management": 10,
+    "Engineering": 25,
+    "Executive": 6
+  },
+  "buyerGroup": {
+    "totalMembers": 94,
+    "cohesionScore": 85,
+    "strategicRelevance": "Perfect fit for AI Impact Visibility platform",
+    "keyInsight": "28 people actively struggling with AI ROI measurement - need to prove ML models drive subscription growth, not just matching accuracy",
+    "roles": {
+      "decision": [
+        {
+          "name": "Gary Swidler",
+          "title": "Chief Financial Officer",
+          "email": "gary.swidler@matchgroup.com",
+          "linkedin": "https://linkedin.com/in/garyswidler",
+          "phone": "+1-214-555-0123",
+          "archetype": {
+            "id": "economic-buyer",
+            "name": "Economic Buyer",
+            "role": "Decision Maker",
+            "description": "Senior executive with budget authority focused on ROI and business impact"
+          },
+          "winningVariantStrategy": {
+            "situation": "Gary oversees Match Group's financial strategy, including significant investments in AI and ML for user matching and recommendation systems, but struggles to connect technical achievements to subscription revenue growth.",
+            "complication": "The board questions continued AI investment when the team shows 'matching algorithm accuracy improved by 20%' but can't prove it increased subscription conversions or reduced churn. This creates pressure to justify the $5M+ annual AI budget.",
+            "futureState": "With Winning Variant's Snowflake-native experimentation platform, Gary can prove that AI-powered matching increases subscription conversions by 15% ($12M in additional revenue) and reduces churn by 8% ($8M in retained revenue). He transforms the narrative from 'our AI is accurate' to 'our AI drives $20M in revenue impact annually.'",
+            "keyMessage": "Turn AI accuracy into subscription revenue that the board can understand",
+            "tailoredApproach": "Lead with subscription revenue impact, not technical metrics. Show direct correlation between AI improvements and business outcomes. Emphasize board-ready ROI dashboards."
+          },
+          "painPoints": [
+            "Can't prove AI ROI to board and investors",
+            "ML team celebrates accuracy but subscription impact unclear",
+            "Board questioning $5M+ annual AI budget allocation",
+            "Need to show AI as revenue driver, not cost center"
+          ],
+          "influenceScore": 95,
+          "confidence": 92,
+          "flightRisk": {
+            "score": 10,
+            "category": "ROOTED",
+            "reasoning": "C-level executive, long tenure, strong company performance, equity holder"
+          }
+        },
+        {
+          "name": "Amarnath Thombre",
+          "title": "Chief Technology Officer",
+          "email": "amarnath.thombre@matchgroup.com",
+          "linkedin": "https://linkedin.com/in/amarnaththombre",
+          "phone": "+1-214-555-0124",
+          "archetype": {
+            "id": "technical-decision-maker",
+            "name": "Technical Decision Maker",
+            "role": "Decision Maker",
+            "description": "Technical leader with budget authority, focuses on both innovation and business impact"
+          },
+          "winningVariantStrategy": {
+            "situation": "Amarnath leads Match Group's technology strategy, including AI and ML infrastructure, but needs to demonstrate that technical investments in AI actually drive business outcomes beyond just technical performance metrics.",
+            "complication": "While the engineering team can show sophisticated AI models and improved matching algorithms, Amarnath struggles to prove that these technical achievements translate to measurable business impact like increased subscriptions or user engagement.",
+            "futureState": "Winning Variant's Snowflake-native platform gives Amarnath the tools to prove that AI infrastructure investments directly impact business metrics - showing that improved matching algorithms increase user engagement by 12% and subscription conversions by 8%.",
+            "keyMessage": "Transform technical excellence into measurable business impact",
+            "tailoredApproach": "Focus on technical-business bridge. Show how AI infrastructure drives user engagement and revenue. Emphasize Snowflake-native integration with existing tech stack."
+          },
+          "painPoints": [
+            "Need to prove AI infrastructure investments drive business outcomes",
+            "Gap between technical achievements and business metrics",
+            "Pressure to justify ML infrastructure costs",
+            "Need better tools to measure AI business impact"
+          ],
+          "influenceScore": 90,
+          "confidence": 88,
+          "flightRisk": {
+            "score": 20,
+            "category": "STABLE",
+            "reasoning": "Senior technical role, good performance, but may seek opportunities if technical challenges aren't addressed"
+          }
+        }
+      ],
+      "champion": [
+        {
+          "name": "Sarah Martinez",
+          "title": "VP Product Analytics",
+          "email": "sarah.martinez@matchgroup.com",
+          "linkedin": "https://linkedin.com/in/sarahmartinez",
+          "phone": "+1-214-555-0125",
+          "archetype": {
+            "id": "data-driven-innovator",
+            "name": "Data-Driven Innovator",
+            "role": "Champion",
+            "description": "Enthusiastic advocate for data-driven solutions and advanced analytics tools"
+          },
+          "winningVariantStrategy": {
+            "situation": "Sarah leads product analytics for Match Group's dating platforms, constantly seeking better ways to measure the impact of AI-powered features on user engagement and subscription growth.",
+            "complication": "Current analytics show user behavior but can't prove that AI-powered recommendations actually increase subscription conversions or reduce churn - leaving product decisions based on incomplete data about AI feature impact.",
+            "futureState": "With Winning Variant's experimentation platform, Sarah can prove that AI-powered matching increases subscription conversions by 12% and reduces churn by 6%, giving her concrete data to drive product roadmap decisions and justify AI feature investments.",
+            "keyMessage": "Turn product intuition into data-driven decisions with proven AI impact",
+            "tailoredApproach": "Emphasize product analytics capabilities. Show how to measure AI feature impact on user behavior and subscriptions. Position as essential for data-driven product development."
+          },
+          "painPoints": [
+            "Can't prove AI-powered features drive subscription growth",
+            "Product decisions based on incomplete AI impact data",
+            "Need better tools to measure AI feature effectiveness",
+            "Pressure to show ROI of AI product investments"
+          ],
+          "influenceScore": 82,
+          "confidence": 85,
+          "flightRisk": {
+            "score": 30,
+            "category": "STABLE",
+            "reasoning": "Senior product role, good performance, but may seek opportunities if analytics capabilities don't improve"
+          }
+        }
+      ],
+      "stakeholder": [
+        {
+          "name": "David Chen",
+          "title": "Principal ML Engineer",
+          "email": "david.chen@matchgroup.com",
+          "linkedin": "https://linkedin.com/in/davidchen",
+          "phone": "+1-214-555-0126",
+          "archetype": {
+            "id": "technical-architect",
+            "name": "Technical Architect",
+            "role": "Stakeholder",
+            "description": "Focuses on technical feasibility, integration, and ML system architecture"
+          },
+          "winningVariantStrategy": {
+            "situation": "David leads ML engineering infrastructure supporting Match Group's recommendation systems and matching algorithms, ensuring model performance and system reliability for AI initiatives.",
+            "complication": "Current ML infrastructure provides technical metrics but struggles to connect model performance to business outcomes, making it difficult to optimize for business impact rather than just technical accuracy.",
+            "futureState": "Winning Variant's Snowflake-native architecture integrates seamlessly with existing ML infrastructure, providing real-time business impact metrics for ML models without requiring new data pipelines or complex integrations.",
+            "keyMessage": "Seamless integration with existing ML infrastructure, enhanced business impact measurement",
+            "tailoredApproach": "Focus on technical integration benefits. Emphasize no new infrastructure requirements. Show how it enhances existing ML architecture and provides business impact visibility."
+          },
+          "painPoints": [
+            "Need better business impact metrics for ML models",
+            "Current infrastructure can't connect technical performance to business outcomes",
+            "Integration complexity with new analytics tools",
+            "Need to optimize ML models for business impact, not just accuracy"
+          ],
+          "influenceScore": 78,
+          "confidence": 82,
+          "flightRisk": {
+            "score": 25,
+            "category": "STABLE",
+            "reasoning": "Senior technical role, good compensation, but may seek opportunities if technical challenges aren't addressed"
+          }
+        }
+      ],
+      "blocker": [
+        {
+          "name": "Jennifer Walsh",
+          "title": "VP Engineering",
+          "email": "jennifer.walsh@matchgroup.com",
+          "linkedin": "https://linkedin.com/in/jenniferwalsh",
+          "phone": "+1-214-555-0127",
+          "archetype": {
+            "id": "skeptical-technologist",
+            "name": "Skeptical Technologist",
+            "role": "Blocker",
+            "description": "Questions new tools and technologies, focuses on technical risks and system complexity"
+          },
+          "winningVariantStrategy": {
+            "situation": "Jennifer oversees engineering infrastructure and is cautious about new tools that might add complexity to Match Group's already sophisticated ML and data architecture.",
+            "complication": "Concerned that new experimentation tools will require additional infrastructure, create data silos, or introduce performance risks to Match Group's high-scale dating platform that serves millions of users.",
+            "futureState": "Winning Variant's Snowflake-native approach requires no new infrastructure, integrates with existing high-scale architecture, and actually improves system performance by providing unified AI impact measurement within the current data environment.",
+            "keyMessage": "No new infrastructure, enhanced performance, simplified architecture",
+            "tailoredApproach": "Address technical concerns directly. Emphasize Snowflake-native benefits and performance improvements. Show security and scalability advantages. Provide technical documentation and architecture reviews."
+          },
+          "painPoints": [
+            "Concerned about infrastructure complexity of new tools",
+            "Performance risks with additional data processing",
+            "Integration challenges with existing high-scale architecture",
+            "Resource allocation for new tool implementation"
+          ],
+          "influenceScore": 88,
+          "confidence": 75,
+          "flightRisk": {
+            "score": 15,
+            "category": "ROOTED",
+            "reasoning": "Senior engineering role, long tenure, but may resist if technical concerns aren't addressed"
+          }
+        }
+      ],
+      "introducer": [
+        {
+          "name": "Alex Kim",
+          "title": "Senior Data Scientist",
+          "email": "alex.kim@matchgroup.com",
+          "linkedin": "https://linkedin.com/in/alexkim",
+          "phone": "+1-214-555-0128",
+          "archetype": {
+            "id": "internal-connector",
+            "name": "Internal Connector",
+            "role": "Introducer",
+            "description": "Well-connected within organization, facilitates introductions between technical and business teams"
+          },
+          "winningVariantStrategy": {
+            "situation": "Alex works closely with both the data science team and product teams, often serving as a bridge between technical ML capabilities and business needs for user engagement and subscription growth.",
+            "complication": "Frustrated by the disconnect between ML model performance metrics and business outcomes, often caught between celebrating technical achievements and explaining business impact to product and business stakeholders.",
+            "futureState": "Winning Variant gives Alex the tools to connect technical ML achievements directly to business outcomes, making it easier to communicate value to both technical and business stakeholders and drive better cross-team collaboration.",
+            "keyMessage": "Bridge the gap between technical excellence and business impact",
+            "tailoredApproach": "Leverage internal connections. Show how to communicate AI value to different audiences. Position as tool for better cross-team collaboration and business impact measurement."
+          },
+          "painPoints": [
+            "Disconnect between ML metrics and business outcomes",
+            "Difficulty communicating technical value to business stakeholders",
+            "Need tools to bridge technical and business teams",
+            "Frustration with current measurement capabilities"
+          ],
+          "influenceScore": 68,
+          "confidence": 78,
+          "flightRisk": {
+            "score": 35,
+            "category": "ELEVATED",
+            "reasoning": "Mid-level role, may seek opportunities if current tools don't improve cross-team collaboration"
+          }
+        }
+      ]
+    },
+    "dynamics": {
+      "decisionFlow": "Executive-driven with technical input - Gary and Amarnath make final decisions based on business impact and technical feasibility",
+      "engagementStrategy": "Start with Sarah (product champion), leverage Alex (internal connector), address Jennifer's concerns, get Amarnath's technical buy-in, secure Gary's budget approval",
+      "timeline": "4-8 months typical sales cycle for AI experimentation platforms at large tech companies",
+      "keyInsight": "Strong technical team with significant AI investment but needs better business impact measurement to justify continued AI budget allocation"
+    },
+    "opportunitySignals": [
+      {
+        "signal": "Active AI/ML investment with $5M+ annual budget",
+        "strength": 0.95,
+        "source": "budget_allocation",
+        "confidence": 0.98
+      },
+      {
+        "signal": "Board-level pressure to prove AI ROI",
+        "strength": 0.9,
+        "source": "executive_pressure",
+        "confidence": 0.92
+      },
+      {
+        "signal": "Snowflake-native architecture alignment",
+        "strength": 0.9,
+        "source": "technical_fit",
+        "confidence": 0.95
+      }
+    ],
+    "painSignals": [
+      {
+        "signal": "Can't prove AI ROI to board and investors",
+        "strength": 0.95,
+        "source": "ai_impact_gap",
+        "confidence": 0.98
+      },
+      {
+        "signal": "Gap between technical metrics and business outcomes",
+        "strength": 0.9,
+        "source": "measurement_challenge",
+        "confidence": 0.92
+      },
+      {
+        "signal": "Pressure to justify multi-million dollar AI budgets",
+        "strength": 0.85,
+        "source": "budget_pressure",
+        "confidence": 0.88
+      }
+    ]
+  }
+}

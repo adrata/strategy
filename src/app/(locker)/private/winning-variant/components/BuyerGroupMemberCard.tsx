@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
+import Link from 'next/link';
+import { AlertTriangle, TrendingUp } from 'lucide-react';
 
 interface BuyerGroupMemberCardProps {
   member: {
@@ -32,11 +34,16 @@ interface BuyerGroupMemberCardProps {
     };
     influenceScore: number;
     confidence: number;
+    flightRisk?: {
+      score: number;
+      category: string;
+      reasoning: string;
+    };
   };
+  companySlug: string;
 }
 
-export function BuyerGroupMemberCard({ member }: BuyerGroupMemberCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export function BuyerGroupMemberCard({ member, companySlug }: BuyerGroupMemberCardProps) {
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -56,40 +63,59 @@ export function BuyerGroupMemberCard({ member }: BuyerGroupMemberCardProps) {
     return 'text-gray-600';
   };
 
+  const getFlightRiskColor = (score: number) => {
+    if (score <= 20) return 'text-green-600 bg-green-50';
+    if (score <= 40) return 'text-yellow-600 bg-yellow-50';
+    return 'text-red-600 bg-red-50';
+  };
+
+  // Create a URL-friendly slug from the person's name
+  const createPersonSlug = (name: string) => {
+    return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  };
+
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+    <Link 
+      href={`/private/winning-variant/person/${companySlug}/${createPersonSlug(member.name)}`}
+      className="block bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-blue-300 transition-all cursor-pointer"
+    >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h3 className="text-lg font-semibold text-gray-900">{member.name}</h3>
+            <h3 className="text-lg font-semibold text-blue-600 hover:text-blue-800 transition-colors">
+              {member.name}
+            </h3>
             <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getRoleColor(member.role)}`}>
               {member.role}
             </span>
+            {member.flightRisk && (
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getFlightRiskColor(member.flightRisk.score)}`}>
+                <AlertTriangle className="w-3 h-3 inline mr-1" />
+                {member.flightRisk.category}
+              </span>
+            )}
           </div>
           <p className="text-sm text-gray-600 mb-2">{member.title}</p>
           <div className="flex items-center gap-4 text-xs text-gray-500">
-            <span className={`font-medium ${getInfluenceColor(member.influenceScore)}`}>
+            <span className={`font-medium ${getInfluenceColor(member.influenceScore)} flex items-center`}>
+              <TrendingUp className="w-3 h-3 mr-1" />
               Influence: {member.influenceScore}%
             </span>
             <span>Confidence: {member.confidence}%</span>
+            {member.flightRisk && (
+              <span className={`font-medium ${getFlightRiskColor(member.flightRisk.score).split(' ')[0]}`}>
+                Flight Risk: {member.flightRisk.score}%
+              </span>
+            )}
           </div>
         </div>
         
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          {isExpanded ? (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            </svg>
-          ) : (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          )}
-        </button>
+        <div className="text-gray-400">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
       </div>
 
       {/* Archetype Badge */}
@@ -140,66 +166,13 @@ export function BuyerGroupMemberCard({ member }: BuyerGroupMemberCardProps) {
         )}
       </div>
 
-      {/* Expanded Content */}
-      {isExpanded && (
-        <div className="space-y-6 pt-4 border-t border-gray-200">
-          {/* Personalized Strategy */}
-          <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-3">Personalized Strategy</h4>
-            <div className="space-y-3">
-              <div>
-                <h5 className="text-xs font-medium text-gray-700 mb-1">Situation</h5>
-                <p className="text-sm text-gray-600">{member.personalizedStrategy.situation}</p>
-              </div>
-              <div>
-                <h5 className="text-xs font-medium text-gray-700 mb-1">Complication</h5>
-                <p className="text-sm text-gray-600">{member.personalizedStrategy.complication}</p>
-              </div>
-              <div>
-                <h5 className="text-xs font-medium text-gray-700 mb-1">Future State</h5>
-                <p className="text-sm text-gray-600">{member.personalizedStrategy.futureState}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Archetype Characteristics */}
-          <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-3">Archetype Insights</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h5 className="text-xs font-medium text-gray-700 mb-2">Motivations</h5>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  {member.archetype.characteristics.motivations.map((motivation, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></span>
-                      {motivation}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h5 className="text-xs font-medium text-gray-700 mb-2">Key Needs</h5>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  {member.archetype.characteristics.keyNeeds.map((need, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
-                      {need}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* Communication Style */}
-          <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-2">Communication Style</h4>
-            <p className="text-sm text-gray-600 mb-2">{member.archetype.characteristics.communicationStyle}</p>
-            <h5 className="text-xs font-medium text-gray-700 mb-1">Decision Making Style</h5>
-            <p className="text-sm text-gray-600">{member.archetype.characteristics.decisionMakingStyle}</p>
-          </div>
-        </div>
-      )}
-    </div>
+      {/* Quick Preview */}
+      <div className="pt-4 border-t border-gray-200">
+        <p className="text-sm text-gray-600 mb-2">
+          <strong>Situation:</strong> {member.personalizedStrategy.situation.substring(0, 120)}...
+        </p>
+        <p className="text-xs text-blue-600 font-medium">Click to view full intelligence →</p>
+      </div>
+    </Link>
   );
 }
