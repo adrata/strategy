@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Mail, Phone, Linkedin, Activity, TrendingUp, Target, Users } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, Linkedin, Activity, TrendingUp, Target, Users, AlertTriangle } from 'lucide-react';
 
 interface PersonDetailPageProps {
   person: {
