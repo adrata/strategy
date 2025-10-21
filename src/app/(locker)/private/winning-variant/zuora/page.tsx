@@ -25,15 +25,25 @@ const zuoraData = {
         role: "Decision Maker" as const,
         archetype: {
           id: "visionary-decider",
-          name: "Visionary Decider",
+          name: "The Visionary Decider",
           role: "Decision Maker",
-          description: "Strategic leader focused on long-term vision and market position",
+          description: "Forward-thinking executive who makes bold, intuitive decisions quickly",
           characteristics: {
-            motivations: ["Market leadership", "Strategic growth", "Competitive advantage"],
-            concerns: ["Market position", "Competitive threats", "Strategic alignment"],
-            decisionMakingStyle: "Vision-driven with focus on strategic impact and market position",
-            communicationStyle: "Strategic, high-level, needs business impact and competitive advantage",
-            keyNeeds: ["Strategic roadmap", "Market analysis", "Competitive intelligence", "Growth metrics"]
+            motivations: ["Strategic impact", "Innovation leadership", "Market transformation"],
+            concerns: ["Competitive advantage", "Strategic positioning", "Innovation timing"],
+            decisionMakingStyle: "Forward-thinking executive who makes bold, intuitive decisions quickly",
+            communicationStyle: "Strategic, high-level, focused on transformative potential and competitive advantage",
+            keyNeeds: ["Strategic vision", "Competitive intelligence", "Innovation roadmap", "Market analysis"]
+          },
+          situation: "A forward-thinking executive who makes bold, intuitive decisions quickly",
+          complication: "Comfortable with calculated risk if they see transformative potential",
+          futureState: "Becomes the strategic champion who drives organizational transformation and market leadership",
+          industryPersonalization: {
+            "SaaS": {
+              situation: "CEO of a SaaS company making strategic decisions about technology and market expansion",
+              complication: "Balancing innovation with customer success and market competition in the subscription economy",
+              futureState: "Becomes the SaaS innovation leader who drives market transformation"
+            }
           }
         },
         personalizedStrategy: {
@@ -282,7 +292,7 @@ export default function ZuoraReportPage() {
   const { companyInfo, buyerGroup, salesIntent, strategicRecommendations } = zuoraData;
 
   return (
-    <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
+    <div className="min-h-screen bg-gray-50" style={{ overflowY: 'auto', height: '100vh' }}>
       {/* Header */}
       <header className="border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 py-4">
@@ -290,24 +300,24 @@ export default function ZuoraReportPage() {
             <div className="flex items-center gap-4">
               <Link 
                 href="/private/winning-variant"
-                className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
               >
                 ← Back to Overview
               </Link>
-              <h1 className="text-lg font-semibold text-[var(--foreground)]">Zuora Intelligence</h1>
+              <h1 className="text-lg font-semibold text-gray-900">Zuora Intelligence</h1>
             </div>
             
             {/* Navigation Links */}
             <div className="flex items-center space-x-6">
               <Link 
                 href="/" 
-                className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
               >
                 Home
               </Link>
               <Link 
                 href="/platform" 
-                className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
               >
                 Platform
               </Link>
@@ -442,7 +452,7 @@ export default function ZuoraReportPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+          <div className="bg-white border border-gray-200 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-black mb-4">Leadership Team</h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
               <div>
@@ -521,7 +531,7 @@ export default function ZuoraReportPage() {
           {/* Buyer Group Members by Role */}
           <div className="space-y-8">
             {/* Decision Makers */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Decision Makers ({buyerGroup.members.filter(m => m.role === 'Decision Maker').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members
@@ -533,7 +543,7 @@ export default function ZuoraReportPage() {
             </div>
 
             {/* Champions */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Champions ({buyerGroup.members.filter(m => m.role === 'Champion').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members
@@ -545,7 +555,7 @@ export default function ZuoraReportPage() {
             </div>
 
             {/* Stakeholders */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Stakeholders ({buyerGroup.members.filter(m => m.role === 'Stakeholder').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members
@@ -557,7 +567,7 @@ export default function ZuoraReportPage() {
             </div>
 
             {/* Introducers */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Introducers ({buyerGroup.members.filter(m => m.role === 'Introducer').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members

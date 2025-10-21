@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Mail, Phone, Linkedin, AlertTriangle, TrendingUp, Target, Users } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, Linkedin, Activity, TrendingUp, Target, Users } from 'lucide-react';
 
 interface PersonDetailPageProps {
   person: {
@@ -95,7 +95,7 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
             </div>
             
             <div className="flex space-x-3">
-              <div className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-sm font-medium">
+              <div className="px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-md text-sm font-medium">
                 <TrendingUp className="w-4 h-4 inline mr-1" />
                 {person.influenceScore}% Influence
               </div>
@@ -110,26 +110,26 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <a 
               href={`mailto:${person.email}`}
-              className="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              className="flex items-center p-3 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors border border-blue-200"
             >
-              <Mail className="w-4 h-4 text-gray-500 mr-2" />
-              <span className="text-sm text-gray-700">{person.email}</span>
+              <Mail className="w-4 h-4 text-blue-600 mr-2" />
+              <span className="text-sm text-blue-700">{person.email}</span>
             </a>
             <a 
               href={`tel:${person.phone}`}
-              className="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              className="flex items-center p-3 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors border border-blue-200"
             >
-              <Phone className="w-4 h-4 text-gray-500 mr-2" />
-              <span className="text-sm text-gray-700">{person.phone}</span>
+              <Phone className="w-4 h-4 text-blue-600 mr-2" />
+              <span className="text-sm text-blue-700">{person.phone}</span>
             </a>
             <a 
               href={person.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+              className="flex items-center p-3 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors border border-blue-200"
             >
-              <Linkedin className="w-4 h-4 text-gray-500 mr-2" />
-              <span className="text-sm text-gray-700">LinkedIn</span>
+              <Linkedin className="w-4 h-4 text-blue-600 mr-2" />
+              <span className="text-sm text-blue-700">LinkedIn</span>
             </a>
           </div>
         </div>
@@ -139,15 +139,15 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
           {/* Archetype & Strategy */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <Target className="w-5 h-5 mr-2 text-gray-600" />
+              <Target className="w-5 h-5 mr-2 text-blue-600" />
               Buyer Group Archetype
             </h2>
             
             <div className="mb-6">
-              <div className="bg-gray-50 border border-gray-200 rounded-md p-4 mb-4">
-                <h3 className="font-medium text-gray-900 mb-1">{person.archetype.name}</h3>
-                <p className="text-gray-600 text-sm mb-1">{person.archetype.role}</p>
-                <p className="text-gray-600 text-sm">{person.archetype.description}</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
+                <h3 className="font-medium text-blue-900 mb-1">{person.archetype.name}</h3>
+                <p className="text-blue-700 text-sm mb-1">{person.archetype.role}</p>
+                <p className="text-blue-600 text-sm">{person.archetype.description}</p>
               </div>
             </div>
 
@@ -167,7 +167,7 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
               </div>
               <div>
                 <h4 className="font-medium text-gray-900 mb-2 text-sm">Key Message</h4>
-                <p className="text-gray-600 text-sm bg-gray-100 p-3 rounded-md border border-gray-200">{person.winningVariantStrategy.keyMessage}</p>
+                <p className="text-blue-700 text-sm bg-blue-50 p-3 rounded-md border border-blue-200">{person.winningVariantStrategy.keyMessage}</p>
               </div>
               <div>
                 <h4 className="font-medium text-gray-900 mb-2 text-sm">Tailored Approach</h4>
@@ -179,7 +179,7 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
           {/* Pain Points & Flight Risk */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <AlertTriangle className="w-5 h-5 mr-2 text-gray-600" />
+              <Activity className="w-5 h-5 mr-2 text-blue-600" />
               Pain Points & Risk Analysis
             </h2>
             
@@ -187,10 +187,7 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
               <h3 className="font-medium text-gray-900 mb-3 text-sm">Current Pain Points</h3>
               <ul className="space-y-2">
                 {person.painPoints.map((pain, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-gray-400 mr-2 mt-0.5 flex-shrink-0">•</span>
-                    <span className="text-gray-600 text-sm">{pain}</span>
-                  </li>
+                  <li key={index} className="text-gray-600 text-sm">• {pain}</li>
                 ))}
               </ul>
             </div>
@@ -235,10 +232,7 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
                   <h3 className="font-medium text-gray-900 mb-3 text-sm">Career Trajectory</h3>
                   <ul className="space-y-2">
                     {person.workHistory.map((role, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="text-gray-400 mr-2 mt-0.5 flex-shrink-0">•</span>
-                        <span className="text-gray-600 text-sm">{role}</span>
-                      </li>
+                      <li key={index} className="text-gray-600 text-sm">• {role}</li>
                     ))}
                   </ul>
                 </div>
@@ -249,10 +243,7 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
                   <h3 className="font-medium text-gray-900 mb-3 text-sm">AI/ML Focus</h3>
                   <ul className="space-y-2">
                     {person.aiInsights.map((insight, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="text-gray-400 mr-2 mt-0.5 flex-shrink-0">•</span>
-                        <span className="text-gray-600 text-sm">{insight}</span>
-                      </li>
+                      <li key={index} className="text-gray-600 text-sm">• {insight}</li>
                     ))}
                   </ul>
                 </div>
@@ -263,10 +254,7 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
                   <h3 className="font-medium text-gray-900 mb-3 text-sm">Recent Strategic Moves</h3>
                   <ul className="space-y-2">
                     {person.recentMoves.map((move, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="text-gray-400 mr-2 mt-0.5 flex-shrink-0">•</span>
-                        <span className="text-gray-600 text-sm">{move}</span>
-                      </li>
+                      <li key={index} className="text-gray-600 text-sm">• {move}</li>
                     ))}
                   </ul>
                 </div>
@@ -277,10 +265,7 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
                   <h3 className="font-medium text-gray-900 mb-3 text-sm">Board Pressure Points</h3>
                   <ul className="space-y-2">
                     {person.boardPressure.map((pressure, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="text-gray-400 mr-2 mt-0.5 flex-shrink-0">•</span>
-                        <span className="text-gray-600 text-sm">{pressure}</span>
-                      </li>
+                      <li key={index} className="text-gray-600 text-sm">• {pressure}</li>
                     ))}
                   </ul>
                 </div>

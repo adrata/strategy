@@ -49,33 +49,33 @@ export default function WinningVariantPage() {
             <p className="text-xl text-[var(--muted)] mb-8">
               Strategic Analysis for AI Impact Visibility Platform: Comprehensive Buyer Group Intelligence for Your Target Companies
             </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-              <h2 className="text-lg font-semibold text-blue-900 mb-3">Executive Summary</h2>
-              <p className="text-blue-800 mb-4">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">Executive Summary</h2>
+              <p className="text-gray-700 mb-4">
                 We found the <strong>exact people</strong> who matter at your 4 target companies. Out of <strong>15,000+ employees</strong>, only <strong>40 people</strong> can actually buy your AI Impact Visibility platform. We know who they are, what they care about, and how to win them.
               </p>
-              <p className="text-blue-800">
+              <p className="text-gray-700">
                 <strong>Without us:</strong> You'll spend months researching thousands of people, waste time on the wrong contacts, and lose deals to competitors who know the real decision makers. <strong>With us:</strong> You get the exact 40 people who matter, their pain points, influence scores, and the exact strategies to close them.
               </p>
             </div>
             
-            <div className="bg-[var(--panel-background)] p-6 rounded-lg border-l-4 border-gray-400">
+            <div className="bg-white p-6 rounded-lg border border-gray-200">
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Prepared For</p>
-                  <p className="text-sm font-semibold text-black">Winning Variant Leadership Team</p>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Prepared For</p>
+                  <p className="text-sm font-semibold text-gray-900">Winning Variant Leadership Team</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Target Companies</p>
-                  <p className="text-sm font-semibold text-black">4 Strategic Prospects</p>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Target Companies</p>
+                  <p className="text-sm font-semibold text-gray-900">4 Strategic Prospects</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Prepared By</p>
-                  <p className="text-sm font-semibold text-black">Adrata Sales Intelligence Team</p>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Prepared By</p>
+                  <p className="text-sm font-semibold text-gray-900">Adrata Sales Intelligence Team</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide">Strategic Focus</p>
-                  <p className="text-sm font-semibold text-black">C-Suite Level Engagement</p>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Strategic Focus</p>
+                  <p className="text-sm font-semibold text-gray-900">C-Suite Level Engagement</p>
                 </div>
               </div>
             </div>
@@ -148,31 +148,39 @@ export default function WinningVariantPage() {
             
             <div className="grid md:grid-cols-2 gap-8">
               {/* Match Group */}
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-black mb-2">Match Group</h3>
-                    <p className="text-sm text-[var(--muted)] mb-2">Online Dating Platform Owner</p>
-                    <p className="text-xs text-gray-600">mtch.com • 3,000+ employees</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Match Group</h3>
+                    <p className="text-sm text-gray-600 mb-2">Online Dating Platform Owner</p>
+                    <p className="text-xs text-gray-500">mtch.com • 3,000+ employees</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-black">10</div>
-                    <div className="text-xs text-[var(--muted)]">Precision Buyer Group</div>
+                    <div className="text-2xl font-bold text-gray-900">10</div>
+                    <div className="text-xs text-gray-500">Precision Buyer Group</div>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-4 mb-4 text-center">
+                <div className="grid grid-cols-5 gap-4 mb-4 text-center">
                   <div>
-                    <div className="text-lg font-bold text-black">15</div>
-                    <div className="text-xs text-[var(--muted)]">Data Science</div>
+                    <div className="text-lg font-bold text-gray-900">2</div>
+                    <div className="text-xs text-gray-500">Decision Makers</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">12</div>
-                    <div className="text-xs text-[var(--muted)]">Product Analytics</div>
+                    <div className="text-lg font-bold text-gray-900">3</div>
+                    <div className="text-xs text-gray-500">Champions</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">8</div>
-                    <div className="text-xs text-[var(--muted)]">ML Engineering</div>
+                    <div className="text-lg font-bold text-gray-900">3</div>
+                    <div className="text-xs text-gray-500">Stakeholders</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">1</div>
+                    <div className="text-xs text-gray-500">Blockers</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">1</div>
+                    <div className="text-xs text-gray-500">Introducers</div>
                   </div>
                 </div>
                 
@@ -191,31 +199,39 @@ export default function WinningVariantPage() {
               </div>
 
               {/* Brex */}
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-black mb-2">Brex</h3>
-                    <p className="text-sm text-[var(--muted)] mb-2">FinTech Corporate Cards</p>
-                    <p className="text-xs text-gray-600">brex.com • 1,000-5,000 employees</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Brex</h3>
+                    <p className="text-sm text-gray-600 mb-2">FinTech Corporate Cards</p>
+                    <p className="text-xs text-gray-500">brex.com • 1,000-5,000 employees</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-black">12</div>
-                    <div className="text-xs text-[var(--muted)]">Precision Buyer Group</div>
+                    <div className="text-2xl font-bold text-gray-900">12</div>
+                    <div className="text-xs text-gray-500">Precision Buyer Group</div>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-4 mb-4 text-center">
+                <div className="grid grid-cols-5 gap-4 mb-4 text-center">
                   <div>
-                    <div className="text-lg font-bold text-black">10</div>
-                    <div className="text-xs text-[var(--muted)]">Data Science</div>
+                    <div className="text-lg font-bold text-gray-900">2</div>
+                    <div className="text-xs text-gray-500">Decision Makers</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">8</div>
-                    <div className="text-xs text-[var(--muted)]">Risk Analytics</div>
+                    <div className="text-lg font-bold text-gray-900">4</div>
+                    <div className="text-xs text-gray-500">Champions</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">6</div>
-                    <div className="text-xs text-[var(--muted)]">ML Engineering</div>
+                    <div className="text-lg font-bold text-gray-900">4</div>
+                    <div className="text-xs text-gray-500">Stakeholders</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">1</div>
+                    <div className="text-xs text-gray-500">Blockers</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">1</div>
+                    <div className="text-xs text-gray-500">Introducers</div>
                   </div>
                 </div>
                 
@@ -234,31 +250,39 @@ export default function WinningVariantPage() {
               </div>
 
               {/* First Premier Bank */}
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-black mb-2">First Premier Bank</h3>
-                    <p className="text-sm text-[var(--muted)] mb-2">Regional Banking</p>
-                    <p className="text-xs text-gray-600">firstpremier.com • 1000-5000 employees</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">First Premier Bank</h3>
+                    <p className="text-sm text-gray-600 mb-2">Regional Banking</p>
+                    <p className="text-xs text-gray-500">firstpremier.com • 1000-5000 employees</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-black">8</div>
-                    <div className="text-xs text-[var(--muted)]">Buyer Group Members</div>
+                    <div className="text-2xl font-bold text-gray-900">8</div>
+                    <div className="text-xs text-gray-500">Buyer Group Members</div>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-4 mb-4 text-center">
+                <div className="grid grid-cols-5 gap-4 mb-4 text-center">
                   <div>
-                    <div className="text-lg font-bold text-black">2</div>
-                    <div className="text-xs text-[var(--muted)]">Decision Makers</div>
+                    <div className="text-lg font-bold text-gray-900">2</div>
+                    <div className="text-xs text-gray-500">Decision Makers</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">3</div>
-                    <div className="text-xs text-[var(--muted)]">Champions</div>
+                    <div className="text-lg font-bold text-gray-900">3</div>
+                    <div className="text-xs text-gray-500">Champions</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">3</div>
-                    <div className="text-xs text-[var(--muted)]">Stakeholders</div>
+                    <div className="text-lg font-bold text-gray-900">2</div>
+                    <div className="text-xs text-gray-500">Stakeholders</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">1</div>
+                    <div className="text-xs text-gray-500">Blockers</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">0</div>
+                    <div className="text-xs text-gray-500">Introducers</div>
                   </div>
                 </div>
                 
@@ -276,31 +300,39 @@ export default function WinningVariantPage() {
               </div>
 
               {/* Zuora */}
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-black mb-2">Zuora</h3>
-                    <p className="text-sm text-[var(--muted)] mb-2">Subscription Management Platform</p>
-                    <p className="text-xs text-gray-600">zuora.com • 1000-5000 employees</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Zuora</h3>
+                    <p className="text-sm text-gray-600 mb-2">Subscription Management Platform</p>
+                    <p className="text-xs text-gray-500">zuora.com • 1000-5000 employees</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-black">8</div>
-                    <div className="text-xs text-[var(--muted)]">Buyer Group Members</div>
+                    <div className="text-2xl font-bold text-gray-900">8</div>
+                    <div className="text-xs text-gray-500">Buyer Group Members</div>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-4 mb-4 text-center">
+                <div className="grid grid-cols-5 gap-4 mb-4 text-center">
                   <div>
-                    <div className="text-lg font-bold text-black">2</div>
-                    <div className="text-xs text-[var(--muted)]">Decision Makers</div>
+                    <div className="text-lg font-bold text-gray-900">2</div>
+                    <div className="text-xs text-gray-500">Decision Makers</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">3</div>
-                    <div className="text-xs text-[var(--muted)]">Champions</div>
+                    <div className="text-lg font-bold text-gray-900">3</div>
+                    <div className="text-xs text-gray-500">Champions</div>
                   </div>
                   <div>
-                    <div className="text-lg font-bold text-black">3</div>
-                    <div className="text-xs text-[var(--muted)]">Stakeholders</div>
+                    <div className="text-lg font-bold text-gray-900">2</div>
+                    <div className="text-xs text-gray-500">Stakeholders</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">1</div>
+                    <div className="text-xs text-gray-500">Blockers</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-gray-900">0</div>
+                    <div className="text-xs text-gray-500">Introducers</div>
                   </div>
                 </div>
                 

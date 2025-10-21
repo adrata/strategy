@@ -26,15 +26,25 @@ const matchGroupData = {
         role: "Decision Maker" as const,
         archetype: {
           id: "economic-buyer",
-          name: "Economic Buyer",
+          name: "The Economic Buyer",
           role: "Decision Maker",
-          description: "Senior executive with budget authority and ROI focus",
+          description: "C-suite executive (CEO, CFO, COO) with ultimate budget authority",
           characteristics: {
-            motivations: ["ROI optimization", "Cost reduction", "Financial performance"],
-            concerns: ["Budget constraints", "Implementation costs", "ROI timeline"],
-            decisionMakingStyle: "Data-driven with focus on financial metrics and business impact",
-            communicationStyle: "Direct, numbers-focused, needs clear business case",
-            keyNeeds: ["ROI data", "Cost analysis", "Implementation timeline", "Success metrics"]
+            motivations: ["Strategic impact", "Financial returns", "Shareholder value"],
+            concerns: ["Strategic alignment", "Financial risk", "Competitive advantage"],
+            decisionMakingStyle: "Time-constrained, relies heavily on trusted advisors and executive summaries",
+            communicationStyle: "Strategic, high-level, focused on business impact and ROI",
+            keyNeeds: ["Clear ROI", "Strategic alignment", "Risk mitigation", "Peer references"]
+          },
+          situation: "A C-suite executive with ultimate budget authority and strategic decision-making power",
+          complication: "Time-constrained and needs clear strategic justification for significant investments",
+          futureState: "Becomes the strategic champion who drives organizational transformation",
+          industryPersonalization: {
+            "Technology": {
+              situation: "CEO making strategic technology decisions that impact competitive advantage",
+              complication: "Balancing technology innovation with business strategy and financial returns",
+              futureState: "Becomes the technology strategy champion who drives digital transformation"
+            }
           }
         },
         personalizedStrategy: {
@@ -123,15 +133,25 @@ const matchGroupData = {
         role: "Stakeholder" as const,
         archetype: {
           id: "technical-architect",
-          name: "Technical Architect",
+          name: "The Technical Architect",
           role: "Stakeholder",
-          description: "Technical leader responsible for data infrastructure and analytics",
+          description: "CTO, IT Director, or Senior Engineer evaluating technical fit",
           characteristics: {
-            motivations: ["Technical excellence", "Data quality", "System performance"],
+            motivations: ["Technical excellence", "System performance", "Architecture quality"],
             concerns: ["Technical complexity", "Data security", "Integration challenges"],
             decisionMakingStyle: "Technical evaluation with focus on system architecture and data quality",
             communicationStyle: "Technical, detail-oriented, needs technical specifications and architecture details",
             keyNeeds: ["Technical documentation", "Security requirements", "Integration specs", "Performance metrics"]
+          },
+          situation: "A senior technical leader responsible for evaluating and implementing technology solutions",
+          complication: "Must balance technical requirements with business needs while ensuring system reliability",
+          futureState: "Becomes the technical champion who ensures successful implementation and integration",
+          industryPersonalization: {
+            "Technology": {
+              situation: "Leading technical architecture decisions for a technology company",
+              complication: "Ensuring technical solutions align with business strategy and scalability requirements",
+              futureState: "Becomes the technical strategy leader who drives successful technology implementations"
+            }
           }
         },
         personalizedStrategy: {
@@ -301,7 +321,7 @@ export default function MatchGroupReportPage() {
   const { companyInfo, buyerGroup, salesIntent, strategicRecommendations } = matchGroupData;
 
   return (
-    <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
+    <div className="min-h-screen bg-gray-50" style={{ overflowY: 'auto', height: '100vh' }}>
       {/* Header */}
       <header className="border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 py-4">
@@ -309,24 +329,24 @@ export default function MatchGroupReportPage() {
             <div className="flex items-center gap-4">
               <Link 
                 href="/private/winning-variant"
-                className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
               >
                 ← Back to Overview
               </Link>
-              <h1 className="text-lg font-semibold text-[var(--foreground)]">Match Group Intelligence</h1>
+              <h1 className="text-lg font-semibold text-gray-900">Match Group Intelligence</h1>
             </div>
             
             {/* Navigation Links */}
             <div className="flex items-center space-x-6">
               <Link 
                 href="/" 
-                className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
               >
                 Home
               </Link>
               <Link 
                 href="/platform" 
-                className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
               >
                 Platform
               </Link>
@@ -463,7 +483,7 @@ export default function MatchGroupReportPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+          <div className="bg-white border border-gray-200 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-black mb-4">Leadership Team</h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
               <div>
@@ -543,7 +563,7 @@ export default function MatchGroupReportPage() {
           {/* Buyer Group Members by Role */}
           <div className="space-y-8">
             {/* Decision Makers */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Decision Makers ({buyerGroup.members.filter(m => m.role === 'Decision Maker').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members
@@ -555,7 +575,7 @@ export default function MatchGroupReportPage() {
             </div>
 
             {/* Champions */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Champions ({buyerGroup.members.filter(m => m.role === 'Champion').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members
@@ -567,7 +587,7 @@ export default function MatchGroupReportPage() {
             </div>
 
             {/* Stakeholders */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Stakeholders ({buyerGroup.members.filter(m => m.role === 'Stakeholder').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members
@@ -579,7 +599,7 @@ export default function MatchGroupReportPage() {
             </div>
 
             {/* Introducers */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Introducers ({buyerGroup.members.filter(m => m.role === 'Introducer').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members

@@ -26,16 +26,26 @@ const firstPremierData = {
         title: "Chief Executive Officer",
         role: "Decision Maker" as const,
         archetype: {
-          id: "visionary-decider",
-          name: "Visionary Decider",
+          id: "consensus-builder",
+          name: "The Consensus Builder",
           role: "Decision Maker",
-          description: "Strategic leader focused on long-term vision and market position",
+          description: "Senior leader who makes decisions through committee and stakeholder buy-in",
           characteristics: {
-            motivations: ["Market leadership", "Strategic growth", "Competitive advantage"],
-            concerns: ["Market position", "Competitive threats", "Strategic alignment"],
-            decisionMakingStyle: "Vision-driven with focus on strategic impact and market position",
-            communicationStyle: "Strategic, high-level, needs business impact and competitive advantage",
-            keyNeeds: ["Strategic roadmap", "Market analysis", "Competitive intelligence", "Growth metrics"]
+            motivations: ["Stakeholder alignment", "Risk mitigation", "Organizational harmony"],
+            concerns: ["Internal conflict", "Implementation resistance", "Stakeholder buy-in"],
+            decisionMakingStyle: "Process-oriented, methodical, risk-averse decision style",
+            communicationStyle: "Collaborative, consensus-focused, needs broad agreement before committing",
+            keyNeeds: ["Stakeholder validation", "Multiple perspectives", "Collaborative evaluation", "Risk mitigation"]
+          },
+          situation: "A senior leader who makes decisions through committee and stakeholder buy-in",
+          complication: "Wants broad agreement before committing to avoid internal conflict",
+          futureState: "Becomes the consensus champion who drives organizational alignment and successful implementation",
+          industryPersonalization: {
+            "Banking": {
+              situation: "CEO of a regional bank making strategic decisions about technology and digital transformation",
+              complication: "Balancing innovation with regulatory compliance and stakeholder expectations in traditional banking",
+              futureState: "Becomes the banking innovation leader who drives digital transformation while maintaining stakeholder alignment"
+            }
           }
         },
         personalizedStrategy: {
@@ -255,7 +265,7 @@ export default function FirstPremierBankReportPage() {
   const { companyInfo, buyerGroup, salesIntent, strategicRecommendations } = firstPremierData;
 
   return (
-    <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
+    <div className="min-h-screen bg-gray-50" style={{ overflowY: 'auto', height: '100vh' }}>
       {/* Header */}
       <header className="border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 py-4">
@@ -263,24 +273,24 @@ export default function FirstPremierBankReportPage() {
             <div className="flex items-center gap-4">
               <Link 
                 href="/private/winning-variant"
-                className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
               >
                 ← Back to Overview
               </Link>
-              <h1 className="text-lg font-semibold text-[var(--foreground)]">First Premier Bank Intelligence</h1>
+              <h1 className="text-lg font-semibold text-gray-900">First Premier Bank Intelligence</h1>
             </div>
             
             {/* Navigation Links */}
             <div className="flex items-center space-x-6">
               <Link 
                 href="/" 
-                className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
               >
                 Home
               </Link>
               <Link 
                 href="/platform" 
-                className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
               >
                 Platform
               </Link>
@@ -417,7 +427,7 @@ export default function FirstPremierBankReportPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+          <div className="bg-white border border-gray-200 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-black mb-4">Leadership Team</h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
               <div>
@@ -495,7 +505,7 @@ export default function FirstPremierBankReportPage() {
           {/* Buyer Group Members by Role */}
           <div className="space-y-8">
             {/* Decision Makers */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Decision Makers ({buyerGroup.members.filter(m => m.role === 'Decision Maker').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members
@@ -507,7 +517,7 @@ export default function FirstPremierBankReportPage() {
             </div>
 
             {/* Champions */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Champions ({buyerGroup.members.filter(m => m.role === 'Champion').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members
@@ -519,7 +529,7 @@ export default function FirstPremierBankReportPage() {
             </div>
 
             {/* Stakeholders */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Stakeholders ({buyerGroup.members.filter(m => m.role === 'Stakeholder').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members
@@ -531,7 +541,7 @@ export default function FirstPremierBankReportPage() {
             </div>
 
             {/* Introducers */}
-            <div className="bg-[var(--background)] border border-[var(--border)] p-6 rounded-lg">
+            <div className="bg-white border border-gray-200 p-6 rounded-lg">
               <h4 className="text-lg font-semibold text-black mb-4">Introducers ({buyerGroup.members.filter(m => m.role === 'Introducer').length})</h4>
               <div className="grid gap-6">
                 {buyerGroup.members
