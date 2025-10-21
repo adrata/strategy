@@ -268,7 +268,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
           href={value}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${className} text-[var(--accent)] hover:text-[var(--accent-text)] hover:underline transition-colors`}
+          className={`${className} text-blue-600 hover:text-blue-700 hover:underline transition-colors`}
           onClick={(e) => e.stopPropagation()} // Prevent triggering edit mode when clicking link
         >
           {getDisplayValue()}
