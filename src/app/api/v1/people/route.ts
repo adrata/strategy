@@ -297,6 +297,18 @@ export async function GET(request: NextRequest) {
             buyerGroupStatus: true,
             isBuyerGroupMember: true,
             state: true,
+            linkedinUrl: true,
+            linkedinNavigatorUrl: true,
+            createdAt: true,
+            updatedAt: true,
+            personalEmail: true,
+            address: true,
+            postalCode: true,
+            bio: true,
+            gender: true,
+            dateOfBirth: true,
+            linkedinConnections: true,
+            linkedinFollowers: true,
             company: {
               select: {
                 id: true,

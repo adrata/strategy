@@ -271,7 +271,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           />
         </div>
 
-        <div className="flex justify-between pt-4 border-t border-[var(--border)]">
+        <div className="flex justify-end pt-4 border-t border-[var(--border)]">
           <div className="flex space-x-3">
             <button
               type="button"
@@ -286,26 +286,10 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             <button
               type="button"
               onClick={handleDelete}
-              disabled={loading || deleteConfirmName !== recordName}
+              disabled={loading || deleteConfirmName.trim() !== recordName.trim()}
               className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Deleting...' : 'Delete Record'}
-            </button>
-          </div>
-          <div className="flex space-x-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Update {recordType === 'people' ? 'Person' : recordType === 'companies' ? 'Company' : 'Record'} (Ctrl+⏎)
             </button>
           </div>
         </div>
@@ -1990,31 +1974,33 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {loading ? 'Updating...' : `Update ${recordType === 'leads' ? 'Lead' : 
-                                                      recordType === 'prospects' ? 'Prospect' :
-                                                      recordType === 'opportunities' ? 'Opportunity' :
-                                                      recordType === 'companies' ? 'Company' :
-                                                      recordType === 'people' ? 'Person' :
-                                                      recordType === 'clients' ? 'Client' :
-                                                      recordType === 'partners' ? 'Partner' :
-                                                      'Record'} (${getCommonShortcut('SUBMIT')})`}
-              </button>
+          {activeTab !== 'delete' && (
+            <div className="flex items-center justify-end p-6 border-t border-[var(--border)] bg-[var(--panel-background)]">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {loading ? 'Updating...' : `Update ${recordType === 'leads' ? 'Lead' : 
+                                                        recordType === 'prospects' ? 'Prospect' :
+                                                        recordType === 'opportunities' ? 'Opportunity' :
+                                                        recordType === 'companies' ? 'Company' :
+                                                        recordType === 'people' ? 'Person' :
+                                                        recordType === 'clients' ? 'Client' :
+                                                        recordType === 'partners' ? 'Partner' :
+                                                        'Record'} (${getCommonShortcut('SUBMIT')})`}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </form>
       </div>
 

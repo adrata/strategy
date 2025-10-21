@@ -272,7 +272,11 @@ export function UniversalRecordTemplate({
         recordId: record?.id,
         recordName: record?.name || record?.fullName,
         pendingSaves: Array.from(pendingSaves),
-        hasRecord: !!record
+        hasRecord: !!record,
+        linkedinUrl: record?.linkedinUrl,
+        linkedin: record?.linkedin,
+        createdAt: record?.createdAt,
+        updatedAt: record?.updatedAt
       });
       setLocalRecord(record);
     } else {
@@ -1257,8 +1261,12 @@ export function UniversalRecordTemplate({
   // Helper function to update sessionStorage cache after successful save
   const updateSessionStorageCache = (updatedRecordData: any, fieldName: string, recId: string, recType: string) => {
     try {
-      const cachedKey = `cached-${recType}-${recId}`;
-      const currentKey = `current-record-${recType}`;
+      // Map recordType to section for cache keys
+      // PipelineDetailPage reads from cached-${section}-${recordId} and current-record-${section}
+      const section = recType === 'universal' ? 'leads' : recType;
+      
+      const cachedKey = `cached-${section}-${recId}`;
+      const currentKey = `current-record-${section}`;
       
       // Update the cache with fresh data
       sessionStorage.setItem(cachedKey, JSON.stringify(updatedRecordData));
@@ -1267,7 +1275,15 @@ export function UniversalRecordTemplate({
         data: updatedRecordData, 
         timestamp: Date.now() 
       }));
-      console.log(`💾 [UNIVERSAL] Updated sessionStorage cache for ${recId} after ${fieldName} update`);
+      
+      console.log(`💾 [UNIVERSAL] Updated sessionStorage cache for ${recId} after ${fieldName} update:`, {
+        recType,
+        section,
+        cachedKey,
+        currentKey,
+        updatedField: fieldName,
+        hasLinkedinUrl: !!updatedRecordData?.linkedinUrl
+      });
     } catch (error) {
       console.warn('Failed to update sessionStorage cache:', error);
     }
@@ -1586,7 +1602,33 @@ export function UniversalRecordTemplate({
       
       console.log(`🎯 [MODEL TARGETING] Field: ${field}, RecordType: ${recordType}, PersonId: ${record?.personId}, CompanyId: ${record?.companyId}`);
       
-      if (personalFields.includes(field)) {
+      // Handle "universal" recordType by detecting actual record type
+      if (recordType === 'universal') {
+        // Check if this is a person record (has firstName, lastName, email, etc.)
+        if (record?.firstName || record?.lastName || record?.email || record?.jobTitle) {
+          targetModel = 'people';
+          targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] Universal record detected as person -> people model (${targetId})`);
+        }
+        // Check if this is a company record (has employees, revenue, industry)
+        else if (record?.employeeCount || record?.revenue || record?.industry) {
+          targetModel = 'companies';
+          targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] Universal record detected as company -> companies model (${targetId})`);
+        }
+        // Default to people for personal fields
+        else if (personalFields.includes(field)) {
+          targetModel = 'people';
+          targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] Universal record with personal field ${field} -> people model (${targetId})`);
+        }
+        // Default to companies for company fields
+        else if (companyFields.includes(field)) {
+          targetModel = 'companies';
+          targetId = recordId;
+          console.log(`🎯 [MODEL TARGETING] Universal record with company field ${field} -> companies model (${targetId})`);
+        }
+      } else if (personalFields.includes(field)) {
         // Personal fields should go to the people model when personId exists
         if (record?.personId) {
           targetModel = 'people';
@@ -1624,12 +1666,15 @@ export function UniversalRecordTemplate({
         'title': 'jobTitle',     // Map title to jobTitle for people API
         'jobTitle': 'jobTitle',  // Keep jobTitle as jobTitle
         'workEmail': 'workEmail',
+        'personalEmail': 'personalEmail',
         'mobilePhone': 'mobilePhone',
         'company': 'company',    // Keep company as company for database
         'companyName': 'company', // Map companyName to company
         'bio': 'bio',            // Keep bio as bio
         'linkedinUrl': 'linkedinUrl', // Keep linkedinUrl as linkedinUrl
-        'linkedinNavigatorUrl': 'linkedinNavigatorUrl' // Keep linkedinNavigatorUrl as linkedinNavigatorUrl
+        'linkedinNavigatorUrl': 'linkedinNavigatorUrl', // Keep linkedinNavigatorUrl as linkedinNavigatorUrl
+        'address': 'address',
+        'postalCode': 'postalCode'
       };
       
       const apiField = fieldMapping[field] || field;
@@ -1898,7 +1943,25 @@ export function UniversalRecordTemplate({
       
       // 🚀 CACHE INVALIDATION & REVALIDATION: Update cache with new data
       const updatedRecord = onRecordUpdate && result.data ? { ...record, ...result.data } : { ...record, [field]: value };
+      
+      // Debug: Log the updated record to verify linkedinUrl is included
+      console.log(`🔍 [CACHE UPDATE] Updating cache with record:`, {
+        field,
+        originalValue: record?.[field],
+        newValue: value,
+        updatedRecordLinkedinUrl: updatedRecord?.linkedinUrl,
+        hasResultData: !!result.data,
+        resultDataLinkedinUrl: result.data?.linkedinUrl,
+        fullUpdatedRecord: updatedRecord
+      });
+      
       updateSessionStorageCache(updatedRecord, field, recordId || '', recordType);
+      
+      // Clear force-refresh flag since we've updated the cache with fresh data
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem(`force-refresh-${recordType}-${recordId}`);
+        console.log(`🗑️ [CACHE] Cleared force-refresh flag for ${recordType} record ${recordId}`);
+      }
       
       // 🚀 SERVER REVALIDATION: Trigger background refresh to ensure data consistency
       // Use a longer delay to allow the optimistic update and parent state update to settle
@@ -1916,7 +1979,7 @@ export function UniversalRecordTemplate({
         else if (value === 'OPPORTUNITY') targetSection = 'opportunities';
         else if (value === 'CLIENT' || value === 'CUSTOMER') targetSection = 'clients';
         
-        window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+        window.dispatchEvent(new CustomEvent('refresh-counts', {
           detail: { 
             section: targetSection,
             type: 'status-update',
@@ -4714,7 +4777,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.fullName || record?.name || ''}
                 field="fullName"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 placeholder="Enter full name"
                 onSave={handleInlineSave}
                 className="text-sm"
@@ -4727,7 +4790,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                   value={record?.firstName || ''}
                   field="firstName"
                   recordId={record?.id || ''}
-                  recordType="universal"
+                  recordType={recordType}
                   placeholder="First name"
                   onSave={handleInlineSave}
                   className="text-sm"
@@ -4739,7 +4802,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                   value={record?.lastName || ''}
                   field="lastName"
                   recordId={record?.id || ''}
-                  recordType="universal"
+                  recordType={recordType}
                   placeholder="Last name"
                   onSave={handleInlineSave}
                   className="text-sm"
@@ -4752,7 +4815,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.title || record?.jobTitle || ''}
                 field="title"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 placeholder="Enter title"
                 onSave={handleInlineSave}
                 className="text-sm"
@@ -4764,7 +4827,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.department || ''}
                 field="department"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 placeholder="Enter department"
                 onSave={handleInlineSave}
                 className="text-sm"
@@ -4776,7 +4839,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.status || 'new'}
                 field="status"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 type="text"
                 onSave={handleInlineSave}
                 className="text-sm"
@@ -4788,7 +4851,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.priority || 'medium'}
                 field="priority"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 type="text"
                 onSave={handleInlineSave}
                 className="text-sm"
@@ -4807,7 +4870,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.role || ''}
                 field="role"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 inputType="select"
                 options={[
                   { value: '', label: 'Select Role' },
@@ -4828,7 +4891,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.email || ''}
                 field="email"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 inputType="email"
                 placeholder="Enter email address"
                 onSave={handleInlineSave}
@@ -4841,9 +4904,22 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.workEmail || ''}
                 field="workEmail"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 inputType="email"
                 placeholder="Enter work email"
+                onSave={handleInlineSave}
+                className="text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Personal Email</label>
+              <InlineEditField
+                value={record?.personalEmail || ''}
+                field="personalEmail"
+                recordId={record?.id || ''}
+                recordType={recordType}
+                inputType="email"
+                placeholder="Enter personal email"
                 onSave={handleInlineSave}
                 className="text-sm"
               />
@@ -4854,7 +4930,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.phone || ''}
                 field="phone"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 inputType="tel"
                 placeholder="Enter phone number"
                 onSave={handleInlineSave}
@@ -4867,7 +4943,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.mobilePhone || ''}
                 field="mobilePhone"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 inputType="tel"
                 placeholder="Enter mobile phone"
                 onSave={handleInlineSave}
@@ -4876,11 +4952,18 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
             </div>
             <div>
               <label className="text-xs text-[var(--muted)] uppercase tracking-wide">LinkedIn</label>
+              {console.log(`🔍 [LINKEDIN DEBUG] OverviewTab LinkedIn field:`, {
+                recordId: record?.id,
+                linkedinUrl: record?.linkedinUrl,
+                linkedin: record?.linkedin,
+                finalValue: record?.linkedinUrl || record?.linkedin || '',
+                recordType
+              })}
               <InlineEditField
                 value={record?.linkedinUrl || record?.linkedin || ''}
                 field="linkedinUrl"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 inputType="url"
                 placeholder="Enter LinkedIn URL"
                 onSave={handleInlineSave}
@@ -4900,7 +4983,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.company || record?.companyName || ''}
                 field="company"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 placeholder="Enter company name"
                 onSave={handleInlineSave}
                 className="text-sm"
@@ -4912,7 +4995,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.companyDomain || record?.domain || ''}
                 field="companyDomain"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 inputType="url"
                 placeholder="Enter company domain"
                 onSave={handleInlineSave}
@@ -4925,7 +5008,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.industry || ''}
                 field="industry"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 placeholder="Enter industry"
                 onSave={handleInlineSave}
                 className="text-sm"
@@ -4937,7 +5020,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.companySize || record?.employeeCount || ''}
                 field="companySize"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 type="text"
                 onSave={handleInlineSave}
                 className="text-sm"
@@ -4956,7 +5039,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.city || ''}
                 field="city"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 placeholder="Enter city"
                 onSave={handleInlineSave}
                 className="text-sm"
@@ -4968,8 +5051,32 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 value={record?.country || ''}
                 field="country"
                 recordId={record?.id || ''}
-                recordType="universal"
+                recordType={recordType}
                 placeholder="Enter country"
+                onSave={handleInlineSave}
+                className="text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Address</label>
+              <InlineEditField
+                value={record?.address || ''}
+                field="address"
+                recordId={record?.id || ''}
+                recordType={recordType}
+                placeholder="Enter address"
+                onSave={handleInlineSave}
+                className="text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Postal Code</label>
+              <InlineEditField
+                value={record?.postalCode || ''}
+                field="postalCode"
+                recordId={record?.id || ''}
+                recordType={recordType}
+                placeholder="Enter postal code"
                 onSave={handleInlineSave}
                 className="text-sm"
               />
@@ -4986,7 +5093,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
             value={record?.notes || record?.description || ''}
             field="notes"
             recordId={record?.id || ''}
-            recordType="universal"
+            recordType={recordType}
             type="textarea"
             placeholder="Add notes or description..."
             onSave={handleInlineSave}

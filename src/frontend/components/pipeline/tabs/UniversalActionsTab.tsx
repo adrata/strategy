@@ -364,7 +364,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       <div>
         <div className="flex items-center justify-between">
           <div className="text-lg font-medium text-[var(--foreground)]">
-            {actionEvents.length} All Actions
+            All Actions
           </div>
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 bg-[var(--hover)] text-gray-700 rounded-full flex items-center justify-center text-sm font-medium">

@@ -5,6 +5,7 @@ import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton, Skeleton } from '@/platform/ui/components/Loader';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
 import { authFetch } from '@/platform/api-fetch';
+import { useUnifiedAuth } from '@/platform/auth';
 
 interface UniversalOverviewTabProps {
   recordType: string;
@@ -14,6 +15,7 @@ interface UniversalOverviewTabProps {
 
 export function UniversalOverviewTab({ recordType, record: recordProp, onSave }: UniversalOverviewTabProps) {
   const { currentRecord: contextRecord } = useRecordContext();
+  const { user: currentUser } = useUnifiedAuth();
   const record = recordProp || contextRecord;
   
   // Success message state
@@ -328,6 +330,67 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     }
   };
 
+  // Helper function to get timing label for date pills (matching list view format)
+  const getTimingLabel = (dateString: string | Date | null | undefined): string => {
+    if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') return 'Never';
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Never';
+      
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      const actionDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const diffMs = now.getTime() - date.getTime();
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      
+      // Check if it's today
+      if (actionDate.getTime() === today.getTime()) {
+        return 'Today';
+      }
+      
+      // Check if it's yesterday
+      if (actionDate.getTime() === yesterday.getTime()) {
+        return 'Yesterday';
+      }
+      
+      // Check if it's within the last week
+      if (diffDays <= 7) {
+        return `${diffDays} days ago`;
+      }
+      
+      // Check if it's within the last month
+      if (diffDays <= 30) {
+        const weeks = Math.floor(diffDays / 7);
+        return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+      }
+      
+      // For future dates (next actions)
+      if (diffMs < 0) {
+        const futureDiffDays = Math.ceil(-diffMs / (1000 * 60 * 60 * 24));
+        if (futureDiffDays === 1) {
+          return 'Tomorrow';
+        } else if (futureDiffDays <= 7) {
+          return 'This week';
+        } else if (futureDiffDays <= 14) {
+          return 'Next week';
+        } else if (futureDiffDays <= 30) {
+          return 'This month';
+        } else {
+          return 'Future';
+        }
+      }
+      
+      // For older dates
+      return date.toLocaleDateString();
+    } catch (error) {
+      return 'Never';
+    }
+  };
+
   // Helper function to check if a value is meaningful (not blank, null, undefined, or "-")
   const hasValue = (value: any): boolean => {
     return value && value !== '-' && value !== '--' && String(value).trim() !== '';
@@ -394,11 +457,16 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     }
     
     // Map fetched actions to display format
-    return actions.map(action => ({
-      action: action.subject || action.title || 'Action',
-      type: action.type || null,
-      date: formatRelativeDate(action.completedAt || action.scheduledAt || action.createdAt)
-    }));
+    return actions.map(action => {
+      // Get user display name - always show the actual name
+      const userDisplayName = action.user?.name || action.user?.email || 'Unknown User';
+      
+      return {
+        action: action.subject || action.title || 'Action',
+        user: userDisplayName,
+        date: formatRelativeDate(action.completedAt || action.scheduledAt || action.createdAt)
+      };
+    });
   };
 
   const lastActions = generateLastActions();
@@ -464,18 +532,6 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">State:</span>
-                <InlineEditField
-                  value={recordData.hqState || recordData.state}
-                  field="hqState"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
-              <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Department:</span>
                 <InlineEditField
                   value={recordData.department}
@@ -490,7 +546,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">State:</span>
                 <InlineEditField
-                  value={record.state || record.company?.hqState || ''}
+                  value={recordData.hqState || recordData.state}
                   field="state"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -502,7 +558,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
                 <InlineEditField
-                  value={formatEmptyValue(recordData.bio)}
+                  value={recordData.bio || null}
                   field="bio"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -538,7 +594,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Role:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record.buyerGroupRole || 'Stakeholder')}
+                  value={record.buyerGroupRole || 'Stakeholder'}
                   field="buyerGroupRole"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -550,7 +606,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Influence Level:</span>
                 <InlineEditField
-                  value={formatEmptyValue(recordData.influenceLevel)}
+                  value={recordData.influenceLevel || null}
                   field="influenceLevel"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -562,7 +618,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Decision Power:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record.customFields?.decisionPower || '70')}
+                  value={record.customFields?.decisionPower || '70'}
                   field="decisionPower"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -574,7 +630,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Engagement Level:</span>
                 <InlineEditField
-                  value={formatEmptyValue(record.customFields?.engagementLevel || 'Medium')}
+                  value={record.customFields?.engagementLevel || 'Medium'}
                   field="engagementLevel"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -598,7 +654,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Email:</span>
                 <InlineEditField
-                  value={formatEmptyValue(recordData.email)}
+                  value={recordData.email || null}
                   field="email"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -610,7 +666,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Phone:</span>
                 <InlineEditField
-                  value={formatEmptyValue(recordData.phone)}
+                  value={recordData.phone || null}
                   field="phone"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -622,7 +678,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
                 <InlineEditField
-                  value={formatEmptyValue(recordData.linkedin)}
+                  value={recordData.linkedin || null}
                   field="linkedinUrl"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -634,7 +690,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
                 <InlineEditField
-                  value={formatEmptyValue(recordData.linkedinNavigatorUrl)}
+                  value={recordData.linkedinNavigatorUrl || null}
                   field="linkedinNavigatorUrl"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -652,33 +708,42 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <div className="space-y-2">
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Last Action:</span>
-                <InlineEditField
-                  value={recordData.lastContact}
-                  field="lastActionDate"
-                  variant="date"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
+                <div className="flex items-center gap-2">
+                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-[var(--hover)] text-gray-800">
+                    {getTimingLabel(recordData.lastContact)}
+                  </span>
+                  <InlineEditField
+                    value={recordData.lastAction || '-'}
+                    field="lastAction"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    className="text-sm font-medium text-[var(--foreground)]"
+                  />
+                </div>
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Next Action:</span>
-                <InlineEditField
-                  value={formatEmptyValue(recordData.nextAction)}
-                  field="nextAction"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
+                <div className="flex items-center gap-2">
+                  <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-[var(--hover)] text-gray-800">
+                    {getTimingLabel(recordData.nextActionDate)}
+                  </span>
+                  <InlineEditField
+                    value={recordData.nextAction || null}
+                    field="nextAction"
+                    onSave={onSave || (() => Promise.resolve())}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    className="text-sm font-medium text-[var(--foreground)]"
+                  />
+                </div>
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Status:</span>
                 <InlineEditField
-                  value={formatEmptyValue(recordData.status)}
+                  value={recordData.status || null}
                   field="status"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
@@ -709,11 +774,9 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               {lastActions.map((action, index) => (
                 <li key={index} className="text-sm text-[var(--foreground)] flex items-center gap-2">
                   <span>•</span>
-                  {action.type && (
-                    <span className="px-2 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full">
-                      {action.type}
-                    </span>
-                  )}
+                  <span className="px-2 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full">
+                    {action.user}
+                  </span>
                   <span>{action.action} - {action.date}</span>
                 </li>
               ))}

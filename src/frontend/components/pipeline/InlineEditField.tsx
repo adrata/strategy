@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PencilIcon, CheckIcon, XMarkIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, CheckIcon, XMarkIcon, ArrowTopRightOnSquareIcon, ClipboardIcon } from '@heroicons/react/24/outline';
 import { InlineCompanySelector } from './InlineCompanySelector';
 import { DatePicker } from '@/platform/ui/components/DatePicker';
 
@@ -70,6 +70,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   const [editValue, setEditValue] = useState(value ?? '');
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   // Sync editValue with value prop when it changes, but not while saving
   useEffect(() => {
@@ -92,8 +93,19 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
     setIsLoading(true);
     setIsSaving(true);
     try {
+      // Clean up the value before saving
+      let cleanedValue = editValue;
+      
+      // Handle empty values and placeholders
+      if (!cleanedValue || cleanedValue.trim() === '' || cleanedValue === '-') {
+        cleanedValue = null;
+      } else {
+        // Trim whitespace but keep the value if it's not empty
+        cleanedValue = cleanedValue.trim();
+      }
+      
       // Pass all required parameters to onSave
-      await onSave(field, editValue, recordId || '', recordType || '');
+      await onSave(field, cleanedValue, recordId || '', recordType || '');
       
       // Show success message
       const message = successMessage || `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`;
@@ -125,6 +137,43 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
       handleEditSave();
     } else if (e['key'] === 'Escape') {
       handleEditCancel();
+    }
+  };
+
+  // Helper function to check if field is copyable
+  const isCopyableField = () => {
+    const copyableFields = [
+      'email', 'workEmail', 'personalEmail', 'secondaryEmail',
+      'phone', 'mobilePhone', 'workPhone'
+    ];
+    // Don't show copy icon for URL fields - users can click the URL directly
+    return copyableFields.includes(field) || inputType === 'email' || inputType === 'tel';
+  };
+
+  // Copy to clipboard function
+  const handleCopy = async () => {
+    if (!value || (typeof value === 'string' && value.trim() === '')) return;
+    
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopySuccess(true);
+      // Reset the success state after 2 seconds
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = value;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
+      } catch (fallbackError) {
+        console.error('Fallback copy failed:', fallbackError);
+      }
+      document.body.removeChild(textArea);
     }
   };
 
@@ -201,7 +250,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
 
   // Get the display value - for select fields, show the label instead of the value
   const getDisplayValue = () => {
-    if (!value || (typeof value === 'string' && value.trim() === '')) return '-';
+    if (!value || (typeof value === 'string' && (value.trim() === '' || value === '-')) || value === null) return '-';
     
     if (inputType === 'select' && options) {
       const option = options.find(opt => opt['value'] === value);
@@ -213,7 +262,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
 
   // Render URL as clickable link if it's a URL field and has a valid URL
   const renderUrlContent = () => {
-    if (isUrlField() && value && typeof value === 'string' && value.trim() !== '' && isValidUrl(value)) {
+    if (isUrlField() && value && typeof value === 'string' && value.trim() !== '' && value !== '-' && isValidUrl(value)) {
       return (
         <a
           href={value}
@@ -227,7 +276,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
       );
     }
     return (
-      <span className={`${className} ${!value || (typeof value === 'string' && value.trim() === '') ? 'text-[var(--muted)]' : ''}`}>
+      <span className={`${className} ${!value || (typeof value === 'string' && (value.trim() === '' || value === '-')) ? 'text-[var(--muted)]' : ''}`}>
         {getDisplayValue()}
       </span>
     );
@@ -243,7 +292,20 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
       >
         <PencilIcon className="w-4 h-4" />
       </button>
-      {isUrlField() && value && typeof value === 'string' && value.trim() !== '' && isValidUrl(value) && (
+      {isCopyableField() && value && typeof value === 'string' && value.trim() !== '' && value !== '-' && (
+        <button
+          onClick={handleCopy}
+          className="opacity-0 group-hover:opacity-100 p-1 text-[var(--muted)] hover:text-[var(--accent)] transition-all duration-200 hover:bg-[var(--hover)] rounded"
+          title={copySuccess ? "Copied!" : "Copy to clipboard"}
+        >
+          {copySuccess ? (
+            <CheckIcon className="w-4 h-4 text-green-600" />
+          ) : (
+            <ClipboardIcon className="w-4 h-4" />
+          )}
+        </button>
+      )}
+      {isUrlField() && value && typeof value === 'string' && value.trim() !== '' && value !== '-' && isValidUrl(value) && (
         <a
           href={value}
           target="_blank"

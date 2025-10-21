@@ -603,7 +603,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
                 <InlineEditField
-                  value={formatEmptyValue(prospectData.linkedinNavigatorUrl)}
+                  value={prospectData.linkedinNavigatorUrl || null}
                   field="linkedinNavigatorUrl"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}

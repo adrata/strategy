@@ -112,7 +112,12 @@ export async function GET(
       personId: id,
       email: transformedPerson.email,
       workEmail: transformedPerson.workEmail,
-      hasEmail: !!transformedPerson.email
+      hasEmail: !!transformedPerson.email,
+      linkedinUrl: transformedPerson.linkedinUrl,
+      linkedinNavigatorUrl: transformedPerson.linkedinNavigatorUrl,
+      createdAt: transformedPerson.createdAt,
+      updatedAt: transformedPerson.updatedAt,
+      allFields: Object.keys(transformedPerson)
     });
 
     return NextResponse.json({
@@ -376,7 +381,8 @@ export async function PATCH(
       'yearsInRole', 'address', 'state', 'country', 'postalCode', 'bio',
       'profilePictureUrl', 'source', 'customFields', 'preferredLanguage',
       'timezone', 'emailVerified', 'phoneVerified', 'lastAction', 'lastActionDate',
-      'actionStatus', 'entityId', 'mainSellerId', 'companyId', 'company'
+      'actionStatus', 'entityId', 'mainSellerId', 'companyId', 'company',
+      'dateOfBirth', 'gender', 'linkedinConnections', 'linkedinFollowers'
     ];
 
     // Filter body to only allowed fields FIRST
@@ -580,7 +586,14 @@ export async function PATCH(
       // Specifically check email field
       emailInUpdateData: (updateData as any).email,
       emailInUpdatedPerson: updatedPerson.email,
-      emailInResponseData: (responseData.data as any).email
+      emailInResponseData: (responseData.data as any).email,
+      // Check LinkedIn fields
+      linkedinUrlInUpdateData: (updateData as any).linkedinUrl,
+      linkedinUrlInUpdatedPerson: updatedPerson.linkedinUrl,
+      linkedinUrlInResponseData: (responseData.data as any).linkedinUrl,
+      linkedinNavigatorUrlInUpdateData: (updateData as any).linkedinNavigatorUrl,
+      linkedinNavigatorUrlInUpdatedPerson: updatedPerson.linkedinNavigatorUrl,
+      linkedinNavigatorUrlInResponseData: (responseData.data as any).linkedinNavigatorUrl
     });
 
     return NextResponse.json(responseData);

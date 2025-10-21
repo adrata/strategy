@@ -526,7 +526,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
                 <InlineEditField
-                  value={formatEmptyValue(personData.linkedinNavigatorUrl)}
+                  value={personData.linkedinNavigatorUrl || null}
                   field="linkedinNavigatorUrl"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}

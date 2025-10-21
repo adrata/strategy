@@ -62,7 +62,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     value={record?.authority || ''}
                     field="authority"
                     recordId={record?.id || ''}
-                    recordType="universal"
+                    recordType={recordType}
                     inputType="select"
                     options={[
                       { value: '', label: 'Select Authority' },
@@ -82,7 +82,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     value={record?.needUrgency || ''}
                     field="needUrgency"
                     recordId={record?.id || ''}
-                    recordType="universal"
+                    recordType={recordType}
                     inputType="select"
                     options={[
                       { value: '', label: 'Select Urgency' },
@@ -101,7 +101,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     value={record?.timeline || ''}
                     field="timeline"
                     recordId={record?.id || ''}
-                    recordType="universal"
+                    recordType={recordType}
                     inputType="select"
                     options={[
                       { value: '', label: 'Select Timeline' },
@@ -120,7 +120,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     value={record?.engagementLevel || 'initial'}
                     field="engagementLevel"
                     recordId={record?.id || ''}
-                    recordType="universal"
+                    recordType={recordType}
                     inputType="select"
                     options={[
                       { value: 'initial', label: 'Initial' },
@@ -145,7 +145,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     value={record?.budget?.toString() || ''}
                     field="budget"
                     recordId={record?.id || ''}
-                    recordType="universal"
+                    recordType={recordType}
                     placeholder="Enter budget"
                     onSave={handleInlineSave}
                     className="text-sm text-gray-800 font-medium"
@@ -157,7 +157,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     value={record?.estimatedValue?.toString() || ''}
                     field="estimatedValue"
                     recordId={record?.id || ''}
-                    recordType="universal"
+                    recordType={recordType}
                     placeholder="Enter estimated value"
                     onSave={handleInlineSave}
                     className="text-sm text-gray-800 font-medium"
@@ -169,7 +169,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     value={record?.currency || 'USD'}
                     field="currency"
                     recordId={record?.id || ''}
-                    recordType="universal"
+                    recordType={recordType}
                     inputType="select"
                     options={[
                       { value: 'USD', label: 'USD' },
@@ -224,7 +224,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     value={record?.communicationStyle || 'Professional'}
                     field="communicationStyle"
                     recordId={record?.id || ''}
-                    recordType="universal"
+                    recordType={recordType}
                     inputType="select"
                     options={[
                       { value: 'Professional', label: 'Professional' },
@@ -242,7 +242,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     value={record?.decisionMakingStyle || 'Analytical'}
                     field="decisionMakingStyle"
                     recordId={record?.id || ''}
-                    recordType="universal"
+                    recordType={recordType}
                     inputType="select"
                     options={[
                       { value: 'Analytical', label: 'Analytical' },
@@ -260,7 +260,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                     value={record?.relationship || ''}
                     field="relationship"
                     recordId={record?.id || ''}
-                    recordType="universal"
+                    recordType={recordType}
                     inputType="select"
                     options={[
                       { value: '', label: 'Select Relationship' },
@@ -393,7 +393,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       value={record?.communicationStyle || 'Professional'}
                       field="communicationStyle"
                       recordId={record?.id || ''}
-                      recordType="universal"
+                      recordType={recordType}
                       inputType="select"
                       options={[
                         { value: 'Professional', label: 'Professional' },
@@ -411,7 +411,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       value={record?.decisionMakingStyle || 'Analytical'}
                       field="decisionMakingStyle"
                       recordId={record?.id || ''}
-                      recordType="universal"
+                      recordType={recordType}
                       inputType="select"
                       options={[
                         { value: 'Analytical', label: 'Analytical' },
@@ -437,7 +437,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       value={record?.nextAction || ''}
                       field="nextAction"
                       recordId={record?.id || ''}
-                      recordType="universal"
+                      recordType={recordType}
                       placeholder="Enter next action"
                       onSave={handleInlineSave}
                       className="text-sm text-[var(--foreground)]"
@@ -449,7 +449,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       value={record?.nextActionDate ? new Date(record.nextActionDate).toLocaleDateString() : ''}
                       field="nextActionDate"
                       recordId={record?.id || ''}
-                      recordType="universal"
+                      recordType={recordType}
                       inputType="date"
                       placeholder="Schedule next action"
                       onSave={handleInlineSave}
@@ -464,7 +464,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       value={record?.relationship || ''}
                       field="relationship"
                       recordId={record?.id || ''}
-                      recordType="universal"
+                      recordType={recordType}
                       inputType="select"
                       options={[
                         { value: '', label: 'Select Relationship' },
@@ -483,7 +483,7 @@ export function UniversalStrategyTab({ record, recordType, onSave }: UniversalSt
                       value={record?.currentStage || ''}
                       field="currentStage"
                       recordId={record?.id || ''}
-                      recordType="universal"
+                      recordType={recordType}
                       inputType="select"
                       options={[
                         { value: '', label: 'Select Stage' },

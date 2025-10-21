@@ -67,36 +67,71 @@ export class DeletionService {
         return false;
       }
       
+      // Two-step process: first verify record exists and belongs to user's workspace
+      let recordExists = false;
+      
       switch (entityType) {
         case 'companies':
-          await prisma.companies.update({
+          const company = await prisma.companies.findFirst({
             where: { 
               id,
               workspaceId: user.workspaceId,
               deletedAt: null // Only delete non-deleted records
             },
+            select: { id: true }
+          });
+          recordExists = !!company;
+          break;
+          
+        case 'people':
+          const person = await prisma.people.findFirst({
+            where: { 
+              id,
+              workspaceId: user.workspaceId,
+              deletedAt: null // Only delete non-deleted records
+            },
+            select: { id: true }
+          });
+          recordExists = !!person;
+          break;
+          
+        case 'actions':
+          const action = await prisma.actions.findFirst({
+            where: { 
+              id,
+              workspaceId: user.workspaceId,
+              deletedAt: null // Only delete non-deleted records
+            },
+            select: { id: true }
+          });
+          recordExists = !!action;
+          break;
+      }
+
+      if (!recordExists) {
+        console.error(`❌ [DELETION] Record not found or already deleted: ${entityType} ${id}`);
+        return false;
+      }
+
+      // Now update using just the id (which is unique)
+      switch (entityType) {
+        case 'companies':
+          await prisma.companies.update({
+            where: { id },
             data: { deletedAt },
           });
           break;
           
         case 'people':
           await prisma.people.update({
-            where: { 
-              id,
-              workspaceId: user.workspaceId,
-              deletedAt: null // Only delete non-deleted records
-            },
+            where: { id },
             data: { deletedAt },
           });
           break;
           
         case 'actions':
           await prisma.actions.update({
-            where: { 
-              id,
-              workspaceId: user.workspaceId,
-              deletedAt: null // Only delete non-deleted records
-            },
+            where: { id },
             data: { deletedAt },
           });
           break;

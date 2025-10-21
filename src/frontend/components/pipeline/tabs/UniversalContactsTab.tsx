@@ -108,7 +108,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                       value={contact.name || ''}
                       field={`contacts.${index}.name`}
                       recordId={record?.id || ''}
-                      recordType="universal"
+                      recordType={recordType}
                       placeholder="Enter contact name"
                       onSave={handleInlineSave}
                       className="text-sm text-gray-800 font-medium"
@@ -120,7 +120,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                       value={contact.email || ''}
                       field={`contacts.${index}.email`}
                       recordId={record?.id || ''}
-                      recordType="universal"
+                      recordType={recordType}
                       inputType="email"
                       placeholder="Enter email address"
                       onSave={handleInlineSave}
@@ -133,7 +133,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                       value={contact.title || ''}
                       field={`contacts.${index}.title`}
                       recordId={record?.id || ''}
-                      recordType="universal"
+                      recordType={recordType}
                       placeholder="Enter job title"
                       onSave={handleInlineSave}
                       className="text-sm text-gray-800 font-medium"
@@ -145,7 +145,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                       value={contact.phone || ''}
                       field={`contacts.${index}.phone`}
                       recordId={record?.id || ''}
-                      recordType="universal"
+                      recordType={recordType}
                       inputType="tel"
                       placeholder="Enter phone number"
                       onSave={handleInlineSave}
@@ -173,7 +173,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
               value={record?.primaryContact || ''}
               field="primaryContact"
               recordId={record?.id || ''}
-              recordType="universal"
+              recordType={recordType}
               placeholder="Select primary contact"
               onSave={handleInlineSave}
               className="text-sm text-gray-800 font-medium"
@@ -185,7 +185,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
               value={record?.decisionMaker || ''}
               field="decisionMaker"
               recordId={record?.id || ''}
-              recordType="universal"
+              recordType={recordType}
               placeholder="Identify decision maker"
               onSave={handleInlineSave}
               className="text-sm text-gray-800 font-medium"
@@ -197,7 +197,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
               value={record?.influencer || ''}
               field="influencer"
               recordId={record?.id || ''}
-              recordType="universal"
+              recordType={recordType}
               placeholder="Identify key influencer"
               onSave={handleInlineSave}
               className="text-sm text-gray-800 font-medium"
