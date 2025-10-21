@@ -706,6 +706,19 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 />
               </div>
               <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Target Industry:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.customFields?.targetIndustry)}
+                  field="targetIndustry"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                  placeholder="e.g., Title Companies, Healthcare Providers"
+                />
+              </div>
+              <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Sector:</span>
                 <InlineEditField
                   value={formatEmptyValue(record?.sector)}

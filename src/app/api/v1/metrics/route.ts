@@ -4,20 +4,25 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('🔍 [METRICS] Starting metrics calculation...');
+    
     const { context, response } = await getSecureApiContext(request, {
       requireAuth: true,
       requireWorkspaceAccess: true
     });
 
     if (response) {
+      console.log('🔍 [METRICS] Auth response returned:', response.status);
       return response;
     }
 
     if (!context) {
+      console.log('🔍 [METRICS] No context available');
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const workspaceId = context.workspaceId;
+    console.log('🔍 [METRICS] Using workspaceId:', workspaceId);
 
     // Calculate weekly date ranges (Monday-Friday business days)
     const now = new Date();
@@ -61,6 +66,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Get actions data for this week and last week
+    console.log('🔍 [METRICS] Fetching actions from database...');
     const [thisWeekActions, lastWeekActions, allActions] = await Promise.all([
       // This week's actions
       prisma.actions.findMany({
@@ -111,6 +117,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Get people and companies data for conversion tracking
+    console.log('🔍 [METRICS] Fetching people and companies from database...');
     const [people, companies, lastWeekPeople, lastWeekCompanies] = await Promise.all([
       prisma.people.findMany({
         where: {
@@ -147,29 +154,51 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Calculate metrics
+    console.log('🔍 [METRICS] Calculating metrics...');
     const thisWeekPeopleActions = thisWeekActions.length;
     const lastWeekPeopleActions = lastWeekActions.length;
     
-    // Action types breakdown - using actual database values
+    // Debug: Log actual action types being stored
+    console.log('🔍 [METRICS] This week action types found:', 
+      thisWeekActions.map(a => a.type).filter(Boolean)
+    );
+    console.log('🔍 [METRICS] Last week action types found:', 
+      lastWeekActions.map(a => a.type).filter(Boolean)
+    );
+    
+    // Action types breakdown - using actual database values from action modals
     const getActionTypeCount = (actions: any[], type: string) => {
       return actions.filter(action => {
         const actionType = action.type?.toLowerCase() || '';
         switch (type) {
           case 'call':
-            return actionType.includes('phone') || actionType.includes('call');
+            return actionType === 'call' || 
+                   actionType === 'phone' || 
+                   actionType.includes('phone call') ||
+                   actionType.includes('linkedin connection') ||
+                   actionType.includes('linkedin message');
           case 'email':
-            return actionType.includes('email') || actionType.includes('inmail');
+            return actionType === 'email' || 
+                   actionType === 'email sent' ||
+                   actionType.includes('linkedin inmail') ||
+                   actionType.includes('inmail');
           case 'meeting':
-            return actionType.includes('meeting');
+            return actionType === 'meeting' || 
+                   actionType === 'demo';
           case 'proposal':
-            return actionType.includes('proposal');
+            return actionType === 'proposal' || 
+                   actionType.includes('proposal sent');
           case 'other':
-            return !actionType.includes('phone') && 
-                   !actionType.includes('call') && 
-                   !actionType.includes('email') && 
-                   !actionType.includes('inmail') && 
-                   !actionType.includes('meeting') &&
-                   !actionType.includes('proposal');
+            return actionType === 'other' || 
+                   actionType === 'follow-up' ||
+                   actionType === 'follow up' ||
+                   (!actionType.includes('call') && 
+                    !actionType.includes('phone') && 
+                    !actionType.includes('email') && 
+                    !actionType.includes('inmail') && 
+                    !actionType.includes('meeting') &&
+                    !actionType.includes('demo') &&
+                    !actionType.includes('proposal'));
           default:
             return false;
         }
@@ -191,22 +220,81 @@ export async function GET(request: NextRequest) {
       proposal: getActionTypeCount(lastWeekActions, 'proposal'),
       other: getActionTypeCount(lastWeekActions, 'other')
     };
+    
+    // Debug: Log calculated action type counts
+    console.log('📊 [METRICS] This week action type counts:', thisWeekActionTypes);
+    console.log('📊 [METRICS] Last week action type counts:', lastWeekActionTypes);
 
-    // Conversion metrics - current counts
-    const leads = people.filter(p => p.status === 'LEAD').length;
-    const prospects = people.filter(p => p.status === 'PROSPECT').length;
-    const opportunities = companies.filter(c => c.status === 'OPPORTUNITY').length;
-    const clients = companies.filter(c => c.status === 'CLIENT').length;
+    // NEW THIS WEEK: People/companies created this week (Monday-Sunday)
+    const thisWeekLeads = people.filter(p => 
+      p.status === 'LEAD' && 
+      p.createdAt >= startOfThisWeek && 
+      p.createdAt <= endOfThisWeek
+    ).length;
+    
+    const thisWeekProspects = people.filter(p => 
+      p.status === 'PROSPECT' && 
+      p.createdAt >= startOfThisWeek && 
+      p.createdAt <= endOfThisWeek
+    ).length;
+    
+    const thisWeekOpportunities = companies.filter(c => 
+      c.status === 'OPPORTUNITY' && 
+      c.createdAt >= startOfThisWeek && 
+      c.createdAt <= endOfThisWeek
+    ).length;
+    
+    const thisWeekClients = companies.filter(c => 
+      c.status === 'CLIENT' && 
+      c.createdAt >= startOfThisWeek && 
+      c.createdAt <= endOfThisWeek
+    ).length;
 
-    // Historical counts for comparison (before this week)
-    const lastWeekLeads = lastWeekPeople.filter(p => p.status === 'LEAD').length;
-    const lastWeekProspects = lastWeekPeople.filter(p => p.status === 'PROSPECT').length;
-    const lastWeekOpportunities = lastWeekCompanies.filter(c => c.status === 'OPPORTUNITY').length;
-    const lastWeekClients = lastWeekCompanies.filter(c => c.status === 'CLIENT').length;
+    // NEW LAST WEEK: People/companies created last week (Monday-Sunday)
+    const lastWeekLeads = people.filter(p => 
+      p.status === 'LEAD' && 
+      p.createdAt >= startOfLastWeek && 
+      p.createdAt <= endOfLastWeek
+    ).length;
+    
+    const lastWeekProspects = people.filter(p => 
+      p.status === 'PROSPECT' && 
+      p.createdAt >= startOfLastWeek && 
+      p.createdAt <= endOfLastWeek
+    ).length;
+    
+    const lastWeekOpportunities = companies.filter(c => 
+      c.status === 'OPPORTUNITY' && 
+      c.createdAt >= startOfLastWeek && 
+      c.createdAt <= endOfLastWeek
+    ).length;
+    
+    const lastWeekClients = companies.filter(c => 
+      c.status === 'CLIENT' && 
+      c.createdAt >= startOfLastWeek && 
+      c.createdAt <= endOfLastWeek
+    ).length;
+    
+    // Debug: Log weekly conversion metrics
+    console.log('📊 [METRICS] This week conversion metrics:', {
+      leads: thisWeekLeads,
+      prospects: thisWeekProspects,
+      opportunities: thisWeekOpportunities,
+      clients: thisWeekClients
+    });
+    console.log('📊 [METRICS] Last week conversion metrics:', {
+      leads: lastWeekLeads,
+      prospects: lastWeekProspects,
+      opportunities: lastWeekOpportunities,
+      clients: lastWeekClients
+    });
 
-    // Calculate conversion rates
-    const prospectsToOpportunitiesRate = prospects > 0 ? (opportunities / prospects) * 100 : 0;
-    const opportunitiesToClientsRate = opportunities > 0 ? (clients / opportunities) * 100 : 0;
+    // Calculate conversion rates for this week
+    const prospectsToOpportunitiesRate = thisWeekProspects > 0 ? (thisWeekOpportunities / thisWeekProspects) * 100 : 0;
+    const opportunitiesToClientsRate = thisWeekOpportunities > 0 ? (thisWeekClients / thisWeekOpportunities) * 100 : 0;
+    
+    // Calculate last week's conversion rates for comparison
+    const lastWeekProspectsToOpportunitiesRate = lastWeekProspects > 0 ? (lastWeekOpportunities / lastWeekProspects) * 100 : 0;
 
     // Generate chart data for last 7 days with real data
     const chartData = [];
@@ -271,8 +359,6 @@ export async function GET(request: NextRequest) {
       };
     };
 
-    // Calculate historical conversion rates for comparison
-    const lastWeekProspectsToOpportunitiesRate = lastWeekProspects > 0 ? (lastWeekOpportunities / lastWeekProspects) * 100 : 0;
 
     const trends = {
       thisWeekPeopleActions: calculateTrend(thisWeekPeopleActions, lastWeekPeopleActions),
@@ -280,9 +366,9 @@ export async function GET(request: NextRequest) {
       calls: calculateTrend(thisWeekActionTypes.call, lastWeekActionTypes.call),
       emails: calculateTrend(thisWeekActionTypes.email, lastWeekActionTypes.email),
       meetings: calculateTrend(thisWeekActionTypes.meeting, lastWeekActionTypes.meeting),
-      prospects: calculateTrend(prospects, lastWeekProspects),
-      opportunities: calculateTrend(opportunities, lastWeekOpportunities),
-      clients: calculateTrend(clients, lastWeekClients),
+      prospects: calculateTrend(thisWeekProspects, lastWeekProspects),
+      opportunities: calculateTrend(thisWeekOpportunities, lastWeekOpportunities),
+      clients: calculateTrend(thisWeekClients, lastWeekClients),
       conversionRate: calculateTrend(prospectsToOpportunitiesRate, lastWeekProspectsToOpportunitiesRate)
     };
 
@@ -294,12 +380,12 @@ export async function GET(request: NextRequest) {
       // Action types (for pie chart)
       actionTypes: thisWeekActionTypes,
       
-      // Conversion metrics
+      // Conversion metrics - NEW THIS WEEK
       conversionMetrics: {
-        leads,
-        prospects,
-        opportunities,
-        clients,
+        leads: thisWeekLeads,
+        prospects: thisWeekProspects,
+        opportunities: thisWeekOpportunities,
+        clients: thisWeekClients,
         prospectsToOpportunitiesRate: Math.round(prospectsToOpportunitiesRate),
         opportunitiesToClientsRate: Math.round(opportunitiesToClientsRate)
       },
@@ -320,13 +406,15 @@ export async function GET(request: NextRequest) {
       }
     };
 
+    console.log('🔍 [METRICS] Returning metrics data...');
     return NextResponse.json({
       success: true,
       data: metrics
     });
 
   } catch (error) {
-    console.error('Error fetching metrics:', error);
+    console.error('❌ [METRICS] Error fetching metrics:', error);
+    console.error('❌ [METRICS] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json(
       { success: false, error: 'Failed to fetch metrics' },
       { status: 500 }

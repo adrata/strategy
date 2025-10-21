@@ -642,6 +642,18 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    // Generate strategy data for new company (async, don't await)
+    setImmediate(async () => {
+      try {
+        const { autoStrategyPopulationService } = await import('@/platform/services/auto-strategy-population-service');
+        await autoStrategyPopulationService.populateStrategiesForNewCompany(company.id);
+        console.log('✅ [COMPANIES API] Generated strategy data for new company', company.id);
+      } catch (error) {
+        console.error('⚠️ [COMPANIES API] Failed to generate strategy data:', error);
+        // Don't fail the request if strategy generation fails
+      }
+    });
+
     return NextResponse.json({
       success: true,
       data: company,

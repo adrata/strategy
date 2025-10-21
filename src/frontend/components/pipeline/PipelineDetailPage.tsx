@@ -606,14 +606,38 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       return;
     }
     
-    // For regular person detail pages, navigate to the people list
+    // For person-related sections, navigate to their respective list views
     if (section === 'people') {
       console.log('🔍 [BACK NAVIGATION] Navigating to people list');
       navigateToPipeline('people');
       return;
     }
     
-    // Default behavior
+    if (section === 'leads') {
+      console.log('🔍 [BACK NAVIGATION] Navigating to leads list');
+      navigateToPipeline('leads');
+      return;
+    }
+    
+    if (section === 'prospects') {
+      console.log('🔍 [BACK NAVIGATION] Navigating to prospects list');
+      navigateToPipeline('prospects');
+      return;
+    }
+    
+    if (section === 'opportunities') {
+      console.log('🔍 [BACK NAVIGATION] Navigating to opportunities list');
+      navigateToPipeline('opportunities');
+      return;
+    }
+    
+    if (section === 'speedrun') {
+      console.log('🔍 [BACK NAVIGATION] Navigating to speedrun list');
+      navigateToPipeline('speedrun');
+      return;
+    }
+    
+    // Default behavior for other sections
     navigateToPipeline(section);
   };
 

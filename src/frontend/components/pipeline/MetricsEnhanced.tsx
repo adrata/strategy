@@ -285,7 +285,7 @@ export function MetricsEnhanced() {
           <MetricCard
             title="New Prospects"
             value={metrics?.conversionMetrics?.prospects || 0}
-            subtitle={`Rolling count (+${(metrics?.conversionMetrics?.prospects || 0) - (metrics?.trends?.prospects?.comparison || 0)} from last period)`}
+            subtitle={`New this week (+${(metrics?.conversionMetrics?.prospects || 0) - (metrics?.trends?.prospects?.comparison || 0)} from last week)`}
             color={(metrics?.conversionMetrics?.prospects || 0) > 20 ? 'success' : (metrics?.conversionMetrics?.prospects || 0) > 10 ? 'default' : 'danger'}
             status={(metrics?.conversionMetrics?.prospects || 0) > 20 ? 'ahead' : (metrics?.conversionMetrics?.prospects || 0) > 10 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.prospects?.direction}
@@ -296,18 +296,18 @@ export function MetricsEnhanced() {
           <MetricCard
             title="New Opportunities"
             value={metrics?.conversionMetrics?.opportunities || 0}
-            subtitle={`Rolling count (+${(metrics?.conversionMetrics?.opportunities || 0) - (metrics?.trends?.opportunities?.comparison || 0)} from last period)`}
+            subtitle={`New this week (+${(metrics?.conversionMetrics?.opportunities || 0) - (metrics?.trends?.opportunities?.comparison || 0)} from last week)`}
             color={(metrics?.conversionMetrics?.opportunities || 0) > 3 ? 'success' : (metrics?.conversionMetrics?.opportunities || 0) > 1 ? 'default' : 'danger'}
             status={(metrics?.conversionMetrics?.opportunities || 0) > 3 ? 'ahead' : (metrics?.conversionMetrics?.opportunities || 0) > 1 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.opportunities?.direction}
             trendValue={`${metrics?.trends?.opportunities?.change || 0}%`}
           />
 
-          {/* Clients */}
+          {/* New Clients */}
           <MetricCard
-            title="Clients"
+            title="New Clients"
             value={metrics?.conversionMetrics?.clients || 0}
-            subtitle={`Rolling count (+${(metrics?.conversionMetrics?.clients || 0) - (metrics?.trends?.clients?.comparison || 0)} from last period)`}
+            subtitle={`New this week (+${(metrics?.conversionMetrics?.clients || 0) - (metrics?.trends?.clients?.comparison || 0)} from last week)`}
             color={(metrics?.conversionMetrics?.clients || 0) > 5 ? 'success' : (metrics?.conversionMetrics?.clients || 0) > 2 ? 'default' : 'danger'}
             status={(metrics?.conversionMetrics?.clients || 0) > 5 ? 'ahead' : (metrics?.conversionMetrics?.clients || 0) > 2 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.clients?.direction}
