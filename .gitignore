@@ -110,3 +110,11 @@ playwright/.cache/
 downloads/
 
 test-results
+
+# Desktop app installers (hosted separately on Vercel)
+public/downloads/*.msi
+public/downloads/*.dmg
+public/downloads/*.deb
+public/downloads/*.exe
+public/downloads/*.AppImage
+public/downloads/*.rpm

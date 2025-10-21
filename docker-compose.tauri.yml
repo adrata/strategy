@@ -1,0 +1,151 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: adrata-postgres
+    environment:
+      POSTGRES_DB: adrata
+      POSTGRES_USER: adrata
+      POSTGRES_PASSWORD: adrata_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U adrata"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: adrata-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Tauri Desktop App
+  tauri-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.tauri
+    container_name: adrata-tauri
+    environment:
+      - DATABASE_URL=postgresql://adrata:adrata_password@postgres:5432/adrata
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
+      - RUST_LOG=info
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  # Development Tauri App (with hot reload)
+  tauri-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.tauri
+      target: frontend-builder
+    container_name: adrata-tauri-dev
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://adrata:adrata_password@postgres:5432/adrata
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "3001:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: npm run dev
+    profiles:
+      - dev
+
+  # Database Migration Service
+  migrate:
+    image: postgres:15-alpine
+    container_name: adrata-migrate
+    environment:
+      - DATABASE_URL=postgresql://adrata:adrata_password@postgres:5432/adrata
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./prisma:/prisma
+      - ./src-tauri/migrations:/migrations
+    command: |
+      sh -c "
+        apk add --no-cache postgresql-client &&
+        psql $$DATABASE_URL -f /migrations/001_initial_desktop_schema.sql &&
+        psql $$DATABASE_URL -f /migrations/002_complete_desktop_schema.sql &&
+        psql $$DATABASE_URL -f /migrations/003_streamlined_schema_parity.sql
+      "
+    profiles:
+      - migrate
+
+  # Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: adrata-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    profiles:
+      - monitoring
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: adrata-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
+    profiles:
+      - monitoring
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  default:
+    name: adrata-network

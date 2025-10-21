@@ -7,22 +7,11 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { IntegrationLibrary } from "./IntegrationLibrary";
 import { 
-  LinkIcon, 
-  CloudIcon, 
-  ChartBarIcon,
-  Cog6ToothIcon,
-  PlusIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
   ArrowPathIcon
 } from "@heroicons/react/24/outline";
 
-interface NavigationTab {
-  id: 'integrations' | 'data' | 'monitoring';
-  name: string;
-  icon: React.ComponentType<any>;
-  description: string;
-}
 
 export function GrandCentralLeftPanel() {
   const { activeTab, setActiveTab } = useGrandCentral();
@@ -37,26 +26,6 @@ export function GrandCentralLeftPanel() {
     lastSyncTime: 'Never',
   });
 
-  const tabs: NavigationTab[] = [
-    { 
-      id: 'integrations', 
-      name: 'Integrations', 
-      icon: LinkIcon,
-      description: 'Manage connections',
-    },
-    { 
-      id: 'data', 
-      name: 'Data Flow', 
-      icon: CloudIcon,
-      description: 'Visualize data flow',
-    },
-    { 
-      id: 'monitoring', 
-      name: 'Monitoring', 
-      icon: ChartBarIcon,
-      description: 'Track performance',
-    },
-  ];
 
   // Update stats when connections change
   useEffect(() => {
@@ -124,121 +93,55 @@ export function GrandCentralLeftPanel() {
         </div>
       </div>
 
-      {/* Navigation Sections */}
-      <div className="flex-1 space-y-1 p-2">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                isActive
-                  ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                  : 'hover:bg-[var(--panel-background)] text-gray-700'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-sm">{tab.name}</span>
-              </div>
-              <div className="text-xs text-[var(--muted)] mt-1">
-                {tab.description}
-              </div>
-            </button>
-          );
-        })}
-
-        {/* Quick Actions */}
-        <div className="mt-4 space-y-1">
-          <button 
-            onClick={() => setShowLibrary(true)}
-            className="w-full text-left px-3 py-2 rounded-lg hover:bg-[var(--panel-background)] text-gray-700 transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <PlusIcon className="w-4 h-4" />
-              <span className="font-medium text-sm">Add Integration</span>
-            </div>
-            <div className="text-xs text-[var(--muted)] mt-1">
-              Connect new service
-            </div>
-          </button>
-          <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-[var(--panel-background)] text-gray-700 transition-colors">
-            <div className="flex items-center gap-2">
-              <Cog6ToothIcon className="w-4 h-4" />
-              <span className="font-medium text-sm">Settings</span>
-            </div>
-            <div className="text-xs text-[var(--muted)] mt-1">
-              Configure platform
-            </div>
-          </button>
-        </div>
-
-        {/* Connected Integrations */}
-        <div className="mt-4 space-y-2">
-          <div className="px-3 py-1 text-xs font-medium text-[var(--muted)] uppercase tracking-wide">
-            Connected ({connections.length})
+      {/* Navigation Tabs */}
+      <div className="mt-4 space-y-1">
+        <button 
+          onClick={() => setActiveTab('apis')}
+          className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+            activeTab === 'apis'
+              ? 'bg-[var(--hover)] text-[var(--foreground)]'
+              : 'hover:bg-[var(--panel-background)] text-gray-700'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-sm">APIs</span>
           </div>
-          
-          {isLoading ? (
-            <div className="flex items-center justify-center py-4">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-            </div>
-          ) : connections.length === 0 ? (
-            <div className="px-3 py-4 text-center">
-              <CloudIcon className="w-6 h-6 text-[var(--muted)] mx-auto mb-2" />
-              <div className="text-xs text-[var(--muted)]">No connections yet</div>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              {connections
-                .slice(0, 5)
-                .map((connection) => (
-                <div 
-                  key={connection.id}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg border ${
-                    connection.status === 'active' 
-                      ? 'bg-green-50 border-green-200' 
-                      : connection.status === 'pending'
-                      ? 'bg-yellow-50 border-yellow-200'
-                      : 'bg-red-50 border-red-200'
-                  }`}
-                >
-                  <div className={`w-2 h-2 rounded-full ${
-                    connection.status === 'active' 
-                      ? 'bg-green-500' 
-                      : connection.status === 'pending'
-                      ? 'bg-yellow-500 animate-pulse'
-                      : 'bg-red-500'
-                  }`}></div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-[var(--foreground)] truncate">
-                      {connection.connectionName || connection.provider}
-                    </div>
-                    <div className="text-xs text-[var(--muted)]">
-                      {connection.status === 'active' && connection.lastSyncAt 
-                        ? `Last sync: ${new Date(connection.lastSyncAt).toLocaleTimeString()}`
-                        : connection.status === 'pending'
-                        ? 'Connecting...'
-                        : 'Error'
-                      }
-                    </div>
-                  </div>
-                  {connection.status === 'active' && <CheckCircleIcon className="w-4 h-4 text-green-600" />}
-                  {connection.status === 'pending' && <ArrowPathIcon className="w-4 h-4 text-yellow-600 animate-spin" />}
-                  {connection.status === 'error' && <ExclamationTriangleIcon className="w-4 h-4 text-red-600" />}
-                </div>
-              ))}
-              {connections.length > 5 && (
-                <div className="px-3 py-1 text-xs text-[var(--muted)] text-center">
-                  +{connections.length - 5} more
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+          <div className="text-xs text-[var(--muted)] mt-1">
+            REST and GraphQL endpoints
+          </div>
+        </button>
+        <button 
+          onClick={() => setActiveTab('mcps')}
+          className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+            activeTab === 'mcps'
+              ? 'bg-[var(--hover)] text-[var(--foreground)]'
+              : 'hover:bg-[var(--panel-background)] text-gray-700'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-sm">MCPs</span>
+          </div>
+          <div className="text-xs text-[var(--muted)] mt-1">
+            Model Context Protocol servers
+          </div>
+        </button>
+        <button 
+          onClick={() => setActiveTab('all-connectors')}
+          className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+            activeTab === 'all-connectors'
+              ? 'bg-[var(--hover)] text-[var(--foreground)]'
+              : 'hover:bg-[var(--panel-background)] text-gray-700'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-sm">All Connectors</span>
+          </div>
+          <div className="text-xs text-[var(--muted)] mt-1">
+            Browse and manage integrations
+          </div>
+        </button>
       </div>
+
 
       {/* Fixed Bottom Section - Profile Button */}
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>

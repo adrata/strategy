@@ -25,8 +25,16 @@ export async function GET(
 
     const { id } = params;
 
-    // For now, return sample data. In production, this would query the database
-    const report = sampleChronicleReports.find(r => r.id === id);
+    // Query actual report from database
+    const report = await prisma.chronicle_reports.findUnique({
+      where: {
+        id,
+        deletedAt: null
+      },
+      include: {
+        shares: true
+      }
+    });
     
     if (!report) {
       return NextResponse.json({ success: false, error: 'Report not found' }, { status: 404 });
@@ -34,10 +42,7 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: {
-        ...report,
-        shares: [] // Mock shares for now
-      }
+      data: report
     });
 
   } catch (error) {

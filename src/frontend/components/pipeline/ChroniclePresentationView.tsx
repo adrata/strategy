@@ -58,34 +58,26 @@ export function ChroniclePresentationView({ report, onClose }: ChroniclePresenta
     });
   };
 
-  // Chart configuration
-  const chartConfig = {
-    actual: {
-      label: "Actual",
-      color: "hsl(var(--chart-1))",
-    },
-    target: {
-      label: "Target",
-      color: "hsl(var(--chart-2))",
-    },
-  };
 
-  // Performance data for chart
+  // Performance data
   const performanceData = [
     {
       metric: "Leads to Prospects",
       actual: report.content?.performanceVsTargets?.leadsToProspects?.actual || 0,
       target: report.content?.performanceVsTargets?.leadsToProspects?.target || 0,
+      percentage: Math.round(((report.content?.performanceVsTargets?.leadsToProspects?.actual || 0) / (report.content?.performanceVsTargets?.leadsToProspects?.target || 1)) * 100),
     },
     {
       metric: "Prospects to Opportunities",
       actual: report.content?.performanceVsTargets?.prospectsToOpportunities?.actual || 0,
       target: report.content?.performanceVsTargets?.prospectsToOpportunities?.target || 0,
+      percentage: Math.round(((report.content?.performanceVsTargets?.prospectsToOpportunities?.actual || 0) / (report.content?.performanceVsTargets?.prospectsToOpportunities?.target || 1)) * 100),
     },
     {
       metric: "Opportunities to Clients",
       actual: report.content?.performanceVsTargets?.opportunitiesToClients?.actual || 0,
       target: report.content?.performanceVsTargets?.opportunitiesToClients?.target || 0,
+      percentage: Math.round(((report.content?.performanceVsTargets?.opportunitiesToClients?.actual || 0) / (report.content?.performanceVsTargets?.opportunitiesToClients?.target || 1)) * 100),
     },
   ];
 
@@ -196,32 +188,33 @@ export function ChroniclePresentationView({ report, onClose }: ChroniclePresenta
                   </h1>
                 </div>
                 
-                <div className="bg-gray-100 p-12 border-l-[6px] border-black shadow-sm">
-                  <ChartContainer config={chartConfig} className="h-[400px]">
-                    <BarChart data={performanceData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="metric" />
-                      <YAxis />
-                      <ChartTooltip />
-                      <Bar dataKey="actual" fill={chartConfig.actual.color} name="Actual" />
-                      <Bar dataKey="target" fill={chartConfig.target.color} name="Target" />
-                    </BarChart>
-                  </ChartContainer>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-12">
                   {performanceData.map((item, index) => (
-                    <div key={index} className="bg-gray-100 p-8 border-l-[6px] border-black shadow-sm">
-                      <div className="text-center space-y-4">
-                        <h3 className="text-xl font-light text-black tracking-wide">
+                    <div key={index} className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-2xl font-light text-black tracking-wide">
                           {item.metric}
                         </h3>
-                        <div className="text-4xl font-light text-black">
+                        <span className="text-xl text-gray-600">
                           {item.actual} / {item.target}
-                        </div>
-                        <div className="text-lg text-gray-600">
-                          {Math.round((item.actual / item.target) * 100)}% of target
-                        </div>
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-3">
+                        <div 
+                          className={`h-3 rounded-full ${
+                            item.percentage >= 90 ? 'bg-green-600' : 
+                            item.percentage >= 70 ? 'bg-gray-500' : 'bg-red-600'
+                          }`}
+                          style={{ width: `${Math.min(item.percentage, 100)}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-right">
+                        <span className={`text-2xl font-light ${
+                          item.percentage >= 90 ? 'text-green-600' : 
+                          item.percentage >= 70 ? 'text-gray-600' : 'text-red-600'
+                        }`}>
+                          {item.percentage}%
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -290,8 +283,8 @@ export function ChroniclePresentationView({ report, onClose }: ChroniclePresenta
                     { label: "Emails Completed", value: report.content.activityMetrics.emailsCompleted },
                     { label: "Meetings Completed", value: report.content.activityMetrics.meetingsCompleted },
                     { label: "New Leads", value: report.content.activityMetrics.newLeads },
-                    { label: "New Prospects", value: report.content.activityMetrics.newProspects },
-                    { label: "New Opportunities", value: report.content.activityMetrics.newOpportunities }
+                    { label: "New Clients", value: report.content.activityMetrics.newProspects },
+                    { label: "New Clients", value: report.content.activityMetrics.newOpportunities }
                   ].map((metric, index) => (
                     <div key={index} className="bg-gray-100 p-10 border-l-[6px] border-black shadow-sm">
                       <div className="text-center space-y-6">

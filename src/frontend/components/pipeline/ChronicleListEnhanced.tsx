@@ -55,11 +55,10 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
         });
         
         if (!response.ok) {
-          // Fall back to mock data for Ryan Serrato in Notary Everyday only
-          const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1';
-          const isRyanSerrato = user?.id === 'cmf0kew2z0000pcsexylorpxp';
-          if (isNotaryEveryday && isRyanSerrato) {
-            console.log('API failed, using mock data for Ryan Serrato in Notary Everyday');
+          // Fall back to mock data for Notary Everyday
+          const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
+          if (isNotaryEveryday) {
+            console.log('API failed, using mock data for Notary Everyday');
             // Convert sample data to match the expected interface
             const convertedReports = sampleChronicleReports.map(report => ({
               id: report.id,
@@ -372,6 +371,7 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
             className="px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="all">All Types</option>
+            <option value="PITCH">Pitch</option>
             <option value="DAILY">Daily</option>
             <option value="WEEKLY">Weekly</option>
             <option value="MONTHLY">Monthly</option>

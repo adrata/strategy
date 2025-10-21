@@ -181,6 +181,16 @@ export async function GET(request: NextRequest) {
               hqState: true,
               state: true
             }
+          },
+          _count: {
+            select: {
+              actions: {
+                where: {
+                  deletedAt: null,
+                  status: 'COMPLETED'
+                }
+              }
+            }
           }
         }
       });

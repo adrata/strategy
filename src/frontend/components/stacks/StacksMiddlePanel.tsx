@@ -14,6 +14,9 @@ import {
   FunnelIcon,
   AdjustmentsHorizontalIcon
 } from '@heroicons/react/24/outline';
+import { StacksMetrics } from './StacksMetrics';
+import { StacksItemList } from './StacksItemList';
+import { StacksItemDetail } from './StacksItemDetail';
 
 interface StacksMiddlePanelProps {
   activeSubSection: string;
@@ -22,48 +25,127 @@ interface StacksMiddlePanelProps {
   isLoading: boolean;
 }
 
-interface TaskItem {
+interface StacksItem {
   id: string;
   title: string;
   description: string;
-  status: 'todo' | 'in-progress' | 'done';
+  status: 'todo' | 'in-progress' | 'done' | 'idea';
   priority: 'low' | 'medium' | 'high';
+  type: 'epic' | 'story' | 'bug' | 'future';
   assignee?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 // Mock data for demonstration
-const mockTasks: TaskItem[] = [
+const mockEpics: StacksItem[] = [
   {
-    id: '1',
-    title: 'Implement user authentication',
-    description: 'Add secure login and registration functionality',
+    id: '01HZ8K9M2N3P4Q5R6S7T8U9V0',
+    title: 'User Authentication System',
+    description: 'Complete overhaul of user authentication including OAuth, 2FA, and session management',
     status: 'in-progress',
     priority: 'high',
+    type: 'epic',
     assignee: 'John Doe',
     createdAt: '2024-01-15',
     updatedAt: '2024-01-20'
   },
   {
-    id: '2',
-    title: 'Design dashboard layout',
-    description: 'Create responsive dashboard with modern UI',
+    id: '01HZ8K9M2N3P4Q5R6S7T8U9V1',
+    title: 'Dashboard Redesign',
+    description: 'Modern responsive dashboard with improved UX and performance',
     status: 'todo',
     priority: 'medium',
+    type: 'epic',
     assignee: 'Jane Smith',
     createdAt: '2024-01-16',
     updatedAt: '2024-01-18'
-  },
+  }
+];
+
+const mockStories: StacksItem[] = [
   {
-    id: '3',
-    title: 'Fix mobile responsiveness',
-    description: 'Ensure all components work on mobile devices',
+    id: '01HZ8K9M2N3P4Q5R6S7T8U9V2',
+    title: 'User can login with email and password',
+    description: 'As a user, I want to login with my email and password so that I can access my account',
     status: 'done',
     priority: 'high',
-    assignee: 'Mike Johnson',
+    type: 'story',
+    assignee: 'John Doe',
     createdAt: '2024-01-10',
     updatedAt: '2024-01-19'
+  },
+  {
+    id: '01HZ8K9M2N3P4Q5R6S7T8U9V3',
+    title: 'User can reset forgotten password',
+    description: 'As a user, I want to reset my password when I forget it so that I can regain access to my account',
+    status: 'in-progress',
+    priority: 'medium',
+    type: 'story',
+    assignee: 'Jane Smith',
+    createdAt: '2024-01-12',
+    updatedAt: '2024-01-21'
+  }
+];
+
+const mockBugs: StacksItem[] = [
+  {
+    id: '01HZ8K9M2N3P4Q5R6S7T8U9V4',
+    title: 'Login button not responding on mobile',
+    description: 'The login button becomes unresponsive when tapped on mobile devices running iOS 17',
+    status: 'todo',
+    priority: 'high',
+    type: 'bug',
+    assignee: 'Mike Johnson',
+    createdAt: '2024-01-22',
+    updatedAt: '2024-01-22'
+  },
+  {
+    id: '01HZ8K9M2N3P4Q5R6S7T8U9V5',
+    title: 'Dashboard cards overlapping on small screens',
+    description: 'Dashboard cards overlap when screen width is less than 768px',
+    status: 'in-progress',
+    priority: 'medium',
+    type: 'bug',
+    assignee: 'Sarah Wilson',
+    createdAt: '2024-01-20',
+    updatedAt: '2024-01-23'
+  }
+];
+
+const mockFutures: StacksItem[] = [
+  {
+    id: '01HZ8K9M2N3P4Q5R6S7T8U9V6',
+    title: 'AI-powered code suggestions',
+    description: 'Integrate AI to provide intelligent code completion and suggestions based on project context',
+    status: 'idea',
+    priority: 'low',
+    type: 'future',
+    assignee: 'Alex Chen',
+    createdAt: '2024-01-25',
+    updatedAt: '2024-01-25'
+  },
+  {
+    id: '01HZ8K9M2N3P4Q5R6S7T8U9V7',
+    title: 'Real-time collaboration features',
+    description: 'Add real-time editing capabilities for multiple users working on the same project',
+    status: 'idea',
+    priority: 'medium',
+    type: 'future',
+    assignee: 'Emma Davis',
+    createdAt: '2024-01-24',
+    updatedAt: '2024-01-24'
+  },
+  {
+    id: '01HZ8K9M2N3P4Q5R6S7T8U9V8',
+    title: 'Advanced analytics dashboard',
+    description: 'Create comprehensive analytics dashboard with custom metrics and reporting',
+    status: 'idea',
+    priority: 'low',
+    type: 'future',
+    assignee: 'David Brown',
+    createdAt: '2024-01-23',
+    updatedAt: '2024-01-23'
   }
 ];
 
@@ -93,27 +175,185 @@ export function StacksMiddlePanel({
 }: StacksMiddlePanelProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [tasks, setTasks] = useState<TaskItem[]>(mockTasks);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [detailItem, setDetailItem] = useState<StacksItem | null>(null);
 
-  // Filter tasks based on search and status
-  const filteredTasks = useMemo(() => {
-    return tasks.filter(task => {
-      const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           task.description.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = filterStatus === 'all' || task.status === filterStatus;
+  // Get items based on active section
+  const getItemsForSection = (section: string): StacksItem[] => {
+    switch (section) {
+      case 'epics': return mockEpics;
+      case 'stories': return mockStories;
+      case 'bugs': return mockBugs;
+      case 'futures': return mockFutures;
+      default: return [];
+    }
+  };
+
+  const currentItems = getItemsForSection(activeSubSection);
+
+  // Filter items based on search and status
+  const filteredItems = useMemo(() => {
+    return currentItems.filter(item => {
+      const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = filterStatus === 'all' || item.status === filterStatus;
       return matchesSearch && matchesStatus;
     });
-  }, [tasks, searchQuery, filterStatus]);
+  }, [currentItems, searchQuery, filterStatus]);
 
-  const handleCreateTask = () => {
-    // TODO: Implement task creation modal
-    console.log('Create new task');
+  const handleCreateItem = () => {
+    // TODO: Implement item creation modal
+    console.log('Create new item');
   };
 
-  const handleTaskClick = (task: TaskItem) => {
-    onItemClick(task);
+  const handleItemClick = (item: StacksItem) => {
+    setDetailItem(item);
+    setShowDetailModal(true);
+    onItemClick(item);
   };
 
+  const handleCloseDetail = () => {
+    setShowDetailModal(false);
+    setDetailItem(null);
+  };
+
+  // Handle special sections that don't use the item list interface
+  if (activeSubSection === 'chronicle') {
+    return (
+      <div className="h-full flex flex-col bg-[var(--background)]">
+        {/* Header */}
+        <div className="p-4 border-b border-[var(--border)]">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold text-[var(--foreground)] capitalize">
+                {activeSubSection}
+              </h1>
+              <p className="text-sm text-[var(--muted)] mt-1">
+                Business intelligence reports and insights
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Chronicle Content - Coming Soon */}
+        <div className="flex-1 overflow-hidden">
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="text-6xl mb-4">📊</div>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                Chronicle Coming Soon
+              </h3>
+              <p className="text-[var(--muted)] mb-4">
+                Business intelligence reports will be available here soon.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (activeSubSection === 'metrics') {
+    return (
+      <div className="h-full flex flex-col bg-[var(--background)]">
+        {/* Header */}
+        <div className="p-4 border-b border-[var(--border)]">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold text-[var(--foreground)] capitalize">
+                {activeSubSection}
+              </h1>
+              <p className="text-sm text-[var(--muted)] mt-1">
+                Product and engineering performance indicators
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Metrics Content */}
+        <div className="flex-1 overflow-hidden">
+          <StacksMetrics />
+        </div>
+      </div>
+    );
+  }
+
+  // Handle item list sections (epics, stories, bugs, futures)
+  if (['epics', 'stories', 'bugs', 'futures'].includes(activeSubSection)) {
+    return (
+      <div className="h-full flex flex-col bg-[var(--background)]">
+        {/* Header */}
+        <div className="p-4 border-b border-[var(--border)]">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold text-[var(--foreground)] capitalize">
+                {activeSubSection}
+              </h1>
+              <p className="text-sm text-[var(--muted)] mt-1">
+                Manage your {activeSubSection} items and projects
+              </p>
+            </div>
+            <button
+              onClick={handleCreateItem}
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-lg hover:bg-[var(--primary)]/90 transition-colors"
+            >
+              <PlusIcon className="h-4 w-4" />
+              New {activeSubSection.slice(0, -1)}
+            </button>
+          </div>
+
+          {/* Search and Filters */}
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1 max-w-md">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
+              <input
+                type="text"
+                placeholder={`Search ${activeSubSection}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+              />
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <FunnelIcon className="h-4 w-4 text-[var(--muted)]" />
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+              >
+                <option value="all">All Status</option>
+                <option value="todo">To Do</option>
+                <option value="in-progress">In Progress</option>
+                <option value="done">Done</option>
+                {activeSubSection === 'futures' && <option value="idea">Idea</option>}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-hidden">
+          <StacksItemList
+            items={filteredItems}
+            onItemClick={handleItemClick}
+            isLoading={isLoading}
+            searchQuery={searchQuery}
+          />
+        </div>
+
+        {/* Detail Modal */}
+        {showDetailModal && detailItem && (
+          <StacksItemDetail
+            item={detailItem}
+            onClose={handleCloseDetail}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // Default fallback for other sections (like 'stacks', 'backlog')
   return (
     <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Header */}
@@ -128,7 +368,7 @@ export function StacksMiddlePanel({
             </p>
           </div>
           <button
-            onClick={handleCreateTask}
+            onClick={handleCreateItem}
             className="flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-lg hover:bg-[var(--primary)]/90 transition-colors"
           >
             <PlusIcon className="h-4 w-4" />
@@ -172,59 +412,16 @@ export function StacksMiddlePanel({
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary)]"></div>
           </div>
         ) : (
-          <div className="h-full overflow-y-auto p-4">
-            {filteredTasks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center">
-                <div className="text-6xl mb-4">📋</div>
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
-                  No tasks found
-                </h3>
-                <p className="text-[var(--muted)] mb-4">
-                  {searchQuery ? 'Try adjusting your search terms' : 'Create your first task to get started'}
-                </p>
-                <button
-                  onClick={handleCreateTask}
-                  className="px-4 py-2 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-lg hover:bg-[var(--primary)]/90 transition-colors"
-                >
-                  Create Task
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {filteredTasks.map((task) => (
-                  <div
-                    key={task.id}
-                    onClick={() => handleTaskClick(task)}
-                    className="p-4 border border-[var(--border)] rounded-lg bg-[var(--card)] hover:bg-[var(--hover-bg)] cursor-pointer transition-colors"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-[var(--foreground)] flex-1">
-                        {task.title}
-                      </h3>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(task.status)}`}>
-                        {task.status.replace('-', ' ')}
-                      </span>
-                    </div>
-                    
-                    <p className="text-sm text-[var(--muted)] mb-3 line-clamp-2">
-                      {task.description}
-                    </p>
-                    
-                    <div className="flex items-center justify-between text-xs text-[var(--muted)]">
-                      <div className="flex items-center gap-4">
-                        <span className={`font-medium ${getPriorityColor(task.priority)}`}>
-                          {task.priority} priority
-                        </span>
-                        {task.assignee && (
-                          <span>Assigned to {task.assignee}</span>
-                        )}
-                      </div>
-                      <span>Updated {task.updatedAt}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+          <div className="flex items-center justify-center h-full text-center">
+            <div>
+              <div className="text-6xl mb-4">📋</div>
+              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                {activeSubSection} Coming Soon
+              </h3>
+              <p className="text-[var(--muted)] mb-4">
+                This section is under development
+              </p>
+            </div>
           </div>
         )}
       </div>

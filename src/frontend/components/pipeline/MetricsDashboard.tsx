@@ -214,17 +214,17 @@ export function MetricsDashboard() {
             color={metrics.smartStatus?.emails?.color || 'default'}
           />
 
-          {/* Meetings Today */}
+          {/* Meetings Today + Scheduled */}
           <MetricCard
-            title="Meetings Today"
+            title="Meetings Today + Scheduled"
             value={metrics.meetingsToday || 0}
             subtitle="Face-to-face"
             color={metrics.smartStatus?.meetings?.color || 'default'}
           />
 
-          {/* New Opportunities Today */}
+          {/* New Clients Today */}
           <MetricCard
-            title="New Opportunities"
+            title="New Clients"
             value={metrics.newOpportunitiesToday || 0}
             subtitle="Today"
             color={metrics.smartStatus?.opportunities?.color || 'default'}

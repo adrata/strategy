@@ -26,6 +26,8 @@ mod webhooks;
 mod email_scanning;
 mod demo_scenarios;
 mod encode;
+mod sync;
+mod api;
 // mod entity; // Removed - entities table doesn't exist in streamlined schema
 
 // Import modules for command generation
@@ -166,6 +168,8 @@ pub fn run() {
             auth::sign_out_desktop,
             auth::refresh_token_desktop,
             auth::get_current_user_desktop,
+            auth::validate_access_token,
+            auth::get_stored_credentials,
             
             // Chat System
             chat::send_message_desktop,
@@ -216,24 +220,61 @@ pub fn run() {
             dynamic_os::switch_client_os,
             dynamic_os::get_client_os_analytics,
 
-            // Encode Code Editor - File System Commands
-            encode::encode_read_directory,
-            encode::encode_read_file,
-            encode::encode_write_file,
-            encode::encode_create_directory,
-            encode::encode_delete_path,
-            encode::encode_rename_path,
-            encode::encode_copy_path,
-            encode::encode_get_file_info,
-            encode::encode_path_exists,
-            encode::encode_get_current_dir,
-            encode::encode_set_current_dir,
-            encode::encode_get_home_dir,
-            encode::encode_get_documents_dir,
-            encode::encode_get_desktop_dir,
-            encode::encode_get_downloads_dir,
-            encode::encode_watch_directory,
-            encode::encode_unwatch_directory
+                // Encode Code Editor - File System Commands
+                encode::encode_read_directory,
+                encode::encode_read_file,
+                encode::encode_write_file,
+                encode::encode_create_directory,
+                encode::encode_delete_path,
+                encode::encode_rename_path,
+                encode::encode_copy_path,
+                encode::encode_get_file_info,
+                encode::encode_path_exists,
+                encode::encode_get_current_dir,
+                encode::encode_set_current_dir,
+                encode::encode_get_home_dir,
+                encode::encode_get_documents_dir,
+                encode::encode_get_desktop_dir,
+                encode::encode_get_downloads_dir,
+                encode::encode_watch_directory,
+                encode::encode_unwatch_directory,
+
+                // Sync Engine Commands
+                sync::sync_workspace,
+                sync::sync_table,
+                sync::push_changes,
+                sync::pull_changes,
+                sync::resolve_conflict,
+                sync::get_sync_status,
+                sync::enable_background_sync,
+                sync::disable_background_sync,
+                sync::get_sync_queue_stats,
+                sync::get_conflict_statistics,
+                sync::retry_failed_syncs,
+                sync::clear_failed_syncs,
+                sync::get_sync_health,
+
+                // API Commands - Matching V1 APIs
+                api::get_people,
+                api::create_person,
+                api::update_person,
+                api::delete_person,
+                api::get_person_by_id_command,
+                api::get_companies,
+                api::create_company,
+                api::update_company,
+                api::delete_company,
+                api::get_company_by_id_command,
+                api::get_actions,
+                api::create_action,
+                api::update_action,
+                api::delete_action,
+                api::get_action_by_id,
+                api::get_speedrun_data,
+                api::invalidate_speedrun_cache,
+                api::get_chronicle_reports,
+                api::create_chronicle_report,
+                api::get_chronicle_report_by_id
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

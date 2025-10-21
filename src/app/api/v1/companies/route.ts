@@ -225,7 +225,17 @@ export async function GET(request: NextRequest) {
             opportunityProbability: true,
             expectedCloseDate: true,
             actualCloseDate: true,
-            competitors: true
+            competitors: true,
+            _count: {
+              select: {
+                actions: {
+                  where: {
+                    deletedAt: null,
+                    status: 'COMPLETED'
+                  }
+                }
+              }
+            }
           }
         }),
         prisma.companies.count({ where }),

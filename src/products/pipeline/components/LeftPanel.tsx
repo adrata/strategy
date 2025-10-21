@@ -120,13 +120,16 @@ function PipelineSections({
   // Check if we're in Notary Everyday workspace (check both old and new IDs)
   const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || 
                           workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' ||
+                          workspaceId === 'cmezxb1ez0001pc94yry3ntjk' ||
                           (typeof window !== "undefined" && window.location.pathname.startsWith('/ne/'));
   
   // Check if this is Ryan Serrato user
   const isRyanSerrato = authUser?.id === 'cmf0kew2z0000pcsexylorpxp';
   console.log('🔍 [LEFT PANEL] Notary Everyday check:', { 
     isNotaryEveryday, 
+    isRyanSerrato,
     workspaceId,
+    userId: authUser?.id,
     pathname: typeof window !== "undefined" ? window.location.pathname : 'server'
   });
   
@@ -162,9 +165,11 @@ function PipelineSections({
   // 🔍 DEBUG: Log counts after hooks are called
   console.log('🔍 [LEFT PANEL] Metrics and Chronicle counts:', {
     isNotaryEveryday,
+    isRyanSerrato,
     metricsCount,
     chronicleCount,
-    workspaceId
+    workspaceId,
+    userId: authUser?.id
   });
   
   // 🔍 DEBUG: Log counts for debugging
@@ -647,8 +652,8 @@ function PipelineSections({
       id: "chronicle",
       name: "Chronicle",
       description: "Business Intelligence Reports",
-      count: (isNotaryEveryday && isRyanSerrato) ? chronicleCount : 0, // Show count only for Ryan Serrato in Notary Everyday
-      visible: (isNotaryEveryday && isRyanSerrato) // Only show for Ryan Serrato in Notary Everyday
+      count: isNotaryEveryday ? chronicleCount : 0, // Show count for Notary Everyday
+      visible: isNotaryEveryday // Show for Notary Everyday
     },
     {
       id: "news",

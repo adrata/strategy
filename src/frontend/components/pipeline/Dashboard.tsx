@@ -747,7 +747,7 @@ export function Dashboard() {
                 className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-sm hover:border-[var(--border)] transition-all"
                 onClick={handleNewOpportunitiesClick}
               >
-                <h3 className="text-sm font-medium text-[var(--muted)] mb-2">New Opportunities</h3>
+                <h3 className="text-sm font-medium text-[var(--muted)] mb-2">New Clients</h3>
                 <div className="text-3xl font-bold text-[var(--foreground)]">{dashboardData.newOpportunities || 0}</div>
                 <div className="text-xs text-[var(--muted)] mt-1">This month</div>
               </div>

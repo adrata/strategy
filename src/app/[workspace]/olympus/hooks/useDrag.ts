@@ -12,6 +12,7 @@ export const useDrag = (
   const [draggingStep, setDraggingStep] = useState<string | null>(null);
   const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null);
   const dragStateRef = useRef<DragState | null>(null);
+  const dragPositionRef = useRef<{ x: number; y: number } | null>(null);
 
   const handleStepMouseDown = useCallback((e: React.MouseEvent, stepId: string) => {
     // Handle both cursor and hand tools for step dragging
@@ -60,25 +61,28 @@ export const useDrag = (
         const newY = mouseY - startY;
         
         // Update drag position for CSS transform (no re-renders!)
-        setDragPosition({ x: newX, y: newY });
+        const newPosition = { x: newX, y: newY };
+        setDragPosition(newPosition);
+        dragPositionRef.current = newPosition;
       };
 
       const handleMouseUp = (e: Event) => {
         const mouseEvent = e as MouseEvent;
         mouseEvent.preventDefault();
         
-        if (dragStateRef.current && dragPosition) {
+        if (dragStateRef.current && dragPositionRef.current) {
           // Only update state on mouseup (final position)
           const { stepId: currentStepId } = dragStateRef.current;
           setWorkflowSteps(prev => prev.map(s => 
             s.id === currentStepId 
-              ? { ...s, position: { x: dragPosition.x, y: dragPosition.y } }
+              ? { ...s, position: { x: dragPositionRef.current!.x, y: dragPositionRef.current!.y } }
               : s
           ));
         }
         
         setDraggingStep(null);
         setDragPosition(null);
+        dragPositionRef.current = null;
         dragStateRef.current = null;
         
         document.removeEventListener('mousemove', handleMouseMove);
@@ -97,7 +101,7 @@ export const useDrag = (
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-  }, [activeTool, workflowSteps, setWorkflowSteps, saveToHistory, dragPosition, zoom, pan]);
+  }, [activeTool, workflowSteps, setWorkflowSteps, saveToHistory, zoom, pan]);
 
   return {
     draggingStep,

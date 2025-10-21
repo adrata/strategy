@@ -207,7 +207,7 @@ export default function GrandCentralPage() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
-        {activeTab === 'integrations' && (
+        {activeTab === 'apis' && (
           <div className="p-6">
             {/* Loading State */}
             {isLoading && (
@@ -322,22 +322,22 @@ export default function GrandCentralPage() {
           </div>
         )}
 
-        {activeTab === 'data' && (
+        {activeTab === 'mcps' && (
           <div className="p-6">
             <div className="text-center py-12">
-              <CloudIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Data Flow</h3>
-              <p className="text-[var(--muted)]">Visualize how data flows between your connected integrations</p>
+              <Cog6ToothIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">MCPs</h3>
+              <p className="text-[var(--muted)]">Model Context Protocol servers for AI integration</p>
             </div>
           </div>
         )}
 
-        {activeTab === 'monitoring' && (
+        {activeTab === 'all-connectors' && (
           <div className="p-6">
             <div className="text-center py-12">
-              <ChartBarIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Monitoring</h3>
-              <p className="text-[var(--muted)]">Track integration health, sync status, and performance metrics</p>
+              <LinkIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">All Connectors</h3>
+              <p className="text-[var(--muted)]">Browse and manage all available integrations</p>
             </div>
           </div>
         )}

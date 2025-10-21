@@ -34,7 +34,9 @@ export function StacksContent({ section }: StacksContentProps) {
 
   // Determine active subsection from pathname
   useEffect(() => {
-    if (pathname.includes('/backlog')) {
+    if (pathname.includes('/chronicle')) {
+      setActiveSubSection('chronicle');
+    } else if (pathname.includes('/backlog')) {
       setActiveSubSection('backlog');
     } else if (pathname.includes('/epics')) {
       setActiveSubSection('epics');
@@ -42,6 +44,10 @@ export function StacksContent({ section }: StacksContentProps) {
       setActiveSubSection('stories');
     } else if (pathname.includes('/bugs')) {
       setActiveSubSection('bugs');
+    } else if (pathname.includes('/futures')) {
+      setActiveSubSection('futures');
+    } else if (pathname.includes('/metrics')) {
+      setActiveSubSection('metrics');
     } else {
       setActiveSubSection('stacks');
     }

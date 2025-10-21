@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
 
     // Get actions data for this week and last week
     console.log('🔍 [METRICS] Fetching actions from database...');
-    const [thisWeekActions, lastWeekActions, allActions] = await Promise.all([
+    const [thisWeekActions, lastWeekActions, allActions, scheduledMeetings] = await Promise.all([
       // This week's actions
       prisma.actions.findMany({
         where: {
@@ -139,6 +139,34 @@ export async function GET(request: NextRequest) {
           createdAt: {
             gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
           },
+          deletedAt: null
+        },
+        include: {
+          person: true,
+          company: true
+        }
+      }),
+
+      // Scheduled meetings (today and future)
+      prisma.actions.findMany({
+        where: {
+          workspaceId,
+          type: {
+            in: ['meeting_scheduled', 'meeting_completed', 'demo_meeting', 'discovery_meeting']
+          },
+          OR: [
+            {
+              scheduledAt: {
+                gte: today
+              }
+            },
+            {
+              status: 'PLANNED',
+              scheduledAt: {
+                gte: today
+              }
+            }
+          ],
           deletedAt: null
         },
         include: {
@@ -185,21 +213,6 @@ export async function GET(request: NextRequest) {
       })
     ]);
 
-    // Calculate metrics - only count the 6 core action types
-    console.log('🔍 [METRICS] Calculating metrics...');
-    const thisWeekPeopleActions = thisWeekActionTypes.phone + thisWeekActionTypes.email + thisWeekActionTypes.meeting + 
-                                  thisWeekActionTypes.linkedinConnection + thisWeekActionTypes.linkedinInMail + thisWeekActionTypes.linkedinMessage;
-    const lastWeekPeopleActions = lastWeekActionTypes.phone + lastWeekActionTypes.email + lastWeekActionTypes.meeting + 
-                                 lastWeekActionTypes.linkedinConnection + lastWeekActionTypes.linkedinInMail + lastWeekActionTypes.linkedinMessage;
-    
-    // Debug: Log actual action types being stored
-    console.log('🔍 [METRICS] This week action types found:', 
-      thisWeekActions.map(a => a.type).filter(Boolean)
-    );
-    console.log('🔍 [METRICS] Last week action types found:', 
-      lastWeekActions.map(a => a.type).filter(Boolean)
-    );
-    
     // Action types breakdown - only count the 6 core action types from CompleteActionModal
     const getActionTypeCount = (actions: any[], type: string) => {
       return actions.filter(action => {
@@ -241,6 +254,21 @@ export async function GET(request: NextRequest) {
       linkedinInMail: getActionTypeCount(lastWeekActions, 'linkedinInMail'),
       linkedinMessage: getActionTypeCount(lastWeekActions, 'linkedinMessage')
     };
+
+    // Calculate metrics - only count the 6 core action types
+    console.log('🔍 [METRICS] Calculating metrics...');
+    const thisWeekPeopleActions = thisWeekActionTypes.phone + thisWeekActionTypes.email + thisWeekActionTypes.meeting + 
+                                  thisWeekActionTypes.linkedinConnection + thisWeekActionTypes.linkedinInMail + thisWeekActionTypes.linkedinMessage;
+    const lastWeekPeopleActions = lastWeekActionTypes.phone + lastWeekActionTypes.email + lastWeekActionTypes.meeting + 
+                                 lastWeekActionTypes.linkedinConnection + lastWeekActionTypes.linkedinInMail + lastWeekActionTypes.linkedinMessage;
+    
+    // Debug: Log actual action types being stored
+    console.log('🔍 [METRICS] This week action types found:', 
+      thisWeekActions.map(a => a.type).filter(Boolean)
+    );
+    console.log('🔍 [METRICS] Last week action types found:', 
+      lastWeekActions.map(a => a.type).filter(Boolean)
+    );
     
     // Debug: Log calculated action type counts
     console.log('📊 [METRICS] This week action type counts:', thisWeekActionTypes);
@@ -384,12 +412,12 @@ export async function GET(request: NextRequest) {
     const trends = {
       thisWeekPeopleActions: calculateTrend(thisWeekPeopleActions, lastWeekPeopleActions),
       lastWeekPeopleActions: calculateTrend(lastWeekPeopleActions, 0), // No comparison for last week
-      phone: calculateTrend(thisWeekActionTypes.phone, lastWeekActionTypes.phone),
+      call: calculateTrend(thisWeekActionTypes.phone, lastWeekActionTypes.phone),
       emails: calculateTrend(thisWeekActionTypes.email, lastWeekActionTypes.email),
       meetings: calculateTrend(thisWeekActionTypes.meeting, lastWeekActionTypes.meeting),
-      linkedinConnections: calculateTrend(thisWeekActionTypes.linkedinConnection, lastWeekActionTypes.linkedinConnection),
-      linkedinInMails: calculateTrend(thisWeekActionTypes.linkedinInMail, lastWeekActionTypes.linkedinInMail),
-      linkedinMessages: calculateTrend(thisWeekActionTypes.linkedinMessage, lastWeekActionTypes.linkedinMessage),
+      demos: calculateTrend(0, 0), // Not currently tracked
+      proposals: calculateTrend(0, 0), // Not currently tracked
+      followUps: calculateTrend(0, 0), // Not currently tracked
       prospects: calculateTrend(thisWeekProspects, lastWeekProspects),
       opportunities: calculateTrend(thisWeekOpportunities, lastWeekOpportunities),
       clients: calculateTrend(thisWeekClients, lastWeekClients),
@@ -401,8 +429,15 @@ export async function GET(request: NextRequest) {
       thisWeekPeopleActions,
       lastWeekPeopleActions,
       
-      // Action types (for pie chart)
-      actionTypes: thisWeekActionTypes,
+      // Action types (for pie chart) - map to frontend expected types
+      actionTypes: {
+        call: thisWeekActionTypes.phone,  // Map phone -> call
+        email: thisWeekActionTypes.email,
+        meeting: thisWeekActionTypes.meeting,
+        demo: 0,  // Not currently tracked, default to 0
+        proposal: 0,  // Not currently tracked, default to 0
+        followUp: 0  // Not currently tracked, default to 0
+      },
       
       // Conversion metrics - NEW THIS WEEK
       conversionMetrics: {
@@ -417,12 +452,12 @@ export async function GET(request: NextRequest) {
       // Smart status calculations for each action type
       smartStatus: {
         totalActions: getSmartStatus(thisWeekPeopleActions, WEEKLY_TARGETS.totalActions, getBusinessDayOfWeek(today)),
-        phone: getSmartStatus(thisWeekActionTypes.phone, WEEKLY_TARGETS.calls, getBusinessDayOfWeek(today)),
+        call: getSmartStatus(thisWeekActionTypes.phone, WEEKLY_TARGETS.calls, getBusinessDayOfWeek(today)),
         emails: getSmartStatus(thisWeekActionTypes.email, WEEKLY_TARGETS.emails, getBusinessDayOfWeek(today)),
         meetings: getSmartStatus(thisWeekActionTypes.meeting, WEEKLY_TARGETS.meetings, getBusinessDayOfWeek(today)),
-        linkedinConnections: getSmartStatus(thisWeekActionTypes.linkedinConnection, 10, getBusinessDayOfWeek(today)), // 2/day target
-        linkedinInMails: getSmartStatus(thisWeekActionTypes.linkedinInMail, 5, getBusinessDayOfWeek(today)), // 1/day target
-        linkedinMessages: getSmartStatus(thisWeekActionTypes.linkedinMessage, 10, getBusinessDayOfWeek(today)) // 2/day target
+        demos: getSmartStatus(0, WEEKLY_TARGETS.demos, getBusinessDayOfWeek(today)), // Not currently tracked
+        proposals: getSmartStatus(0, WEEKLY_TARGETS.proposals, getBusinessDayOfWeek(today)), // Not currently tracked
+        followUps: getSmartStatus(0, WEEKLY_TARGETS.followUps, getBusinessDayOfWeek(today)) // Not currently tracked
       },
       
       // Progress calculations for subtitles
