@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "outDir": "C:\\Users\\ross\\Development\\adrata\\src\\platform\\pipelines\\pipelines\\core\\compiled-buyer-group",
+    "rootDir": "C:\\Users\\ross\\Development\\adrata\\src\\platform\\services\\buyer-group",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "C:\\Users\\ross\\Development\\adrata\\src\\platform\\services\\buyer-group/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

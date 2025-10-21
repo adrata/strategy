@@ -335,7 +335,7 @@ Only return acquisitions from 2020-2025. If no recent acquisition, return isAcqu
             const response = await fetch('https://api.perplexity.ai/chat/completions', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY}`,
+                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY.trim()}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -406,7 +406,7 @@ Only return acquisitions from 2015-2025. If no acquisition, return isAcquired: f
             const response = await fetch('https://api.perplexity.ai/chat/completions', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY}`,
+                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY.trim()}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -495,7 +495,7 @@ Focus on current status as of 2025.`;
             const response = await fetch('https://api.perplexity.ai/chat/completions', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY}`,
+                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY.trim()}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -588,7 +588,7 @@ Provide ONLY a JSON response:
             const response = await fetch('https://api.perplexity.ai/chat/completions', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY}`,
+                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY.trim()}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -737,7 +737,7 @@ Focus on recent information (2021-2025).`;
             const response = await fetch('https://api.perplexity.ai/chat/completions', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY}`,
+                    'Authorization': `Bearer ${this.config.PERPLEXITY_API_KEY.trim()}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({

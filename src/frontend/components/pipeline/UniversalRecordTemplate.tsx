@@ -261,8 +261,13 @@ export function UniversalRecordTemplate({
   
   // Initialize active tab from URL parameter or default to first tab
   const urlTab = searchParams.get('tab');
-  const defaultTab = (customTabs || DEFAULT_TABS)[0]?.id || 'overview';
-  const [activeTab, setActiveTab] = useState(urlTab || defaultTab);
+  const validTabs = (customTabs || getTabsForRecordType(recordType, record));
+  const defaultTab = validTabs[0]?.id || 'overview';
+  const [activeTab, setActiveTab] = useState(() => {
+    // Only use URL tab if it's valid for this record type
+    const validTabIds = validTabs.map(t => t.id);
+    return (urlTab && validTabIds.includes(urlTab)) ? urlTab : defaultTab;
+  });
   const [loading, setLoading] = useState(false);
   const [activeReport, setActiveReport] = useState<DeepValueReport | null>(null);
   const [localRecord, setLocalRecord] = useState(record);
@@ -344,10 +349,15 @@ export function UniversalRecordTemplate({
   
   // Function to update URL with tab parameter
   const updateURLTab = (tabId: string) => {
+    const currentParams = new URLSearchParams(window.location.search);
+    const currentTab = currentParams.get('tab');
+    
+    // Only update if tab actually changed
+    if (currentTab === tabId) return;
+    
     const currentPath = window.location.pathname;
-    const params = new URLSearchParams(window.location.search);
-    params.set('tab', tabId);
-    router.replace(`${currentPath}?${params.toString()}`, { scroll: false });
+    currentParams.set('tab', tabId);
+    router.replace(`${currentPath}?${currentParams.toString()}`, { scroll: false });
   };
   
   // Handle profile click for popup
@@ -393,24 +403,26 @@ export function UniversalRecordTemplate({
     const validTabIds = tabs.map(tab => tab.id);
     const urlTab = searchParams.get('tab');
     
-    // If URL has a valid tab parameter, use it (only on initial load or external navigation)
+    // Reset sync ref when tabs or record changes
+    urlSyncRef.current = false;
+    
+    // If URL has a valid tab parameter, sync state with it
     if (urlTab && validTabIds.includes(urlTab)) {
-      if (activeTab !== urlTab && !urlSyncRef.current) {
+      if (activeTab !== urlTab) {
         setActiveTab(urlTab);
-        urlSyncRef.current = true;
       }
     } 
     // If current active tab is not valid for this record type, reset to first tab
     else if (!validTabIds.includes(activeTab)) {
       const newTab = tabs[0]?.id || 'overview';
       setActiveTab(newTab);
-      // Only update URL if we haven't synced yet to prevent circular updates
-      if (!urlSyncRef.current) {
-        updateURLTab(newTab);
-        urlSyncRef.current = true;
-      }
+      updateURLTab(newTab);
     }
-  }, [tabs]); // Removed searchParams dependency to prevent circular updates
+    // If URL doesn't have a tab but we have an active tab, update URL
+    else if (!urlTab && activeTab && validTabIds.includes(activeTab)) {
+      updateURLTab(activeTab);
+    }
+  }, [tabs, searchParams, activeTab]); // Add all dependencies
 
   // Set current record context when component mounts or record changes
   useEffect(() => {

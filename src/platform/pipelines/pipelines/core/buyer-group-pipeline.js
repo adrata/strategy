@@ -488,7 +488,8 @@ class BuyerGroupPipeline {
      * Uses the buyer group bridge to integrate with TypeScript modules
      */
     async discoverBuyerGroup(companyInfo) {
-        const cacheKey = `buyer_group_${companyInfo.name.toLowerCase()}`;
+        const companyName = companyInfo.companyName || companyInfo.name;
+        const cacheKey = `buyer_group_${companyName.toLowerCase()}`;
         
         // Check cache first
         const cached = await this.dataCache.get(cacheKey);
@@ -501,7 +502,7 @@ class BuyerGroupPipeline {
         this.stats.cacheMisses++;
         
         // Use buyer group bridge to discover buyer group
-        const buyerGroup = await this.buyerGroupBridge.discoverBuyerGroup(companyInfo.name, companyInfo);
+        const buyerGroup = await this.buyerGroupBridge.discoverBuyerGroup(companyName, companyInfo);
         
         // Cache the result
         await this.dataCache.set(cacheKey, buyerGroup, this.config.BUYER_GROUP_DISCOVERY_TTL * 24 * 60 * 60 * 1000);
@@ -988,7 +989,7 @@ class BuyerGroupPipeline {
      * INITIALIZE API MONITORING
      */
     async initializeApiMonitoring() {
-        await this.apiCreditMonitor.initialize();
+        // ApiCreditMonitor is already initialized in constructor
         console.log('   ✅ API credit monitoring initialized');
     }
 

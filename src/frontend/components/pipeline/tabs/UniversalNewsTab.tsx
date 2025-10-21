@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Skeleton } from '@/platform/ui/components/Loader';
 
 interface UniversalNewsTabProps {
   record: any;
@@ -19,7 +20,6 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<string>('unknown');
-  const [warning, setWarning] = useState<string | null>(null);
 
   const companyName = record?.name || 'Company';
 
@@ -35,7 +35,6 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     try {
       setLoading(true);
       setError(null);
-      setWarning(null);
 
       // First, check if we have companyUpdates from CoreSignal database
       const companyUpdates = record?.companyUpdates || [];
@@ -67,11 +66,6 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
       if (data.success && data.articles) {
         setNewsArticles(data.articles);
         setDataSource(data.dataSource || 'perplexity_api');
-        
-        // Show warning if using fallback data
-        if (data.warning) {
-          setWarning(data.warning);
-        }
       } else {
         setError(data.error || 'Failed to fetch news data');
       }
@@ -98,11 +92,38 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
   if (loading) {
     return (
       <div className="space-y-8">
+        {/* Header skeleton */}
+        <div className="flex items-center justify-between">
+          <div className="h-6 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+          <div className="h-6 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        </div>
+
+        {/* News article skeletons */}
         <div className="space-y-4">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-            <div className="mt-2 text-[var(--muted)]">Loading company news...</div>
-          </div>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+              {/* Title skeleton */}
+              <div className="flex items-start justify-between mb-2">
+                <div className="h-6 w-3/4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                <div className="h-4 w-16 bg-[var(--loading-bg)] rounded animate-pulse ml-2 flex-shrink-0"></div>
+              </div>
+              
+              {/* Source skeleton */}
+              <div className="flex items-center mb-3">
+                <div className="h-4 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+              </div>
+              
+              {/* Description skeleton */}
+              <div className="space-y-2 mb-3">
+                <div className="h-4 w-full bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                <div className="h-4 w-5/6 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                <div className="h-4 w-2/3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+              </div>
+              
+              {/* Link skeleton */}
+              <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -126,24 +147,6 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     );
   }
 
-  // Show warning if using fallback data
-  if (warning) {
-    return (
-      <div className="space-y-8">
-        <div className="space-y-4">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex items-center">
-              <div className="text-yellow-600 mr-2">⚠️</div>
-              <div className="text-yellow-800">
-                <strong>Notice:</strong> {warning}
-              </div>
-            </div>
-          </div>
-        </div>
-        {renderNewsContent()}
-      </div>
-    );
-  }
 
   // Format date helper function
   const formatDate = (dateString: string) => {
@@ -175,14 +178,14 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
                 ? 'bg-blue-100 text-blue-800'
                 : dataSource === 'external_api' 
                 ? 'bg-green-100 text-green-800' 
-                : dataSource === 'fallback_generated'
-                ? 'bg-yellow-100 text-yellow-800'
+                : dataSource === 'no_news_available'
+                ? 'bg-gray-100 text-gray-800'
                 : 'bg-gray-100 text-gray-800'
             }`}>
               {dataSource === 'database_companyUpdates' ? 'Database' : 
                dataSource === 'perplexity_api' ? 'Perplexity' :
                dataSource === 'external_api' ? 'Real News' : 
-               dataSource === 'fallback_generated' ? 'Generated' : 
+               dataSource === 'no_news_available' ? 'No News' : 
                'Unknown'}
             </span>
           </div>
@@ -192,8 +195,8 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
           <div className="space-y-4">
             <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
               <div className="text-[var(--muted)]">
-                <div className="text-lg font-medium mb-2">No Recent News</div>
-                <div className="text-sm">No company updates available for {companyName}</div>
+                <div className="text-lg font-medium mb-2">No Company News Available</div>
+                <div className="text-sm">No company news available at this time for {companyName}</div>
               </div>
             </div>
           </div>
