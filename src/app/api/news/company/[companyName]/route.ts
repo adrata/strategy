@@ -35,6 +35,44 @@ export async function GET(
   }
 }
 
+// Helper function to check if an article is relevant to the company
+function isArticleRelevant(article: any, companyName: string): boolean {
+  if (!article || !companyName) return false;
+  
+  // Normalize company name - remove common legal suffixes and extra words
+  const normalizedCompanyName = companyName
+    .toLowerCase()
+    .replace(/\b(inc|llc|ltd|corp|corporation|company|co|llp|lp|partners|group|associates|services|solutions|technologies|tech|systems|enterprises|ventures|holdings|international|global|worldwide)\b\.?/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  
+  // Get searchable text from article
+  const title = (article.title || '').toLowerCase();
+  const description = (article.description || '').toLowerCase();
+  const content = (article.content || '').toLowerCase();
+  const searchText = `${title} ${description} ${content}`;
+  
+  // Check if company name appears in the text
+  if (searchText.includes(normalizedCompanyName)) {
+    return true;
+  }
+  
+  // Check for partial matches - require at least 2 significant words from company name
+  const companyWords = normalizedCompanyName.split(' ').filter(word => word.length > 2);
+  if (companyWords.length >= 2) {
+    const matchingWords = companyWords.filter(word => searchText.includes(word));
+    // Require at least 2/3 of significant words to match
+    return matchingWords.length >= Math.ceil(companyWords.length * 0.67);
+  }
+  
+  // For single word company names, require exact match
+  if (companyWords.length === 1) {
+    return searchText.includes(companyWords[0]);
+  }
+  
+  return false;
+}
+
 async function fetchRealNews(companyName: string): Promise<any[]> {
   const newsArticles: any[] = [];
   
@@ -57,7 +95,7 @@ async function fetchRealNews(companyName: string): Promise<any[]> {
           console.log(`✅ [NEWS API] Found ${data.articles.length} articles from NewsAPI`);
           
           // Transform NewsAPI format to our format
-          return data.articles.map((article: any) => ({
+          const transformedArticles = data.articles.map((article: any) => ({
             title: article.title,
             description: article.description,
             source: article.source?.name || 'Unknown Source',
@@ -65,6 +103,30 @@ async function fetchRealNews(companyName: string): Promise<any[]> {
             url: article.url,
             content: article.content || article.description
           }));
+          
+          // Filter for relevance
+          const relevantArticles = transformedArticles.filter((article: any) => 
+            isArticleRelevant(article, companyName)
+          );
+          
+          console.log(`🔍 [NEWS API] Relevance check: ${transformedArticles.length} total → ${relevantArticles.length} relevant`);
+          
+          // Log filtered out articles for debugging
+          const filteredArticles = transformedArticles.filter((article: any) => 
+            !isArticleRelevant(article, companyName)
+          );
+          if (filteredArticles.length > 0) {
+            console.log(`❌ [NEWS API] Filtered out ${filteredArticles.length} irrelevant articles:`);
+            filteredArticles.forEach((article, index) => {
+              console.log(`  ${index + 1}. "${article.title}" (${article.source})`);
+            });
+          }
+          
+          if (relevantArticles.length > 0) {
+            return relevantArticles;
+          } else {
+            console.log(`❌ [NEWS API] No relevant articles found for ${companyName}`);
+          }
         }
       } else {
         console.warn(`⚠️ [NEWS API] NewsAPI returned status ${response.status}`);
@@ -103,7 +165,30 @@ async function fetchRealNews(companyName: string): Promise<any[]> {
             const parsedNews = JSON.parse(content);
             if (Array.isArray(parsedNews) && parsedNews.length > 0) {
               console.log(`✅ [NEWS API] Found ${parsedNews.length} articles from Perplexity AI`);
-              return parsedNews;
+              
+              // Filter for relevance
+              const relevantArticles = parsedNews.filter((article: any) => 
+                isArticleRelevant(article, companyName)
+              );
+              
+              console.log(`🔍 [PERPLEXITY] Relevance check: ${parsedNews.length} total → ${relevantArticles.length} relevant`);
+              
+              // Log filtered out articles for debugging
+              const filteredArticles = parsedNews.filter((article: any) => 
+                !isArticleRelevant(article, companyName)
+              );
+              if (filteredArticles.length > 0) {
+                console.log(`❌ [PERPLEXITY] Filtered out ${filteredArticles.length} irrelevant articles:`);
+                filteredArticles.forEach((article, index) => {
+                  console.log(`  ${index + 1}. "${article.title}" (${article.source})`);
+                });
+              }
+              
+              if (relevantArticles.length > 0) {
+                return relevantArticles;
+              } else {
+                console.log(`❌ [PERPLEXITY] No relevant articles found for ${companyName}`);
+              }
             }
           } catch (parseError) {
             console.warn('⚠️ [NEWS API] Failed to parse Perplexity AI response as JSON');

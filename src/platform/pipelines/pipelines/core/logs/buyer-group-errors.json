@@ -174,5 +174,21 @@
     },
     "pipeline": "buyer-group",
     "version": "2.0"
+  },
+  {
+    "timestamp": "2025-10-21T16:39:00.887Z",
+    "error": {
+      "message": "Cannot convert undefined or null to object",
+      "stack": "TypeError: Cannot convert undefined or null to object\n    at Object.entries (<anonymous>)\n    at BuyerGroupPipeline.enrichContacts (C:\\Users\\ross\\Development\\adrata\\src\\platform\\pipelines\\pipelines\\core\\buyer-group-pipeline.js:521:50)\n    at BuyerGroupPipeline.processCompany (C:\\Users\\ross\\Development\\adrata\\src\\platform\\pipelines\\pipelines\\core\\buyer-group-pipeline.js:403:51)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Promise.allSettled (index 1)\n    at async BuyerGroupPipeline.runPipeline (C:\\Users\\ross\\Development\\adrata\\src\\platform\\pipelines\\pipelines\\core\\buyer-group-pipeline.js:174:38)",
+      "name": "TypeError"
+    },
+    "context": {
+      "company": "Brex",
+      "step": "buyer_group_processing",
+      "index": 2,
+      "total": 4
+    },
+    "pipeline": "buyer-group",
+    "version": "2.0"
   }
 ]
