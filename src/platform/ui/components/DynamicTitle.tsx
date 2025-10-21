@@ -45,14 +45,14 @@ const getPageName = (pathname: string): string => {
 
   // Check for dynamic routes (e.g., /leads/[id], /companies/[id])
   const dynamicPatterns = [
-    { pattern: /^\/leads\/[^\/]+/, name: 'Lead Details' },
-    { pattern: /^\/prospects\/[^\/]+/, name: 'Prospect Details' },
-    { pattern: /^\/opportunities\/[^\/]+/, name: 'Opportunity Details' },
-    { pattern: /^\/companies\/[^\/]+/, name: 'Company Details' },
-    { pattern: /^\/people\/[^\/]+/, name: 'Person Details' },
-    { pattern: /^\/clients\/[^\/]+/, name: 'Customer Details' },
-    { pattern: /^\/partners\/[^\/]+/, name: 'Partner Details' },
-    { pattern: /^\/sellers\/[^\/]+/, name: 'Seller Details' },
+    { pattern: /^\/leads\/[^\/]+/, name: 'Lead' },
+    { pattern: /^\/prospects\/[^\/]+/, name: 'Prospect' },
+    { pattern: /^\/opportunities\/[^\/]+/, name: 'Opportunity' },
+    { pattern: /^\/companies\/[^\/]+/, name: 'Company' },
+    { pattern: /^\/people\/[^\/]+/, name: 'Person' },
+    { pattern: /^\/clients\/[^\/]+/, name: 'Customer' },
+    { pattern: /^\/partners\/[^\/]+/, name: 'Partner' },
+    { pattern: /^\/sellers\/[^\/]+/, name: 'Seller' },
     { pattern: /^\/aos\/[^\/]+/, name: 'AOS Platform' },
     { pattern: /^\/monaco\/[^\/]+/, name: 'Monaco' },
   ];
@@ -112,18 +112,30 @@ export function DynamicTitle() {
           // Generate title based on record type and data
           let title = '';
           
-          if (section === 'people' || section === 'leads' || section === 'prospects') {
-            // For people/leads/prospects, use fullName or name
-            title = recordData.fullName || recordData.name || 'Unknown Person';
+          if (section === 'leads') {
+            // For leads, show "Lead • [Name]"
+            const name = recordData.fullName || recordData.name || 'Unknown Lead';
+            title = `Lead • ${name}`;
+          } else if (section === 'prospects') {
+            // For prospects, show "Prospect • [Name]"
+            const name = recordData.fullName || recordData.name || 'Unknown Prospect';
+            title = `Prospect • ${name}`;
+          } else if (section === 'people') {
+            // For people, show "Person • [Name]"
+            const name = recordData.fullName || recordData.name || 'Unknown Person';
+            title = `Person • ${name}`;
           } else if (section === 'companies' || section === 'clients' || section === 'partners') {
-            // For companies/clients/partners, use name
-            title = recordData.name || 'Unknown Company';
+            // For companies/clients/partners, show "Company • [Name]"
+            const name = recordData.name || 'Unknown Company';
+            title = `Company • ${name}`;
           } else if (section === 'opportunities') {
-            // For opportunities, use name
-            title = recordData.name || 'Unknown Opportunity';
+            // For opportunities, show "Opportunity • [Name]"
+            const name = recordData.name || 'Unknown Opportunity';
+            title = `Opportunity • ${name}`;
           } else if (section === 'sellers') {
-            // For sellers, use fullName or name
-            title = recordData.fullName || recordData.name || 'Unknown Seller';
+            // For sellers, show "Seller • [Name]"
+            const name = recordData.fullName || recordData.name || 'Unknown Seller';
+            title = `Seller • ${name}`;
           } else {
             // Fallback to generic title
             title = getPageName(pathname);

@@ -207,7 +207,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   };
 
   // Extract comprehensive record data from CoreSignal with database fallback
-  const recordData = {
+  // This needs to be reactive to actions state
+  const recordData = React.useMemo(() => ({
     // Basic info - Database fields first, then CoreSignal fallback - no fallback to '-'
     name: record?.fullName || record?.name || coresignalData.full_name || null,
     title: record?.jobTitle || record?.title || coresignalData.active_experience_title || coresignalData.experience?.find(exp => exp.active_experience === 1)?.position_title || coresignalData.experience?.[0]?.position_title || null,
@@ -262,9 +263,9 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     isDecisionMaker: coresignalData.is_decision_maker || coresignalData.isDecisionMaker || 0,
     enrichedAt: coresignalData.lastEnrichedAt || coresignalData.enrichedAt || new Date().toISOString(),
     
-    // Contact history
-    lastContact: record.lastActionDate || record.updatedAt || '-',
-    lastAction: record.lastAction || '-',
+    // Contact history - use fetched actions data if available, otherwise fall back to record fields
+    lastContact: actions.length > 0 ? (actions[0]?.completedAt || actions[0]?.createdAt) : (record.lastActionDate || record.updatedAt || '-'),
+    lastAction: actions.length > 0 ? (actions[0]?.subject || actions[0]?.title) : (record.lastAction || '-'),
     nextAction: record.nextAction || 'Schedule follow-up call',
     nextActionDate: record.nextActionDate || '-',
     
@@ -277,47 +278,143 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     status: record.status || 'active',
     source: record.customFields?.source || 'Data Enrichment',
     seniority: record.customFields?.seniority || 'Mid-level'
-  };
+  }), [record, coresignalData, actions]);
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
-    if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') return 'Never';
+    console.log('🔍 [FORMAT DEBUG] formatRelativeDate called with:', {
+      dateString,
+      type: typeof dateString,
+      isNull: dateString === null,
+      isUndefined: dateString === undefined,
+      isNever: dateString === 'Never',
+      isInvalidDate: dateString === 'Invalid Date'
+    });
+    
+    if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') {
+      console.log('🔍 [FORMAT DEBUG] Returning "Never" due to invalid input');
+      return 'Never';
+    }
     
     try {
-    const date = new Date(dateString);
-      if (isNaN(date.getTime())) return 'Never';
+      let date: Date;
       
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    
-    if (diffInHours < 1) {
-      return 'Just now';
-    } else if (diffInHours < 24) {
-      return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-    } else if (diffInDays === 1) {
-      return 'Yesterday';
-    } else if (diffInDays < 7) {
-      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-    } else if (diffInDays < 30) {
-      const weeks = Math.floor(diffInDays / 7);
-      return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
-    } else {
-      return date.toLocaleDateString();
-    }
-    } catch {
+      // Handle different date formats
+      if (dateString instanceof Date) {
+        date = dateString;
+      } else if (typeof dateString === 'string') {
+        // Handle Prisma DateTime strings and ISO strings
+        if (dateString.includes('T') && dateString.includes('Z')) {
+          // ISO string with timezone
+          date = new Date(dateString);
+        } else if (dateString.includes('T')) {
+          // ISO string without timezone - assume UTC
+          date = new Date(dateString + 'Z');
+        } else {
+          // Try parsing as regular date string
+          date = new Date(dateString);
+        }
+      } else {
+        console.log('🔍 [FORMAT DEBUG] Unsupported date type, returning "Never"');
+        return 'Never';
+      }
+      
+      console.log('🔍 [FORMAT DEBUG] Parsed date:', {
+        original: dateString,
+        parsed: date,
+        isValid: !isNaN(date.getTime()),
+        timestamp: date.getTime()
+      });
+      
+      if (isNaN(date.getTime())) {
+        console.log('🔍 [FORMAT DEBUG] Invalid date, returning "Never"');
+        return 'Never';
+      }
+      
+      const now = new Date();
+      const diffInMs = now.getTime() - date.getTime();
+      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+      const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+      
+      console.log('🔍 [FORMAT DEBUG] Time calculations:', {
+        now: now.getTime(),
+        date: date.getTime(),
+        diffInMs,
+        diffInHours,
+        diffInDays
+      });
+      
+      let result = '';
+      if (diffInHours < 1) {
+        result = 'Just now';
+      } else if (diffInHours < 24) {
+        result = `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+      } else if (diffInDays === 1) {
+        result = 'Yesterday';
+      } else if (diffInDays < 7) {
+        result = `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+      } else if (diffInDays < 30) {
+        const weeks = Math.floor(diffInDays / 7);
+        result = `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+      } else {
+        result = date.toLocaleDateString();
+      }
+      
+      console.log('🔍 [FORMAT DEBUG] Final result:', result);
+      return result;
+    } catch (error) {
+      console.log('🔍 [FORMAT DEBUG] Error in formatRelativeDate:', error);
       return 'Never';
     }
   };
 
   const formatFullDate = (dateString: string | Date | null | undefined): string => {
-    if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') return 'Never';
+    console.log('🔍 [FORMAT DEBUG] formatFullDate called with:', {
+      dateString,
+      type: typeof dateString,
+      isNull: dateString === null,
+      isUndefined: dateString === undefined
+    });
+    
+    if (!dateString || dateString === 'Never' || dateString === 'Invalid Date') {
+      console.log('🔍 [FORMAT DEBUG] formatFullDate returning "Never" due to invalid input');
+      return 'Never';
+    }
     
     try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return 'Never';
+      let date: Date;
       
-      return date.toLocaleString('en-US', {
+      // Handle different date formats
+      if (dateString instanceof Date) {
+        date = dateString;
+      } else if (typeof dateString === 'string') {
+        // Handle Prisma DateTime strings and ISO strings
+        if (dateString.includes('T') && dateString.includes('Z')) {
+          // ISO string with timezone
+          date = new Date(dateString);
+        } else if (dateString.includes('T')) {
+          // ISO string without timezone - assume UTC
+          date = new Date(dateString + 'Z');
+        } else {
+          // Try parsing as regular date string
+          date = new Date(dateString);
+        }
+      } else {
+        console.log('🔍 [FORMAT DEBUG] formatFullDate unsupported date type, returning "Never"');
+        return 'Never';
+      }
+      
+      console.log('🔍 [FORMAT DEBUG] formatFullDate parsed date:', {
+        original: dateString,
+        parsed: date,
+        isValid: !isNaN(date.getTime())
+      });
+      
+      if (isNaN(date.getTime())) {
+        console.log('🔍 [FORMAT DEBUG] formatFullDate invalid date, returning "Never"');
+        return 'Never';
+      }
+      
+      const result = date.toLocaleString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -325,7 +422,11 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         minute: '2-digit',
         hour12: true
       });
+      
+      console.log('🔍 [FORMAT DEBUG] formatFullDate result:', result);
+      return result;
     } catch (error) {
+      console.log('🔍 [FORMAT DEBUG] formatFullDate error:', error);
       return 'Never';
     }
   };
@@ -826,13 +927,39 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <div className="flex items-center space-x-3">
                   <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Created:</span>
                   <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.createdAt)}>
-                    {formatRelativeDate(record?.createdAt)}
+                    {(() => {
+                      console.log('🔍 [DATE DEBUG] Created date values:', {
+                        recordId: record?.id,
+                        recordKeys: Object.keys(record || {}),
+                        createdAt: record?.createdAt,
+                        createdAtType: typeof record?.createdAt,
+                        createdAtValue: record?.createdAt,
+                        isNull: record?.createdAt === null,
+                        isUndefined: record?.createdAt === undefined,
+                        formattedRelative: formatRelativeDate(record?.createdAt),
+                        formattedFull: formatFullDate(record?.createdAt)
+                      });
+                      return formatRelativeDate(record?.createdAt);
+                    })()}
                   </span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Last Updated:</span>
                   <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.updatedAt)}>
-                    {formatRelativeDate(record?.updatedAt)}
+                    {(() => {
+                      console.log('🔍 [DATE DEBUG] Updated date values:', {
+                        recordId: record?.id,
+                        recordKeys: Object.keys(record || {}),
+                        updatedAt: record?.updatedAt,
+                        updatedAtType: typeof record?.updatedAt,
+                        updatedAtValue: record?.updatedAt,
+                        isNull: record?.updatedAt === null,
+                        isUndefined: record?.updatedAt === undefined,
+                        formattedRelative: formatRelativeDate(record?.updatedAt),
+                        formattedFull: formatFullDate(record?.updatedAt)
+                      });
+                      return formatRelativeDate(record?.updatedAt);
+                    })()}
                   </span>
                 </div>
               </div>

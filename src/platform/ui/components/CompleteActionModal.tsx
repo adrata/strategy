@@ -24,7 +24,7 @@ export interface ActionLogData {
   personId?: string;
   company?: string;
   companyId?: string;
-  type: 'LinkedIn Connection' | 'LinkedIn InMail' | 'LinkedIn Message' | 'Phone' | 'Email';
+  type: 'LinkedIn Connection' | 'LinkedIn InMail' | 'LinkedIn Message' | 'Phone' | 'Email' | 'Meeting';
   time: 'Now' | 'Past' | 'Future';
   action: string;
   actionPerformedBy?: string; // User ID of who performed the action

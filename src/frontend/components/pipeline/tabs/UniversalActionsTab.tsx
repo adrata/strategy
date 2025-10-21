@@ -127,6 +127,17 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     
     // ⚡ CACHE-FIRST: Check cache BEFORE setting loading state
     const cacheKey = `actions-${record.id}`;
+    const cacheVersionKey = `actions-version-${record.id}`;
+    const currentCacheVersion = '2.0'; // Increment to clear old cache with incorrect format
+    
+    // Check if cache version is outdated and clear it
+    const storedVersion = localStorage.getItem(cacheVersionKey);
+    if (storedVersion !== currentCacheVersion) {
+      console.log('🔄 [ACTIONS] Cache version outdated, clearing cache');
+      localStorage.removeItem(cacheKey);
+      localStorage.setItem(cacheVersionKey, currentCacheVersion);
+    }
+    
     const cachedData = localStorage.getItem(cacheKey);
     
     let activityEvents: ActionEvent[] = [];
@@ -135,7 +146,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     if (cachedData) {
       try {
         const parsed = JSON.parse(cachedData);
-        if (parsed.timestamp && Date.now() - parsed.timestamp < 180000) { // 3 minute cache
+        if (parsed.timestamp && Date.now() - parsed.timestamp < 180000 && parsed.version === currentCacheVersion) { // 3 minute cache + version check
           activityEvents = parsed.activities || [];
           noteEvents = parsed.notes || [];
           console.log('⚡ [ACTIONS] Using cached actions data');
@@ -212,7 +223,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         console.log('📅 [ACTIONS] Found actions:', actionsResponse.value.data.length);
         allActivities.push(...actionsResponse.value.data.map((action: any) => ({
           ...action,
-          type: 'action',
+          activityType: 'action',  // Use different field name to avoid overwriting action.type
           timestamp: action.completedAt || action.createdAt || action.scheduledAt
         })));
       } else {
@@ -276,15 +287,38 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         'Meeting'
       ];
 
-      activityEvents = activityEvents.filter(event => 
-        event.metadata?.type && CORE_ACTION_TYPES.includes(event.metadata.type)
-      );
+      console.log('🔍 [ACTIONS] Before filtering:', {
+        totalEvents: activityEvents.length,
+        eventTypes: activityEvents.map(e => e.metadata?.type),
+        coreTypes: CORE_ACTION_TYPES,
+        sampleEvent: activityEvents[0]
+      });
+
+      activityEvents = activityEvents.filter(event => {
+        // Check both metadata.type and direct type field
+        const eventType = event.metadata?.type || event.type;
+        const matches = eventType && CORE_ACTION_TYPES.includes(eventType);
+        console.log('🔍 [ACTIONS] Filtering event:', {
+          eventType: eventType,
+          metadataType: event.metadata?.type,
+          directType: event.type,
+          matches,
+          title: event.title
+        });
+        return matches;
+      });
+
+      console.log('🔍 [ACTIONS] After filtering:', {
+        filteredEvents: activityEvents.length,
+        filteredTypes: activityEvents.map(e => e.metadata?.type)
+      });
       
       // Cache the data
       localStorage.setItem(cacheKey, JSON.stringify({
         activities: activityEvents,
         notes: noteEvents,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        version: currentCacheVersion
       }));
 
       // Update state with fresh data from API
@@ -346,7 +380,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
 
   // Group actions by type
   const groupedActions = actionEvents.reduce((groups, event) => {
-    const type = event.metadata?.type || 'Other';
+    const type = event.metadata?.type || event.type || 'Other';
     if (!groups[type]) {
       groups[type] = [];
     }
@@ -366,33 +400,24 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
           <div className="text-lg font-medium text-[var(--foreground)]">
             All Actions
           </div>
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 bg-[var(--hover)] text-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
-              {actionEvents.length}
-            </span>
+          <div className="flex items-center gap-3">
             <span className="text-sm text-[var(--muted)]">
-              {actionEvents.length === 1 ? 'Action' : 'Actions'}
+              {actionEvents.length} {actionEvents.length === 1 ? 'Action' : 'Actions'}
             </span>
+            {!loading && actionEvents.length > 0 && (
+              <div className="flex items-center gap-2">
+                {sortedActionTypes.map((actionType, index) => (
+                  <span key={actionType} className="text-xs text-[var(--muted)]">
+                    {groupedActions[actionType].length} {actionType}
+                    {index < sortedActionTypes.length - 1 && ', '}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Action Type Summary */}
-      {!loading && actionEvents.length > 0 && (
-        <div className="bg-[var(--panel-background)] rounded-lg p-4 border border-[var(--border)]">
-          <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Action Breakdown</h4>
-          <div className="flex flex-wrap gap-2">
-            {sortedActionTypes.map((actionType) => (
-              <div key={actionType} className="flex items-center gap-2 px-3 py-2 bg-[var(--background)] rounded-lg border border-[var(--border)]">
-                <span className="text-sm font-medium text-[var(--foreground)]">{actionType}</span>
-                <span className="px-2 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full">
-                  {groupedActions[actionType].length}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {loading ? (
         <div className="space-y-4">
@@ -428,9 +453,6 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                 <h3 className="text-lg font-semibold text-[var(--foreground)]">
                   {actionType}
                 </h3>
-                <span className="px-3 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-sm font-medium rounded-full">
-                  {groupedActions[actionType].length}
-                </span>
               </div>
               
               {/* Actions for this type */}
@@ -475,11 +497,11 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                       )}
                       {event.metadata?.status && (
                         <span className={`px-4 py-1 text-xs rounded-full whitespace-nowrap ${
-                          event.metadata.status === 'completed' ? 'bg-green-100 text-green-800' :
-                          event.metadata.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
+                          event.metadata.status.toUpperCase() === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                          event.metadata.status.toUpperCase() === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
                           'bg-[var(--hover)] text-gray-800'
                         }`}>
-                          {event.metadata.status}
+                          {event.metadata.status.toUpperCase()}
                         </span>
                       )}
                     </div>

@@ -21,6 +21,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, entityType, entityId } = body;
 
+    console.log(`🔍 [DELETION API] Request: ${action} ${entityType} ${entityId} by user ${user.id}`);
+
     if (!action || !entityType || !entityId) {
       return NextResponse.json({
         success: false,
@@ -28,7 +30,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    let result = false;
+    let result;
 
     switch (action) {
       case 'soft_delete':
@@ -36,11 +38,15 @@ export async function POST(request: NextRequest) {
         break;
         
       case 'restore':
-        result = await deletionService.restore(entityType, entityId, user.id);
+        // For now, keep the old boolean return for restore and hard_delete
+        const restoreResult = await deletionService.restore(entityType, entityId, user.id);
+        result = { success: restoreResult };
         break;
         
       case 'hard_delete':
-        result = await deletionService.hardDelete(entityType, entityId, user.id);
+        // For now, keep the old boolean return for hard_delete
+        const hardDeleteResult = await deletionService.hardDelete(entityType, entityId, user.id);
+        result = { success: hardDeleteResult };
         break;
         
       default:
@@ -50,24 +56,42 @@ export async function POST(request: NextRequest) {
         }, { status: 400 });
     }
 
-    if (result) {
+    if (result.success) {
+      console.log(`✅ [DELETION API] Success: ${action} ${entityType} ${entityId}`);
       return NextResponse.json({
         success: true,
         message: `${action} completed successfully`,
         data: { entityType, entityId, action }
       });
     } else {
+      console.error(`❌ [DELETION API] Failed: ${action} ${entityType} ${entityId}`, result);
+      
+      // Return appropriate HTTP status based on error code
+      let status = 500;
+      if (result.errorCode === 'USER_NOT_FOUND') {
+        status = 401;
+      } else if (result.errorCode === 'RECORD_NOT_FOUND') {
+        status = 404;
+      }
+      
       return NextResponse.json({
         success: false,
-        error: `Failed to ${action} ${entityType} ${entityId}`
-      }, { status: 500 });
+        error: result.error || `Failed to ${action} ${entityType} ${entityId}`,
+        errorCode: result.errorCode,
+        details: process.env.NODE_ENV === 'development' ? result.details : undefined
+      }, { status });
     }
 
   } catch (error) {
-    console.error('❌ [DELETION API] Error:', error);
+    console.error('❌ [DELETION API] Error:', {
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined,
+      request: { url: request.url, method: request.method }
+    });
     return NextResponse.json({
       success: false,
-      error: 'Internal server error'
+      error: 'Internal server error',
+      details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : error) : undefined
     }, { status: 500 });
   }
 }

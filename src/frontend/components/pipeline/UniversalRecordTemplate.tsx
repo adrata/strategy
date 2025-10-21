@@ -2204,7 +2204,7 @@ export function UniversalRecordTemplate({
 
     try {
       setLoading(true);
-      console.log('🗑️ [UNIVERSAL] Soft deleting record:', record.id);
+      console.log(`🗑️ [UniversalRecordTemplate] Soft deleting ${recordType} record: ${record.id}`);
       
       // Perform soft delete via new v1 deletion API
       const response = await fetch('/api/v1/deletion', {
@@ -2221,14 +2221,29 @@ export function UniversalRecordTemplate({
         }),
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete record');
+        console.error(`❌ [UniversalRecordTemplate] Deletion failed:`, responseData);
+        throw new Error(responseData.error || 'Failed to delete record');
       }
+
+      console.log(`✅ [UniversalRecordTemplate] Deletion successful:`, responseData);
       
       // Navigate back to the table view immediately
       if (onBack) {
         onBack();
+      }
+      
+      // Dispatch cache invalidation event for other components
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cache-invalidate', {
+          detail: { 
+            pattern: `${recordType}-*`, 
+            reason: 'record_deleted',
+            recordId: record.id
+          }
+        }));
       }
       
       // Show success message after navigation (with a small delay to ensure navigation completes)
@@ -2237,8 +2252,9 @@ export function UniversalRecordTemplate({
       }, 100);
       
     } catch (error) {
-      console.error('❌ [UNIVERSAL] Error deleting record:', error);
-      showMessage('Failed to delete record. Please try again.', 'error');
+      console.error('❌ [UniversalRecordTemplate] Error deleting record:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete record. Please try again.';
+      showMessage(errorMessage, 'error');
     } finally {
       setLoading(false);
       setShowDeleteConfirm(false);
@@ -2796,6 +2812,8 @@ export function UniversalRecordTemplate({
     try {
       setLoading(true);
       
+      console.log(`🗑️ [UniversalRecordTemplate] Deleting ${recordType} record: ${record.id}`);
+      
       // Perform soft delete via new v1 deletion API
       const response = await fetch('/api/v1/deletion', {
         method: 'POST',
@@ -2811,10 +2829,14 @@ export function UniversalRecordTemplate({
         }),
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete record');
+        console.error(`❌ [UniversalRecordTemplate] Deletion failed:`, responseData);
+        throw new Error(responseData.error || 'Failed to delete record');
       }
+
+      console.log(`✅ [UniversalRecordTemplate] Deletion successful:`, responseData);
 
       // Close the modal first
       setIsEditRecordModalOpen(false);
@@ -2824,13 +2846,25 @@ export function UniversalRecordTemplate({
         onBack();
       }
       
+      // Dispatch cache invalidation event for other components
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cache-invalidate', {
+          detail: { 
+            pattern: `${recordType}-*`, 
+            reason: 'record_deleted',
+            recordId: record.id
+          }
+        }));
+      }
+      
       // Show success message after navigation (with a small delay to ensure navigation completes)
       setTimeout(() => {
         showMessage('Record moved to trash successfully!', 'success');
       }, 100);
     } catch (error) {
-      console.error('Error deleting record:', error);
-      showMessage('Failed to delete record. Please try again.', 'error');
+      console.error('❌ [UniversalRecordTemplate] Error deleting record:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete record. Please try again.';
+      showMessage(errorMessage, 'error');
     } finally {
       setLoading(false);
     }

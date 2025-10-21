@@ -6,9 +6,7 @@
  * 2. Hard delete (eventual) - for performance and storage management
  */
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/platform/database/prisma-client';
 
 export interface DeletionConfig {
   // Soft delete retention periods (in days)
@@ -26,6 +24,13 @@ export interface DeletionConfig {
     actions: number;      // 1000
     audit_logs: number;   // 2000
   };
+}
+
+export interface DeletionResult {
+  success: boolean;
+  error?: string;
+  errorCode?: string;
+  details?: any;
 }
 
 export class DeletionService {
@@ -52,11 +57,11 @@ export class DeletionService {
   /**
    * 🗑️ SOFT DELETE - Mark record as deleted
    */
-  async softDelete(entityType: 'companies' | 'people' | 'actions', id: string, userId: string): Promise<boolean> {
+  async softDelete(entityType: 'companies' | 'people' | 'actions', id: string, userId: string): Promise<DeletionResult> {
     try {
       const deletedAt = new Date();
       
-      // First, get the user's workspace to ensure proper filtering
+      // Get the user's workspace to ensure proper filtering
       const user = await prisma.users.findUnique({
         where: { id: userId },
         select: { workspaceId: true }
@@ -64,87 +69,82 @@ export class DeletionService {
       
       if (!user) {
         console.error(`❌ [DELETION] User not found: ${userId}`);
-        return false;
+        return {
+          success: false,
+          error: 'User not found',
+          errorCode: 'USER_NOT_FOUND'
+        };
       }
       
-      // Two-step process: first verify record exists and belongs to user's workspace
-      let recordExists = false;
-      
+      console.log(`🔍 [DELETION] Attempting to soft delete ${entityType} ${id} for user ${userId} in workspace ${user.workspaceId}`);
+
+      // Direct update with workspace filtering - Prisma will throw if record doesn't exist
+      let updateResult;
       switch (entityType) {
         case 'companies':
-          const company = await prisma.companies.findFirst({
+          updateResult = await prisma.companies.updateMany({
             where: { 
               id,
               workspaceId: user.workspaceId,
               deletedAt: null // Only delete non-deleted records
             },
-            select: { id: true }
+            data: { deletedAt },
           });
-          recordExists = !!company;
           break;
           
         case 'people':
-          const person = await prisma.people.findFirst({
+          updateResult = await prisma.people.updateMany({
             where: { 
               id,
               workspaceId: user.workspaceId,
               deletedAt: null // Only delete non-deleted records
             },
-            select: { id: true }
+            data: { deletedAt },
           });
-          recordExists = !!person;
           break;
           
         case 'actions':
-          const action = await prisma.actions.findFirst({
+          updateResult = await prisma.actions.updateMany({
             where: { 
               id,
               workspaceId: user.workspaceId,
               deletedAt: null // Only delete non-deleted records
             },
-            select: { id: true }
+            data: { deletedAt },
           });
-          recordExists = !!action;
           break;
       }
 
-      if (!recordExists) {
+      if (updateResult.count === 0) {
         console.error(`❌ [DELETION] Record not found or already deleted: ${entityType} ${id}`);
-        return false;
-      }
-
-      // Now update using just the id (which is unique)
-      switch (entityType) {
-        case 'companies':
-          await prisma.companies.update({
-            where: { id },
-            data: { deletedAt },
-          });
-          break;
-          
-        case 'people':
-          await prisma.people.update({
-            where: { id },
-            data: { deletedAt },
-          });
-          break;
-          
-        case 'actions':
-          await prisma.actions.update({
-            where: { id },
-            data: { deletedAt },
-          });
-          break;
+        return {
+          success: false,
+          error: 'Record not found or already deleted',
+          errorCode: 'RECORD_NOT_FOUND'
+        };
       }
 
       // Log the deletion for audit trail
       await this.logDeletion(entityType, id, userId, 'SOFT_DELETE');
       
-      console.log(`✅ [DELETION] Soft deleted ${entityType} ${id}`);
-      return true;
+      console.log(`✅ [DELETION] Soft deleted ${entityType} ${id} (${updateResult.count} records affected)`);
+      return {
+        success: true
+      };
     } catch (error) {
-      console.error(`❌ [DELETION] Failed to soft delete ${entityType} ${id}:`, error);
-      return false;
+      console.error(`❌ [DELETION] Failed to soft delete ${entityType} ${id}:`, {
+        error: error instanceof Error ? error.message : error,
+        stack: error instanceof Error ? error.stack : undefined,
+        prismaCode: error && typeof error === 'object' && 'code' in error ? error.code : undefined,
+        prismaMessage: error && typeof error === 'object' && 'message' in error ? error.message : undefined
+      });
+      
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        errorCode: error && typeof error === 'object' && 'code' in error ? error.code as string : 'UNKNOWN_ERROR',
+        details: error
+      };
     }
   }
 
@@ -164,36 +164,71 @@ export class DeletionService {
         return false;
       }
       
+      // Two-step process: first verify record exists, belongs to workspace, and is soft-deleted
+      let recordExists = false;
+      
       switch (entityType) {
         case 'companies':
-          await prisma.companies.update({
+          const company = await prisma.companies.findFirst({
             where: { 
               id,
               workspaceId: user.workspaceId,
               deletedAt: { not: null } // Only restore soft-deleted records
             },
+            select: { id: true }
+          });
+          recordExists = !!company;
+          break;
+          
+        case 'people':
+          const person = await prisma.people.findFirst({
+            where: { 
+              id,
+              workspaceId: user.workspaceId,
+              deletedAt: { not: null } // Only restore soft-deleted records
+            },
+            select: { id: true }
+          });
+          recordExists = !!person;
+          break;
+          
+        case 'actions':
+          const action = await prisma.actions.findFirst({
+            where: { 
+              id,
+              workspaceId: user.workspaceId,
+              deletedAt: { not: null } // Only restore soft-deleted records
+            },
+            select: { id: true }
+          });
+          recordExists = !!action;
+          break;
+      }
+
+      if (!recordExists) {
+        console.error(`❌ [DELETION] Record not found or not soft-deleted: ${entityType} ${id}`);
+        return false;
+      }
+
+      // Now update using just the id (which is unique)
+      switch (entityType) {
+        case 'companies':
+          await prisma.companies.update({
+            where: { id },
             data: { deletedAt: null },
           });
           break;
           
         case 'people':
           await prisma.people.update({
-            where: { 
-              id,
-              workspaceId: user.workspaceId,
-              deletedAt: { not: null } // Only restore soft-deleted records
-            },
+            where: { id },
             data: { deletedAt: null },
           });
           break;
           
         case 'actions':
           await prisma.actions.update({
-            where: { 
-              id,
-              workspaceId: user.workspaceId,
-              deletedAt: { not: null } // Only restore soft-deleted records
-            },
+            where: { id },
             data: { deletedAt: null },
           });
           break;
@@ -226,31 +261,66 @@ export class DeletionService {
         return false;
       }
       
+      // Two-step process: first verify record exists and belongs to workspace
+      let recordExists = false;
+      
       switch (entityType) {
         case 'companies':
-          await prisma.companies.delete({
+          const company = await prisma.companies.findFirst({
             where: { 
               id,
               workspaceId: user.workspaceId
             },
+            select: { id: true }
+          });
+          recordExists = !!company;
+          break;
+          
+        case 'people':
+          const person = await prisma.people.findFirst({
+            where: { 
+              id,
+              workspaceId: user.workspaceId
+            },
+            select: { id: true }
+          });
+          recordExists = !!person;
+          break;
+          
+        case 'actions':
+          const action = await prisma.actions.findFirst({
+            where: { 
+              id,
+              workspaceId: user.workspaceId
+            },
+            select: { id: true }
+          });
+          recordExists = !!action;
+          break;
+      }
+
+      if (!recordExists) {
+        console.error(`❌ [DELETION] Record not found: ${entityType} ${id}`);
+        return false;
+      }
+
+      // Now delete using just the id (which is unique)
+      switch (entityType) {
+        case 'companies':
+          await prisma.companies.delete({
+            where: { id },
           });
           break;
           
         case 'people':
           await prisma.people.delete({
-            where: { 
-              id,
-              workspaceId: user.workspaceId
-            },
+            where: { id },
           });
           break;
           
         case 'actions':
           await prisma.actions.delete({
-            where: { 
-              id,
-              workspaceId: user.workspaceId
-            },
+            where: { id },
           });
           break;
       }

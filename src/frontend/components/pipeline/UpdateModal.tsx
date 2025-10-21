@@ -110,6 +110,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     try {
       setLoading(true);
       
+      console.log(`🗑️ [UpdateModal] Deleting ${recordType} record: ${record.id}`);
+      
       // Perform soft delete via new v1 deletion API
       const response = await fetch('/api/v1/deletion', {
         method: 'POST',
@@ -125,10 +127,14 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         }),
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete record');
+        console.error(`❌ [UpdateModal] Deletion failed:`, responseData);
+        throw new Error(responseData.error || 'Failed to delete record');
       }
+
+      console.log(`✅ [UpdateModal] Deletion successful:`, responseData);
 
       // Close the modal first
       onClose();
@@ -136,10 +142,22 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       // Call the onDelete callback if provided (this should handle navigation and success message)
       if (onDelete) {
         await onDelete(record.id);
+      } else {
+        // Fallback: dispatch cache invalidation event for other components
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('cache-invalidate', {
+            detail: { 
+              pattern: `${recordType}-*`, 
+              reason: 'record_deleted',
+              recordId: record.id
+            }
+          }));
+        }
       }
     } catch (error) {
-      console.error('Error deleting record:', error);
-      alert('Failed to delete record. Please try again.');
+      console.error('❌ [UpdateModal] Error deleting record:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete record. Please try again.';
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
