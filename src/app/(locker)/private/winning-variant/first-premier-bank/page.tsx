@@ -5,10 +5,13 @@ import Link from 'next/link';
 import { BuyerGroupMemberCard } from '../components/BuyerGroupMemberCard';
 import { SalesIntentGauge } from '../components/SalesIntentGauge';
 
+// Import shared data
+import { firstPremierData } from '../data/buyerGroupData';
+
 // Real data for First Premier Bank buyer group
 import firstPremierRealData from '../data/first-premier-bank-buyer-group-real.json';
 
-const firstPremierData = {
+const localFirstPremierData = {
   companyInfo: {
     name: firstPremierRealData.company.companyName,
     website: "https://firstpremier.com",

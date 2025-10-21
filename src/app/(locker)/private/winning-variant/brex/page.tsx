@@ -5,8 +5,11 @@ import Link from 'next/link';
 import { BuyerGroupMemberCard } from '../components/BuyerGroupMemberCard';
 import { SalesIntentGauge } from '../components/SalesIntentGauge';
 
+// Import shared data
+import { brexData } from '../data/buyerGroupData';
+
 // Mock data for Brex buyer group
-const brexData = {
+const localBrexData = {
   companyInfo: {
     name: "Brex",
     website: "https://brex.com",

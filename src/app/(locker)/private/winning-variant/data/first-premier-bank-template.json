@@ -54,7 +54,7 @@
           "confidence": 94,
           "flightRisk": {
             "score": 10,
-            "category": "ROOTED",
+            "category": "LOW RISK",
             "reasoning": "CEO role, long tenure, strong company performance, equity holder"
           }
         },
@@ -192,7 +192,7 @@
           "confidence": 75,
           "flightRisk": {
             "score": 15,
-            "category": "ROOTED",
+            "category": "LOW RISK",
             "reasoning": "Legal role, long tenure, but may resist if compliance concerns aren't addressed"
           }
         }

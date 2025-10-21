@@ -6,8 +6,11 @@ import { BuyerGroupMemberCard } from '../components/BuyerGroupMemberCard';
 import { ArchetypeBadge } from '../components/ArchetypeBadge';
 import { SalesIntentGauge } from '../components/SalesIntentGauge';
 
+// Import shared data
+import { matchGroupData } from '../data/buyerGroupData';
+
 // Mock data - in production this would be loaded from the discovery results
-const matchGroupData = {
+const localMatchGroupData = {
   companyInfo: {
     name: "Match Group",
     website: "https://mtch.com",
@@ -60,7 +63,7 @@ const matchGroupData = {
         confidence: 94,
         flightRisk: {
           score: 10,
-          category: "ROOTED",
+          category: "LOW RISK",
           reasoning: "C-level executive with 6+ years tenure, strong equity position, recently promoted to CFO role"
         }
       },

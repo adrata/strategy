@@ -466,17 +466,31 @@ export function PipelineHeader({
       const result = await response.json();
       console.log('✅ Action saved successfully:', result);
       
-      // Clear timeline cache if we have a personId
+      // Clear cache and dispatch events for both person and company
       if (actionData.personId) {
-        const cacheKey = `timeline-${actionData.personId}`;
+        const cacheKey = `actions-${actionData.personId}`;
         localStorage.removeItem(cacheKey);
-        console.log('🗑️ [HEADER] Cleared timeline cache for person:', actionData.personId);
+        console.log('🗑️ [HEADER] Cleared actions cache for person:', actionData.personId);
         
-        // Dispatch event to trigger timeline refresh
         document.dispatchEvent(new CustomEvent('actionCreated', {
           detail: {
             recordId: actionData.personId,
-            recordType: 'speedrun',
+            recordType: section, // Use actual section, not hardcoded 'speedrun'
+            actionId: result.data?.id,
+            timestamp: new Date().toISOString()
+          }
+        }));
+      }
+
+      if (actionData.companyId) {
+        const cacheKey = `actions-${actionData.companyId}`;
+        localStorage.removeItem(cacheKey);
+        console.log('🗑️ [HEADER] Cleared actions cache for company:', actionData.companyId);
+        
+        document.dispatchEvent(new CustomEvent('actionCreated', {
+          detail: {
+            recordId: actionData.companyId,
+            recordType: 'companies',
             actionId: result.data?.id,
             timestamp: new Date().toISOString()
           }

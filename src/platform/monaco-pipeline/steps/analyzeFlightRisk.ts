@@ -8,7 +8,7 @@
  * - CRITICAL: High likelihood of departure (80-100%)
  * - ELEVATED: Moderate risk of departure (50-79%)
  * - STABLE: Low risk of departure (20-49%)
- * - ROOTED: Very low risk of departure (0-19%)
+ * - LOW RISK: Very low risk of departure (0-19%)
  */
 
 import {
@@ -26,7 +26,7 @@ interface FlightRiskAnalysis {
   companyId: string;
   companyName: string;
   flightRiskScore: number; // 0-100 scale
-  riskCategory: "CRITICAL" | "ELEVATED" | "STABLE" | "ROOTED";
+  riskCategory: "CRITICAL" | "ELEVATED" | "STABLE" | "LOW RISK";
   riskFactors: {
     tenureRisk: {
       score: number;
@@ -348,7 +348,7 @@ export class FlightRiskAnalyzer {
     if (weightedScore >= 80) category = "CRITICAL";
     else if (weightedScore >= 50) category = "ELEVATED";
     else if (weightedScore >= 20) category = "STABLE";
-    else category = "ROOTED";
+    else category = "LOW RISK";
 
     // Calculate confidence based on data availability
     const confidence = 0.75; // Simplified - would be based on actual data quality
@@ -753,7 +753,7 @@ export async function analyzeFlightRisk(
       (a) => a['riskCategory'] === "STABLE",
     ).length;
     const rootedRisk = flightRiskAnalyses.filter(
-      (a) => a['riskCategory'] === "ROOTED",
+      (a) => a['riskCategory'] === "LOW RISK",
     ).length;
 
     const averageRiskScore =

@@ -54,7 +54,7 @@
           "confidence": 95,
           "flightRisk": {
             "score": 15,
-            "category": "ROOTED",
+            "category": "LOW RISK",
             "reasoning": "Long tenure (8 years), executive role with equity, strong company performance"
           }
         },
@@ -157,7 +157,7 @@
           "confidence": 80,
           "flightRisk": {
             "score": 20,
-            "category": "ROOTED",
+            "category": "LOW RISK",
             "reasoning": "Senior technical role, good compensation, but may seek opportunities if technical challenges aren't addressed"
           }
         }
@@ -192,7 +192,7 @@
           "confidence": 70,
           "flightRisk": {
             "score": 15,
-            "category": "ROOTED",
+            "category": "LOW RISK",
             "reasoning": "Senior engineering role, long tenure, but may resist if technical concerns aren't addressed"
           }
         }

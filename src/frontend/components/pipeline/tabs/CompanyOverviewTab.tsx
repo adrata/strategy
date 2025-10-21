@@ -86,9 +86,9 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     if (typeof window === 'undefined') return;
     
     const handleActionCreated = (event: CustomEvent) => {
-      const { recordId, recordType: eventRecordType } = event.detail || {};
+      const { recordId } = event.detail || {};
       // Match on company ID, not the person ID
-      if (recordId === companyId && eventRecordType === 'companies') {
+      if (recordId === companyId) {
         console.log('🔄 [COMPANY OVERVIEW] Action created event matches current company, refreshing actions');
         // Refresh actions immediately
         fetchActions();

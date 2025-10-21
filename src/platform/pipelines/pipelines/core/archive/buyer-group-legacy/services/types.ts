@@ -216,7 +216,7 @@ export interface BuyerGroup {
   };
   flightRisk: Array<{
     personId: number;
-    riskLevel: 'CRITICAL' | 'ELEVATED' | 'STABLE' | 'ROOTED';
+    riskLevel: 'CRITICAL' | 'ELEVATED' | 'STABLE' | 'LOW RISK';
     riskScore: number;
     factors: string[];
     mitigation: string[];

@@ -146,7 +146,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     if (cachedData) {
       try {
         const parsed = JSON.parse(cachedData);
-        if (parsed.timestamp && Date.now() - parsed.timestamp < 180000 && parsed.version === currentCacheVersion) { // 3 minute cache + version check
+        if (parsed.timestamp && Date.now() - parsed.timestamp < 30000 && parsed.version === currentCacheVersion) { // 30 second cache + version check
           activityEvents = parsed.activities || [];
           noteEvents = parsed.notes || [];
           console.log('⚡ [ACTIONS] Using cached actions data');
@@ -352,8 +352,9 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
   // Listen for action creation events to refresh actions
   useEffect(() => {
     const handleActionCreated = (event: CustomEvent) => {
-      const { recordId, recordType: eventRecordType } = event.detail || {};
-      if (recordId === record?.id && eventRecordType === recordType) {
+      const { recordId, actionId } = event.detail || {};
+      // Match by recordId only - don't check recordType to avoid mismatches
+      if (recordId === record?.id) {
         console.log('🔄 [ACTIONS] Action created event matches current record, refreshing actions');
         // Clear cache and reload
         const cacheKey = `actions-${record.id}`;

@@ -287,8 +287,9 @@ export default function WinningVariantPage() {
                 </div>
                 
                 <p className="text-sm text-gray-700 mb-4">
-                  Regional bank specializing in credit cards and consumer banking services. 
-                  Traditional bank looking to optimize digital customer acquisition.
+                  <strong>Scale Challenge:</strong> 1,000-5,000 employees → We found the exact 8 who matter
+                  <br/><br/>
+                  <strong>Key Insight:</strong> 6 people actively struggling with AI ROI measurement - need to prove ML models drive fraud detection accuracy and reduce credit losses, not just improve detection rates.
                 </p>
                 
                 <Link 
@@ -337,8 +338,9 @@ export default function WinningVariantPage() {
                 </div>
                 
                 <p className="text-sm text-gray-700 mb-4">
-                  Leading subscription management platform helping companies transition to subscription business models. 
-                  High-value enterprise prospect with complex revenue optimization needs.
+                  <strong>Scale Challenge:</strong> 1,000-5,000 employees → We found the exact 8 who matter
+                  <br/><br/>
+                  <strong>Key Insight:</strong> 5 people actively struggling with subscription analytics - need to prove ML models drive churn prediction accuracy and revenue optimization, not just improve forecasting metrics.
                 </p>
                 
                 <Link 

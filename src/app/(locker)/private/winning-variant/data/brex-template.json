@@ -54,7 +54,7 @@
           "confidence": 95,
           "flightRisk": {
             "score": 5,
-            "category": "ROOTED",
+            "category": "LOW RISK",
             "reasoning": "Co-founder and CEO, equity holder, strong company performance, long-term vision"
           }
         },
@@ -87,7 +87,7 @@
           "confidence": 90,
           "flightRisk": {
             "score": 15,
-            "category": "ROOTED",
+            "category": "LOW RISK",
             "reasoning": "CFO role, long tenure, strong company performance, but may seek opportunities if financial pressure continues"
           }
         }
@@ -192,7 +192,7 @@
           "confidence": 75,
           "flightRisk": {
             "score": 15,
-            "category": "ROOTED",
+            "category": "LOW RISK",
             "reasoning": "Senior engineering role, long tenure, but may resist if technical and compliance concerns aren't addressed"
           }
         }

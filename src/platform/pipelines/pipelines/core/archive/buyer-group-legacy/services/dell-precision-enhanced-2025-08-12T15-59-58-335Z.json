@@ -314,14 +314,14 @@
     "flightRisk": [
       {
         "personId": 210172622,
-        "riskLevel": "ROOTED",
+        "riskLevel": "LOW RISK",
         "riskScore": 0,
         "factors": [],
         "mitigation": []
       },
       {
         "personId": 324986675,
-        "riskLevel": "ROOTED",
+        "riskLevel": "LOW RISK",
         "riskScore": 0,
         "factors": [],
         "mitigation": []

@@ -5,8 +5,11 @@ import Link from 'next/link';
 import { BuyerGroupMemberCard } from '../components/BuyerGroupMemberCard';
 import { SalesIntentGauge } from '../components/SalesIntentGauge';
 
+// Import shared data
+import { zuoraData } from '../data/buyerGroupData';
+
 // Mock data for Zuora buyer group
-const zuoraData = {
+const localZuoraData = {
   companyInfo: {
     name: "Zuora",
     website: "https://zuora.com",

@@ -27,7 +27,7 @@ export interface DealImpactAnalysis {
     | "stakeholder"
     | "opener";
   flightRiskScore: number;
-  riskCategory: "CRITICAL" | "ELEVATED" | "STABLE" | "ROOTED";
+  riskCategory: "CRITICAL" | "ELEVATED" | "STABLE" | "LOW RISK";
 
   dealImpact: {
     overallRiskLevel: "CATASTROPHIC" | "HIGH" | "MODERATE" | "LOW";

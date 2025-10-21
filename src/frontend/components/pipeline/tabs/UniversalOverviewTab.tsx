@@ -132,8 +132,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     if (typeof window === 'undefined') return;
     
     const handleActionCreated = (event: CustomEvent) => {
-      const { recordId, recordType: eventRecordType } = event.detail || {};
-      if (recordId === record?.id && eventRecordType === recordType) {
+      const { recordId } = event.detail || {};
+      if (recordId === record?.id) {
         console.log('🔄 [OVERVIEW] Action created event matches current record, refreshing actions');
         // Refresh actions immediately
         fetchActions();
