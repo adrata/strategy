@@ -127,7 +127,7 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'pain-value': UniversalPainValueTab,
   
   // Information and content tabs
-  'news': UniversalNewsTab,
+  // 'news': UniversalNewsTab, // Temporarily hidden until news relevance is improved
   'notes': NotesTab, // Simple notes textarea
   'timeline': UniversalActionsTab,
   
@@ -182,7 +182,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
     { id: 'overview', label: 'Overview', component: UniversalCompanyTab },
     { id: 'strategy', label: 'Strategy', component: UniversalCompanyIntelTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
-    { id: 'news', label: 'News', component: UniversalNewsTab },
+    // { id: 'news', label: 'News', component: UniversalNewsTab }, // Temporarily hidden until news relevance is improved
     { id: 'people', label: 'People', component: UniversalPeopleTab },
     { id: 'value', label: 'Value', component: ValueTab },
     { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },

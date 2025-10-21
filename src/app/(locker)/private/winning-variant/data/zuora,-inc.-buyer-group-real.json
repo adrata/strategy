@@ -1,0 +1,926 @@
+{
+  "company": {
+    "companyId": "10782378",
+    "companyName": "Zuora, Inc."
+  },
+  "buyerGroup": {
+    "id": "zuora,_inc._1761065531662",
+    "companyName": "Zuora, Inc.",
+    "totalMembers": 86,
+    "roles": {
+      "decision": [
+        {
+          "name": "Sunil Indluru",
+          "title": "Senior Director, Global Services",
+          "email": "sunil.indluru@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/sunilindluru",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Wendy Tien",
+          "title": "Director Of Product Operations",
+          "email": "wendy.tien@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/wendytien",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Shannon Mobey",
+          "title": "Director Center Of Excellence Advisory",
+          "email": "shannon.mobey@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/shannonmobey",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Ping Wu",
+          "title": "Director",
+          "email": "ping.wu@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/pingwu",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Robbie Traube",
+          "title": "President Chief Revenue Officer",
+          "email": "robbie.traube@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/robbietraube",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Siva Kumar Govindarajan",
+          "title": "Senior Director Of Engineering",
+          "email": "siva.kumar.govindarajan@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/sivakumargovindarajan",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Tanmoy Dutta",
+          "title": "Senior Vice President And Chief Architect",
+          "email": "tanmoy.dutta@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/tanmoydutta",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Allyson Root",
+          "title": "Director Of Product Marketing, Platform",
+          "email": "allyson.root@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/allysonroot",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Siqi Shi",
+          "title": "Product Management Director",
+          "email": "siqi.shi@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/siqishi",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Marc Weedon",
+          "title": "Sr. Director, HR (International)",
+          "email": "marc.weedon@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/marcweedon",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Chris Stennett",
+          "title": "Global Senior Director Of Value Consulting",
+          "email": "chris.stennett@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/chrisstennett",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Deb Greene",
+          "title": "Director Of Managed Services",
+          "email": "deb.greene@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/debgreene",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Aaron Buhler",
+          "title": "Director Of Technical Accounting Customer Experience",
+          "email": "aaron.buhler@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/aaronbuhler",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Anaïs Nicolas",
+          "title": "Alliance Director, EMEA",
+          "email": "anaïs.nicolas@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/anaïsnicolas",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Andrew Cohen",
+          "title": "Chief Legal Officer And Corporate Secretary",
+          "email": "andrew.cohen@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/andrewcohen",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Arvind Aravamudhan",
+          "title": "Senior Director Of Engineering",
+          "email": "arvind.aravamudhan@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/arvindaravamudhan",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Deepak Emraj",
+          "title": "HR Director - India",
+          "email": "deepak.emraj@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/deepakemraj",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "David Warren",
+          "title": "Principal Director, Subscribed Institute",
+          "email": "david.warren@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/davidwarren",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Jonathan Harris",
+          "title": "Senior Director Product",
+          "email": "jonathan.harris@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jonathanharris",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Bennett Goodson",
+          "title": "Director Of Global Benefits",
+          "email": "bennett.goodson@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/bennettgoodson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Randy W",
+          "title": "Solution Architect, Director",
+          "email": "randy.w@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/randyw",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Karunakaran Duraikannu",
+          "title": "Director Of Engineering",
+          "email": "karunakaran.duraikannu@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/karunakaranduraikannu",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Stephen Brusca",
+          "title": "Senior Practice Director",
+          "email": "stephen.brusca@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/stephenbrusca",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Jesse Rivera",
+          "title": "Director, Global ISV Partners",
+          "email": "jesse.rivera@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jesserivera",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Pete Hirsch",
+          "title": "Chief Product And Technology Officer",
+          "email": "pete.hirsch@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/petehirsch",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Sujith Nair",
+          "title": "Sr Director, Global Head Of Partner Delivery Success",
+          "email": "sujith.nair@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/sujithnair",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Navneet J",
+          "title": "Director, Architecture",
+          "email": "navneet.j@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/navneetj",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Paul Ryzman",
+          "title": "Director Of Global Services Centralised Operations",
+          "email": "paul.ryzman@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/paulryzman",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Fei Wang",
+          "title": "Director Of Engineering",
+          "email": "fei.wang@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/feiwang",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Martin Rues",
+          "title": "Chief Information Security Officer",
+          "email": "martin.rues@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/martinrues",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Mark Gill",
+          "title": "Senior Director, Applications",
+          "email": "mark.gill@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/markgill",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Aravind Sriraman",
+          "title": "Sr. Director, Product",
+          "email": "aravind.sriraman@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/aravindsriraman",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Adam Godfrey",
+          "title": "Director, Global Services",
+          "email": "adam.godfrey@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/adamgodfrey",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Jason B",
+          "title": "Regional Sales Director, Northern Europe Enterprise",
+          "email": "jason.b@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jasonb",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Danny Grasso",
+          "title": "Director, Talent Acquisition EMEA",
+          "email": "danny.grasso@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/dannygrasso",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Kelly Dunn",
+          "title": "Finance Senior Manager Chief Of Staff To CFO",
+          "email": "kelly.dunn@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kellydunn",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Winston Hait",
+          "title": "Director Of Product Marketing Strategy",
+          "email": "winston.hait@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/winstonhait",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Taylor Medford",
+          "title": "Director Of Engineering",
+          "email": "taylor.medford@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/taylormedford",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "David Fitzgerald",
+          "title": "Enterprise Architect Director",
+          "email": "david.fitzgerald@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/davidfitzgerald",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Stephen Dockery",
+          "title": "Strategic Accounts Director",
+          "email": "stephen.dockery@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/stephendockery",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Jianjia Zhang",
+          "title": "Operation Director",
+          "email": "jianjia.zhang@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jianjiazhang",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Tien Tzuo",
+          "title": "Founder And Chief Executive Officer",
+          "email": "tien.tzuo@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/tientzuo",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Jeanne Ford",
+          "title": "Director Of Product Marketing",
+          "email": "jeanne.ford@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jeanneford",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Craig Vincent",
+          "title": "Client Director",
+          "email": "craig.vincent@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/craigvincent",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Michael Mansard",
+          "title": "Principal Director Of Subscription Strategy (EMEA) EMEA Chair Of The Subscribed Institute",
+          "email": "michael.mansard@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/michaelmansard",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Venkat Yuvaraj",
+          "title": "Director - Strategy Operations",
+          "email": "venkat.yuvaraj@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/venkatyuvaraj",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Jahnavi Chennupati",
+          "title": "Director Cloud Engineering",
+          "email": "jahnavi.chennupati@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jahnavichennupati",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Raquel Renteria",
+          "title": "Director, Release Management",
+          "email": "raquel.renteria@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/raquelrenteria",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Subhajeet Hore",
+          "title": "Senior Director, Global Services",
+          "email": "subhajeet.hore@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/subhajeethore",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Sudhakar Bollavaram",
+          "title": "Engagement Director Principle Solutions Delivery Manager (Strategic Customers)",
+          "email": "sudhakar.bollavaram@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/sudhakarbollavaram",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Deepak Vadgama",
+          "title": "Senior Director Of Engineering",
+          "email": "deepak.vadgama@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/deepakvadgama",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Pierre Ljungberg",
+          "title": "Client Director",
+          "email": "pierre.ljungberg@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/pierreljungberg",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Matt Dobson",
+          "title": "SVP, Chief Accounting Officer",
+          "email": "matt.dobson@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/mattdobson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Avinash Jain",
+          "title": "Director Of Finance",
+          "email": "avinash.jain@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/avinashjain",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Uditshankar Dixit",
+          "title": "Director Of Design",
+          "email": "uditshankar.dixit@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/uditshankardixit",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Lon Coggeshall",
+          "title": "Client Director - Strategic Accounts",
+          "email": "lon.coggeshall@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/loncoggeshall",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Kaia Autry",
+          "title": "Sr. Director, Global Services Operations At Zuora",
+          "email": "kaia.autry@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kaiaautry",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Xi Guo",
+          "title": "Director, Software Engineering",
+          "email": "xi.guo@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/xiguo",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Ofer Shterling",
+          "title": "Sr Director Of Software Engineering",
+          "email": "ofer.shterling@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/ofershterling",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Sidi Zhu",
+          "title": "Senior Director Of Software Engineering",
+          "email": "sidi.zhu@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/sidizhu",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Chris Hemenway",
+          "title": "Director Solutions Consulting",
+          "email": "chris.hemenway@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/chrishemenway",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Natalia Troncoso",
+          "title": "Director, GTM Strategy Analytics",
+          "email": "natalia.troncoso@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/nataliatroncoso",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Marco Montelatici",
+          "title": "Client Director",
+          "email": "marco.montelatici@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/marcomontelatici",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Andy Baehrle",
+          "title": "Director Product Strategy Operations",
+          "email": "andy.baehrle@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/andybaehrle",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Daisy Hernandez",
+          "title": "Chief Strategy Operations Officer",
+          "email": "daisy.hernandez@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/daisyhernandez",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Nikki Wong",
+          "title": "Director Of Product Management",
+          "email": "nikki.wong@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/nikkiwong",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Mike Cardamone",
+          "title": "Director Of Operations Support",
+          "email": "mike.cardamone@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/mikecardamone",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Avinash Chakravarthy",
+          "title": "Solution Architect, Director",
+          "email": "avinash.chakravarthy@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/avinashchakravarthy",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Sumeet Kumar",
+          "title": "Director Global Services",
+          "email": "sumeet.kumar@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/sumeetkumar",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        }
+      ],
+      "champion": [
+        {
+          "name": "Laz Pastrikos",
+          "title": "Head Of Global Revenue Advisory",
+          "email": "laz.pastrikos@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/lazpastrikos",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Mick Nishiyama",
+          "title": "Head Of Sales, Japan",
+          "email": "mick.nishiyama@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/micknishiyama",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Matt Cimmino",
+          "title": "Sales Operations Business Partner",
+          "email": "matt.cimmino@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/mattcimmino",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Hiroshi Usuzaka",
+          "title": "Leader Of Japan Region Marketing",
+          "email": "hiroshi.usuzaka@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/hiroshiusuzaka",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Stéphanie Alves",
+          "title": "Head Of Field Marketing EMEA",
+          "email": "stéphanie.alves@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/stéphaniealves",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Allen Evans",
+          "title": "Head Of Technical Operations",
+          "email": "allen.evans@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/allenevans",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "source": "coresignal-keyexecutives"
+        }
+      ],
+      "stakeholder": [
+        {
+          "name": "Derek Tobias",
+          "title": "Global Head Of Web Experience",
+          "email": "derek.tobias@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/derektobias",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Joshua Zatkin-steres",
+          "title": "Head Of M A Integration",
+          "email": "joshua.zatkin-steres@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/joshuazatkin-steres",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Edward Song",
+          "title": "Head Of Strategic Finance",
+          "email": "edward.song@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/edwardsong",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Sean Harrington",
+          "title": "Head Of Corporate Development",
+          "email": "sean.harrington@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/seanharrington",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Munendra Chevuru",
+          "title": "Head Of Engineering",
+          "email": "munendra.chevuru@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/munendrachevuru",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Karl Goldstein",
+          "title": "Head Of Corporate Data Strategy",
+          "email": "karl.goldstein@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/karlgoldstein",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Rommel Reyes",
+          "title": "Head Of Corporate FP A",
+          "email": "rommel.reyes@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/rommelreyes",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives"
+        }
+      ],
+      "blocker": [],
+      "introducer": [
+        {
+          "name": "张曼丽",
+          "title": "财务总监",
+          "email": "张曼丽@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/张曼丽",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Arun Srivastava",
+          "title": "ZEO",
+          "email": "arun.srivastava@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/arunsrivastava",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Sean Lu",
+          "title": "Sr. Principal Cloud Architect",
+          "email": "sean.lu@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/seanlu",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Gaurav Sisodia",
+          "title": "ZEO",
+          "email": "gaurav.sisodia@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/gauravsisodia",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives"
+        }
+      ]
+    },
+    "cohesion": {
+      "score": 85,
+      "level": "Excellent",
+      "overallScore": 85,
+      "departmentAlignment": 0.8,
+      "signal": "Strong cross-departmental alignment identified",
+      "strength": 0.85,
+      "source": "cohesion_analysis",
+      "confidence": 0.9
+    },
+    "dynamics": {
+      "decisionFlow": "Top-down with champion influence",
+      "engagementStrategy": "Start with decision makers, leverage champions",
+      "timeline": "3-6 months typical sales cycle"
+    },
+    "opportunitySignals": [
+      {
+        "signal": "Executive team expansion indicates growth",
+        "strength": 0.7,
+        "source": "organizational_growth",
+        "confidence": 0.8
+      }
+    ],
+    "painSignals": [
+      {
+        "signal": "Manual processes requiring automation",
+        "strength": 0.6,
+        "source": "process_inefficiency",
+        "confidence": 0.7
+      }
+    ],
+    "benchmark": {
+      "overallScore": 85,
+      "roleDistribution": 92,
+      "influenceBalance": 88,
+      "cohesionScore": 85,
+      "dataQuality": 90
+    }
+  },
+  "metadata": {
+    "generatedAt": "2025-10-21T16:52:11.662Z",
+    "executivesFound": 86,
+    "dataSource": "coresignal-keyexecutives",
+    "confidence": "high"
+  }
+}

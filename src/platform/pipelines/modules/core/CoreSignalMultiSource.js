@@ -656,10 +656,16 @@ class CoreSignalMultiSource {
                 
                 for (const variation of companyVariations) {
                     console.log(`   🔍 Trying company name variation: "${variation}"`);
-                    employeeIds = await this.searchEmployeesByTitle(variation, titleBatch);
+                    // Search with each title in the batch individually
+                    for (const title of titleBatch) {
+                        employeeIds = await this.searchEmployeesByTitle(variation, title);
+                        if (employeeIds.length > 0) {
+                            console.log(`   ✅ Found ${employeeIds.length} employees with variation: "${variation}" and title: "${title}"`);
+                            foundVariation = variation;
+                            break;
+                        }
+                    }
                     if (employeeIds.length > 0) {
-                        console.log(`   ✅ Found ${employeeIds.length} employees with variation: "${variation}"`);
-                        foundVariation = variation;
                         break;
                     }
                 }

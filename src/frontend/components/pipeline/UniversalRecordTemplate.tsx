@@ -3322,7 +3322,7 @@ export function UniversalRecordTemplate({
     if (activeTabConfig?.component) {
       try {
         const TabComponent = activeTabConfig.component;
-        return <TabComponent key={activeTab} record={record} recordType={recordType} />;
+        return <TabComponent key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />;
       } catch (error) {
         console.error(`🚨 [UNIVERSAL] Error rendering custom tab component:`, error);
         return (
@@ -3436,11 +3436,11 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             <ValueTab key={activeTab} record={record} recordType={recordType} onReportClick={handleReportClick} />
           );
-        case 'news':
-          console.log(`📰 [UNIVERSAL] Rendering news tab for ${recordType}`);
-          return renderTabWithErrorBoundary(
-            <UniversalNewsTab key={activeTab} record={record} recordType={recordType} />
-          );
+        // case 'news':
+        //   console.log(`📰 [UNIVERSAL] Rendering news tab for ${recordType}`);
+        //   return renderTabWithErrorBoundary(
+        //     <UniversalNewsTab key={activeTab} record={record} recordType={recordType} />
+        //   );
         case 'companies':
           return renderTabWithErrorBoundary(
             <UniversalSellerCompaniesTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />

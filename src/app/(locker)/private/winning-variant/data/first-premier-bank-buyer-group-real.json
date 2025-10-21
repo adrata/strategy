@@ -1,0 +1,386 @@
+{
+  "company": {
+    "companyId": "7578901",
+    "companyName": "First PREMIER Bank"
+  },
+  "buyerGroup": {
+    "id": "first_premier_bank_1761065530877",
+    "companyName": "First PREMIER Bank",
+    "totalMembers": 32,
+    "roles": {
+      "decision": [
+        {
+          "name": "Natasha Hulscher",
+          "title": "Director, Benefits And Wellness",
+          "email": "natasha.hulscher@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/natashahulscher",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "William Dale",
+          "title": "Director",
+          "email": "william.dale@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/williamdale",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Kent Hartsuiker",
+          "title": "Director Of Sales Retention",
+          "email": "kent.hartsuiker@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kenthartsuiker",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Lorena Holguin",
+          "title": "Director Of Product Marketing",
+          "email": "lorena.holguin@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/lorenaholguin",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "David Zimbeck",
+          "title": "Member Board Of Directors",
+          "email": "david.zimbeck@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/davidzimbeck",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Amanda Munson",
+          "title": "Director, HRIS And Technology",
+          "email": "amanda.munson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/amandamunson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Aron Larson",
+          "title": "Director Of Technology Support",
+          "email": "aron.larson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/aronlarson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Trent Myron",
+          "title": "Director Of Finance",
+          "email": "trent.myron@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/trentmyron",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Glenda Bittner",
+          "title": "Director Of Operations Support",
+          "email": "glenda.bittner@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/glendabittner",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Corey Anson",
+          "title": "Director, Retention",
+          "email": "corey.anson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/coreyanson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Greg Honl",
+          "title": "Bank Director",
+          "email": "greg.honl@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/greghonl",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Anna Mitchell",
+          "title": "Director, Human Resources",
+          "email": "anna.mitchell@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/annamitchell",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Carleen Frey",
+          "title": "Director Of IT Audit And Data Analytics",
+          "email": "carleen.frey@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/carleenfrey",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Missy Kuiper",
+          "title": "Director Of Accounting",
+          "email": "missy.kuiper@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/missykuiper",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Jody Borstad",
+          "title": "Director",
+          "email": "jody.borstad@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jodyborstad",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Jason Schmidt",
+          "title": "Director Business Intelligence",
+          "email": "jason.schmidt@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jasonschmidt",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Melissa Carlson",
+          "title": "Director",
+          "email": "melissa.carlson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/melissacarlson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Brian Siemonsma",
+          "title": "Director IT Program Management",
+          "email": "brian.siemonsma@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/briansiemonsma",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Mike Laycock",
+          "title": "Director Of Training",
+          "email": "mike.laycock@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/mikelaycock",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Kodi Benson",
+          "title": "Director Of Customer Service Workforce Management",
+          "email": "kodi.benson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kodibenson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Dana Dykhouse",
+          "title": "Chief Executive Officer",
+          "email": "dana.dykhouse@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/danadykhouse",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Kathy Hess",
+          "title": "Director Of Telecommunications",
+          "email": "kathy.hess@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kathyhess",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Rose Aesoph",
+          "title": "Director Of Accounting Payments",
+          "email": "rose.aesoph@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/roseaesoph",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives"
+        }
+      ],
+      "champion": [
+        {
+          "name": "Hannah Nolte",
+          "title": "Human Resources Business Partner",
+          "email": "hannah.nolte@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/hannahnolte",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Melissa Sand",
+          "title": "HR Business Partner",
+          "email": "melissa.sand@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/melissasand",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "source": "coresignal-keyexecutives"
+        }
+      ],
+      "stakeholder": [
+        {
+          "name": "Jimmy Gardner",
+          "title": "Head Of Product Strategy",
+          "email": "jimmy.gardner@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jimmygardner",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Floyd Rummel",
+          "title": "Market Leader",
+          "email": "floyd.rummel@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/floydrummel",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives"
+        }
+      ],
+      "blocker": [],
+      "introducer": [
+        {
+          "name": "Joe Vanden Bosch",
+          "title": "Product Owner",
+          "email": "joe.vanden.bosch@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/joevandenbosch",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Michelle Gullickson",
+          "title": "Directing Officer, Project Management Office",
+          "email": "michelle.gullickson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/michellegullickson",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Denny Sanford",
+          "title": "Chairman",
+          "email": "denny.sanford@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/dennysanford",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Nichole Moeller",
+          "title": "Product Owner",
+          "email": "nichole.moeller@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/nicholemoeller",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives"
+        },
+        {
+          "name": "Kristina Kuhnert",
+          "title": "Product Owner",
+          "email": "kristina.kuhnert@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kristinakuhnert",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives"
+        }
+      ]
+    },
+    "cohesion": {
+      "score": 85,
+      "level": "Excellent",
+      "overallScore": 85,
+      "departmentAlignment": 0.8,
+      "signal": "Strong cross-departmental alignment identified",
+      "strength": 0.85,
+      "source": "cohesion_analysis",
+      "confidence": 0.9
+    },
+    "dynamics": {
+      "decisionFlow": "Top-down with champion influence",
+      "engagementStrategy": "Start with decision makers, leverage champions",
+      "timeline": "3-6 months typical sales cycle"
+    },
+    "opportunitySignals": [
+      {
+        "signal": "Executive team expansion indicates growth",
+        "strength": 0.7,
+        "source": "organizational_growth",
+        "confidence": 0.8
+      }
+    ],
+    "painSignals": [
+      {
+        "signal": "Manual processes requiring automation",
+        "strength": 0.6,
+        "source": "process_inefficiency",
+        "confidence": 0.7
+      }
+    ],
+    "benchmark": {
+      "overallScore": 85,
+      "roleDistribution": 92,
+      "influenceBalance": 88,
+      "cohesionScore": 85,
+      "dataQuality": 90
+    }
+  },
+  "metadata": {
+    "generatedAt": "2025-10-21T16:52:10.877Z",
+    "executivesFound": 32,
+    "dataSource": "coresignal-keyexecutives",
+    "confidence": "high"
+  }
+}

@@ -199,12 +199,14 @@ async function fetchRealNews(companyName: string): Promise<any[]> {
       }
     }
     
-    // If no external APIs are configured or available, throw error to trigger fallback
+    // If no external APIs are configured or available, return empty array
     if (!process.env.NEWS_API_KEY && !process.env.PERPLEXITY_API_KEY) {
-      throw new Error('No external news APIs configured');
+      console.log('❌ [NEWS API] No external news APIs configured');
+      return [];
     }
     
-    throw new Error('All external news APIs failed');
+    console.log('❌ [NEWS API] All external news APIs failed or returned no relevant articles');
+    return [];
     
   } catch (error) {
     console.error('❌ [NEWS API] Error fetching real news:', error);

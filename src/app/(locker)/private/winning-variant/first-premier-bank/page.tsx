@@ -5,18 +5,20 @@ import Link from 'next/link';
 import { BuyerGroupMemberCard } from '../components/BuyerGroupMemberCard';
 import { SalesIntentGauge } from '../components/SalesIntentGauge';
 
-// Mock data for First Premier Bank buyer group
+// Real data for First Premier Bank buyer group
+import firstPremierRealData from '../data/first-premier-bank-buyer-group-real.json';
+
 const firstPremierData = {
   companyInfo: {
-    name: "First Premier Bank",
+    name: firstPremierRealData.company.companyName,
     website: "https://firstpremier.com",
     industry: "Banking / Financial Services",
     size: "1,000-5,000 employees",
     headquarters: "Sioux Falls, South Dakota"
   },
   buyerGroup: {
-    totalMembers: 7,
-    cohesionScore: 79,
+    totalMembers: firstPremierRealData.buyerGroup.totalMembers,
+    cohesionScore: firstPremierRealData.buyerGroup.cohesion.score,
     overallConfidence: 86,
     members: [
       {

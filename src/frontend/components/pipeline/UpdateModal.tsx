@@ -960,12 +960,12 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderHomeTab();
         case 'actions':
           return renderTimelineTab();
-        case 'news':
-          return (
-            <div className="p-6">
-              <UniversalNewsTab record={record} recordType={recordType} />
-            </div>
-          );
+        // case 'news':
+        //   return (
+        //     <div className="p-6">
+        //       <UniversalNewsTab record={record} recordType={recordType} />
+        //     </div>
+        //   );
         case 'strategy':
           return (
             <div className="p-6">
