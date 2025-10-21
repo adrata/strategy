@@ -77,19 +77,18 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'overview-people': PersonOverviewTab,
   'overview-prospects': ProspectOverviewTab,
   
-  // Intelligence tabs
-  'intelligence': UniversalInsightsTab,
-  'intelligence-companies': UniversalCompanyIntelTab,
-  'intelligence-people': ComprehensiveInsightsTab,
-  'intelligence-comprehensive': ComprehensiveInsightsTab,
+  // Strategy tabs
+  'strategy': UniversalInsightsTab,
+  'strategy-companies': UniversalCompanyIntelTab,
+  'strategy-people': ComprehensiveInsightsTab,
+  'strategy-comprehensive': ComprehensiveInsightsTab,
   
   // Career and role tabs
   'career': ComprehensiveCareerTab,
   'role': UniversalRoleTab,
   'enablers': UniversalEnablersTab,
   
-  // Strategy and business tabs
-  'strategy': UniversalStrategyTab,
+  // Business tabs
   'buyer-groups': UniversalBuyerGroupsTab,
   'people': UniversalPeopleTab,
   'competitors': UniversalCompetitorsTab,
@@ -149,7 +148,7 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
 export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   leads: [
     { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
-    { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'strategy', label: 'Strategy', component: UniversalInsightsTab },
     { id: 'value', label: 'Value', component: ValueTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab },
@@ -158,7 +157,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   
   prospects: [
     { id: 'overview', label: 'Overview', component: ProspectOverviewTab },
-    { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'strategy', label: 'Strategy', component: UniversalInsightsTab },
     { id: 'value', label: 'Value', component: ValueTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab },
@@ -178,8 +177,8 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   
   companies: [
     { id: 'overview', label: 'Overview', component: UniversalCompanyTab },
+    { id: 'strategy', label: 'Strategy', component: UniversalCompanyIntelTab },
     { id: 'news', label: 'News', component: UniversalNewsTab },
-    { id: 'intelligence', label: 'Intelligence', component: UniversalCompanyIntelTab },
     { id: 'people', label: 'People', component: UniversalPeopleTab },
     { id: 'value', label: 'Value', component: ValueTab },
     { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
@@ -190,7 +189,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   
   people: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
-    { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
+    { id: 'strategy', label: 'Strategy', component: ComprehensiveInsightsTab },
     { id: 'value', label: 'Value', component: ValueTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab },
@@ -199,7 +198,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   
   speedrun: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
-    { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
+    { id: 'strategy', label: 'Strategy', component: ComprehensiveInsightsTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab },
     { id: 'timeline', label: 'Timeline', component: UniversalActionsTab }

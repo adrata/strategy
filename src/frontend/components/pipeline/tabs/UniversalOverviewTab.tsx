@@ -27,6 +27,9 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   const [actionsLoading, setActionsLoading] = useState(false);
   const [actionsError, setActionsError] = useState<string | null>(null);
   
+  // Timestamp refresh state
+  const [timestampRefresh, setTimestampRefresh] = useState(0);
+  
   // LinkedIn fields state for persistence
   const [linkedinUrl, setLinkedinUrl] = useState<string | null>(null);
   const [linkedinNavigatorUrl, setLinkedinNavigatorUrl] = useState<string | null>(null);
@@ -142,6 +145,15 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       document.removeEventListener('actionCreated', handleActionCreated as EventListener);
     };
   }, [record?.id, recordType, fetchActions]);
+
+  // Auto-refresh timestamps every 60 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimestampRefresh(prev => prev + 1);
+    }, 60000); // 60 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Show skeleton loader while data is loading
   if (!record) {
@@ -332,6 +344,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       
       const now = new Date();
       const diffInMs = now.getTime() - date.getTime();
+      const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
       const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
       const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
       
@@ -339,13 +352,16 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         now: now.getTime(),
         date: date.getTime(),
         diffInMs,
+        diffInMinutes,
         diffInHours,
         diffInDays
       });
       
       let result = '';
-      if (diffInHours < 1) {
+      if (diffInMinutes < 1) {
         result = 'Just now';
+      } else if (diffInMinutes < 60) {
+        result = `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
       } else if (diffInHours < 24) {
         result = `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
       } else if (diffInDays === 1) {
@@ -547,8 +563,8 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   };
 
 
-  // Generate last actions from fetched API data
-  const generateLastActions = () => {
+  // Generate last actions from fetched API data with timestamp refresh dependency
+  const lastActions = React.useMemo(() => {
     if (actionsLoading) {
       return [];
     }
@@ -568,9 +584,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         date: formatRelativeDate(action.completedAt || action.scheduledAt || action.createdAt)
       };
     });
-  };
-
-  const lastActions = generateLastActions();
+  }, [actions, actionsLoading, actionsError, timestampRefresh]);
 
         return (
           <div className="space-y-6">

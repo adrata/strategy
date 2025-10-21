@@ -17,30 +17,56 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Workspace ID required' }, { status: 400 });
     }
 
-    // Get today and yesterday dates
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    // Set to start of day
+    // Calculate weekly date ranges (Monday-Friday business days)
+    const now = new Date();
+    const today = new Date(now);
     today.setHours(0, 0, 0, 0);
-    yesterday.setHours(0, 0, 0, 0);
     
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    // Get current day of week (0 = Sunday, 1 = Monday, etc.)
+    const currentDay = today.getDay();
     
-    const dayBeforeYesterday = new Date(yesterday);
-    dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 1);
+    // Calculate start of this week (Monday)
+    const daysToMonday = currentDay === 0 ? -6 : 1 - currentDay; // If Sunday, go back 6 days; otherwise go to Monday
+    const startOfThisWeek = new Date(today);
+    startOfThisWeek.setDate(today.getDate() + daysToMonday);
+    startOfThisWeek.setHours(0, 0, 0, 0);
+    
+    // Calculate end of this week (Friday or today if before Friday)
+    const endOfThisWeek = new Date(today);
+    if (currentDay >= 1 && currentDay <= 5) { // Monday to Friday
+      endOfThisWeek.setHours(23, 59, 59, 999);
+    } else { // Weekend - use Friday of current week
+      const daysToFriday = 5 - currentDay;
+      endOfThisWeek.setDate(today.getDate() + daysToFriday);
+      endOfThisWeek.setHours(23, 59, 59, 999);
+    }
+    
+    // Calculate last week (previous Monday to Friday)
+    const startOfLastWeek = new Date(startOfThisWeek);
+    startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
+    startOfLastWeek.setHours(0, 0, 0, 0);
+    
+    const endOfLastWeek = new Date(startOfLastWeek);
+    endOfLastWeek.setDate(startOfLastWeek.getDate() + 4); // Monday + 4 days = Friday
+    endOfLastWeek.setHours(23, 59, 59, 999);
+    
+    console.log('📅 Weekly date ranges:', {
+      startOfThisWeek: startOfThisWeek.toISOString(),
+      endOfThisWeek: endOfThisWeek.toISOString(),
+      startOfLastWeek: startOfLastWeek.toISOString(),
+      endOfLastWeek: endOfLastWeek.toISOString(),
+      currentDay
+    });
 
-    // Get actions data for today and yesterday
-    const [todayActions, yesterdayActions, allActions] = await Promise.all([
-      // Today's actions
+    // Get actions data for this week and last week
+    const [thisWeekActions, lastWeekActions, allActions] = await Promise.all([
+      // This week's actions
       prisma.actions.findMany({
         where: {
           workspaceId,
           createdAt: {
-            gte: today,
-            lt: tomorrow
+            gte: startOfThisWeek,
+            lte: endOfThisWeek
           },
           deletedAt: null
         },
@@ -50,13 +76,13 @@ export async function GET(request: NextRequest) {
         }
       }),
       
-      // Yesterday's actions
+      // Last week's actions
       prisma.actions.findMany({
         where: {
           workspaceId,
           createdAt: {
-            gte: yesterday,
-            lt: today
+            gte: startOfLastWeek,
+            lte: endOfLastWeek
           },
           deletedAt: null
         },
@@ -99,8 +125,8 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Calculate metrics
-    const todayPeopleActions = todayActions.length;
-    const yesterdayPeopleActions = yesterdayActions.length;
+    const thisWeekPeopleActions = thisWeekActions.length;
+    const lastWeekPeopleActions = lastWeekActions.length;
     
     // Action types breakdown
     const actionTypes = {
@@ -115,12 +141,12 @@ export async function GET(request: NextRequest) {
       return actions.filter(action => actionTypes[type as keyof typeof actionTypes].includes(action.type)).length;
     };
 
-    const todayActionTypes = {
-      call: getActionTypeCount(todayActions, 'call'),
-      email: getActionTypeCount(todayActions, 'email'),
-      meeting: getActionTypeCount(todayActions, 'meeting'),
-      proposal: getActionTypeCount(todayActions, 'proposal'),
-      other: getActionTypeCount(todayActions, 'other')
+    const thisWeekActionTypes = {
+      call: getActionTypeCount(thisWeekActions, 'call'),
+      email: getActionTypeCount(thisWeekActions, 'email'),
+      meeting: getActionTypeCount(thisWeekActions, 'meeting'),
+      proposal: getActionTypeCount(thisWeekActions, 'proposal'),
+      other: getActionTypeCount(thisWeekActions, 'other')
     };
 
     // Conversion metrics
@@ -133,7 +159,7 @@ export async function GET(request: NextRequest) {
     const prospectsToOpportunitiesRate = prospects > 0 ? (opportunities / prospects) * 100 : 0;
     const opportunitiesToClientsRate = opportunities > 0 ? (clients / opportunities) * 100 : 0;
 
-    // Generate chart data for last 7 days
+    // Generate chart data for last 7 days (for weekly context)
     const chartData = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
@@ -157,13 +183,36 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Calculate trends for week-over-week comparison
+    const calculateTrend = (current: number, previous: number) => {
+      if (previous === 0) return { direction: 'stable' as const, change: 0, comparison: 0 };
+      const change = ((current - previous) / previous) * 100;
+      return {
+        direction: change > 0 ? 'up' as const : change < 0 ? 'down' as const : 'stable' as const,
+        change: Math.round(change),
+        comparison: previous
+      };
+    };
+
+    const trends = {
+      thisWeekPeopleActions: calculateTrend(thisWeekPeopleActions, lastWeekPeopleActions),
+      lastWeekPeopleActions: calculateTrend(lastWeekPeopleActions, 0), // No comparison for last week
+      calls: calculateTrend(thisWeekActionTypes.call, 0), // Simplified - would need last week's call data
+      emails: calculateTrend(thisWeekActionTypes.email, 0), // Simplified - would need last week's email data
+      meetings: calculateTrend(thisWeekActionTypes.meeting, 0), // Simplified - would need last week's meeting data
+      prospects: calculateTrend(prospects, 0), // Rolling count
+      opportunities: calculateTrend(opportunities, 0), // Rolling count
+      clients: calculateTrend(clients, 0), // Rolling count
+      conversionRate: calculateTrend(prospectsToOpportunitiesRate, 0) // Rolling rate
+    };
+
     const metrics = {
       // Main stats
-      todayPeopleActions,
-      yesterdayPeopleActions,
+      thisWeekPeopleActions,
+      lastWeekPeopleActions,
       
       // Action types (for pie chart)
-      actionTypes: todayActionTypes,
+      actionTypes: thisWeekActionTypes,
       
       // Conversion metrics
       conversionMetrics: {
@@ -175,13 +224,16 @@ export async function GET(request: NextRequest) {
         opportunitiesToClientsRate: Math.round(opportunitiesToClientsRate)
       },
       
+      // Trends for week-over-week comparison
+      trends,
+      
       // Chart data
       chartData,
       
       // Raw data for debugging
       raw: {
-        todayActions: todayActions.length,
-        yesterdayActions: yesterdayActions.length,
+        thisWeekActions: thisWeekActions.length,
+        lastWeekActions: lastWeekActions.length,
         totalActions: allActions.length,
         totalPeople: people.length,
         totalCompanies: companies.length

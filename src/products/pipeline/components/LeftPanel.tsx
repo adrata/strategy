@@ -731,9 +731,11 @@ function PipelineSections({
     {
       id: "metrics",
       name: "Metrics",
-      description: "Sales Activity Dashboard",
-      count: (isNotaryEveryday && isRyanSerrato) ? metricsCount : 0, // Show count only for Ryan Serrato in Notary Everyday
-      visible: (isNotaryEveryday && isRyanSerrato) // Only show for Ryan Serrato in Notary Everyday
+      description: "Weekly Sales Performance",
+      count: loading ? (
+        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+      ) : "9", // 9 different metrics displayed on the page
+      visible: true // Show for all users
     },
     // SELLERS: Show only for demo workspace
     {

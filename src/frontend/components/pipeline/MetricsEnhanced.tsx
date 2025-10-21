@@ -79,8 +79,8 @@ function MetricCard({ title, value, subtitle, trend, trendValue, color = 'defaul
 }
 
 interface MetricsData {
-  todayPeopleActions: number;
-  yesterdayPeopleActions: number;
+  thisWeekPeopleActions: number;
+  lastWeekPeopleActions: number;
   actionTypes: {
     call: number;
     email: number;
@@ -97,8 +97,8 @@ interface MetricsData {
     opportunitiesToClientsRate: number;
   };
   trends: {
-    todayPeopleActions: { direction: 'up' | 'down' | 'stable'; change: number; comparison: number };
-    yesterdayPeopleActions: { direction: 'up' | 'down' | 'stable'; change: number; comparison: number };
+    thisWeekPeopleActions: { direction: 'up' | 'down' | 'stable'; change: number; comparison: number };
+    lastWeekPeopleActions: { direction: 'up' | 'down' | 'stable'; change: number; comparison: number };
     calls: { direction: 'up' | 'down' | 'stable'; change: number; comparison: number };
     emails: { direction: 'up' | 'down' | 'stable'; change: number; comparison: number };
     meetings: { direction: 'up' | 'down' | 'stable'; change: number; comparison: number };
@@ -147,8 +147,8 @@ export function MetricsEnhanced() {
           if (isNotaryEveryday) {
             console.log('API failed, using mock data for Notary Everyday');
             setMetrics({
-              todayPeopleActions: 18,
-              yesterdayPeopleActions: 16,
+              thisWeekPeopleActions: 89,
+              lastWeekPeopleActions: 76,
               actionTypes: {
                 call: 45,
                 email: 35,
@@ -160,13 +160,13 @@ export function MetricsEnhanced() {
                 leads: 67,
                 prospects: 45,
                 opportunities: 12,
-                clients: 8,
+                clients: 0, // Start with 0 to show real data when available
                 prospectsToOpportunitiesRate: 26.7,
                 opportunitiesToClientsRate: 66.7
               },
               trends: {
-                todayPeopleActions: { direction: 'up', change: 12.5, comparison: 16 },
-                yesterdayPeopleActions: { direction: 'up', change: 6.7, comparison: 15 },
+                thisWeekPeopleActions: { direction: 'up', change: 17.1, comparison: 76 },
+                lastWeekPeopleActions: { direction: 'up', change: 6.7, comparison: 71 },
                 calls: { direction: 'up', change: 15.4, comparison: 39 },
                 emails: { direction: 'up', change: 9.4, comparison: 32 },
                 meetings: { direction: 'up', change: 20.0, comparison: 15 },
@@ -197,8 +197,10 @@ export function MetricsEnhanced() {
         const data = await response.json();
         
         if (data.success) {
+          console.log('✅ [METRICS] API returned real data:', data.data);
           setMetrics(data.data);
         } else {
+          console.log('❌ [METRICS] API returned error:', data.error);
           throw new Error(data.error || 'Failed to load metrics');
         }
       } catch (err) {
@@ -210,8 +212,8 @@ export function MetricsEnhanced() {
         if (isNotaryEveryday && isRyanSerrato) {
           console.log('Error occurred, using mock data for Ryan Serrato in Notary Everyday');
           setMetrics({
-            todayPeopleActions: 18,
-            yesterdayPeopleActions: 16,
+            thisWeekPeopleActions: 89,
+            lastWeekPeopleActions: 76,
             actionTypes: {
               call: 45,
               email: 35,
@@ -223,13 +225,13 @@ export function MetricsEnhanced() {
               leads: 67,
               prospects: 45,
               opportunities: 12,
-              clients: 8,
+              clients: 0, // Start with 0 to show real data when available
               prospectsToOpportunitiesRate: 26.7,
               opportunitiesToClientsRate: 66.7
             },
             trends: {
-              todayPeopleActions: { direction: 'up', change: 12.5, comparison: 16 },
-              yesterdayPeopleActions: { direction: 'up', change: 6.7, comparison: 15 },
+              thisWeekPeopleActions: { direction: 'up', change: 17.1, comparison: 76 },
+              lastWeekPeopleActions: { direction: 'up', change: 6.7, comparison: 71 },
               calls: { direction: 'up', change: 15.4, comparison: 39 },
               emails: { direction: 'up', change: 9.4, comparison: 32 },
               meetings: { direction: 'up', change: 20.0, comparison: 15 },
@@ -298,57 +300,57 @@ export function MetricsEnhanced() {
       <div className="p-6 bg-[var(--background)] min-h-full">
         {/* 3x3 Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1400px]">
-          {/* Actions Today */}
+          {/* Actions Last Week */}
           <MetricCard
-            title="Actions Today"
-            value={metrics?.todayPeopleActions || 0}
-            subtitle={`Daily outreach (+${(metrics?.todayPeopleActions || 0) - (metrics?.trends?.todayPeopleActions?.comparison || 0)} from yesterday)`}
-            color={(metrics?.todayPeopleActions || 0) >= 15 ? 'success' : (metrics?.todayPeopleActions || 0) < 8 ? 'danger' : 'default'}
-            status={(metrics?.todayPeopleActions || 0) >= 15 ? 'ahead' : (metrics?.todayPeopleActions || 0) < 8 ? 'behind' : 'on-track'}
-            trend={metrics?.trends?.todayPeopleActions?.direction}
-            trendValue={`${metrics?.trends?.todayPeopleActions?.change || 0}%`}
+            title="Actions Last Week"
+            value={metrics?.lastWeekPeopleActions || 0}
+            subtitle={`Previous week (+${(metrics?.lastWeekPeopleActions || 0) - (metrics?.trends?.lastWeekPeopleActions?.comparison || 0)} from week before)`}
+            color={(metrics?.lastWeekPeopleActions || 0) >= 75 ? 'success' : (metrics?.lastWeekPeopleActions || 0) < 40 ? 'danger' : 'default'}
+            status={(metrics?.lastWeekPeopleActions || 0) >= 75 ? 'ahead' : (metrics?.lastWeekPeopleActions || 0) < 40 ? 'behind' : 'on-track'}
+            trend={metrics?.trends?.lastWeekPeopleActions?.direction}
+            trendValue={`${metrics?.trends?.lastWeekPeopleActions?.change || 0}%`}
           />
 
-          {/* Actions Yesterday */}
+          {/* Actions This Week */}
           <MetricCard
-            title="Actions Yesterday"
-            value={metrics?.yesterdayPeopleActions || 0}
-            subtitle={`Daily outreach (+${(metrics?.yesterdayPeopleActions || 0) - (metrics?.trends?.yesterdayPeopleActions?.comparison || 0)} from day before)`}
-            color={(metrics?.yesterdayPeopleActions || 0) >= 15 ? 'success' : (metrics?.yesterdayPeopleActions || 0) < 8 ? 'danger' : 'default'}
-            status={(metrics?.yesterdayPeopleActions || 0) >= 15 ? 'ahead' : (metrics?.yesterdayPeopleActions || 0) < 8 ? 'behind' : 'on-track'}
-            trend={metrics?.trends?.yesterdayPeopleActions?.direction}
-            trendValue={`${metrics?.trends?.yesterdayPeopleActions?.change || 0}%`}
+            title="Actions This Week"
+            value={metrics?.thisWeekPeopleActions || 0}
+            subtitle={`Weekly outreach (+${(metrics?.thisWeekPeopleActions || 0) - (metrics?.trends?.thisWeekPeopleActions?.comparison || 0)} from last week)`}
+            color={(metrics?.thisWeekPeopleActions || 0) >= 75 ? 'success' : (metrics?.thisWeekPeopleActions || 0) < 40 ? 'danger' : 'default'}
+            status={(metrics?.thisWeekPeopleActions || 0) >= 75 ? 'ahead' : (metrics?.thisWeekPeopleActions || 0) < 40 ? 'behind' : 'on-track'}
+            trend={metrics?.trends?.thisWeekPeopleActions?.direction}
+            trendValue={`${metrics?.trends?.thisWeekPeopleActions?.change || 0}%`}
           />
 
-          {/* Calls Today */}
+          {/* Calls This Week */}
           <MetricCard
-            title="Calls Today"
+            title="Calls This Week"
             value={metrics?.actionTypes?.call || 0}
-            subtitle={`Daily phone activity (+${(metrics?.actionTypes?.call || 0) - (metrics?.trends?.calls?.comparison || 0)} from yesterday)`}
-            color={(metrics?.actionTypes?.call || 0) > 20 ? 'success' : (metrics?.actionTypes?.call || 0) > 10 ? 'default' : 'danger'}
-            status={(metrics?.actionTypes?.call || 0) > 20 ? 'ahead' : (metrics?.actionTypes?.call || 0) > 10 ? 'on-track' : 'behind'}
+            subtitle={`Weekly phone activity (+${(metrics?.actionTypes?.call || 0) - (metrics?.trends?.calls?.comparison || 0)} from last week)`}
+            color={(metrics?.actionTypes?.call || 0) > 100 ? 'success' : (metrics?.actionTypes?.call || 0) > 50 ? 'default' : 'danger'}
+            status={(metrics?.actionTypes?.call || 0) > 100 ? 'ahead' : (metrics?.actionTypes?.call || 0) > 50 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.calls?.direction}
             trendValue={`${metrics?.trends?.calls?.change || 0}%`}
           />
 
-          {/* Emails Today */}
+          {/* Emails This Week */}
           <MetricCard
-            title="Emails Today"
+            title="Emails This Week"
             value={metrics?.actionTypes?.email || 0}
-            subtitle={`Daily email outreach (+${(metrics?.actionTypes?.email || 0) - (metrics?.trends?.emails?.comparison || 0)} from yesterday)`}
-            color={(metrics?.actionTypes?.email || 0) > 20 ? 'success' : (metrics?.actionTypes?.email || 0) > 10 ? 'default' : 'danger'}
-            status={(metrics?.actionTypes?.email || 0) > 20 ? 'ahead' : (metrics?.actionTypes?.email || 0) > 10 ? 'on-track' : 'behind'}
+            subtitle={`Weekly email outreach (+${(metrics?.actionTypes?.email || 0) - (metrics?.trends?.emails?.comparison || 0)} from last week)`}
+            color={(metrics?.actionTypes?.email || 0) > 100 ? 'success' : (metrics?.actionTypes?.email || 0) > 50 ? 'default' : 'danger'}
+            status={(metrics?.actionTypes?.email || 0) > 100 ? 'ahead' : (metrics?.actionTypes?.email || 0) > 50 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.emails?.direction}
             trendValue={`${metrics?.trends?.emails?.change || 0}%`}
           />
 
-          {/* Meetings Today */}
+          {/* Meetings This Week */}
           <MetricCard
-            title="Meetings Today"
+            title="Meetings This Week"
             value={metrics?.actionTypes?.meeting || 0}
-            subtitle={`Daily face-to-face (+${(metrics?.actionTypes?.meeting || 0) - (metrics?.trends?.meetings?.comparison || 0)} from yesterday)`}
-            color={(metrics?.actionTypes?.meeting || 0) > 5 ? 'success' : (metrics?.actionTypes?.meeting || 0) > 2 ? 'default' : 'danger'}
-            status={(metrics?.actionTypes?.meeting || 0) > 5 ? 'ahead' : (metrics?.actionTypes?.meeting || 0) > 2 ? 'on-track' : 'behind'}
+            subtitle={`Weekly face-to-face (+${(metrics?.actionTypes?.meeting || 0) - (metrics?.trends?.meetings?.comparison || 0)} from last week)`}
+            color={(metrics?.actionTypes?.meeting || 0) > 25 ? 'success' : (metrics?.actionTypes?.meeting || 0) > 10 ? 'default' : 'danger'}
+            status={(metrics?.actionTypes?.meeting || 0) > 25 ? 'ahead' : (metrics?.actionTypes?.meeting || 0) > 10 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.meetings?.direction}
             trendValue={`${metrics?.trends?.meetings?.change || 0}%`}
           />
@@ -357,7 +359,7 @@ export function MetricsEnhanced() {
           <MetricCard
             title="New Prospects"
             value={metrics?.conversionMetrics?.prospects || 0}
-            subtitle={`This month (+${(metrics?.conversionMetrics?.prospects || 0) - (metrics?.trends?.prospects?.comparison || 0)} from last month)`}
+            subtitle={`Rolling count (+${(metrics?.conversionMetrics?.prospects || 0) - (metrics?.trends?.prospects?.comparison || 0)} from last period)`}
             color={(metrics?.conversionMetrics?.prospects || 0) > 20 ? 'success' : (metrics?.conversionMetrics?.prospects || 0) > 10 ? 'default' : 'danger'}
             status={(metrics?.conversionMetrics?.prospects || 0) > 20 ? 'ahead' : (metrics?.conversionMetrics?.prospects || 0) > 10 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.prospects?.direction}
@@ -368,7 +370,7 @@ export function MetricsEnhanced() {
           <MetricCard
             title="New Opportunities"
             value={metrics?.conversionMetrics?.opportunities || 0}
-            subtitle={`This week (+${(metrics?.conversionMetrics?.opportunities || 0) - (metrics?.trends?.opportunities?.comparison || 0)} from last week)`}
+            subtitle={`Rolling count (+${(metrics?.conversionMetrics?.opportunities || 0) - (metrics?.trends?.opportunities?.comparison || 0)} from last period)`}
             color={(metrics?.conversionMetrics?.opportunities || 0) > 3 ? 'success' : (metrics?.conversionMetrics?.opportunities || 0) > 1 ? 'default' : 'danger'}
             status={(metrics?.conversionMetrics?.opportunities || 0) > 3 ? 'ahead' : (metrics?.conversionMetrics?.opportunities || 0) > 1 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.opportunities?.direction}
@@ -379,7 +381,7 @@ export function MetricsEnhanced() {
           <MetricCard
             title="Clients"
             value={metrics?.conversionMetrics?.clients || 0}
-            subtitle={`This quarter (+${(metrics?.conversionMetrics?.clients || 0) - (metrics?.trends?.clients?.comparison || 0)} from last quarter)`}
+            subtitle={`Rolling count (+${(metrics?.conversionMetrics?.clients || 0) - (metrics?.trends?.clients?.comparison || 0)} from last period)`}
             color={(metrics?.conversionMetrics?.clients || 0) > 5 ? 'success' : (metrics?.conversionMetrics?.clients || 0) > 2 ? 'default' : 'danger'}
             status={(metrics?.conversionMetrics?.clients || 0) > 5 ? 'ahead' : (metrics?.conversionMetrics?.clients || 0) > 2 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.clients?.direction}
@@ -390,7 +392,7 @@ export function MetricsEnhanced() {
           <MetricCard
             title="Lead to Prospect"
             value={`${metrics?.conversionMetrics?.prospectsToOpportunitiesRate || 0}%`}
-            subtitle={`Lead → Prospect (+${((metrics?.conversionMetrics?.prospectsToOpportunitiesRate || 0) - (metrics?.trends?.conversionRate?.comparison || 0)).toFixed(1)}% from last period)`}
+            subtitle={`Rolling conversion rate (+${((metrics?.conversionMetrics?.prospectsToOpportunitiesRate || 0) - (metrics?.trends?.conversionRate?.comparison || 0)).toFixed(1)}% from last period)`}
             color={(metrics?.conversionMetrics?.prospectsToOpportunitiesRate || 0) > 30 ? 'success' : (metrics?.conversionMetrics?.prospectsToOpportunitiesRate || 0) > 20 ? 'default' : 'danger'}
             status={(metrics?.conversionMetrics?.prospectsToOpportunitiesRate || 0) > 30 ? 'ahead' : (metrics?.conversionMetrics?.prospectsToOpportunitiesRate || 0) > 20 ? 'on-track' : 'behind'}
             trend={metrics?.trends?.conversionRate?.direction}

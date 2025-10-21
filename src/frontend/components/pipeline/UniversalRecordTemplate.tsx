@@ -135,16 +135,16 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         case 'leads':
           return [
             { id: 'overview', label: 'Overview' },
+            { id: 'strategy', label: 'Strategy' },
             { id: 'actions', label: 'Actions' },
-            { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' }
           ];
     case 'prospects':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
-        { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
       ];
@@ -161,9 +161,9 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'companies':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
         { id: 'news', label: 'News' },
-        { id: 'intelligence', label: 'Intelligence' },
         { id: 'people', label: 'People' },
         { id: 'buyer-groups', label: 'Buyer Group' },
         { id: 'notes', label: 'Notes' }
@@ -171,16 +171,16 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'people':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
-        { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
       ];
     case 'speedrun':
       return [
         { id: 'overview', label: 'Overview' },
+        { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
-        { id: 'intelligence', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
       ];
@@ -3159,9 +3159,19 @@ export function UniversalRecordTemplate({
             <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'strategy':
-          console.log(`🎯 [UNIVERSAL] Rendering strategy tab for ${recordType}`);
+          console.log(`🧠 [UNIVERSAL] Rendering strategy tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            <UniversalStrategyTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+            recordType === 'companies' ? 
+              <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} /> :
+              recordType === 'speedrun' ?
+                <SpeedrunInsightsTab 
+                  key={activeTab} 
+                  person={record} 
+                  insightsData={extractProductionInsights(record)} 
+                /> :
+              recordType === 'people' ?
+                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} /> :
+                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
           );
         case 'buyer-groups':
           console.log(`👥 [UNIVERSAL] Rendering buyer groups tab for ${recordType}`);
@@ -3186,8 +3196,8 @@ export function UniversalRecordTemplate({
               <ComprehensiveInsightsTab key={activeTab} record={record} recordType={recordType} /> :
               <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
           );
-        case 'intelligence':
-          console.log(`🧠 [UNIVERSAL] Rendering intelligence tab for ${recordType}`);
+        case 'strategy':
+          console.log(`🧠 [UNIVERSAL] Rendering strategy tab for ${recordType}`);
           return renderTabWithErrorBoundary(
             recordType === 'companies' ? 
               <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} /> :
@@ -3776,17 +3786,17 @@ export function UniversalRecordTemplate({
               <nav className="-mb-px flex space-x-8">
                 {(recordType === 'companies' ? [
                   { id: 'overview', label: 'Overview' },
+                  { id: 'strategy', label: 'Strategy' },
                   { id: 'timeline', label: 'Actions' },
                   { id: 'news', label: 'News' },
-                  { id: 'intelligence', label: 'Intelligence' },
                   { id: 'buyer-groups', label: 'Buyer Group' },
                   { id: 'notes', label: 'Notes' },
                   { id: 'delete', label: 'Delete' }
                 ] : [
                   { id: 'overview', label: 'Overview' },
-                  { id: 'intelligence', label: 'Intelligence' },
-                  { id: 'career', label: 'Career' },
+                  { id: 'strategy', label: 'Strategy' },
                   { id: 'actions', label: 'Actions' },
+                  { id: 'career', label: 'Career' },
                   { id: 'notes', label: 'Notes' },
                   { id: 'delete', label: 'Delete' }
                 ]).map((tab) => (

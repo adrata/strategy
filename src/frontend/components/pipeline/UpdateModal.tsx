@@ -170,8 +170,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         case 'people':
           return [
             { id: 'overview', label: 'Overview' },
+            { id: 'strategy', label: 'Strategy' },
             { id: 'actions', label: 'Actions' },
-            { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' },
             { id: 'delete', label: 'Delete' }
@@ -179,9 +179,9 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         case 'companies':
           return [
             { id: 'overview', label: 'Overview' },
+            { id: 'strategy', label: 'Strategy' },
             { id: 'actions', label: 'Actions' },
             { id: 'news', label: 'News' },
-            { id: 'intelligence', label: 'Intelligence' },
             { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'delete', label: 'Delete' }
@@ -189,8 +189,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         case 'leads':
           return [
             { id: 'overview', label: 'Overview' },
+            { id: 'strategy', label: 'Strategy' },
             { id: 'actions', label: 'Actions' },
-            { id: 'intelligence', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' },
             { id: 'delete', label: 'Delete' }
@@ -198,8 +198,8 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       case 'prospects':
         return [
           { id: 'overview', label: 'Overview' },
+          { id: 'strategy', label: 'Strategy' },
           { id: 'actions', label: 'Actions' },
-          { id: 'intelligence', label: 'Intelligence' },
           { id: 'career', label: 'Career' },
           { id: 'notes', label: 'Notes' },
           { id: 'delete', label: 'Delete' }
@@ -925,11 +925,11 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderEnablersTab();
         case 'company':
           return renderCompanyTab();
-        case 'intelligence':
+        case 'strategy':
           return (
             <div className="p-6">
               <div className="text-center py-12 text-[var(--muted)]">
-                <p className="text-sm">Intelligence data is available in the main record view.</p>
+                <p className="text-sm">Strategy data is available in the main record view.</p>
                 <p className="text-xs text-[var(--muted)] mt-2">This feature is read-only in edit mode.</p>
               </div>
             </div>
@@ -957,7 +957,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
               <UniversalNewsTab record={record} recordType={recordType} />
             </div>
           );
-        case 'intelligence':
+        case 'strategy':
           return (
             <div className="p-6">
               <UniversalCompanyIntelTab 
@@ -998,11 +998,11 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return renderEnablersTab();
         case 'company':
           return renderCompanyTab();
-        case 'intelligence':
+        case 'strategy':
           return (
             <div className="p-6">
               <div className="text-center py-12 text-[var(--muted)]">
-                <p className="text-sm">Intelligence data is available in the main record view.</p>
+                <p className="text-sm">Strategy data is available in the main record view.</p>
                 <p className="text-xs text-[var(--muted)] mt-2">This feature is read-only in edit mode.</p>
               </div>
             </div>
