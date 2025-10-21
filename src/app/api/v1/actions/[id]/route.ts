@@ -127,13 +127,21 @@ export async function PUT(
       );
     }
 
+    // Prepare update data with automatic completion handling
+    const updateData: any = {
+      ...body,
+      updatedAt: new Date(),
+    };
+
+    // If status is being changed to COMPLETED, set completedAt
+    if (body.status === 'COMPLETED' && existingAction.status !== 'COMPLETED') {
+      updateData.completedAt = new Date();
+    }
+
     // Update action
     const updatedAction = await prisma.actions.update({
       where: { id },
-      data: {
-        ...body,
-        updatedAt: new Date(),
-      },
+      data: updateData,
       include: {
         user: {
           select: {
@@ -162,6 +170,48 @@ export async function PUT(
         },
       },
     });
+
+    // Update person's lastAction fields if action is completed
+    if (updatedAction.personId && updatedAction.status === 'COMPLETED') {
+      try {
+        await prisma.people.update({
+          where: { id: updatedAction.personId },
+          data: {
+            lastAction: updatedAction.subject,
+            lastActionDate: updatedAction.completedAt || updatedAction.updatedAt,
+            actionStatus: updatedAction.status
+          }
+        });
+        console.log('✅ [ACTIONS PUT] Updated person lastAction fields:', {
+          personId: updatedAction.personId,
+          lastAction: updatedAction.subject,
+          lastActionDate: updatedAction.completedAt || updatedAction.updatedAt
+        });
+      } catch (error) {
+        console.error('❌ [ACTIONS PUT] Failed to update person lastAction fields:', error);
+      }
+    }
+
+    // Update company's lastAction fields if action is completed
+    if (updatedAction.companyId && updatedAction.status === 'COMPLETED') {
+      try {
+        await prisma.companies.update({
+          where: { id: updatedAction.companyId },
+          data: {
+            lastAction: updatedAction.subject,
+            lastActionDate: updatedAction.completedAt || updatedAction.updatedAt,
+            actionStatus: updatedAction.status
+          }
+        });
+        console.log('✅ [ACTIONS PUT] Updated company lastAction fields:', {
+          companyId: updatedAction.companyId,
+          lastAction: updatedAction.subject,
+          lastActionDate: updatedAction.completedAt || updatedAction.updatedAt
+        });
+      } catch (error) {
+        console.error('❌ [ACTIONS PUT] Failed to update company lastAction fields:', error);
+      }
+    }
 
     return NextResponse.json({
       success: true,
@@ -214,13 +264,21 @@ export async function PATCH(
       );
     }
 
+    // Prepare update data with automatic completion handling
+    const updateData: any = {
+      ...body,
+      updatedAt: new Date(),
+    };
+
+    // If status is being changed to COMPLETED, set completedAt
+    if (body.status === 'COMPLETED' && existingAction.status !== 'COMPLETED') {
+      updateData.completedAt = new Date();
+    }
+
     // Update action with partial data
     const updatedAction = await prisma.actions.update({
       where: { id },
-      data: {
-        ...body,
-        updatedAt: new Date(),
-      },
+      data: updateData,
       include: {
         user: {
           select: {
@@ -249,6 +307,48 @@ export async function PATCH(
         },
       },
     });
+
+    // Update person's lastAction fields if action is completed
+    if (updatedAction.personId && updatedAction.status === 'COMPLETED') {
+      try {
+        await prisma.people.update({
+          where: { id: updatedAction.personId },
+          data: {
+            lastAction: updatedAction.subject,
+            lastActionDate: updatedAction.completedAt || updatedAction.updatedAt,
+            actionStatus: updatedAction.status
+          }
+        });
+        console.log('✅ [ACTIONS PATCH] Updated person lastAction fields:', {
+          personId: updatedAction.personId,
+          lastAction: updatedAction.subject,
+          lastActionDate: updatedAction.completedAt || updatedAction.updatedAt
+        });
+      } catch (error) {
+        console.error('❌ [ACTIONS PATCH] Failed to update person lastAction fields:', error);
+      }
+    }
+
+    // Update company's lastAction fields if action is completed
+    if (updatedAction.companyId && updatedAction.status === 'COMPLETED') {
+      try {
+        await prisma.companies.update({
+          where: { id: updatedAction.companyId },
+          data: {
+            lastAction: updatedAction.subject,
+            lastActionDate: updatedAction.completedAt || updatedAction.updatedAt,
+            actionStatus: updatedAction.status
+          }
+        });
+        console.log('✅ [ACTIONS PATCH] Updated company lastAction fields:', {
+          companyId: updatedAction.companyId,
+          lastAction: updatedAction.subject,
+          lastActionDate: updatedAction.completedAt || updatedAction.updatedAt
+        });
+      } catch (error) {
+        console.error('❌ [ACTIONS PATCH] Failed to update company lastAction fields:', error);
+      }
+    }
 
     return NextResponse.json({
       success: true,

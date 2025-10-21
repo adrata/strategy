@@ -64,7 +64,7 @@ export class DeletionService {
       // Get the user's workspace to ensure proper filtering
       const user = await prisma.users.findUnique({
         where: { id: userId },
-        select: { workspaceId: true }
+        select: { activeWorkspaceId: true }
       });
       
       if (!user) {
@@ -76,7 +76,7 @@ export class DeletionService {
         };
       }
       
-      console.log(`🔍 [DELETION] Attempting to soft delete ${entityType} ${id} for user ${userId} in workspace ${user.workspaceId}`);
+      console.log(`🔍 [DELETION] Attempting to soft delete ${entityType} ${id} for user ${userId} in workspace ${user.activeWorkspaceId}`);
 
       // Direct update with workspace filtering - Prisma will throw if record doesn't exist
       let updateResult;
@@ -85,7 +85,7 @@ export class DeletionService {
           updateResult = await prisma.companies.updateMany({
             where: { 
               id,
-              workspaceId: user.workspaceId,
+              workspaceId: user.activeWorkspaceId,
               deletedAt: null // Only delete non-deleted records
             },
             data: { deletedAt },
@@ -96,7 +96,7 @@ export class DeletionService {
           updateResult = await prisma.people.updateMany({
             where: { 
               id,
-              workspaceId: user.workspaceId,
+              workspaceId: user.activeWorkspaceId,
               deletedAt: null // Only delete non-deleted records
             },
             data: { deletedAt },
@@ -107,7 +107,7 @@ export class DeletionService {
           updateResult = await prisma.actions.updateMany({
             where: { 
               id,
-              workspaceId: user.workspaceId,
+              workspaceId: user.activeWorkspaceId,
               deletedAt: null // Only delete non-deleted records
             },
             data: { deletedAt },
@@ -156,7 +156,7 @@ export class DeletionService {
       // First, get the user's workspace to ensure proper filtering
       const user = await prisma.users.findUnique({
         where: { id: userId },
-        select: { workspaceId: true }
+        select: { activeWorkspaceId: true }
       });
       
       if (!user) {
@@ -172,7 +172,7 @@ export class DeletionService {
           const company = await prisma.companies.findFirst({
             where: { 
               id,
-              workspaceId: user.workspaceId,
+              workspaceId: user.activeWorkspaceId,
               deletedAt: { not: null } // Only restore soft-deleted records
             },
             select: { id: true }
@@ -184,7 +184,7 @@ export class DeletionService {
           const person = await prisma.people.findFirst({
             where: { 
               id,
-              workspaceId: user.workspaceId,
+              workspaceId: user.activeWorkspaceId,
               deletedAt: { not: null } // Only restore soft-deleted records
             },
             select: { id: true }
@@ -196,7 +196,7 @@ export class DeletionService {
           const action = await prisma.actions.findFirst({
             where: { 
               id,
-              workspaceId: user.workspaceId,
+              workspaceId: user.activeWorkspaceId,
               deletedAt: { not: null } // Only restore soft-deleted records
             },
             select: { id: true }
@@ -253,7 +253,7 @@ export class DeletionService {
       // First, get the user's workspace to ensure proper filtering
       const user = await prisma.users.findUnique({
         where: { id: userId },
-        select: { workspaceId: true }
+        select: { activeWorkspaceId: true }
       });
       
       if (!user) {
@@ -269,7 +269,7 @@ export class DeletionService {
           const company = await prisma.companies.findFirst({
             where: { 
               id,
-              workspaceId: user.workspaceId
+              workspaceId: user.activeWorkspaceId
             },
             select: { id: true }
           });
@@ -280,7 +280,7 @@ export class DeletionService {
           const person = await prisma.people.findFirst({
             where: { 
               id,
-              workspaceId: user.workspaceId
+              workspaceId: user.activeWorkspaceId
             },
             select: { id: true }
           });
@@ -291,7 +291,7 @@ export class DeletionService {
           const action = await prisma.actions.findFirst({
             where: { 
               id,
-              workspaceId: user.workspaceId
+              workspaceId: user.activeWorkspaceId
             },
             select: { id: true }
           });

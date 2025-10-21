@@ -120,9 +120,51 @@ export async function GET(
       allFields: Object.keys(transformedPerson)
     });
 
+    // 🔍 ENHANCED DATE DEBUGGING: Detailed logging for date fields
+    console.log(`🔍 [DATE DEBUG] Detailed date field analysis:`, {
+      personId: id,
+      createdAt: {
+        value: transformedPerson.createdAt,
+        type: typeof transformedPerson.createdAt,
+        isNull: transformedPerson.createdAt === null,
+        isUndefined: transformedPerson.createdAt === undefined,
+        isDate: transformedPerson.createdAt instanceof Date,
+        stringified: JSON.stringify(transformedPerson.createdAt)
+      },
+      updatedAt: {
+        value: transformedPerson.updatedAt,
+        type: typeof transformedPerson.updatedAt,
+        isNull: transformedPerson.updatedAt === null,
+        isUndefined: transformedPerson.updatedAt === undefined,
+        isDate: transformedPerson.updatedAt instanceof Date,
+        stringified: JSON.stringify(transformedPerson.updatedAt)
+      }
+    });
+
+    // 🔧 DATE SERIALIZATION FIX: Ensure dates are properly serialized
+    const responseData = {
+      ...transformedPerson,
+      // Explicitly ensure dates are properly formatted for JSON serialization
+      createdAt: transformedPerson.createdAt ? new Date(transformedPerson.createdAt).toISOString() : null,
+      // Use createdAt as fallback if updatedAt is null/undefined (common for older records)
+      updatedAt: transformedPerson.updatedAt 
+        ? new Date(transformedPerson.updatedAt).toISOString() 
+        : transformedPerson.createdAt 
+          ? new Date(transformedPerson.createdAt).toISOString()
+          : null
+    };
+
+    console.log(`🔍 [DATE SERIALIZATION] Final response data dates:`, {
+      personId: id,
+      createdAt: responseData.createdAt,
+      updatedAt: responseData.updatedAt,
+      createdAtType: typeof responseData.createdAt,
+      updatedAtType: typeof responseData.updatedAt
+    });
+
     return NextResponse.json({
       success: true,
-      data: transformedPerson,
+      data: responseData,
     });
 
   } catch (error) {

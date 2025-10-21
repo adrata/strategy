@@ -1,21 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-options';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response;
     }
 
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId') || session.user.activeWorkspaceId;
-    
-    if (!workspaceId) {
-      return NextResponse.json({ success: false, error: 'Workspace ID required' }, { status: 400 });
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
+
+    const workspaceId = context.workspaceId;
 
     // Calculate weekly date ranges (Monday-Friday business days)
     const now = new Date();
@@ -109,7 +111,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Get people and companies data for conversion tracking
-    const [people, companies] = await Promise.all([
+    const [people, companies, lastWeekPeople, lastWeekCompanies] = await Promise.all([
       prisma.people.findMany({
         where: {
           workspaceId,
@@ -121,6 +123,26 @@ export async function GET(request: NextRequest) {
           workspaceId,
           deletedAt: null
         }
+      }),
+      // Get people created before this week for historical comparison
+      prisma.people.findMany({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          createdAt: {
+            lt: startOfThisWeek
+          }
+        }
+      }),
+      // Get companies created before this week for historical comparison
+      prisma.companies.findMany({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          createdAt: {
+            lt: startOfThisWeek
+          }
+        }
       })
     ]);
 
@@ -128,17 +150,30 @@ export async function GET(request: NextRequest) {
     const thisWeekPeopleActions = thisWeekActions.length;
     const lastWeekPeopleActions = lastWeekActions.length;
     
-    // Action types breakdown
-    const actionTypes = {
-      call: ['cold_call', 'follow_up_call', 'discovery_call', 'demo_call', 'qualification_call'],
-      email: ['cold_email', 'follow_up_email', 'email_conversation'],
-      meeting: ['meeting_scheduled', 'meeting_completed', 'demo_meeting', 'discovery_meeting'],
-      proposal: ['proposal_sent', 'proposal_follow_up'],
-      other: ['relationship_building', 'research_completed', 'note_added', 'status_changed']
-    };
-
+    // Action types breakdown - using actual database values
     const getActionTypeCount = (actions: any[], type: string) => {
-      return actions.filter(action => actionTypes[type as keyof typeof actionTypes].includes(action.type)).length;
+      return actions.filter(action => {
+        const actionType = action.type?.toLowerCase() || '';
+        switch (type) {
+          case 'call':
+            return actionType.includes('phone') || actionType.includes('call');
+          case 'email':
+            return actionType.includes('email') || actionType.includes('inmail');
+          case 'meeting':
+            return actionType.includes('meeting');
+          case 'proposal':
+            return actionType.includes('proposal');
+          case 'other':
+            return !actionType.includes('phone') && 
+                   !actionType.includes('call') && 
+                   !actionType.includes('email') && 
+                   !actionType.includes('inmail') && 
+                   !actionType.includes('meeting') &&
+                   !actionType.includes('proposal');
+          default:
+            return false;
+        }
+      }).length;
     };
 
     const thisWeekActionTypes = {
@@ -149,17 +184,31 @@ export async function GET(request: NextRequest) {
       other: getActionTypeCount(thisWeekActions, 'other')
     };
 
-    // Conversion metrics
+    const lastWeekActionTypes = {
+      call: getActionTypeCount(lastWeekActions, 'call'),
+      email: getActionTypeCount(lastWeekActions, 'email'),
+      meeting: getActionTypeCount(lastWeekActions, 'meeting'),
+      proposal: getActionTypeCount(lastWeekActions, 'proposal'),
+      other: getActionTypeCount(lastWeekActions, 'other')
+    };
+
+    // Conversion metrics - current counts
     const leads = people.filter(p => p.status === 'LEAD').length;
     const prospects = people.filter(p => p.status === 'PROSPECT').length;
     const opportunities = companies.filter(c => c.status === 'OPPORTUNITY').length;
     const clients = companies.filter(c => c.status === 'CLIENT').length;
 
+    // Historical counts for comparison (before this week)
+    const lastWeekLeads = lastWeekPeople.filter(p => p.status === 'LEAD').length;
+    const lastWeekProspects = lastWeekPeople.filter(p => p.status === 'PROSPECT').length;
+    const lastWeekOpportunities = lastWeekCompanies.filter(c => c.status === 'OPPORTUNITY').length;
+    const lastWeekClients = lastWeekCompanies.filter(c => c.status === 'CLIENT').length;
+
     // Calculate conversion rates
     const prospectsToOpportunitiesRate = prospects > 0 ? (opportunities / prospects) * 100 : 0;
     const opportunitiesToClientsRate = opportunities > 0 ? (clients / opportunities) * 100 : 0;
 
-    // Generate chart data for last 7 days (for weekly context)
+    // Generate chart data for last 7 days with real data
     const chartData = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
@@ -173,13 +222,41 @@ export async function GET(request: NextRequest) {
         action.createdAt >= date && action.createdAt < nextDate
       );
       
+      // Calculate real daily counts from database
+      const dayProspects = people.filter(p => 
+        p.status === 'PROSPECT' && 
+        p.createdAt >= date && 
+        p.createdAt < nextDate
+      ).length;
+      
+      const dayOpportunities = companies.filter(c => 
+        c.status === 'OPPORTUNITY' && 
+        c.createdAt >= date && 
+        c.createdAt < nextDate
+      ).length;
+      
+      const dayClients = companies.filter(c => 
+        c.status === 'CLIENT' && 
+        c.createdAt >= date && 
+        c.createdAt < nextDate
+      ).length;
+      
+      // Calculate revenue from opportunities created that day
+      const dayRevenue = companies
+        .filter(c => c.status === 'OPPORTUNITY' && c.createdAt >= date && c.createdAt < nextDate)
+        .reduce((sum, c) => {
+          // Try to extract revenue from various possible fields
+          const revenue = c.revenue || c.annualRevenue || c.estimatedValue || 0;
+          return sum + (typeof revenue === 'number' ? revenue : 0);
+        }, 0);
+      
       chartData.push({
         date: date.toISOString().split('T')[0],
         actions: dayActions.length,
-        prospects: Math.floor(Math.random() * 10) + 5, // Mock data for now
-        opportunities: Math.floor(Math.random() * 5) + 2,
-        clients: Math.floor(Math.random() * 3) + 1,
-        revenue: Math.floor(Math.random() * 50000) + 10000
+        prospects: dayProspects,
+        opportunities: dayOpportunities,
+        clients: dayClients,
+        revenue: dayRevenue
       });
     }
 
@@ -194,16 +271,19 @@ export async function GET(request: NextRequest) {
       };
     };
 
+    // Calculate historical conversion rates for comparison
+    const lastWeekProspectsToOpportunitiesRate = lastWeekProspects > 0 ? (lastWeekOpportunities / lastWeekProspects) * 100 : 0;
+
     const trends = {
       thisWeekPeopleActions: calculateTrend(thisWeekPeopleActions, lastWeekPeopleActions),
       lastWeekPeopleActions: calculateTrend(lastWeekPeopleActions, 0), // No comparison for last week
-      calls: calculateTrend(thisWeekActionTypes.call, 0), // Simplified - would need last week's call data
-      emails: calculateTrend(thisWeekActionTypes.email, 0), // Simplified - would need last week's email data
-      meetings: calculateTrend(thisWeekActionTypes.meeting, 0), // Simplified - would need last week's meeting data
-      prospects: calculateTrend(prospects, 0), // Rolling count
-      opportunities: calculateTrend(opportunities, 0), // Rolling count
-      clients: calculateTrend(clients, 0), // Rolling count
-      conversionRate: calculateTrend(prospectsToOpportunitiesRate, 0) // Rolling rate
+      calls: calculateTrend(thisWeekActionTypes.call, lastWeekActionTypes.call),
+      emails: calculateTrend(thisWeekActionTypes.email, lastWeekActionTypes.email),
+      meetings: calculateTrend(thisWeekActionTypes.meeting, lastWeekActionTypes.meeting),
+      prospects: calculateTrend(prospects, lastWeekProspects),
+      opportunities: calculateTrend(opportunities, lastWeekOpportunities),
+      clients: calculateTrend(clients, lastWeekClients),
+      conversionRate: calculateTrend(prospectsToOpportunitiesRate, lastWeekProspectsToOpportunitiesRate)
     };
 
     const metrics = {

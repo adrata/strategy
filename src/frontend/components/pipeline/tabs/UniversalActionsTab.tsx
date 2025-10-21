@@ -490,7 +490,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                         placeholder="Enter action title"
                         className="text-sm font-medium text-[var(--foreground)]"
                       />
-                      {!isPastEvent(event.date) && (
+                      {!isPastEvent(event.date) && event.metadata?.status?.toUpperCase() !== 'COMPLETED' && (
                         <span className="px-4 py-1 bg-red-100 text-red-800 text-xs rounded-full whitespace-nowrap">
                           Scheduled
                         </span>

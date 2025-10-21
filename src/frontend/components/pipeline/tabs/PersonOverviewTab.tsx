@@ -682,13 +682,42 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
           <div className="flex items-center space-x-3">
             <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Created:</span>
             <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.createdAt)}>
-              {formatRelativeDate(record?.createdAt)}
+              {(() => {
+                console.log('🔍 [PERSON TAB] Date debugging for Created:', {
+                  recordId: record?.id,
+                  createdAt: record?.createdAt,
+                  createdAtType: typeof record?.createdAt,
+                  isNull: record?.createdAt === null,
+                  isUndefined: record?.createdAt === undefined,
+                  recordKeys: record ? Object.keys(record) : 'No record',
+                  formattedRelative: formatRelativeDate(record?.createdAt),
+                  formattedFull: formatFullDate(record?.createdAt)
+                });
+                return formatRelativeDate(record?.createdAt);
+              })()}
             </span>
           </div>
           <div className="flex items-center space-x-3">
             <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Last Updated:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.updatedAt)}>
-              {formatRelativeDate(record?.updatedAt)}
+            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.updatedAt || record?.createdAt)}>
+              {(() => {
+                // Use createdAt as fallback if updatedAt is not available
+                const dateToUse = record?.updatedAt || record?.createdAt;
+                console.log('🔍 [PERSON TAB] Date debugging for Updated:', {
+                  recordId: record?.id,
+                  updatedAt: record?.updatedAt,
+                  createdAt: record?.createdAt,
+                  dateToUse: dateToUse,
+                  updatedAtType: typeof record?.updatedAt,
+                  createdAtType: typeof record?.createdAt,
+                  isNull: record?.updatedAt === null,
+                  isUndefined: record?.updatedAt === undefined,
+                  recordKeys: record ? Object.keys(record) : 'No record',
+                  formattedRelative: formatRelativeDate(dateToUse),
+                  formattedFull: formatFullDate(dateToUse)
+                });
+                return formatRelativeDate(dateToUse);
+              })()}
             </span>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
@@ -19,10 +19,69 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   
+  // Strategy state
+  const [strategyData, setStrategyData] = useState<any>(null);
+  const [isGeneratingStrategy, setIsGeneratingStrategy] = useState(false);
+  const [strategyError, setStrategyError] = useState<string | null>(null);
+  
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
+
+  // Load existing strategy data on component mount
+  useEffect(() => {
+    if (record?.id) {
+      loadStrategyData();
+    }
+  }, [record?.id]);
+
+  const loadStrategyData = async () => {
+    try {
+      const response = await fetch(`/api/v1/strategy/generate?personId=${record.id}`);
+      const data = await response.json();
+      
+      if (data.success && data.data.hasStrategy) {
+        setStrategyData(data.data);
+      }
+    } catch (error) {
+      console.error('Failed to load strategy data:', error);
+    }
+  };
+
+  const handleGenerateStrategy = async () => {
+    if (!record?.id) return;
+    
+    setIsGeneratingStrategy(true);
+    setStrategyError(null);
+    
+    try {
+      const response = await fetch('/api/v1/strategy/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          personId: record.id,
+          recordType: recordType
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setStrategyData(data.data);
+        handleSuccess('Strategy summary generated successfully!');
+      } else {
+        setStrategyError(data.message || 'Failed to generate strategy summary');
+      }
+    } catch (error) {
+      console.error('Strategy generation failed:', error);
+      setStrategyError('Failed to generate strategy summary. Please try again.');
+    } finally {
+      setIsGeneratingStrategy(false);
+    }
   };
   
   // Deep Value Reports functionality - Temporarily disabled
@@ -177,44 +236,95 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
 
   return (
     <div className="space-y-6">
-      {/* Summary */}
+      {/* Strategy Summary Header */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
+          <h3 className="text-lg font-semibold text-[var(--foreground)]">Strategy Summary</h3>
+          <button
+            onClick={handleGenerateStrategy}
+            disabled={isGeneratingStrategy}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+          >
+            {isGeneratingStrategy ? 'Generating...' : 'Generate Strategy'}
+          </button>
         </div>
-        <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
-          <div className="text-sm text-[var(--foreground)] leading-relaxed">
-            {intelligenceSummary || (() => {
-              const { generatePersonSentence, validatePersonData } = require('@/platform/utils/intelligence-validation');
+        
+        {/* Strategy Summary Content */}
+        {strategyData ? (
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+            <div className="text-sm text-[var(--foreground)] leading-relaxed mb-4">
+              {strategyData.strategySummary}
+            </div>
+            
+            {/* Archetype Badge */}
+            {strategyData.archetype && (
+              <div className="flex items-center gap-2 mb-4">
+                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                  {strategyData.archetype.role}
+                </span>
+                <span className="text-sm text-[var(--muted)]">
+                  {strategyData.archetype.name}
+                </span>
+              </div>
+            )}
+            
+            {/* Three Column Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Situation */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  Situation
+                </h4>
+                <div className="text-sm text-[var(--muted)] leading-relaxed">
+                  {strategyData.situation}
+                </div>
+              </div>
               
-              const personData = {
-                name: record?.fullName || record?.name,
-                title: insightsData.primaryRole,
-                company: record?.company || record?.companyName
-              };
+              {/* Complication */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  Complication
+                </h4>
+                <div className="text-sm text-[var(--muted)] leading-relaxed">
+                  {strategyData.complication}
+                </div>
+              </div>
               
-              const validation = validatePersonData(personData);
-              
-              if (!validation.hasCompleteData) {
-                return (
-                  <>
-                    <span className="font-semibold text-[var(--foreground)]">{validation.fallbackData.name}</span> serves as a <span className="font-semibold text-blue-700">{validation.fallbackData.title}</span> with <span className="font-semibold text-green-600">{insightsData.influenceScore >= 80 ? 'high' : insightsData.influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{insightsData.decisionPower >= 80 ? 'strong' : insightsData.decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority. 
-                    They prefer <span className="font-medium text-gray-800">{insightsData.communicationStyle?.toLowerCase() || 'professional'}</span> communication and make decisions based on <span className="font-medium text-gray-800">{insightsData.decisionMaking?.toLowerCase() || 'data-driven'}</span> analysis. 
-                    Current engagement level is <span className="font-medium text-gray-800">{insightsData.engagementLevel || 'Medium'}</span>, indicating <span className="font-medium text-gray-800">{(insightsData.engagementLevel || 'Medium').includes('High') ? 'positive' : (insightsData.engagementLevel || 'Medium').includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
-                  </>
-                );
-              }
-              
-              return (
-                <>
-                  <span className="font-semibold text-[var(--foreground)]">{record?.fullName || record?.name || 'This individual'}</span> serves as a <span className="font-semibold text-blue-700">{insightsData.primaryRole || 'Professional'}</span> with <span className="font-semibold text-green-600">{insightsData.influenceScore >= 80 ? 'high' : insightsData.influenceScore >= 60 ? 'moderate' : 'limited'}</span> influence and <span className="font-semibold text-purple-600">{insightsData.decisionPower >= 80 ? 'strong' : insightsData.decisionPower >= 60 ? 'moderate' : 'limited'}</span> decision-making authority in their organization. 
-                  They prefer <span className="font-medium text-gray-800">{insightsData.communicationStyle?.toLowerCase() || 'professional'}</span> communication and make decisions based on <span className="font-medium text-gray-800">{insightsData.decisionMaking?.toLowerCase() || 'data-driven'}</span> analysis. 
-                  Current engagement level is <span className="font-medium text-gray-800">{insightsData.engagementLevel || 'Medium'}</span>, indicating <span className="font-medium text-gray-800">{(insightsData.engagementLevel || 'Medium').includes('High') ? 'positive' : (insightsData.engagementLevel || 'Medium').includes('Medium') ? 'moderate' : 'limited'}</span> receptivity to outreach.
-                </>
-              );
-            })()}
+              {/* Future State */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  Future State
+                </h4>
+                <div className="text-sm text-[var(--muted)] leading-relaxed">
+                  {strategyData.futureState}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+            <div className="text-center py-8">
+              <div className="text-sm text-[var(--muted)] mb-4">
+                No strategy summary available. Click "Generate Strategy" to create a personalized strategy summary.
+              </div>
+              <button
+                onClick={handleGenerateStrategy}
+                disabled={isGeneratingStrategy}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              >
+                {isGeneratingStrategy ? 'Generating Strategy...' : 'Generate Strategy Summary'}
+              </button>
+              {strategyError && (
+                <div className="mt-4 text-sm text-red-600">
+                  {strategyError}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Intelligence Profile */}

@@ -415,7 +415,7 @@ model people {
   globalRank             Int?                @default(0)
   companyRank            Int?                @default(0)
   createdAt              DateTime            @default(now())
-  updatedAt              DateTime
+  updatedAt              DateTime            @updatedAt
   entityId               String?             @db.VarChar(30)
   deletedAt              DateTime?
   mainSellerId           String?             @db.VarChar(30)

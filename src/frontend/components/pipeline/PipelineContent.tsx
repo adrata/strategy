@@ -932,14 +932,6 @@ export const PipelineContent = React.memo(function PipelineContent({
         <StandardHeader
           title="Metrics"
           subtitle="Sales performance and KPIs"
-          actions={
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-md">
-                <img src="/download.jpg" alt="Dano" className="w-6 h-6 rounded-lg object-cover" />
-                <span className="text-sm font-medium text-gray-600">John Dano</span>
-              </div>
-            </div>
-          }
         />
       )}
       <div className="flex-1 overflow-auto">

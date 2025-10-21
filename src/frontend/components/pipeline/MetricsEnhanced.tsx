@@ -142,55 +142,7 @@ export function MetricsEnhanced() {
         });
 
         if (!response.ok) {
-          // Fall back to mock data for Notary Everyday (check both old and new IDs)
-          const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1';
-          if (isNotaryEveryday) {
-            console.log('API failed, using mock data for Notary Everyday');
-            setMetrics({
-              thisWeekPeopleActions: 89,
-              lastWeekPeopleActions: 76,
-              actionTypes: {
-                call: 45,
-                email: 35,
-                meeting: 18,
-                proposal: 12,
-                other: 5
-              },
-              conversionMetrics: {
-                leads: 67,
-                prospects: 45,
-                opportunities: 12,
-                clients: 0, // Start with 0 to show real data when available
-                prospectsToOpportunitiesRate: 26.7,
-                opportunitiesToClientsRate: 66.7
-              },
-              trends: {
-                thisWeekPeopleActions: { direction: 'up', change: 17.1, comparison: 76 },
-                lastWeekPeopleActions: { direction: 'up', change: 6.7, comparison: 71 },
-                calls: { direction: 'up', change: 15.4, comparison: 39 },
-                emails: { direction: 'up', change: 9.4, comparison: 32 },
-                meetings: { direction: 'up', change: 20.0, comparison: 15 },
-                prospects: { direction: 'up', change: 12.5, comparison: 40 },
-                opportunities: { direction: 'up', change: 20.0, comparison: 10 },
-                clients: { direction: 'up', change: 14.3, comparison: 7 },
-                conversionRate: { direction: 'up', change: 8.1, comparison: 24.7 }
-              },
-              chartData: [
-                { date: '2025-01-08', actions: 12, prospects: 6, opportunities: 2, clients: 1, revenue: 3000 },
-                { date: '2025-01-09', actions: 14, prospects: 7, opportunities: 3, clients: 2, revenue: 4000 },
-                { date: '2025-01-10', actions: 15, prospects: 8, opportunities: 3, clients: 2, revenue: 5000 },
-                { date: '2025-01-11', actions: 18, prospects: 12, opportunities: 5, clients: 3, revenue: 12000 },
-                { date: '2025-01-12', actions: 22, prospects: 15, opportunities: 7, clients: 4, revenue: 18000 },
-                { date: '2025-01-13', actions: 19, prospects: 11, opportunities: 6, clients: 3, revenue: 15000 },
-                { date: '2025-01-14', actions: 25, prospects: 18, opportunities: 9, clients: 5, revenue: 22000 },
-                { date: '2025-01-15', actions: 20, prospects: 14, opportunities: 8, clients: 4, revenue: 19000 },
-                { date: '2025-01-16', actions: 16, prospects: 10, opportunities: 5, clients: 3, revenue: 12000 },
-                { date: '2025-01-17', actions: 18, prospects: 12, opportunities: 6, clients: 4, revenue: 15000 }
-              ]
-            });
-            setLoading(false);
-            return;
-          }
+          console.error('❌ [METRICS] API failed with status:', response.status);
           throw new Error(`Failed to fetch metrics: ${response.status}`);
         }
 
@@ -206,56 +158,8 @@ export function MetricsEnhanced() {
       } catch (err) {
         console.error('Error fetching metrics:', err);
         
-        // Fall back to mock data for Ryan Serrato in Notary Everyday only
-        const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1';
-        const isRyanSerrato = user?.id === 'cmf0kew2z0000pcsexylorpxp';
-        if (isNotaryEveryday && isRyanSerrato) {
-          console.log('Error occurred, using mock data for Ryan Serrato in Notary Everyday');
-          setMetrics({
-            thisWeekPeopleActions: 89,
-            lastWeekPeopleActions: 76,
-            actionTypes: {
-              call: 45,
-              email: 35,
-              meeting: 18,
-              proposal: 12,
-              other: 5
-            },
-            conversionMetrics: {
-              leads: 67,
-              prospects: 45,
-              opportunities: 12,
-              clients: 0, // Start with 0 to show real data when available
-              prospectsToOpportunitiesRate: 26.7,
-              opportunitiesToClientsRate: 66.7
-            },
-            trends: {
-              thisWeekPeopleActions: { direction: 'up', change: 17.1, comparison: 76 },
-              lastWeekPeopleActions: { direction: 'up', change: 6.7, comparison: 71 },
-              calls: { direction: 'up', change: 15.4, comparison: 39 },
-              emails: { direction: 'up', change: 9.4, comparison: 32 },
-              meetings: { direction: 'up', change: 20.0, comparison: 15 },
-              prospects: { direction: 'up', change: 12.5, comparison: 40 },
-              opportunities: { direction: 'up', change: 20.0, comparison: 10 },
-              clients: { direction: 'up', change: 14.3, comparison: 7 },
-              conversionRate: { direction: 'up', change: 8.1, comparison: 24.7 }
-            },
-            chartData: [
-              { date: '2025-01-08', actions: 12, prospects: 6, opportunities: 2, clients: 1, revenue: 3000 },
-              { date: '2025-01-09', actions: 14, prospects: 7, opportunities: 3, clients: 2, revenue: 4000 },
-              { date: '2025-01-10', actions: 15, prospects: 8, opportunities: 3, clients: 2, revenue: 5000 },
-              { date: '2025-01-11', actions: 18, prospects: 12, opportunities: 5, clients: 3, revenue: 12000 },
-              { date: '2025-01-12', actions: 22, prospects: 15, opportunities: 7, clients: 4, revenue: 18000 },
-              { date: '2025-01-13', actions: 19, prospects: 11, opportunities: 6, clients: 3, revenue: 15000 },
-              { date: '2025-01-14', actions: 25, prospects: 18, opportunities: 9, clients: 5, revenue: 22000 },
-              { date: '2025-01-15', actions: 20, prospects: 14, opportunities: 8, clients: 4, revenue: 19000 },
-              { date: '2025-01-16', actions: 16, prospects: 10, opportunities: 5, clients: 3, revenue: 12000 },
-              { date: '2025-01-17', actions: 18, prospects: 12, opportunities: 6, clients: 4, revenue: 15000 }
-            ]
-          });
-        } else {
-          setError(err instanceof Error ? err.message : 'Failed to load metrics');
-        }
+        console.error('❌ [METRICS] Error fetching metrics:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load metrics');
       } finally {
         setLoading(false);
       }
@@ -269,6 +173,28 @@ export function MetricsEnhanced() {
       console.log('🔍 [MetricsEnhanced] No workspaceId, not calling fetchMetrics');
     }
   }, [workspaceId]);
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="h-full overflow-y-auto invisible-scrollbar">
+        <div className="p-6 bg-[var(--background)] min-h-full">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="text-red-500 text-lg font-medium mb-2">Failed to load metrics</div>
+              <div className="text-gray-600 text-sm mb-4">{error}</div>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Don't render until metrics are loaded
   if (loading || !metrics) {
