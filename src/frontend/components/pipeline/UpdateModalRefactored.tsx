@@ -315,7 +315,7 @@ export function UpdateModalRefactored({
                 <button
                   onClick={handleDelete}
                   disabled={normalizeString(deleteConfirmName) !== normalizeString(formData.name || formData.fullName || '') || loading}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
                 >
                   {loading ? 'Deleting...' : 'Delete'}
                 </button>

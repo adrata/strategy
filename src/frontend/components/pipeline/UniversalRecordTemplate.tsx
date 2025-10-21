@@ -2239,10 +2239,9 @@ export function UniversalRecordTemplate({
 
       console.log(`✅ [UniversalRecordTemplate] Deletion successful:`, responseData);
       
-      // Navigate back to the table view immediately
-      if (onBack) {
-        onBack();
-      }
+      // Close the delete confirmation modal
+      setShowDeleteConfirm(false);
+      setDeleteConfirmName('');
       
       // Dispatch cache invalidation event for other components
       if (typeof window !== 'undefined') {
@@ -2253,12 +2252,31 @@ export function UniversalRecordTemplate({
             recordId: record.id
           }
         }));
+        
+        // Also dispatch a refresh event for the sidebar counts
+        window.dispatchEvent(new CustomEvent('refresh-sidebar-counts', {
+          detail: { 
+            section: recordType,
+            action: 'delete'
+          }
+        }));
       }
       
-      // Show success message after navigation (with a small delay to ensure navigation completes)
+      // Show success message
+      showMessage('Record moved to trash successfully!', 'success');
+      
+      // Navigate back to the list page after a brief delay
       setTimeout(() => {
-        showMessage('Record moved to trash successfully!', 'success');
-      }, 100);
+        const currentPath = window.location.pathname;
+        const pathParts = currentPath.split('/');
+        const workspaceIndex = pathParts.findIndex(part => part.length > 0);
+        const workspace = pathParts[workspaceIndex];
+        
+        // Construct the list page URL
+        const listPageUrl = `/${workspace}/${recordType}`;
+        console.log(`🔄 [UniversalRecordTemplate] Redirecting to list page: ${listPageUrl}`);
+        router.push(listPageUrl);
+      }, 500);
       
     } catch (error) {
       console.error('❌ [UniversalRecordTemplate] Error deleting record:', error);
@@ -2849,11 +2867,7 @@ export function UniversalRecordTemplate({
 
       // Close the modal first
       setIsEditRecordModalOpen(false);
-      
-      // Navigate back to the table view immediately
-      if (onBack) {
-        onBack();
-      }
+      setDeleteConfirmName('');
       
       // Dispatch cache invalidation event for other components
       if (typeof window !== 'undefined') {
@@ -2864,12 +2878,31 @@ export function UniversalRecordTemplate({
             recordId: record.id
           }
         }));
+        
+        // Also dispatch a refresh event for the sidebar counts
+        window.dispatchEvent(new CustomEvent('refresh-sidebar-counts', {
+          detail: { 
+            section: recordType,
+            action: 'delete'
+          }
+        }));
       }
       
-      // Show success message after navigation (with a small delay to ensure navigation completes)
+      // Show success message
+      showMessage('Record moved to trash successfully!', 'success');
+      
+      // Navigate back to the list page after a brief delay
       setTimeout(() => {
-        showMessage('Record moved to trash successfully!', 'success');
-      }, 100);
+        const currentPath = window.location.pathname;
+        const pathParts = currentPath.split('/');
+        const workspaceIndex = pathParts.findIndex(part => part.length > 0);
+        const workspace = pathParts[workspaceIndex];
+        
+        // Construct the list page URL
+        const listPageUrl = `/${workspace}/${recordType}`;
+        console.log(`🔄 [UniversalRecordTemplate] Redirecting to list page: ${listPageUrl}`);
+        router.push(listPageUrl);
+      }, 500);
     } catch (error) {
       console.error('❌ [UniversalRecordTemplate] Error deleting record:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete record. Please try again.';
@@ -3701,7 +3734,7 @@ export function UniversalRecordTemplate({
                 className={`px-4 py-2 text-sm rounded-md transition-colors ${
                   loading || normalizeString(deleteConfirmName) !== normalizeString(getDisplayName())
                     ? 'bg-gray-300 text-[var(--muted)] cursor-not-allowed'
-                    : 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100'
                 }`}
               >
                 {loading ? 'Deleting...' : 'Delete'}
@@ -4557,7 +4590,7 @@ export function UniversalRecordTemplate({
                   <button
                     onClick={handleDeleteRecordFromModal}
                     disabled={loading || normalizeString(deleteConfirmName) !== normalizeString(getDisplayName())}
-                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {loading ? 'Deleting...' : 'Delete Record'}
                   </button>
