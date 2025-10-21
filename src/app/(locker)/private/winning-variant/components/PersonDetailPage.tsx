@@ -188,7 +188,7 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
               <ul className="space-y-2">
                 {person.painPoints.map((pain, index) => (
                   <li key={index} className="flex items-start">
-                    <span className="text-gray-400 mr-2 mt-1">•</span>
+                    <span className="text-gray-400 mr-2 mt-0.5 flex-shrink-0">•</span>
                     <span className="text-gray-600 text-sm">{pain}</span>
                   </li>
                 ))}
@@ -235,7 +235,10 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
                   <h3 className="font-medium text-gray-900 mb-3 text-sm">Career Trajectory</h3>
                   <ul className="space-y-2">
                     {person.workHistory.map((role, index) => (
-                      <li key={index} className="text-gray-600 text-sm">• {role}</li>
+                      <li key={index} className="flex items-start">
+                        <span className="text-gray-400 mr-2 mt-0.5 flex-shrink-0">•</span>
+                        <span className="text-gray-600 text-sm">{role}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -246,7 +249,10 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
                   <h3 className="font-medium text-gray-900 mb-3 text-sm">AI/ML Focus</h3>
                   <ul className="space-y-2">
                     {person.aiInsights.map((insight, index) => (
-                      <li key={index} className="text-gray-600 text-sm">• {insight}</li>
+                      <li key={index} className="flex items-start">
+                        <span className="text-gray-400 mr-2 mt-0.5 flex-shrink-0">•</span>
+                        <span className="text-gray-600 text-sm">{insight}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -257,7 +263,10 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
                   <h3 className="font-medium text-gray-900 mb-3 text-sm">Recent Strategic Moves</h3>
                   <ul className="space-y-2">
                     {person.recentMoves.map((move, index) => (
-                      <li key={index} className="text-gray-600 text-sm">• {move}</li>
+                      <li key={index} className="flex items-start">
+                        <span className="text-gray-400 mr-2 mt-0.5 flex-shrink-0">•</span>
+                        <span className="text-gray-600 text-sm">{move}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -268,7 +277,10 @@ export default function PersonDetailPage({ person, companySlug }: PersonDetailPa
                   <h3 className="font-medium text-gray-900 mb-3 text-sm">Board Pressure Points</h3>
                   <ul className="space-y-2">
                     {person.boardPressure.map((pressure, index) => (
-                      <li key={index} className="text-gray-600 text-sm">• {pressure}</li>
+                      <li key={index} className="flex items-start">
+                        <span className="text-gray-400 mr-2 mt-0.5 flex-shrink-0">•</span>
+                        <span className="text-gray-600 text-sm">{pressure}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
