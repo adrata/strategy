@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getStreamlinedModels } from "../utils/schemaParser";
+import { Breadcrumb } from "./Breadcrumb";
 
 interface ParsedField {
   name: string;
@@ -65,7 +66,7 @@ export function StreamlinedAttributesView() {
         <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-4">
             {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="bg-white border border-[var(--border)] rounded-lg">
+              <div key={index} className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg">
                 <div className="p-4 border-b border-[var(--border)]">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -105,6 +106,12 @@ export function StreamlinedAttributesView() {
 
   return (
     <div className="h-full flex flex-col bg-[var(--background)]">
+      {/* Breadcrumb */}
+      <Breadcrumb items={[
+        { label: 'Database', onClick: () => window.location.href = window.location.pathname.split('/').slice(0, 3).join('/') },
+        { label: 'Attributes' }
+      ]} />
+
       {/* Header */}
       <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
         <div className="flex items-center justify-between">
@@ -134,7 +141,7 @@ export function StreamlinedAttributesView() {
       }}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {models.map((model) => (
-            <div key={model.name} className="bg-white border border-[var(--border)] rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors shadow-sm">
+            <div key={model.name} className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 hover:bg-[var(--hover)] cursor-pointer transition-colors shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-medium text-[var(--foreground)]">{model.name}</h3>
                 <span className="text-xs text-[var(--muted)] bg-[var(--background)] px-2 py-1 rounded">
