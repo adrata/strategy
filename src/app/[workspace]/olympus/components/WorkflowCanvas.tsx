@@ -69,45 +69,76 @@ export const WorkflowCanvas: React.FC<WorkflowCanvasProps> = ({
     return step.position;
   }, [draggingStep, dragPosition]);
 
-  // Memoize connection lines for better performance
+  // Memoize connection lines for better performance - based on dependencies, not sequence
   const connectionLines = useMemo(() => {
-    return workflowSteps.map((step, index) => {
-      if (index === workflowSteps.length - 1) return null;
-
-      const nextStep = workflowSteps[index + 1];
-      const widgetHeight = 60;
-      const widgetWidth = 200;
-      
-      // Use helper function to get current position (including during drag)
-      const currentStepPos = getStepPosition(step);
-      const currentNextStepPos = getStepPosition(nextStep);
-      
-      const startX = currentStepPos.x + widgetWidth;
-      const startY = currentStepPos.y + widgetHeight / 2;
-      const endX = currentNextStepPos.x;
-      const endY = currentNextStepPos.y + widgetHeight / 2;
-      
-      const distance = Math.abs(endX - startX);
-      const controlOffset = Math.min(distance * 0.3, 100);
-      const verticalOffset = Math.min(Math.abs(endY - startY) * 0.3, 50);
-      
-      const controlX1 = startX + controlOffset;
-      const controlY1 = startY + verticalOffset;
-      const controlX2 = endX - controlOffset;
-      const controlY2 = endY - verticalOffset;
-      
-      return (
-        <path
-          key={`connection-${step.id}-${nextStep.id}`}
-          d={`M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`}
-          stroke="#d1d5db"
-          strokeWidth="1.5"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+    const connections: JSX.Element[] = [];
+    
+    workflowSteps.forEach((step) => {
+      // Find all steps that depend on this step
+      const dependentSteps = workflowSteps.filter(dependentStep => 
+        dependentStep.dependencies?.includes(step.id)
       );
+      
+      dependentSteps.forEach(dependentStep => {
+        const widgetHeight = 60;
+        const widgetWidth = 200;
+        
+        // Use helper function to get current position (including during drag)
+        const currentStepPos = getStepPosition(step);
+        const currentDependentPos = getStepPosition(dependentStep);
+        
+        // Determine connection points based on relative positions
+        const isStepLeft = currentStepPos.x < currentDependentPos.x;
+        const isStepAbove = currentStepPos.y < currentDependentPos.y;
+        
+        // Start point (from source step)
+        const startX = isStepLeft ? currentStepPos.x + widgetWidth : currentStepPos.x;
+        const startY = currentStepPos.y + widgetHeight / 2;
+        
+        // End point (to target step)  
+        const endX = isStepLeft ? currentDependentPos.x : currentDependentPos.x + widgetWidth;
+        const endY = currentDependentPos.y + widgetHeight / 2;
+        
+        // Calculate control points for smooth curves with better routing
+        const distance = Math.abs(endX - startX);
+        const verticalDistance = Math.abs(endY - startY);
+        
+        // Use different routing strategies based on connection type
+        let controlX1, controlY1, controlX2, controlY2;
+        
+        if (verticalDistance < 50) {
+          // Horizontal connections - use minimal curves
+          const controlOffset = Math.min(distance * 0.2, 50);
+          controlX1 = startX + (isStepLeft ? controlOffset : -controlOffset);
+          controlY1 = startY;
+          controlX2 = endX + (isStepLeft ? -controlOffset : controlOffset);
+          controlY2 = endY;
+        } else {
+          // Vertical or diagonal connections - use more pronounced curves
+          const controlOffset = Math.min(distance * 0.4, 80);
+          const verticalOffset = Math.min(verticalDistance * 0.3, 60);
+          
+          controlX1 = startX + (isStepLeft ? controlOffset : -controlOffset);
+          controlY1 = startY + (isStepAbove ? verticalOffset : -verticalOffset);
+          controlX2 = endX + (isStepLeft ? -controlOffset : controlOffset);
+          controlY2 = endY + (isStepAbove ? -verticalOffset : verticalOffset);
+        }
+        
+        connections.push(
+          <path
+            key={`connection-${step.id}-${dependentStep.id}`}
+            d={`M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`}
+            stroke="#d1d5db"
+            strokeWidth="1.5"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        );
+      });
     });
+    
+    return connections;
   }, [workflowSteps, getStepPosition]);
 
   return (

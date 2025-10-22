@@ -709,14 +709,14 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
               onClick={() => {
                 console.log("🏔️ Olympus clicked - navigating to olympus");
                 setIsProfileOpen(false);
-                handleNavigation("./olympus");
+                handleNavigation("/adrata/olympus");
               }}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e['key'] === "Enter") {
                   setIsProfileOpen(false);
-                  handleNavigation("./olympus");
+                  handleNavigation("/adrata/olympus");
                 }
               }}
             >
@@ -749,14 +749,14 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
               onClick={() => {
                 console.log("🗄️ Database clicked - navigating to database");
                 setIsProfileOpen(false);
-                handleNavigation("./database");
+                handleNavigation("/adrata/database");
               }}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e['key'] === "Enter") {
                   setIsProfileOpen(false);
-                  handleNavigation("./database");
+                  handleNavigation("/adrata/database");
                 }
               }}
             >
@@ -1031,14 +1031,14 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
             onClick={() => {
               console.log("🚉 Grand Central clicked - navigating to grand-central");
               setIsProfileOpen(false);
-              handleNavigation("./grand-central");
+              handleNavigation("/adrata/grand-central");
             }}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e['key'] === "Enter") {
                 setIsProfileOpen(false);
-                handleNavigation("./grand-central");
+                handleNavigation("/adrata/grand-central");
               }
             }}
           >

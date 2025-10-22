@@ -33,8 +33,8 @@ interface DatabaseLayoutProps {
 export default function DatabaseLayout({ children }: DatabaseLayoutProps) {
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const [selectedRecord, setSelectedRecord] = useState<Record<string, any> | null>(null);
-  const [viewMode, setViewMode] = useState<'browser' | 'detail' | 'query' | 'schema'>('browser');
-  const [activeSection, setActiveSection] = useState<string>('tables');
+  const [viewMode, setViewMode] = useState<'browser' | 'detail' | 'query' | 'schema' | 'tables' | 'objects' | 'model-detail'>('browser');
+  const [activeSection, setActiveSection] = useState<string>('objects');
   const params = useParams();
   const workspaceId = params.workspace as string;
 

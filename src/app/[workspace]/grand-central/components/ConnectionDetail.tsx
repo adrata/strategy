@@ -100,7 +100,7 @@ export function ConnectionDetail({ connection, onClose }: ConnectionDetailProps)
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-4 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-4 space-y-6 overflow-y-auto invisible-scrollbar">
         {/* Status */}
         <div className="space-y-3">
           <h3 className="font-medium text-[var(--foreground)]">Connection Status</h3>

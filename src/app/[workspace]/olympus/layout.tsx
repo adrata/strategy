@@ -31,6 +31,7 @@ interface OlympusContextType {
   selectedStep: WorkflowStep | null;
   setSelectedStep: (step: WorkflowStep | null) => void;
   addWorkflowSteps: (steps: WorkflowStep[]) => void;
+  activeSection: string;
 }
 
 const OlympusContext = createContext<OlympusContextType | undefined>(undefined);
@@ -55,7 +56,16 @@ interface OlympusLayoutProps {
  */
 export default function OlympusLayout({ children }: OlympusLayoutProps) {
   const [selectedStep, setSelectedStep] = useState<WorkflowStep | null>(null);
-  const [activeSection, setActiveSection] = useState<string>('workflows');
+  const [activeSection, setActiveSection] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      const segments = path.split('/').filter(Boolean);
+      // Extract section from URL: /{workspace}/olympus/{section}
+      const sectionIndex = segments.indexOf('olympus') + 1;
+      return segments[sectionIndex] || 'buyer-group';
+    }
+    return 'buyer-group';
+  });
   const params = useParams();
   const workspaceId = params.workspace as string;
   const { user: authUser } = useUnifiedAuth();
@@ -131,11 +141,31 @@ export default function OlympusLayout({ children }: OlympusLayoutProps) {
 
   const handleSectionChange = (section: string) => {
     setActiveSection(section);
+    // Use router.push to properly navigate and update the middle panel
+    router.push(`/${workspaceId}/olympus/${section}`);
     console.log(`Olympus section changed to: ${section}`);
   };
 
+  // Handle URL-based section updates and redirects
+  useEffect(() => {
+    const path = window.location.pathname;
+    const segments = path.split('/').filter(Boolean);
+    const olympusIndex = segments.indexOf('olympus');
+    
+    // If URL is just /{workspace}/olympus, redirect to buyer-group
+    if (olympusIndex === segments.length - 1) {
+      router.replace(`/${workspaceId}/olympus/buyer-group`);
+    } else if (olympusIndex >= 0 && segments[olympusIndex + 1]) {
+      // Update state to match URL
+      const urlSection = segments[olympusIndex + 1];
+      if (urlSection !== activeSection) {
+        setActiveSection(urlSection);
+      }
+    }
+  }, [workspaceId, router]); // Remove activeSection from dependencies
+
   return (
-    <OlympusContext.Provider value={{ selectedStep, setSelectedStep, addWorkflowSteps }}>
+    <OlympusContext.Provider value={{ selectedStep, setSelectedStep, addWorkflowSteps, activeSection }}>
       <AcquisitionOSProvider>
         <ZoomProvider>
           <ProfilePopupProvider>

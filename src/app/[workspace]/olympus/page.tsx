@@ -8,6 +8,7 @@ import { Toolbar } from "./components/Toolbar";
 import { ContextMenu } from "./components/ContextMenu";
 import { CommentaryPanel } from "./components/CommentaryPanel";
 import { StartPipelineModal } from "./components/StartPipelineModal";
+import { PipelineRouter } from "./components/PipelineRouter";
 import { useDrag } from "./hooks/useDrag";
 import { useZoomPan } from "./hooks/useZoomPan";
 import { 
@@ -42,7 +43,16 @@ export default function OlympusPage() {
   const [commentaryLog, setCommentaryLog] = useState<string[]>([]);
   const [stepStatus, setStepStatus] = useState<Record<string, 'success' | 'error' | 'pending'>>({});
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const { setSelectedStep } = useOlympus();
+  const { setSelectedStep, activeSection } = useOlympus();
+
+  // Add loading state guard to prevent premature rendering
+  if (!activeSection || activeSection === '') {
+    return (
+      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+        <div className="text-sm text-[var(--muted)]">Loading...</div>
+      </div>
+    );
+  }
 
   // Load the actual CRO-CFO pipeline structure
   const [workflowSteps, setWorkflowSteps] = useState<WorkflowStep[]>(() => loadCROCFOPipeline());
@@ -367,40 +377,44 @@ export default function OlympusPage() {
       </div>
 
       {/* Main Content */}
-      {isCodeMode ? (
-        <CodeEditor 
-          workflowSteps={workflowSteps}
-          setWorkflowSteps={setWorkflowSteps}
-        />
+      {activeSection === 'all-workflows' ? (
+        isCodeMode ? (
+          <CodeEditor 
+            workflowSteps={workflowSteps}
+            setWorkflowSteps={setWorkflowSteps}
+          />
+        ) : (
+          <WorkflowCanvas
+            workflowSteps={workflowSteps}
+            setWorkflowSteps={setWorkflowSteps}
+            draggingStep={draggingStep}
+            dragPosition={dragPosition}
+            activeTool={activeTool}
+            zoom={zoom}
+            pan={pan}
+            isExecuting={isExecuting}
+            currentStepIndex={currentStepIndex}
+            hoveredCard={hoveredCard}
+            closestConnectionPoint={closestConnectionPoint}
+            stepStatus={stepStatus}
+            onStepClick={handleStepClick}
+            onStepMouseDown={handleStepMouseDown}
+            onStepMouseEnter={handleStepMouseEnter}
+            onStepMouseLeave={handleStepMouseLeave}
+            onStepMouseMove={handleStepMouseMove}
+            onConnectionPointClick={handleConnectionPointClick}
+            onContextMenu={handleContextMenu}
+            onBackgroundClick={handleBackgroundClick}
+            onWheel={handleWheel}
+            onBackgroundMouseDown={handleBackgroundMouseDown}
+          />
+        )
       ) : (
-        <WorkflowCanvas
-          workflowSteps={workflowSteps}
-          setWorkflowSteps={setWorkflowSteps}
-          draggingStep={draggingStep}
-          dragPosition={dragPosition}
-          activeTool={activeTool}
-          zoom={zoom}
-          pan={pan}
-          isExecuting={isExecuting}
-          currentStepIndex={currentStepIndex}
-          hoveredCard={hoveredCard}
-          closestConnectionPoint={closestConnectionPoint}
-          stepStatus={stepStatus}
-          onStepClick={handleStepClick}
-          onStepMouseDown={handleStepMouseDown}
-          onStepMouseEnter={handleStepMouseEnter}
-          onStepMouseLeave={handleStepMouseLeave}
-          onStepMouseMove={handleStepMouseMove}
-          onConnectionPointClick={handleConnectionPointClick}
-          onContextMenu={handleContextMenu}
-          onBackgroundClick={handleBackgroundClick}
-          onWheel={handleWheel}
-          onBackgroundMouseDown={handleBackgroundMouseDown}
-        />
+        <PipelineRouter activeSection={activeSection} />
       )}
 
-      {/* Toolbar - Only show in build mode */}
-      {!isCodeMode && (
+      {/* Toolbar - Only show in all-workflows mode */}
+      {activeSection === 'all-workflows' && !isCodeMode && (
         <Toolbar
           activeTool={activeTool}
           historyIndex={historyIndex}

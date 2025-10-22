@@ -6,6 +6,8 @@
  * with a single, reliable interface.
  */
 
+import { ApplicationContextService } from './ApplicationContextService';
+
 export interface OpenRouterRequest {
   message: string;
   conversationHistory?: Array<{
@@ -19,6 +21,13 @@ export interface OpenRouterRequest {
   workspaceId?: string;
   userId?: string;
   context?: any;
+  pageContext?: {
+    primaryApp: string;
+    secondarySection: string;
+    detailView: string;
+    breadcrumb: string;
+    fullPath: string;
+  };
 }
 
 export interface OpenRouterResponse {
@@ -570,9 +579,51 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
    * Build system prompt based on context and complexity
    */
   private buildSystemPrompt(request: OpenRouterRequest, complexity: any): string {
-    const { appType, currentRecord, recordType } = request;
+    const { appType, currentRecord, recordType, pageContext } = request;
     
     let prompt = `You are Adrata's AI assistant, specialized in sales intelligence and pipeline optimization. `;
+    
+    // Add comprehensive page context using ApplicationContextService
+    if (pageContext) {
+      const contextInfo = ApplicationContextService.getPageContextInfo(pageContext);
+      
+      prompt += `\n\nCURRENT PAGE CONTEXT:`;
+      prompt += `\n${contextInfo.contextString}`;
+      
+      if (contextInfo.sectionInfo) {
+        prompt += `\n\nSECTION CAPABILITIES:`;
+        contextInfo.sectionInfo.capabilities.forEach(cap => {
+          prompt += `\n- ${cap}`;
+        });
+        
+        prompt += `\n\nCOMMON TASKS:`;
+        contextInfo.sectionInfo.commonTasks.forEach(task => {
+          prompt += `\n- ${task}`;
+        });
+        
+        prompt += `\n\nAI GUIDANCE:`;
+        prompt += `\n${contextInfo.guidance}`;
+        
+        if (contextInfo.examples.length > 0) {
+          prompt += `\n\nEXAMPLE QUESTIONS I CAN HELP WITH:`;
+          contextInfo.examples.forEach(example => {
+            prompt += `\n- "${example}"`;
+          });
+        }
+      }
+      
+      // Add specific item context if viewing a detail page
+      if (pageContext.isDetailPage) {
+        prompt += `\n\nDETAIL VIEW CONTEXT:`;
+        prompt += `\n- Viewing specific item: ${pageContext.itemName || pageContext.itemId || 'Unknown'}`;
+        prompt += `\n- View type: ${pageContext.viewType}`;
+        prompt += `\n- Item ID: ${pageContext.itemId || 'N/A'}`;
+        
+        if (pageContext.filters && Object.keys(pageContext.filters).length > 0) {
+          prompt += `\n- Applied filters: ${Object.entries(pageContext.filters).map(([key, value]) => `${key}: ${value}`).join(', ')}`;
+        }
+      }
+    }
     
     // Add context-specific instructions
     if (currentRecord) {

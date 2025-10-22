@@ -10,6 +10,7 @@ import { prisma } from '@/platform/database/prisma-client';
 import { EnhancedWorkspaceContextService } from '@/platform/ai/services/EnhancedWorkspaceContextService';
 import { BrowserTools } from '@/platform/ai/tools/browser-tools';
 import { browserAutomationService } from './BrowserAutomationService';
+import { ApplicationContextService } from './ApplicationContextService';
 
 export interface ListViewContext {
   visibleRecords: any[];
@@ -39,6 +40,13 @@ export interface ClaudeChatRequest {
   appType?: string;
   workspaceId?: string;
   userId?: string;
+  pageContext?: {
+    primaryApp: string;
+    secondarySection: string;
+    detailView: string;
+    breadcrumb: string;
+    fullPath: string;
+  };
 }
 
 export interface ClaudeChatResponse {
@@ -548,6 +556,7 @@ export class ClaudeAIService {
     const recordType = request.recordType;
     const listViewContext = request.listViewContext;
     const appType = request.appType;
+    const pageContext = request.pageContext;
 
     // Validate context and add warnings to prompt
     const validation = this.validateContext(request, dataContext);
@@ -649,6 +658,51 @@ ${recentActions}`;
 `;
     }
 
+    // Add comprehensive page context using ApplicationContextService
+    let pageContextString = '';
+    if (pageContext) {
+      const contextInfo = ApplicationContextService.getPageContextInfo(pageContext);
+      
+      pageContextString = `
+CURRENT PAGE CONTEXT:
+${contextInfo.contextString}`;
+      
+      if (contextInfo.sectionInfo) {
+        pageContextString += `
+
+SECTION CAPABILITIES:
+${contextInfo.sectionInfo.capabilities.map(cap => `- ${cap}`).join('\n')}
+
+COMMON TASKS:
+${contextInfo.sectionInfo.commonTasks.map(task => `- ${task}`).join('\n')}
+
+AI GUIDANCE:
+${contextInfo.guidance}`;
+        
+        if (contextInfo.examples.length > 0) {
+          pageContextString += `
+
+EXAMPLE QUESTIONS I CAN HELP WITH:
+${contextInfo.examples.map(example => `- "${example}"`).join('\n')}`;
+        }
+      }
+      
+      // Add specific item context if viewing a detail page
+      if (pageContext.isDetailPage) {
+        pageContextString += `
+
+DETAIL VIEW CONTEXT:
+- Viewing specific item: ${pageContext.itemName || pageContext.itemId || 'Unknown'}
+- View type: ${pageContext.viewType}
+- Item ID: ${pageContext.itemId || 'N/A'}`;
+        
+        if (pageContext.filters && Object.keys(pageContext.filters).length > 0) {
+          pageContextString += `
+- Applied filters: ${Object.entries(pageContext.filters).map(([key, value]) => `${key}: ${value}`).join(', ')}`;
+        }
+      }
+    }
+
     // Add list view context
     let listViewContextString = '';
     if (listViewContext) {
@@ -714,6 +768,7 @@ You're like a trusted sales consultant who's always available to help. You under
 - Sales process improvement
 
 ${contextWarnings}
+${pageContextString}
 ${contextInfo}
 ${workspaceContext}
 ${workspaceBusinessContext}

@@ -101,6 +101,53 @@ interface MessageListProps {
   onRecordSearch?: (recordName: string) => void;
 }
 
+// Helper function to render markdown with proper styling
+const renderMarkdown = (content: string): React.ReactNode => {
+  // Split content by markdown patterns while preserving the patterns
+  const parts = content.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
+  
+  return parts.map((part, index) => {
+    if (!part) return null;
+    
+    // Handle bold text **text**
+    if (part.match(/^\*\*.*\*\*$/)) {
+      const text = part.slice(2, -2);
+      return (
+        <strong key={index} className="font-semibold text-[var(--foreground)]">
+          {text}
+        </strong>
+      );
+    }
+    
+    // Handle italic text *text*
+    if (part.match(/^\*.*\*$/)) {
+      const text = part.slice(1, -1);
+      return (
+        <em key={index} className="italic text-[var(--foreground)]">
+          {text}
+        </em>
+      );
+    }
+    
+    // Handle code `text`
+    if (part.match(/^`.*`$/)) {
+      const text = part.slice(1, -1);
+      return (
+        <code key={index} className="bg-[var(--muted)] px-1.5 py-0.5 rounded text-sm font-mono text-[var(--foreground)]">
+          {text}
+        </code>
+      );
+    }
+    
+    // Regular text
+    return (
+      <span key={index} className="text-[var(--foreground)]">
+        {part}
+      </span>
+    );
+  });
+};
+
 export function MessageList({ 
   messages, 
   chatEndRef, 
@@ -208,7 +255,9 @@ export function MessageList({
             ) : (
               <div className="whitespace-pre-line">
                 {/* Enhanced content rendering with smart links and record references */}
-                {message.content.split(/(\bhttps?:\/\/[^\s]+|\[([^\]]+)\]\(([^)]+)\)|@(\w+)|"([A-Z][a-z]+ [A-Z][a-z]+)"|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(\([0-9]{3}\) [0-9]{3}-[0-9]{4}))/g).map((part, index) => {
+                {(() => {
+                  // Split by smart link patterns first, then handle markdown
+                  return message.content.split(/(\bhttps?:\/\/[^\s]+|\[([^\]]+)\]\(([^)]+)\)|@(\w+)|"([A-Z][a-z]+ [A-Z][a-z]+)"|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|(\([0-9]{3}\) [0-9]{3}-[0-9]{4}))/g).map((part, index) => {
                   // CRITICAL: Handle undefined parts from split operation
                   if (!part) {
                     return null;
@@ -320,8 +369,10 @@ export function MessageList({
                     );
                   }
                   
-                  return part;
-                })}
+                  // For regular text, render markdown properly
+                  return renderMarkdown(part);
+                });
+                })()}
               </div>
             )
           )}

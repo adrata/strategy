@@ -72,8 +72,8 @@ export interface DatabaseContextType {
   setSelectedTable: (table: string | null) => void;
   selectedRecord: Record<string, any> | null;
   setSelectedRecord: (record: Record<string, any> | null) => void;
-  viewMode: 'browser' | 'detail' | 'query' | 'schema';
-  setViewMode: (mode: 'browser' | 'detail' | 'query' | 'schema') => void;
+  viewMode: 'browser' | 'detail' | 'query' | 'schema' | 'tables' | 'objects' | 'model-detail';
+  setViewMode: (mode: 'browser' | 'detail' | 'query' | 'schema' | 'tables' | 'objects' | 'model-detail') => void;
   refreshData: () => void;
 }
 

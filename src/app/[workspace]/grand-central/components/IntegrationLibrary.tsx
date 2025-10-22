@@ -174,9 +174,20 @@ export function IntegrationLibrary({ isOpen, onClose }: IntegrationLibraryProps)
         {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
           {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-              <span className="ml-3 text-[var(--muted)]">Loading integrations...</span>
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 animate-pulse">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="h-8 w-8 bg-[var(--loading-bg)] rounded"></div>
+                    <div className="flex-1">
+                      <div className="h-5 bg-[var(--loading-bg)] rounded w-32 mb-2"></div>
+                      <div className="h-4 bg-[var(--loading-bg)] rounded w-48"></div>
+                    </div>
+                    <div className="h-8 bg-[var(--loading-bg)] rounded w-20"></div>
+                  </div>
+                  <div className="h-4 bg-[var(--loading-bg)] rounded w-full"></div>
+                </div>
+              ))}
             </div>
           ) : error ? (
             <div className="text-center py-12">

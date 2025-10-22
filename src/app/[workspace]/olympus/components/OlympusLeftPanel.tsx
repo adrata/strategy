@@ -45,58 +45,49 @@ export function OlympusLeftPanel({ activeSection, onSectionChange }: OlympusLeft
   // Olympus-specific sections
   const sections = [
     {
-      id: "workflows",
-      name: "Workflows",
-      description: "Active processes",
+      id: "buyer-group",
+      name: "Buyer Group",
+      description: "Target buyer segments",
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : workflowData?.workflows || "0",
+      ) : "12",
       visible: true
     },
     {
-      id: "steps",
-      name: "Steps",
-      description: "Process components",
+      id: "person",
+      name: "Person",
+      description: "Individual contacts",
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : workflowData?.totalSteps || "0",
+      ) : "247",
       visible: true
     },
     {
-      id: "active",
-      name: "Active",
-      description: "Currently running",
+      id: "company",
+      name: "Company",
+      description: "Organization data",
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : workflowData?.activeSteps || "0",
+      ) : "89",
       visible: true
     },
     {
-      id: "completed",
-      name: "Completed",
-      description: "Finished processes",
+      id: "role",
+      name: "Role",
+      description: "Job positions & titles",
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : workflowData?.completedSteps || "0",
+      ) : "156",
       visible: true
     },
     {
-      id: "templates",
-      name: "Templates",
-      description: "Reusable workflows",
+      id: "all-workflows",
+      name: "All Workflows",
+      description: "Complete pipeline view",
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : workflowData?.templates || "0",
-      visible: true
-    },
-    {
-      id: "analytics",
-      name: "Analytics",
-      description: "Performance insights",
-      count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : "Live",
-      visible: true
+      ) : "8",
+      visible: false
     }
   ];
 
@@ -133,31 +124,31 @@ export function OlympusLeftPanel({ activeSection, onSectionChange }: OlympusLeft
           </div>
         </div>
 
-        {/* Workflow Performance Dashboard */}
+        {/* Data Overview Dashboard */}
         <div className="mx-2 mb-4 p-3 bg-[var(--hover)] rounded-lg border border-[var(--border)]">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Workflows</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Total Contacts</span>
               <span className="text-xs font-semibold text-black">
                 {loading ? (
                   <div className="w-8 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                ) : workflowData?.workflows || "0"}
+                ) : "247"}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Completed</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Companies</span>
               <span className="text-xs font-semibold text-black">
                 {loading ? (
                   <div className="w-8 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                ) : workflowData?.completedSteps || "0"}
+                ) : "89"}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Active</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Buyer Groups</span>
               <span className="text-xs font-semibold text-black">
                 {loading ? (
                   <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                ) : workflowData?.activeSteps || "0"}
+                ) : "12"}
               </span>
             </div>
           </div>

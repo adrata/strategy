@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useDatabase } from "../layout";
 import { DatabaseTable } from "../types";
+import { getStreamlinedModels, ParsedModel } from "../utils/schemaParser";
 
 interface DatabaseLeftPanelProps {
   activeSection: string;
@@ -12,6 +14,7 @@ interface DatabaseLeftPanelProps {
 }
 
 export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLeftPanelProps) {
+  const router = useRouter();
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { data: acquisitionData } = useAcquisitionOS();
   const { setSelectedTable, setViewMode } = useDatabase();
@@ -20,16 +23,18 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
   const userId = authUser?.id;
   
   const [tables, setTables] = useState<DatabaseTable[]>([]);
+  const [models, setModels] = useState<ParsedModel[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch database tables and stats
+  // Fetch database tables, models, and stats
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [tablesResponse, statsResponse] = await Promise.all([
+        const [tablesResponse, statsResponse, modelsData] = await Promise.all([
           fetch(`/api/database/tables?workspaceId=${workspaceId}`),
-          fetch(`/api/database/stats?workspaceId=${workspaceId}`)
+          fetch(`/api/database/stats?workspaceId=${workspaceId}`),
+          getStreamlinedModels()
         ]);
 
         if (tablesResponse.ok) {
@@ -45,6 +50,10 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
             setStats(statsData.data);
           }
         }
+
+        if (modelsData) {
+          setModels(modelsData.models);
+        }
       } catch (error) {
         console.error('Failed to fetch database data:', error);
       } finally {
@@ -57,8 +66,12 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
     }
   }, [workspaceId]);
 
+  // Filter tables to only show streamlined schema tables
+  const streamlinedTableNames = models.map(model => model.tableName);
+  const filteredTables = tables.filter(table => streamlinedTableNames.includes(table.name));
+  
   // Group tables by category
-  const groupedTables = tables.reduce((acc, table) => {
+  const groupedTables = filteredTables.reduce((acc, table) => {
     if (!acc[table.category]) {
       acc[table.category] = [];
     }
@@ -74,8 +87,12 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
 
   const handleSectionClick = (sectionId: string) => {
     onSectionChange(sectionId);
-    if (sectionId === 'tables') {
-      setViewMode('browser');
+    if (sectionId === 'objects') {
+      router.push('/adrata/database/objects');
+    } else if (sectionId === 'attributes') {
+      router.push('/adrata/database/attributes');
+    } else if (sectionId === 'relationships') {
+      router.push('/adrata/database/relationships');
     } else if (sectionId === 'query') {
       setViewMode('query');
     } else if (sectionId === 'schema') {
@@ -83,15 +100,34 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
     }
   };
 
+
   // Database sections
   const sections = [
     {
-      id: "tables",
-      name: "Tables",
-      description: "Browse all tables",
+      id: "objects",
+      name: "Objects",
+      description: "Database objects & models",
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : stats?.totalTables || "0",
+      ) : models.length || "0",
+      visible: true
+    },
+    {
+      id: "attributes",
+      name: "Attributes",
+      description: "Object fields & properties",
+      count: loading ? (
+        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+      ) : models.reduce((sum, model) => sum + model.fields.length, 0) || "0",
+      visible: true
+    },
+    {
+      id: "relationships",
+      name: "Relationships",
+      description: "Object connections & links",
+      count: loading ? (
+        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+      ) : models.reduce((sum, model) => sum + model.relationships.length, 0) || "0",
       visible: true
     },
     {
@@ -101,7 +137,7 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : "SQL",
-      visible: true
+      visible: false
     },
     {
       id: "schema",
@@ -110,7 +146,7 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : "ER",
-      visible: true
+      visible: false
     }
   ];
 
@@ -144,24 +180,34 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
 
 
         {/* Stats */}
-        {stats && (
-          <div className="mx-2 mb-3 p-3 bg-[var(--panel-background)] rounded-lg">
-            <div className="text-xs text-[var(--muted)] space-y-1">
-              <div className="flex justify-between">
-                <span>Tables:</span>
-                <span className="font-medium">{stats.totalTables}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Records:</span>
-                <span className="font-medium">{stats.totalRecords.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Size:</span>
-                <span className="font-medium">{stats.storageSize}</span>
-              </div>
+        <div className="mx-2 mb-3 p-3 bg-[var(--panel-background)] rounded-lg">
+          <div className="text-xs text-[var(--muted)] space-y-1">
+            <div className="flex justify-between">
+              <span>Objects:</span>
+              <span className="font-medium">
+                {loading ? (
+                  <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                ) : models.length || "0"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>Fields:</span>
+              <span className="font-medium">
+                {loading ? (
+                  <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                ) : models.reduce((sum, model) => sum + model.fields.length, 0) || "0"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>Relationships:</span>
+              <span className="font-medium">
+                {loading ? (
+                  <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                ) : models.reduce((sum, model) => sum + model.relationships.length, 0) || "0"}
+              </span>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Navigation Sections */}
@@ -216,6 +262,7 @@ export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLe
             ))}
           </div>
         )}
+
       </div>
 
       {/* Fixed Bottom Section - Profile Button */}

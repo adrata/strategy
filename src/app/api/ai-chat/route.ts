@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
       listViewContext,
       enableVoiceResponse,
       selectedVoiceId,
-      useOpenRouter = true // New parameter to control routing
+      useOpenRouter = true, // New parameter to control routing
+      pageContext // New parameter for page context
     } = body;
 
     console.log('🤖 [AI CHAT] Processing request:', {
@@ -77,7 +78,8 @@ export async function POST(request: NextRequest) {
             currentUrl: request.headers.get('referer'),
             userAgent: request.headers.get('user-agent'),
             timestamp: new Date().toISOString()
-          }
+          },
+          pageContext
         });
 
         // Record cost
@@ -161,7 +163,8 @@ export async function POST(request: NextRequest) {
           listViewContext,
           appType,
           workspaceId,
-          userId
+          userId,
+          pageContext
         });
 
         response = {
@@ -203,7 +206,8 @@ export async function POST(request: NextRequest) {
         listViewContext,
         appType,
         workspaceId,
-        userId
+        userId,
+        pageContext
       });
 
       // Record Claude request for monitoring

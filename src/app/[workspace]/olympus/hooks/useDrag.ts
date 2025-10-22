@@ -73,9 +73,10 @@ export const useDrag = (
         if (dragStateRef.current && dragPositionRef.current) {
           // Only update state on mouseup (final position)
           const { stepId: currentStepId } = dragStateRef.current;
+          const finalPosition = { ...dragPositionRef.current };
           setWorkflowSteps(prev => prev.map(s => 
             s.id === currentStepId 
-              ? { ...s, position: { x: dragPositionRef.current!.x, y: dragPositionRef.current!.y } }
+              ? { ...s, position: finalPosition }
               : s
           ));
         }

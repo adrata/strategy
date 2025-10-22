@@ -9,7 +9,7 @@ import { ChatQueueManager } from "./ChatQueueManager";
 import { AI_MODELS, type AIModel } from './AIModelSelector';
 import { RecordUpdateService } from '@/platform/services/record-update-service';
 import { CoreSignalChatHandler } from './CoreSignalChatHandler';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { elevenLabsVoice } from '@/platform/services/elevenlabs-voice';
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
@@ -101,6 +101,7 @@ interface ContextFile {
 export function RightPanel() {
   const { ui, chat } = useAcquisitionOS();
   const router = useRouter();
+  const pathname = usePathname();
   
   // Utility function for file size formatting
   const formatFileSize = (bytes: number): string => {
@@ -193,6 +194,10 @@ export function RightPanel() {
   
   // Track if conversations have been initially loaded to prevent re-loading on workspace changes
   const conversationsLoadedRef = useRef(false);
+  
+  // Track current page context for AI awareness
+  const [currentPageContext, setCurrentPageContext] = useState<any>(null);
+  const [contextLastUpdated, setContextLastUpdated] = useState<Date>(new Date());
   
   // Track locally deleted conversation IDs to prevent re-adding during API sync
   const [deletedConversationIds, setDeletedConversationIds] = useState<Set<string>>(() => {
@@ -448,6 +453,35 @@ export function RightPanel() {
     
     return () => clearInterval(interval);
   }, [workspaceId, userId]);
+
+  // Update page context when pathname changes
+  useEffect(() => {
+    const newContext = getPageContext();
+    if (newContext) {
+      setCurrentPageContext(newContext);
+      setContextLastUpdated(new Date());
+      console.log('🧭 [AI CONTEXT] Page context updated:', {
+        section: newContext.secondarySection,
+        detailView: newContext.detailView,
+        isDetailPage: newContext.isDetailPage,
+        itemId: newContext.itemId,
+        itemName: newContext.itemName,
+        viewType: newContext.viewType
+      });
+    }
+  }, [pathname]);
+
+  // Update context when current record changes
+  useEffect(() => {
+    if (currentRecord) {
+      setContextLastUpdated(new Date());
+      console.log('📝 [AI CONTEXT] Record context updated:', {
+        recordType,
+        recordId: currentRecord.id,
+        recordName: currentRecord.name || currentRecord.fullName
+      });
+    }
+  }, [currentRecord, recordType]);
 
   
   // Refs
@@ -1114,6 +1148,112 @@ I've received your ${parsedDoc.fileType.toUpperCase()} file. While I may need ad
   };
 
   // Optimized message processing with caching and debouncing
+  // Helper function to extract comprehensive page context from URL
+  const getPageContext = () => {
+    if (typeof window === 'undefined') return null;
+    
+    const pathname = window.location.pathname;
+    const searchParams = new URLSearchParams(window.location.search);
+    const pathSegments = pathname.split('/').filter(Boolean);
+    
+    // Extract context from URL structure
+    let primaryApp = '';
+    let secondarySection = '';
+    let detailView = '';
+    let breadcrumb = '';
+    let itemId = '';
+    let itemName = '';
+    let isDetailPage = false;
+    let viewType: 'list' | 'detail' | 'form' | 'editor' = 'list';
+    const filters: Record<string, any> = {};
+    
+    // Parse URL segments
+    if (pathSegments.length >= 2) {
+      primaryApp = pathSegments[1]; // workspace
+      if (pathSegments.length >= 3) {
+        secondarySection = pathSegments[2]; // database, grand-central, olympus, etc.
+        if (pathSegments.length >= 4) {
+          detailView = pathSegments[3]; // tables, apis, connectors, etc.
+          if (pathSegments.length >= 5) {
+            // Check if this is a detail page with an ID
+            const potentialId = pathSegments[4];
+            if (potentialId && !isNaN(Number(potentialId)) || potentialId.match(/^[a-f0-9-]{8,}$/i)) {
+              // This looks like an ID
+              itemId = potentialId;
+              isDetailPage = true;
+              viewType = 'detail';
+              detailView += `/${potentialId}`;
+            } else {
+              // This is a sub-section
+              detailView += `/${potentialId}`;
+              if (pathSegments.length >= 6) {
+                const subItem = pathSegments[5];
+                if (subItem && !isNaN(Number(subItem)) || subItem.match(/^[a-f0-9-]{8,}$/i)) {
+                  itemId = subItem;
+                  isDetailPage = true;
+                  viewType = 'detail';
+                  detailView += `/${subItem}`;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Determine view type based on URL patterns
+    if (detailView.includes('edit') || detailView.includes('create') || detailView.includes('new')) {
+      viewType = 'form';
+    } else if (detailView.includes('editor') || detailView.includes('code') || detailView.includes('monaco')) {
+      viewType = 'editor';
+    } else if (isDetailPage) {
+      viewType = 'detail';
+    } else {
+      viewType = 'list';
+    }
+    
+    // Extract query parameters as filters
+    for (const [key, value] of searchParams.entries()) {
+      if (key !== 'tab' && key !== 'view') { // Exclude UI state params
+        try {
+          // Try to parse as JSON for complex filters
+          filters[key] = JSON.parse(value);
+        } catch {
+          // Keep as string for simple filters
+          filters[key] = value;
+        }
+      }
+    }
+    
+    // Try to extract item name from page title or other sources
+    if (typeof document !== 'undefined') {
+      const title = document.title;
+      if (title && title !== 'Adrata') {
+        // Extract meaningful name from title
+        const titleParts = title.split(' - ');
+        if (titleParts.length > 1) {
+          itemName = titleParts[0];
+        }
+      }
+    }
+    
+    // Build breadcrumb
+    breadcrumb = pathSegments.join(' > ');
+    
+    return {
+      primaryApp,
+      secondarySection,
+      detailView,
+      breadcrumb,
+      fullPath: pathname,
+      isDetailPage,
+      itemId: itemId || undefined,
+      itemName: itemName || undefined,
+      viewType,
+      filters: Object.keys(filters).length > 0 ? filters : undefined
+    };
+  };
+
   const processMessageWithQueue = async (input: string) => {
     if (isProcessing) return;
     
@@ -1293,7 +1433,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString(),
             sessionId: `session-${Date.now()}`
-          }
+          },
+          // Add page context for better AI awareness
+          pageContext: currentPageContext || getPageContext()
         }),
       });
 

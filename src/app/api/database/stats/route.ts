@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
+import { getStreamlinedModels } from '@/app/[workspace]/database/utils/schemaParser';
 
 /**
  * GET /api/database/stats
@@ -57,16 +58,20 @@ export async function GET(request: NextRequest) {
  * Get database statistics for workspace
  */
 async function getDatabaseStats(workspaceId: string) {
-  // Get total tables count
-  const dmmf = prisma._dmmf;
-  const totalTables = dmmf.datamodel.models.length;
+  // Get streamlined schema information
+  const { models, stats: schemaStats } = await getStreamlinedModels();
+  
+  // Get total tables count from streamlined schema
+  const totalTables = schemaStats.totalTables;
+  const totalObjects = schemaStats.totalModels;
+  const totalColumns = schemaStats.totalFields;
 
-  // Get total records across all tables
+  // Get total records across streamlined tables only
   let totalRecords = 0;
   const tableCounts = [];
 
-  for (const model of dmmf.datamodel.models) {
-    const tableName = model.dbName || model.name;
+  for (const model of models) {
+    const tableName = model.tableName;
     try {
       const result = await prisma.$queryRawUnsafe(`SELECT COUNT(*) as count FROM "${tableName}"`);
       const count = Number((result as any)[0]?.count || 0);
@@ -103,6 +108,8 @@ async function getDatabaseStats(workspaceId: string) {
 
   return {
     totalTables,
+    totalObjects,
+    totalColumns,
     totalRecords,
     storageSize,
     lastBackup,
