@@ -49,12 +49,12 @@ class BuyerGroupPipeline {
         // Pass environment variables to all modules that need API keys
         const apiConfig = {
             PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY,
-            OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-            CORESIGNAL_API_KEY: process.env.CORESIGNAL_API_KEY,
+            OPENAI_API_KEY: (process.env.OPENAI_API_KEY || '').replace(/\\n/g, '').trim(),
+            CORESIGNAL_API_KEY: (process.env.CORESIGNAL_API_KEY || '').replace(/\\n/g, '').trim(),
             LUSHA_API_KEY: process.env.LUSHA_API_KEY,
             ZEROBOUNCE_API_KEY: process.env.ZEROBOUNCE_API_KEY,
             MYEMAILVERIFIER_API_KEY: process.env.MYEMAILVERIFIER_API_KEY,
-            PEOPLE_DATA_LABS_API_KEY: process.env.PEOPLE_DATA_LABS_API_KEY,
+            PEOPLE_DATA_LABS_API_KEY: (process.env.PEOPLE_DATA_LABS_API_KEY || '').replace(/\\n/g, '').trim(),
             PROSPEO_API_KEY: process.env.PROSPEO_API_KEY,
             TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
             TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,

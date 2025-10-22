@@ -11,13 +11,14 @@
  * Transforms buyer group discovery from narrow search to comprehensive intelligence
  */
 
-const fetch = require('node-fetch');
+// Use global fetch (Node.js 18+) or fallback to node-fetch
+const fetch = globalThis.fetch || require('node-fetch');
 const { ExecutiveRoleDefinitions } = require('./ExecutiveRoleDefinitions');
 
 class BuyerGroupPreviewDiscovery {
     constructor(config = {}) {
         this.config = {
-            CORESIGNAL_API_KEY: config.CORESIGNAL_API_KEY || process.env.CORESIGNAL_API_KEY,
+            CORESIGNAL_API_KEY: (config.CORESIGNAL_API_KEY || process.env.CORESIGNAL_API_KEY || '').replace(/\\n/g, '').trim(),
             CORESIGNAL_BASE_URL: config.CORESIGNAL_BASE_URL || 'https://api.coresignal.com',
             TIMEOUT: config.TIMEOUT || 20000,
             MAX_RETRIES: config.MAX_RETRIES || 2,
@@ -90,6 +91,9 @@ class BuyerGroupPreviewDiscovery {
         if (!this.config.CORESIGNAL_API_KEY) {
             console.log('   ⚠️ CoreSignal API key not configured');
             return [];
+        } else {
+            const keyPreview = this.config.CORESIGNAL_API_KEY.substring(0, 10) + '...';
+            console.log(`   ✅ CoreSignal API key loaded: ${keyPreview} (length: ${this.config.CORESIGNAL_API_KEY.length})`);
         }
 
         try {

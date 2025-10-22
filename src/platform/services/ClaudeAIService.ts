@@ -71,7 +71,7 @@ export class ClaudeAIService {
   private browserSessions: Map<string, string> = new Map(); // userId -> sessionId
 
   constructor() {
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = (process.env.ANTHROPIC_API_KEY || '').replace(/\\n/g, '').trim();
     if (!apiKey) {
       console.warn('⚠️ Claude service not available - missing ANTHROPIC_API_KEY or running in client');
       // Don't throw error during build - just log warning

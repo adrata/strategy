@@ -139,16 +139,17 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
 
   return (
     <div className="h-full flex flex-col bg-[var(--background)]">
+      {/* Breadcrumb */}
+      <Breadcrumb items={[
+        { label: 'Database', onClick: () => window.location.href = window.location.pathname.split('/').slice(0, 3).join('/') },
+        { label: 'Objects', onClick: () => window.location.href = window.location.pathname.split('/').slice(0, 4).join('/') },
+        { label: model.name }
+      ]} />
+
       {/* Header */}
       <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
         <div className="flex items-center justify-between">
           <div>
-            <button
-              onClick={() => router.back()}
-              className="text-[var(--muted)] hover:text-[var(--foreground)] mb-2"
-            >
-              ← Back to Objects
-            </button>
             <h1 className="text-2xl font-semibold text-[var(--foreground)]">{model.name}</h1>
             <p className="text-sm text-[var(--muted)] mt-1">
               Database Model • {model.fields.length} fields • Table: {model.tableName}
@@ -193,10 +194,10 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-[var(--foreground)]">{field.name}</span>
                       <span className={`px-2 py-1 rounded text-xs ${
-                        field.isPrimaryKey ? 'bg-blue-100 text-blue-700' :
-                        field.isForeignKey ? 'bg-green-100 text-green-700' :
-                        field.isUnique ? 'bg-purple-100 text-purple-700' :
-                        'bg-gray-100 text-gray-600'
+                        field.isPrimaryKey ? 'bg-blue-50 text-blue-600' :
+                        field.isForeignKey ? 'bg-green-50 text-green-600' :
+                        field.isUnique ? 'bg-purple-50 text-purple-600' :
+                        'bg-[var(--background)] text-[var(--muted)]'
                       }`}>
                         {field.type}
                       </span>
@@ -210,13 +211,13 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
                     
                     <div className="flex gap-1">
                       {field.isPrimaryKey && (
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Primary Key</span>
+                        <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded">Primary Key</span>
                       )}
                       {field.isForeignKey && (
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Foreign Key</span>
+                        <span className="text-xs bg-green-50 text-green-600 px-2 py-1 rounded">Foreign Key</span>
                       )}
                       {field.isUnique && (
-                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">Unique</span>
+                        <span className="text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded">Unique</span>
                       )}
                     </div>
                   </div>
@@ -258,9 +259,9 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
                         <span className="text-sm text-[var(--muted)] ml-2">→ {rel.targetModel}</span>
                       </div>
                       <span className={`text-xs px-2 py-1 rounded ${
-                        rel.type === 'one-to-one' ? 'bg-blue-100 text-blue-700' :
-                        rel.type === 'one-to-many' ? 'bg-green-100 text-green-700' :
-                        'bg-purple-100 text-purple-700'
+                        rel.type === 'one-to-one' ? 'bg-blue-50 text-blue-600' :
+                        rel.type === 'one-to-many' ? 'bg-green-50 text-green-600' :
+                        'bg-purple-50 text-purple-600'
                       }`}>
                         {rel.type}
                       </span>

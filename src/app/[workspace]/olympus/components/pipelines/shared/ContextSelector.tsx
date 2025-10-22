@@ -43,8 +43,7 @@ export const ContextSelector: React.FC<ContextSelectorProps> = ({
             { name: 'companyDomain', label: 'Company Domain', type: 'text', placeholder: 'e.g., salesforce.com' }
           ],
           many: [
-            { name: 'companyNames', label: 'Company Names', type: 'textarea', placeholder: 'Enter company names, one per line' },
-            { name: 'focusRoles', label: 'Focus Roles', type: 'text', placeholder: 'e.g., CFO, CRO, VP Sales' }
+            { name: 'companyNames', label: 'Company Names', type: 'textarea', placeholder: 'Enter company names, one per line' }
           ]
         };
       

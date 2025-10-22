@@ -38,8 +38,8 @@ export const EntityActions: React.FC<EntityActionsProps> = ({
           },
           {
             id: 'enlighten',
-            title: 'Enlighten',
-            description: 'Get strategic insights about buyer groups',
+            title: 'Enlighten Buyer Group',
+            description: 'Complete buyer group intelligence workflow - discover, enrich, and monitor',
             color: 'bg-purple-500'
           },
           {
@@ -72,8 +72,8 @@ export const EntityActions: React.FC<EntityActionsProps> = ({
           },
           {
             id: 'enlighten',
-            title: 'Enlighten',
-            description: 'Get strategic insights about companies',
+            title: 'Enlighten Company',
+            description: 'Complete company intelligence workflow - discover, enrich, and monitor',
             color: 'bg-purple-500'
           },
           {
@@ -106,8 +106,8 @@ export const EntityActions: React.FC<EntityActionsProps> = ({
           },
           {
             id: 'enlighten',
-            title: 'Enlighten',
-            description: 'Get strategic insights about people',
+            title: 'Enlighten Person',
+            description: 'Complete person intelligence workflow - discover, enrich, and monitor',
             color: 'bg-purple-500'
           },
           {
@@ -140,8 +140,8 @@ export const EntityActions: React.FC<EntityActionsProps> = ({
           },
           {
             id: 'enlighten',
-            title: 'Enlighten',
-            description: 'Get strategic insights about roles',
+            title: 'Enlighten Role',
+            description: 'Complete role intelligence workflow - discover, enrich, and monitor',
             color: 'bg-purple-500'
           },
           {

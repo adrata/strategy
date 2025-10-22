@@ -11,7 +11,8 @@
  * 94% credit savings vs blind collection
  */
 
-const fetch = require('node-fetch');
+// Use global fetch (Node.js 18+) or fallback to node-fetch
+const fetch = globalThis.fetch || require('node-fetch');
 const { ExecutiveRoleDefinitions } = require('./ExecutiveRoleDefinitions');
 const RetryHandler = require('./RetryHandler');
 const TimeoutHandler = require('./TimeoutHandler');
@@ -19,7 +20,7 @@ const TimeoutHandler = require('./TimeoutHandler');
 class CoreSignalMultiSource {
     constructor(config = {}) {
         this.config = {
-            CORESIGNAL_API_KEY: config.CORESIGNAL_API_KEY || process.env.CORESIGNAL_API_KEY,
+            CORESIGNAL_API_KEY: (config.CORESIGNAL_API_KEY || process.env.CORESIGNAL_API_KEY || '').replace(/\\n/g, '').trim(),
             CORESIGNAL_BASE_URL: config.CORESIGNAL_BASE_URL || 'https://api.coresignal.com',
             TIMEOUT: config.TIMEOUT || 20000, // Optimized from 30s to 20s
             MAX_RETRIES: config.MAX_RETRIES || 2,

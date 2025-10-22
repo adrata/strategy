@@ -11,7 +11,7 @@ import type {
   BuyerGroup,
 } from '../shared/types';
 import { ProgressiveEnrichmentEngine } from './progressive-enrichment';
-import { BuyerGroupPreviewDiscovery } from '../../pipelines/modules/core/BuyerGroupPreviewDiscovery';
+const BuyerGroupPreviewDiscovery = require('../../pipelines/modules/core/BuyerGroupPreviewDiscovery');
 
 export class BuyerGroupEngine {
   private enrichmentEngine: ProgressiveEnrichmentEngine;

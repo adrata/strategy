@@ -7,6 +7,15 @@ import {
 import { BuyerGroupEngine } from '@/platform/intelligence/buyer-group/buyer-group-engine';
 import type { EnrichmentLevel } from '@/platform/intelligence/shared/types';
 
+// Ensure environment variables are loaded
+if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+  try {
+    require('dotenv').config();
+  } catch (e) {
+    // dotenv not available, continue
+  }
+}
+
 // Required for static export compatibility
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +43,8 @@ export async function POST(request: NextRequest) {
 
     // 2. Parse request
     const body = await request.json();
+
+    // 3. Extract request parameters
     const {
       companies, // Array of company names or objects with {name, website}
       accounts, // Legacy support
@@ -84,6 +95,12 @@ export async function POST(request: NextRequest) {
 
     // 5. Process with engine
     const startTime = Date.now();
+    console.log('🔧 [DEBUG] Environment check:', {
+      CORESIGNAL_API_KEY: process.env.CORESIGNAL_API_KEY ? 'Found' : 'Not found',
+      CORESIGNAL_API_KEY_LENGTH: process.env.CORESIGNAL_API_KEY?.length,
+      NODE_ENV: process.env.NODE_ENV
+    });
+    
     const engine = new BuyerGroupEngine();
     const results = await engine.discoverBatch(requests);
     const totalTime = Date.now() - startTime;

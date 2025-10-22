@@ -5,6 +5,9 @@ import { FindCompanyPipeline } from './pipelines/FindCompanyPipeline';
 import { FindBuyerGroupPipeline } from './pipelines/FindBuyerGroupPipeline';
 import { FindPersonPipeline } from './pipelines/FindPersonPipeline';
 import { FindRolePipeline } from './pipelines/FindRolePipeline';
+import { EnlightenBuyerGroupPipeline } from './pipelines/EnlightenBuyerGroupPipeline';
+import { EnrichBuyerGroupPipeline } from './pipelines/EnrichBuyerGroupPipeline';
+import { UpdateBuyerGroupPipeline } from './pipelines/UpdateBuyerGroupPipeline';
 import { EntityActions } from './EntityActions';
 
 interface PipelineRouterProps {
@@ -111,7 +114,20 @@ export const PipelineRouter: React.FC<PipelineRouterProps> = ({ activeSection })
       }
     }
     
-    // For enrich, update, enlighten, and monitor actions, we'll show placeholder components for now
+    // Handle buyer-group specific actions
+    if (activeSection === 'buyer-group') {
+      if (activeAction === 'enlighten') {
+        return <EnlightenBuyerGroupPipeline />;
+      }
+      if (activeAction === 'enrich') {
+        return <EnrichBuyerGroupPipeline />;
+      }
+      if (activeAction === 'update') {
+        return <UpdateBuyerGroupPipeline />;
+      }
+    }
+    
+    // For monitor actions and other entity types, we'll show placeholder components for now
     return (
       <div className="h-full flex flex-col bg-[var(--background)]">
         {/* Breadcrumb Navigation */}
