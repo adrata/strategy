@@ -307,19 +307,8 @@ export const EnlightenBuyerGroupPipeline: React.FC = () => {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
 
-      // Set results from V1 API
-      setResults(transformedResults.length > 0 ? transformedResults : [
-        {
-          companyName: 'No Results',
-          buyingCommittees: [],
-          insights: {
-            decisionPathway: 'No buyer group data found',
-            keyInfluencers: [],
-            engagementOpportunities: [],
-            monitoringAlerts: ['API returned no results']
-          }
-        }
-      ]);
+      // Set results from V1 API - no fallback data
+      setResults(transformedResults);
       
     } catch (error: any) {
       console.error('Error calling V1 buyer group API:', error);
@@ -341,38 +330,8 @@ export const EnlightenBuyerGroupPipeline: React.FC = () => {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
       
-      // Fall back to sample data on error
-      const fallbackResults = [
-        {
-          companyName: 'Sample Company (API Error)',
-          buyingCommittees: [
-            {
-              name: 'Executive Committee',
-              members: [
-                {
-                  name: 'John Smith',
-                  title: 'CEO',
-                  role: 'Decision Maker',
-                  influenceScore: 95,
-                  email: 'john.smith@company.com',
-                  phone: '+1-555-0000',
-                  linkedin: 'linkedin.com/in/johnsmith',
-                  engagementScore: 85,
-                  lastContact: '2024-01-15',
-                  communicationPreference: 'Email'
-                }
-              ]
-            }
-          ],
-          insights: {
-            decisionPathway: 'Standard executive decision flow',
-            keyInfluencers: ['John Smith'],
-            engagementOpportunities: ['John Smith (CEO, high influence)'],
-            monitoringAlerts: [`API Error: ${errorDetails}`, 'Using fallback data']
-          }
-        }
-      ];
-      setResults(fallbackResults);
+      // No fallback data - return empty results on error
+      setResults([]);
     }
 
     setIsExecuting(false);
@@ -462,7 +421,7 @@ export const EnlightenBuyerGroupPipeline: React.FC = () => {
       </div>
 
       {/* Results Panel */}
-      {results.length > 0 && (
+      {results.length > 0 ? (
         <div className="flex-shrink-0 border-t border-[var(--border)] bg-white p-6 max-h-96 overflow-y-auto overflow-x-hidden scrollbar-hide">
           <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
             Comprehensive Buyer Group Intelligence
@@ -525,6 +484,18 @@ export const EnlightenBuyerGroupPipeline: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      ) : (
+        <div className="flex-shrink-0 border-t border-[var(--border)] bg-white p-6 max-h-96 overflow-y-auto overflow-x-hidden scrollbar-hide">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            Comprehensive Buyer Group Intelligence
+          </h3>
+          <div className="text-center py-8">
+            <div className="text-gray-500 mb-2">No Results</div>
+            <div className="text-sm text-gray-400">
+              {isExecuting ? 'Processing buyer group discovery...' : 'No buyer group data found. Check the logs for errors.'}
+            </div>
           </div>
         </div>
       )}

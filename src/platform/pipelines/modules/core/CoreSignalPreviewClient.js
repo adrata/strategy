@@ -50,8 +50,11 @@ class CoreSignalPreviewClient {
 
             const url = `${this.config.CORESIGNAL_BASE_URL}/cdapi/v2/employee_multi_source/search/es_dsl/preview`;
             
-            // Add pagination if specified
-            const searchUrl = options.page ? `${url}?page=${options.page}` : url;
+            // Add pagination and size if specified
+            const params = new URLSearchParams();
+            if (options.page) params.append('page', options.page);
+            if (options.size) params.append('size', options.size);
+            const searchUrl = params.toString() ? `${url}?${params.toString()}` : url;
 
             const response = await fetch(searchUrl, {
                 method: 'POST',
@@ -107,8 +110,11 @@ class CoreSignalPreviewClient {
 
             const url = `${this.config.CORESIGNAL_BASE_URL}/cdapi/v2/company_multi_source/search/es_dsl/preview`;
             
-            // Add pagination if specified
-            const searchUrl = options.page ? `${url}?page=${options.page}` : url;
+            // Add pagination and size if specified
+            const params = new URLSearchParams();
+            if (options.page) params.append('page', options.page);
+            if (options.size) params.append('size', options.size);
+            const searchUrl = params.toString() ? `${url}?${params.toString()}` : url;
 
             const response = await fetch(searchUrl, {
                 method: 'POST',

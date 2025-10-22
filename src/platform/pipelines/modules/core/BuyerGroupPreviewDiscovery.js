@@ -22,7 +22,7 @@ class BuyerGroupPreviewDiscovery {
             CORESIGNAL_BASE_URL: config.CORESIGNAL_BASE_URL || 'https://api.coresignal.com',
             TIMEOUT: config.TIMEOUT || 20000,
             MAX_RETRIES: config.MAX_RETRIES || 2,
-            PREVIEW_LIMIT: config.PREVIEW_LIMIT || 100,
+            PREVIEW_LIMIT: config.PREVIEW_LIMIT || 200,
             ...config
         };
         
@@ -100,7 +100,7 @@ class BuyerGroupPreviewDiscovery {
             console.log(`   🔍 CoreSignal Preview: Searching for employees at ${companyName}...`);
             this.stats.previewSearches++;
 
-            const url = `${this.config.CORESIGNAL_BASE_URL}/cdapi/v2/employee_multi_source/search/es_dsl/preview`;
+            const url = `${this.config.CORESIGNAL_BASE_URL}/cdapi/v2/employee_multi_source/search/es_dsl/preview?page=1&size=${this.config.PREVIEW_LIMIT}`;
             
             // Build comprehensive query for broad visibility
             const query = {

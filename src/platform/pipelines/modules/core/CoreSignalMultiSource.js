@@ -378,7 +378,7 @@ class CoreSignalMultiSource {
      * 
      * Search for employees with basic info (1 credit for 100 employees)
      */
-    async previewEmployees(companyName, limit = 100) {
+    async previewEmployees(companyName, limit = 200) {
         if (!this.config.CORESIGNAL_API_KEY) {
             console.log('   ⚠️ CoreSignal API key not configured');
             return null;
