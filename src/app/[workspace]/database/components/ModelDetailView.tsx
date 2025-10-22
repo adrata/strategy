@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { getStreamlinedModels, ParsedModel } from "../utils/schemaParser";
+import { Breadcrumb } from "./Breadcrumb";
 
 interface ModelDetailViewProps {
   modelName: string;
