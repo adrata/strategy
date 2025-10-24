@@ -275,6 +275,16 @@ export function UniversalRecordTemplate({
   const [pendingSaves, setPendingSaves] = useState<Set<string>>(new Set());
   const [recentlyUpdatedFields, setRecentlyUpdatedFields] = useState<Set<string>>(new Set());
   
+  // 🚀 CRITICAL FIX: Clear recentlyUpdatedFields when navigating to a different record
+  // This prevents stale local state from overriding fresh API data
+  useEffect(() => {
+    if (record?.id && localRecord?.id && record.id !== localRecord.id) {
+      console.log(`🔄 [UNIVERSAL] Record ID changed from ${localRecord.id} to ${record.id}, clearing recentlyUpdatedFields`);
+      setRecentlyUpdatedFields(new Set());
+      setPendingSaves(new Set());
+    }
+  }, [record?.id, localRecord?.id]);
+  
   // Update local record state when prop changes, but not during pending saves
   useEffect(() => {
     console.log(`🔄 [UNIVERSAL] Record prop updated:`, {
@@ -2297,6 +2307,15 @@ export function UniversalRecordTemplate({
             targetModel === 'companies' ? 'force-refresh-companies' : `force-refresh-${targetModel}`
           ]
         });
+        
+        // 🚀 CRITICAL FIX: Use Next.js router.refresh() to invalidate client-side router cache
+        // This ensures fresh data is loaded when navigating back to the record
+        try {
+          router.refresh();
+          console.log('🔄 [ROUTER] Called router.refresh() to invalidate Next.js client-side cache');
+        } catch (error) {
+          console.warn('⚠️ [ROUTER] Failed to call router.refresh():', error);
+        }
       }
       
       // Dispatch cache invalidation event for other components
