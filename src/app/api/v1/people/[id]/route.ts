@@ -638,6 +638,43 @@ export async function PATCH(
       linkedinNavigatorUrlInResponseData: (responseData.data as any).linkedinNavigatorUrl
     });
 
+    // Auto-populate nextActionDate if it's null
+    if (!updatedPerson.nextActionDate) {
+      try {
+        // Calculate nextActionDate based on rank or lastActionDate
+        const lastActionDate = updatedPerson.lastActionDate || updatedPerson.createdAt;
+        const rank = updatedPerson.globalRank || 1000; // Default rank if null
+        
+        // Calculate days to add based on rank (higher rank = more urgent = sooner)
+        let daysToAdd = 7; // Default 1 week
+        if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
+        else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
+        else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
+        else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
+        else daysToAdd = 14; // Others: 2 weeks
+        
+        const nextActionDate = new Date(lastActionDate);
+        nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+        
+        // Update the person with the calculated nextActionDate
+        await prisma.people.update({
+          where: { id },
+          data: { nextActionDate }
+        });
+        
+        console.log(`✅ [PEOPLE API] Auto-populated nextActionDate:`, {
+          personId: id,
+          rank,
+          daysToAdd,
+          nextActionDate,
+          lastActionDate
+        });
+      } catch (nextActionError) {
+        console.error('⚠️ [PEOPLE API] Failed to auto-populate nextActionDate:', nextActionError);
+        // Don't fail the main update if nextActionDate calculation fails
+      }
+    }
+
     return NextResponse.json(responseData);
 
   } catch (error) {

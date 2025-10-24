@@ -2178,14 +2178,33 @@ export function UniversalRecordTemplate({
           });
         }
         
-        // Force next page load to bypass cache and fetch fresh from API
+        // 🚀 CRITICAL FIX: Set force-refresh flags for useFastSectionData to detect
+        // This ensures fresh data is fetched instead of stale cache on next page load
         sessionStorage.setItem(`force-refresh-${recordType}-${record.id}`, 'true');
+        
+        // Also set a general section-level force-refresh flag for list views
+        // This is needed because useFastSectionData checks for keys that include the section name
+        if (targetModel === 'companies') {
+          sessionStorage.setItem(`force-refresh-companies`, 'true');
+          console.log('🔄 [CACHE] Set force-refresh flags for companies:', {
+            recordSpecific: `force-refresh-companies-${record.id}`,
+            sectionLevel: 'force-refresh-companies'
+          });
+        } else if (targetModel === 'people' || targetModel === 'leads' || targetModel === 'prospects' || targetModel === 'opportunities') {
+          sessionStorage.setItem(`force-refresh-people`, 'true');
+          sessionStorage.setItem(`force-refresh-${targetModel}`, 'true');
+          console.log('🔄 [CACHE] Set force-refresh flags for people/section:', {
+            recordSpecific: `force-refresh-${recordType}-${record.id}`,
+            sectionLevel: `force-refresh-${targetModel}`
+          });
+        }
         
         console.log('🗑️ [CACHE] Invalidated all caches after inline field update:', {
           workspaceId,
           recordType,
           recordId: record.id,
           field,
+          targetModel,
           clearedCaches: [
             `adrata-people-${workspaceId}`,
             `adrata-prospects-${workspaceId}`,
@@ -2195,6 +2214,10 @@ export function UniversalRecordTemplate({
             `adrata-speedrun-${workspaceId}`,
             `adrata-fast-counts-${workspaceId}`,
             'acquisition-os:*'
+          ],
+          forceRefreshFlags: [
+            `force-refresh-${recordType}-${record.id}`,
+            targetModel === 'companies' ? 'force-refresh-companies' : `force-refresh-${targetModel}`
           ]
         });
       }

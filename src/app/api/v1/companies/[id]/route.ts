@@ -479,6 +479,43 @@ export async function PATCH(
       // Don't fail the main update if action logging fails
     }
 
+    // Auto-populate nextActionDate if it's null
+    if (!updatedCompany.nextActionDate) {
+      try {
+        // Calculate nextActionDate based on rank or lastActionDate
+        const lastActionDate = updatedCompany.lastActionDate || updatedCompany.createdAt;
+        const rank = updatedCompany.globalRank || 1000; // Default rank if null
+        
+        // Calculate days to add based on rank (higher rank = more urgent = sooner)
+        let daysToAdd = 7; // Default 1 week
+        if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
+        else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
+        else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
+        else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
+        else daysToAdd = 14; // Others: 2 weeks
+        
+        const nextActionDate = new Date(lastActionDate);
+        nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+        
+        // Update the company with the calculated nextActionDate
+        await prisma.companies.update({
+          where: { id },
+          data: { nextActionDate }
+        });
+        
+        console.log(`✅ [COMPANY API] Auto-populated nextActionDate:`, {
+          companyId: id,
+          rank,
+          daysToAdd,
+          nextActionDate,
+          lastActionDate
+        });
+      } catch (nextActionError) {
+        console.error('⚠️ [COMPANY API] Failed to auto-populate nextActionDate:', nextActionError);
+        // Don't fail the main update if nextActionDate calculation fails
+      }
+    }
+
     console.log(`🔍 [COMPANY API AUDIT] Database update completed:`, {
       companyId: id,
       updatedCompany,

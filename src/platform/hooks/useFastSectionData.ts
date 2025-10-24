@@ -89,8 +89,50 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       return;
     }
 
-    // 🚀 PERFORMANCE: Check localStorage cache first (like leads pattern)
-    if (!forceRefresh) {
+    // 🚀 CRITICAL FIX: Check for force-refresh flags FIRST before any caching logic
+    // This ensures that when a field is saved, we ALWAYS fetch fresh data instead of stale cache
+    let shouldForceRefresh = forceRefresh;
+    if (typeof window !== 'undefined' && !forceRefresh) {
+      const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
+        key.startsWith('force-refresh-') && key.includes(section)
+      );
+      
+      if (forceRefreshKeys.length > 0) {
+        console.log(`🔄 [FAST SECTION DATA] Force refresh detected, clearing ALL caches for ${section}`, {
+          section,
+          forceRefreshKeys,
+          workspaceId
+        });
+        
+        // Remove force-refresh flags
+        forceRefreshKeys.forEach(key => {
+          console.log(`🗑️ [FAST SECTION DATA] Removing force-refresh key: ${key}`);
+          sessionStorage.removeItem(key);
+        });
+        
+        // Clear localStorage cache to prevent stale data
+        const storageKey = `adrata-${section}-${workspaceId}`;
+        localStorage.removeItem(storageKey);
+        console.log(`🗑️ [FAST SECTION DATA] Cleared localStorage cache: ${storageKey}`);
+        
+        // Clear loaded sections to force refetch
+        setLoadedSections(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(section);
+          console.log(`🔄 [FAST SECTION DATA] Cleared section ${section} from loadedSections:`, {
+            before: Array.from(prev),
+            after: Array.from(newSet)
+          });
+          return newSet;
+        });
+        
+        // Set flag to skip all caching below
+        shouldForceRefresh = true;
+      }
+    }
+
+    // 🚀 PERFORMANCE: Check localStorage cache (only if not force refreshing)
+    if (!shouldForceRefresh) {
       try {
         const storageKey = `adrata-${section}-${workspaceId}`;
         const cached = localStorage.getItem(storageKey);
@@ -117,59 +159,10 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     }
 
     // 🚀 PERFORMANCE: Skip if we already loaded this section (unless force refresh)
-    if (!forceRefresh && loadedSections.has(section)) {
-      // Check if a force refresh was requested via sessionStorage
-      if (typeof window !== 'undefined') {
-        const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
-          key.startsWith('force-refresh-') && key.includes(section)
-        );
-        
-        // 🔍 DEBUG: Enhanced logging for cache invalidation debugging
-        console.log(`🔍 [FAST SECTION DATA DEBUG] Cache check for section: ${section}`, {
-          section,
-          loadedSections: Array.from(loadedSections),
-          isLoaded: loadedSections.has(section),
-          forceRefresh,
-          allSessionKeys: Object.keys(sessionStorage),
-          forceRefreshKeys,
-          sessionStorageContent: Object.keys(sessionStorage).reduce((acc, key) => {
-            if (key.startsWith('force-refresh-')) {
-              acc[key] = sessionStorage.getItem(key);
-            }
-            return acc;
-          }, {} as Record<string, string>)
-        });
-        
-        if (forceRefreshKeys.length > 0) {
-          console.log(`🔄 [FAST SECTION DATA] Force refresh flag detected for ${section}, clearing cache and refetching`, {
-            section,
-            forceRefreshKeys,
-            keysToRemove: forceRefreshKeys
-          });
-          forceRefreshKeys.forEach(key => {
-            console.log(`🗑️ [FAST SECTION DATA] Removing force-refresh key: ${key}`);
-            sessionStorage.removeItem(key);
-          });
-          setLoadedSections(prev => {
-            const newSet = new Set(prev);
-            newSet.delete(section);
-            console.log(`🔄 [FAST SECTION DATA] Cleared section ${section} from loadedSections:`, {
-              before: Array.from(prev),
-              after: Array.from(newSet)
-            });
-            return newSet;
-          });
-          // Continue to fetch below
-        } else {
-          console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded (no force refresh flags found)`);
-          setLoading(false);
-          return;
-        }
-      } else {
-        console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded (server side)`);
-        setLoading(false);
-        return;
-      }
+    if (!shouldForceRefresh && loadedSections.has(section)) {
+      console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded in memory`);
+      setLoading(false);
+      return;
     }
 
     setLoading(true);
@@ -182,7 +175,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       console.log(`🚀 [FAST SECTION DATA] Loading ${section} data for workspace:`, workspaceId);
       
       // Add refresh parameter to bypass backend cache when force refreshing
-      const refreshParam = forceRefresh ? '&refresh=true' : '';
+      const refreshParam = shouldForceRefresh ? '&refresh=true' : '';
       
       switch (section) {
         case 'speedrun':

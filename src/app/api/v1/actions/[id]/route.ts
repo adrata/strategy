@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getV1AuthUser } from '../../auth';
-import { isEngagementAction } from '@/platform/utils/actionUtils';
+import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 
 const prisma = new PrismaClient();
@@ -173,8 +173,8 @@ export async function PUT(
       },
     });
 
-    // Update person's lastAction fields if action is completed AND is a real engagement action
-    if (updatedAction.personId && updatedAction.status === 'COMPLETED' && isEngagementAction(updatedAction.type)) {
+    // Update person's lastAction fields if action is completed AND is a meaningful action
+    if (updatedAction.personId && updatedAction.status === 'COMPLETED' && isMeaningfulAction(updatedAction.type)) {
       try {
         await prisma.people.update({
           where: { id: updatedAction.personId },
@@ -184,7 +184,7 @@ export async function PUT(
             actionStatus: updatedAction.status
           }
         });
-        console.log('✅ [ACTIONS PUT] Updated person lastAction fields for engagement action:', {
+        console.log('✅ [ACTIONS PUT] Updated person lastAction fields for meaningful action:', {
           personId: updatedAction.personId,
           actionType: updatedAction.type,
           lastAction: updatedAction.subject,
@@ -218,7 +218,7 @@ export async function PUT(
       } catch (error) {
         console.error('❌ [ACTIONS PUT] Failed to update person lastAction fields:', error);
       }
-    } else if (updatedAction.personId && updatedAction.status === 'COMPLETED' && !isEngagementAction(updatedAction.type)) {
+    } else if (updatedAction.personId && updatedAction.status === 'COMPLETED' && !isMeaningfulAction(updatedAction.type)) {
       console.log('⏭️ [ACTIONS PUT] Skipping lastAction update for system action:', {
         personId: updatedAction.personId,
         actionType: updatedAction.type,
@@ -226,8 +226,8 @@ export async function PUT(
       });
     }
 
-    // Update company's lastAction fields if action is completed AND is a real engagement action
-    if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && isEngagementAction(updatedAction.type)) {
+    // Update company's lastAction fields if action is completed AND is a meaningful action
+    if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && isMeaningfulAction(updatedAction.type)) {
       try {
         await prisma.companies.update({
           where: { id: updatedAction.companyId },
@@ -246,7 +246,7 @@ export async function PUT(
       } catch (error) {
         console.error('❌ [ACTIONS PUT] Failed to update company lastAction fields:', error);
       }
-    } else if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && !isEngagementAction(updatedAction.type)) {
+    } else if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && !isMeaningfulAction(updatedAction.type)) {
       console.log('⏭️ [ACTIONS PUT] Skipping lastAction update for system action:', {
         companyId: updatedAction.companyId,
         actionType: updatedAction.type,
@@ -392,8 +392,8 @@ export async function PATCH(
       },
     });
 
-    // Update person's lastAction fields if action is completed AND is a real engagement action
-    if (updatedAction.personId && updatedAction.status === 'COMPLETED' && isEngagementAction(updatedAction.type)) {
+    // Update person's lastAction fields if action is completed AND is a meaningful action
+    if (updatedAction.personId && updatedAction.status === 'COMPLETED' && isMeaningfulAction(updatedAction.type)) {
       try {
         await prisma.people.update({
           where: { id: updatedAction.personId },
@@ -403,7 +403,7 @@ export async function PATCH(
             actionStatus: updatedAction.status
           }
         });
-        console.log('✅ [ACTIONS PATCH] Updated person lastAction fields for engagement action:', {
+        console.log('✅ [ACTIONS PATCH] Updated person lastAction fields for meaningful action:', {
           personId: updatedAction.personId,
           actionType: updatedAction.type,
           lastAction: updatedAction.subject,
@@ -437,7 +437,7 @@ export async function PATCH(
       } catch (error) {
         console.error('❌ [ACTIONS PATCH] Failed to update person lastAction fields:', error);
       }
-    } else if (updatedAction.personId && updatedAction.status === 'COMPLETED' && !isEngagementAction(updatedAction.type)) {
+    } else if (updatedAction.personId && updatedAction.status === 'COMPLETED' && !isMeaningfulAction(updatedAction.type)) {
       console.log('⏭️ [ACTIONS PATCH] Skipping lastAction update for system action:', {
         personId: updatedAction.personId,
         actionType: updatedAction.type,
@@ -445,8 +445,8 @@ export async function PATCH(
       });
     }
 
-    // Update company's lastAction fields if action is completed AND is a real engagement action
-    if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && isEngagementAction(updatedAction.type)) {
+    // Update company's lastAction fields if action is completed AND is a meaningful action
+    if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && isMeaningfulAction(updatedAction.type)) {
       try {
         await prisma.companies.update({
           where: { id: updatedAction.companyId },
@@ -465,7 +465,7 @@ export async function PATCH(
       } catch (error) {
         console.error('❌ [ACTIONS PATCH] Failed to update company lastAction fields:', error);
       }
-    } else if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && !isEngagementAction(updatedAction.type)) {
+    } else if (updatedAction.companyId && updatedAction.status === 'COMPLETED' && !isMeaningfulAction(updatedAction.type)) {
       console.log('⏭️ [ACTIONS PATCH] Skipping lastAction update for system action:', {
         companyId: updatedAction.companyId,
         actionType: updatedAction.type,

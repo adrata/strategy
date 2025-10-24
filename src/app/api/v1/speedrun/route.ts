@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { cache } from '@/platform/services/unified-cache';
+import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 
 // 🚀 PERFORMANCE: Aggressive caching for speedrun data (rarely changes)
 const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
@@ -182,6 +183,23 @@ export async function GET(request: NextRequest) {
               state: true
             }
           },
+          actions: {
+            where: {
+              deletedAt: null,
+              status: 'COMPLETED'
+            },
+            orderBy: {
+              completedAt: 'desc'
+            },
+            take: 1,
+            select: {
+              id: true,
+              type: true,
+              subject: true,
+              completedAt: true,
+              createdAt: true
+            }
+          },
           _count: {
             select: {
               actions: {
@@ -218,12 +236,22 @@ export async function GET(request: NextRequest) {
               }).join(', ')
           : '-';
 
-        // Calculate lastActionTime for speedrun table display
+        // Calculate lastActionTime for speedrun table display using meaningful actions
         let lastActionTime = 'Never';
-        const lastActionDate = person.lastActionDate || person.updatedAt;
+        let lastAction = person.lastAction;
+        let lastActionDate = person.lastActionDate;
         
-        // Only show real last actions if they exist
-        if (lastActionDate && person.lastAction && person.lastAction !== 'No action taken') {
+        // Check if we have a meaningful action from the database
+        if (person.actions && person.actions.length > 0) {
+          const meaningfulAction = person.actions.find(action => isMeaningfulAction(action.type));
+          if (meaningfulAction) {
+            lastAction = meaningfulAction.subject || meaningfulAction.type;
+            lastActionDate = meaningfulAction.completedAt || meaningfulAction.createdAt;
+          }
+        }
+        
+        // Only show real last actions if they exist and are meaningful
+        if (lastActionDate && lastAction && lastAction !== 'No action taken') {
           const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
           if (daysSince === 0) lastActionTime = 'Today';
           else if (daysSince === 1) lastActionTime = 'Yesterday';
@@ -231,6 +259,7 @@ export async function GET(request: NextRequest) {
           else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
           else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
         } else if (person.createdAt) {
+          // Fallback to creation date if no meaningful actions
           const daysSince = Math.floor((new Date().getTime() - new Date(person.createdAt).getTime()) / (1000 * 60 * 60 * 24));
           if (daysSince === 0) lastActionTime = 'Today';
           else if (daysSince === 1) lastActionTime = 'Yesterday';
@@ -276,8 +305,8 @@ export async function GET(request: NextRequest) {
           linkedin: person.linkedinUrl || '',
           status: person.status || 'Unknown',
           globalRank: person.globalRank || 0,
-          lastAction: person.lastAction || null,
-          lastActionDate: person.lastActionDate || null,
+          lastAction: lastAction || null,
+          lastActionDate: lastActionDate || null,
           lastActionTime: lastActionTime,
           nextAction: person.nextAction || null,
           nextActionDate: person.nextActionDate || null,

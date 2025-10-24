@@ -130,8 +130,8 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     ceo: getValue(record.ceo),
     description: (() => {
       // Prioritize the longer, more detailed description for better seller context
-      const originalDesc = record.description && record.description.trim() !== '' ? record.description : '';
-      const enrichedDesc = record.descriptionEnriched && record.descriptionEnriched.trim() !== '' ? record.descriptionEnriched : '';
+      const originalDesc = record.description && record.description.trim() !== '' ? record.description.trim() : '';
+      const enrichedDesc = record.descriptionEnriched && record.descriptionEnriched.trim() !== '' ? record.descriptionEnriched.trim() : '';
       
       // Use the longer description for better context, or enriched if original is not available
       if (originalDesc && enrichedDesc) {
@@ -142,8 +142,8 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
         return enrichedDesc;
       }
       
-      // Fallback to basic description if no data
-      return 'No description available';
+      // Return null instead of fallback text to let InlineEditField show its placeholder
+      return null;
     })(),
     marketCap: getValue(record.marketCap),
     employees: getValue(record.employeeCount || record.size),

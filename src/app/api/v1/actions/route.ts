@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 import { cache } from '@/platform/services/unified-cache';
-import { isEngagementAction } from '@/platform/utils/actionUtils';
+import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 
 const prisma = new PrismaClient();
 
@@ -343,8 +343,8 @@ export async function POST(request: NextRequest) {
       console.error('⚠️ [ACTIONS API] Background next action generation failed:', error);
     });
 
-    // Update person's lastAction fields if action is completed AND is a real engagement action
-    if (action.personId && action.status === 'COMPLETED' && isEngagementAction(action.type)) {
+    // Update person's lastAction fields if action is completed AND is a meaningful action
+    if (action.personId && action.status === 'COMPLETED' && isMeaningfulAction(action.type)) {
       try {
         await prisma.people.update({
           where: { id: action.personId },
@@ -354,7 +354,7 @@ export async function POST(request: NextRequest) {
             actionStatus: action.status
           }
         });
-        console.log('✅ [ACTIONS API] Updated person lastAction fields for engagement action:', {
+        console.log('✅ [ACTIONS API] Updated person lastAction fields for meaningful action:', {
           personId: action.personId,
           actionType: action.type,
           lastAction: action.subject,
