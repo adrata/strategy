@@ -494,10 +494,7 @@ export async function PATCH(
             status: 'COMPLETED',
             completedAt: new Date(),
             workspaceId: existingCompany.workspaceId,
-            userId: authUser.id,
-            ownerId: authUser.id,
-            createdAt: new Date(),
-            updatedAt: new Date()
+            userId: authUser.id
           }
         });
         
