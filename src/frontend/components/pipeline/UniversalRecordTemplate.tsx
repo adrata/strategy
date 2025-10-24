@@ -422,7 +422,7 @@ export function UniversalRecordTemplate({
     else if (!urlTab && activeTab && validTabIds.includes(activeTab)) {
       updateURLTab(activeTab);
     }
-  }, [tabs, searchParams, activeTab]); // Add all dependencies
+  }, [tabs, searchParams]); // Remove activeTab to prevent circular updates
 
   // Set current record context when component mounts or record changes
   useEffect(() => {
@@ -2117,11 +2117,11 @@ export function UniversalRecordTemplate({
         });
       }, 3000);
       
-      // 🚀 CACHE INVALIDATION & REVALIDATION: Update cache with new data
+      // 🚀 CACHE INVALIDATION & REVALIDATION: Prepare updated record data
       const updatedRecord = onRecordUpdate && result.data ? { ...record, ...result.data } : { ...record, [field]: value };
       
-      // Debug: Log the updated record to verify linkedinUrl is included
-      console.log(`🔍 [CACHE UPDATE] Updating cache with record:`, {
+      // Debug: Log the updated record
+      console.log(`🔍 [CACHE UPDATE] Updated record prepared:`, {
         field,
         originalValue: record?.[field],
         newValue: value,
@@ -2131,7 +2131,10 @@ export function UniversalRecordTemplate({
         fullUpdatedRecord: updatedRecord
       });
       
-      updateSessionStorageCache(updatedRecord, field, recordId || '', recordType);
+      // CRITICAL FIX: Don't update sessionStorage cache here - we'll clear it anyway
+      // Updating the cache then immediately clearing it creates a race condition
+      // Instead, we'll let the next page load fetch fresh data from the API
+      console.log('🚫 [CACHE] Skipping sessionStorage cache update - will use force-refresh instead');
       
       // 🚀 SERVER REVALIDATION: Trigger background refresh to ensure data consistency
       // Use a longer delay to allow the optimistic update and parent state update to settle
@@ -3666,15 +3669,15 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             recordType === 'people' ? 
               <UniversalHistoryTab key={activeTab} recordType={recordType} /> :
-              <UniversalActionsTab key={activeTab} record={localRecord} recordType={recordType} onSave={handleInlineFieldSave} />
+              <UniversalActionsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'actions':
           return renderTabWithErrorBoundary(
-            <UniversalActionsTab key={activeTab} record={localRecord} recordType={recordType} onSave={handleInlineFieldSave} />
+            <UniversalActionsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'timeline':
           return renderTabWithErrorBoundary(
-            <UniversalActionsTab key={activeTab} record={localRecord} recordType={recordType} onSave={handleInlineFieldSave} />
+            <UniversalActionsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'notes':
           return renderTabWithErrorBoundary(

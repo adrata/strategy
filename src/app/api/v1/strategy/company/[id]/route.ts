@@ -224,6 +224,18 @@ export async function POST(
     }
 
     console.log(`🔄 [COMPANY STRATEGY API] Generating strategy for company ${companyId}`);
+    console.log(`📊 [COMPANY STRATEGY API] Company data:`, {
+      name: company.name,
+      industry: company.industry,
+      size: company.size,
+      revenue: company.revenue,
+      foundedAt: company.foundedAt,
+      website: company.website,
+      headquarters: company.headquarters,
+      opportunitiesCount: company.opportunities?.length || 0,
+      peopleCount: company.people?.length || 0,
+      buyerGroupsCount: company.buyerGroups?.length || 0
+    });
 
     // Prepare strategy request with comprehensive company data
     const strategyRequest: CompanyStrategyRequest = {
@@ -258,10 +270,40 @@ export async function POST(
       buyerGroups: company.buyerGroups || []
     };
 
+    console.log(`📋 [COMPANY STRATEGY API] Strategy request prepared:`, {
+      companyId: strategyRequest.companyId,
+      companyName: strategyRequest.companyName,
+      companyIndustry: strategyRequest.companyIndustry,
+      targetIndustry: strategyRequest.targetIndustry,
+      companySize: strategyRequest.companySize,
+      companyRevenue: strategyRequest.companyRevenue,
+      companyAge: strategyRequest.companyAge,
+      growthStage: strategyRequest.growthStage,
+      marketPosition: strategyRequest.marketPosition,
+      forceRegenerate: strategyRequest.forceRegenerate,
+      opportunitiesCount: strategyRequest.opportunities?.length || 0,
+      peopleCount: strategyRequest.people?.length || 0,
+      buyerGroupsCount: strategyRequest.buyerGroups?.length || 0
+    });
+
     // Generate strategy using company strategy service
+    console.log(`🤖 [COMPANY STRATEGY API] Calling companyStrategyService.generateCompanyStrategy...`);
     const strategyResponse = await companyStrategyService.generateCompanyStrategy(strategyRequest);
+    console.log(`📤 [COMPANY STRATEGY API] Strategy service response:`, {
+      success: strategyResponse.success,
+      hasData: !!strategyResponse.data,
+      error: strategyResponse.error,
+      cached: strategyResponse.cached
+    });
     
     if (!strategyResponse.success || !strategyResponse.data) {
+      console.error(`❌ [COMPANY STRATEGY API] Strategy generation failed:`, {
+        success: strategyResponse.success,
+        error: strategyResponse.error,
+        hasData: !!strategyResponse.data,
+        companyId,
+        companyName: company.name
+      });
       return createErrorResponse(
         strategyResponse.error || 'Failed to generate company strategy',
         'STRATEGY_GENERATION_FAILED',
@@ -269,38 +311,66 @@ export async function POST(
       );
     }
 
-    // Update company record with strategy data
-    const updatedCompany = await prisma.companies.update({
-      where: { id: companyId },
-      data: {
-        customFields: {
-          ...company.customFields,
-          strategyData: strategyResponse.data,
-          lastStrategyUpdate: new Date().toISOString()
+    console.log(`💾 [COMPANY STRATEGY API] Updating company record with strategy data...`);
+    
+    try {
+      // Update company record with strategy data
+      const updatedCompany = await prisma.companies.update({
+        where: { id: companyId },
+        data: {
+          customFields: {
+            ...company.customFields,
+            strategyData: strategyResponse.data,
+            lastStrategyUpdate: new Date().toISOString()
+          }
         }
-      }
-    });
+      });
 
-    console.log(`✅ [COMPANY STRATEGY API] Successfully generated and saved strategy for company ${companyId}`);
-
-    return NextResponse.json({
-      success: true,
-      data: strategyResponse.data,
-      cached: false,
-      meta: {
-        companyId,
-        companyName: company.name,
-        generatedAt: strategyResponse.data.strategyGeneratedAt,
+      console.log(`✅ [COMPANY STRATEGY API] Successfully generated and saved strategy for company ${companyId}`);
+      console.log(`📊 [COMPANY STRATEGY API] Strategy data saved:`, {
+        strategySummary: strategyResponse.data.strategySummary?.substring(0, 100) + '...',
+        archetypeName: strategyResponse.data.archetypeName,
+        targetIndustry: strategyResponse.data.targetIndustry,
         generatedBy: strategyResponse.data.strategyGeneratedBy,
-        archetype: strategyResponse.data.archetypeName,
-        targetIndustry: strategyResponse.data.targetIndustry
-      }
-    });
+        generatedAt: strategyResponse.data.strategyGeneratedAt
+      });
+
+      return NextResponse.json({
+        success: true,
+        data: strategyResponse.data,
+        cached: false,
+        meta: {
+          companyId,
+          companyName: company.name,
+          generatedAt: strategyResponse.data.strategyGeneratedAt,
+          generatedBy: strategyResponse.data.strategyGeneratedBy,
+          archetype: strategyResponse.data.archetypeName,
+          targetIndustry: strategyResponse.data.targetIndustry
+        }
+      });
+    } catch (dbError) {
+      console.error(`❌ [COMPANY STRATEGY API] Database update failed:`, {
+        error: dbError,
+        companyId,
+        strategyData: strategyResponse.data ? 'present' : 'missing'
+      });
+      return createErrorResponse(
+        'Failed to save strategy data to database',
+        'DATABASE_UPDATE_FAILED',
+        500
+      );
+    }
 
   } catch (error) {
-    console.error('❌ [COMPANY STRATEGY API] POST Error:', error);
+    console.error('❌ [COMPANY STRATEGY API] POST Error:', {
+      error: error,
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      companyId: params.id,
+      timestamp: new Date().toISOString()
+    });
     return createErrorResponse(
-      'Internal server error',
+      error instanceof Error ? error.message : 'Internal server error',
       'INTERNAL_ERROR',
       500
     );

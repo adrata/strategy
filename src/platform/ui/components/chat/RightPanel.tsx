@@ -286,7 +286,9 @@ export function RightPanel() {
         const stored = localStorage.getItem(storageKey);
         if (stored) {
           const parsed = JSON.parse(stored);
-          const restoredConversations = parsed.map((conv: any) => ({
+          // Filter out conversations that were deleted locally
+          const filteredConversations = parsed.filter((conv: any) => !deletedConversationIds.has(conv.id));
+          const restoredConversations = filteredConversations.map((conv: any) => ({
             ...conv,
             lastActivity: new Date(conv.lastActivity),
             messages: conv.messages.map((msg: any) => ({
@@ -298,6 +300,9 @@ export function RightPanel() {
           }));
           setConversations(restoredConversations);
           console.log('📂 [CHAT] Loaded conversations from localStorage:', restoredConversations.length, 'for workspace:', workspaceId);
+          if (parsed.length > filteredConversations.length) {
+            console.log('🗑️ [CHAT] Filtered out', parsed.length - filteredConversations.length, 'deleted conversations');
+          }
           conversationsLoadedRef.current = true;
         }
       } catch (error) {

@@ -114,28 +114,8 @@ export class CompanyStrategyService {
   async generateCompanyStrategy(request: CompanyStrategyRequest): Promise<CompanyStrategyResponse> {
     try {
       console.log(`🔄 [COMPANY STRATEGY] Generating strategy for ${request.companyName}`);
-
-      // Determine company archetype
-      const profile: CompanyProfile = {
-        name: request.companyName,
-        industry: request.companyIndustry,
-        targetIndustry: request.targetIndustry,
-        size: request.companySize,
-        revenue: request.companyRevenue,
-        age: request.companyAge,
-        growthStage: request.growthStage,
-        marketPosition: request.marketPosition
-      };
-
-      const archetype = determineCompanyArchetype(profile);
-      console.log(`📊 [COMPANY STRATEGY] Determined archetype: ${archetype.name}`);
-
-      // Get industry-personalized content
-      const personalizedContent = getIndustryPersonalizedContent(archetype, request.targetIndustry);
-      console.log(`🎯 [COMPANY STRATEGY] Personalized for target industry: ${request.targetIndustry}`);
-
-      // Prepare Claude AI request with comprehensive company data
-      const claudeRequest: ClaudeStrategyRequest = {
+      console.log(`📊 [COMPANY STRATEGY] Request details:`, {
+        companyId: request.companyId,
         companyName: request.companyName,
         companyIndustry: request.companyIndustry,
         targetIndustry: request.targetIndustry,
@@ -144,27 +124,113 @@ export class CompanyStrategyService {
         companyAge: request.companyAge,
         growthStage: request.growthStage,
         marketPosition: request.marketPosition,
-        archetypeName: archetype.name,
-        archetypeDescription: archetype.description,
-        // Pass through all additional real company data
-        website: request.website,
-        headquarters: request.headquarters,
-        foundedYear: request.foundedYear,
-        isPublic: request.isPublic,
-        sector: request.sector,
-        description: request.description,
-        linkedinFollowers: request.linkedinFollowers,
-        globalRank: request.globalRank,
-        competitors: request.competitors,
-        lastAction: request.lastAction,
-        nextAction: request.nextAction,
-        opportunityStage: request.opportunityStage,
-        opportunityAmount: request.opportunityAmount
-      };
+        forceRegenerate: request.forceRegenerate,
+        opportunitiesCount: request.opportunities?.length || 0,
+        peopleCount: request.people?.length || 0,
+        buyerGroupsCount: request.buyerGroups?.length || 0
+      });
+
+      // Determine company archetype
+      let profile: CompanyProfile;
+      let archetype;
+      let personalizedContent;
+      
+      try {
+        profile = {
+          name: request.companyName,
+          industry: request.companyIndustry,
+          targetIndustry: request.targetIndustry,
+          size: request.companySize,
+          revenue: request.companyRevenue,
+          age: request.companyAge,
+          growthStage: request.growthStage,
+          marketPosition: request.marketPosition
+        };
+        console.log(`📋 [COMPANY STRATEGY] Company profile created:`, profile);
+
+        archetype = determineCompanyArchetype(profile);
+        console.log(`📊 [COMPANY STRATEGY] Determined archetype: ${archetype.name} (${archetype.id})`);
+
+        personalizedContent = getIndustryPersonalizedContent(archetype, request.targetIndustry);
+        console.log(`🎯 [COMPANY STRATEGY] Personalized for target industry: ${request.targetIndustry}`);
+      } catch (archetypeError) {
+        console.error(`❌ [COMPANY STRATEGY] Error determining archetype:`, {
+          error: archetypeError,
+          profile: profile,
+          companyName: request.companyName
+        });
+        throw new Error(`Failed to determine company archetype: ${archetypeError instanceof Error ? archetypeError.message : 'Unknown error'}`);
+      }
+
+      // Prepare Claude AI request with comprehensive company data
+      let claudeRequest: ClaudeStrategyRequest;
+      try {
+        claudeRequest = {
+          companyName: request.companyName,
+          companyIndustry: request.companyIndustry,
+          targetIndustry: request.targetIndustry,
+          companySize: request.companySize,
+          companyRevenue: request.companyRevenue,
+          companyAge: request.companyAge,
+          growthStage: request.growthStage,
+          marketPosition: request.marketPosition,
+          archetypeName: archetype.name,
+          archetypeDescription: archetype.description,
+          // Pass through all additional real company data
+          website: request.website,
+          headquarters: request.headquarters,
+          foundedYear: request.foundedYear,
+          isPublic: request.isPublic,
+          sector: request.sector,
+          description: request.description,
+          linkedinFollowers: request.linkedinFollowers,
+          globalRank: request.globalRank,
+          competitors: request.competitors,
+          lastAction: request.lastAction,
+          nextAction: request.nextAction,
+          opportunityStage: request.opportunityStage,
+          opportunityAmount: request.opportunityAmount,
+          // Include enriched data for comprehensive intelligence
+          opportunities: request.opportunities,
+          people: request.people,
+          buyerGroups: request.buyerGroups
+        };
+        console.log(`📋 [COMPANY STRATEGY] Claude request prepared:`, {
+          companyName: claudeRequest.companyName,
+          archetypeName: claudeRequest.archetypeName,
+          targetIndustry: claudeRequest.targetIndustry,
+          opportunitiesCount: claudeRequest.opportunities?.length || 0,
+          peopleCount: claudeRequest.people?.length || 0,
+          buyerGroupsCount: claudeRequest.buyerGroups?.length || 0
+        });
+      } catch (requestError) {
+        console.error(`❌ [COMPANY STRATEGY] Error preparing Claude request:`, {
+          error: requestError,
+          companyName: request.companyName,
+          archetype: archetype?.name
+        });
+        throw new Error(`Failed to prepare Claude request: ${requestError instanceof Error ? requestError.message : 'Unknown error'}`);
+      }
 
       // Generate AI-powered strategy content
       console.log('🤖 [COMPANY STRATEGY] Attempting to generate AI-powered intelligence with Claude...');
-      const claudeResponse = await this.claudeService.generateCompanyStrategy(claudeRequest);
+      let claudeResponse;
+      try {
+        claudeResponse = await this.claudeService.generateCompanyStrategy(claudeRequest);
+        console.log(`📤 [COMPANY STRATEGY] Claude response received:`, {
+          success: claudeResponse.success,
+          hasData: !!claudeResponse.data,
+          error: claudeResponse.error,
+          usage: claudeResponse.usage
+        });
+      } catch (claudeError) {
+        console.error(`❌ [COMPANY STRATEGY] Claude service error:`, {
+          error: claudeError,
+          message: claudeError instanceof Error ? claudeError.message : 'Unknown Claude error',
+          companyName: request.companyName
+        });
+        throw new Error(`Claude service failed: ${claudeError instanceof Error ? claudeError.message : 'Unknown error'}`);
+      }
       
       if (!claudeResponse.success || !claudeResponse.data) {
         console.warn('⚠️ [COMPANY STRATEGY] Claude AI failed, using fallback content');
@@ -175,30 +241,51 @@ export class CompanyStrategyService {
       console.log('✅ [COMPANY STRATEGY] Successfully generated AI-powered intelligence with Claude');
 
       // Build comprehensive strategy data
-      const strategyData: CompanyStrategyData = {
-        // AI-Generated Content
-        strategySummary: claudeResponse.data.strategySummary,
-        situation: claudeResponse.data.situation,
-        complication: claudeResponse.data.complication,
-        futureState: claudeResponse.data.futureState,
-        strategicRecommendations: claudeResponse.data.strategicRecommendations,
-        competitivePositioning: claudeResponse.data.competitivePositioning,
-        successMetrics: claudeResponse.data.successMetrics,
-        
-        // Company Archetype
-        companyArchetype: archetype.id,
-        archetypeName: archetype.name,
-        archetypeRole: archetype.role,
-        
-        // Target Industry
-        targetIndustry: request.targetIndustry,
-        targetIndustryCategory: this.getIndustryCategory(request.targetIndustry),
-        
-        // Metadata
-        strategyGeneratedAt: new Date().toISOString(),
-        strategyGeneratedBy: 'claude-3-sonnet',
-        strategyVersion: '1.0'
-      };
+      let strategyData: CompanyStrategyData;
+      try {
+        strategyData = {
+          // AI-Generated Content
+          strategySummary: claudeResponse.data.strategySummary,
+          situation: claudeResponse.data.situation,
+          complication: claudeResponse.data.complication,
+          futureState: claudeResponse.data.futureState,
+          strategicRecommendations: claudeResponse.data.strategicRecommendations,
+          competitivePositioning: claudeResponse.data.competitivePositioning,
+          successMetrics: claudeResponse.data.successMetrics,
+          
+          // Company Archetype
+          companyArchetype: archetype.id,
+          archetypeName: archetype.name,
+          archetypeRole: archetype.role,
+          
+          // Target Industry
+          targetIndustry: request.targetIndustry,
+          targetIndustryCategory: this.getIndustryCategory(request.targetIndustry),
+          
+          // Metadata
+          strategyGeneratedAt: new Date().toISOString(),
+          strategyGeneratedBy: 'claude-3-sonnet',
+          strategyVersion: '1.0'
+        };
+        console.log(`📋 [COMPANY STRATEGY] Strategy data built successfully:`, {
+          hasSummary: !!strategyData.strategySummary,
+          hasSituation: !!strategyData.situation,
+          hasComplication: !!strategyData.complication,
+          hasFutureState: !!strategyData.futureState,
+          recommendationsCount: strategyData.strategicRecommendations?.length || 0,
+          metricsCount: strategyData.successMetrics?.length || 0,
+          archetypeName: strategyData.archetypeName,
+          targetIndustry: strategyData.targetIndustry
+        });
+      } catch (dataError) {
+        console.error(`❌ [COMPANY STRATEGY] Error building strategy data:`, {
+          error: dataError,
+          claudeData: claudeResponse.data,
+          archetype: archetype?.name,
+          companyName: request.companyName
+        });
+        throw new Error(`Failed to build strategy data: ${dataError instanceof Error ? dataError.message : 'Unknown error'}`);
+      }
 
       console.log(`✅ [COMPANY STRATEGY] Successfully generated strategy for ${request.companyName}`);
       
@@ -209,7 +296,14 @@ export class CompanyStrategyService {
       };
 
     } catch (error) {
-      console.error('❌ [COMPANY STRATEGY] Error generating strategy:', error);
+      console.error('❌ [COMPANY STRATEGY] Error generating strategy:', {
+        error: error,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        companyName: request.companyName,
+        companyId: request.companyId,
+        timestamp: new Date().toISOString()
+      });
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to generate company strategy'

@@ -102,6 +102,7 @@ export class ClaudeStrategyService {
 
   async generateCompanyStrategy(request: ClaudeStrategyRequest): Promise<ClaudeApiResponse> {
     if (!this.apiKey) {
+      console.warn('⚠️ [CLAUDE SERVICE] No API key configured');
       return {
         success: false,
         error: 'Claude AI API key not configured'
@@ -109,14 +110,60 @@ export class ClaudeStrategyService {
     }
 
     try {
+      console.log(`🤖 [CLAUDE SERVICE] Starting strategy generation for ${request.companyName}`);
+      console.log(`📋 [CLAUDE SERVICE] Request details:`, {
+        companyName: request.companyName,
+        companyIndustry: request.companyIndustry,
+        targetIndustry: request.targetIndustry,
+        companySize: request.companySize,
+        companyRevenue: request.companyRevenue,
+        companyAge: request.companyAge,
+        growthStage: request.growthStage,
+        marketPosition: request.marketPosition,
+        archetypeName: request.archetypeName,
+        opportunitiesCount: request.opportunities?.length || 0,
+        peopleCount: request.people?.length || 0,
+        buyerGroupsCount: request.buyerGroups?.length || 0
+      });
+
       const prompt = this.buildStrategyPrompt(request);
+      console.log(`📝 [CLAUDE SERVICE] Prompt built, length: ${prompt.length} characters`);
       
       // Use direct Anthropic API if we have ANTHROPIC_API_KEY, otherwise use OpenRouter
       const useDirectAPI = process.env.ANTHROPIC_API_KEY;
       
       console.log(`🤖 [CLAUDE SERVICE] Using ${useDirectAPI ? 'Direct Anthropic API' : 'OpenRouter API'} for strategy generation`);
+      console.log(`🔑 [CLAUDE SERVICE] API Key: ${this.apiKey.substring(0, 8)}...`);
+      console.log(`🎯 [CLAUDE SERVICE] Model: ${this.model}`);
+      console.log(`🌐 [CLAUDE SERVICE] Base URL: ${this.baseUrl}`);
       
       let response;
+      const requestBody = useDirectAPI ? {
+        model: this.model,
+        max_tokens: 4000,
+        temperature: 0.7,
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      } : {
+        model: this.model,
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        max_tokens: 4000,
+        temperature: 0.7,
+        top_p: 0.9
+      };
+
+      console.log(`📤 [CLAUDE SERVICE] Making API request...`);
+      const startTime = Date.now();
+      
       if (useDirectAPI) {
         // Use direct Anthropic API
         response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -126,17 +173,7 @@ export class ClaudeStrategyService {
             'Content-Type': 'application/json',
             'anthropic-version': '2023-06-01'
           },
-          body: JSON.stringify({
-            model: this.model,
-            max_tokens: 4000,
-            temperature: 0.7,
-            messages: [
-              {
-                role: 'user',
-                content: prompt
-              }
-            ]
-          })
+          body: JSON.stringify(requestBody)
         });
       } else {
         // Use OpenRouter API
@@ -148,34 +185,56 @@ export class ClaudeStrategyService {
             'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
             'X-Title': 'Adrata Strategy Generation'
           },
-          body: JSON.stringify({
-            model: this.model,
-            messages: [
-              {
-                role: 'user',
-                content: prompt
-              }
-            ],
-            max_tokens: 4000,
-            temperature: 0.7,
-            top_p: 0.9
-          })
+          body: JSON.stringify(requestBody)
         });
       }
 
+      const requestTime = Date.now() - startTime;
+      console.log(`⏱️ [CLAUDE SERVICE] Request completed in ${requestTime}ms`);
+      console.log(`📊 [CLAUDE SERVICE] Response status: ${response.status} ${response.statusText}`);
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        console.error(`❌ [CLAUDE SERVICE] API request failed:`, {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        
+        let errorData;
+        try {
+          errorData = await response.json();
+          console.error(`❌ [CLAUDE SERVICE] Error response body:`, errorData);
+        } catch (parseError) {
+          console.error(`❌ [CLAUDE SERVICE] Could not parse error response:`, parseError);
+          errorData = {};
+        }
+        
         throw new Error(`Claude API error: ${response.status} - ${errorData.error?.message || response.statusText}`);
       }
 
+      console.log(`✅ [CLAUDE SERVICE] API request successful, parsing response...`);
       const data = await response.json();
+      console.log(`📥 [CLAUDE SERVICE] Response received:`, {
+        hasContent: useDirectAPI ? !!data.content : !!data.choices,
+        hasUsage: !!data.usage,
+        responseSize: JSON.stringify(data).length,
+        model: data.model || 'unknown'
+      });
       
       let content;
       let usage;
       
       if (useDirectAPI) {
         // Direct Anthropic API response format
+        console.log(`🔍 [CLAUDE SERVICE] Parsing Anthropic API response...`);
         if (!data.content || !data.content[0]?.text) {
+          console.error(`❌ [CLAUDE SERVICE] Invalid Anthropic response structure:`, {
+            hasContent: !!data.content,
+            contentLength: data.content?.length || 0,
+            hasText: !!data.content?.[0]?.text,
+            dataKeys: Object.keys(data)
+          });
           throw new Error('Invalid response from Anthropic API');
         }
         content = data.content[0].text;
@@ -184,9 +243,18 @@ export class ClaudeStrategyService {
           completionTokens: data.usage?.output_tokens || 0,
           totalTokens: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0)
         };
+        console.log(`📊 [CLAUDE SERVICE] Anthropic usage:`, usage);
       } else {
         // OpenRouter API response format
+        console.log(`🔍 [CLAUDE SERVICE] Parsing OpenRouter API response...`);
         if (!data.choices || !data.choices[0]?.message?.content) {
+          console.error(`❌ [CLAUDE SERVICE] Invalid OpenRouter response structure:`, {
+            hasChoices: !!data.choices,
+            choicesLength: data.choices?.length || 0,
+            hasMessage: !!data.choices?.[0]?.message,
+            hasContent: !!data.choices?.[0]?.message?.content,
+            dataKeys: Object.keys(data)
+          });
           throw new Error('Invalid response from OpenRouter API');
         }
         content = data.choices[0].message.content;
@@ -195,9 +263,22 @@ export class ClaudeStrategyService {
           completionTokens: data.usage?.completion_tokens || 0,
           totalTokens: data.usage?.total_tokens || 0
         };
+        console.log(`📊 [CLAUDE SERVICE] OpenRouter usage:`, usage);
       }
 
+      console.log(`📝 [CLAUDE SERVICE] Content extracted, length: ${content.length} characters`);
+
+      console.log(`🔍 [CLAUDE SERVICE] Parsing strategy response...`);
       const parsedStrategy = this.parseStrategyResponse(content);
+      console.log(`✅ [CLAUDE SERVICE] Strategy parsed successfully:`, {
+        hasSummary: !!parsedStrategy.strategySummary,
+        hasSituation: !!parsedStrategy.situation,
+        hasComplication: !!parsedStrategy.complication,
+        hasFutureState: !!parsedStrategy.futureState,
+        recommendationsCount: parsedStrategy.strategicRecommendations?.length || 0,
+        metricsCount: parsedStrategy.successMetrics?.length || 0,
+        hasPositioning: !!parsedStrategy.competitivePositioning
+      });
       
       return {
         success: true,
@@ -206,7 +287,13 @@ export class ClaudeStrategyService {
       };
 
     } catch (error) {
-      console.error('❌ [CLAUDE SERVICE] Error generating strategy:', error);
+      console.error('❌ [CLAUDE SERVICE] Error generating strategy:', {
+        error: error,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        companyName: request.companyName,
+        timestamp: new Date().toISOString()
+      });
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to generate strategy'

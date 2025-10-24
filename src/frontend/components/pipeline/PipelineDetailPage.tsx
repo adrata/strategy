@@ -359,31 +359,45 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     
     // 🎯 FIRST: Try to find record in sessionStorage (instant loading)
     if (typeof window !== 'undefined') {
-      // Check the optimized cache first
-      const currentRecord = sessionStorage.getItem(`current-record-${section}`);
-      if (currentRecord) {
-        try {
-          const { id, data, timestamp } = JSON.parse(currentRecord);
-          if (id === recordId && Date.now() - timestamp < 300000) { // 5 minute cache
-            console.log(`⚡ [INSTANT LOAD] Found record in optimized cache - instant loading:`, data.name || data.fullName || recordId);
-            setSelectedRecord(data);
-            return;
-          }
-        } catch (error) {
-          console.warn('Failed to parse optimized cached record:', error);
-        }
-      }
+      // 🚀 CRITICAL FIX: Check for force-refresh flags BEFORE using cached data
+      const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
+        key.startsWith('force-refresh-') && (key.includes(section) || key.includes(recordId))
+      );
       
-      // Fallback to original cache
-      const cachedRecord = sessionStorage.getItem(`cached-${section}-${recordId}`);
-      if (cachedRecord) {
-        try {
-          const record = JSON.parse(cachedRecord);
-          console.log(`⚡ [INSTANT LOAD] Found record in sessionStorage - instant loading:`, record.name || record.fullName || recordId);
-          setSelectedRecord(record);
-          return;
-        } catch (error) {
-          console.warn('Failed to parse cached record:', error);
+      if (forceRefreshKeys.length > 0) {
+        console.log(`🔄 [INSTANT LOAD] Force refresh detected, skipping cache and loading from API:`, {
+          section,
+          recordId,
+          forceRefreshKeys
+        });
+        // Don't use cache - let it fall through to API load
+      } else {
+        // Check the optimized cache first
+        const currentRecord = sessionStorage.getItem(`current-record-${section}`);
+        if (currentRecord) {
+          try {
+            const { id, data, timestamp } = JSON.parse(currentRecord);
+            if (id === recordId && Date.now() - timestamp < 300000) { // 5 minute cache
+              console.log(`⚡ [INSTANT LOAD] Found record in optimized cache - instant loading:`, data.name || data.fullName || recordId);
+              setSelectedRecord(data);
+              return;
+            }
+          } catch (error) {
+            console.warn('Failed to parse optimized cached record:', error);
+          }
+        }
+        
+        // Fallback to original cache
+        const cachedRecord = sessionStorage.getItem(`cached-${section}-${recordId}`);
+        if (cachedRecord) {
+          try {
+            const record = JSON.parse(cachedRecord);
+            console.log(`⚡ [INSTANT LOAD] Found record in sessionStorage - instant loading:`, record.name || record.fullName || recordId);
+            setSelectedRecord(record);
+            return;
+          } catch (error) {
+            console.warn('Failed to parse cached record:', error);
+          }
         }
       }
     }
