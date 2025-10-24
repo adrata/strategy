@@ -491,7 +491,7 @@ export async function PATCH(
             type: 'data_update',
             subject: `Updated ${updatedFields.join(', ')}`,
             description: `Company data fields updated by ${authUser.name || authUser.email}`,
-            status: 'completed',
+            status: 'COMPLETED',
             completedAt: new Date(),
             workspaceId: existingCompany.workspaceId,
             userId: authUser.id,
