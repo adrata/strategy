@@ -2235,6 +2235,13 @@ export function UniversalRecordTemplate({
         sessionStorage.removeItem(`current-record-${targetModel}`);
         sessionStorage.removeItem(`current-record-${recordType}`);
         
+        // 🚀 ADDITIONAL FIX: Clear section-based caches used by PipelineDetailPage
+        // PipelineDetailPage uses section-based cache keys, so we need to clear those too
+        sessionStorage.removeItem(`cached-companies-${record.id}`);
+        sessionStorage.removeItem(`current-record-companies`);
+        sessionStorage.removeItem(`cached-people-${record.id}`);
+        sessionStorage.removeItem(`current-record-people`);
+        
         console.log('🗑️ [CACHE] Cleared sessionStorage instant-load caches:', {
           keys: [
             `cached-${targetModel}-${targetId}`,
