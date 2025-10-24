@@ -1887,8 +1887,15 @@ export function UniversalRecordTemplate({
       }
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to update ${field}`);
+        let errorMessage = `Failed to update ${field}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (jsonError) {
+          // Handle empty body from 405 or other errors
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
       
       const result = await response.json();

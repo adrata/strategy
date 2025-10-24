@@ -104,17 +104,6 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
         </div>
       )}
 
-      {/* Success Toast */}
-      {showSuccessMessage && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <div className="px-4 py-2 rounded-lg shadow-lg bg-green-50 border border-green-200 text-green-800">
-            <div className="flex items-center space-x-2">
-              <span>✓</span>
-              <span className="text-sm font-medium">{successMessage}</span>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
