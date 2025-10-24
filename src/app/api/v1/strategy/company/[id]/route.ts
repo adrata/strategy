@@ -40,20 +40,6 @@ export async function GET(
         deletedAt: null
       },
       include: {
-        // Include related opportunities
-        opportunities: {
-          where: { deletedAt: null },
-          select: {
-            id: true,
-            name: true,
-            stage: true,
-            amount: true,
-            probability: true,
-            closeDate: true,
-            lastAction: true,
-            nextAction: true
-          }
-        },
         // Include related people/contacts
         people: {
           where: { deletedAt: null },
@@ -67,17 +53,6 @@ export async function GET(
             linkedinUrl: true,
             lastAction: true,
             nextAction: true
-          }
-        },
-        // Include buyer groups if available
-        buyerGroups: {
-          where: { deletedAt: null },
-          select: {
-            id: true,
-            name: true,
-            totalMembers: true,
-            overallConfidence: true,
-            cohesionScore: true
           }
         }
       }
@@ -161,20 +136,6 @@ export async function POST(
         deletedAt: null
       },
       include: {
-        // Include related opportunities
-        opportunities: {
-          where: { deletedAt: null },
-          select: {
-            id: true,
-            name: true,
-            stage: true,
-            amount: true,
-            probability: true,
-            closeDate: true,
-            lastAction: true,
-            nextAction: true
-          }
-        },
         // Include related people/contacts
         people: {
           where: { deletedAt: null },
@@ -188,17 +149,6 @@ export async function POST(
             linkedinUrl: true,
             lastAction: true,
             nextAction: true
-          }
-        },
-        // Include buyer groups if available
-        buyerGroups: {
-          where: { deletedAt: null },
-          select: {
-            id: true,
-            name: true,
-            totalMembers: true,
-            overallConfidence: true,
-            cohesionScore: true
           }
         }
       }
@@ -232,9 +182,7 @@ export async function POST(
       foundedAt: company.foundedAt,
       website: company.website,
       headquarters: company.headquarters,
-      opportunitiesCount: company.opportunities?.length || 0,
-      peopleCount: company.people?.length || 0,
-      buyerGroupsCount: company.buyerGroups?.length || 0
+      peopleCount: company.people?.length || 0
     });
 
     // Prepare strategy request with comprehensive company data
@@ -265,9 +213,7 @@ export async function POST(
       opportunityStage: company.opportunityStage,
       opportunityAmount: company.opportunityAmount,
       // Include enriched data for better intelligence
-      opportunities: company.opportunities || [],
-      people: company.people || [],
-      buyerGroups: company.buyerGroups || []
+      people: company.people || []
     };
 
     console.log(`📋 [COMPANY STRATEGY API] Strategy request prepared:`, {
@@ -281,9 +227,7 @@ export async function POST(
       growthStage: strategyRequest.growthStage,
       marketPosition: strategyRequest.marketPosition,
       forceRegenerate: strategyRequest.forceRegenerate,
-      opportunitiesCount: strategyRequest.opportunities?.length || 0,
-      peopleCount: strategyRequest.people?.length || 0,
-      buyerGroupsCount: strategyRequest.buyerGroups?.length || 0
+      peopleCount: strategyRequest.people?.length || 0
     });
 
     // Generate strategy using company strategy service

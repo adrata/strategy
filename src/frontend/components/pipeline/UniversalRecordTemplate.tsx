@@ -1775,6 +1775,16 @@ export function UniversalRecordTemplate({
           'address': 'address',
           'postalCode': 'postalCode'
         };
+      } else if (targetModel === 'actions') {
+        // Action-specific field mapping
+        fieldMapping = {
+          'description': 'description',
+          'title': 'title',
+          'subject': 'subject',
+          'type': 'type',
+          'status': 'status',
+          'notes': 'notes'
+        };
       } else {
         // People/leads/prospects field mapping
         fieldMapping = {
@@ -2177,22 +2187,30 @@ export function UniversalRecordTemplate({
         
         // 🚀 CRITICAL FIX: Set force-refresh flags for useFastSectionData to detect
         // This ensures fresh data is fetched instead of stale cache on next page load
+        
+        // Set record-specific force-refresh flag using the actual section name from URL
         sessionStorage.setItem(`force-refresh-${recordType}-${record.id}`, 'true');
         
         // Also set a general section-level force-refresh flag for list views
         // This is needed because useFastSectionData checks for keys that include the section name
         if (targetModel === 'companies') {
+          // For companies, ensure we use the correct section name from the URL
           sessionStorage.setItem(`force-refresh-companies`, 'true');
           console.log('🔄 [CACHE] Set force-refresh flags for companies:', {
-            recordSpecific: `force-refresh-companies-${record.id}`,
-            sectionLevel: 'force-refresh-companies'
+            recordSpecific: `force-refresh-${recordType}-${record.id}`,
+            sectionLevel: 'force-refresh-companies',
+            recordType,
+            targetModel
           });
         } else if (targetModel === 'people' || targetModel === 'leads' || targetModel === 'prospects' || targetModel === 'opportunities') {
+          // For people records, set both people and specific section flags
           sessionStorage.setItem(`force-refresh-people`, 'true');
           sessionStorage.setItem(`force-refresh-${targetModel}`, 'true');
           console.log('🔄 [CACHE] Set force-refresh flags for people/section:', {
             recordSpecific: `force-refresh-${recordType}-${record.id}`,
-            sectionLevel: `force-refresh-${targetModel}`
+            sectionLevel: `force-refresh-${targetModel}`,
+            recordType,
+            targetModel
           });
         }
         
@@ -2713,17 +2731,11 @@ export function UniversalRecordTemplate({
       setLoading(true);
       console.log('🔄 [UNIVERSAL] Submitting action:', actionData);
       
-      // Use different API endpoints based on record type
-      const apiEndpoint = recordType === 'speedrun' ? '/api/speedrun/action-log' : '/api/v1/actions';
+      // Use v1 actions API for all record types including speedrun
+      const apiEndpoint = '/api/v1/actions';
       
-      // Prepare request body based on record type
-      const requestBody = recordType === 'speedrun' ? {
-        personId: record.id,
-        personName: record.name || record.fullName || 'Unknown',
-        actionType: actionData.type,
-        notes: actionData.action, // Use action field for speedrun
-        actionPerformedBy: actionData.actionPerformedBy
-      } : {
+      // Prepare request body for v1 actions API (unified format for all record types)
+      const requestBody = {
         type: actionData.type,
         subject: actionData.action.length > 100 ? actionData.action.substring(0, 100) + '...' : actionData.action,
         description: actionData.action,

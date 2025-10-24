@@ -403,10 +403,43 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     }
     
     // Check if we should force a fresh API call (after update)
-    const forceRefresh = sessionStorage.getItem(`force-refresh-${section}-${recordId}`) === 'true';
+    // Check for both record-specific and section-level force-refresh flags
+    const recordSpecificForceRefresh = sessionStorage.getItem(`force-refresh-${section}-${recordId}`) === 'true';
+    const sectionLevelForceRefresh = sessionStorage.getItem(`force-refresh-${section}`) === 'true';
+    const forceRefresh = recordSpecificForceRefresh || sectionLevelForceRefresh;
+    
     if (forceRefresh) {
-      console.log(`🔄 [FORCE REFRESH] Skipping cache, fetching fresh from API for ${section} record ${recordId}`);
-      sessionStorage.removeItem(`force-refresh-${section}-${recordId}`);
+      console.log(`🔄 [FORCE REFRESH] Force refresh detected, skipping ALL caches and fetching fresh from API:`, {
+        section,
+        recordId,
+        recordSpecific: recordSpecificForceRefresh,
+        sectionLevel: sectionLevelForceRefresh
+      });
+      
+      // Clear force-refresh flags
+      if (recordSpecificForceRefresh) {
+        sessionStorage.removeItem(`force-refresh-${section}-${recordId}`);
+      }
+      if (sectionLevelForceRefresh) {
+        sessionStorage.removeItem(`force-refresh-${section}`);
+      }
+      
+      // 🚀 CRITICAL FIX: Clear the specific record from acquisitionData to prevent stale data
+      if (acquisitionData?.acquireData?.[section]) {
+        const sectionData = acquisitionData.acquireData[section];
+        const recordIndex = sectionData.findIndex((record: any) => record['id'] === recordId);
+        if (recordIndex !== -1) {
+          console.log(`🗑️ [FORCE REFRESH] Removing stale record from acquisitionData:`, {
+            section,
+            recordId,
+            recordIndex,
+            recordName: sectionData[recordIndex]?.name || sectionData[recordIndex]?.fullName
+          });
+          // Remove the stale record from acquisitionData
+          acquisitionData.acquireData[section].splice(recordIndex, 1);
+        }
+      }
+      
       // Skip to the API call section below
     } else {
       // 🎯 SECOND: Try to find record in already-loaded data (no API call needed)

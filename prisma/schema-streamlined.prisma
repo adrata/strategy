@@ -336,6 +336,9 @@ model companies {
   jobPostingsChange      Json?
   productReviewsScore    Json?
   revenueRange           Json?
+  linkedinnavigatorurl   String?          @db.VarChar(500)
+  linkedinNavigatorUrl   String?          @db.VarChar(500)
+  descriptionEnriched    String?
   actions                actions[]
   mainSeller             users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
   workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -1014,42 +1017,6 @@ model email_messages {
   @@index([personId])
   @@index([workspaceId, receivedAt])
   @@index([from])
-}
-
-model chronicle_reports {
-  id               String             @id
-  workspaceId      String             @db.VarChar(30)
-  title            String             @db.VarChar(255)
-  reportDate       DateTime
-  reportType       String             @db.VarChar(20)
-  content          Json
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime
-  createdBy        String             @db.VarChar(30)
-  deletedAt        DateTime?
-  chronicle_shares chronicle_shares[]
-
-  @@index([createdBy])
-  @@index([deletedAt])
-  @@index([reportDate])
-  @@index([reportType])
-  @@index([workspaceId])
-}
-
-model chronicle_shares {
-  id                String            @id
-  reportId          String
-  shareToken        String            @db.VarChar(100)
-  shareUrl          String            @db.VarChar(500)
-  viewCount         Int               @default(0)
-  createdAt         DateTime          @default(now())
-  expiresAt         DateTime?
-  allowedEmails     String[]          @default([])
-  chronicle_reports chronicle_reports @relation(fields: [reportId], references: [id], onDelete: Cascade)
-
-  @@index([expiresAt])
-  @@index([reportId])
-  @@index([shareToken])
 }
 
 enum UserRole {

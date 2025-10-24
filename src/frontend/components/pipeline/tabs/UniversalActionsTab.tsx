@@ -538,6 +538,10 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                               {event.metadata.status.toUpperCase()}
                             </span>
                           )}
+                          {/* Action type badge */}
+                          <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">
+                            {event.metadata?.type || event.type || 'Action'}
+                          </span>
                         </div>
                     <InlineEditField
                       value={event.description}

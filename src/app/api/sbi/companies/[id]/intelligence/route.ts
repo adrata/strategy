@@ -70,8 +70,7 @@ export async function GET(
     const company = await prisma.companies.findUnique({
       where: { id },
       include: {
-        people: true,
-        opportunities: true
+        people: true
       }
     });
 
