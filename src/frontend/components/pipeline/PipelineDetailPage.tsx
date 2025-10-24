@@ -592,6 +592,19 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         return;
       }
       
+      // 🎯 CRITICAL FIX: Check for force-refresh flags again BEFORE using cached data
+      // This prevents using stale data from the data array
+      const shouldForceFresh = typeof window !== 'undefined' && (
+        sessionStorage.getItem(`force-refresh-${section}-${recordId}`) === 'true' ||
+        sessionStorage.getItem(`force-refresh-${section}`) === 'true'
+      );
+      
+      if (shouldForceFresh) {
+        console.log(`🔄 [DEBOUNCE] Force-refresh flags still present, skipping cache and calling loadDirectRecord`);
+        loadDirectRecord(recordId);
+        return;
+      }
+      
       // If we have data loaded, try to find the record in it
       if (data.length > 0) {
         console.log(`🔍 [DATA DEBUG] Looking for record ${recordId} in ${data.length} cached records`);
