@@ -302,9 +302,22 @@ export function TableRow({
                   <td key="lastAction" className={mutedClasses}>
                     <div className="flex items-center gap-2">
                       {(() => {
-                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
-                        const timing = getRealtimeActionTiming(lastActionDate);
+                        // Use API-provided lastActionTime if available (from speedrun/section APIs)
+                        const lastActionTime = record['lastActionTime'];
                         const actionText = record['lastAction'] || record['lastActionDescription'] || 'No action';
+                        
+                        let timing;
+                        if (lastActionTime) {
+                          // API already calculated timing with meaningful action filtering
+                          timing = { 
+                            text: lastActionTime, 
+                            color: 'bg-[var(--hover)] text-gray-800' 
+                          };
+                        } else {
+                          // Fallback: calculate from date (legacy support)
+                          const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
+                          timing = getRealtimeActionTiming(lastActionDate);
+                        }
                         
                         // If timing is "Never" or no actionText, show dash instead of action text
                         const displayText = (timing.text === 'Never' || !actionText || actionText === 'No action') ? '-' : actionText;
@@ -532,9 +545,22 @@ export function TableRow({
                   <td key="lastAction" className={mutedClasses}>
                     <div className="flex items-center gap-2">
                       {(() => {
-                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
-                        const timing = getRealtimeActionTiming(lastActionDate);
+                        // Use API-provided lastActionTime if available (from speedrun/section APIs)
+                        const lastActionTime = record['lastActionTime'];
                         const actionText = record['lastAction'] || record['lastActionDescription'] || 'No action';
+                        
+                        let timing;
+                        if (lastActionTime) {
+                          // API already calculated timing with meaningful action filtering
+                          timing = { 
+                            text: lastActionTime, 
+                            color: 'bg-[var(--hover)] text-gray-800' 
+                          };
+                        } else {
+                          // Fallback: calculate from date (legacy support)
+                          const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
+                          timing = getRealtimeActionTiming(lastActionDate);
+                        }
                         
                         // If timing is "Never" or no actionText, show dash instead of action text
                         const displayText = (timing.text === 'Never' || !actionText || actionText === 'No action') ? '-' : actionText;
@@ -676,9 +702,22 @@ export function TableRow({
                   <td key="lastAction" className={mutedClasses}>
                     <div className="flex items-center gap-2">
                       {(() => {
-                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
-                        const timing = getRealtimeActionTiming(lastActionDate);
+                        // Use API-provided lastActionTime if available (from speedrun/section APIs)
+                        const lastActionTime = record['lastActionTime'];
                         const actionText = record['lastAction'] || record['lastActionDescription'] || 'No action';
+                        
+                        let timing;
+                        if (lastActionTime) {
+                          // API already calculated timing with meaningful action filtering
+                          timing = { 
+                            text: lastActionTime, 
+                            color: 'bg-[var(--hover)] text-gray-800' 
+                          };
+                        } else {
+                          // Fallback: calculate from date (legacy support)
+                          const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
+                          timing = getRealtimeActionTiming(lastActionDate);
+                        }
                         
                         // If timing is "Never" or no actionText, show dash instead of action text
                         const displayText = (timing.text === 'Never' || !actionText || actionText === 'No action') ? '-' : actionText;
@@ -811,9 +850,22 @@ export function TableRow({
                   <td key="lastAction" className={mutedClasses}>
                     <div className="flex items-center gap-2">
                       {(() => {
-                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
-                        const timing = getRealtimeActionTiming(lastActionDate);
+                        // Use API-provided lastActionTime if available (from speedrun/section APIs)
+                        const lastActionTime = record['lastActionTime'];
                         const actionText = record['lastAction'] || record['lastActionDescription'] || 'No action';
+                        
+                        let timing;
+                        if (lastActionTime) {
+                          // API already calculated timing with meaningful action filtering
+                          timing = { 
+                            text: lastActionTime, 
+                            color: 'bg-[var(--hover)] text-gray-800' 
+                          };
+                        } else {
+                          // Fallback: calculate from date (legacy support)
+                          const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
+                          timing = getRealtimeActionTiming(lastActionDate);
+                        }
                         
                         // If timing is "Never" or no actionText, show dash instead of action text
                         const displayText = (timing.text === 'Never' || !actionText || actionText === 'No action') ? '-' : actionText;

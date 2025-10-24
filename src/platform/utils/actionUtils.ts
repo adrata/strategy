@@ -187,22 +187,18 @@ export function getActionDescription(actionType: string): string {
 
 /**
  * Calculate the timing for the last action
+ * 
+ * NOTE: System action filtering should be done BEFORE calling this function.
+ * Use isMeaningfulAction() from meaningfulActions.ts to filter actions first.
+ * This function only calculates timing display text, not action filtering.
+ * 
  * @param lastActionDate - The date of the last action
  * @param lastActionText - The text description of the last action
  * @returns The timing text for display
  */
 export function calculateLastActionTiming(lastActionDate: Date | null, lastActionText: string | null): string {
-  // System actions that should not count as real actions
-  const systemActions = [
-    'Record created',
-    'No action taken',
-    'Record updated',
-    'Person created',
-    'Company created'
-  ];
-  
-  // If no date or it's a system action, return "Never"
-  if (!lastActionDate || !lastActionText || systemActions.includes(lastActionText)) {
+  // If no date or text, return "Never"
+  if (!lastActionDate || !lastActionText) {
     return 'Never';
   }
   

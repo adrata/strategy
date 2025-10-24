@@ -2133,12 +2133,6 @@ export function UniversalRecordTemplate({
       
       updateSessionStorageCache(updatedRecord, field, recordId || '', recordType);
       
-      // Clear force-refresh flag since we've updated the cache with fresh data
-      if (typeof window !== 'undefined') {
-        sessionStorage.removeItem(`force-refresh-${recordType}-${recordId}`);
-        console.log(`🗑️ [CACHE] Cleared force-refresh flag for ${recordType} record ${recordId}`);
-      }
-      
       // 🚀 SERVER REVALIDATION: Trigger background refresh to ensure data consistency
       // Use a longer delay to allow the optimistic update and parent state update to settle
       setTimeout(() => {
@@ -2198,6 +2192,22 @@ export function UniversalRecordTemplate({
             sectionLevel: `force-refresh-${targetModel}`
           });
         }
+        
+        // 🚀 CRITICAL FIX: Clear sessionStorage instant-load cache to prevent stale data
+        // This cache is checked BEFORE useFastSectionData runs, so it must be cleared
+        sessionStorage.removeItem(`cached-${targetModel}-${targetId}`);
+        sessionStorage.removeItem(`cached-${recordType}-${record.id}`);
+        sessionStorage.removeItem(`current-record-${targetModel}`);
+        sessionStorage.removeItem(`current-record-${recordType}`);
+        
+        console.log('🗑️ [CACHE] Cleared sessionStorage instant-load caches:', {
+          keys: [
+            `cached-${targetModel}-${targetId}`,
+            `cached-${recordType}-${record.id}`,
+            `current-record-${targetModel}`,
+            `current-record-${recordType}`
+          ]
+        });
         
         console.log('🗑️ [CACHE] Invalidated all caches after inline field update:', {
           workspaceId,

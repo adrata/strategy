@@ -4,6 +4,7 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, DocumentTextIcon, PhoneIcon, CalendarIcon, UserIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
 import { InlineEditField } from '../InlineEditField';
+import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 
 interface ActionEvent {
   id: string;
@@ -321,27 +322,17 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         }
       }));
 
-      // Filter to core action types only
-      const CORE_ACTION_TYPES = [
-        'LinkedIn Connection',
-        'LinkedIn InMail', 
-        'LinkedIn Message',
-        'Phone',
-        'Email',
-        'Meeting'
-      ];
-
+      // Filter to meaningful action types only (matches Last Action column filtering)
       console.log('🔍 [ACTIONS] Before filtering:', {
         totalEvents: activityEvents.length,
         eventTypes: activityEvents.map(e => e.metadata?.type),
-        coreTypes: CORE_ACTION_TYPES,
         sampleEvent: activityEvents[0]
       });
 
       activityEvents = activityEvents.filter(event => {
         // Check both metadata.type and direct type field
         const eventType = event.metadata?.type || event.type;
-        const matches = eventType && CORE_ACTION_TYPES.includes(eventType);
+        const matches = eventType && isMeaningfulAction(eventType);
         console.log('🔍 [ACTIONS] Filtering event:', {
           eventType: eventType,
           metadataType: event.metadata?.type,
