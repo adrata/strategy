@@ -146,7 +146,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     if (cachedData) {
       try {
         const parsed = JSON.parse(cachedData);
-        if (parsed.timestamp && Date.now() - parsed.timestamp < 30000 && parsed.version === currentCacheVersion) { // 30 second cache + version check
+        if (parsed.timestamp && Date.now() - parsed.timestamp < 5000 && parsed.version === currentCacheVersion) { // 5 second cache + version check
           activityEvents = parsed.activities || [];
           noteEvents = parsed.notes || [];
           console.log('⚡ [ACTIONS] Using cached actions data');
@@ -349,7 +349,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
   }, [record?.id, recordType, getUserName]);
 
 
-  // Listen for action creation events to refresh actions
+  // Listen for action creation and update events to refresh actions
   useEffect(() => {
     const handleActionCreated = (event: CustomEvent) => {
       const { recordId, actionId } = event.detail || {};
@@ -363,10 +363,24 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       }
     };
 
+    const handleActionUpdated = (event: CustomEvent) => {
+      const { recordId, actionId } = event.detail || {};
+      // Match by recordId only - don't check recordType to avoid mismatches
+      if (recordId === record?.id) {
+        console.log('🔄 [ACTIONS] Action updated event matches current record, refreshing actions');
+        // Clear cache and reload
+        const cacheKey = `actions-${record.id}`;
+        localStorage.removeItem(cacheKey);
+        loadActionsFromAPI();
+      }
+    };
+
     document.addEventListener('actionCreated', handleActionCreated as EventListener);
+    document.addEventListener('actionUpdated', handleActionUpdated as EventListener);
     
     return () => {
       document.removeEventListener('actionCreated', handleActionCreated as EventListener);
+      document.removeEventListener('actionUpdated', handleActionUpdated as EventListener);
     };
   }, [record?.id, recordType, loadActionsFromAPI]);
 

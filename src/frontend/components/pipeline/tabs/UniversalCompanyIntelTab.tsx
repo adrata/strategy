@@ -67,6 +67,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     if (record?.id && !strategyData && !isGeneratingStrategy) {
       const hasStrategy = record.customFields?.strategyData;
       if (!hasStrategy) {
+        console.log('🔄 [COMPANY STRATEGY] Auto-generating strategy for company:', record.id);
         handleGenerateStrategy();
       }
     }
@@ -97,10 +98,16 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
   };
 
   const handleGenerateStrategy = async () => {
+    if (isGeneratingStrategy) {
+      console.log('⚠️ [COMPANY STRATEGY] Strategy generation already in progress, skipping');
+      return;
+    }
+    
     setIsGeneratingStrategy(true);
     setStrategyError(null);
     
     try {
+      console.log('🚀 [COMPANY STRATEGY] Starting strategy generation for company:', record.id);
       const response = await fetch(`/api/v1/strategy/company/${record.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -109,11 +116,14 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
       
       const data = await response.json();
       if (data.success && data.data) {
+        console.log('✅ [COMPANY STRATEGY] Strategy generated successfully');
         setStrategyData(data.data);
       } else {
+        console.error('❌ [COMPANY STRATEGY] Strategy generation failed:', data.error);
         setStrategyError(data.error || 'Failed to generate strategy');
       }
     } catch (error) {
+      console.error('❌ [COMPANY STRATEGY] Strategy generation error:', error);
       setStrategyError('Failed to generate strategy');
     } finally {
       setIsGeneratingStrategy(false);
@@ -129,12 +139,26 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     );
   }
 
+  // Show loading state if we're generating strategy
+  if (isGeneratingStrategy) {
+    return (
+      <div className="p-6">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
+          </div>
+          <StrategySkeleton />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Strategy Summary Header */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">Strategy Summary</h3>
+          <h3 className="text-lg font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
         </div>
         
         {/* Strategy Summary Content */}
@@ -160,8 +184,12 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                     • Serving {strategyData.targetIndustry}
                   </span>
                 )}
-                <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">
-                  📊 Data-Driven
+                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                  strategyData.strategyGeneratedBy === 'claude-3-sonnet' 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-orange-100 text-orange-800'
+                }`}>
+                  {strategyData.strategyGeneratedBy === 'claude-3-sonnet' ? '🤖 AI-Powered' : '📊 Data-Driven'}
                 </span>
               </div>
             )}

@@ -86,16 +86,36 @@ class BuyerGroupBridge {
                     // Initialize CoreSignal client
                     const coresignal = new CoreSignalMultiSource(pipelineConfig.coreSignal);
                     
-                    // Search for executives using multiple role searches
-                    const cfoResult = await coresignal.discoverExecutives(companyName, ['CFO']);
-                    const ceoResult = await coresignal.discoverExecutives(companyName, ['CEO']);
-                    const ctoResult = await coresignal.discoverExecutives(companyName, ['CTO']);
+                    // Winning Variant needs comprehensive department discovery for AI/ML ROI platform
+                    const targetRoles = [
+                        // C-Suite executives
+                        'CFO', 'CEO', 'CTO', 'CPO',
+                        // VP level - Data Science, Product, Engineering, Analytics
+                        'VP Data Science', 'VP Product', 'VP Engineering', 'VP Analytics', 'VP Finance',
+                        // Director level - same departments
+                        'Director Data Science', 'Director Product', 'Director Analytics', 'Director Engineering', 'Director Finance',
+                        // Head level - same departments  
+                        'Head of Data Science', 'Head of Product', 'Head of Analytics', 'Head of Engineering', 'Head of Finance'
+                    ];
+                    
+                    console.log(`   🎯 Searching for ${targetRoles.length} strategic roles for Winning Variant AI ROI platform...`);
+                    
+                    // Search for all target roles
+                    const allExecutives = [];
+                    for (const role of targetRoles) {
+                        try {
+                            const result = await coresignal.discoverExecutives(companyName, [role]);
+                            if (result.cfo) {
+                                allExecutives.push(result.cfo);
+                                console.log(`   ✅ Found ${role}: ${result.cfo.name}`);
+                            }
+                        } catch (error) {
+                            console.log(`   ⚠️ Error searching for ${role}: ${error.message}`);
+                        }
+                    }
                     
                     // Collect all found executives
-                    const executives = [];
-                    if (cfoResult.cfo) executives.push(cfoResult.cfo);
-                    if (ceoResult.cfo) executives.push(ceoResult.cfo); // CEO might be returned as CFO
-                    if (ctoResult.cfo) executives.push(ctoResult.cfo); // CTO might be returned as CFO
+                    const executives = allExecutives;
                     
                     if (executives.length === 0) {
                         console.log(`   ⚠️ No executives found for ${companyName}`);

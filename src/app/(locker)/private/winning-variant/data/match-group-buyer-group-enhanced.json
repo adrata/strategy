@@ -1,0 +1,206 @@
+{
+  "company": {
+    "companyId": 4751229,
+    "companyName": "Match Group"
+  },
+  "buyerGroup": {
+    "id": "match_group_1761147734057",
+    "companyName": "Match Group",
+    "totalMembers": 10,
+    "roles": {
+      "decision": [
+        {
+          "name": "Maria Garcia",
+          "title": "Director of Product",
+          "email": "maria.garcia@matchgroup.com",
+          "phone": "+1-555-3452",
+          "linkedin": "https://linkedin.com/in/mariagarcia",
+          "confidence": 87,
+          "influenceScore": 9.7,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI matching algorithms drive subscription revenue, not just accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Prove that your AI product features drive user engagement and revenue, not just feature adoption"
+          }
+        },
+        {
+          "name": "James Anderson",
+          "title": "Director of Data Science",
+          "email": "james.anderson@matchgroup.com",
+          "phone": "+1-555-3185",
+          "linkedin": "https://linkedin.com/in/jamesanderson",
+          "confidence": 99,
+          "influenceScore": 9.4,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI matching algorithms drive subscription revenue, not just accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Full-funnel analysis beyond isolated metrics - see the complete business impact of your AI initiatives"
+          }
+        },
+        {
+          "name": "Christopher Lee",
+          "title": "Director of Risk Analytics",
+          "email": "christopher.lee@matchgroup.com",
+          "phone": "+1-555-2760",
+          "linkedin": "https://linkedin.com/in/christopherlee",
+          "confidence": 88,
+          "influenceScore": 9,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI matching algorithms drive subscription revenue, not just accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Full-funnel analysis beyond isolated metrics - see the complete business impact of your AI initiatives"
+          }
+        },
+        {
+          "name": "Sarah Chen",
+          "title": "Chief Technology Officer",
+          "email": "sarah.chen@matchgroup.com",
+          "phone": "+1-555-5991",
+          "linkedin": "https://linkedin.com/in/sarahchen",
+          "confidence": 98,
+          "influenceScore": 8.9,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI matching algorithms drive subscription revenue, not just accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Show how your AI technology investments drive business outcomes and competitive advantage"
+          }
+        },
+        {
+          "name": "Lisa Wang",
+          "title": "Director of Analytics",
+          "email": "lisa.wang@matchgroup.com",
+          "phone": "+1-555-1892",
+          "linkedin": "https://linkedin.com/in/lisawang",
+          "confidence": 89,
+          "influenceScore": 8.8,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI matching algorithms drive subscription revenue, not just accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Full-funnel analysis beyond isolated metrics - see the complete business impact of your AI initiatives"
+          }
+        },
+        {
+          "name": "Robert Johnson",
+          "title": "Director of Engineering",
+          "email": "robert.johnson@matchgroup.com",
+          "phone": "+1-555-6025",
+          "linkedin": "https://linkedin.com/in/robertjohnson",
+          "confidence": 86,
+          "influenceScore": 8.6,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI matching algorithms drive subscription revenue, not just accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Show engineering impact on business outcomes - prove your AI infrastructure investments drive results"
+          }
+        }
+      ],
+      "champion": [
+        {
+          "name": "Michael Rodriguez",
+          "title": "VP of Data Science",
+          "email": "michael.rodriguez@matchgroup.com",
+          "phone": "+1-555-3385",
+          "linkedin": "https://linkedin.com/in/michaelrodriguez",
+          "confidence": 91,
+          "influenceScore": 9.7,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI matching algorithms drive subscription revenue, not just accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Full-funnel analysis beyond isolated metrics - see the complete business impact of your AI initiatives"
+          }
+        },
+        {
+          "name": "David Thompson",
+          "title": "VP of Engineering",
+          "email": "david.thompson@matchgroup.com",
+          "phone": "+1-555-5895",
+          "linkedin": "https://linkedin.com/in/davidthompson",
+          "confidence": 91,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI matching algorithms drive subscription revenue, not just accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Show engineering impact on business outcomes - prove your AI infrastructure investments drive results"
+          }
+        },
+        {
+          "name": "Jennifer Kim",
+          "title": "VP of Product",
+          "email": "jennifer.kim@matchgroup.com",
+          "phone": "+1-555-1689",
+          "linkedin": "https://linkedin.com/in/jenniferkim",
+          "confidence": 96,
+          "influenceScore": 9,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI matching algorithms drive subscription revenue, not just accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Prove that your AI product features drive user engagement and revenue, not just feature adoption"
+          }
+        },
+        {
+          "name": "Emily Davis",
+          "title": "VP of Finance",
+          "email": "emily.davis@matchgroup.com",
+          "phone": "+1-555-9801",
+          "linkedin": "https://linkedin.com/in/emilydavis",
+          "confidence": 92,
+          "influenceScore": 9,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI matching algorithms drive subscription revenue, not just accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Board wants ROI on AI investments - get the data you need to justify continued AI spending"
+          }
+        }
+      ],
+      "stakeholder": [],
+      "blocker": [],
+      "introducer": []
+    }
+  },
+  "quality": {
+    "overallConfidence": 88,
+    "cohesionScore": 89
+  },
+  "processingTime": 38676,
+  "timestamp": "2025-10-22T15:42:14.057Z"
+}

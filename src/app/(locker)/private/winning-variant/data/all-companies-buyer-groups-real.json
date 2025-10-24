@@ -3,25 +3,25 @@
     "totalCompanies": 4,
     "successfulCompanies": 0,
     "failedCompanies": 4,
-    "timestamp": "2025-10-21T16:36:28.432Z"
+    "timestamp": "2025-10-22T15:44:52.911Z"
   },
   "companies": [],
   "failures": [
     {
       "companyName": "Match Group",
-      "error": "next-auth.session-token=a/hdT3DqJ8CdRUCO9J1p0qKiG2zHud6Y5k7I4FKix7M=\n is not a legal HTTP header value"
+      "error": "No buyer group data returned from pipeline"
     },
     {
       "companyName": "Brex",
-      "error": "next-auth.session-token=a/hdT3DqJ8CdRUCO9J1p0qKiG2zHud6Y5k7I4FKix7M=\n is not a legal HTTP header value"
+      "error": "No buyer group data returned from pipeline"
     },
     {
       "companyName": "First Premier Bank",
-      "error": "next-auth.session-token=a/hdT3DqJ8CdRUCO9J1p0qKiG2zHud6Y5k7I4FKix7M=\n is not a legal HTTP header value"
+      "error": "No buyer group data returned from pipeline"
     },
     {
       "companyName": "Zuora",
-      "error": "next-auth.session-token=a/hdT3DqJ8CdRUCO9J1p0qKiG2zHud6Y5k7I4FKix7M=\n is not a legal HTTP header value"
+      "error": "No buyer group data returned from pipeline"
     }
   ]
 }

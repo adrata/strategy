@@ -402,18 +402,16 @@ export function PipelineTable({
                         cellContent = (title && title !== 'Unknown Title' && title.trim() !== '') ? title : '-';
                         break;
                       case 'last action':
-                        // Format last action with timing badge and description
-                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
-                        const lastTiming = getRealtimeActionTiming(lastActionDate);
-                        const lastActionText = record['lastActionDescription'] || record['lastAction'] || record['lastContactType'] || '-';
-                        cellContent = `${lastTiming.text} | ${lastActionText}`;
+                        // Use pre-formatted lastActionTime from speedrun API if available
+                        const lastActionTime = record['lastActionTime'] || 'Never';
+                        const lastActionText = record['lastAction'] || record['lastActionDescription'] || record['lastContactType'] || '-';
+                        cellContent = `${lastActionTime} | ${lastActionText}`;
                         break;
                       case 'next action':
-                        // Format next action with timing badge and description
+                        // Use pre-formatted nextActionTiming from speedrun API if available
+                        const nextActionTime = record['nextActionTiming'] || 'No date set';
                         const nextActionText = record['nextAction'] || record['next_action'] || 'No action planned';
-                        const nextActionDate = record['nextActionDate'] || record['next_action_date'];
-                        const timing = nextActionDate ? getRealtimeActionTiming(nextActionDate) : 'No date';
-                        cellContent = `${timing} | ${nextActionText}`;
+                        cellContent = `${nextActionTime} | ${nextActionText}`;
                         break;
                       case 'stage':
                         cellContent = record['stage'] || record['status'] || '-';
@@ -486,9 +484,13 @@ export function PipelineTable({
                             let pillData: { text: string; color: string; icon?: string };
                             
                             if (isLastAction) {
-                              pillData = getLastActionTiming(record);
+                              // Use pre-formatted timing from API
+                              const timingText = record['lastActionTime'] || 'Never';
+                              pillData = { text: timingText, color: 'bg-[var(--hover)] text-gray-800' };
                             } else if (isNextAction) {
-                              pillData = getNextActionTiming(record);
+                              // Use pre-formatted timing from API
+                              const timingText = record['nextActionTiming'] || 'No date set';
+                              pillData = { text: timingText, color: 'bg-[var(--hover)] text-gray-800' };
                             } else if (isStatus) {
                               // Status pill styling - reverted to previous implementation
                               const personStatus = record['status'];

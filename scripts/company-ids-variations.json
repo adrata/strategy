@@ -1,0 +1,12 @@
+{
+  "Match Group": null,
+  "Brex": null,
+  "Zuora": null,
+  "First Premier Bank": {
+    "id": 7578901,
+    "name": "First Premier Bank",
+    "website": "https://www.firstpremier.com",
+    "industry": "Financial Services",
+    "country": "United States"
+  }
+}

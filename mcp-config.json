@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "coresignal_data_api": {
+      "command": "npx",
+      "args": [
+        "mcp-remote@0.0.22",
+        "https://mcp.coresignal.com/mcp",
+        "--header",
+        "apikey:${AUTH_HEADER}"
+      ],
+      "env": {
+        "AUTH_HEADER": "hzwQmb13cF21if4arzLpx0SRWyoOUyzP"
+      }
+    }
+  }
+}

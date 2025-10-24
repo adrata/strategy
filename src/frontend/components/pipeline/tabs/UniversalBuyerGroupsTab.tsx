@@ -477,6 +477,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
             phone: person.phone || person.mobilePhone || '',
             role: buyerRole,
             buyerGroupStatus: person.buyerGroupStatus,  // ADD THIS - capture from API
+            status: person.status,  // Add status field for navigation
+            companyId: person.companyId || companyId,  // Add companyId for navigation
             influence: buyerRole === 'Decision Maker' ? 'high' : buyerRole === 'Champion' ? 'high' : 'medium',
             isPrimary: isPrimary,
             company: companyName,
@@ -586,7 +588,29 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           personUrl = `/${workspaceSlug}/prospects/${personSlug}`;
           break;
         case 'OPPORTUNITY':
-          personUrl = `/${workspaceSlug}/opportunities/${personSlug}`;
+          // For OPPORTUNITY status, navigate to the company's opportunity record
+          // Get company information from the record prop
+          let companyName = '';
+          let companyId = '';
+          
+          if (recordType === 'people') {
+            // For person records, get company from companyId or company object
+            companyId = record.companyId;
+            companyName = (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                         record.companyName || 'Company';
+          } else {
+            // For company records, use the record name as company name
+            companyName = record.name || 
+                         (typeof record.company === 'object' && record.company !== null ? record.company.name : record.company) || 
+                         record.companyName ||
+                         'Company';
+            companyId = record.id; // For company records, the record ID is the company ID
+          }
+          
+          // Generate company slug for opportunity navigation
+          const companySlug = generateSlug(companyName, companyId);
+          personUrl = `/${workspaceSlug}/opportunities/${companySlug}`;
+          console.log(`🔗 [BUYER GROUPS] OPPORTUNITY person - navigating to company opportunity: ${companyName} (${companyId})`);
           break;
         default:
           // CLIENT, SUPERFAN, or any other status

@@ -360,6 +360,31 @@ export async function POST(request: NextRequest) {
           lastAction: action.subject,
           lastActionDate: action.completedAt || action.createdAt
         });
+
+        // 🎯 AUTO RE-RANKING: Trigger automatic re-ranking for speedrun when engagement actions are completed
+        try {
+          const reRankResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/v1/speedrun/re-rank`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.INTERNAL_API_KEY || 'internal'}`,
+            },
+            body: JSON.stringify({
+              trigger: 'action_completion',
+              personId: action.personId,
+              actionType: action.type,
+              timestamp: new Date().toISOString()
+            })
+          });
+          
+          if (reRankResponse.ok) {
+            console.log('✅ [ACTIONS API] Triggered automatic re-ranking after engagement action completion');
+          } else {
+            console.warn('⚠️ [ACTIONS API] Re-ranking request failed but continuing:', reRankResponse.status);
+          }
+        } catch (reRankError) {
+          console.error('⚠️ [ACTIONS API] Background re-ranking failed (non-blocking):', reRankError);
+        }
       } catch (error) {
         console.error('❌ [ACTIONS API] Failed to update person lastAction fields:', error);
       }

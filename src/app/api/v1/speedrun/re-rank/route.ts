@@ -7,12 +7,22 @@ import { StateRankingService } from '@/products/speedrun/state-ranking';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { completedCount, triggerAutoFetch, isDailyReset, manualRankUpdate } = body;
+    const { completedCount, triggerAutoFetch, isDailyReset, manualRankUpdate, trigger, personId, actionType, timestamp } = body;
 
     // Handle manual rank update
     if (manualRankUpdate) {
       console.log(`🔄 Manual rank update: Person ${manualRankUpdate.personId} to rank ${manualRankUpdate.newRank}`);
       return await handleManualRankUpdate(request, manualRankUpdate);
+    }
+
+    // 🎯 AUTO RE-RANKING: Log trigger information for debugging
+    if (trigger) {
+      console.log(`🎯 [AUTO RE-RANKING] Triggered by: ${trigger}`, {
+        personId,
+        actionType,
+        timestamp,
+        completedCount
+      });
     }
 
     console.log(`🔄 Re-ranking speedrun data for user. Completed: ${completedCount}`);
@@ -168,6 +178,17 @@ export async function POST(request: NextRequest) {
     await Promise.all(updatePromises);
 
     console.log(`✅ Successfully re-ranked and updated ${newBatch.length} records`);
+
+    // 🎯 AUTO RE-RANKING: Log completion for debugging
+    if (trigger) {
+      console.log(`🎯 [AUTO RE-RANKING] Completed successfully`, {
+        trigger,
+        personId,
+        actionType,
+        recordsUpdated: newBatch.length,
+        timestamp: new Date().toISOString()
+      });
+    }
 
     // Return the new batch data
     return NextResponse.json({

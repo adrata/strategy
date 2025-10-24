@@ -1,157 +1,97 @@
-#!/usr/bin/env node
+const fetch = require('node-fetch');
+require('dotenv').config();
 
-/**
- * 🧪 SIMPLE CORESIGNAL TEST
- * 
- * Tests different search approaches to find what works
- */
-
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-
-// Load environment variables
-require('dotenv').config({ path: '.env.local' });
-
-const CORESIGNAL_API_KEY = process.env.CORESIGNAL_API_KEY?.replace(/\\n/g, '').trim();
+const CORESIGNAL_API_KEY = process.env.CORESIGNAL_API_KEY;
+const CORESIGNAL_BASE_URL = 'https://api.coresignal.com/cdapi/v2';
 
 async function testCoreSignalSimple() {
-  console.log('🧪 SIMPLE CORESIGNAL TEST');
-  console.log('=' .repeat(50));
+  console.log('🔍 TESTING CORESIGNAL SIMPLE');
+  console.log('============================');
   
-  if (!CORESIGNAL_API_KEY) {
-    console.log('❌ CoreSignal API key not available');
-    return;
-  }
+  console.log(`API Key: ${CORESIGNAL_API_KEY ? 'Set' : 'Not set'}`);
+  console.log(`Base URL: ${CORESIGNAL_BASE_URL}`);
+  console.log('');
 
-  // Test 1: Try employee search instead of company search
-  console.log('👤 TEST 1: Employee Search (Direct)');
-  console.log('─'.repeat(30));
-  
+  // Test 1: Company collect endpoint (we know this works)
+  console.log('🧪 Test 1: Company collect endpoint...');
   try {
-    const employeeQuery = {
-      query: {
-        bool: {
-          must: [
-            { match: { full_name: "David Hisey" } },
-            { 
-              bool: {
-                should: [
-                  { match: { current_company_name: "Stewart Information Services" } },
-                  { match: { current_company_name: "Stewart Title" } },
-                  { match: { current_company_name: "Stewart" } }
-                ]
-              }
-            }
-          ]
-        }
-      }
-    };
-    
-    const response = await fetch('https://api.coresignal.com/cdapi/v2/employee_multi_source/search/es_dsl', {
-      method: 'POST',
+    const companyId = '11523857'; // Match Group ID
+    const response = await fetch(`${CORESIGNAL_BASE_URL}/company_multi_source/collect/${companyId}`, {
+      method: 'GET',
       headers: {
         'apikey': CORESIGNAL_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(employeeQuery)
+        'Accept': 'application/json'
+      }
     });
 
-    console.log(`   📊 Status: ${response.status}`);
+    console.log(`📡 Response Status: ${response.status} ${response.statusText}`);
     
     if (response.ok) {
       const data = await response.json();
-      console.log(`   📋 Found: ${data.hits?.length || 0} employee matches`);
-      
-      if (data.hits && data.hits.length > 0) {
-        const employee = data.hits[0]._source;
-        console.log(`   👤 Employee: ${employee.full_name || 'Unknown'}`);
-        console.log(`   🏢 Company: ${employee.current_company_name || 'Unknown'}`);
-        console.log(`   💼 Title: ${employee.member_position_title || employee.current_position_title || 'Unknown'}`);
-        console.log(`   📧 Email: ${employee.member_professional_email || employee.primary_professional_email || 'Not found'}`);
-        console.log(`   💼 LinkedIn: ${employee.member_linkedin_url || employee.linkedin_url || 'Not found'}`);
-        
-        if (employee.member_professional_email || employee.primary_professional_email) {
-          console.log('   ✅ SUCCESS: Found verified email in CoreSignal!');
-        }
-      }
+      console.log(`✅ Company collect successful`);
+      console.log(`   Company: ${data.company_name || 'Unknown'}`);
+      console.log(`   Employees: ${data.employees_count || 'Unknown'}`);
+      console.log(`   Industry: ${data.industry || 'Unknown'}`);
     } else {
-      const errorText = await response.text();
-      console.log(`   ❌ Error: ${errorText}`);
+      const errorData = await response.json().catch(() => ({}));
+      console.log(`❌ Company collect error: ${errorData.message || 'Unknown error'}`);
     }
   } catch (error) {
-    console.log(`   ❌ Exception: ${error.message}`);
+    console.log(`❌ Company collect error: ${error.message}`);
   }
 
   console.log('');
-  
-  // Test 2: Try broader search
-  console.log('🔍 TEST 2: Broader Executive Search');
-  console.log('─'.repeat(30));
-  
+
+  // Test 2: Try to get any employees at all
+  console.log('🧪 Test 2: Try to get any employees...');
   try {
-    const broadQuery = {
+    const query = {
       query: {
-        bool: {
-          must: [
-            { 
-              bool: {
-                should: [
-                  { match: { current_company_name: "Stewart" } },
-                  { match: { "experience.company_name": "Stewart" } }
-                ]
-              }
-            },
-            {
-              bool: {
-                should: [
-                  { match: { member_position_title: "Chief Financial Officer" } },
-                  { match: { member_position_title: "CFO" } },
-                  { match: { current_position_title: "Chief Financial Officer" } },
-                  { match: { current_position_title: "CFO" } }
-                ]
-              }
-            }
-          ]
-        }
+        match_all: {}
       }
     };
-    
-    const response = await fetch('https://api.coresignal.com/cdapi/v2/employee_multi_source/search/es_dsl', {
+
+    const response = await fetch(`${CORESIGNAL_BASE_URL}/employee_multi_source/search/es_dsl/preview`, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         'apikey': CORESIGNAL_API_KEY,
-        'Content-Type': 'application/json'
+        'Accept': 'application/json'
       },
-      body: JSON.stringify(broadQuery)
+      body: JSON.stringify(query)
     });
 
-    console.log(`   📊 Status: ${response.status}`);
+    console.log(`📡 Response Status: ${response.status} ${response.statusText}`);
     
     if (response.ok) {
       const data = await response.json();
-      console.log(`   📋 Found: ${data.hits?.length || 0} matches`);
+      console.log(`✅ Found ${data.total || 0} total employees in database`);
       
       if (data.hits && data.hits.length > 0) {
-        console.log('   🎯 CFO MATCHES:');
+        console.log('📋 Sample employees:');
         data.hits.slice(0, 3).forEach((hit, index) => {
-          const emp = hit._source;
-          console.log(`   ${index + 1}. ${emp.full_name || 'Unknown'}`);
-          console.log(`      Company: ${emp.current_company_name || 'Unknown'}`);
-          console.log(`      Title: ${emp.member_position_title || emp.current_position_title || 'Unknown'}`);
-          console.log(`      Email: ${emp.member_professional_email || emp.primary_professional_email || 'Not found'}`);
+          const employee = hit._source;
+          const name = employee?.full_name || 'Unknown';
+          const title = employee?.active_experience_title || 'Unknown';
+          const company = employee?.company_name || 'Unknown';
+          console.log(`   ${index + 1}. ${name} - ${title} at ${company}`);
         });
       }
     } else {
-      const errorText = await response.text();
-      console.log(`   ❌ Error: ${errorText}`);
+      const errorData = await response.json().catch(() => ({}));
+      console.log(`❌ Employee search error: ${errorData.message || 'Unknown error'}`);
     }
   } catch (error) {
-    console.log(`   ❌ Exception: ${error.message}`);
+    console.log(`❌ Employee search error: ${error.message}`);
   }
+
+  console.log('');
+  console.log('🎯 SUMMARY:');
+  console.log('===========');
+  console.log('This test will help us understand:');
+  console.log('1. If our API key works for company data');
+  console.log('2. If there are any employees in the database at all');
+  console.log('3. If the issue is with our specific queries or the entire database');
 }
 
-// Run the test
-if (require.main === module) {
-  testCoreSignalSimple().catch(console.error);
-}
-
-module.exports = { testCoreSignalSimple };
+testCoreSignalSimple().catch(console.error);

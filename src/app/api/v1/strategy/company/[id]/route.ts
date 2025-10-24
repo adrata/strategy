@@ -32,12 +32,54 @@ export async function GET(
       return createErrorResponse('Company ID is required', 'VALIDATION_ERROR', 400);
     }
 
-    // Get company record
+    // Get company record with enriched data
     const company = await prisma.companies.findFirst({
       where: {
         id: companyId,
         workspaceId: context.workspaceId,
         deletedAt: null
+      },
+      include: {
+        // Include related opportunities
+        opportunities: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            name: true,
+            stage: true,
+            amount: true,
+            probability: true,
+            closeDate: true,
+            lastAction: true,
+            nextAction: true
+          }
+        },
+        // Include related people/contacts
+        people: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            title: true,
+            email: true,
+            phone: true,
+            linkedinUrl: true,
+            lastAction: true,
+            nextAction: true
+          }
+        },
+        // Include buyer groups if available
+        buyerGroups: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            name: true,
+            totalMembers: true,
+            overallConfidence: true,
+            cohesionScore: true
+          }
+        }
       }
     });
 
@@ -111,12 +153,54 @@ export async function POST(
     const body = await request.json();
     const { forceRegenerate = false } = body;
 
-    // Get company record
+    // Get company record with enriched data
     const company = await prisma.companies.findFirst({
       where: {
         id: companyId,
         workspaceId: context.workspaceId,
         deletedAt: null
+      },
+      include: {
+        // Include related opportunities
+        opportunities: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            name: true,
+            stage: true,
+            amount: true,
+            probability: true,
+            closeDate: true,
+            lastAction: true,
+            nextAction: true
+          }
+        },
+        // Include related people/contacts
+        people: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            title: true,
+            email: true,
+            phone: true,
+            linkedinUrl: true,
+            lastAction: true,
+            nextAction: true
+          }
+        },
+        // Include buyer groups if available
+        buyerGroups: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            name: true,
+            totalMembers: true,
+            overallConfidence: true,
+            cohesionScore: true
+          }
+        }
       }
     });
 
@@ -167,7 +251,11 @@ export async function POST(
       lastAction: company.lastAction,
       nextAction: company.nextAction,
       opportunityStage: company.opportunityStage,
-      opportunityAmount: company.opportunityAmount
+      opportunityAmount: company.opportunityAmount,
+      // Include enriched data for better intelligence
+      opportunities: company.opportunities || [],
+      people: company.people || [],
+      buyerGroups: company.buyerGroups || []
     };
 
     // Generate strategy using company strategy service

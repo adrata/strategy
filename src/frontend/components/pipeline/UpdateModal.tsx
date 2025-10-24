@@ -575,6 +575,10 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   if (!isOpen) return null;
 
   const handleClose = () => {
+    if (loading) {
+      console.log('⚠️ [UpdateModal] Cannot close - save operation in progress');
+      return;
+    }
     onClose();
   };
 
@@ -839,9 +843,15 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         record={record} 
         recordType={recordType} 
         onSave={async (field: string, value: string) => {
-          // Create a simple inline save handler that updates the record
-          const updatedData = { [field]: value };
-          await onUpdate(updatedData);
+          try {
+            const updatedData = { [field]: value };
+            await onUpdate(updatedData);
+          } catch (error) {
+            console.error('❌ [UpdateModal] Error saving buyer group data:', error);
+            const errorMessage = error instanceof Error ? error.message : 'Failed to save changes';
+            alert(`Error: ${errorMessage}`);
+            // Don't rethrow - handle gracefully
+          }
         }} 
       />
     </div>
@@ -1968,7 +1978,9 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           <div className="flex items-center gap-2">
             <button
               onClick={handleClose}
-              className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+              className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
+              title={loading ? "Saving..." : "Close"}
             >
               <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
             </button>

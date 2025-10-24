@@ -66,6 +66,35 @@ export interface CompanyStrategyRequest {
   nextAction?: string;
   opportunityStage?: string;
   opportunityAmount?: number;
+  // Enriched data for comprehensive intelligence
+  opportunities?: Array<{
+    id: string;
+    name: string;
+    stage: string;
+    amount: number;
+    probability: number;
+    closeDate: string | null;
+    lastAction: string | null;
+    nextAction: string | null;
+  }>;
+  people?: Array<{
+    id: string;
+    firstName: string;
+    lastName: string;
+    title: string;
+    email: string | null;
+    phone: string | null;
+    linkedinUrl: string | null;
+    lastAction: string | null;
+    nextAction: string | null;
+  }>;
+  buyerGroups?: Array<{
+    id: string;
+    name: string;
+    totalMembers: number;
+    overallConfidence: number;
+    cohesionScore: number;
+  }>;
 }
 
 export interface CompanyStrategyResponse {
@@ -134,12 +163,16 @@ export class CompanyStrategyService {
       };
 
       // Generate AI-powered strategy content
+      console.log('🤖 [COMPANY STRATEGY] Attempting to generate AI-powered intelligence with Claude...');
       const claudeResponse = await this.claudeService.generateCompanyStrategy(claudeRequest);
       
       if (!claudeResponse.success || !claudeResponse.data) {
         console.warn('⚠️ [COMPANY STRATEGY] Claude AI failed, using fallback content');
+        console.warn('⚠️ [COMPANY STRATEGY] This will result in generic intelligence. Check API key configuration.');
         return this.generateFallbackStrategy(profile, archetype, personalizedContent);
       }
+
+      console.log('✅ [COMPANY STRATEGY] Successfully generated AI-powered intelligence with Claude');
 
       // Build comprehensive strategy data
       const strategyData: CompanyStrategyData = {
@@ -189,22 +222,29 @@ export class CompanyStrategyService {
     archetype: CompanyArchetype, 
     personalizedContent: { situation: string; complication: string; futureState: string }
   ): CompanyStrategyResponse {
+    // Use real company data to create more personalized fallback
+    const companySize = profile.size > 0 ? `${profile.size} employees` : 'unknown size';
+    const companyRevenue = profile.revenue > 0 ? `$${profile.revenue.toLocaleString()}` : 'unknown revenue';
+    const companyAge = profile.age > 0 ? `${profile.age} years` : 'unknown age';
+    
     const strategyData: CompanyStrategyData = {
-      // Fallback Content
-      strategySummary: `Strategic analysis for ${profile.name}, a ${archetype.name} serving ${profile.targetIndustry}. This company demonstrates the characteristics of a ${archetype.role} with significant opportunities in their target market.`,
+      // Enhanced Fallback Content using real company data
+      strategySummary: `${profile.name} is a ${companySize} company with ${companyRevenue} in revenue, operating as a ${archetype.name} in the ${profile.targetIndustry} market. As a ${archetype.role}, they have significant opportunities to expand their market presence and leverage their ${profile.growthStage} stage growth potential.`,
       situation: personalizedContent.situation,
       complication: personalizedContent.complication,
       futureState: personalizedContent.futureState,
       strategicRecommendations: [
-        `Focus on ${profile.targetIndustry} market penetration`,
-        `Leverage ${archetype.name} competitive advantages`,
-        `Develop industry-specific solutions for ${profile.targetIndustry}`
+        `Focus on ${profile.targetIndustry} market penetration leveraging their ${companySize} team`,
+        `Leverage ${archetype.name} competitive advantages in the ${profile.targetIndustry} sector`,
+        `Develop industry-specific solutions for ${profile.targetIndustry} based on their ${profile.marketPosition} market position`,
+        `Optimize their ${profile.growthStage} stage growth strategy for ${profile.targetIndustry} market expansion`
       ],
-      competitivePositioning: `Position as a ${archetype.role} in the ${profile.targetIndustry} market with specialized expertise and proven results.`,
+      competitivePositioning: `Position as a ${archetype.role} in the ${profile.targetIndustry} market with specialized expertise, leveraging their ${companySize} team and ${profile.marketPosition} market position to deliver proven results.`,
       successMetrics: [
-        'Market share growth in target industry',
-        'Customer acquisition rate',
-        'Revenue growth from target industry'
+        `Market share growth in ${profile.targetIndustry} (target: 15-25% increase)`,
+        'Customer acquisition rate (target: 20-30% growth)',
+        `Revenue growth from ${profile.targetIndustry} sector (target: 30-50% increase)`,
+        `Team expansion aligned with ${profile.targetIndustry} market demands`
       ],
       
       // Company Archetype
@@ -222,6 +262,7 @@ export class CompanyStrategyService {
       strategyVersion: '1.0'
     };
 
+    console.log('📋 [COMPANY STRATEGY] Generated fallback strategy using real company data');
     return {
       success: true,
       data: strategyData,

@@ -3,6 +3,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { CalendarIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { 
+  formatDateInput, 
+  parseDateInput, 
+  validateDateFormat, 
+  getDateFormatPlaceholder,
+  formatDateForInput,
+  isValidPartialDate
+} from '@/platform/utils/dateInput';
 
 export interface DateOption {
   id: string;
@@ -72,8 +80,14 @@ export function DatePicker({
   const [isClient, setIsClient] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, positionAbove: false });
   
+  // Manual input state
+  const [manualInput, setManualInput] = useState('');
+  const [isValidInput, setIsValidInput] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
+  
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const manualInputRef = useRef<HTMLInputElement>(null);
 
   // Client-side rendering check
   useEffect(() => {
@@ -121,6 +135,20 @@ export function DatePicker({
     }
   }, [isOpen, isClient]);
 
+  // Sync manual input with value prop
+  useEffect(() => {
+    if (value && !isTyping) {
+      const dateObj = typeof value === 'string' ? new Date(value) : value;
+      if (!isNaN(dateObj.getTime())) {
+        setManualInput(formatDateForInput(dateObj));
+        setIsValidInput(true);
+      }
+    } else if (!value && !isTyping) {
+      setManualInput('');
+      setIsValidInput(true);
+    }
+  }, [value, isTyping]);
+
   // Format the display value
   const formatDisplayValue = (date: string | Date | undefined): string => {
     if (!date) return placeholder;
@@ -166,7 +194,51 @@ export function DatePicker({
     setSelectedOption(null);
   };
 
-  // Handle direct date input
+  // Handle manual date input
+  const handleManualInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    const formattedValue = formatDateInput(inputValue);
+    setManualInput(formattedValue);
+    setIsTyping(true);
+    
+    // Validate the input
+    const isValid = isValidPartialDate(formattedValue);
+    setIsValidInput(isValid);
+    
+    // If it's a complete valid date, parse and update
+    if (isValid && formattedValue.length === 10) { // MM/DD/YYYY = 10 chars
+      const parsedDate = parseDateInput(formattedValue);
+      if (parsedDate) {
+        onChange(parsedDate);
+        setIsTyping(false);
+      }
+    }
+  };
+
+  // Handle manual input blur (when user finishes typing)
+  const handleManualInputBlur = () => {
+    setIsTyping(false);
+    if (manualInput && validateDateFormat(manualInput)) {
+      const parsedDate = parseDateInput(manualInput);
+      if (parsedDate) {
+        onChange(parsedDate);
+      }
+    }
+  };
+
+  // Handle manual input key down
+  const handleManualInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleManualInputBlur();
+    } else if (e.key === 'Escape') {
+      setManualInput('');
+      setIsValidInput(true);
+      setIsTyping(false);
+    }
+  };
+
+  // Handle direct date input (for calendar selection)
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value ? new Date(e.target.value) : null;
     onChange(newDate);
@@ -266,9 +338,34 @@ export function DatePicker({
             </div>
           )}
 
-          {/* Direct date input */}
+          {/* Manual date input */}
           <div className="border-t border-[var(--border)] p-3">
-            <div className="text-xs font-medium text-[var(--muted)] mb-2">Or pick a date</div>
+            <div className="text-xs font-medium text-[var(--muted)] mb-2">Or type a date</div>
+            <div className="space-y-2">
+              <input
+                ref={manualInputRef}
+                type="text"
+                value={manualInput}
+                onChange={handleManualInputChange}
+                onBlur={handleManualInputBlur}
+                onKeyDown={handleManualInputKeyDown}
+                placeholder={getDateFormatPlaceholder()}
+                className={`w-full px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${
+                  !isValidInput && manualInput ? 'border-red-500' : 'border-[var(--border)]'
+                }`}
+                autoComplete="off"
+              />
+              {!isValidInput && manualInput && (
+                <div className="text-xs text-red-500">
+                  Invalid date format. Use {getDateFormatPlaceholder()}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Calendar picker */}
+          <div className="border-t border-[var(--border)] p-3">
+            <div className="text-xs font-medium text-[var(--muted)] mb-2">Or pick from calendar</div>
             <input
               type={showTime ? 'datetime-local' : 'date'}
               value={value ? (typeof value === 'string' ? value : value.toISOString().split('T')[0]) : ''}
@@ -286,7 +383,12 @@ export function DatePicker({
       {isOpen && isClient && createPortal(
         <div
           className="fixed inset-0 z-[9998]"
-          onClick={() => setIsOpen(false)}
+          onClick={(e) => {
+            // Don't close if user is typing in manual input
+            if (!isTyping) {
+              setIsOpen(false);
+            }
+          }}
         />,
         document.body
       )}

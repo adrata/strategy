@@ -1,0 +1,812 @@
+{
+  "company": {
+    "name": "First Premier Bank",
+    "website": "https://firstpremier.com",
+    "companyId": "7578901"
+  },
+  "employees": [
+    {
+      "id": 394467213,
+      "name": "Natasha Hulscher",
+      "title": "Director, Benefits And Wellness",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 351950404,
+      "name": "William Dale",
+      "title": "Director",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 154583154,
+      "name": "Kent Hartsuiker",
+      "title": "Director Of Sales Retention",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 113470204,
+      "name": "Lorena Holguin",
+      "title": "Director Of Product Marketing",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 88927076,
+      "name": "David Zimbeck",
+      "title": "Member Board Of Directors",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 3207893,
+      "name": "Joe Vanden Bosch",
+      "title": "Product Owner",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 418561202,
+      "name": "Amanda Munson",
+      "title": "Director, HRIS And Technology",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 101769359,
+      "name": "Aron Larson",
+      "title": "Director Of Technology Support",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 128369295,
+      "name": "Trent Myron",
+      "title": "Director Of Finance",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 58034526,
+      "name": "Michelle Gullickson",
+      "title": "Directing Officer, Project Management Office",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 415548266,
+      "name": "Denny Sanford",
+      "title": "Chairman",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 507944166,
+      "name": "Nichole Moeller",
+      "title": "Product Owner",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 168671424,
+      "name": "Glenda Bittner",
+      "title": "Director Of Operations Support",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 227471286,
+      "name": "Corey Anson",
+      "title": "Director, Retention",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 724546945,
+      "name": "Greg Honl",
+      "title": "Bank Director",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 622025241,
+      "name": "Hannah Nolte",
+      "title": "Human Resources Business Partner",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 212021424,
+      "name": "Jimmy Gardner",
+      "title": "Head Of Product Strategy",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 524710687,
+      "name": "Anna Mitchell",
+      "title": "Director, Human Resources",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 275518088,
+      "name": "Melissa Sand",
+      "title": "HR Business Partner",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 409109057,
+      "name": "Carleen Frey",
+      "title": "Director Of IT Audit And Data Analytics",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 753341653,
+      "name": "Missy Kuiper",
+      "title": "Director Of Accounting",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 345843889,
+      "name": "Jody Borstad",
+      "title": "Director",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 484934206,
+      "name": "Jason Schmidt",
+      "title": "Director Business Intelligence",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 582267039,
+      "name": "Melissa Carlson",
+      "title": "Director",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 398858181,
+      "name": "Brian Siemonsma",
+      "title": "Director IT Program Management",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 242070405,
+      "name": "Mike Laycock",
+      "title": "Director Of Training",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 227770636,
+      "name": "Kodi Benson",
+      "title": "Director Of Customer Service Workforce Management",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 252120484,
+      "name": "Dana Dykhouse",
+      "title": "Chief Executive Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 283797942,
+      "name": "Kristina Kuhnert",
+      "title": "Product Owner",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 187921072,
+      "name": "Kathy Hess",
+      "title": "Director Of Telecommunications",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 484380745,
+      "name": "Floyd Rummel",
+      "title": "Market Leader",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 174831964,
+      "name": "Rose Aesoph",
+      "title": "Director Of Accounting Payments",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    }
+  ],
+  "analysis": {
+    "departments": [
+      [
+        "Unknown",
+        32
+      ]
+    ],
+    "titles": [
+      [
+        "Director",
+        3
+      ],
+      [
+        "Product Owner",
+        3
+      ],
+      [
+        "Director, Benefits And Wellness",
+        1
+      ],
+      [
+        "Director Of Sales Retention",
+        1
+      ],
+      [
+        "Director Of Product Marketing",
+        1
+      ],
+      [
+        "Member Board Of Directors",
+        1
+      ],
+      [
+        "Director, HRIS And Technology",
+        1
+      ],
+      [
+        "Director Of Technology Support",
+        1
+      ],
+      [
+        "Director Of Finance",
+        1
+      ],
+      [
+        "Directing Officer, Project Management Office",
+        1
+      ],
+      [
+        "Chairman",
+        1
+      ],
+      [
+        "Director Of Operations Support",
+        1
+      ],
+      [
+        "Director, Retention",
+        1
+      ],
+      [
+        "Bank Director",
+        1
+      ],
+      [
+        "Human Resources Business Partner",
+        1
+      ],
+      [
+        "Head Of Product Strategy",
+        1
+      ],
+      [
+        "Director, Human Resources",
+        1
+      ],
+      [
+        "HR Business Partner",
+        1
+      ],
+      [
+        "Director Of IT Audit And Data Analytics",
+        1
+      ],
+      [
+        "Director Of Accounting",
+        1
+      ],
+      [
+        "Director Business Intelligence",
+        1
+      ],
+      [
+        "Director IT Program Management",
+        1
+      ],
+      [
+        "Director Of Training",
+        1
+      ],
+      [
+        "Director Of Customer Service Workforce Management",
+        1
+      ],
+      [
+        "Chief Executive Officer",
+        1
+      ],
+      [
+        "Director Of Telecommunications",
+        1
+      ],
+      [
+        "Market Leader",
+        1
+      ],
+      [
+        "Director Of Accounting Payments",
+        1
+      ]
+    ],
+    "seniority": [
+      [
+        "Unknown",
+        32
+      ]
+    ],
+    "totalEmployees": 32
+  },
+  "buyerGroup": [
+    {
+      "id": 394467213,
+      "name": "Natasha Hulscher",
+      "title": "Director, Benefits And Wellness",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 351950404,
+      "name": "William Dale",
+      "title": "Director",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 154583154,
+      "name": "Kent Hartsuiker",
+      "title": "Director Of Sales Retention",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 113470204,
+      "name": "Lorena Holguin",
+      "title": "Director Of Product Marketing",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 88927076,
+      "name": "David Zimbeck",
+      "title": "Member Board Of Directors",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 3207893,
+      "name": "Joe Vanden Bosch",
+      "title": "Product Owner",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 418561202,
+      "name": "Amanda Munson",
+      "title": "Director, HRIS And Technology",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 101769359,
+      "name": "Aron Larson",
+      "title": "Director Of Technology Support",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 128369295,
+      "name": "Trent Myron",
+      "title": "Director Of Finance",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 415548266,
+      "name": "Denny Sanford",
+      "title": "Chairman",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 507944166,
+      "name": "Nichole Moeller",
+      "title": "Product Owner",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 168671424,
+      "name": "Glenda Bittner",
+      "title": "Director Of Operations Support",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 227471286,
+      "name": "Corey Anson",
+      "title": "Director, Retention",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 724546945,
+      "name": "Greg Honl",
+      "title": "Bank Director",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 212021424,
+      "name": "Jimmy Gardner",
+      "title": "Head Of Product Strategy",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 524710687,
+      "name": "Anna Mitchell",
+      "title": "Director, Human Resources",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 409109057,
+      "name": "Carleen Frey",
+      "title": "Director Of IT Audit And Data Analytics",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 753341653,
+      "name": "Missy Kuiper",
+      "title": "Director Of Accounting",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 345843889,
+      "name": "Jody Borstad",
+      "title": "Director",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 484934206,
+      "name": "Jason Schmidt",
+      "title": "Director Business Intelligence",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 582267039,
+      "name": "Melissa Carlson",
+      "title": "Director",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 398858181,
+      "name": "Brian Siemonsma",
+      "title": "Director IT Program Management",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 242070405,
+      "name": "Mike Laycock",
+      "title": "Director Of Training",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 227770636,
+      "name": "Kodi Benson",
+      "title": "Director Of Customer Service Workforce Management",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 252120484,
+      "name": "Dana Dykhouse",
+      "title": "Chief Executive Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 283797942,
+      "name": "Kristina Kuhnert",
+      "title": "Product Owner",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 187921072,
+      "name": "Kathy Hess",
+      "title": "Director Of Telecommunications",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 484380745,
+      "name": "Floyd Rummel",
+      "title": "Market Leader",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 174831964,
+      "name": "Rose Aesoph",
+      "title": "Director Of Accounting Payments",
+      "email": "",
+      "linkedin": "",
+      "company": "First Premier Bank",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    }
+  ],
+  "timestamp": "2025-10-22T16:00:44.805Z"
+}

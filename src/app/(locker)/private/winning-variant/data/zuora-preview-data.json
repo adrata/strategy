@@ -1,0 +1,2174 @@
+{
+  "company": {
+    "name": "Zuora",
+    "website": "https://zuora.com",
+    "companyId": "10782378"
+  },
+  "employees": [
+    {
+      "id": 66401966,
+      "name": "Sunil Indluru",
+      "title": "Senior Director, Global Services",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 186351075,
+      "name": "Wendy Tien",
+      "title": "Director Of Product Operations",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 414574299,
+      "name": "张曼丽",
+      "title": "财务总监",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 97015840,
+      "name": "Derek Tobias",
+      "title": "Global Head Of Web Experience",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 326843138,
+      "name": "Shannon Mobey",
+      "title": "Director Center Of Excellence Advisory",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 482871546,
+      "name": "Ping Wu",
+      "title": "Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 86962594,
+      "name": "Robbie Traube",
+      "title": "President Chief Revenue Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 629490991,
+      "name": "Siva Kumar Govindarajan",
+      "title": "Senior Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 113401151,
+      "name": "Tanmoy Dutta",
+      "title": "Senior Vice President And Chief Architect",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 69870264,
+      "name": "Allyson Root",
+      "title": "Director Of Product Marketing, Platform",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 388273936,
+      "name": "Siqi Shi",
+      "title": "Product Management Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 34871931,
+      "name": "Marc Weedon",
+      "title": "Sr. Director, HR (International)",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 273533803,
+      "name": "Chris Stennett",
+      "title": "Global Senior Director Of Value Consulting",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 342384744,
+      "name": "Deb Greene",
+      "title": "Director Of Managed Services",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 204708857,
+      "name": "Aaron Buhler",
+      "title": "Director Of Technical Accounting Customer Experience",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 199977234,
+      "name": "Anaïs Nicolas",
+      "title": "Alliance Director, EMEA",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 880709618,
+      "name": "Andrew Cohen",
+      "title": "Chief Legal Officer And Corporate Secretary",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 345345330,
+      "name": "Arvind Aravamudhan",
+      "title": "Senior Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 130476667,
+      "name": "Deepak Emraj",
+      "title": "HR Director - India",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 356263278,
+      "name": "David Warren",
+      "title": "Principal Director, Subscribed Institute",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 357133773,
+      "name": "Jonathan Harris",
+      "title": "Senior Director Product",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 620101846,
+      "name": "Bennett Goodson",
+      "title": "Director Of Global Benefits",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 289229218,
+      "name": "Randy W",
+      "title": "Solution Architect, Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 684740214,
+      "name": "Karunakaran Duraikannu",
+      "title": "Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 331302834,
+      "name": "Laz Pastrikos",
+      "title": "Head Of Global Revenue Advisory",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 143928422,
+      "name": "Arun Srivastava",
+      "title": "ZEO",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 130405995,
+      "name": "Stephen Brusca",
+      "title": "Senior Practice Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 99748494,
+      "name": "Jesse Rivera",
+      "title": "Director, Global ISV Partners",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 348040940,
+      "name": "Sean Lu",
+      "title": "Sr. Principal Cloud Architect",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 195752433,
+      "name": "Pete Hirsch",
+      "title": "Chief Product And Technology Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 308567515,
+      "name": "Sujith Nair",
+      "title": "Sr Director, Global Head Of Partner Delivery Success",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 395029381,
+      "name": "Joshua Zatkin-steres",
+      "title": "Head Of M A Integration",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 381772833,
+      "name": "Navneet J",
+      "title": "Director, Architecture",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 762837818,
+      "name": "Mick Nishiyama",
+      "title": "Head Of Sales, Japan",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 24265093,
+      "name": "Paul Ryzman",
+      "title": "Director Of Global Services Centralised Operations",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 398463331,
+      "name": "Fei Wang",
+      "title": "Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 233864005,
+      "name": "Edward Song",
+      "title": "Head Of Strategic Finance",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 225029524,
+      "name": "Martin Rues",
+      "title": "Chief Information Security Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 358616805,
+      "name": "Sean Harrington",
+      "title": "Head Of Corporate Development",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 334955621,
+      "name": "Mark Gill",
+      "title": "Senior Director, Applications",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 348883407,
+      "name": "Aravind Sriraman",
+      "title": "Sr. Director, Product",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 73463897,
+      "name": "Gaurav Sisodia",
+      "title": "ZEO",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 263555798,
+      "name": "Adam Godfrey",
+      "title": "Director, Global Services",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 192129067,
+      "name": "Jason B",
+      "title": "Regional Sales Director, Northern Europe Enterprise",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 202229144,
+      "name": "Danny Grasso",
+      "title": "Director, Talent Acquisition EMEA",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 522566511,
+      "name": "Kelly Dunn",
+      "title": "Finance Senior Manager Chief Of Staff To CFO",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 240975813,
+      "name": "Munendra Chevuru",
+      "title": "Head Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 227677996,
+      "name": "Winston Hait",
+      "title": "Director Of Product Marketing Strategy",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 345187558,
+      "name": "Taylor Medford",
+      "title": "Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 359366554,
+      "name": "David Fitzgerald",
+      "title": "Enterprise Architect Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 437402414,
+      "name": "Matt Cimmino",
+      "title": "Sales Operations Business Partner",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 249782798,
+      "name": "Stephen Dockery",
+      "title": "Strategic Accounts Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 207448246,
+      "name": "Jianjia Zhang",
+      "title": "Operation Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 87567234,
+      "name": "Hiroshi Usuzaka",
+      "title": "Leader Of Japan Region Marketing",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 19926320,
+      "name": "Tien Tzuo",
+      "title": "Founder And Chief Executive Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 349885006,
+      "name": "Jeanne Ford",
+      "title": "Director Of Product Marketing",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 71362782,
+      "name": "Craig Vincent",
+      "title": "Client Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 49598885,
+      "name": "Michael Mansard",
+      "title": "Principal Director Of Subscription Strategy (EMEA) EMEA Chair Of The Subscribed Institute",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 479673362,
+      "name": "Venkat Yuvaraj",
+      "title": "Director - Strategy Operations",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 409926498,
+      "name": "Jahnavi Chennupati",
+      "title": "Director Cloud Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 42986202,
+      "name": "Raquel Renteria",
+      "title": "Director, Release Management",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 143068823,
+      "name": "Karl Goldstein",
+      "title": "Head Of Corporate Data Strategy",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 273104092,
+      "name": "Subhajeet Hore",
+      "title": "Senior Director, Global Services",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 244234244,
+      "name": "Sudhakar Bollavaram",
+      "title": "Engagement Director Principle Solutions Delivery Manager (Strategic Customers)",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 401583727,
+      "name": "Stéphanie Alves",
+      "title": "Head Of Field Marketing EMEA",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 199717835,
+      "name": "Deepak Vadgama",
+      "title": "Senior Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 398093379,
+      "name": "Pierre Ljungberg",
+      "title": "Client Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 56099966,
+      "name": "Matt Dobson",
+      "title": "SVP, Chief Accounting Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 360709126,
+      "name": "Avinash Jain",
+      "title": "Director Of Finance",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 371435710,
+      "name": "Uditshankar Dixit",
+      "title": "Director Of Design",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 150518114,
+      "name": "Lon Coggeshall",
+      "title": "Client Director - Strategic Accounts",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 416904066,
+      "name": "Kaia Autry",
+      "title": "Sr. Director, Global Services Operations At Zuora",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 396235919,
+      "name": "Xi Guo",
+      "title": "Director, Software Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 68322831,
+      "name": "Ofer Shterling",
+      "title": "Sr Director Of Software Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 389036586,
+      "name": "Rommel Reyes",
+      "title": "Head Of Corporate FP A",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 331600202,
+      "name": "Sidi Zhu",
+      "title": "Senior Director Of Software Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 305578749,
+      "name": "Allen Evans",
+      "title": "Head Of Technical Operations",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 69604183,
+      "name": "Chris Hemenway",
+      "title": "Director Solutions Consulting",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 214569143,
+      "name": "Natalia Troncoso",
+      "title": "Director, GTM Strategy Analytics",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 163476987,
+      "name": "Marco Montelatici",
+      "title": "Client Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 256354993,
+      "name": "Andy Baehrle",
+      "title": "Director Product Strategy Operations",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 163911820,
+      "name": "Daisy Hernandez",
+      "title": "Chief Strategy Operations Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 622070718,
+      "name": "Nikki Wong",
+      "title": "Director Of Product Management",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 167854284,
+      "name": "Mike Cardamone",
+      "title": "Director Of Operations Support",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 130136518,
+      "name": "Avinash Chakravarthy",
+      "title": "Solution Architect, Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 358822495,
+      "name": "Sumeet Kumar",
+      "title": "Director Global Services",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    }
+  ],
+  "analysis": {
+    "departments": [
+      [
+        "Unknown",
+        86
+      ]
+    ],
+    "titles": [
+      [
+        "Senior Director Of Engineering",
+        3
+      ],
+      [
+        "Director Of Engineering",
+        3
+      ],
+      [
+        "Client Director",
+        3
+      ],
+      [
+        "Senior Director, Global Services",
+        2
+      ],
+      [
+        "Solution Architect, Director",
+        2
+      ],
+      [
+        "ZEO",
+        2
+      ],
+      [
+        "Director Of Product Operations",
+        1
+      ],
+      [
+        "财务总监",
+        1
+      ],
+      [
+        "Global Head Of Web Experience",
+        1
+      ],
+      [
+        "Director Center Of Excellence Advisory",
+        1
+      ],
+      [
+        "Director",
+        1
+      ],
+      [
+        "President Chief Revenue Officer",
+        1
+      ],
+      [
+        "Senior Vice President And Chief Architect",
+        1
+      ],
+      [
+        "Director Of Product Marketing, Platform",
+        1
+      ],
+      [
+        "Product Management Director",
+        1
+      ],
+      [
+        "Sr. Director, HR (International)",
+        1
+      ],
+      [
+        "Global Senior Director Of Value Consulting",
+        1
+      ],
+      [
+        "Director Of Managed Services",
+        1
+      ],
+      [
+        "Director Of Technical Accounting Customer Experience",
+        1
+      ],
+      [
+        "Alliance Director, EMEA",
+        1
+      ],
+      [
+        "Chief Legal Officer And Corporate Secretary",
+        1
+      ],
+      [
+        "HR Director - India",
+        1
+      ],
+      [
+        "Principal Director, Subscribed Institute",
+        1
+      ],
+      [
+        "Senior Director Product",
+        1
+      ],
+      [
+        "Director Of Global Benefits",
+        1
+      ],
+      [
+        "Head Of Global Revenue Advisory",
+        1
+      ],
+      [
+        "Senior Practice Director",
+        1
+      ],
+      [
+        "Director, Global ISV Partners",
+        1
+      ],
+      [
+        "Sr. Principal Cloud Architect",
+        1
+      ],
+      [
+        "Chief Product And Technology Officer",
+        1
+      ],
+      [
+        "Sr Director, Global Head Of Partner Delivery Success",
+        1
+      ],
+      [
+        "Head Of M A Integration",
+        1
+      ],
+      [
+        "Director, Architecture",
+        1
+      ],
+      [
+        "Head Of Sales, Japan",
+        1
+      ],
+      [
+        "Director Of Global Services Centralised Operations",
+        1
+      ],
+      [
+        "Head Of Strategic Finance",
+        1
+      ],
+      [
+        "Chief Information Security Officer",
+        1
+      ],
+      [
+        "Head Of Corporate Development",
+        1
+      ],
+      [
+        "Senior Director, Applications",
+        1
+      ],
+      [
+        "Sr. Director, Product",
+        1
+      ],
+      [
+        "Director, Global Services",
+        1
+      ],
+      [
+        "Regional Sales Director, Northern Europe Enterprise",
+        1
+      ],
+      [
+        "Director, Talent Acquisition EMEA",
+        1
+      ],
+      [
+        "Finance Senior Manager Chief Of Staff To CFO",
+        1
+      ],
+      [
+        "Head Of Engineering",
+        1
+      ],
+      [
+        "Director Of Product Marketing Strategy",
+        1
+      ],
+      [
+        "Enterprise Architect Director",
+        1
+      ],
+      [
+        "Sales Operations Business Partner",
+        1
+      ],
+      [
+        "Strategic Accounts Director",
+        1
+      ],
+      [
+        "Operation Director",
+        1
+      ],
+      [
+        "Leader Of Japan Region Marketing",
+        1
+      ],
+      [
+        "Founder And Chief Executive Officer",
+        1
+      ],
+      [
+        "Director Of Product Marketing",
+        1
+      ],
+      [
+        "Principal Director Of Subscription Strategy (EMEA) EMEA Chair Of The Subscribed Institute",
+        1
+      ],
+      [
+        "Director - Strategy Operations",
+        1
+      ],
+      [
+        "Director Cloud Engineering",
+        1
+      ],
+      [
+        "Director, Release Management",
+        1
+      ],
+      [
+        "Head Of Corporate Data Strategy",
+        1
+      ],
+      [
+        "Engagement Director Principle Solutions Delivery Manager (Strategic Customers)",
+        1
+      ],
+      [
+        "Head Of Field Marketing EMEA",
+        1
+      ],
+      [
+        "SVP, Chief Accounting Officer",
+        1
+      ],
+      [
+        "Director Of Finance",
+        1
+      ],
+      [
+        "Director Of Design",
+        1
+      ],
+      [
+        "Client Director - Strategic Accounts",
+        1
+      ],
+      [
+        "Sr. Director, Global Services Operations At Zuora",
+        1
+      ],
+      [
+        "Director, Software Engineering",
+        1
+      ],
+      [
+        "Sr Director Of Software Engineering",
+        1
+      ],
+      [
+        "Head Of Corporate FP A",
+        1
+      ],
+      [
+        "Senior Director Of Software Engineering",
+        1
+      ],
+      [
+        "Head Of Technical Operations",
+        1
+      ],
+      [
+        "Director Solutions Consulting",
+        1
+      ],
+      [
+        "Director, GTM Strategy Analytics",
+        1
+      ],
+      [
+        "Director Product Strategy Operations",
+        1
+      ],
+      [
+        "Chief Strategy Operations Officer",
+        1
+      ],
+      [
+        "Director Of Product Management",
+        1
+      ],
+      [
+        "Director Of Operations Support",
+        1
+      ],
+      [
+        "Director Global Services",
+        1
+      ]
+    ],
+    "seniority": [
+      [
+        "Unknown",
+        86
+      ]
+    ],
+    "totalEmployees": 86
+  },
+  "buyerGroup": [
+    {
+      "id": 66401966,
+      "name": "Sunil Indluru",
+      "title": "Senior Director, Global Services",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 186351075,
+      "name": "Wendy Tien",
+      "title": "Director Of Product Operations",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 97015840,
+      "name": "Derek Tobias",
+      "title": "Global Head Of Web Experience",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 326843138,
+      "name": "Shannon Mobey",
+      "title": "Director Center Of Excellence Advisory",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 482871546,
+      "name": "Ping Wu",
+      "title": "Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 86962594,
+      "name": "Robbie Traube",
+      "title": "President Chief Revenue Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 629490991,
+      "name": "Siva Kumar Govindarajan",
+      "title": "Senior Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 113401151,
+      "name": "Tanmoy Dutta",
+      "title": "Senior Vice President And Chief Architect",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 69870264,
+      "name": "Allyson Root",
+      "title": "Director Of Product Marketing, Platform",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 388273936,
+      "name": "Siqi Shi",
+      "title": "Product Management Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 34871931,
+      "name": "Marc Weedon",
+      "title": "Sr. Director, HR (International)",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 273533803,
+      "name": "Chris Stennett",
+      "title": "Global Senior Director Of Value Consulting",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 342384744,
+      "name": "Deb Greene",
+      "title": "Director Of Managed Services",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 204708857,
+      "name": "Aaron Buhler",
+      "title": "Director Of Technical Accounting Customer Experience",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 199977234,
+      "name": "Anaïs Nicolas",
+      "title": "Alliance Director, EMEA",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 880709618,
+      "name": "Andrew Cohen",
+      "title": "Chief Legal Officer And Corporate Secretary",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 345345330,
+      "name": "Arvind Aravamudhan",
+      "title": "Senior Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 130476667,
+      "name": "Deepak Emraj",
+      "title": "HR Director - India",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 356263278,
+      "name": "David Warren",
+      "title": "Principal Director, Subscribed Institute",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 357133773,
+      "name": "Jonathan Harris",
+      "title": "Senior Director Product",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 620101846,
+      "name": "Bennett Goodson",
+      "title": "Director Of Global Benefits",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 289229218,
+      "name": "Randy W",
+      "title": "Solution Architect, Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 684740214,
+      "name": "Karunakaran Duraikannu",
+      "title": "Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 331302834,
+      "name": "Laz Pastrikos",
+      "title": "Head Of Global Revenue Advisory",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 130405995,
+      "name": "Stephen Brusca",
+      "title": "Senior Practice Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 99748494,
+      "name": "Jesse Rivera",
+      "title": "Director, Global ISV Partners",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 195752433,
+      "name": "Pete Hirsch",
+      "title": "Chief Product And Technology Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 308567515,
+      "name": "Sujith Nair",
+      "title": "Sr Director, Global Head Of Partner Delivery Success",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 395029381,
+      "name": "Joshua Zatkin-steres",
+      "title": "Head Of M A Integration",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 381772833,
+      "name": "Navneet J",
+      "title": "Director, Architecture",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 762837818,
+      "name": "Mick Nishiyama",
+      "title": "Head Of Sales, Japan",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 24265093,
+      "name": "Paul Ryzman",
+      "title": "Director Of Global Services Centralised Operations",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 398463331,
+      "name": "Fei Wang",
+      "title": "Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 233864005,
+      "name": "Edward Song",
+      "title": "Head Of Strategic Finance",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 225029524,
+      "name": "Martin Rues",
+      "title": "Chief Information Security Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 358616805,
+      "name": "Sean Harrington",
+      "title": "Head Of Corporate Development",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 334955621,
+      "name": "Mark Gill",
+      "title": "Senior Director, Applications",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 348883407,
+      "name": "Aravind Sriraman",
+      "title": "Sr. Director, Product",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 263555798,
+      "name": "Adam Godfrey",
+      "title": "Director, Global Services",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 192129067,
+      "name": "Jason B",
+      "title": "Regional Sales Director, Northern Europe Enterprise",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 202229144,
+      "name": "Danny Grasso",
+      "title": "Director, Talent Acquisition EMEA",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 522566511,
+      "name": "Kelly Dunn",
+      "title": "Finance Senior Manager Chief Of Staff To CFO",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 240975813,
+      "name": "Munendra Chevuru",
+      "title": "Head Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 227677996,
+      "name": "Winston Hait",
+      "title": "Director Of Product Marketing Strategy",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 345187558,
+      "name": "Taylor Medford",
+      "title": "Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 359366554,
+      "name": "David Fitzgerald",
+      "title": "Enterprise Architect Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 249782798,
+      "name": "Stephen Dockery",
+      "title": "Strategic Accounts Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 207448246,
+      "name": "Jianjia Zhang",
+      "title": "Operation Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 87567234,
+      "name": "Hiroshi Usuzaka",
+      "title": "Leader Of Japan Region Marketing",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 19926320,
+      "name": "Tien Tzuo",
+      "title": "Founder And Chief Executive Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 349885006,
+      "name": "Jeanne Ford",
+      "title": "Director Of Product Marketing",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 71362782,
+      "name": "Craig Vincent",
+      "title": "Client Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 49598885,
+      "name": "Michael Mansard",
+      "title": "Principal Director Of Subscription Strategy (EMEA) EMEA Chair Of The Subscribed Institute",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 479673362,
+      "name": "Venkat Yuvaraj",
+      "title": "Director - Strategy Operations",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 409926498,
+      "name": "Jahnavi Chennupati",
+      "title": "Director Cloud Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 42986202,
+      "name": "Raquel Renteria",
+      "title": "Director, Release Management",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 143068823,
+      "name": "Karl Goldstein",
+      "title": "Head Of Corporate Data Strategy",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 273104092,
+      "name": "Subhajeet Hore",
+      "title": "Senior Director, Global Services",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 244234244,
+      "name": "Sudhakar Bollavaram",
+      "title": "Engagement Director Principle Solutions Delivery Manager (Strategic Customers)",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 401583727,
+      "name": "Stéphanie Alves",
+      "title": "Head Of Field Marketing EMEA",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 199717835,
+      "name": "Deepak Vadgama",
+      "title": "Senior Director Of Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 398093379,
+      "name": "Pierre Ljungberg",
+      "title": "Client Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 56099966,
+      "name": "Matt Dobson",
+      "title": "SVP, Chief Accounting Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 360709126,
+      "name": "Avinash Jain",
+      "title": "Director Of Finance",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 371435710,
+      "name": "Uditshankar Dixit",
+      "title": "Director Of Design",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 150518114,
+      "name": "Lon Coggeshall",
+      "title": "Client Director - Strategic Accounts",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 416904066,
+      "name": "Kaia Autry",
+      "title": "Sr. Director, Global Services Operations At Zuora",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 396235919,
+      "name": "Xi Guo",
+      "title": "Director, Software Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 68322831,
+      "name": "Ofer Shterling",
+      "title": "Sr Director Of Software Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 389036586,
+      "name": "Rommel Reyes",
+      "title": "Head Of Corporate FP A",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 331600202,
+      "name": "Sidi Zhu",
+      "title": "Senior Director Of Software Engineering",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 305578749,
+      "name": "Allen Evans",
+      "title": "Head Of Technical Operations",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 69604183,
+      "name": "Chris Hemenway",
+      "title": "Director Solutions Consulting",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 214569143,
+      "name": "Natalia Troncoso",
+      "title": "Director, GTM Strategy Analytics",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 163476987,
+      "name": "Marco Montelatici",
+      "title": "Client Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 256354993,
+      "name": "Andy Baehrle",
+      "title": "Director Product Strategy Operations",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 163911820,
+      "name": "Daisy Hernandez",
+      "title": "Chief Strategy Operations Officer",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 622070718,
+      "name": "Nikki Wong",
+      "title": "Director Of Product Management",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 167854284,
+      "name": "Mike Cardamone",
+      "title": "Director Of Operations Support",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 130136518,
+      "name": "Avinash Chakravarthy",
+      "title": "Solution Architect, Director",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    },
+    {
+      "id": 358822495,
+      "name": "Sumeet Kumar",
+      "title": "Director Global Services",
+      "email": "",
+      "linkedin": "",
+      "company": "Zuora",
+      "department": "Unknown",
+      "seniority": "Unknown",
+      "source": "coresignal-keyexecutives"
+    }
+  ],
+  "timestamp": "2025-10-22T16:00:52.090Z"
+}

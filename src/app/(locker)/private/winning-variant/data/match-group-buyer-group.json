@@ -1,0 +1,62 @@
+{
+  "company": {
+    "name": "Match Group",
+    "id": 2496218,
+    "website": "https://www.matchgroup.com",
+    "industry": "Technology"
+  },
+  "totalEmployees": 4,
+  "buyerGroupSize": 2,
+  "buyerGroup": [
+    {
+      "id": 51815732,
+      "full_name": "Madeleine Tbm",
+      "linkedin_url": "https://www.linkedin.com/in/madeleine-tbm-a6556057",
+      "headline": "Affiliate Manager en The Best Match Group",
+      "location_full": "Greater Barcelona Metropolitan Area",
+      "location_country": "Spain",
+      "connections_count": 33,
+      "followers_count": 33,
+      "company_name": "The Best Match Group",
+      "company_linkedin_url": "https://www.linkedin.com/company/the-best-match-group",
+      "company_website": "https://www.thebestmatch.com",
+      "company_industry": "Technology, Information and Internet",
+      "active_experience_title": "Affiliate Manager",
+      "active_experience_department": "Sales",
+      "active_experience_management_level": "Manager",
+      "company_hq_full_address": null,
+      "company_hq_country": null,
+      "_score": 1,
+      "buyerRole": "champion",
+      "personalizedMessage": "Hi Madeleine Tbm, I noticed your role as Affiliate Manager at Match Group. Given your expertise in Sales, you'd be interested in our AI Impact Visibility Platform that helps companies measure the ROI of their AI initiatives. 95% of generative AI pilots fail - we help prove AI ROI.",
+      "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+      "productFit": "Perfect for Sales teams looking to quantify AI success",
+      "winningVariantContext": "Match Group's AI-powered recommendation systems and user matching algorithms would benefit from ROI measurement"
+    },
+    {
+      "id": 281986361,
+      "full_name": "Charo Cavero",
+      "linkedin_url": "https://www.linkedin.com/in/charo-cavero-75138348",
+      "headline": "Programador Web PHP chez The Best Match Group",
+      "location_full": "Greater Barcelona Metropolitan Area",
+      "location_country": "Spain",
+      "connections_count": null,
+      "followers_count": null,
+      "company_name": "The Best Match Group",
+      "company_linkedin_url": "https://www.linkedin.com/company/the-best-match-group",
+      "company_website": "https://www.thebestmatch.com",
+      "company_industry": "Technology, Information and Internet",
+      "active_experience_title": "Programador Web PHP",
+      "active_experience_department": "Engineering and Technical",
+      "active_experience_management_level": "Specialist",
+      "company_hq_full_address": null,
+      "company_hq_country": null,
+      "_score": 1,
+      "buyerRole": "stakeholder",
+      "personalizedMessage": "Hi Charo Cavero, I noticed your role as Programador Web PHP at Match Group. Given your expertise in Engineering and Technical, you'd be interested in our AI Impact Visibility Platform that helps companies measure the ROI of their AI initiatives. 95% of generative AI pilots fail - we help prove AI ROI.",
+      "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+      "productFit": "Perfect for Engineering and Technical teams looking to quantify AI success",
+      "winningVariantContext": "Match Group's AI-powered recommendation systems and user matching algorithms would benefit from ROI measurement"
+    }
+  ]
+}

@@ -196,7 +196,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     // Metadata
     lastEnrichedAt: record.customFields?.lastEnrichedAt || record.updatedAt || new Date().toISOString(),
     totalFields: record.customFields?.totalFields || 13,
-    status: record.status || 'active',
+    status: record.status || 'LEAD',
     source: record.customFields?.source || 'Data Enrichment',
     seniority: record.customFields?.seniority || 'Mid-level'
   };
@@ -416,6 +416,33 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Status:</span>
+                <InlineEditField
+                  value={personData.status}
+                  field="status"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'LEAD', label: 'Lead' },
+                    { value: 'PROSPECT', label: 'Prospect' },
+                    { value: 'OPPORTUNITY', label: 'Opportunity' },
+                    { value: 'CLIENT', label: 'Client' },
+                    { value: 'SUPERFAN', label: 'Superfan' }
+                  ]}
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                    personData.status === 'LEAD' ? 'bg-blue-100 text-blue-800' :
+                    personData.status === 'PROSPECT' ? 'bg-purple-100 text-purple-800' :
+                    personData.status === 'OPPORTUNITY' ? 'bg-yellow-100 text-yellow-800' :
+                    personData.status === 'CLIENT' ? 'bg-green-100 text-green-800' :
+                    personData.status === 'SUPERFAN' ? 'bg-pink-100 text-pink-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}
+                />
+              </div>
             </div>
           </div>
 
@@ -562,16 +589,6 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Next Action:</span>
                 <span className="text-sm font-medium text-[var(--foreground)]">{personData.nextAction}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Status:</span>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success-text)]' :
-                  personData.status === 'inactive' ? 'bg-[var(--hover)] text-[var(--foreground)]' :
-                  'bg-[var(--warning-bg)] text-[var(--warning-text)]'
-                }`}>
-                  {personData.status}
-                </span>
               </div>
             </div>
           </div>

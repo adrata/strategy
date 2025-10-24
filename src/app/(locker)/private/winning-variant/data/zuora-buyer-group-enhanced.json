@@ -1,0 +1,314 @@
+{
+  "company": {
+    "companyId": "10782378",
+    "companyName": "Zuora, Inc."
+  },
+  "buyerGroup": {
+    "id": "zuora,_inc._1761065531662",
+    "companyName": "Zuora, Inc.",
+    "totalMembers": 14,
+    "roles": {
+      "decision": [
+        {
+          "name": "Wendy Tien",
+          "title": "Director Of Product Operations",
+          "email": "wendy.tien@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/wendytien",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Prove that your AI product features drive user engagement and revenue, not just feature adoption"
+          }
+        },
+        {
+          "name": "Robbie Traube",
+          "title": "President Chief Revenue Officer",
+          "email": "robbie.traube@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/robbietraube",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI"
+          }
+        },
+        {
+          "name": "Siva Kumar Govindarajan",
+          "title": "Senior Director Of Engineering",
+          "email": "siva.kumar.govindarajan@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/sivakumargovindarajan",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Show engineering impact on business outcomes - prove your AI infrastructure investments drive results"
+          }
+        },
+        {
+          "name": "Allyson Root",
+          "title": "Director Of Product Marketing, Platform",
+          "email": "allyson.root@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/allysonroot",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Prove that your AI product features drive user engagement and revenue, not just feature adoption"
+          }
+        },
+        {
+          "name": "Siqi Shi",
+          "title": "Product Management Director",
+          "email": "siqi.shi@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/siqishi",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Prove that your AI product features drive user engagement and revenue, not just feature adoption"
+          }
+        },
+        {
+          "name": "Arvind Aravamudhan",
+          "title": "Senior Director Of Engineering",
+          "email": "arvind.aravamudhan@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/arvindaravamudhan",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Show engineering impact on business outcomes - prove your AI infrastructure investments drive results"
+          }
+        },
+        {
+          "name": "Jonathan Harris",
+          "title": "Senior Director Product",
+          "email": "jonathan.harris@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jonathanharris",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Prove that your AI product features drive user engagement and revenue, not just feature adoption"
+          }
+        },
+        {
+          "name": "Karunakaran Duraikannu",
+          "title": "Director Of Engineering",
+          "email": "karunakaran.duraikannu@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/karunakaranduraikannu",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Show engineering impact on business outcomes - prove your AI infrastructure investments drive results"
+          }
+        },
+        {
+          "name": "Pete Hirsch",
+          "title": "Chief Product And Technology Officer",
+          "email": "pete.hirsch@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/petehirsch",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Prove that your AI product features drive user engagement and revenue, not just feature adoption"
+          }
+        },
+        {
+          "name": "Paul Ryzman",
+          "title": "Director Of Global Services Centralised Operations",
+          "email": "paul.ryzman@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/paulryzman",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Show how your AI operations improvements drive cost savings and efficiency gains"
+          }
+        },
+        {
+          "name": "Fei Wang",
+          "title": "Director Of Engineering",
+          "email": "fei.wang@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/feiwang",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Show engineering impact on business outcomes - prove your AI infrastructure investments drive results"
+          }
+        },
+        {
+          "name": "Aravind Sriraman",
+          "title": "Sr. Director, Product",
+          "email": "aravind.sriraman@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/aravindsriraman",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Prove that your AI product features drive user engagement and revenue, not just feature adoption"
+          }
+        },
+        {
+          "name": "Kelly Dunn",
+          "title": "Finance Senior Manager Chief Of Staff To CFO",
+          "email": "kelly.dunn@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kellydunn",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Board wants ROI on AI investments - get the data you need to justify continued AI spending"
+          }
+        },
+        {
+          "name": "Winston Hait",
+          "title": "Director Of Product Marketing Strategy",
+          "email": "winston.hait@zuora,inc..com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/winstonhait",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your AI churn models drive retention revenue, not just prediction accuracy",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Prove that your AI product features drive user engagement and revenue, not just feature adoption"
+          }
+        }
+      ],
+      "champion": [],
+      "stakeholder": [],
+      "blocker": [],
+      "introducer": []
+    },
+    "cohesion": {
+      "score": 85,
+      "level": "Excellent",
+      "overallScore": 85,
+      "departmentAlignment": 0.8,
+      "signal": "Strong cross-departmental alignment identified",
+      "strength": 0.85,
+      "source": "cohesion_analysis",
+      "confidence": 0.9
+    },
+    "dynamics": {
+      "decisionFlow": "Top-down with champion influence",
+      "engagementStrategy": "Start with decision makers, leverage champions",
+      "timeline": "3-6 months typical sales cycle"
+    },
+    "opportunitySignals": [
+      {
+        "signal": "Executive team expansion indicates growth",
+        "strength": 0.7,
+        "source": "organizational_growth",
+        "confidence": 0.8
+      }
+    ],
+    "painSignals": [
+      {
+        "signal": "Manual processes requiring automation",
+        "strength": 0.6,
+        "source": "process_inefficiency",
+        "confidence": 0.7
+      }
+    ],
+    "benchmark": {
+      "overallScore": 85,
+      "roleDistribution": 92,
+      "influenceBalance": 88,
+      "cohesionScore": 85,
+      "dataQuality": 90
+    }
+  },
+  "metadata": {
+    "generatedAt": "2025-10-21T16:52:11.662Z",
+    "executivesFound": 86,
+    "dataSource": "coresignal-keyexecutives",
+    "confidence": "high"
+  }
+}

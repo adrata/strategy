@@ -369,6 +369,112 @@ class CoreSignalMultiSource {
         }
     }
 
+    /**
+     * 🔍 SEARCH EMPLOYEES BY EXACT TITLE
+     * 
+     * Search for employees with exact title matching and improved company name variations
+     */
+    async searchEmployeesByExactTitle(companyName, exactTitle, companyId = null) {
+        if (!this.config.CORESIGNAL_API_KEY) {
+            console.log('   ⚠️ CoreSignal API key not configured');
+            return [];
+        }
+
+        try {
+            console.log(`   🔍 CoreSignal: Searching for ${exactTitle} at ${companyName}...`);
+            this.stats.employeeSearches++;
+
+            const url = `${this.config.CORESIGNAL_BASE_URL}/cdapi/v2/employee_multi_source/search/es_dsl`;
+            
+            const query = {
+                query: {
+                    bool: {
+                        must: []
+                    }
+                }
+            };
+            
+            // Company matching: Use ID if available, fallback to name variations
+            if (companyId) {
+                query.query.bool.must.push({ term: { "company_id": companyId } });
+                console.log(`   🔍 Using company ID: ${companyId}`);
+            } else {
+                // Try multiple company name variations
+                query.query.bool.must.push({
+                    bool: {
+                        should: [
+                            { match_phrase: { "company_name": companyName } },
+                            { match_phrase: { "company_name": `${companyName}, Inc.` } },
+                            { match_phrase: { "company_name": `${companyName}, LLC` } },
+                            { match_phrase: { "company_name": `${companyName}, Corp.` } },
+                            { match_phrase: { "company_name": `${companyName}, Corporation` } },
+                            { wildcard: { "company_name": `*${companyName}*` } }
+                        ],
+                        minimum_should_match: 1
+                    }
+                });
+                console.log(`   🔍 Using company name variations for: ${companyName}`);
+            }
+            
+            // Title matching: Exact phrase or wildcard
+            query.query.bool.must.push({
+                bool: {
+                    should: [
+                        { match_phrase: { "active_experience_title": exactTitle } },
+                        { wildcard: { "active_experience_title": `*${exactTitle}*` } }
+                    ],
+                    minimum_should_match: 1
+                }
+            });
+
+            console.log(`   🔍 DEBUG: Query: ${JSON.stringify(query, null, 2)}`);
+
+            const response = await this.retryHandler.execute(async () => {
+                return this.timeoutHandler.fetchWithTimeout(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': this.config.CORESIGNAL_API_KEY.trim(),
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(query)
+                }, this.timeoutHandler.getApiTimeout('coresignal'));
+            });
+
+            if (!response.ok) {
+                throw new Error(`CoreSignal search error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.hits && data.hits.hits && data.hits.hits.length > 0) {
+                const employees = data.hits.hits.map(hit => ({
+                    id: hit._id,
+                    name: hit._source.member_full_name || hit._source.full_name || 'Unknown',
+                    title: hit._source.active_experience_title || hit._source.title || exactTitle,
+                    email: hit._source.member_professional_email || hit._source.professional_email || '',
+                    linkedin: hit._source.member_linkedin_url || hit._source.linkedin_url || '',
+                    company: hit._source.company_name || companyName,
+                    department: hit._source.department || 'Unknown',
+                    seniority: hit._source.seniority || 'Unknown',
+                    source: 'coresignal-exact-search'
+                }));
+                
+                console.log(`   ✅ CoreSignal: Found ${employees.length} employees with title "${exactTitle}"`);
+                this.stats.successes++;
+                return employees;
+            } else {
+                console.log(`   ⚠️ CoreSignal: No employees found with title "${exactTitle}"`);
+                return [];
+            }
+
+        } catch (error) {
+            console.log(`   ❌ CoreSignal Search error: ${error.message}`);
+            this.stats.failures++;
+            return [];
+        }
+    }
+
     // REMOVED: searchEmployeesByDepartment() - was causing 422 errors due to incorrect field names
 
     // REMOVED: searchTopEmployeesBySeniority() - was causing 422 errors due to incorrect field names
@@ -659,7 +765,7 @@ class CoreSignalMultiSource {
                     console.log(`   🔍 Trying company name variation: "${variation}"`);
                     // Search with each title in the batch individually
                     for (const title of titleBatch) {
-                        employeeIds = await this.searchEmployeesByTitle(variation, title);
+                        employeeIds = await this.searchEmployeesByExactTitle(variation, title, companyId);
                         if (employeeIds.length > 0) {
                             console.log(`   ✅ Found ${employeeIds.length} employees with variation: "${variation}" and title: "${title}"`);
                             foundVariation = variation;

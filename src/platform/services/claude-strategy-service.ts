@@ -28,6 +28,35 @@ export interface ClaudeStrategyRequest {
   nextAction?: string;
   opportunityStage?: string;
   opportunityAmount?: number;
+  // Enriched data for comprehensive intelligence
+  opportunities?: Array<{
+    id: string;
+    name: string;
+    stage: string;
+    amount: number;
+    probability: number;
+    closeDate: string | null;
+    lastAction: string | null;
+    nextAction: string | null;
+  }>;
+  people?: Array<{
+    id: string;
+    firstName: string;
+    lastName: string;
+    title: string;
+    email: string | null;
+    phone: string | null;
+    linkedinUrl: string | null;
+    lastAction: string | null;
+    nextAction: string | null;
+  }>;
+  buyerGroups?: Array<{
+    id: string;
+    name: string;
+    totalMembers: number;
+    overallConfidence: number;
+    cohesionScore: number;
+  }>;
 }
 
 export interface ClaudeStrategyResponse {
@@ -57,12 +86,17 @@ export class ClaudeStrategyService {
   private model: string;
 
   constructor() {
-    this.apiKey = process.env.OPENROUTER_API_KEY || process.env.CLAUDE_API_KEY || '';
+    // Use the same API key configuration as your other Claude services
+    this.apiKey = process.env.ANTHROPIC_API_KEY || process.env.OPENROUTER_API_KEY || process.env.CLAUDE_API_KEY || '';
     this.baseUrl = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
-    this.model = process.env.CLAUDE_MODEL || 'anthropic/claude-3-sonnet';
+    this.model = process.env.CLAUDE_MODEL || 'claude-sonnet-4-5';
     
     if (!this.apiKey) {
       console.warn('⚠️ [CLAUDE SERVICE] No API key found. Claude AI features will be disabled.');
+      console.warn('⚠️ [CLAUDE SERVICE] Set ANTHROPIC_API_KEY, OPENROUTER_API_KEY, or CLAUDE_API_KEY environment variable to enable AI-powered intelligence generation.');
+    } else {
+      console.log('✅ [CLAUDE SERVICE] API key found. Claude AI intelligence generation enabled.');
+      console.log(`🔑 [CLAUDE SERVICE] Using API key: ${this.apiKey.substring(0, 8)}...`);
     }
   }
 
@@ -77,27 +111,57 @@ export class ClaudeStrategyService {
     try {
       const prompt = this.buildStrategyPrompt(request);
       
-      const response = await fetch(`${this.baseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-          'X-Title': 'Adrata Strategy Generation'
-        },
-        body: JSON.stringify({
-          model: this.model,
-          messages: [
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          max_tokens: 4000,
-          temperature: 0.7,
-          top_p: 0.9
-        })
-      });
+      // Use direct Anthropic API if we have ANTHROPIC_API_KEY, otherwise use OpenRouter
+      const useDirectAPI = process.env.ANTHROPIC_API_KEY;
+      
+      console.log(`🤖 [CLAUDE SERVICE] Using ${useDirectAPI ? 'Direct Anthropic API' : 'OpenRouter API'} for strategy generation`);
+      
+      let response;
+      if (useDirectAPI) {
+        // Use direct Anthropic API
+        response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+            'anthropic-version': '2023-06-01'
+          },
+          body: JSON.stringify({
+            model: this.model,
+            max_tokens: 4000,
+            temperature: 0.7,
+            messages: [
+              {
+                role: 'user',
+                content: prompt
+              }
+            ]
+          })
+        });
+      } else {
+        // Use OpenRouter API
+        response = await fetch(`${this.baseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+            'X-Title': 'Adrata Strategy Generation'
+          },
+          body: JSON.stringify({
+            model: this.model,
+            messages: [
+              {
+                role: 'user',
+                content: prompt
+              }
+            ],
+            max_tokens: 4000,
+            temperature: 0.7,
+            top_p: 0.9
+          })
+        });
+      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -106,21 +170,39 @@ export class ClaudeStrategyService {
 
       const data = await response.json();
       
-      if (!data.choices || !data.choices[0]?.message?.content) {
-        throw new Error('Invalid response from Claude API');
+      let content;
+      let usage;
+      
+      if (useDirectAPI) {
+        // Direct Anthropic API response format
+        if (!data.content || !data.content[0]?.text) {
+          throw new Error('Invalid response from Anthropic API');
+        }
+        content = data.content[0].text;
+        usage = {
+          promptTokens: data.usage?.input_tokens || 0,
+          completionTokens: data.usage?.output_tokens || 0,
+          totalTokens: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0)
+        };
+      } else {
+        // OpenRouter API response format
+        if (!data.choices || !data.choices[0]?.message?.content) {
+          throw new Error('Invalid response from OpenRouter API');
+        }
+        content = data.choices[0].message.content;
+        usage = {
+          promptTokens: data.usage?.prompt_tokens || 0,
+          completionTokens: data.usage?.completion_tokens || 0,
+          totalTokens: data.usage?.total_tokens || 0
+        };
       }
 
-      const content = data.choices[0].message.content;
       const parsedStrategy = this.parseStrategyResponse(content);
       
       return {
         success: true,
         data: parsedStrategy,
-        usage: {
-          promptTokens: data.usage?.prompt_tokens || 0,
-          completionTokens: data.usage?.completion_tokens || 0,
-          totalTokens: data.usage?.total_tokens || 0
-        }
+        usage
       };
 
     } catch (error) {
@@ -158,27 +240,51 @@ export class ClaudeStrategyService {
       request.description ? `- Company Description: ${request.description}` : ''
     ].filter(line => line.trim()).join('\n');
 
+    // Add opportunities data if available
+    const opportunitiesSection = request.opportunities && request.opportunities.length > 0 ? [
+      `\nACTIVE OPPORTUNITIES:`,
+      ...request.opportunities.map(opp => 
+        `- ${opp.name} (${opp.stage}): $${opp.amount.toLocaleString()} (${opp.probability}% probability)${opp.closeDate ? `, Close: ${opp.closeDate}` : ''}${opp.lastAction ? `, Last: ${opp.lastAction}` : ''}${opp.nextAction ? `, Next: ${opp.nextAction}` : ''}`
+      )
+    ].join('\n') : '';
+
+    // Add people/contacts data if available
+    const peopleSection = request.people && request.people.length > 0 ? [
+      `\nKEY CONTACTS:`,
+      ...request.people.map(person => 
+        `- ${person.firstName} ${person.lastName} (${person.title})${person.email ? `, Email: ${person.email}` : ''}${person.phone ? `, Phone: ${person.phone}` : ''}${person.linkedinUrl ? `, LinkedIn: ${person.linkedinUrl}` : ''}${person.lastAction ? `, Last: ${person.lastAction}` : ''}${person.nextAction ? `, Next: ${person.nextAction}` : ''}`
+      )
+    ].join('\n') : '';
+
+    // Add buyer groups data if available
+    const buyerGroupsSection = request.buyerGroups && request.buyerGroups.length > 0 ? [
+      `\nBUYER GROUPS:`,
+      ...request.buyerGroups.map(group => 
+        `- ${group.name}: ${group.totalMembers} members (${Math.round(group.overallConfidence * 100)}% confidence, ${Math.round(group.cohesionScore * 100)}% cohesion)`
+      )
+    ].join('\n') : '';
+
     return `You are a strategic business advisor with deep expertise in ${request.targetIndustry}. Generate a comprehensive strategy summary for a company with the following profile:
 
-${companyProfile}
+${companyProfile}${opportunitiesSection}${peopleSection}${buyerGroupsSection}
 
 COMPANY ARCHETYPE: ${request.archetypeName}
 Archetype Description: ${request.archetypeDescription}
 
-TASK: Generate a strategic analysis using the Situation-Complication-Future State framework, specifically personalized for a company serving ${request.targetIndustry}. Use the real company data above to inform your analysis.
+TASK: Generate a strategic analysis using the Situation-Complication-Future State framework, specifically personalized for a company serving ${request.targetIndustry}. Use ALL the real company data above to inform your analysis.
 
 REQUIREMENTS:
-1. SITUATION: Describe their current business position, strengths, and market context. Personalize for their target industry (${request.targetIndustry}). Use their actual company data (size, revenue, age, market position) to paint an accurate picture. Include specific industry terminology, challenges, and opportunities.
+1. SITUATION: Describe their current business position, strengths, and market context. Personalize for their target industry (${request.targetIndustry}). Use their actual company data (size, revenue, age, market position) to paint an accurate picture. Include specific industry terminology, challenges, and opportunities. ${request.opportunities && request.opportunities.length > 0 ? 'Reference their active opportunities and pipeline to understand their current business momentum.' : ''} ${request.people && request.people.length > 0 ? 'Consider their key contacts and relationships in your analysis.' : ''}
 
-2. COMPLICATION: Identify key challenges, pain points, and strategic obstacles they face. Consider both internal challenges and external market dynamics specific to serving ${request.targetIndustry}. Be specific about industry regulations, competitive pressures, and market trends. Reference their actual company characteristics (size, growth stage, market position) to identify realistic complications.
+2. COMPLICATION: Identify key challenges, pain points, and strategic obstacles they face. Consider both internal challenges and external market dynamics specific to serving ${request.targetIndustry}. Be specific about industry regulations, competitive pressures, and market trends. Reference their actual company characteristics (size, growth stage, market position) to identify realistic complications. ${request.buyerGroups && request.buyerGroups.length > 0 ? 'Consider their buyer group dynamics and decision-making complexity.' : ''} ${request.competitors && request.competitors.length > 0 ? 'Reference their actual competitors and competitive landscape.' : ''}
 
-3. FUTURE STATE: Paint a vision of success if they overcome complications. Describe tangible outcomes and competitive advantages specific to the ${request.targetIndustry} market. Include specific metrics, market positions, and strategic outcomes. Make it realistic based on their current company profile.
+3. FUTURE STATE: Paint a vision of success if they overcome complications. Describe tangible outcomes and competitive advantages specific to the ${request.targetIndustry} market. Include specific metrics, market positions, and strategic outcomes. Make it realistic based on their current company profile. ${request.opportunities && request.opportunities.length > 0 ? 'Consider how their current opportunities could evolve and expand.' : ''}
 
-4. STRATEGIC RECOMMENDATIONS: Provide 3-5 actionable strategic recommendations tailored to their archetype, target industry, and actual company characteristics.
+4. STRATEGIC RECOMMENDATIONS: Provide 3-5 actionable strategic recommendations tailored to their archetype, target industry, and actual company characteristics. ${request.people && request.people.length > 0 ? 'Include recommendations for leveraging their key relationships and contacts.' : ''} ${request.buyerGroups && request.buyerGroups.length > 0 ? 'Consider how to optimize their buyer group engagement.' : ''}
 
-5. COMPETITIVE POSITIONING: Describe how they should position themselves in the ${request.targetIndustry} market based on their real company profile.
+5. COMPETITIVE POSITIONING: Describe how they should position themselves in the ${request.targetIndustry} market based on their real company profile. ${request.competitors && request.competitors.length > 0 ? 'Reference their actual competitive landscape and differentiation opportunities.' : ''}
 
-6. SUCCESS METRICS: List 3-5 key performance indicators they should track, relevant to their company size and target industry.
+6. SUCCESS METRICS: List 3-5 key performance indicators they should track, relevant to their company size and target industry. ${request.opportunities && request.opportunities.length > 0 ? 'Include metrics related to their opportunity pipeline and conversion rates.' : ''}
 
 FORMAT YOUR RESPONSE AS JSON:
 {

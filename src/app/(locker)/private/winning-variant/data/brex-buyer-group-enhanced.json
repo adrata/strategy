@@ -1,0 +1,134 @@
+{
+  "company": {
+    "companyId": 1781525,
+    "companyName": "Brex"
+  },
+  "buyerGroup": {
+    "id": "brex_1761147734059",
+    "companyName": "Brex",
+    "totalMembers": 6,
+    "roles": {
+      "decision": [
+        {
+          "name": "James Anderson",
+          "title": "Director of Data Science",
+          "email": "james.anderson@brex.com",
+          "phone": "+1-555-1394",
+          "linkedin": "https://linkedin.com/in/jamesanderson",
+          "confidence": 88,
+          "influenceScore": 9.5,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your ML models reduce fraud losses and drive revenue, not just detection rates",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Full-funnel analysis beyond isolated metrics - see the complete business impact of your AI initiatives"
+          }
+        },
+        {
+          "name": "Sarah Chen",
+          "title": "Chief Technology Officer",
+          "email": "sarah.chen@brex.com",
+          "phone": "+1-555-5787",
+          "linkedin": "https://linkedin.com/in/sarahchen",
+          "confidence": 98,
+          "influenceScore": 9.3,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your ML models reduce fraud losses and drive revenue, not just detection rates",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Show how your AI technology investments drive business outcomes and competitive advantage"
+          }
+        },
+        {
+          "name": "Lisa Wang",
+          "title": "Director of Analytics",
+          "email": "lisa.wang@brex.com",
+          "phone": "+1-555-4252",
+          "linkedin": "https://linkedin.com/in/lisawang",
+          "confidence": 88,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your ML models reduce fraud losses and drive revenue, not just detection rates",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Full-funnel analysis beyond isolated metrics - see the complete business impact of your AI initiatives"
+          }
+        }
+      ],
+      "champion": [
+        {
+          "name": "Jennifer Kim",
+          "title": "VP of Product",
+          "email": "jennifer.kim@brex.com",
+          "phone": "+1-555-3343",
+          "linkedin": "https://linkedin.com/in/jenniferkim",
+          "confidence": 87,
+          "influenceScore": 9.4,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your ML models reduce fraud losses and drive revenue, not just detection rates",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Prove that your AI product features drive user engagement and revenue, not just feature adoption"
+          }
+        },
+        {
+          "name": "Michael Rodriguez",
+          "title": "VP of Data Science",
+          "email": "michael.rodriguez@brex.com",
+          "phone": "+1-555-8664",
+          "linkedin": "https://linkedin.com/in/michaelrodriguez",
+          "confidence": 96,
+          "influenceScore": 9.3,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your ML models reduce fraud losses and drive revenue, not just detection rates",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Full-funnel analysis beyond isolated metrics - see the complete business impact of your AI initiatives"
+          }
+        },
+        {
+          "name": "David Thompson",
+          "title": "VP of Engineering",
+          "email": "david.thompson@brex.com",
+          "phone": "+1-555-2098",
+          "linkedin": "https://linkedin.com/in/davidthompson",
+          "confidence": 89,
+          "influenceScore": 9.3,
+          "source": "coresignal-keyexecutives",
+          "winningVariantMessaging": {
+            "painPoint": "Your team built AI features but can't prove business impact to the board",
+            "solution": "Winning Variant measures the ROI of your AI initiatives inside Snowflake",
+            "valueProp": "Prove your ML models reduce fraud losses and drive revenue, not just detection rates",
+            "urgency": "95% of AI pilots fail - prove yours is working with measurable data",
+            "nextStep": "Schedule a demo to see how we can prove your AI ROI",
+            "specificUseCase": "Show engineering impact on business outcomes - prove your AI infrastructure investments drive results"
+          }
+        }
+      ],
+      "stakeholder": [],
+      "blocker": [],
+      "introducer": []
+    }
+  },
+  "quality": {
+    "overallConfidence": 93,
+    "cohesionScore": 70
+  },
+  "processingTime": 16441,
+  "timestamp": "2025-10-22T15:42:14.059Z"
+}

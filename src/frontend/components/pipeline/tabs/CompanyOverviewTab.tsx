@@ -417,6 +417,19 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               />
             </div>
             <div className="flex items-center">
+              <span className="text-sm text-[var(--muted)] w-32">LinkedIn Navigator:</span>
+              <InlineEditField
+                value={formatUrlForDisplay(record?.linkedinNavigatorUrl || '', { maxLength: 40, preserveEnding: 10 })}
+                field="linkedinNavigatorUrl"
+                onSave={onSave || (() => Promise.resolve())}
+                recordId={companyId}
+                recordType="companies"
+                onSuccess={handleSuccess}
+                type="url"
+                className="text-sm font-medium text-[#2563EB] hover:underline"
+              />
+            </div>
+            <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">Headquarters:</span>
               <InlineEditField
                 value={record?.hqFullAddress || `${record?.hqCity || ''}${record?.hqCity && record?.hqState ? ', ' : ''}${record?.hqState || ''}`}

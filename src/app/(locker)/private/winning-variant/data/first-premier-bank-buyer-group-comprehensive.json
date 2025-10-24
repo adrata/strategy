@@ -1,0 +1,463 @@
+{
+  "company": {
+    "name": "First Premier Bank",
+    "discoveryTimestamp": "2025-10-22T15:56:29.781Z",
+    "dataSource": "buyer-group-engine-comprehensive",
+    "confidence": "high"
+  },
+  "buyerGroup": {
+    "id": "first_premier_bank_1761148589780",
+    "companyName": "First PREMIER Bank",
+    "totalMembers": 10,
+    "roles": {
+      "decision": [
+        {
+          "name": "John Smith",
+          "title": "VP Sales",
+          "email": "john.smith@company.com",
+          "phone": "+1-555-0123",
+          "linkedin": "https://linkedin.com/in/johnsmith",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "enriched": false,
+          "enrichmentError": "this.executiveContactIntelligence.enrichContact is not a function",
+          "winningVariantContext": {
+            "productFocus": "AI Impact Visibility Platform",
+            "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+            "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+            "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+            "targetDepartments": [
+              "data science",
+              "product",
+              "engineering",
+              "analytics"
+            ],
+            "dealSize": "$100K+",
+            "personalizedApproach": {
+              "approach": "General AI ROI conversation",
+              "keyPoints": [
+                "Close the AI Impact Gap",
+                "Measure business ROI of AI initiatives",
+                "Snowflake-native deployment"
+              ],
+              "opener": "AI investments need measurable ROI. Our platform helps you prove AI impact."
+            }
+          },
+          "dataProvenance": {
+            "coresignal": false,
+            "enrichment": "enriched",
+            "validation": "unvalidated",
+            "lastUpdated": "2025-10-22T15:56:29.781Z"
+          }
+        }
+      ],
+      "champion": [
+        {
+          "name": "Sarah Johnson",
+          "title": "Sales Director",
+          "email": "sarah.johnson@company.com",
+          "phone": "+1-555-0124",
+          "linkedin": "https://linkedin.com/in/sarahjohnson",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "enriched": false,
+          "enrichmentError": "this.executiveContactIntelligence.enrichContact is not a function",
+          "winningVariantContext": {
+            "productFocus": "AI Impact Visibility Platform",
+            "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+            "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+            "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+            "targetDepartments": [
+              "data science",
+              "product",
+              "engineering",
+              "analytics"
+            ],
+            "dealSize": "$100K+",
+            "personalizedApproach": {
+              "approach": "General AI ROI conversation",
+              "keyPoints": [
+                "Close the AI Impact Gap",
+                "Measure business ROI of AI initiatives",
+                "Snowflake-native deployment"
+              ],
+              "opener": "AI investments need measurable ROI. Our platform helps you prove AI impact."
+            }
+          },
+          "dataProvenance": {
+            "coresignal": false,
+            "enrichment": "enriched",
+            "validation": "unvalidated",
+            "lastUpdated": "2025-10-22T15:56:29.781Z"
+          }
+        },
+        {
+          "name": "Mike Davis",
+          "title": "Revenue Operations Manager",
+          "email": "mike.davis@company.com",
+          "phone": "+1-555-0125",
+          "linkedin": "https://linkedin.com/in/mikedavis",
+          "confidence": 72,
+          "influenceScore": 7.8,
+          "enriched": false,
+          "enrichmentError": "this.executiveContactIntelligence.enrichContact is not a function",
+          "winningVariantContext": {
+            "productFocus": "AI Impact Visibility Platform",
+            "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+            "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+            "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+            "targetDepartments": [
+              "data science",
+              "product",
+              "engineering",
+              "analytics"
+            ],
+            "dealSize": "$100K+",
+            "personalizedApproach": {
+              "approach": "General AI ROI conversation",
+              "keyPoints": [
+                "Close the AI Impact Gap",
+                "Measure business ROI of AI initiatives",
+                "Snowflake-native deployment"
+              ],
+              "opener": "AI investments need measurable ROI. Our platform helps you prove AI impact."
+            }
+          },
+          "dataProvenance": {
+            "coresignal": false,
+            "enrichment": "enriched",
+            "validation": "unvalidated",
+            "lastUpdated": "2025-10-22T15:56:29.781Z"
+          }
+        }
+      ],
+      "stakeholder": [
+        {
+          "name": "Lisa Chen",
+          "title": "Marketing Director",
+          "email": "lisa.chen@company.com",
+          "phone": "+1-555-0126",
+          "linkedin": "https://linkedin.com/in/lisachen",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "enriched": false,
+          "enrichmentError": "this.executiveContactIntelligence.enrichContact is not a function",
+          "winningVariantContext": {
+            "productFocus": "AI Impact Visibility Platform",
+            "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+            "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+            "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+            "targetDepartments": [
+              "data science",
+              "product",
+              "engineering",
+              "analytics"
+            ],
+            "dealSize": "$100K+",
+            "personalizedApproach": {
+              "approach": "General AI ROI conversation",
+              "keyPoints": [
+                "Close the AI Impact Gap",
+                "Measure business ROI of AI initiatives",
+                "Snowflake-native deployment"
+              ],
+              "opener": "AI investments need measurable ROI. Our platform helps you prove AI impact."
+            }
+          },
+          "dataProvenance": {
+            "coresignal": false,
+            "enrichment": "enriched",
+            "validation": "unvalidated",
+            "lastUpdated": "2025-10-22T15:56:29.781Z"
+          }
+        },
+        {
+          "name": "David Wilson",
+          "title": "Finance Manager",
+          "email": "david.wilson@company.com",
+          "phone": "+1-555-0127",
+          "linkedin": "https://linkedin.com/in/davidwilson",
+          "confidence": 65,
+          "influenceScore": 6.9,
+          "enriched": false,
+          "enrichmentError": "this.executiveContactIntelligence.enrichContact is not a function",
+          "winningVariantContext": {
+            "productFocus": "AI Impact Visibility Platform",
+            "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+            "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+            "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+            "targetDepartments": [
+              "data science",
+              "product",
+              "engineering",
+              "analytics"
+            ],
+            "dealSize": "$100K+",
+            "personalizedApproach": {
+              "approach": "ROI-focused conversation about AI investment returns",
+              "keyPoints": [
+                "95% of AI projects fail to deliver measurable ROI",
+                "Snowflake-native deployment means no data movement costs",
+                "Prove AI impact before scaling investments"
+              ],
+              "opener": "As CFO at First Premier Bank, you're likely seeing AI investments without clear ROI measurement. Our platform helps finance teams quantify AI impact."
+            }
+          },
+          "dataProvenance": {
+            "coresignal": false,
+            "enrichment": "enriched",
+            "validation": "unvalidated",
+            "lastUpdated": "2025-10-22T15:56:29.781Z"
+          }
+        },
+        {
+          "name": "Amy Rodriguez",
+          "title": "IT Director",
+          "email": "amy.rodriguez@company.com",
+          "phone": "+1-555-0128",
+          "linkedin": "https://linkedin.com/in/amyrodriguez",
+          "confidence": 62,
+          "influenceScore": 6.5,
+          "enriched": false,
+          "enrichmentError": "this.executiveContactIntelligence.enrichContact is not a function",
+          "winningVariantContext": {
+            "productFocus": "AI Impact Visibility Platform",
+            "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+            "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+            "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+            "targetDepartments": [
+              "data science",
+              "product",
+              "engineering",
+              "analytics"
+            ],
+            "dealSize": "$100K+",
+            "personalizedApproach": {
+              "approach": "General AI ROI conversation",
+              "keyPoints": [
+                "Close the AI Impact Gap",
+                "Measure business ROI of AI initiatives",
+                "Snowflake-native deployment"
+              ],
+              "opener": "AI investments need measurable ROI. Our platform helps you prove AI impact."
+            }
+          },
+          "dataProvenance": {
+            "coresignal": false,
+            "enrichment": "enriched",
+            "validation": "unvalidated",
+            "lastUpdated": "2025-10-22T15:56:29.781Z"
+          }
+        },
+        {
+          "name": "Tom Brown",
+          "title": "Operations Manager",
+          "email": "tom.brown@company.com",
+          "phone": "+1-555-0129",
+          "linkedin": "https://linkedin.com/in/tombrown",
+          "confidence": 60,
+          "influenceScore": 6.2,
+          "enriched": false,
+          "enrichmentError": "this.executiveContactIntelligence.enrichContact is not a function",
+          "winningVariantContext": {
+            "productFocus": "AI Impact Visibility Platform",
+            "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+            "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+            "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+            "targetDepartments": [
+              "data science",
+              "product",
+              "engineering",
+              "analytics"
+            ],
+            "dealSize": "$100K+",
+            "personalizedApproach": {
+              "approach": "General AI ROI conversation",
+              "keyPoints": [
+                "Close the AI Impact Gap",
+                "Measure business ROI of AI initiatives",
+                "Snowflake-native deployment"
+              ],
+              "opener": "AI investments need measurable ROI. Our platform helps you prove AI impact."
+            }
+          },
+          "dataProvenance": {
+            "coresignal": false,
+            "enrichment": "enriched",
+            "validation": "unvalidated",
+            "lastUpdated": "2025-10-22T15:56:29.781Z"
+          }
+        }
+      ],
+      "blocker": [
+        {
+          "name": "Jennifer Lee",
+          "title": "Legal Counsel",
+          "email": "jennifer.lee@company.com",
+          "phone": "+1-555-0130",
+          "linkedin": "https://linkedin.com/in/jenniferlee",
+          "confidence": 70,
+          "influenceScore": 7.5,
+          "enriched": false,
+          "enrichmentError": "this.executiveContactIntelligence.enrichContact is not a function",
+          "winningVariantContext": {
+            "productFocus": "AI Impact Visibility Platform",
+            "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+            "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+            "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+            "targetDepartments": [
+              "data science",
+              "product",
+              "engineering",
+              "analytics"
+            ],
+            "dealSize": "$100K+",
+            "personalizedApproach": {
+              "approach": "General AI ROI conversation",
+              "keyPoints": [
+                "Close the AI Impact Gap",
+                "Measure business ROI of AI initiatives",
+                "Snowflake-native deployment"
+              ],
+              "opener": "AI investments need measurable ROI. Our platform helps you prove AI impact."
+            }
+          },
+          "dataProvenance": {
+            "coresignal": false,
+            "enrichment": "enriched",
+            "validation": "unvalidated",
+            "lastUpdated": "2025-10-22T15:56:29.781Z"
+          }
+        }
+      ],
+      "introducer": [
+        {
+          "name": "Robert Taylor",
+          "title": "Sales Rep",
+          "email": "robert.taylor@company.com",
+          "phone": "+1-555-0131",
+          "linkedin": "https://linkedin.com/in/roberttaylor",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "enriched": false,
+          "enrichmentError": "this.executiveContactIntelligence.enrichContact is not a function",
+          "winningVariantContext": {
+            "productFocus": "AI Impact Visibility Platform",
+            "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+            "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+            "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+            "targetDepartments": [
+              "data science",
+              "product",
+              "engineering",
+              "analytics"
+            ],
+            "dealSize": "$100K+",
+            "personalizedApproach": {
+              "approach": "General AI ROI conversation",
+              "keyPoints": [
+                "Close the AI Impact Gap",
+                "Measure business ROI of AI initiatives",
+                "Snowflake-native deployment"
+              ],
+              "opener": "AI investments need measurable ROI. Our platform helps you prove AI impact."
+            }
+          },
+          "dataProvenance": {
+            "coresignal": false,
+            "enrichment": "enriched",
+            "validation": "unvalidated",
+            "lastUpdated": "2025-10-22T15:56:29.781Z"
+          }
+        },
+        {
+          "name": "Maria Garcia",
+          "title": "Account Executive",
+          "email": "maria.garcia@company.com",
+          "phone": "+1-555-0132",
+          "linkedin": "https://linkedin.com/in/mariagarcia",
+          "confidence": 55,
+          "influenceScore": 5.5,
+          "enriched": false,
+          "enrichmentError": "this.executiveContactIntelligence.enrichContact is not a function",
+          "winningVariantContext": {
+            "productFocus": "AI Impact Visibility Platform",
+            "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+            "valueProposition": "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+            "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+            "targetDepartments": [
+              "data science",
+              "product",
+              "engineering",
+              "analytics"
+            ],
+            "dealSize": "$100K+",
+            "personalizedApproach": {
+              "approach": "General AI ROI conversation",
+              "keyPoints": [
+                "Close the AI Impact Gap",
+                "Measure business ROI of AI initiatives",
+                "Snowflake-native deployment"
+              ],
+              "opener": "AI investments need measurable ROI. Our platform helps you prove AI impact."
+            }
+          },
+          "dataProvenance": {
+            "coresignal": false,
+            "enrichment": "enriched",
+            "validation": "unvalidated",
+            "lastUpdated": "2025-10-22T15:56:29.781Z"
+          }
+        }
+      ]
+    },
+    "cohesion": {
+      "score": 85,
+      "level": "Excellent",
+      "overallScore": 85,
+      "departmentAlignment": 0.8,
+      "signal": "Strong cross-departmental alignment identified",
+      "strength": 0.85,
+      "source": "cohesion_analysis",
+      "confidence": 0.9
+    },
+    "dynamics": {
+      "decisionFlow": "Top-down with champion influence",
+      "engagementStrategy": "Start with VP Sales, leverage Sales Director as champion",
+      "timeline": "3-6 months typical sales cycle"
+    },
+    "opportunitySignals": [
+      {
+        "signal": "Revenue operations team expansion indicates growth",
+        "strength": 0.7,
+        "source": "organizational_growth",
+        "confidence": 0.8
+      }
+    ],
+    "painSignals": [
+      {
+        "signal": "Manual revenue reporting processes",
+        "strength": 0.6,
+        "source": "process_inefficiency",
+        "confidence": 0.7
+      }
+    ],
+    "benchmark": {
+      "overallScore": 85,
+      "roleDistribution": 92,
+      "influenceBalance": 88,
+      "cohesionScore": 85,
+      "dataQuality": 90
+    },
+    "contactsEnriched": 0
+  },
+  "metadata": {
+    "generatedAt": "2025-10-22T15:56:29.781Z",
+    "totalMembers": 10,
+    "dataSource": "coresignal-preview-discovery",
+    "enrichmentLevel": "enrich",
+    "confidence": "high",
+    "apiCreditsUsed": 0,
+    "processingTime": 51836
+  }
+}

@@ -151,8 +151,8 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   leads: [
     { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
     { id: 'company', label: 'Company', component: CompanyOverviewTab },
-    { id: 'strategy', label: 'Strategy', component: UniversalInsightsTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
+    { id: 'strategy', label: 'Intelligence', component: UniversalInsightsTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
@@ -160,8 +160,8 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   prospects: [
     { id: 'overview', label: 'Overview', component: ProspectOverviewTab },
     { id: 'company', label: 'Company', component: CompanyOverviewTab },
-    { id: 'strategy', label: 'Strategy', component: UniversalInsightsTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
+    { id: 'strategy', label: 'Intelligence', component: UniversalInsightsTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
@@ -180,8 +180,8 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   
   companies: [
     { id: 'overview', label: 'Overview', component: UniversalCompanyTab },
-    { id: 'strategy', label: 'Strategy', component: UniversalCompanyIntelTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
+    { id: 'strategy', label: 'Intelligence', component: UniversalCompanyIntelTab },
     // { id: 'news', label: 'News', component: UniversalNewsTab }, // Temporarily hidden until news relevance is improved
     { id: 'people', label: 'People', component: UniversalPeopleTab },
     { id: 'value', label: 'Value', component: ValueTab },
@@ -193,8 +193,8 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   people: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
     { id: 'company', label: 'Company', component: CompanyOverviewTab },
-    { id: 'strategy', label: 'Strategy', component: ComprehensiveInsightsTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
+    { id: 'strategy', label: 'Intelligence', component: ComprehensiveInsightsTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
@@ -202,8 +202,8 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   speedrun: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
     { id: 'company', label: 'Company', component: CompanyOverviewTab },
-    { id: 'strategy', label: 'Strategy', component: ComprehensiveInsightsTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
+    { id: 'strategy', label: 'Intelligence', component: ComprehensiveInsightsTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],

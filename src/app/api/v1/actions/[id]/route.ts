@@ -190,6 +190,31 @@ export async function PUT(
           lastAction: updatedAction.subject,
           lastActionDate: updatedAction.completedAt || updatedAction.updatedAt
         });
+
+        // 🎯 AUTO RE-RANKING: Trigger automatic re-ranking for speedrun when engagement actions are completed
+        try {
+          const reRankResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/v1/speedrun/re-rank`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.INTERNAL_API_KEY || 'internal'}`,
+            },
+            body: JSON.stringify({
+              trigger: 'action_update',
+              personId: updatedAction.personId,
+              actionType: updatedAction.type,
+              timestamp: new Date().toISOString()
+            })
+          });
+          
+          if (reRankResponse.ok) {
+            console.log('✅ [ACTIONS PUT] Triggered automatic re-ranking after engagement action update');
+          } else {
+            console.warn('⚠️ [ACTIONS PUT] Re-ranking request failed but continuing:', reRankResponse.status);
+          }
+        } catch (reRankError) {
+          console.error('⚠️ [ACTIONS PUT] Background re-ranking failed (non-blocking):', reRankError);
+        }
       } catch (error) {
         console.error('❌ [ACTIONS PUT] Failed to update person lastAction fields:', error);
       }
@@ -341,6 +366,31 @@ export async function PATCH(
           lastAction: updatedAction.subject,
           lastActionDate: updatedAction.completedAt || updatedAction.updatedAt
         });
+
+        // 🎯 AUTO RE-RANKING: Trigger automatic re-ranking for speedrun when engagement actions are completed
+        try {
+          const reRankResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/v1/speedrun/re-rank`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.INTERNAL_API_KEY || 'internal'}`,
+            },
+            body: JSON.stringify({
+              trigger: 'action_patch',
+              personId: updatedAction.personId,
+              actionType: updatedAction.type,
+              timestamp: new Date().toISOString()
+            })
+          });
+          
+          if (reRankResponse.ok) {
+            console.log('✅ [ACTIONS PATCH] Triggered automatic re-ranking after engagement action patch');
+          } else {
+            console.warn('⚠️ [ACTIONS PATCH] Re-ranking request failed but continuing:', reRankResponse.status);
+          }
+        } catch (reRankError) {
+          console.error('⚠️ [ACTIONS PATCH] Background re-ranking failed (non-blocking):', reRankError);
+        }
       } catch (error) {
         console.error('❌ [ACTIONS PATCH] Failed to update person lastAction fields:', error);
       }

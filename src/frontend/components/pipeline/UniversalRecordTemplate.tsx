@@ -137,8 +137,8 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
           return [
             { id: 'overview', label: 'Overview' },
             { id: 'company', label: 'Company' },
-            { id: 'strategy', label: 'Strategy' },
             { id: 'actions', label: 'Actions' },
+            { id: 'strategy', label: 'Intelligence' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' }
           ];
@@ -146,8 +146,8 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
       return [
         { id: 'overview', label: 'Overview' },
         { id: 'company', label: 'Company' },
-        { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
+        { id: 'strategy', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
       ];
@@ -164,8 +164,8 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
     case 'companies':
       return [
         { id: 'overview', label: 'Overview' },
-        { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
+        { id: 'strategy', label: 'Intelligence' },
         { id: 'news', label: 'News' },
         { id: 'people', label: 'People' },
         { id: 'buyer-groups', label: 'Buyer Group' },
@@ -175,8 +175,8 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
       return [
         { id: 'overview', label: 'Overview' },
         { id: 'company', label: 'Company' },
-        { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
+        { id: 'strategy', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
       ];
@@ -184,8 +184,8 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
       return [
         { id: 'overview', label: 'Overview' },
         { id: 'company', label: 'Company' },
-        { id: 'strategy', label: 'Strategy' },
         { id: 'actions', label: 'Actions' },
+        { id: 'strategy', label: 'Intelligence' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
       ];
@@ -1794,7 +1794,7 @@ export function UniversalRecordTemplate({
       });
       
       // Validate that the mapped field is appropriate for the target model
-      if (targetModel === 'companies' && !['name', 'legalName', 'tradingName', 'localName', 'description', 'website', 'email', 'phone', 'fax', 'address', 'city', 'state', 'country', 'postalCode', 'industry', 'sector', 'size', 'revenue', 'currency', 'employeeCount', 'foundedYear', 'registrationNumber', 'taxId', 'vatNumber', 'domain', 'logoUrl', 'status', 'priority', 'tags', 'customFields', 'notes', 'lastAction', 'lastActionDate', 'nextAction', 'nextActionDate', 'nextActionReasoning', 'nextActionPriority', 'nextActionType', 'actionStatus', 'globalRank', 'entityId', 'mainSellerId', 'actualCloseDate', 'expectedCloseDate', 'opportunityAmount', 'opportunityProbability', 'opportunityStage', 'acquisitionDate', 'competitors', 'businessChallenges', 'businessPriorities', 'competitiveAdvantages', 'growthOpportunities', 'strategicInitiatives', 'successMetrics', 'marketThreats', 'keyInfluencers', 'decisionTimeline', 'marketPosition', 'digitalMaturity', 'techStack', 'linkedinUrl', 'linkedinFollowers', 'twitterUrl', 'twitterFollowers', 'facebookUrl', 'instagramUrl', 'youtubeUrl', 'githubUrl', 'hqLocation', 'hqFullAddress', 'hqCity', 'hqState', 'hqStreet', 'hqZipcode', 'hqRegion', 'hqCountryIso2', 'hqCountryIso3', 'lastFundingAmount', 'lastFundingDate', 'stockSymbol', 'isPublic', 'naicsCodes', 'sicCodes', 'activeJobPostings', 'numTechnologiesUsed', 'technologiesUsed', 'confidence', 'sources', 'lastVerified', 'parentCompanyName', 'parentCompanyDomain', 'targetIndustry'].includes(apiField)) {
+      if (targetModel === 'companies' && !['name', 'legalName', 'tradingName', 'localName', 'description', 'website', 'email', 'phone', 'fax', 'address', 'city', 'state', 'country', 'postalCode', 'industry', 'sector', 'size', 'revenue', 'currency', 'employeeCount', 'foundedYear', 'registrationNumber', 'taxId', 'vatNumber', 'domain', 'logoUrl', 'status', 'priority', 'tags', 'customFields', 'notes', 'lastAction', 'lastActionDate', 'nextAction', 'nextActionDate', 'nextActionReasoning', 'nextActionPriority', 'nextActionType', 'actionStatus', 'globalRank', 'entityId', 'mainSellerId', 'actualCloseDate', 'expectedCloseDate', 'opportunityAmount', 'opportunityProbability', 'opportunityStage', 'acquisitionDate', 'competitors', 'businessChallenges', 'businessPriorities', 'competitiveAdvantages', 'growthOpportunities', 'strategicInitiatives', 'successMetrics', 'marketThreats', 'keyInfluencers', 'decisionTimeline', 'marketPosition', 'digitalMaturity', 'techStack', 'linkedinUrl', 'linkedinNavigatorUrl', 'linkedinFollowers', 'twitterUrl', 'twitterFollowers', 'facebookUrl', 'instagramUrl', 'youtubeUrl', 'githubUrl', 'hqLocation', 'hqFullAddress', 'hqCity', 'hqState', 'hqStreet', 'hqZipcode', 'hqRegion', 'hqCountryIso2', 'hqCountryIso3', 'lastFundingAmount', 'lastFundingDate', 'stockSymbol', 'isPublic', 'naicsCodes', 'sicCodes', 'activeJobPostings', 'numTechnologiesUsed', 'technologiesUsed', 'confidence', 'sources', 'lastVerified', 'parentCompanyName', 'parentCompanyDomain', 'targetIndustry'].includes(apiField)) {
         console.warn(`⚠️ [FIELD MAPPING] Field '${apiField}' may not be valid for companies model`);
       }
       
@@ -1862,10 +1862,21 @@ export function UniversalRecordTemplate({
           credentials: 'include',
           body: JSON.stringify(updateData),
         });
+      } else if (targetModel === 'actions') {
+        // Use v1 actions API
+        console.log(`🔄 [UNIVERSAL] Using v1 actions API for ${targetId}`);
+        response = await fetch(`/api/v1/actions/${targetId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(updateData),
+        });
       } else {
         // For other record types, try to use appropriate v1 API or throw error
         console.log('🔍 [DEBUG] Unsupported record type for v1 migration:', apiRecordType);
-        throw new Error(`Record type '${apiRecordType}' is not yet supported in v1 APIs. Please use companies or people records.`);
+        throw new Error(`Record type '${apiRecordType}' is not yet supported in v1 APIs. Please use companies, people, or actions records.`);
       }
       
       if (!response.ok) {
@@ -2052,6 +2063,26 @@ export function UniversalRecordTemplate({
       }));
       
       showMessage(`Updated ${field} successfully`);
+      
+      // Dispatch actionUpdated event for action record types
+      if (targetModel === 'actions') {
+        // Clear actions cache
+        const cacheKey = `actions-${record.id}`;
+        localStorage.removeItem(cacheKey);
+        console.log('🗑️ [UNIVERSAL] Cleared actions cache for record:', record.id);
+        
+        document.dispatchEvent(new CustomEvent('actionUpdated', {
+          detail: {
+            recordId: record.id,
+            recordType: recordType,
+            actionId: targetId,
+            field: field,
+            value: value,
+            timestamp: new Date().toISOString()
+          }
+        }));
+        console.log('🔄 [UNIVERSAL] Dispatched actionUpdated event for action:', targetId);
+      }
       
       // Track this field as recently updated to prevent stale prop overwrites
       setRecentlyUpdatedFields(prev => new Set(prev).add(field));
@@ -2982,6 +3013,13 @@ export function UniversalRecordTemplate({
           onRecordUpdate(result.data || result.record);
         }
         
+        // UPDATE CACHE: Ensure sessionStorage cache is updated with fresh data
+        const updatedRecord = result.data || result.record;
+        if (updatedRecord && typeof window !== 'undefined') {
+          updateSessionStorageCache(updatedRecord, 'modal-save', record.id, recordType);
+          console.log(`💾 [UNIVERSAL] Updated sessionStorage cache after modal save for ${recordType} record ${record.id}`);
+        }
+        
         // Dispatch event to update the UI without page reload
         window.dispatchEvent(new CustomEvent('record-updated', {
           detail: {
@@ -3261,6 +3299,30 @@ export function UniversalRecordTemplate({
             Advance to Opportunity
           </button>
         );
+      } else if (recordType === 'people') {
+        // Dynamic advance button for people based on their status
+        const currentStatus = record?.status;
+        if (currentStatus === 'LEAD') {
+          buttons.push(
+            <button
+              key="advance-to-prospect"
+              onClick={handleAdvanceToProspect}
+              className="px-3 py-1.5 text-sm bg-[var(--panel-background)] text-[var(--foreground)] border border-[var(--border)] rounded-md hover:bg-[var(--hover)] transition-colors"
+            >
+              Advance to Prospect
+            </button>
+          );
+        } else if (currentStatus === 'PROSPECT') {
+          buttons.push(
+            <button
+              key="advance-to-opportunity"
+              onClick={handleAdvanceToOpportunity}
+              className="px-3 py-1.5 text-sm bg-[var(--info-bg)] text-[var(--info-text)] border border-[var(--info-border)] rounded-md hover:bg-[var(--info)] hover:text-[var(--button-text)] transition-colors"
+            >
+              Advance to Opportunity
+            </button>
+          );
+        }
       }
 
       // Add Action button - CATEGORY COLORED BUTTON (matching section colors)

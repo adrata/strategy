@@ -346,13 +346,20 @@ export function CompleteActionModal({
     if (!isOpen) return;
 
     const handleDocumentKeyDown = (event: KeyboardEvent) => {
+      // Check if user is typing in an input field - if so, don't intercept number keys
+      const target = event.target as HTMLElement;
+      const isInputField = target.tagName === 'INPUT' || 
+                          target.tagName === 'TEXTAREA' || 
+                          target.contentEditable === 'true' ||
+                          target.isContentEditable;
+      
       // Handle action type shortcuts (1-6) with cycling
       // Check both key and code for better cross-platform compatibility
       const isNumberKey = (event.key >= '1' && event.key <= '6') || 
                          (event.code >= 'Digit1' && event.code <= 'Digit6') ||
                          (event.code >= 'Numpad1' && event.code <= 'Numpad6');
       
-      if (isNumberKey) {
+      if (isNumberKey && !isInputField) {
         event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();

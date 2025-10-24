@@ -843,6 +843,16 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
               if (section !== 'speedrun') refreshPromises.push(speedrunHook.refresh());
             }
             
+            // For company records, also refresh related sections since companies are linked to people
+            // and may affect people records, actions, and other related data
+            if (section === 'companies') {
+              // Refresh people-related sections since people are linked to companies
+              refreshPromises.push(leadsHook.refresh());
+              refreshPromises.push(prospectsHook.refresh());
+              refreshPromises.push(peopleHook.refresh());
+              refreshPromises.push(speedrunHook.refresh());
+            }
+            
             // Wait for all refreshes to complete
             await Promise.all(refreshPromises);
             console.log('🔄 [PIPELINE] Refreshed all relevant data hooks');

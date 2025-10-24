@@ -28,45 +28,50 @@ module.exports = {
     BUYER_GROUP_DISCOVERY_TTL: 3,    // 3 days for buyer group discovery
     CONTACT_ENRICHMENT_TTL: 1,       // 1 day for contact enrichment
     
-    // Buyer Group Discovery Settings
+    // Buyer Group Discovery Settings - Optimized for $100K Snowflake Product
     BUYER_GROUP: {
-        MIN_SIZE: 8,                 // Minimum buyer group size
-        MAX_SIZE: 12,                // Maximum buyer group size
-        TARGET_SIZE: 10,             // Ideal buyer group size
-        MIN_INFLUENCE_SCORE: 8,      // Minimum influence score for inclusion
-        REQUIRE_DIRECTOR: false,     // Include managers and below
-        ALLOW_IC: false,             // Include individual contributors
-        EARLY_STOP_MODE: 'accuracy_first' // vs 'aggressive'
+        MIN_SIZE: 4,                 // Focused buying committee for $100K deals
+        MAX_SIZE: 14,                // Maximum for mid-market $100K+ contracts
+        TARGET_SIZE: 8,              // Ideal size for executive-focused deals
+        MIN_INFLUENCE_SCORE: 8.5,    // C-level and VPs only for $100K+ deals
+        REQUIRE_DIRECTOR: true,      // Director-level minimum for executive focus
+        ALLOW_IC: false,             // No individual contributors for $100K deals
+        EARLY_STOP_MODE: 'accuracy_first' // Quality over quantity
     },
     
-    // Role Distribution Targets
+    // Role Distribution Targets - Optimized for AI/ML ROI Platform
     ROLE_TARGETS: {
-        DECISION_MAKERS: { min: 1, max: 3, ideal: 2 },
-        CHAMPIONS: { min: 2, max: 4, ideal: 3 },
-        STAKEHOLDERS: { min: 3, max: 5, ideal: 4 },
-        BLOCKERS: { min: 0, max: 2, ideal: 1 },
-        INTRODUCERS: { min: 1, max: 3, ideal: 2 }
+        DECISION_MAKERS: { min: 1, max: 3, ideal: 2 },  // CFO, CTO, CPO with budget authority
+        CHAMPIONS: { min: 2, max: 5, ideal: 3 },        // VP Data Science, VP Engineering
+        STAKEHOLDERS: { min: 1, max: 4, ideal: 3 },     // Director Analytics, BI Leads
+        BLOCKERS: { min: 0, max: 1, ideal: 0 },         // Minimize blockers for $100K deals
+        INTRODUCERS: { min: 0, max: 2, ideal: 1 }       // RevOps who can introduce to CFO
     },
     
-    // Default Seller Profile Configuration
+    // Default Seller Profile Configuration - Winning Variant AI Impact Visibility
     DEFAULT_SELLER_PROFILE: {
-        productName: "Buyer Group Intelligence Platform",
-        sellerCompanyName: "Adrata",
-        solutionCategory: "buyer_group_intelligence",
-        targetMarket: "enterprise",
-        dealSize: "enterprise",
-        targetDepartments: ["sales", "revenue operations", "marketing", "finance"],
+        productName: "AI Impact Visibility Platform",
+        sellerCompanyName: "Winning Variant",
+        solutionCategory: "ai_ml_roi_analytics",
+        targetMarket: "mid_market",
+        dealSize: "$100K+ annually",
+        valueProposition: "Close the AI Impact Gap - Measure business ROI of AI initiatives",
+        keyMessage: "95% of generative AI pilots are failures - prove your AI ROI",
+        deploymentModel: "Snowflake-native (100% inside customer Snowflake account)",
+        targetDepartments: ["data science", "product", "engineering", "analytics", "finance"],
         mustHaveTitles: [
-            "sales director", "vp sales", "revenue operations",
-            "marketing director", "vp marketing", "finance director",
-            "vp finance", "chief revenue officer", "chief sales officer"
+            "chief financial officer", "cfo", "chief technology officer", "cto",
+            "chief product officer", "cpo", "vp data science", "vp engineering",
+            "vp product", "director analytics", "director data science",
+            "director engineering", "director product", "vp finance"
         ],
         productPortfolio: [{
-            productName: "Buyer Group Intelligence",
-            productCategory: "sales_intelligence",
+            productName: "AI Impact Visibility Platform",
+            productCategory: "ai_ml_roi_analytics",
             buyingCommitteeRoles: [
-                "CEO", "CTO", "CFO", "CRO", "VP Sales", "VP Marketing", 
-                "VP Finance", "VP Engineering", "Director Sales", "Director Marketing"
+                "CFO", "CTO", "CPO", "VP Data Science", "VP Engineering", 
+                "VP Product", "Director Analytics", "Director Data Science",
+                "Director Engineering", "Director Product", "VP Finance"
             ]
         }]
     },

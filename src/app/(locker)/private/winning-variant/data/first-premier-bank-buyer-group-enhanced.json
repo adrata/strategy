@@ -1,0 +1,841 @@
+{
+  "company": {
+    "companyId": "7578901",
+    "companyName": "First PREMIER Bank"
+  },
+  "buyerGroup": {
+    "id": "first_premier_bank_1761065530877",
+    "companyName": "First PREMIER Bank",
+    "totalMembers": 32,
+    "roles": {
+      "decision": [
+        {
+          "name": "Natasha Hulscher",
+          "title": "Director, Benefits And Wellness",
+          "email": "natasha.hulscher@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/natashahulscher",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "William Dale",
+          "title": "Director",
+          "email": "william.dale@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/williamdale",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Kent Hartsuiker",
+          "title": "Director Of Sales Retention",
+          "email": "kent.hartsuiker@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kenthartsuiker",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Lorena Holguin",
+          "title": "Director Of Product Marketing",
+          "email": "lorena.holguin@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/lorenaholguin",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "David Zimbeck",
+          "title": "Member Board Of Directors",
+          "email": "david.zimbeck@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/davidzimbeck",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Amanda Munson",
+          "title": "Director, HRIS And Technology",
+          "email": "amanda.munson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/amandamunson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Aron Larson",
+          "title": "Director Of Technology Support",
+          "email": "aron.larson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/aronlarson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Trent Myron",
+          "title": "Director Of Finance",
+          "email": "trent.myron@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/trentmyron",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "ROI measurement and budget justification",
+            "painPoint": "95% of AI projects fail to show measurable ROI",
+            "solution": "Prove AI investment value with real business metrics",
+            "urgency": "AI spending is increasing but ROI visibility is lacking"
+          }
+        },
+        {
+          "name": "Glenda Bittner",
+          "title": "Director Of Operations Support",
+          "email": "glenda.bittner@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/glendabittner",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Corey Anson",
+          "title": "Director, Retention",
+          "email": "corey.anson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/coreyanson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Greg Honl",
+          "title": "Bank Director",
+          "email": "greg.honl@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/greghonl",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Anna Mitchell",
+          "title": "Director, Human Resources",
+          "email": "anna.mitchell@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/annamitchell",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Carleen Frey",
+          "title": "Director Of IT Audit And Data Analytics",
+          "email": "carleen.frey@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/carleenfrey",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Missy Kuiper",
+          "title": "Director Of Accounting",
+          "email": "missy.kuiper@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/missykuiper",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Jody Borstad",
+          "title": "Director",
+          "email": "jody.borstad@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jodyborstad",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Jason Schmidt",
+          "title": "Director Business Intelligence",
+          "email": "jason.schmidt@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jasonschmidt",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Melissa Carlson",
+          "title": "Director",
+          "email": "melissa.carlson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/melissacarlson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Brian Siemonsma",
+          "title": "Director IT Program Management",
+          "email": "brian.siemonsma@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/briansiemonsma",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Mike Laycock",
+          "title": "Director Of Training",
+          "email": "mike.laycock@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/mikelaycock",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Kodi Benson",
+          "title": "Director Of Customer Service Workforce Management",
+          "email": "kodi.benson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kodibenson",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Dana Dykhouse",
+          "title": "Chief Executive Officer",
+          "email": "dana.dykhouse@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/danadykhouse",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "AI initiative success and business impact",
+            "painPoint": "AI projects lack clear business outcome measurement",
+            "solution": "Prove AI project value with measurable business metrics",
+            "urgency": "AI investments need demonstrable ROI for continued funding"
+          }
+        },
+        {
+          "name": "Kathy Hess",
+          "title": "Director Of Telecommunications",
+          "email": "kathy.hess@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kathyhess",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        },
+        {
+          "name": "Rose Aesoph",
+          "title": "Director Of Accounting Payments",
+          "email": "rose.aesoph@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/roseaesoph",
+          "confidence": 85,
+          "influenceScore": 9.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "decision",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "95% of generative AI pilots fail to show business impact. Our Snowflake-native platform helps you prove AI ROI and justify your $100K+ AI investments with measurable business outcomes.",
+            "valueProp": "ROI measurement and AI investment justification for executive decision makers",
+            "callToAction": "Schedule a 15-minute demo to see how we help CFOs measure AI ROI"
+          },
+          "personalizedApproach": {
+            "focus": "Technical implementation and security",
+            "painPoint": "AI initiatives lack measurable business impact",
+            "solution": "Snowflake-native platform for secure AI ROI tracking",
+            "urgency": "Technical teams need to prove AI business value"
+          }
+        }
+      ],
+      "champion": [
+        {
+          "name": "Hannah Nolte",
+          "title": "Human Resources Business Partner",
+          "email": "hannah.nolte@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/hannahnolte",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "stakeholder",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "Track the business impact of your AI products and engineering initiatives. Our Snowflake-native platform provides real-time ROI visibility for your AI investments.",
+            "valueProp": "Product and engineering leaders can track AI initiative success",
+            "callToAction": "Learn how we help teams measure AI project success"
+          },
+          "personalizedApproach": {
+            "focus": "AI initiative success and business impact",
+            "painPoint": "AI projects lack clear business outcome measurement",
+            "solution": "Prove AI project value with measurable business metrics",
+            "urgency": "AI investments need demonstrable ROI for continued funding"
+          }
+        },
+        {
+          "name": "Melissa Sand",
+          "title": "HR Business Partner",
+          "email": "melissa.sand@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/melissasand",
+          "confidence": 78,
+          "influenceScore": 8.1,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "stakeholder",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "Track the business impact of your AI products and engineering initiatives. Our Snowflake-native platform provides real-time ROI visibility for your AI investments.",
+            "valueProp": "Product and engineering leaders can track AI initiative success",
+            "callToAction": "Learn how we help teams measure AI project success"
+          },
+          "personalizedApproach": {
+            "focus": "AI initiative success and business impact",
+            "painPoint": "AI projects lack clear business outcome measurement",
+            "solution": "Prove AI project value with measurable business metrics",
+            "urgency": "AI investments need demonstrable ROI for continued funding"
+          }
+        }
+      ],
+      "stakeholder": [
+        {
+          "name": "Jimmy Gardner",
+          "title": "Head Of Product Strategy",
+          "email": "jimmy.gardner@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/jimmygardner",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "champion",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "As a data science leader, you understand the challenge of measuring AI impact. Our platform gives you the visibility to prove your AI initiatives are driving real business value.",
+            "valueProp": "Technical champions can demonstrate AI success with measurable outcomes",
+            "callToAction": "See how we help data teams prove AI business impact"
+          },
+          "personalizedApproach": {
+            "focus": "Product management and user experience",
+            "painPoint": "AI features launched but user impact unknown",
+            "solution": "Track AI feature adoption and business impact",
+            "urgency": "Product teams need AI feature performance data"
+          }
+        },
+        {
+          "name": "Floyd Rummel",
+          "title": "Market Leader",
+          "email": "floyd.rummel@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/floydrummel",
+          "confidence": 68,
+          "influenceScore": 7.2,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "stakeholder",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "Track the business impact of your AI products and engineering initiatives. Our Snowflake-native platform provides real-time ROI visibility for your AI investments.",
+            "valueProp": "Product and engineering leaders can track AI initiative success",
+            "callToAction": "Learn how we help teams measure AI project success"
+          },
+          "personalizedApproach": {
+            "focus": "AI initiative success and business impact",
+            "painPoint": "AI projects lack clear business outcome measurement",
+            "solution": "Prove AI project value with measurable business metrics",
+            "urgency": "AI investments need demonstrable ROI for continued funding"
+          }
+        }
+      ],
+      "blocker": [],
+      "introducer": [
+        {
+          "name": "Joe Vanden Bosch",
+          "title": "Product Owner",
+          "email": "joe.vanden.bosch@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/joevandenbosch",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "stakeholder",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "Track the business impact of your AI products and engineering initiatives. Our Snowflake-native platform provides real-time ROI visibility for your AI investments.",
+            "valueProp": "Product and engineering leaders can track AI initiative success",
+            "callToAction": "Learn how we help teams measure AI project success"
+          },
+          "personalizedApproach": {
+            "focus": "AI initiative success and business impact",
+            "painPoint": "AI projects lack clear business outcome measurement",
+            "solution": "Prove AI project value with measurable business metrics",
+            "urgency": "AI investments need demonstrable ROI for continued funding"
+          }
+        },
+        {
+          "name": "Michelle Gullickson",
+          "title": "Directing Officer, Project Management Office",
+          "email": "michelle.gullickson@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/michellegullickson",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "stakeholder",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "Track the business impact of your AI products and engineering initiatives. Our Snowflake-native platform provides real-time ROI visibility for your AI investments.",
+            "valueProp": "Product and engineering leaders can track AI initiative success",
+            "callToAction": "Learn how we help teams measure AI project success"
+          },
+          "personalizedApproach": {
+            "focus": "AI initiative success and business impact",
+            "painPoint": "AI projects lack clear business outcome measurement",
+            "solution": "Prove AI project value with measurable business metrics",
+            "urgency": "AI investments need demonstrable ROI for continued funding"
+          }
+        },
+        {
+          "name": "Denny Sanford",
+          "title": "Chairman",
+          "email": "denny.sanford@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/dennysanford",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "stakeholder",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "Track the business impact of your AI products and engineering initiatives. Our Snowflake-native platform provides real-time ROI visibility for your AI investments.",
+            "valueProp": "Product and engineering leaders can track AI initiative success",
+            "callToAction": "Learn how we help teams measure AI project success"
+          },
+          "personalizedApproach": {
+            "focus": "AI initiative success and business impact",
+            "painPoint": "AI projects lack clear business outcome measurement",
+            "solution": "Prove AI project value with measurable business metrics",
+            "urgency": "AI investments need demonstrable ROI for continued funding"
+          }
+        },
+        {
+          "name": "Nichole Moeller",
+          "title": "Product Owner",
+          "email": "nichole.moeller@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/nicholemoeller",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "stakeholder",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "Track the business impact of your AI products and engineering initiatives. Our Snowflake-native platform provides real-time ROI visibility for your AI investments.",
+            "valueProp": "Product and engineering leaders can track AI initiative success",
+            "callToAction": "Learn how we help teams measure AI project success"
+          },
+          "personalizedApproach": {
+            "focus": "AI initiative success and business impact",
+            "painPoint": "AI projects lack clear business outcome measurement",
+            "solution": "Prove AI project value with measurable business metrics",
+            "urgency": "AI investments need demonstrable ROI for continued funding"
+          }
+        },
+        {
+          "name": "Kristina Kuhnert",
+          "title": "Product Owner",
+          "email": "kristina.kuhnert@firstpremierbank.com",
+          "phone": "+1-555-0000",
+          "linkedin": "https://linkedin.com/in/kristinakuhnert",
+          "confidence": 58,
+          "influenceScore": 5.8,
+          "source": "coresignal-keyexecutives",
+          "buyerRole": "stakeholder",
+          "winningVariantMessaging": {
+            "subject": "Close the AI Impact Gap - Measure Your AI ROI",
+            "message": "Track the business impact of your AI products and engineering initiatives. Our Snowflake-native platform provides real-time ROI visibility for your AI investments.",
+            "valueProp": "Product and engineering leaders can track AI initiative success",
+            "callToAction": "Learn how we help teams measure AI project success"
+          },
+          "personalizedApproach": {
+            "focus": "AI initiative success and business impact",
+            "painPoint": "AI projects lack clear business outcome measurement",
+            "solution": "Prove AI project value with measurable business metrics",
+            "urgency": "AI investments need demonstrable ROI for continued funding"
+          }
+        }
+      ]
+    },
+    "cohesion": {
+      "score": 85,
+      "level": "Excellent",
+      "overallScore": 85,
+      "departmentAlignment": 0.8,
+      "signal": "Strong cross-departmental alignment identified",
+      "strength": 0.85,
+      "source": "cohesion_analysis",
+      "confidence": 0.9
+    },
+    "dynamics": {
+      "decisionFlow": "Top-down with champion influence",
+      "engagementStrategy": "Start with decision makers, leverage champions",
+      "timeline": "3-6 months typical sales cycle"
+    },
+    "opportunitySignals": [
+      {
+        "signal": "Executive team expansion indicates growth",
+        "strength": 0.7,
+        "source": "organizational_growth",
+        "confidence": 0.8
+      }
+    ],
+    "painSignals": [
+      {
+        "signal": "Manual processes requiring automation",
+        "strength": 0.6,
+        "source": "process_inefficiency",
+        "confidence": 0.7
+      }
+    ],
+    "benchmark": {
+      "overallScore": 85,
+      "roleDistribution": 92,
+      "influenceBalance": 88,
+      "cohesionScore": 85,
+      "dataQuality": 90
+    },
+    "winningVariantContext": {
+      "productName": "AI Impact Visibility Platform",
+      "targetMarket": "Mid-market companies with $100K+ AI investments",
+      "valueProposition": "Close the AI Impact Gap - Measure Your AI ROI",
+      "keyMessage": "95% of generative AI pilots are failures - prove your AI ROI",
+      "deploymentModel": "Snowflake-native (100% inside customer Snowflake account)",
+      "targetDepartments": [
+        "data science",
+        "product",
+        "engineering",
+        "analytics",
+        "finance"
+      ],
+      "dealSize": "$100K+ annually",
+      "sellerCompany": "Winning Variant"
+    },
+    "metadata": {
+      "enhanced": true,
+      "enhancedAt": "2025-10-22T17:06:54.566Z",
+      "winningVariantOptimized": true
+    }
+  },
+  "metadata": {
+    "generatedAt": "2025-10-21T16:52:10.877Z",
+    "executivesFound": 32,
+    "dataSource": "coresignal-keyexecutives",
+    "confidence": "high",
+    "optimized": true,
+    "optimizedAt": "2025-10-22T17:06:54.567Z",
+    "targetSize": 14,
+    "actualSize": 0,
+    "roleDistribution": {
+      "decision": 0,
+      "champion": 0,
+      "stakeholder": 0,
+      "introducer": 0
+    }
+  },
+  "totalMembers": 0,
+  "roles": {
+    "decision": [],
+    "champion": [],
+    "stakeholder": [],
+    "introducer": []
+  },
+  "members": []
+}
