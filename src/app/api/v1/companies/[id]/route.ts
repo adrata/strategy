@@ -361,7 +361,6 @@ export async function PATCH(
       // SBI fields
       'confidence', 'sources', 'lastVerified', 'parentCompanyName', 'parentCompanyDomain',
       // Additional fields found in UI
-      'targetIndustry'
     ];
 
     // Filter body to only allowed fields FIRST
@@ -538,25 +537,35 @@ export async function PATCH(
     });
 
   } catch (error) {
+    // Log the full error with stack trace
     console.error('❌ [COMPANIES API] Error updating company:', {
       companyId: id,
+      requestBody: body,
+      updateData,
       error: error instanceof Error ? {
         message: error.message,
         stack: error.stack,
         name: error.name
       } : error,
-      // Include Prisma-specific error details if available
       prismaCode: error && typeof error === 'object' && 'code' in error ? error.code : undefined,
       prismaMessage: error && typeof error === 'object' && 'message' in error ? error.message : undefined,
       prismaMeta: error && typeof error === 'object' && 'meta' in error ? error.meta : undefined
     });
     
-    // Handle unique constraint violations
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
-      return NextResponse.json(
-        { success: false, error: 'Company with this information already exists' },
-        { status: 400 }
-      );
+    // Handle specific Prisma errors
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'P2002') {
+        return NextResponse.json(
+          { success: false, error: 'Company with this information already exists', code: 'DUPLICATE' },
+          { status: 400 }
+        );
+      }
+      if (error.code === 'P2025') {
+        return NextResponse.json(
+          { success: false, error: 'Company not found or has been deleted', code: 'NOT_FOUND' },
+          { status: 404 }
+        );
+      }
     }
     
     const errorMessage = error instanceof Error ? error.message : 'Failed to update company';
@@ -564,7 +573,8 @@ export async function PATCH(
       { 
         success: false, 
         error: 'Failed to update company',
-        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
+        code: 'UPDATE_FAILED'
       },
       { status: 500 }
     );
