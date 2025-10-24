@@ -636,12 +636,12 @@ export default function MatchGroupReportPage() {
           <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-black mb-4">Recommended Engagement Strategy</h3>
             <ul className="space-y-3">
-              {strategicRecommendations.map((recommendation, index) => (
+              {strategicRecommendations?.map((recommendation, index) => (
                 <li key={index} className="flex items-start gap-3">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
                   <span className="text-gray-700">{recommendation}</span>
                 </li>
-              ))}
+              )) || <li className="text-gray-500">No recommendations available</li>}
             </ul>
           </div>
         </section>
