@@ -533,7 +533,7 @@ export default function MatchGroupReportPage() {
               <div>
                 <h4 className="text-lg font-semibold text-black mb-3">Growth Signals</h4>
                 <ul className="text-sm text-gray-700 space-y-2">
-                  {salesIntent.signals.map((signal, index) => (
+                  {salesIntent?.signals?.map((signal, index) => (
                     <li key={index} className="flex items-start gap-2">
                       <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
                       {signal}
