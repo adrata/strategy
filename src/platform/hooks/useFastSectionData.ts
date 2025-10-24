@@ -94,22 +94,22 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     // This ensures that when a field is saved, we ALWAYS fetch fresh data instead of stale cache
     let shouldForceRefresh = forceRefresh;
     if (typeof window !== 'undefined' && !forceRefresh) {
-      const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
-        key.startsWith('force-refresh-') && key.includes(section)
-      );
+      // 🚀 INDUSTRY BEST PRACTICE: Only clear section-level flags, ignore record-specific flags
+      // Record-specific flags (like force-refresh-companies-01K8B82...) are only read/cleared by loadDirectRecord
+      // This prevents race conditions where useFastSectionData clears flags before PipelineDetailPage can read them
+      const sectionLevelFlag = `force-refresh-${section}`;
+      const hasSectionLevelFlag = sessionStorage.getItem(sectionLevelFlag);
       
-      if (forceRefreshKeys.length > 0) {
-        console.log(`🔄 [FAST SECTION DATA] Force refresh detected, clearing ALL caches for ${section}`, {
+      if (hasSectionLevelFlag) {
+        console.log(`🔄 [FAST SECTION DATA] Section-level force refresh detected for ${section}`, {
           section,
-          forceRefreshKeys,
+          sectionLevelFlag,
           workspaceId
         });
         
-        // Remove force-refresh flags
-        forceRefreshKeys.forEach(key => {
-          console.log(`🗑️ [FAST SECTION DATA] Removing force-refresh key: ${key}`);
-          sessionStorage.removeItem(key);
-        });
+        // Remove only the section-level flag (not record-specific flags)
+        sessionStorage.removeItem(sectionLevelFlag);
+        console.log(`🗑️ [FAST SECTION DATA] Removed section-level force-refresh key: ${sectionLevelFlag}`);
         
         // Clear localStorage cache to prevent stale data
         const storageKey = `adrata-${section}-${workspaceId}`;

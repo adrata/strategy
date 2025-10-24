@@ -378,16 +378,37 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     
     // Only check caches if NO force-refresh flags were detected
     if (!shouldSkipAllCaches) {
+      // 🚀 INDUSTRY BEST PRACTICE: Check for force-refresh flags first
+      const forceRefreshRecordKey = `force-refresh-${section}-${recordId}`;
+      const hasForceRefreshFlag = sessionStorage.getItem(forceRefreshRecordKey) === 'true';
+      
       // Check the optimized cache first
       const currentRecord = sessionStorage.getItem(`current-record-${section}`);
       if (currentRecord) {
         try {
           const { id, data, timestamp } = JSON.parse(currentRecord);
-          if (id === recordId && Date.now() - timestamp < 300000) { // 5 minute cache
-            console.log(`⚡ [INSTANT LOAD] Found record in optimized cache - instant loading:`, data.name || data.fullName || recordId);
+          const cacheAge = Date.now() - timestamp;
+          const isStale = cacheAge > 30000; // 30 seconds threshold
+          
+          console.log(`🔍 [CACHE CHECK] Optimized cache:`, {
+            recordId: id,
+            targetId: recordId,
+            cacheAge: `${Math.round(cacheAge / 1000)}s`,
+            isStale,
+            hasForceRefreshFlag,
+            willUseCache: id === recordId && !isStale && !hasForceRefreshFlag
+          });
+          
+          if (id === recordId && !isStale && !hasForceRefreshFlag) {
+            console.log(`⚡ [INSTANT LOAD] Found fresh record in optimized cache - instant loading:`, data.name || data.fullName || recordId);
             setSelectedRecord(data);
             console.log(`✅ [INSTANT LOAD] Record set from optimized cache: ${data.name || data.id}`);
             return;
+          } else if (isStale) {
+            console.log(`🔄 [CACHE CHECK] Cache is stale (${Math.round(cacheAge / 1000)}s old), fetching fresh data`);
+          } else if (hasForceRefreshFlag) {
+            console.log(`🔄 [CACHE CHECK] Force refresh flag detected, fetching fresh data`);
+            sessionStorage.removeItem(forceRefreshRecordKey);
           }
         } catch (error) {
           console.warn('Failed to parse optimized cached record:', error);
@@ -399,10 +420,29 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       if (cachedRecord) {
         try {
           const record = JSON.parse(cachedRecord);
-          console.log(`⚡ [INSTANT LOAD] Found record in sessionStorage - instant loading:`, record.name || record.fullName || recordId);
-          setSelectedRecord(record);
-          console.log(`✅ [INSTANT LOAD] Record set from sessionStorage: ${record.name || record.id}`);
-          return;
+          const recordAge = record.updatedAt ? Date.now() - new Date(record.updatedAt).getTime() : 0;
+          const isStale = recordAge > 30000; // 30 seconds threshold
+          
+          console.log(`🔍 [CACHE CHECK] SessionStorage cache:`, {
+            recordId: record.id,
+            targetId: recordId,
+            recordAge: `${Math.round(recordAge / 1000)}s`,
+            isStale,
+            hasForceRefreshFlag,
+            willUseCache: record.id === recordId && !isStale && !hasForceRefreshFlag
+          });
+          
+          if (record.id === recordId && !isStale && !hasForceRefreshFlag) {
+            console.log(`⚡ [INSTANT LOAD] Found fresh record in sessionStorage - instant loading:`, record.name || record.fullName || recordId);
+            setSelectedRecord(record);
+            console.log(`✅ [INSTANT LOAD] Record set from sessionStorage: ${record.name || record.id}`);
+            return;
+          } else if (isStale) {
+            console.log(`🔄 [CACHE CHECK] SessionStorage cache is stale (${Math.round(recordAge / 1000)}s old), fetching fresh data`);
+          } else if (hasForceRefreshFlag) {
+            console.log(`🔄 [CACHE CHECK] Force refresh flag detected, fetching fresh data`);
+            sessionStorage.removeItem(forceRefreshRecordKey);
+          }
         } catch (error) {
           console.warn('Failed to parse cached record:', error);
         }
@@ -543,131 +583,18 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       dataLength: data.length
     });
 
-    // 🎯 CRITICAL FIX: Check for force-refresh flags FIRST
-    // This ensures saved changes are fetched fresh instead of serving stale cached data
-    if (typeof window !== 'undefined') {
-      const forceRefreshRecordKey = `force-refresh-${section}-${recordId}`;
-      const forceRefreshSectionKey = `force-refresh-${section}`;
-      const hasRecordFlag = sessionStorage.getItem(forceRefreshRecordKey);
-      const hasSectionFlag = sessionStorage.getItem(forceRefreshSectionKey);
-      const isForceRefresh = hasRecordFlag === 'true' || hasSectionFlag === 'true';
-      
-      console.log(`🔍 [RECORD LOADING useEffect] Force refresh check:`, {
-        section,
-        recordId,
-        forceRefreshRecordKey,
-        forceRefreshSectionKey,
-        hasRecordFlag,
-        hasSectionFlag,
-        isForceRefresh,
-        willCallLoadDirectRecord: isForceRefresh,
-        allForceRefreshFlags: Object.keys(sessionStorage).filter(k => k.startsWith('force-refresh-'))
-      });
-      
-      if (isForceRefresh) {
-        console.log(`🔄 [RECORD LOADING] Force refresh detected for ${section} record ${recordId}, clearing flags.`);
-        sessionStorage.removeItem(forceRefreshRecordKey);
-        sessionStorage.removeItem(forceRefreshSectionKey);
-        // Clear all related caches
-        sessionStorage.removeItem(`cached-${section}-${recordId}`);
-        sessionStorage.removeItem(`current-record-${section}`);
-        // 🎯 CRITICAL: Call loadDirectRecord directly to fetch fresh data
-        console.log(`🔄 [RECORD LOADING] Calling loadDirectRecord for fresh data: ${recordId}`);
-        loadDirectRecord(recordId);
-        return; // Exit early to skip cache checks
-      }
-      
-      // 🚫 PREVENT INFINITE LOOPS: Only skip if we already have the record AND no force-refresh flags
-      // If force-refresh flags exist, we should always reload even if we have the record
-      if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
-        console.log(`🔄 [PREVENT LOOP] Already loading or have record: ${recordId} (and no force-refresh flags)`);
-        return;
-      }
-    } else if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
-      console.log(`🔄 [PREVENT LOOP] Already loading or have record: ${recordId} (no window object)`);
+    // 🚀 INDUSTRY BEST PRACTICE: Always call loadDirectRecord when navigating to a record
+    // This ensures fresh data is always fetched, with proper caching handled inside loadDirectRecord
+    // No more complex sessionStorage flag management with race conditions
+    if (directRecordLoading) {
+      console.log(`🔄 [RECORD LOADING] Already loading record: ${recordId}`);
       return;
     }
     
-    // 🚫 PREVENT INFINITE LOOPS: Add debounce to prevent rapid-fire calls
-    const timeoutId = setTimeout(() => {
-      // Check again after timeout to ensure we still need to load
-      if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
-        console.log(`🔄 [DEBOUNCE] Record already loaded or loading: ${recordId}`);
-        return;
-      }
-      
-      // 🎯 CRITICAL FIX: Check for force-refresh flags again BEFORE using cached data
-      // This prevents using stale data from the data array
-      const shouldForceFresh = typeof window !== 'undefined' && (
-        sessionStorage.getItem(`force-refresh-${section}-${recordId}`) === 'true' ||
-        sessionStorage.getItem(`force-refresh-${section}`) === 'true'
-      );
-      
-      if (shouldForceFresh) {
-        console.log(`🔄 [DEBOUNCE] Force-refresh flags still present, skipping cache and calling loadDirectRecord`);
-        loadDirectRecord(recordId);
-        return;
-      }
-      
-      // If we have data loaded, try to find the record in it
-      if (data.length > 0) {
-        console.log(`🔍 [DATA DEBUG] Looking for record ${recordId} in ${data.length} cached records`);
-        console.log(`🔍 [DATA DEBUG] Available record IDs:`, data.slice(0, 5).map(r => ({ id: r.id, name: r.name })));
-        console.log(`🔍 [DATA DEBUG] Section: ${section}, RecordId: ${recordId}`);
-        
-        // For demo scenarios, also check userId field (contains demo IDs like zp-kirk-harbaugh-2025)
-        const record = data.find((r: any) => r['id'] === recordId || r['userId'] === recordId);
-        
-        console.log(`🔍 [DATA DEBUG] Record search result:`, record ? 'FOUND' : 'NOT FOUND');
-        console.log(`🔍 [DATA DEBUG] Searching for ID: ${recordId}`);
-        console.log(`🔍 [DATA DEBUG] First few records:`, data.slice(0, 3).map(r => ({ id: r.id, name: r.name })));
-        
-        if (record) {
-          console.log(`🔗 [Direct URL] Found ${section} record in cached data:`, {
-            id: record.id,
-            name: record.name,
-            description: record.description ? 'Yes' : 'No',
-            website: record.website ? 'Yes' : 'No',
-            source: 'cached'
-          });
-          
-          // Keep the previous record in case we need to fall back
-          if (selectedRecord && selectedRecord.id !== record.id) {
-            setPreviousRecord(selectedRecord);
-          }
-          setSelectedRecord(record);
-          console.log(`✅ [RECORD LOADING] Record set from cached data: ${record.name || record.id}`);
-          return;
-        } else {
-          console.log(`⚠️ [DATA DEBUG] Record ${recordId} not found in cached data, will try direct load`);
-        }
-      }
-      
-      // If we have data but no record found, or no data at all, try direct loading
-      if (!selectedRecord || selectedRecord.id !== recordId) {
-        console.log(`🔍 [Direct URL] Record not found in data, attempting direct load for: ${recordId}`);
-        
-        // Check if this is an external ID (Coresignal format) - these should not be used for navigation
-        if (recordId && recordId.includes('coresignal')) {
-          console.error(`❌ [Direct URL] External Coresignal ID detected: ${recordId}. These should not be used for navigation.`);
-          setDirectRecordError('External ID detected. This record may not exist in the current workspace.');
-          return;
-        }
-        
-        // Only attempt direct loading if we have a valid recordId and not already loading
-        if (recordId && recordId !== 'undefined' && recordId !== 'null' && !directRecordLoading) {
-          loadDirectRecord(recordId);
-        } else if (directRecordLoading) {
-          console.log(`⏳ [Direct URL] Already loading record, skipping duplicate request`);
-        } else {
-          console.error(`❌ [Direct URL] Invalid record ID: ${recordId}`);
-          setDirectRecordError('Invalid record ID');
-        }
-      }
-    }, 100); // 100ms debounce to prevent rapid-fire calls
-    
-    // Cleanup timeout on unmount or dependency change
-    return () => clearTimeout(timeoutId);
+    // Always call loadDirectRecord - it will handle caching and force-refresh logic internally
+    console.log(`🔄 [RECORD LOADING] Loading record: ${recordId} (always fresh)`);
+    loadDirectRecord(recordId);
+    return; // Exit early - loadDirectRecord handles everything
   }, [slug, section, data.length, selectedRecord?.id, loadDirectRecord]); // 🚀 FIX: Added loadDirectRecord to dependencies
 
   // Handle section navigation

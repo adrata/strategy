@@ -1096,11 +1096,9 @@ export function UniversalRecordTemplate({
       }
       console.log('✅ [UNIVERSAL] Record updated successfully:', result.data);
 
-      // Set force-refresh flag for proper cache invalidation
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem(`force-refresh-${recordType}`, Date.now().toString());
-        console.log(`🔄 [UNIVERSAL] Set force-refresh flag for ${recordType}`);
-      }
+      // 🚀 INDUSTRY BEST PRACTICE: Only set record-specific flags to avoid race conditions
+      // Section-level flags are cleared by useFastSectionData before PipelineDetailPage can read them
+      // Record-specific flags are only read/cleared by loadDirectRecord, preventing race conditions
 
       // Update local record state
       setLocalRecord(result.data);
