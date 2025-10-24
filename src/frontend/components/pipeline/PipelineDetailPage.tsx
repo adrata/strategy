@@ -29,6 +29,7 @@ interface PipelineDetailPageProps {
 }
 
 export function PipelineDetailPage({ section, slug, standalone = false }: PipelineDetailPageProps) {
+  const DEBUG_PIPELINE = process.env.NODE_ENV === 'development' && false; // Enable manually when needed
   const router = useRouter();
   const { navigateToPipeline, navigateToPipelineItem } = useWorkspaceNavigation();
   const { user } = useUnifiedAuth();
@@ -87,63 +88,38 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // 🆕 CRITICAL FIX: Get workspace ID from multiple sources with priority
-  const getCurrentWorkspaceId = useCallback(async () => {
-    try {
-      // 1. First try to get from JWT token (most reliable)
-      const session = await import('@/platform/auth/service').then(m => m.UnifiedAuthService.getSession());
-      if (session?.accessToken) {
-        try {
-          const jwt = await import('jsonwebtoken');
-          const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
-          const decoded = jwt.verify(session.accessToken, secret) as any;
-          if (decoded?.workspaceId) {
-            console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from JWT: ${decoded.workspaceId}`);
-            return decoded.workspaceId;
-          }
-        } catch (error) {
-          console.warn('⚠️ [PIPELINE DETAIL] Failed to decode JWT token:', error);
-        }
-      }
-      
-      // 2. Fallback to acquisitionData
-      if (acquisitionData?.auth?.authUser?.activeWorkspaceId) {
-        console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from acquisitionData: ${acquisitionData.auth.authUser.activeWorkspaceId}`);
-        return acquisitionData.auth.authUser.activeWorkspaceId;
-      }
-      
-      // 3. Fallback to user activeWorkspaceId
-      if (user?.activeWorkspaceId) {
-        console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from user: ${user.activeWorkspaceId}`);
-        return user.activeWorkspaceId;
-      }
-      
-      // 4. Last resort: first workspace
-      if (user?.workspaces?.[0]?.id) {
-        console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from first workspace: ${user.workspaces[0].id}`);
-        return user.workspaces[0].id;
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('❌ [PIPELINE DETAIL] Error getting workspace ID:', error);
-      return acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId || null;
+  // 🆕 PERFORMANCE FIX: Simplified workspace ID resolution without JWT verification
+  const getCurrentWorkspaceId = useCallback(() => {
+    // 1. Use acquisitionData as primary source (most reliable)
+    if (acquisitionData?.auth?.authUser?.activeWorkspaceId) {
+      if (DEBUG_PIPELINE) console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from acquisitionData: ${acquisitionData.auth.authUser.activeWorkspaceId}`);
+      return acquisitionData.auth.authUser.activeWorkspaceId;
     }
-  }, [acquisitionData, user]);
-
-  // 🆕 CRITICAL FIX: Update workspace ID when it changes
-  useEffect(() => {
-    const updateWorkspaceId = async () => {
-      const newWorkspaceId = await getCurrentWorkspaceId();
-      if (newWorkspaceId && newWorkspaceId !== currentWorkspaceId) {
-        console.log(`🔄 [PIPELINE DETAIL] Workspace ID changed: ${currentWorkspaceId} -> ${newWorkspaceId}`);
-        setCurrentWorkspaceId(newWorkspaceId);
-        setCurrentUserId(user?.id || null);
-      }
-    };
     
-    updateWorkspaceId();
-  }, [acquisitionData, user, getCurrentWorkspaceId, currentWorkspaceId]);
+    // 2. Fallback to user activeWorkspaceId
+    if (user?.activeWorkspaceId) {
+      if (DEBUG_PIPELINE) console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from user: ${user.activeWorkspaceId}`);
+      return user.activeWorkspaceId;
+    }
+    
+    // 3. Last resort: first workspace
+    if (user?.workspaces?.[0]?.id) {
+      if (DEBUG_PIPELINE) console.log(`🔍 [PIPELINE DETAIL] Got workspace ID from first workspace: ${user.workspaces[0].id}`);
+      return user.workspaces[0].id;
+    }
+    
+    return null;
+  }, [acquisitionData?.auth?.authUser?.activeWorkspaceId, user?.activeWorkspaceId, user?.workspaces]);
+
+  // 🆕 PERFORMANCE FIX: Update workspace ID when it changes (synchronous)
+  useEffect(() => {
+    const newWorkspaceId = getCurrentWorkspaceId();
+    if (newWorkspaceId && newWorkspaceId !== currentWorkspaceId) {
+      if (DEBUG_PIPELINE) console.log(`🔄 [PIPELINE DETAIL] Workspace ID changed: ${currentWorkspaceId} -> ${newWorkspaceId}`);
+      setCurrentWorkspaceId(newWorkspaceId);
+      setCurrentUserId(user?.id || null);
+    }
+  }, [getCurrentWorkspaceId, currentWorkspaceId, user?.id]);
 
   const workspaceId = currentWorkspaceId;
   // Map workspace to correct user ID
@@ -161,20 +137,23 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   };
   const userId = getUserIdForWorkspace(workspaceId || '');
   
-  // 🚀 NAVIGATION FIX: Load section data for navigation for all sections
-  // Note: useFastSectionData gets workspaceId and userId from useWorkspaceContext() internally
-  const speedrunHook = useFastSectionData('speedrun', 30);
-  const peopleHook = useFastSectionData('people', 1000);
-  const companiesHook = useFastSectionData('companies', 500);
-  const leadsHook = useFastSectionData('leads', 2000);
-  const prospectsHook = useFastSectionData('prospects', 1000);
+  // 🚀 PERFORMANCE FIX: Load only necessary section data for navigation
+  // Only load data for the current section to prevent excessive hook calls
+  const currentSectionHook = useFastSectionData(section, section === 'speedrun' ? 30 : 1000);
+  const { data: currentSectionData, loading: currentSectionLoading } = currentSectionHook;
   
-  // Extract data for compatibility
-  const { data: speedrunData, loading: speedrunLoading } = speedrunHook;
-  const { data: peopleData, loading: peopleLoading } = peopleHook;
-  const { data: companiesData, loading: companiesLoading } = companiesHook;
-  const { data: leadsData, loading: leadsLoading } = leadsHook;
-  const { data: prospectsData, loading: prospectsLoading } = prospectsHook;
+  // Map to legacy variable names for compatibility
+  const speedrunData = section === 'speedrun' ? currentSectionData : [];
+  const peopleData = section === 'people' ? currentSectionData : [];
+  const companiesData = section === 'companies' ? currentSectionData : [];
+  const leadsData = section === 'leads' ? currentSectionData : [];
+  const prospectsData = section === 'prospects' ? currentSectionData : [];
+  
+  const speedrunLoading = section === 'speedrun' ? currentSectionLoading : false;
+  const peopleLoading = section === 'people' ? currentSectionLoading : false;
+  const companiesLoading = section === 'companies' ? currentSectionLoading : false;
+  const leadsLoading = section === 'leads' ? currentSectionLoading : false;
+  const prospectsLoading = section === 'prospects' ? currentSectionLoading : false;
   
   // Map acquisition data to pipeline format for compatibility (same as working leads page)
   const getSectionData = (section: string) => {
@@ -360,6 +339,8 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     
     // 🎯 CRITICAL FIX: Check for force-refresh flags FIRST before ANY cache checks
     // This ensures saved changes are fetched fresh instead of serving stale cached data
+    let shouldSkipAllCaches = false;
+    
     if (typeof window !== 'undefined') {
       const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
         key.startsWith('force-refresh-') && (key.includes(section) || key.includes(recordId))
@@ -388,50 +369,59 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         
         console.log(`🗑️ [INSTANT LOAD] Cleared session caches for section ${section} and record ${recordId}`);
         
-        // Skip to API call below - don't check any caches
-        // (fall through to API fetch section)
-      } else {
-        // No force-refresh flags, safe to use cached data
-        // Check the optimized cache first
-        const currentRecord = sessionStorage.getItem(`current-record-${section}`);
-        if (currentRecord) {
-          try {
-            const { id, data, timestamp } = JSON.parse(currentRecord);
-            if (id === recordId && Date.now() - timestamp < 300000) { // 5 minute cache
-              console.log(`⚡ [INSTANT LOAD] Found record in optimized cache - instant loading:`, data.name || data.fullName || recordId);
-              setSelectedRecord(data);
-              return;
-            }
-          } catch (error) {
-            console.warn('Failed to parse optimized cached record:', error);
-          }
-        }
-        
-        // Fallback to original cache
-        const cachedRecord = sessionStorage.getItem(`cached-${section}-${recordId}`);
-        if (cachedRecord) {
-          try {
-            const record = JSON.parse(cachedRecord);
-            console.log(`⚡ [INSTANT LOAD] Found record in sessionStorage - instant loading:`, record.name || record.fullName || recordId);
-            setSelectedRecord(record);
+        // Set flag to skip ALL cache checks and go directly to API
+        shouldSkipAllCaches = true;
+      }
+    }
+    
+    // Only check caches if NO force-refresh flags were detected
+    if (!shouldSkipAllCaches) {
+      // Check the optimized cache first
+      const currentRecord = sessionStorage.getItem(`current-record-${section}`);
+      if (currentRecord) {
+        try {
+          const { id, data, timestamp } = JSON.parse(currentRecord);
+          if (id === recordId && Date.now() - timestamp < 300000) { // 5 minute cache
+            console.log(`⚡ [INSTANT LOAD] Found record in optimized cache - instant loading:`, data.name || data.fullName || recordId);
+            setSelectedRecord(data);
+            console.log(`✅ [INSTANT LOAD] Record set from optimized cache: ${data.name || data.id}`);
             return;
-          } catch (error) {
-            console.warn('Failed to parse cached record:', error);
           }
+        } catch (error) {
+          console.warn('Failed to parse optimized cached record:', error);
+        }
+      }
+      
+      // Fallback to original cache
+      const cachedRecord = sessionStorage.getItem(`cached-${section}-${recordId}`);
+      if (cachedRecord) {
+        try {
+          const record = JSON.parse(cachedRecord);
+          console.log(`⚡ [INSTANT LOAD] Found record in sessionStorage - instant loading:`, record.name || record.fullName || recordId);
+          setSelectedRecord(record);
+          console.log(`✅ [INSTANT LOAD] Record set from sessionStorage: ${record.name || record.id}`);
+          return;
+        } catch (error) {
+          console.warn('Failed to parse cached record:', error);
         }
       }
     }
     
     // 🎯 SECOND: Try to find record in already-loaded data (no API call needed)
-    // Note: Force-refresh is already handled above, so this only runs if no flags were found
-    const allData = acquisitionData?.acquireData || acquisitionData || {};
-    const sectionData = allData[section] || [];
-    
-    const existingRecord = sectionData.find((record: any) => record['id'] === recordId);
-    if (existingRecord) {
-      console.log(`⚡ [SMART LOAD] Found record in acquisition data - no API call needed:`, existingRecord.name || existingRecord.fullName || recordId);
-      setSelectedRecord(existingRecord);
-      return;
+    // Note: Skip this if force-refresh flags were detected (shouldSkipAllCaches = true)
+    if (!shouldSkipAllCaches) {
+      const allData = acquisitionData?.acquireData || acquisitionData || {};
+      const sectionData = allData[section] || [];
+      
+      const existingRecord = sectionData.find((record: any) => record['id'] === recordId);
+      if (existingRecord) {
+        console.log(`⚡ [SMART LOAD] Found record in acquisition data - no API call needed:`, existingRecord.name || existingRecord.fullName || recordId);
+        setSelectedRecord(existingRecord);
+        console.log(`✅ [SMART LOAD] Record set from acquisition data: ${existingRecord.name || existingRecord.id}`);
+        return;
+      }
+    } else {
+      console.log(`🔄 [DIRECT LOAD] Skipping acquisition data check due to force-refresh flags - fetching fresh from API`);
     }
 
     // 🎯 FALLBACK: Only make API call if record not found in cache
@@ -514,6 +504,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           }
           
           setSelectedRecord(record);
+          console.log(`✅ [DIRECT LOAD] Record set from API: ${record.name || record.id}`);
         } else {
           console.log(`⚠️ [DIRECT LOAD] Record not found in API response, but continuing with cached data if available`);
           // Don't throw error - let the app continue with cached data
@@ -536,7 +527,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     // Extract ID from slug
     const recordId = extractIdFromSlug(slug);
     
-    console.log(`🔍 [RECORD LOADING] Slug: ${slug}, Extracted ID: ${recordId}`);
+    console.log(`🔍 [RECORD LOADING] Slug: ${slug}, Extracted ID: ${recordId}`, {
+      hasSelectedRecord: !!selectedRecord,
+      selectedRecordId: selectedRecord?.id,
+      directRecordLoading,
+      dataLength: data.length
+    });
     
     // 🚫 PREVENT INFINITE LOOPS: Check if we're already loading this record
     if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
@@ -548,6 +544,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     const timeoutId = setTimeout(() => {
       // Check again after timeout to ensure we still need to load
       if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
+        console.log(`🔄 [DEBOUNCE] Record already loaded or loading: ${recordId}`);
         return;
       }
       
@@ -578,6 +575,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
             setPreviousRecord(selectedRecord);
           }
           setSelectedRecord(record);
+          console.log(`✅ [RECORD LOADING] Record set from cached data: ${record.name || record.id}`);
           return;
         } else {
           console.log(`⚠️ [DATA DEBUG] Record ${recordId} not found in cached data, will try direct load`);
@@ -609,7 +607,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     
     // Cleanup timeout on unmount or dependency change
     return () => clearTimeout(timeoutId);
-  }, [slug, section]); // 🚫 FIXED: Removed data, loading, selectedRecord to prevent infinite loops
+  }, [slug, section, data.length, selectedRecord?.id]); // 🚀 FIX: Added data.length and selectedRecord.id to dependencies
 
   // Handle section navigation
   const handleSectionChange = (newSection: string) => {
@@ -849,40 +847,11 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
             const refreshPromises = [];
             
             // Always refresh the current section
-            if (section === 'leads') {
-              refreshPromises.push(leadsHook.refresh());
-            } else if (section === 'prospects') {
-              refreshPromises.push(prospectsHook.refresh());
-            } else if (section === 'people') {
-              refreshPromises.push(peopleHook.refresh());
-            } else if (section === 'companies') {
-              refreshPromises.push(companiesHook.refresh());
-            } else if (section === 'speedrun') {
-              refreshPromises.push(speedrunHook.refresh());
-            }
+            refreshPromises.push(currentSectionHook.refresh());
             
-            // For people-related records (leads, prospects, opportunities, speedrun), 
-            // also refresh related sections since records can move between them
-            if (['leads', 'prospects', 'opportunities', 'speedrun', 'people'].includes(section)) {
-              // Refresh all people-related sections to catch status changes
-              if (section !== 'leads') refreshPromises.push(leadsHook.refresh());
-              if (section !== 'prospects') refreshPromises.push(prospectsHook.refresh());
-              if (section !== 'people') refreshPromises.push(peopleHook.refresh());
-              if (section !== 'speedrun') refreshPromises.push(speedrunHook.refresh());
-            }
-            
-            // For company records, also refresh related sections since companies are linked to people
-            // and may affect people records, actions, and other related data
-            if (section === 'companies') {
-              console.log('🔄 [PIPELINE DEBUG] Refreshing all hooks for company update');
-              // Refresh people-related sections since people are linked to companies
-              refreshPromises.push(leadsHook.refresh());
-              refreshPromises.push(prospectsHook.refresh());
-              refreshPromises.push(peopleHook.refresh());
-              refreshPromises.push(speedrunHook.refresh());
-              // Note: companiesHook.refresh() is already called above in the "Always refresh the current section" block
-              // No need to call it again here to avoid duplication
-            }
+            // Note: With the performance optimization, we only load the current section's data
+            // Cross-section refreshes are handled by the parent layout's data providers
+            // This reduces the number of API calls and improves performance
             
             // Wait for all refreshes to complete
             await Promise.all(refreshPromises);
