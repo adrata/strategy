@@ -64,33 +64,7 @@ export async function GET(
         deletedAt: null, // Only show non-deleted records
         workspaceId: authUser.workspaceId // Ensure company belongs to user's workspace
       },
-      select: {
-        // Base company fields
-        id: true,
-        name: true,
-        website: true,
-        description: true,
-        descriptionEnriched: true,
-        industry: true,
-        size: true,
-        revenue: true,
-        employeeCount: true,
-        status: true,
-        priority: true,
-        tags: true,
-        notes: true,
-        customFields: true,
-        lastAction: true,
-        lastActionDate: true,
-        nextAction: true,
-        nextActionDate: true,
-        globalRank: true,
-        competitors: true, // Include competitors field
-        linkedinUrl: true,
-        linkedinNavigatorUrl: true,
-        workspaceId: true,
-        createdAt: true,
-        updatedAt: true,
+      include: {
         // Relations
         mainSeller: {
           select: {

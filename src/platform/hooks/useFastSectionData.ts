@@ -89,6 +89,33 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       return;
     }
 
+    // 🚀 PERFORMANCE: Check localStorage cache first (like leads pattern)
+    if (!forceRefresh) {
+      try {
+        const storageKey = `adrata-${section}-${workspaceId}`;
+        const cached = localStorage.getItem(storageKey);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed?.data)) {
+            console.log(`⚡ [FAST SECTION DATA] Loading ${section} from localStorage cache:`, {
+              section,
+              cachedCount: parsed.data.length,
+              cacheTimestamp: parsed.ts
+            });
+            setData(parsed.data);
+            setCount(parsed.data.length);
+            setLoading(false);
+            setError(null);
+            // Still mark as loaded in memory cache
+            setLoadedSections(prev => new Set(prev).add(section));
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn(`⚠️ [FAST SECTION DATA] Failed to load ${section} from cache:`, e);
+      }
+    }
+
     // 🚀 PERFORMANCE: Skip if we already loaded this section (unless force refresh)
     if (!forceRefresh && loadedSections.has(section)) {
       // Check if a force refresh was requested via sessionStorage
@@ -97,22 +124,49 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           key.startsWith('force-refresh-') && key.includes(section)
         );
         
+        // 🔍 DEBUG: Enhanced logging for cache invalidation debugging
+        console.log(`🔍 [FAST SECTION DATA DEBUG] Cache check for section: ${section}`, {
+          section,
+          loadedSections: Array.from(loadedSections),
+          isLoaded: loadedSections.has(section),
+          forceRefresh,
+          allSessionKeys: Object.keys(sessionStorage),
+          forceRefreshKeys,
+          sessionStorageContent: Object.keys(sessionStorage).reduce((acc, key) => {
+            if (key.startsWith('force-refresh-')) {
+              acc[key] = sessionStorage.getItem(key);
+            }
+            return acc;
+          }, {} as Record<string, string>)
+        });
+        
         if (forceRefreshKeys.length > 0) {
-          console.log(`🔄 [FAST SECTION DATA] Force refresh flag detected for ${section}, clearing cache and refetching`);
-          forceRefreshKeys.forEach(key => sessionStorage.removeItem(key));
+          console.log(`🔄 [FAST SECTION DATA] Force refresh flag detected for ${section}, clearing cache and refetching`, {
+            section,
+            forceRefreshKeys,
+            keysToRemove: forceRefreshKeys
+          });
+          forceRefreshKeys.forEach(key => {
+            console.log(`🗑️ [FAST SECTION DATA] Removing force-refresh key: ${key}`);
+            sessionStorage.removeItem(key);
+          });
           setLoadedSections(prev => {
             const newSet = new Set(prev);
             newSet.delete(section);
+            console.log(`🔄 [FAST SECTION DATA] Cleared section ${section} from loadedSections:`, {
+              before: Array.from(prev),
+              after: Array.from(newSet)
+            });
             return newSet;
           });
           // Continue to fetch below
         } else {
-          console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
+          console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded (no force refresh flags found)`);
           setLoading(false);
           return;
         }
       } else {
-        console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
+        console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded (server side)`);
         setLoading(false);
         return;
       }
@@ -283,6 +337,25 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         setData(responseData);
         setCount(responseCount);
         setLoadedSections(prev => new Set(prev).add(section));
+        
+        // 🚀 PERFORMANCE: Cache data in localStorage (like leads pattern)
+        try {
+          const storageKey = `adrata-${section}-${workspaceId}`;
+          const cacheData = {
+            data: responseData,
+            count: responseCount,
+            ts: Date.now()
+          };
+          localStorage.setItem(storageKey, JSON.stringify(cacheData));
+          console.log(`💾 [FAST SECTION DATA] Cached ${section} data to localStorage:`, {
+            section,
+            storageKey,
+            cachedCount: responseData.length,
+            cacheTimestamp: cacheData.ts
+          });
+        } catch (e) {
+          console.warn(`⚠️ [FAST SECTION DATA] Failed to cache ${section} data:`, e);
+        }
         
         console.log(`⚡ [FAST SECTION DATA] Loaded ${section} data:`, {
           count: responseCount,

@@ -187,6 +187,23 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     visibleColumns
   } = preferences;
   
+  // Notify parent of loaded filter values on mount
+  useEffect(() => {
+    // Only run once on mount to sync persisted filters with parent
+    onSearchChange?.(searchQuery);
+    onStatusChange?.(statusFilter);
+    onPriorityChange?.(priorityFilter);
+    onVerticalChange?.(verticalFilter);
+    onRevenueChange?.(revenueFilter);
+    onLastContactedChange?.(lastContactedFilter);
+    onTimezoneChange?.(timezoneFilter);
+    onCompanySizeChange?.(companySizeFilter);
+    onLocationChange?.(locationFilter);
+    onTechnologyChange?.(technologyFilter);
+    onSortChange?.(sortBy);
+    onColumnVisibilityChange?.(visibleColumns);
+  }, []); // Empty deps - only run on mount
+  
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Debounced search function

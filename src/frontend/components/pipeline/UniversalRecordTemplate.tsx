@@ -1526,8 +1526,15 @@ export function UniversalRecordTemplate({
               }
               
               // Set force refresh flag for this record
-              sessionStorage.setItem(`force-refresh-${recordType}-${record.id}`, 'true');
-              console.log(`🔄 [COMPANY UPDATE] Set force refresh flag for ${recordType} record ${record.id}`);
+              const forceRefreshKey = `force-refresh-${recordType}-${record.id}`;
+              sessionStorage.setItem(forceRefreshKey, 'true');
+              console.log(`🔄 [COMPANY UPDATE] Set force refresh flag for ${recordType} record ${record.id}`, {
+                recordType,
+                recordId: record.id,
+                forceRefreshKey,
+                allSessionKeys: Object.keys(sessionStorage),
+                forceRefreshFlags: Object.keys(sessionStorage).filter(key => key.startsWith('force-refresh-'))
+              });
             }
             
             // Trigger server refresh
