@@ -52,7 +52,8 @@ interface UseFastSectionDataReturn {
  * Provides instant section data for middle panel with smart caching
  */
 export function useFastSectionData(section: string, limit: number = 30): UseFastSectionDataReturn {
-  console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
+  const DEBUG_PIPELINE = process.env.NODE_ENV === 'development' && false; // Enable manually when needed
+  if (DEBUG_PIPELINE) console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
   
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { workspaceId, userId, isLoading: workspaceLoading, error: workspaceError } = useWorkspaceContext();
@@ -63,7 +64,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
   const [loadedSections, setLoadedSections] = useState<Set<string>>(new Set());
 
   const fetchSectionData = useCallback(async (forceRefresh: boolean = false) => {
-    console.log(`🔍 [FAST SECTION DATA] Hook called for ${section}:`, {
+    if (DEBUG_PIPELINE) console.log(`🔍 [FAST SECTION DATA] Hook called for ${section}:`, {
       workspaceId: !!workspaceId,
       userId: !!userId,
       authLoading,
@@ -77,7 +78,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     });
     
     if (!workspaceId || !userId || authLoading || workspaceLoading) {
-      console.log(`⏳ [FAST SECTION DATA] Skipping fetch - missing requirements:`, {
+      if (DEBUG_PIPELINE) console.log(`⏳ [FAST SECTION DATA] Skipping fetch - missing requirements:`, {
         workspaceId: !!workspaceId,
         userId: !!userId,
         authLoading,
@@ -428,37 +429,32 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     }
   }, [section, workspaceId, userId, authLoading, workspaceLoading, loadedSections]); // Removed fetchSectionData to prevent infinite loops
 
-  // 🚀 CRITICAL FIX: Monitor for force-refresh flags even when section is already loaded
+  // 🚀 PERFORMANCE FIX: Event-based force refresh monitoring (no interval polling)
   // This solves the issue where saved changes don't persist when navigating back to a record
   useEffect(() => {
     if (!workspaceId || !userId || authLoading || workspaceLoading) {
       return;
     }
 
-    // Check for force-refresh flags in sessionStorage
-    const checkForceRefreshFlags = () => {
-      if (typeof window !== 'undefined') {
-        const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
-          key.startsWith('force-refresh-') && key.includes(section)
-        );
+    // Check for force-refresh flags in sessionStorage immediately
+    if (typeof window !== 'undefined') {
+      const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
+        key.startsWith('force-refresh-') && key.includes(section)
+      );
+      
+      if (forceRefreshKeys.length > 0) {
+        console.log(`🔄 [FAST SECTION DATA] Force refresh flags detected for section ${section}, triggering refetch:`, forceRefreshKeys);
         
-        if (forceRefreshKeys.length > 0) {
-          console.log(`🔄 [FAST SECTION DATA] Force refresh flags detected for already-loaded section ${section}, triggering refetch:`, forceRefreshKeys);
-          
-          // Trigger a forced refetch
-          fetchSectionData(true);
-        }
+        // Remove force-refresh flags
+        forceRefreshKeys.forEach(key => {
+          sessionStorage.removeItem(key);
+        });
+        
+        // Trigger a forced refetch
+        fetchSectionData(true);
       }
-    };
-    
-    // Check immediately when dependencies change
-    checkForceRefreshFlags();
-    
-    // Also set up an interval to check periodically (for cases where user navigates back)
-    const intervalId = setInterval(checkForceRefreshFlags, 1000);
-    
-    return () => clearInterval(intervalId);
-  }, [section, workspaceId, userId, authLoading, workspaceLoading, fetchSectionData]);
+    }
+  }, [section, workspaceId, userId, authLoading, workspaceLoading]);
 
   // 🚀 RETRY: Retry failed network requests after a delay
   useEffect(() => {

@@ -524,14 +524,29 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
     e.preventDefault();
     if (loading) return;
 
+    console.log('📝 [UPDATE MODAL] Submitting form:', {
+      recordType,
+      recordId: record?.id,
+      formData,
+      hasActionData: includeAction,
+      actionData: includeAction ? actionData : undefined
+    });
+
     setLoading(true);
     try {
       await onUpdate(formData, includeAction ? actionData : undefined);
+      console.log('✅ [UPDATE MODAL] Update successful, closing modal');
       onClose();
     } catch (error) {
-      console.error('Error updating record:', error);
+      console.error('❌ [UPDATE MODAL] Update failed:', {
+        error,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        errorStack: error instanceof Error ? error.stack : undefined,
+        recordType,
+        recordId: record?.id
+      });
       const errorMessage = error instanceof Error ? error.message : 'Failed to update record';
-      alert(`${errorMessage}. Please try again.`);
+      alert(`Failed to update ${recordType}. ${errorMessage}. Please check the console for details.`);
     } finally {
       setLoading(false);
     }

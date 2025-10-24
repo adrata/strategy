@@ -2,11 +2,6 @@
 
 import { useParams } from "next/navigation";
 import { PipelineDetailPage } from "@/frontend/components/pipeline/PipelineDetailPage";
-import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
-import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
-import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
-import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
-import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -19,19 +14,9 @@ export default function CompanyDetailPage() {
   console.log('🔍 [COMPANIES PAGE] Slug type:', typeof slug);
 
   return (
-    <AcquisitionOSProvider>
-      <PipelineProvider>
-        <SpeedrunDataProvider>
-          <RecordContextProvider>
-            <ProfilePopupProvider>
-              <PipelineDetailPage
-                section="companies"
-                slug={slug}
-              />
-            </ProfilePopupProvider>
-          </RecordContextProvider>
-        </SpeedrunDataProvider>
-      </PipelineProvider>
-    </AcquisitionOSProvider>
+    <PipelineDetailPage
+      section="companies"
+      slug={slug}
+    />
   );
 }

@@ -277,6 +277,17 @@ export function UniversalRecordTemplate({
   
   // Update local record state when prop changes, but not during pending saves
   useEffect(() => {
+    console.log(`🔄 [UNIVERSAL] Record prop updated:`, {
+      recordId: record?.id,
+      name: record?.name,
+      tradingName: record?.tradingName,
+      description: record?.description,
+      updatedAt: record?.updatedAt,
+      pendingSaves: Array.from(pendingSaves),
+      recentlyUpdatedFields: Array.from(recentlyUpdatedFields),
+      timestamp: Date.now()
+    });
+    
     // Only sync if there are no pending saves for any field
     if (pendingSaves.size === 0) {
       console.log(`🔄 [UNIVERSAL] Syncing localRecord with record prop:`, {
@@ -288,7 +299,9 @@ export function UniversalRecordTemplate({
         linkedinUrl: record?.linkedinUrl,
         linkedin: record?.linkedin,
         createdAt: record?.createdAt,
-        updatedAt: record?.updatedAt
+        updatedAt: record?.updatedAt,
+        tradingName: record?.tradingName,
+        description: record?.description
       });
       
       // If there are recently updated fields, merge carefully to avoid overwriting local changes
@@ -305,10 +318,22 @@ export function UniversalRecordTemplate({
             }
           });
           
+          console.log(`🔄 [UNIVERSAL] Final merged record:`, {
+            id: mergedRecord.id,
+            tradingName: mergedRecord.tradingName,
+            description: mergedRecord.description,
+            updatedAt: mergedRecord.updatedAt
+          });
           return mergedRecord;
         });
       } else {
         // No recently updated fields, safe to sync completely
+        console.log(`🔄 [UNIVERSAL] Setting localRecord directly from record prop (no recently updated fields):`, {
+          id: record.id,
+          tradingName: record.tradingName,
+          description: record.description,
+          updatedAt: record.updatedAt
+        });
         setLocalRecord(record);
       }
     } else {

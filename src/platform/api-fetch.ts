@@ -83,8 +83,26 @@ export async function apiFetch<T = any>(
         errorMessage = errorData.error || errorData.message || errorMessage;
         errorCode = errorData.code || errorCode;
         responseBody = errorData;
-      } catch {
-        // If we can't parse the error response, use the status text
+        
+        // Log the full error response for debugging
+        console.error(`❌ API Error Response:`, {
+          url,
+          status: response.status,
+          errorData,
+          errorMessage,
+          errorCode
+        });
+      } catch (jsonError) {
+        // If we can't parse JSON, try to get text response
+        console.error(`❌ Failed to parse error response as JSON:`, jsonError);
+        try {
+          const errorText = await response.text();
+          console.error(`❌ Error response text:`, errorText);
+          errorMessage = `Server error: ${response.status} ${response.statusText}`;
+        } catch {
+          // Complete failure
+          console.error(`❌ Could not read error response at all`);
+        }
       }
 
       // Enhanced error logging with more context

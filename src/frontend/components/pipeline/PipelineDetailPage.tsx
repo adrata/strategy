@@ -346,7 +346,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         key.startsWith('force-refresh-') && (key.includes(section) || key.includes(recordId))
       );
       
-      console.log(`🔍 [INSTANT LOAD DEBUG] Checking for force-refresh flags:`, {
+      console.log(`🔍 [loadDirectRecord] Checking for force-refresh flags:`, {
         section,
         recordId,
         allSessionStorageKeys: Object.keys(sessionStorage).filter(key => key.startsWith('force-refresh-')),
@@ -354,7 +354,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       });
       
       if (forceRefreshKeys.length > 0) {
-        console.log(`🔄 [INSTANT LOAD] Force refresh detected, clearing flags and ALL session caches:`, {
+        console.log(`🔄 [loadDirectRecord] Force refresh detected, clearing flags and ALL session caches:`, {
           section,
           recordId,
           forceRefreshKeys
@@ -367,12 +367,14 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         sessionStorage.removeItem(`current-record-${section}`);
         sessionStorage.removeItem(`cached-${section}-${recordId}`);
         
-        console.log(`🗑️ [INSTANT LOAD] Cleared session caches for section ${section} and record ${recordId}`);
+        console.log(`🗑️ [loadDirectRecord] Cleared session caches for section ${section} and record ${recordId}`);
         
         // Set flag to skip ALL cache checks and go directly to API
         shouldSkipAllCaches = true;
       }
     }
+    
+    console.log(`🔄 [loadDirectRecord] shouldSkipAllCaches: ${shouldSkipAllCaches}`);
     
     // Only check caches if NO force-refresh flags were detected
     if (!shouldSkipAllCaches) {
@@ -504,7 +506,14 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           }
           
           setSelectedRecord(record);
-          console.log(`✅ [DIRECT LOAD] Record set from API: ${record.name || record.id}`);
+          console.log(`✅ [DIRECT LOAD] Updated selectedRecord state with fresh API data:`, {
+            id: record.id,
+            name: record.name,
+            tradingName: record.tradingName,
+            description: record.description,
+            updatedAt: record.updatedAt,
+            allFields: Object.keys(record).length
+          });
         } else {
           console.log(`⚠️ [DIRECT LOAD] Record not found in API response, but continuing with cached data if available`);
           // Don't throw error - let the app continue with cached data
@@ -539,8 +548,21 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     if (typeof window !== 'undefined') {
       const forceRefreshRecordKey = `force-refresh-${section}-${recordId}`;
       const forceRefreshSectionKey = `force-refresh-${section}`;
-      const isForceRefresh = sessionStorage.getItem(forceRefreshRecordKey) === 'true' || 
-                            sessionStorage.getItem(forceRefreshSectionKey) === 'true';
+      const hasRecordFlag = sessionStorage.getItem(forceRefreshRecordKey);
+      const hasSectionFlag = sessionStorage.getItem(forceRefreshSectionKey);
+      const isForceRefresh = hasRecordFlag === 'true' || hasSectionFlag === 'true';
+      
+      console.log(`🔍 [RECORD LOADING useEffect] Force refresh check:`, {
+        section,
+        recordId,
+        forceRefreshRecordKey,
+        forceRefreshSectionKey,
+        hasRecordFlag,
+        hasSectionFlag,
+        isForceRefresh,
+        willCallLoadDirectRecord: isForceRefresh,
+        allForceRefreshFlags: Object.keys(sessionStorage).filter(k => k.startsWith('force-refresh-'))
+      });
       
       if (isForceRefresh) {
         console.log(`🔄 [RECORD LOADING] Force refresh detected for ${section} record ${recordId}, clearing flags.`);
