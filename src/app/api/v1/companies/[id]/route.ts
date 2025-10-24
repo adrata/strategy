@@ -78,6 +78,8 @@ export async function GET(
         nextActionDate: true,
         globalRank: true,
         competitors: true, // Include competitors field
+        linkedinUrl: true,
+        linkedinNavigatorUrl: true,
         workspaceId: true,
         createdAt: true,
         updatedAt: true,
@@ -336,7 +338,7 @@ export async function PATCH(
       'marketThreats', 'keyInfluencers', 'decisionTimeline', 'marketPosition', 
       'digitalMaturity', 'techStack',
       // Social media fields
-      'linkedinUrl', 'linkedinFollowers', 'twitterUrl', 'twitterFollowers', 
+      'linkedinUrl', 'linkedinNavigatorUrl', 'linkedinFollowers', 'twitterUrl', 'twitterFollowers', 
       'facebookUrl', 'instagramUrl', 'youtubeUrl', 'githubUrl',
       // HQ Location fields
       'hqLocation', 'hqFullAddress', 'hqCity', 'hqState', 'hqStreet', 

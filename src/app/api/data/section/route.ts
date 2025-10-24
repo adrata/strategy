@@ -399,10 +399,10 @@ export async function GET(request: NextRequest) {
             title: person.jobTitle || '-',
             email: person.email || 'Unknown Email',
             status: person.status || 'Unknown',
-            lastAction: person.lastAction || 'No action taken',
+            lastAction: person.lastAction || null,
             lastActionDate: person.lastActionDate,
             lastActionTime: lastActionTime, // NEW: Timing text
-            nextAction: person.nextAction || 'No action planned',
+            nextAction: person.nextAction || null,
             nextActionDate: person.nextActionDate,
             nextActionTiming: nextActionTiming, // NEW: Timing text
             createdAt: person.createdAt,
@@ -517,10 +517,10 @@ export async function GET(request: NextRequest) {
             title: person.jobTitle || '-',
             email: person.email || 'Unknown Email',
             status: person.status || 'Unknown',
-            lastAction: person.lastAction || 'No action taken',
+            lastAction: person.lastAction || null,
             lastActionDate: person.lastActionDate,
             lastActionTime: lastActionTime, // NEW: Timing text
-            nextAction: person.nextAction || 'No action planned',
+            nextAction: person.nextAction || null,
             nextActionDate: person.nextActionDate,
             nextActionTiming: nextActionTiming, // NEW: Timing text
             createdAt: person.createdAt,

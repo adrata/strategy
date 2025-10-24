@@ -312,7 +312,7 @@ export function TableRow({
                               {timing.text}
                             </span>
                             <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {actionText}
+                              {displayText}
                             </span>
                           </>
                         );
@@ -531,7 +531,10 @@ export function TableRow({
                       {(() => {
                         const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
                         const timing = getRealtimeActionTiming(lastActionDate);
-                        const actionText = record['lastAction'] || record['lastActionDescription'] || '-';
+                        const actionText = record['lastAction'] || record['lastActionDescription'];
+                        
+                        // If timing is "Never", show dash instead of action text
+                        const displayText = (timing.text === 'Never' || !actionText) ? '-' : actionText;
                         
                         return (
                           <>
@@ -539,7 +542,7 @@ export function TableRow({
                               {timing.text}
                             </span>
                             <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {actionText}
+                              {displayText}
                             </span>
                           </>
                         );
@@ -672,7 +675,10 @@ export function TableRow({
                       {(() => {
                         const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
                         const timing = getRealtimeActionTiming(lastActionDate);
-                        const actionText = record['lastAction'] || record['lastActionDescription'] || '-';
+                        const actionText = record['lastAction'] || record['lastActionDescription'];
+                        
+                        // If timing is "Never", show dash instead of action text
+                        const displayText = (timing.text === 'Never' || !actionText) ? '-' : actionText;
                         
                         return (
                           <>
@@ -680,7 +686,7 @@ export function TableRow({
                               {timing.text}
                             </span>
                             <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {actionText}
+                              {displayText}
                             </span>
                           </>
                         );
@@ -804,7 +810,10 @@ export function TableRow({
                       {(() => {
                         const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
                         const timing = getRealtimeActionTiming(lastActionDate);
-                        const actionText = record['lastAction'] || record['lastActionDescription'] || '-';
+                        const actionText = record['lastAction'] || record['lastActionDescription'];
+                        
+                        // If timing is "Never", show dash instead of action text
+                        const displayText = (timing.text === 'Never' || !actionText) ? '-' : actionText;
                         
                         return (
                           <>
@@ -812,7 +821,7 @@ export function TableRow({
                               {timing.text}
                             </span>
                             <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {actionText}
+                              {displayText}
                             </span>
                           </>
                         );

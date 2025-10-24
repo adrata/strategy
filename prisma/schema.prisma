@@ -300,6 +300,7 @@ model companies {
   lastVerified           DateTime?
   linkedinFollowers      Int?
   linkedinUrl            String?          @db.VarChar(500)
+  linkedinNavigatorUrl   String?          @db.VarChar(500)
   marketPosition         String?          @db.VarChar(100)
   marketThreats          String[]         @default([])
   naicsCodes             String[]         @default([])

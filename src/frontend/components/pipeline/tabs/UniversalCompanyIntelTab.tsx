@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { InlineEditField } from '../InlineEditField';
 import { StrategySkeleton } from '@/frontend/components/strategy/StrategySkeleton';
@@ -54,6 +54,9 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
   const [strategyData, setStrategyData] = useState<CompanyStrategyData | null>(null);
   const [isGeneratingStrategy, setIsGeneratingStrategy] = useState(false);
   const [strategyError, setStrategyError] = useState<string | null>(null);
+  
+  // Track generation attempts to prevent duplicate calls
+  const generationAttempted = useRef(false);
 
   // Load existing strategy data on component mount
   useEffect(() => {
@@ -62,13 +65,18 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     }
   }, [record?.id]);
 
-  // Load strategy data if available, but don't auto-generate
+  // Smart auto-generation logic
   useEffect(() => {
-    if (record?.id && !strategyData && !isGeneratingStrategy) {
+    if (record?.id && !strategyData && !isGeneratingStrategy && !generationAttempted.current) {
       const hasStrategy = record.customFields?.strategyData;
       if (hasStrategy) {
         console.log('🔄 [COMPANY STRATEGY] Loading existing strategy data for company:', record.id);
         setStrategyData(hasStrategy);
+      } else {
+        // No cached data, trigger auto-generation
+        console.log('🚀 [COMPANY STRATEGY] No cached data found, triggering auto-generation for company:', record.id);
+        generationAttempted.current = true;
+        handleGenerateStrategy();
       }
     }
   }, [record?.id, strategyData, isGeneratingStrategy]);
@@ -77,14 +85,14 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     if (!record?.id) return;
     
     try {
-      // First check if strategy data exists in the record's customFields
+      // First check if strategy data exists in the record's customFields (instant load)
       if (record.customFields?.strategyData) {
         console.log('✅ [COMPANY STRATEGY] Using cached strategy data from record');
         setStrategyData(record.customFields.strategyData);
         return;
       }
 
-      // If no cached data, try to load from API
+      // If no cached data, try to load from API (fast check)
       const response = await fetch(`/api/v1/strategy/company/${record.id}`);
       const data = await response.json();
       
@@ -92,6 +100,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
         setStrategyData(data.data);
         console.log('✅ [COMPANY STRATEGY] Loaded existing strategy data from API');
       }
+      // If no data found, auto-generation will be triggered by the useEffect above
     } catch (error) {
       console.error('Failed to load strategy data:', error);
     }
@@ -147,7 +156,25 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
           </div>
-          <StrategySkeleton />
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+            <div className="text-center py-8">
+              <div className="mb-4">
+                <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center animate-pulse">
+                  <span className="text-3xl">🧠</span>
+                </div>
+              </div>
+              <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                Generating AI-Powered Intelligence
+              </h4>
+              <p className="text-sm text-[var(--muted)] mb-4">
+                Our AI is analyzing company data, buyer signals, and market positioning...
+              </p>
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{width: '60%'}}></div>
+              </div>
+              <p className="text-xs text-[var(--muted)]">This may take 10-30 seconds</p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -271,28 +298,58 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             )}
           </div>
         ) : strategyError ? (
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] shadow-sm">
-            <div className="text-center py-6">
-              <div className="text-sm text-red-600 mb-4">
-                Failed to generate strategy: {strategyError}
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+            <div className="text-center py-8">
+              <div className="mb-4">
+                <div className="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center">
+                  <span className="text-3xl">⚠️</span>
+                </div>
               </div>
-              <button 
-                onClick={handleGenerateStrategy}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Try Again
-              </button>
+              <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                Intelligence Generation Failed
+              </h4>
+              <div className="text-sm text-red-600 mb-4 max-w-md mx-auto">
+                {strategyError}
+              </div>
+              <div className="text-xs text-[var(--muted)] mb-6">
+                This could be due to API rate limits, network issues, or insufficient company data.
+              </div>
+              <div className="flex gap-3 justify-center">
+                <button 
+                  onClick={handleGenerateStrategy}
+                  className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                >
+                  Retry Generation
+                </button>
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="px-6 py-2.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
+                >
+                  Refresh Page
+                </button>
+              </div>
             </div>
           </div>
         ) : (
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] shadow-sm">
-            <div className="text-center py-6">
-              <div className="text-sm text-[var(--muted)] mb-4">
-                No intelligence summary available for this company.
+          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+            <div className="text-center py-8">
+              <div className="mb-4">
+                <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
+                  <span className="text-3xl">🧠</span>
+                </div>
               </div>
-              <div className="text-xs text-[var(--muted)]">
-                Intelligence data should be automatically populated based on company information.
-              </div>
+              <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                Analyzing Company Intelligence
+              </h4>
+              <p className="text-sm text-[var(--muted)] mb-6 max-w-md mx-auto">
+                Our AI is analyzing company data, buyer signals, and market positioning to generate strategic intelligence and actionable insights.
+              </p>
+              <button 
+                onClick={handleGenerateStrategy}
+                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Generate Intelligence Now
+              </button>
             </div>
           </div>
         )}

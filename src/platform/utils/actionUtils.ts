@@ -187,38 +187,55 @@ export function getActionDescription(actionType: string): string {
 
 /**
  * Calculate the timing for the last action
- * @param lastAction - The last action object
- * @returns The timing information for the last action
+ * @param lastActionDate - The date of the last action
+ * @param lastActionText - The text description of the last action
+ * @returns The timing text for display
  */
-export function calculateLastActionTiming(lastAction: any): any {
-  if (!lastAction) {
-    return null;
+export function calculateLastActionTiming(lastActionDate: Date | null, lastActionText: string | null): string {
+  // System actions that should not count as real actions
+  const systemActions = [
+    'Record created',
+    'No action taken',
+    'Record updated',
+    'Person created',
+    'Company created'
+  ];
+  
+  // If no date or it's a system action, return "Never"
+  if (!lastActionDate || !lastActionText || systemActions.includes(lastActionText)) {
+    return 'Never';
   }
   
-  return {
-    actionType: lastAction.actionType,
-    timestamp: lastAction.timestamp,
-    daysSince: lastAction.daysSince || 0,
-    isRecent: lastAction.daysSince <= 7,
-    isOverdue: lastAction.daysSince > 30
-  };
+  const now = new Date();
+  const daysSince = Math.floor((now.getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysSince === 0) return 'Today';
+  if (daysSince === 1) return 'Yesterday';
+  if (daysSince <= 7) return `${daysSince} days ago`;
+  if (daysSince <= 30) return `${Math.floor(daysSince / 7)} weeks ago`;
+  return `${Math.floor(daysSince / 30)} months ago`;
 }
 
 /**
  * Calculate the timing for the next action
- * @param nextAction - The next action object
- * @returns The timing information for the next action
+ * @param nextActionDate - The date of the next action
+ * @returns The timing text for display
  */
-export function calculateNextActionTiming(nextAction: any): any {
-  if (!nextAction) {
-    return null;
+export function calculateNextActionTiming(nextActionDate: Date | null): string {
+  if (!nextActionDate) {
+    return 'No date set';
   }
   
-  return {
-    actionType: nextAction.actionType,
-    scheduledDate: nextAction.scheduledDate,
-    daysUntil: nextAction.daysUntil || 0,
-    isOverdue: nextAction.daysUntil < 0,
-    isUpcoming: nextAction.daysUntil <= 7
-  };
+  const now = new Date();
+  const actionDate = new Date(nextActionDate);
+  const diffMs = actionDate.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 0) return 'Overdue';
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Tomorrow';
+  if (diffDays <= 7) return 'This week';
+  if (diffDays <= 14) return 'Next week';
+  if (diffDays <= 30) return 'This month';
+  return 'Future';
 }

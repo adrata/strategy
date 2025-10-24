@@ -1683,6 +1683,13 @@ export function UniversalRecordTemplate({
       let targetModel = recordType;
       let targetId = recordId;
       
+      // Special handling for action editing - if recordTypeParam is "action", use actions model
+      if (recordTypeParam === 'action') {
+        targetModel = 'actions';
+        targetId = recordId;
+        console.log(`🎯 [MODEL TARGETING] Action field ${field} -> actions model (${targetId})`);
+      }
+      
       console.log(`🎯 [MODEL TARGETING] Field: ${field}, RecordType: ${recordType}, PersonId: ${record?.personId}, CompanyId: ${record?.companyId}`);
       
       // Handle "universal" recordType by detecting actual record type

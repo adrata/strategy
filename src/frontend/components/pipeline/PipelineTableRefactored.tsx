@@ -404,14 +404,26 @@ export function PipelineTable({
                       case 'last action':
                         // Use pre-formatted lastActionTime from speedrun API if available
                         const lastActionTime = record['lastActionTime'] || 'Never';
-                        const lastActionText = record['lastAction'] || record['lastActionDescription'] || record['lastContactType'] || '-';
-                        cellContent = `${lastActionTime} | ${lastActionText}`;
+                        const lastActionText = record['lastAction'] || record['lastActionDescription'] || record['lastContactType'];
+                        
+                        // If timing is "Never", show dash instead of action text
+                        if (lastActionTime === 'Never' || !lastActionText) {
+                          cellContent = `${lastActionTime} | -`;
+                        } else {
+                          cellContent = `${lastActionTime} | ${lastActionText}`;
+                        }
                         break;
                       case 'next action':
                         // Use pre-formatted nextActionTiming from speedrun API if available
                         const nextActionTime = record['nextActionTiming'] || 'No date set';
-                        const nextActionText = record['nextAction'] || record['next_action'] || 'No action planned';
-                        cellContent = `${nextActionTime} | ${nextActionText}`;
+                        const nextActionText = record['nextAction'] || record['next_action'];
+                        
+                        // If timing is "No date set", show dash instead of action text
+                        if (nextActionTime === 'No date set' || !nextActionText) {
+                          cellContent = `${nextActionTime} | -`;
+                        } else {
+                          cellContent = `${nextActionTime} | ${nextActionText}`;
+                        }
                         break;
                       case 'stage':
                         cellContent = record['stage'] || record['status'] || '-';

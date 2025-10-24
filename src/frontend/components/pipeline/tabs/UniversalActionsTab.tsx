@@ -266,8 +266,8 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         id: activity.id,
         type: 'activity' as const,
         date: new Date(activity.completedAt || activity.createdAt || Date.now()),
-        title: activity.subject || activity.type || 'Activity',
-        description: activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : '',
+        title: activity.type || 'Activity',
+        description: activity.subject || (activity.description ? activity.description.substring(0, 100) + (activity.description.length > 100 ? '...' : '') : ''),
         content: activity.description || activity.outcome || '',
         user: getUserName(activity.userId || 'System'),
         metadata: {
