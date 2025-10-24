@@ -488,11 +488,11 @@ export default function FirstPremierBankReportPage() {
                 <h4 className="text-lg font-semibold text-black mb-3">Hiring Activity</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="text-center p-3 bg-white rounded border">
-                    <div className="text-2xl font-bold text-black">{salesIntent.hiringActivity.totalJobs}</div>
+                    <div className="text-2xl font-bold text-black">{salesIntent?.hiringActivity?.totalJobs || 0}</div>
                     <div className="text-xs text-gray-600">Total Openings</div>
                   </div>
                   <div className="text-center p-3 bg-white rounded border">
-                    <div className="text-2xl font-bold text-black">{salesIntent.hiringActivity.engineeringRoles}</div>
+                    <div className="text-2xl font-bold text-black">{salesIntent?.hiringActivity?.engineeringRoles || 0}</div>
                     <div className="text-xs text-gray-600">Engineering Roles</div>
                   </div>
                 </div>
