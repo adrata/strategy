@@ -322,6 +322,18 @@ const localMatchGroupData = {
 
 export default function MatchGroupReportPage() {
   const { companyInfo, buyerGroup, salesIntent, strategicRecommendations } = matchGroupData;
+  
+  // Add null checks to prevent runtime errors
+  if (!companyInfo || !buyerGroup) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Loading Match Group Intelligence...</h1>
+          <p className="text-gray-600">Please wait while we load the buyer group data.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ overflowY: 'auto', height: '100vh' }}>
@@ -512,7 +524,9 @@ export default function MatchGroupReportPage() {
           <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-semibold text-black">Sales Intent Score</h3>
-              <SalesIntentGauge score={salesIntent.score} level={salesIntent.level} />
+              {salesIntent && (
+                <SalesIntentGauge score={salesIntent.score} level={salesIntent.level} />
+              )}
             </div>
             
             <div className="grid md:grid-cols-2 gap-6">
