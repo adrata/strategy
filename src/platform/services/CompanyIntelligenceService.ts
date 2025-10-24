@@ -640,15 +640,21 @@ Return only valid JSON.`;
    */
   async cacheInsights(companyId: string, insights: CompanyIntelligenceResult): Promise<void> {
     try {
+      // Generate company summary for descriptionEnriched field
+      const companySummary = this.generateCompanySummaryFromInsights(insights);
+      
       await prisma.companies.update({
         where: { id: companyId },
         data: {
           companyIntelligence: {
             ...insights,
             lastIntelligenceUpdate: new Date().toISOString()
-          }
+          },
+          descriptionEnriched: companySummary,
+          updatedAt: new Date()
         }
       });
+      console.log(`✅ [COMPANY_INTELLIGENCE] Cached insights and company summary for company: ${companyId}`);
     } catch (error) {
       console.error('❌ [COMPANY_INTELLIGENCE] Failed to cache insights:', error);
     }
@@ -680,5 +686,76 @@ Return only valid JSON.`;
       console.error('❌ [COMPANY_INTELLIGENCE] Failed to get cached insights:', error);
       return null;
     }
+  }
+
+  /**
+   * Generate company summary from intelligence insights
+   */
+  private generateCompanySummaryFromInsights(insights: CompanyIntelligenceResult): string {
+    const companyName = insights.companyName || 'Company';
+    const industry = insights.industry || 'Technology';
+    
+    let summary = `${companyName} is a ${industry.toLowerCase()} company`;
+    
+    // Add market position context
+    if (insights.marketPosition) {
+      summary += ` with a ${insights.marketPosition.competitivePosition || 'strong'} market position`;
+      
+      if (insights.marketPosition.growthTrajectory) {
+        summary += ` and ${insights.marketPosition.growthTrajectory.toLowerCase()} growth trajectory`;
+      }
+    }
+    
+    summary += '.';
+    
+    // Add buying signals context
+    if (insights.buyingSignals) {
+      if (insights.buyingSignals.hiring?.activePostings > 0) {
+        summary += `\n\nThe company is actively hiring with ${insights.buyingSignals.hiring.activePostings} job postings`;
+        
+        if (insights.buyingSignals.hiring.keyRoles?.length > 0) {
+          summary += `, including key roles in ${insights.buyingSignals.hiring.keyRoles.slice(0, 2).join(' and ')}`;
+        }
+        summary += '.';
+      }
+      
+      if (insights.buyingSignals.fundingEvents?.recentFunding?.length > 0) {
+        summary += `\n\nRecent funding activity indicates ${insights.buyingSignals.fundingEvents.fundingStage || 'growth'} stage`;
+        if (insights.buyingSignals.fundingEvents.financialHealth) {
+          summary += ` with ${insights.buyingSignals.fundingEvents.financialHealth.toLowerCase()} financial health`;
+        }
+        summary += '.';
+      }
+    }
+    
+    // Add engagement context
+    if (insights.engagementStrategy) {
+      summary += `\n\nEngagement strategy: ${insights.engagementStrategy.bestEntryPoint || 'Direct outreach'}`;
+      
+      if (insights.engagementStrategy.optimalTiming) {
+        summary += ` (optimal timing: ${insights.engagementStrategy.optimalTiming})`;
+      }
+      
+      if (insights.engagementStrategy.decisionTimeline) {
+        summary += ` (decision timeline: ${insights.engagementStrategy.decisionTimeline})`;
+      }
+      summary += '.';
+    }
+    
+    // Add market opportunities
+    if (insights.marketPosition?.opportunities?.length > 0) {
+      summary += `\n\nMarket opportunities include ${insights.marketPosition.opportunities.slice(0, 2).join(' and ')}.`;
+    }
+    
+    // Add pain signals
+    if (insights.painSignals?.pains?.length > 0) {
+      summary += `\n\nKey challenges: ${insights.painSignals.pains.slice(0, 2).join(' and ')}`;
+      if (insights.painSignals.urgency) {
+        summary += ` (urgency level: ${insights.painSignals.urgency})`;
+      }
+      summary += '.';
+    }
+    
+    return summary;
   }
 }

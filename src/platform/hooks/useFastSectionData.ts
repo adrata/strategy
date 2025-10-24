@@ -91,9 +91,31 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
 
     // 🚀 PERFORMANCE: Skip if we already loaded this section (unless force refresh)
     if (!forceRefresh && loadedSections.has(section)) {
-      console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
-      setLoading(false);
-      return;
+      // Check if a force refresh was requested via sessionStorage
+      if (typeof window !== 'undefined') {
+        const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
+          key.startsWith('force-refresh-') && key.includes(section)
+        );
+        
+        if (forceRefreshKeys.length > 0) {
+          console.log(`🔄 [FAST SECTION DATA] Force refresh flag detected for ${section}, clearing cache and refetching`);
+          forceRefreshKeys.forEach(key => sessionStorage.removeItem(key));
+          setLoadedSections(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(section);
+            return newSet;
+          });
+          // Continue to fetch below
+        } else {
+          console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
+          setLoading(false);
+          return;
+        }
+      } else {
+        console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded`);
+        setLoading(false);
+        return;
+      }
     }
 
     setLoading(true);

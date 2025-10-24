@@ -120,7 +120,10 @@ export async function GET(
     // Generate new intelligence
     const intelligence = await generateCompanyIntelligence(company);
 
-    // Cache the intelligence in customFields
+    // Generate company summary for descriptionEnriched field
+    const companySummary = generateCompanySummary(company, intelligence);
+
+    // Cache the intelligence in customFields and update descriptionEnriched
     try {
       await prisma.companies.update({
         where: { id },
@@ -129,10 +132,11 @@ export async function GET(
             ...cachedIntelligence,
             intelligence: intelligence
           },
+          descriptionEnriched: companySummary,
           updatedAt: new Date(),
         },
       });
-      console.log(`✅ [INTELLIGENCE API] Cached intelligence for company: ${company.name}`);
+      console.log(`✅ [INTELLIGENCE API] Cached intelligence and company summary for company: ${company.name}`);
     } catch (cacheError) {
       console.error('⚠️ [INTELLIGENCE API] Failed to cache intelligence:', cacheError);
       // Continue without failing the request
@@ -234,7 +238,10 @@ export async function POST(
     // Generate new intelligence (force regenerate)
     const intelligence = await generateCompanyIntelligence(company, true);
 
-    // Update the intelligence in customFields
+    // Generate company summary for descriptionEnriched field
+    const companySummary = generateCompanySummary(company, intelligence);
+
+    // Update the intelligence in customFields and descriptionEnriched
     const currentCustomFields = company.customFields as any || {};
     await prisma.companies.update({
       where: { id },
@@ -243,6 +250,7 @@ export async function POST(
           ...currentCustomFields,
           intelligence: intelligence
         },
+        descriptionEnriched: companySummary,
         updatedAt: new Date(),
       },
     });
@@ -472,4 +480,99 @@ function generateStrategicIntelligence(company: any, industry: string, size: str
  */
 function generateAdrataStrategy(company: any, industry: string, strategicWants: string[], criticalNeeds: string[]): string {
   return `For ${company.name}, Adrata should focus on positioning our solutions as strategic enablers for their ${industry.toLowerCase()} operations. Key approach: 1) Lead with ROI and efficiency gains that address their critical needs around ${criticalNeeds.slice(0, 2).join(' and ')}, 2) Demonstrate how our platform can support their strategic wants including ${strategicWants.slice(0, 2).join(' and ')}, 3) Engage with decision-makers through targeted outreach that emphasizes industry-specific value propositions, 4) Provide proof-of-concept opportunities that showcase immediate impact on their core business processes.`;
+}
+
+/**
+ * Generate comprehensive company summary for descriptionEnriched field
+ */
+function generateCompanySummary(company: any, intelligence: any): string {
+  const industry = company.industry || 'Technology';
+  const size = company.size || 'Medium';
+  const employeeCount = company.employeeCount || 100;
+  const revenue = company.revenue || 0;
+  const location = company.city && company.state ? `${company.city}, ${company.state}` : company.country || 'Unknown';
+  const foundedYear = company.foundedYear || 'Unknown';
+  const website = company.website || company.domain || 'N/A';
+  
+  // Build comprehensive company summary
+  let summary = `${company.name} is a ${size.toLowerCase()} ${industry.toLowerCase()} company`;
+  
+  // Add employee count
+  if (employeeCount) {
+    summary += ` with approximately ${employeeCount.toLocaleString()} employees`;
+  }
+  
+  // Add revenue if available
+  if (revenue > 0) {
+    summary += ` and estimated revenue of $${revenue.toLocaleString()}`;
+  }
+  
+  // Add location
+  summary += `, headquartered in ${location}`;
+  
+  // Add founding year
+  if (foundedYear !== 'Unknown') {
+    summary += `, founded in ${foundedYear}`;
+  }
+  
+  // Add website
+  if (website !== 'N/A') {
+    summary += `. Website: ${website}`;
+  }
+  
+  summary += '.';
+  
+  // Add industry context
+  summary += `\n\nAs a ${industry.toLowerCase()} company, ${company.name} operates in a competitive market`;
+  
+  // Add strategic context from intelligence
+  if (intelligence && intelligence.strategicWants && intelligence.strategicWants.length > 0) {
+    summary += ` with strategic focus on ${intelligence.strategicWants.slice(0, 2).join(' and ')}`;
+  }
+  
+  if (intelligence && intelligence.criticalNeeds && intelligence.criticalNeeds.length > 0) {
+    summary += `. Key challenges include ${intelligence.criticalNeeds.slice(0, 2).join(' and ')}`;
+  }
+  
+  summary += '.';
+  
+  // Add business intelligence context
+  if (intelligence && intelligence.strategicIntelligence) {
+    summary += `\n\n${intelligence.strategicIntelligence}`;
+  }
+  
+  // Add engagement context
+  if (company.people && company.people.length > 0) {
+    summary += `\n\nThe company has ${company.people.length} known contacts in our database`;
+    
+    // Add buyer group context if available
+    const buyerGroup = company.people.filter((p: any) => p.buyerGroupRole);
+    if (buyerGroup.length > 0) {
+      summary += `, including ${buyerGroup.length} identified buyer group members`;
+    }
+    
+    summary += '.';
+  }
+  
+  // Add recent activity context
+  if (company.lastAction) {
+    summary += `\n\nRecent activity: ${company.lastAction}`;
+    if (company.lastActionDate) {
+      const actionDate = new Date(company.lastActionDate).toLocaleDateString();
+      summary += ` (${actionDate})`;
+    }
+    summary += '.';
+  }
+  
+  // Add next action context
+  if (company.nextAction) {
+    summary += `\n\nNext planned action: ${company.nextAction}`;
+    if (company.nextActionDate) {
+      const nextActionDate = new Date(company.nextActionDate).toLocaleDateString();
+      summary += ` (scheduled for ${nextActionDate})`;
+    }
+    summary += '.';
+  }
+  
+  return summary;
 }
