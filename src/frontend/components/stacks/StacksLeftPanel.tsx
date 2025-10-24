@@ -74,12 +74,12 @@ const navigationItems: NavigationItem[] = [
     icon: LightBulbIcon,
     description: 'Future ideas and concepts'
   },
-  {
-    id: 'metrics',
-    label: 'Metrics',
-    icon: ChartBarIcon,
-    description: 'Product & engineering KPIs'
-  }
+  // {
+  //   id: 'metrics',
+  //   label: 'Metrics',
+  //   icon: ChartBarIcon,
+  //   description: 'Product & engineering KPIs'
+  // }
 ];
 
 export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: StacksLeftPanelProps) {

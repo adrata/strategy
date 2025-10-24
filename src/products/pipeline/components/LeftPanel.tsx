@@ -740,7 +740,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : "9", // 9 different metrics displayed on the page
-      visible: true // Show for all users
+      visible: false // Hidden for now
     },
     // SELLERS: Show only for demo workspace
     {
