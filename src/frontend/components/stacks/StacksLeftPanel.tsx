@@ -38,12 +38,12 @@ const navigationItems: NavigationItem[] = [
     icon: QueueListIcon,
     description: 'Project overview and management'
   },
-  {
-    id: 'chronicle',
-    label: 'Chronicle',
-    icon: BookOpenIcon,
-    description: 'Business intelligence reports'
-  },
+  // {
+  //   id: 'chronicle',
+  //   label: 'Chronicle',
+  //   icon: BookOpenIcon,
+  //   description: 'Business intelligence reports'
+  // },
   {
     id: 'backlog',
     label: 'Backlog',

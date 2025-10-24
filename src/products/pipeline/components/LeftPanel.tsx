@@ -653,7 +653,7 @@ function PipelineSections({
       name: "Chronicle",
       description: "Business Intelligence Reports",
       count: isNotaryEveryday ? chronicleCount : 0, // Show count for Notary Everyday
-      visible: isNotaryEveryday // Show for Notary Everyday
+      visible: false // Hidden for now
     },
     {
       id: "news",
