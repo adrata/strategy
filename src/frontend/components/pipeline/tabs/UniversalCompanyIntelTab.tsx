@@ -62,13 +62,13 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
     }
   }, [record?.id]);
 
-  // Auto-generate strategy if no data exists
+  // Load strategy data if available, but don't auto-generate
   useEffect(() => {
     if (record?.id && !strategyData && !isGeneratingStrategy) {
       const hasStrategy = record.customFields?.strategyData;
-      if (!hasStrategy) {
-        console.log('🔄 [COMPANY STRATEGY] Auto-generating strategy for company:', record.id);
-        handleGenerateStrategy();
+      if (hasStrategy) {
+        console.log('🔄 [COMPANY STRATEGY] Loading existing strategy data for company:', record.id);
+        setStrategyData(hasStrategy);
       }
     }
   }, [record?.id, strategyData, isGeneratingStrategy]);
@@ -155,17 +155,17 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
 
   return (
     <div className="space-y-6">
-      {/* Strategy Summary Header */}
+      {/* Intelligence Summary Header */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
         </div>
         
-        {/* Strategy Summary Content */}
+        {/* Intelligence Summary Content */}
         {isGeneratingStrategy ? (
           <StrategySkeleton />
         ) : strategyData ? (
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] shadow-sm">
             <div className="text-sm text-[var(--foreground)] leading-relaxed mb-4">
               {strategyData.strategySummary}
             </div>
@@ -195,9 +195,9 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             )}
             
             {/* Three Column Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Situation */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   Situation
@@ -208,7 +208,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
               </div>
               
               {/* Complication */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
                   <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
                   Complication
@@ -219,7 +219,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
               </div>
               
               {/* Future State */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   Future State
@@ -232,7 +232,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
 
             {/* Strategic Recommendations */}
             {strategyData.strategicRecommendations && strategyData.strategicRecommendations.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-[var(--border)]">
+              <div className="mt-4 pt-4 border-t border-[var(--border)]">
                 <h4 className="text-sm font-semibold text-[var(--foreground)] mb-3">Strategic Recommendations</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {strategyData.strategicRecommendations.map((recommendation, index) => (
@@ -247,7 +247,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
 
             {/* Competitive Positioning */}
             {strategyData.competitivePositioning && (
-              <div className="mt-6 pt-6 border-t border-[var(--border)]">
+              <div className="mt-4 pt-4 border-t border-[var(--border)]">
                 <h4 className="text-sm font-semibold text-[var(--foreground)] mb-3">Competitive Positioning</h4>
                 <div className="text-sm text-[var(--muted)] leading-relaxed">
                   {strategyData.competitivePositioning}
@@ -257,7 +257,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
 
             {/* Success Metrics */}
             {strategyData.successMetrics && strategyData.successMetrics.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-[var(--border)]">
+              <div className="mt-4 pt-4 border-t border-[var(--border)]">
                 <h4 className="text-sm font-semibold text-[var(--foreground)] mb-3">Success Metrics</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {strategyData.successMetrics.map((metric, index) => (
@@ -271,8 +271,8 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             )}
           </div>
         ) : strategyError ? (
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
-            <div className="text-center py-8">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] shadow-sm">
+            <div className="text-center py-6">
               <div className="text-sm text-red-600 mb-4">
                 Failed to generate strategy: {strategyError}
               </div>
@@ -285,13 +285,13 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             </div>
           </div>
         ) : (
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
-            <div className="text-center py-8">
+          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] shadow-sm">
+            <div className="text-center py-6">
               <div className="text-sm text-[var(--muted)] mb-4">
-                No strategy summary available for this company.
+                No intelligence summary available for this company.
               </div>
               <div className="text-xs text-[var(--muted)]">
-                Strategy data should be automatically populated based on company information.
+                Intelligence data should be automatically populated based on company information.
               </div>
             </div>
           </div>

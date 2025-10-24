@@ -78,11 +78,11 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'overview-people': PersonOverviewTab,
   'overview-prospects': ProspectOverviewTab,
   
-  // Strategy tabs
-  'strategy': UniversalInsightsTab,
-  'strategy-companies': UniversalCompanyIntelTab,
-  'strategy-people': ComprehensiveInsightsTab,
-  'strategy-comprehensive': ComprehensiveInsightsTab,
+  // Intelligence tabs
+  'intelligence': UniversalInsightsTab,
+  'intelligence-companies': UniversalCompanyIntelTab,
+  'intelligence-people': ComprehensiveInsightsTab,
+  'intelligence-comprehensive': ComprehensiveInsightsTab,
   
   // Career and role tabs
   'career': ComprehensiveCareerTab,
@@ -150,18 +150,18 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
 export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   leads: [
     { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
-    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
-    { id: 'strategy', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
   prospects: [
     { id: 'overview', label: 'Overview', component: ProspectOverviewTab },
-    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
-    { id: 'strategy', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
@@ -181,7 +181,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   companies: [
     { id: 'overview', label: 'Overview', component: UniversalCompanyTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
-    { id: 'strategy', label: 'Intelligence', component: UniversalCompanyIntelTab },
+    { id: 'intelligence', label: 'Intelligence', component: UniversalCompanyIntelTab },
     // { id: 'news', label: 'News', component: UniversalNewsTab }, // Temporarily hidden until news relevance is improved
     { id: 'people', label: 'People', component: UniversalPeopleTab },
     { id: 'value', label: 'Value', component: ValueTab },
@@ -192,18 +192,18 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   
   people: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
-    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
-    { id: 'strategy', label: 'Intelligence', component: ComprehensiveInsightsTab },
+    { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
   speedrun: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
-    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
-    { id: 'strategy', label: 'Intelligence', component: ComprehensiveInsightsTab },
+    { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
