@@ -2190,6 +2190,7 @@ export function UniversalRecordTemplate({
         
         // Set record-specific force-refresh flag using the actual section name from URL
         sessionStorage.setItem(`force-refresh-${recordType}-${record.id}`, 'true');
+        console.log(`🔄 [CACHE DEBUG] Set record-specific force-refresh flag: force-refresh-${recordType}-${record.id}`);
         
         // Also set a general section-level force-refresh flag for list views
         // This is needed because useFastSectionData checks for keys that include the section name
@@ -2202,6 +2203,7 @@ export function UniversalRecordTemplate({
             recordType,
             targetModel
           });
+          console.log(`🔄 [CACHE DEBUG] Set section-level force-refresh flag: force-refresh-companies`);
         } else if (targetModel === 'people' || targetModel === 'leads' || targetModel === 'prospects' || targetModel === 'opportunities') {
           // For people records, set both people and specific section flags
           sessionStorage.setItem(`force-refresh-people`, 'true');

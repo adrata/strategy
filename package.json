@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "prisma generate --schema=prisma/schema-streamlined.prisma",
-    "prebuild": "echo 'Starting build at' && date",
+    "prebuild": "echo 'Starting build at' && echo %date% %time%",
     "build:scripts": "tsc -p tsconfig.scripts.json",
     "run:buyer-group": "node dist-scripts/scripts/run-buyer-group.js --company=\"Dell Technologies\" --profile=buyer-group-intelligence --limit=100",
     "dev": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next dev -p 3000",

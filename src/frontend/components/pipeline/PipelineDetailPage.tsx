@@ -162,11 +162,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const userId = getUserIdForWorkspace(workspaceId || '');
   
   // 🚀 NAVIGATION FIX: Load section data for navigation for all sections
-  const speedrunHook = useFastSectionData('speedrun', 30, workspaceId, userId);
-  const peopleHook = useFastSectionData('people', 1000, workspaceId, userId);
-  const companiesHook = useFastSectionData('companies', 500, workspaceId, userId);
-  const leadsHook = useFastSectionData('leads', 2000, workspaceId, userId);
-  const prospectsHook = useFastSectionData('prospects', 1000, workspaceId, userId);
+  // Note: useFastSectionData gets workspaceId and userId from useWorkspaceContext() internally
+  const speedrunHook = useFastSectionData('speedrun', 30);
+  const peopleHook = useFastSectionData('people', 1000);
+  const companiesHook = useFastSectionData('companies', 500);
+  const leadsHook = useFastSectionData('leads', 2000);
+  const prospectsHook = useFastSectionData('prospects', 1000);
   
   // Extract data for compatibility
   const { data: speedrunData, loading: speedrunLoading } = speedrunHook;
@@ -357,15 +358,22 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       return;
     }
     
-    // 🎯 CRITICAL FIX: Check for force-refresh flags FIRST before any cache checks
+    // 🎯 CRITICAL FIX: Check for force-refresh flags FIRST before ANY cache checks
     // This ensures saved changes are fetched fresh instead of serving stale cached data
     if (typeof window !== 'undefined') {
       const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
         key.startsWith('force-refresh-') && (key.includes(section) || key.includes(recordId))
       );
       
+      console.log(`🔍 [INSTANT LOAD DEBUG] Checking for force-refresh flags:`, {
+        section,
+        recordId,
+        allSessionStorageKeys: Object.keys(sessionStorage).filter(key => key.startsWith('force-refresh-')),
+        matchingKeys: forceRefreshKeys
+      });
+      
       if (forceRefreshKeys.length > 0) {
-        console.log(`🔄 [INSTANT LOAD] Force refresh detected, clearing flags and skipping ALL caches:`, {
+        console.log(`🔄 [INSTANT LOAD] Force refresh detected, clearing flags and ALL session caches:`, {
           section,
           recordId,
           forceRefreshKeys
@@ -373,6 +381,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         
         // Clear the force-refresh flags
         forceRefreshKeys.forEach(key => sessionStorage.removeItem(key));
+        
+        // 🚀 CRITICAL: Also clear the optimized caches that might have stale data
+        sessionStorage.removeItem(`current-record-${section}`);
+        sessionStorage.removeItem(`cached-${section}-${recordId}`);
+        
+        console.log(`🗑️ [INSTANT LOAD] Cleared session caches for section ${section} and record ${recordId}`);
         
         // Skip to API call below - don't check any caches
         // (fall through to API fetch section)
@@ -826,6 +840,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         }}
         onRecordUpdate={async (updatedRecord) => {
           console.log('🔄 [PIPELINE] Updating record:', updatedRecord);
+          console.log('🔍 [PIPELINE DEBUG] onRecordUpdate called for section:', section, 'recordType:', updatedRecord?.recordType || 'unknown');
           setSelectedRecord(updatedRecord);
           
           // Trigger refresh of data hooks to ensure parent components get updated data
@@ -859,11 +874,14 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
             // For company records, also refresh related sections since companies are linked to people
             // and may affect people records, actions, and other related data
             if (section === 'companies') {
+              console.log('🔄 [PIPELINE DEBUG] Refreshing all hooks for company update');
               // Refresh people-related sections since people are linked to companies
               refreshPromises.push(leadsHook.refresh());
               refreshPromises.push(prospectsHook.refresh());
               refreshPromises.push(peopleHook.refresh());
               refreshPromises.push(speedrunHook.refresh());
+              // Note: companiesHook.refresh() is already called above in the "Always refresh the current section" block
+              // No need to call it again here to avoid duplication
             }
             
             // Wait for all refreshes to complete

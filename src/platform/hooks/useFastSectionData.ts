@@ -544,7 +544,10 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     loading,
     error,
     count,
-    refresh: () => fetchSectionData(true),
+    refresh: () => {
+      console.log(`🔄 [FAST SECTION DATA] Refresh called for section: ${section}`);
+      return fetchSectionData(true);
+    },
     clearCache: () => {
       console.log(`🧹 [FAST SECTION DATA] Clearing cache for section: ${section}`);
       // Critical: Remove section from loaded sections Set to allow refetch
