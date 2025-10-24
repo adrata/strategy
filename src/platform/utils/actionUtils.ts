@@ -184,3 +184,41 @@ export function getActionDescription(actionType: string): string {
   
   return descriptions[actionType] || actionType;
 }
+
+/**
+ * Calculate the timing for the last action
+ * @param lastAction - The last action object
+ * @returns The timing information for the last action
+ */
+export function calculateLastActionTiming(lastAction: any): any {
+  if (!lastAction) {
+    return null;
+  }
+  
+  return {
+    actionType: lastAction.actionType,
+    timestamp: lastAction.timestamp,
+    daysSince: lastAction.daysSince || 0,
+    isRecent: lastAction.daysSince <= 7,
+    isOverdue: lastAction.daysSince > 30
+  };
+}
+
+/**
+ * Calculate the timing for the next action
+ * @param nextAction - The next action object
+ * @returns The timing information for the next action
+ */
+export function calculateNextActionTiming(nextAction: any): any {
+  if (!nextAction) {
+    return null;
+  }
+  
+  return {
+    actionType: nextAction.actionType,
+    scheduledDate: nextAction.scheduledDate,
+    daysUntil: nextAction.daysUntil || 0,
+    isOverdue: nextAction.daysUntil < 0,
+    isUpcoming: nextAction.daysUntil <= 7
+  };
+}

@@ -293,6 +293,18 @@ const localZuoraData = {
 
 export default function ZuoraReportPage() {
   const { companyInfo, buyerGroup, salesIntent, strategicRecommendations } = zuoraData;
+  
+  // Add null checks to prevent runtime errors
+  if (!companyInfo || !buyerGroup) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Loading Zuora Intelligence...</h1>
+          <p className="text-gray-600">Please wait while we load the buyer group data.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ overflowY: 'auto', height: '100vh' }}>
@@ -481,30 +493,32 @@ export default function ZuoraReportPage() {
           <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-semibold text-black">Sales Intent Score</h3>
-              <SalesIntentGauge score={salesIntent.score} level={salesIntent.level} />
+              {salesIntent && (
+                <SalesIntentGauge score={salesIntent.score} level={salesIntent.level} />
+              )}
             </div>
             
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-lg font-semibold text-black mb-3">Growth Signals</h4>
                 <ul className="text-sm text-gray-700 space-y-2">
-                  {salesIntent.signals.map((signal, index) => (
+                  {salesIntent?.signals?.map((signal, index) => (
                     <li key={index} className="flex items-start gap-2">
                       <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
                       {signal}
                     </li>
-                  ))}
+                  )) || <li className="text-gray-500">No signals available</li>}
                 </ul>
               </div>
               <div>
                 <h4 className="text-lg font-semibold text-black mb-3">Hiring Activity</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="text-center p-3 bg-white rounded border">
-                    <div className="text-2xl font-bold text-black">{salesIntent.hiringActivity.totalJobs}</div>
+                    <div className="text-2xl font-bold text-black">{salesIntent?.hiringActivity?.totalJobs || 0}</div>
                     <div className="text-xs text-gray-600">Total Openings</div>
                   </div>
                   <div className="text-center p-3 bg-white rounded border">
-                    <div className="text-2xl font-bold text-black">{salesIntent.hiringActivity.engineeringRoles}</div>
+                    <div className="text-2xl font-bold text-black">{salesIntent?.hiringActivity?.engineeringRoles || 0}</div>
                     <div className="text-xs text-gray-600">Engineering Roles</div>
                   </div>
                 </div>
