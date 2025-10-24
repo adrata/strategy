@@ -207,7 +207,7 @@ export async function POST(
       description: company.description,
       linkedinFollowers: company.linkedinFollowers,
       globalRank: company.globalRank,
-      competitors: company.competitors ? company.competitors.split(',').map(c => c.trim()) : [],
+      competitors: Array.isArray(company.competitors) ? company.competitors : [],
       lastAction: company.lastAction,
       nextAction: company.nextAction,
       opportunityStage: company.opportunityStage,

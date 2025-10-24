@@ -428,6 +428,38 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     }
   }, [section, workspaceId, userId, authLoading, workspaceLoading, loadedSections]); // Removed fetchSectionData to prevent infinite loops
 
+  // 🚀 CRITICAL FIX: Monitor for force-refresh flags even when section is already loaded
+  // This solves the issue where saved changes don't persist when navigating back to a record
+  useEffect(() => {
+    if (!workspaceId || !userId || authLoading || workspaceLoading) {
+      return;
+    }
+
+    // Check for force-refresh flags in sessionStorage
+    const checkForceRefreshFlags = () => {
+      if (typeof window !== 'undefined') {
+        const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
+          key.startsWith('force-refresh-') && key.includes(section)
+        );
+        
+        if (forceRefreshKeys.length > 0) {
+          console.log(`🔄 [FAST SECTION DATA] Force refresh flags detected for already-loaded section ${section}, triggering refetch:`, forceRefreshKeys);
+          
+          // Trigger a forced refetch
+          fetchSectionData(true);
+        }
+      }
+    };
+    
+    // Check immediately when dependencies change
+    checkForceRefreshFlags();
+    
+    // Also set up an interval to check periodically (for cases where user navigates back)
+    const intervalId = setInterval(checkForceRefreshFlags, 1000);
+    
+    return () => clearInterval(intervalId);
+  }, [section, workspaceId, userId, authLoading, workspaceLoading, fetchSectionData]);
+
   // 🚀 RETRY: Retry failed network requests after a delay
   useEffect(() => {
     if (error && error.includes('Failed to fetch')) {

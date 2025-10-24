@@ -179,7 +179,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         case 'people':
           return [
             { id: 'overview', label: 'Overview' },
-            { id: 'strategy', label: 'Strategy' },
+            { id: 'strategy', label: 'Intelligence' },
             { id: 'actions', label: 'Actions' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' },
@@ -188,7 +188,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         case 'companies':
           return [
             { id: 'overview', label: 'Overview' },
-            { id: 'strategy', label: 'Strategy' },
+            { id: 'strategy', label: 'Intelligence' },
             { id: 'actions', label: 'Actions' },
             { id: 'news', label: 'News' },
             { id: 'buyer-groups', label: 'Buyer Group' },
@@ -198,7 +198,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
         case 'leads':
           return [
             { id: 'overview', label: 'Overview' },
-            { id: 'strategy', label: 'Strategy' },
+            { id: 'strategy', label: 'Intelligence' },
             { id: 'actions', label: 'Actions' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' },
@@ -207,7 +207,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
       case 'prospects':
         return [
           { id: 'overview', label: 'Overview' },
-          { id: 'strategy', label: 'Strategy' },
+          { id: 'strategy', label: 'Intelligence' },
           { id: 'actions', label: 'Actions' },
           { id: 'career', label: 'Career' },
           { id: 'notes', label: 'Notes' },
@@ -956,7 +956,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return (
             <div className="p-6">
               <div className="text-center py-12 text-[var(--muted)]">
-                <p className="text-sm">Strategy data is available in the main record view.</p>
+                <p className="text-sm">Intelligence data is available in the main record view.</p>
                 <p className="text-xs text-[var(--muted)] mt-2">This feature is read-only in edit mode.</p>
               </div>
             </div>
@@ -1029,7 +1029,7 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
           return (
             <div className="p-6">
               <div className="text-center py-12 text-[var(--muted)]">
-                <p className="text-sm">Strategy data is available in the main record view.</p>
+                <p className="text-sm">Intelligence data is available in the main record view.</p>
                 <p className="text-xs text-[var(--muted)] mt-2">This feature is read-only in edit mode.</p>
               </div>
             </div>

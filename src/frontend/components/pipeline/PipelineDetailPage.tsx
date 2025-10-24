@@ -357,21 +357,27 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       return;
     }
     
-    // 🎯 FIRST: Try to find record in sessionStorage (instant loading)
+    // 🎯 CRITICAL FIX: Check for force-refresh flags FIRST before any cache checks
+    // This ensures saved changes are fetched fresh instead of serving stale cached data
     if (typeof window !== 'undefined') {
-      // 🚀 CRITICAL FIX: Check for force-refresh flags BEFORE using cached data
       const forceRefreshKeys = Object.keys(sessionStorage).filter(key => 
         key.startsWith('force-refresh-') && (key.includes(section) || key.includes(recordId))
       );
       
       if (forceRefreshKeys.length > 0) {
-        console.log(`🔄 [INSTANT LOAD] Force refresh detected, skipping cache and loading from API:`, {
+        console.log(`🔄 [INSTANT LOAD] Force refresh detected, clearing flags and skipping ALL caches:`, {
           section,
           recordId,
           forceRefreshKeys
         });
-        // Don't use cache - let it fall through to API load
+        
+        // Clear the force-refresh flags
+        forceRefreshKeys.forEach(key => sessionStorage.removeItem(key));
+        
+        // Skip to API call below - don't check any caches
+        // (fall through to API fetch section)
       } else {
+        // No force-refresh flags, safe to use cached data
         // Check the optimized cache first
         const currentRecord = sessionStorage.getItem(`current-record-${section}`);
         if (currentRecord) {
@@ -402,56 +408,16 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       }
     }
     
-    // Check if we should force a fresh API call (after update)
-    // Check for both record-specific and section-level force-refresh flags
-    const recordSpecificForceRefresh = sessionStorage.getItem(`force-refresh-${section}-${recordId}`) === 'true';
-    const sectionLevelForceRefresh = sessionStorage.getItem(`force-refresh-${section}`) === 'true';
-    const forceRefresh = recordSpecificForceRefresh || sectionLevelForceRefresh;
+    // 🎯 SECOND: Try to find record in already-loaded data (no API call needed)
+    // Note: Force-refresh is already handled above, so this only runs if no flags were found
+    const allData = acquisitionData?.acquireData || acquisitionData || {};
+    const sectionData = allData[section] || [];
     
-    if (forceRefresh) {
-      console.log(`🔄 [FORCE REFRESH] Force refresh detected, skipping ALL caches and fetching fresh from API:`, {
-        section,
-        recordId,
-        recordSpecific: recordSpecificForceRefresh,
-        sectionLevel: sectionLevelForceRefresh
-      });
-      
-      // Clear force-refresh flags
-      if (recordSpecificForceRefresh) {
-        sessionStorage.removeItem(`force-refresh-${section}-${recordId}`);
-      }
-      if (sectionLevelForceRefresh) {
-        sessionStorage.removeItem(`force-refresh-${section}`);
-      }
-      
-      // 🚀 CRITICAL FIX: Clear the specific record from acquisitionData to prevent stale data
-      if (acquisitionData?.acquireData?.[section]) {
-        const sectionData = acquisitionData.acquireData[section];
-        const recordIndex = sectionData.findIndex((record: any) => record['id'] === recordId);
-        if (recordIndex !== -1) {
-          console.log(`🗑️ [FORCE REFRESH] Removing stale record from acquisitionData:`, {
-            section,
-            recordId,
-            recordIndex,
-            recordName: sectionData[recordIndex]?.name || sectionData[recordIndex]?.fullName
-          });
-          // Remove the stale record from acquisitionData
-          acquisitionData.acquireData[section].splice(recordIndex, 1);
-        }
-      }
-      
-      // Skip to the API call section below
-    } else {
-      // 🎯 SECOND: Try to find record in already-loaded data (no API call needed)
-      const allData = acquisitionData?.acquireData || acquisitionData || {};
-      const sectionData = allData[section] || [];
-      
-      const existingRecord = sectionData.find((record: any) => record['id'] === recordId);
-      if (existingRecord) {
-        console.log(`⚡ [SMART LOAD] Found record in cache - no API call needed:`, existingRecord.name || existingRecord.fullName || recordId);
-        setSelectedRecord(existingRecord);
-        return;
-      }
+    const existingRecord = sectionData.find((record: any) => record['id'] === recordId);
+    if (existingRecord) {
+      console.log(`⚡ [SMART LOAD] Found record in acquisition data - no API call needed:`, existingRecord.name || existingRecord.fullName || recordId);
+      setSelectedRecord(existingRecord);
+      return;
     }
 
     // 🎯 FALLBACK: Only make API call if record not found in cache
