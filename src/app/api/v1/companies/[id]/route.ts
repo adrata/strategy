@@ -368,6 +368,36 @@ export async function PATCH(
       .filter(key => ALLOWED_COMPANY_FIELDS.includes(key))
       .reduce((obj, key) => ({ ...obj, [key]: body[key] }), {});
 
+    // Sanitize date fields - convert "-" or empty strings to null
+    const DATE_FIELDS = [
+      'lastFundingDate',
+      'acquisitionDate', 
+      'lastVerified',
+      'foundedYear',
+      'lastActionDate',
+      'nextActionDate',
+      'actualCloseDate',
+      'expectedCloseDate'
+    ];
+
+    for (const field of DATE_FIELDS) {
+      if (field in updateData) {
+        const value = updateData[field];
+        // Convert "-", empty string, or invalid dates to null
+        if (value === "-" || value === "" || value === undefined) {
+          updateData[field] = null;
+          console.log(`🔄 [DATE SANITIZATION] Converted ${field} from "${value}" to null`);
+        } else if (typeof value === 'string') {
+          // Validate it's a proper ISO date
+          const date = new Date(value);
+          if (isNaN(date.getTime())) {
+            updateData[field] = null;
+            console.log(`🔄 [DATE SANITIZATION] Converted invalid date ${field} from "${value}" to null`);
+          }
+        }
+      }
+    }
+
     console.log(`🔍 [COMPANY API AUDIT] Database update preparation:`, {
       companyId: id,
       updateData,

@@ -912,7 +912,7 @@ export function UniversalRecordTemplate({
         
         // Business fields
         addField('lastFundingAmount', updatedData['lastFundingAmount']);
-        addField('lastFundingDate', updatedData['lastFundingDate']);
+        addField('lastFundingDate', updatedData['lastFundingDate'], 'date');
         addField('stockSymbol', updatedData['stockSymbol']);
         addField('isPublic', updatedData['isPublic']);
         addField('naicsCodes', updatedData['naicsCodes']);
@@ -926,8 +926,8 @@ export function UniversalRecordTemplate({
         // SBI fields
         addField('confidence', updatedData['confidence']);
         addField('sources', updatedData['sources']);
-        addField('acquisitionDate', updatedData['acquisitionDate']);
-        addField('lastVerified', updatedData['lastVerified']);
+        addField('acquisitionDate', updatedData['acquisitionDate'], 'date');
+        addField('lastVerified', updatedData['lastVerified'], 'date');
         addField('parentCompanyName', updatedData['parentCompanyName']);
         addField('parentCompanyDomain', updatedData['parentCompanyDomain']);
       }
@@ -1054,15 +1054,27 @@ export function UniversalRecordTemplate({
       if (!result.success) {
         console.error('❌ [UNIVERSAL] API update failed:', {
           error: result.error,
-          details: result.details
+          details: result.details,
+          code: result.code
         });
         throw new Error(result.error || 'Failed to update record');
       }
-      console.log('✅ [UNIVERSAL] Record updated successfully:', {
-        success: result.success,
-        data: result.data,
-        meta: result.meta
-      });
+      console.log('✅ [UNIVERSAL] Record updated successfully:', result.data);
+
+      // Set force-refresh flag for proper cache invalidation
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem(`force-refresh-${recordType}`, Date.now().toString());
+        console.log(`🔄 [UNIVERSAL] Set force-refresh flag for ${recordType}`);
+      }
+
+      // Update local record state
+      setLocalRecord(result.data);
+
+      // Call the parent onRecordUpdate callback
+      if (onRecordUpdate) {
+        console.log('🔄 [UNIVERSAL] Calling onRecordUpdate callback');
+        await onRecordUpdate(result.data);
+      }
       
       // Update local record state with API response data
       const updatedRecord = {
