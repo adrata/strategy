@@ -221,7 +221,23 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         <h3 className="text-lg font-semibold text-[var(--foreground)]">{companyName} Summary</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <InlineEditField
-            value={record?.description || ''}
+            value={(() => {
+              // Prioritize the longer, more detailed description for better seller context
+              const originalDesc = record?.description && record.description.trim() !== '' ? record.description : '';
+              const enrichedDesc = record?.descriptionEnriched && record.descriptionEnriched.trim() !== '' ? record.descriptionEnriched : '';
+              
+              // Use the longer description for better context, or enriched if original is not available
+              if (originalDesc && enrichedDesc) {
+                return originalDesc.length > enrichedDesc.length ? originalDesc : enrichedDesc;
+              } else if (originalDesc) {
+                return originalDesc;
+              } else if (enrichedDesc) {
+                return enrichedDesc;
+              }
+              
+              // Fallback to basic description if no data
+              return 'No description available';
+            })()}
             field="description"
             onSave={onSave || (() => Promise.resolve())}
             recordId={companyId}

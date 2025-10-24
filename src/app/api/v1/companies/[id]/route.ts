@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/platform/database/prisma-client';
 import { getV1AuthUser } from '../../auth';
 
 // Vercel runtime configuration for proper HTTP method handling
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const prisma = new PrismaClient();
 
 /**
  * Clean and normalize website URL
@@ -46,7 +44,11 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let id: string | undefined;
   try {
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+    
     // Simple authentication check
     const authUser = await getV1AuthUser(request);
     if (!authUser) {
@@ -56,12 +58,11 @@ export async function GET(
       );
     }
 
-    const { id } = await params;
-
     const company = await prisma.companies.findUnique({
       where: { 
         id,
-        deletedAt: null // Only show non-deleted records
+        deletedAt: null, // Only show non-deleted records
+        workspaceId: authUser.workspaceId // Ensure company belongs to user's workspace
       },
       select: {
         // Base company fields
@@ -69,6 +70,7 @@ export async function GET(
         name: true,
         website: true,
         description: true,
+        descriptionEnriched: true,
         industry: true,
         size: true,
         revenue: true,
@@ -158,7 +160,14 @@ export async function GET(
     });
 
   } catch (error) {
-    console.error('Error fetching company:', error);
+    console.error('❌ [COMPANIES API] Error fetching company:', {
+      companyId: id,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+    });
     return NextResponse.json(
       { success: false, error: 'Failed to fetch company' },
       { status: 500 }
@@ -171,7 +180,11 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let id: string | undefined;
   try {
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+    
     // Simple authentication check
     const authUser = await getV1AuthUser(request);
     if (!authUser) {
@@ -181,7 +194,6 @@ export async function PUT(
       );
     }
 
-    const { id } = await params;
     const body = await request.json();
 
     // Clean and validate website URL only if it's being explicitly updated to a non-empty value
@@ -199,11 +211,12 @@ export async function PUT(
       }
     }
 
-    // Check if company exists
+    // Check if company exists and belongs to user's workspace
     const existingCompany = await prisma.companies.findUnique({
       where: { 
         id,
-        deletedAt: null // Only update non-deleted records
+        deletedAt: null, // Only update non-deleted records
+        workspaceId: authUser.workspaceId // Ensure company belongs to user's workspace
       },
     });
 
@@ -255,7 +268,18 @@ export async function PUT(
     });
 
   } catch (error) {
-    console.error('Error updating company:', error);
+    console.error('❌ [COMPANIES API] Error updating company:', {
+      companyId: id,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+      // Include Prisma-specific error details if available
+      prismaCode: error && typeof error === 'object' && 'code' in error ? error.code : undefined,
+      prismaMessage: error && typeof error === 'object' && 'message' in error ? error.message : undefined,
+      prismaMeta: error && typeof error === 'object' && 'meta' in error ? error.meta : undefined
+    });
     
     // Handle unique constraint violations
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
@@ -277,7 +301,13 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let id: string | undefined;
+  let body: any;
+  let updateData: any;
   try {
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+    
     // Simple authentication check
     const authUser = await getV1AuthUser(request);
     if (!authUser) {
@@ -287,8 +317,7 @@ export async function PATCH(
       );
     }
 
-    const { id } = await params;
-    const body = await request.json();
+    body = await request.json();
     
     console.log(`🔍 [COMPANY API AUDIT] PATCH request received:`, {
       companyId: id,
@@ -311,11 +340,12 @@ export async function PATCH(
       }
     }
 
-    // Check if company exists
+    // Check if company exists and belongs to user's workspace
     const existingCompany = await prisma.companies.findUnique({
       where: { 
         id,
-        deletedAt: null // Only update non-deleted records
+        deletedAt: null, // Only update non-deleted records
+        workspaceId: authUser.workspaceId // Ensure company belongs to user's workspace
       },
     });
 
@@ -360,8 +390,8 @@ export async function PATCH(
       'targetIndustry'
     ];
 
-    // Filter body to only allowed fields
-    const updateData = Object.keys(body)
+    // Filter body to only allowed fields FIRST
+    updateData = Object.keys(body)
       .filter(key => ALLOWED_COMPANY_FIELDS.includes(key))
       .reduce((obj, key) => ({ ...obj, [key]: body[key] }), {});
 
@@ -505,11 +535,9 @@ export async function PATCH(
         name: error.name
       } : error,
       // Include Prisma-specific error details if available
-      ...(error && typeof error === 'object' && 'code' in error && {
-        prismaCode: error.code,
-        prismaMessage: 'message' in error ? error.message : undefined,
-        meta: 'meta' in error ? error.meta : undefined
-      })
+      prismaCode: error && typeof error === 'object' && 'code' in error ? error.code : undefined,
+      prismaMessage: error && typeof error === 'object' && 'message' in error ? error.message : undefined,
+      prismaMeta: error && typeof error === 'object' && 'meta' in error ? error.meta : undefined
     });
     
     // Handle unique constraint violations
@@ -537,7 +565,11 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let id: string | undefined;
   try {
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+    
     // Simple authentication check
     const authUser = await getV1AuthUser(request);
     if (!authUser) {
@@ -547,15 +579,15 @@ export async function DELETE(
       );
     }
 
-    const { id } = await params;
     const { searchParams } = new URL(request.url);
     const mode = searchParams.get('mode') || 'soft'; // Default to soft delete
     
-    // Check if company exists
+    // Check if company exists and belongs to user's workspace
     const existingCompany = await prisma.companies.findUnique({
       where: { 
         id,
-        deletedAt: null // Only delete non-deleted records
+        deletedAt: null, // Only delete non-deleted records
+        workspaceId: authUser.workspaceId // Ensure company belongs to user's workspace
       },
       include: {
         _count: {
@@ -616,7 +648,14 @@ export async function DELETE(
     });
 
   } catch (error) {
-    console.error('Error deleting company:', error);
+    console.error('❌ [COMPANIES API] Error deleting company:', {
+      companyId: id,
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      } : error,
+    });
     return NextResponse.json(
       { success: false, error: 'Failed to delete company' },
       { status: 500 }

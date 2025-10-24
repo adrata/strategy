@@ -227,6 +227,7 @@ model companies {
   tradingName            String?          @db.VarChar(255)
   localName              String?          @db.VarChar(255)
   description            String?
+  descriptionEnriched    String?
   website                String?          @db.VarChar(500)
   email                  String?          @db.VarChar(300)
   phone                  String?          @db.VarChar(50)
