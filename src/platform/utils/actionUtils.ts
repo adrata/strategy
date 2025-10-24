@@ -239,3 +239,242 @@ export function calculateNextActionTiming(nextActionDate: Date | null): string {
   if (diffDays <= 30) return 'This month';
   return 'Future';
 }
+
+/**
+ * Get the last action time from a record
+ * @param record - The pipeline record
+ * @returns The last action timestamp or null
+ */
+export function getLastActionTime(record: any): Date | null {
+  const lastActionDate = record?.lastActionDate || record?.lastActionTime || record?.lastContactDate || record?.lastContact;
+  if (!lastActionDate) return null;
+  
+  try {
+    const date = new Date(lastActionDate);
+    return isNaN(date.getTime()) ? null : date;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Get a smart last action description from a record
+ * @param record - The pipeline record
+ * @returns A formatted last action description
+ */
+export function getSmartLastActionDescription(record: any): string {
+  return record?.lastAction || record?.lastActionDescription || 'No action';
+}
+
+/**
+ * Format last action time for display
+ * @param date - The date to format
+ * @returns Formatted date string
+ */
+export function formatLastActionTime(date: Date | null): string {
+  if (!date) return 'Never';
+  
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffMinutes < 60) {
+    return diffMinutes < 1 ? 'Just now' : `${diffMinutes}m ago`;
+  }
+  if (diffHours < 24) {
+    return `${diffHours}h ago`;
+  }
+  if (diffDays < 7) {
+    return `${diffDays}d ago`;
+  }
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7);
+    return `${weeks}w ago`;
+  }
+  return date.toLocaleDateString();
+}
+
+/**
+ * Calculate health status based on record data
+ * @param record - The pipeline record
+ * @returns Health status object
+ */
+export function getHealthStatus(record: any): { status: string; color: string; score: number } {
+  const lastActionTime = getLastActionTime(record);
+  const now = new Date();
+  
+  if (!lastActionTime) {
+    return { status: 'Cold', color: 'bg-red-100 text-red-800', score: 0 };
+  }
+  
+  const diffDays = Math.floor((now.getTime() - lastActionTime.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (diffDays <= 1) {
+    return { status: 'Hot', color: 'bg-green-100 text-green-800', score: 100 };
+  }
+  if (diffDays <= 7) {
+    return { status: 'Warm', color: 'bg-yellow-100 text-yellow-800', score: 75 };
+  }
+  if (diffDays <= 30) {
+    return { status: 'Cool', color: 'bg-orange-100 text-orange-800', score: 50 };
+  }
+  
+  return { status: 'Cold', color: 'bg-red-100 text-red-800', score: 25 };
+}
+
+/**
+ * Get smart next action based on record context
+ * @param record - The pipeline record
+ * @returns Suggested next action text
+ */
+export function getSmartNextAction(record: any): string {
+  const lastAction = record?.lastAction || record?.lastActionDescription || '';
+  const status = record?.status?.toLowerCase() || '';
+  
+  // If no last action, suggest initial outreach
+  if (!lastAction || lastAction === 'No action') {
+    if (record?.email) {
+      return 'Send initial email introduction';
+    }
+    if (record?.linkedinUrl) {
+      return 'Send LinkedIn connection request';
+    }
+    return 'Make initial contact';
+  }
+  
+  // Suggest follow-up based on last action type
+  if (lastAction.toLowerCase().includes('email')) {
+    return 'Follow up with phone call or LinkedIn message';
+  }
+  if (lastAction.toLowerCase().includes('linkedin')) {
+    return 'Send follow-up email or schedule meeting';
+  }
+  if (lastAction.toLowerCase().includes('call') || lastAction.toLowerCase().includes('phone')) {
+    return 'Send follow-up email with next steps';
+  }
+  if (lastAction.toLowerCase().includes('meeting')) {
+    return 'Send meeting summary and next steps';
+  }
+  
+  // Default suggestions based on status
+  if (status === 'hot' || status === 'qualified') {
+    return 'Schedule demo or proposal meeting';
+  }
+  if (status === 'warm') {
+    return 'Send value-focused follow-up';
+  }
+  
+  return 'Continue nurturing relationship';
+}
+
+/**
+ * Get next action for leads with priority logic
+ * @param record - The pipeline record
+ * @param index - The record index (0-based)
+ * @returns Next action object with timing and action text
+ */
+export function getLeadsNextAction(record: any, index: number): { timing: string; timingColor: string; action: string } {
+  // Top 50 priority: always show "Today"
+  if (index < 50) {
+    return {
+      timing: 'Today',
+      timingColor: 'bg-red-100 text-red-800 border border-red-200',
+      action: getSmartNextAction(record)
+    };
+  }
+  
+  // If nextActionDate exists, use it
+  if (record?.nextActionDate) {
+    const nextDate = new Date(record.nextActionDate);
+    const now = new Date();
+    const diffMs = nextDate.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) {
+      return {
+        timing: 'Overdue',
+        timingColor: 'bg-red-100 text-red-800 border border-red-200',
+        action: record?.nextAction || getSmartNextAction(record)
+      };
+    }
+    if (diffDays === 0) {
+      return {
+        timing: 'Today',
+        timingColor: 'bg-orange-100 text-orange-800 border border-orange-200',
+        action: record?.nextAction || getSmartNextAction(record)
+      };
+    }
+    if (diffDays <= 7) {
+      return {
+        timing: 'This week',
+        timingColor: 'bg-yellow-100 text-yellow-800 border border-yellow-200',
+        action: record?.nextAction || getSmartNextAction(record)
+      };
+    }
+    return {
+      timing: 'Future',
+      timingColor: 'bg-gray-100 text-gray-800 border border-gray-200',
+      action: record?.nextAction || getSmartNextAction(record)
+    };
+  }
+  
+  // Calculate optimal timing based on last action
+  const lastActionTime = getLastActionTime(record);
+  const lastAction = record?.lastAction || record?.lastActionDescription || '';
+  
+  if (!lastActionTime || !lastAction || lastAction === 'No action') {
+    return {
+      timing: 'ASAP',
+      timingColor: 'bg-red-100 text-red-800 border border-red-200',
+      action: getSmartNextAction(record)
+    };
+  }
+  
+  const now = new Date();
+  const diffDays = Math.floor((now.getTime() - lastActionTime.getTime()) / (1000 * 60 * 60 * 24));
+  
+  // Calculate optimal next action timing based on last action type
+  let optimalDays = 3; // Default
+  
+  if (lastAction.toLowerCase().includes('linkedin')) {
+    optimalDays = 2; // LinkedIn actions: 2-3 days
+  } else if (lastAction.toLowerCase().includes('email')) {
+    optimalDays = 4; // Email: 3-5 days
+  } else if (lastAction.toLowerCase().includes('call') || lastAction.toLowerCase().includes('phone')) {
+    optimalDays = 2; // Phone call: 1-2 days
+  } else if (lastAction.toLowerCase().includes('meeting')) {
+    optimalDays = 7; // Meeting follow-up: 1 week
+  }
+  
+  const daysUntilNext = optimalDays - diffDays;
+  
+  if (daysUntilNext <= 0) {
+    return {
+      timing: 'Overdue',
+      timingColor: 'bg-red-100 text-red-800 border border-red-200',
+      action: getSmartNextAction(record)
+    };
+  }
+  if (daysUntilNext === 1) {
+    return {
+      timing: 'Tomorrow',
+      timingColor: 'bg-orange-100 text-orange-800 border border-orange-200',
+      action: getSmartNextAction(record)
+    };
+  }
+  if (daysUntilNext <= 3) {
+    return {
+      timing: 'This week',
+      timingColor: 'bg-yellow-100 text-yellow-800 border border-yellow-200',
+      action: getSmartNextAction(record)
+    };
+  }
+  
+  return {
+    timing: 'Next week',
+    timingColor: 'bg-blue-100 text-blue-800 border border-blue-200',
+    action: getSmartNextAction(record)
+  };
+}

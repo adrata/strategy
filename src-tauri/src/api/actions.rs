@@ -439,27 +439,31 @@ pub async fn update_action(
     let sqlite_pool = db_manager.get_sqlite_pool().await
         .map_err(|e| format!("Failed to get SQLite connection: {}", e))?;
 
-    // Check if action exists
-    let action_exists: bool = sqlx::query_scalar(
-        "SELECT EXISTS(SELECT 1 FROM actions WHERE id = ? AND deleted_at IS NULL)"
-    )
-    .bind(&action_id)
-    .fetch_one(&*sqlite_pool)
-    .await
-    .map_err(|e| format!("Failed to check action existence: {}", e))?;
+    // Get existing action to check current values
+    let existing_action_row = sqlx::query("SELECT * FROM actions WHERE id = ? AND deleted_at IS NULL")
+        .bind(&action_id)
+        .fetch_optional(&*sqlite_pool)
+        .await
+        .map_err(|e| format!("Failed to fetch existing action: {}", e))?;
 
-    if !action_exists {
-        return Ok(ActionResponse {
-            success: false,
-            data: None,
-            error: Some("Action not found".to_string()),
-            meta: None,
-        });
-    }
+    let existing_action = match existing_action_row {
+        Some(row) => row,
+        None => {
+            return Ok(ActionResponse {
+                success: false,
+                data: None,
+                error: Some("Action not found".to_string()),
+                meta: None,
+            });
+        }
+    };
 
-    // Validate foreign key references if provided
+    // Get current company_id from existing action
+    let current_company_id: Option<String> = existing_action.get("company_id");
+
+    // Validate foreign key references if provided AND being changed
     if let Some(ref company_id) = request.company_id {
-        if !company_id.is_empty() {
+        if !company_id.is_empty() && current_company_id.as_ref() != Some(company_id) {
             let company_exists: bool = sqlx::query_scalar(
                 "SELECT EXISTS(SELECT 1 FROM companies WHERE id = ? AND deleted_at IS NULL)"
             )
@@ -479,8 +483,11 @@ pub async fn update_action(
         }
     }
 
+    // Get current person_id from existing action
+    let current_person_id: Option<String> = existing_action.get("person_id");
+
     if let Some(ref person_id) = request.person_id {
-        if !person_id.is_empty() {
+        if !person_id.is_empty() && current_person_id.as_ref() != Some(person_id) {
             let person_exists: bool = sqlx::query_scalar(
                 "SELECT EXISTS(SELECT 1 FROM people WHERE id = ? AND deleted_at IS NULL)"
             )

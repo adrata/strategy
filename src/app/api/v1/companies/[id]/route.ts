@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { PrismaClient } from '@prisma/client';
 import { getV1AuthUser } from '../../auth';
+
+const prisma = new PrismaClient();
 
 /**
  * Clean and normalize website URL

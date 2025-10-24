@@ -452,6 +452,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
+                <InlineEditField
+                  value={record?.linkedinNavigatorUrl || ''}
+                  field="linkedinNavigatorUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Market:</span>
                 <DisplayValue value={record?.industry} />
@@ -866,6 +878,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={formatEmptyValue(record?.linkedinUrl)}
                   field="linkedinUrl"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  className="text-sm font-medium text-[var(--foreground)]"
+                />
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
+                <InlineEditField
+                  value={formatEmptyValue(record?.linkedinNavigatorUrl)}
+                  field="linkedinNavigatorUrl"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { authFetch } from '@/platform/api-fetch';
 import { formatDistanceToNow, format } from 'date-fns';
-import { ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, DocumentTextIcon, PhoneIcon, CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, DocumentTextIcon, PhoneIcon, CalendarIcon, UserIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
 import { InlineEditField } from '../InlineEditField';
 
@@ -33,10 +33,54 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   
+  // Delete confirmation state
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteActionId, setDeleteActionId] = useState<string | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
+
+  const handleDeleteClick = (actionId: string) => {
+    setDeleteActionId(actionId);
+    setShowDeleteConfirm(true);
+    setDeleteConfirmText('');
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteActionId || deleteConfirmText.toLowerCase() !== 'delete') {
+      return;
+    }
+
+    try {
+      const response = await authFetch(`/api/v1/actions/${deleteActionId}`, {
+        method: 'DELETE',
+      });
+
+      if (response && response.success) {
+        handleSuccess('Action deleted successfully');
+        // Refresh the actions list
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        throw new Error(response?.error || 'Failed to delete action');
+      }
+    } catch (error) {
+      console.error('Error deleting action:', error);
+      handleSuccess('Failed to delete action');
+    } finally {
+      setShowDeleteConfirm(false);
+      setDeleteActionId(null);
+      setDeleteConfirmText('');
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false);
+    setDeleteActionId(null);
+    setDeleteConfirmText('');
   };
 
   // Function to get user name from user ID
@@ -486,34 +530,24 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
 
                     {/* Event content */}
                     <div className="flex-1 min-w-0 pb-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <InlineEditField
-                        value={event.title}
-                        field="title"
-                        onSave={onSave || (() => Promise.resolve())}
-                        recordId={event.id}
-                        recordType="action"
-                        onSuccess={handleSuccess}
-                        placeholder="Enter action title"
-                        className="text-sm font-medium text-[var(--foreground)]"
-                      />
-                      {!isPastEvent(event.date) && event.metadata?.status?.toUpperCase() !== 'COMPLETED' && (
-                        <span className="px-4 py-1 bg-red-100 text-red-800 text-xs rounded-full whitespace-nowrap">
-                          Scheduled
-                        </span>
-                      )}
-                      {event.metadata?.status && (
-                        <span className={`px-4 py-1 text-xs rounded-full whitespace-nowrap ${
-                          event.metadata.status.toUpperCase() === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                          event.metadata.status.toUpperCase() === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
-                          'bg-[var(--hover)] text-gray-800'
-                        }`}>
-                          {event.metadata.status.toUpperCase()}
-                        </span>
-                      )}
-                    </div>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          {!isPastEvent(event.date) && event.metadata?.status?.toUpperCase() !== 'COMPLETED' && (
+                            <span className="px-4 py-1 bg-red-100 text-red-800 text-xs rounded-full whitespace-nowrap">
+                              Scheduled
+                            </span>
+                          )}
+                          {event.metadata?.status && (
+                            <span className={`px-4 py-1 text-xs rounded-full whitespace-nowrap ${
+                              event.metadata.status.toUpperCase() === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                              event.metadata.status.toUpperCase() === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
+                              'bg-[var(--hover)] text-gray-800'
+                            }`}>
+                              {event.metadata.status.toUpperCase()}
+                            </span>
+                          )}
+                        </div>
                     <InlineEditField
                       value={event.description}
                       field="description"
@@ -596,6 +630,14 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                           return 'Unknown date';
                         }
                       })()}</span>
+                      <span>•</span>
+                      <button
+                        onClick={() => handleDeleteClick(event.id)}
+                        className="flex items-center gap-1 text-red-600 hover:text-red-800 transition-colors"
+                      >
+                        <TrashIcon className="w-3 h-3" />
+                        <span>Delete</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -616,6 +658,53 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
             <div className="flex items-center space-x-2">
               <span>✓</span>
               <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <TrashIcon className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Delete Action</h3>
+                <p className="text-sm text-gray-600">This action cannot be undone.</p>
+              </div>
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Type "delete" to confirm:
+              </label>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                placeholder="Type 'delete' here"
+                autoFocus
+              />
+            </div>
+            
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleDeleteCancel}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={deleteConfirmText.toLowerCase() !== 'delete'}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md transition-colors"
+              >
+                Delete Action
+              </button>
             </div>
           </div>
         </div>

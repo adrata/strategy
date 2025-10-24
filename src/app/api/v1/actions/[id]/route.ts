@@ -305,6 +305,49 @@ export async function PATCH(
       );
     }
 
+    // Validate foreign key references if provided AND being changed
+    if (body.companyId && body.companyId !== existingAction.companyId) {
+      console.log('🔍 [ACTIONS PATCH] Validating company reference (being changed):', { 
+        newCompanyId: body.companyId,
+        existingCompanyId: existingAction.companyId
+      });
+      const companyExists = await prisma.companies.findUnique({
+        where: { id: body.companyId, deletedAt: null }
+      });
+      if (!companyExists) {
+        console.error('❌ [ACTIONS PATCH] Validation failed - company not found:', {
+          companyId: body.companyId,
+          context: { userId: authUser.id, workspaceId: authUser.workspaceId }
+        });
+        return NextResponse.json(
+          { success: false, error: `Company with ID ${body.companyId} not found or has been deleted` },
+          { status: 400 }
+        );
+      }
+      console.log('✅ [ACTIONS PATCH] Company reference validated:', { companyName: companyExists.name });
+    }
+
+    if (body.personId && body.personId !== existingAction.personId) {
+      console.log('🔍 [ACTIONS PATCH] Validating person reference (being changed):', { 
+        newPersonId: body.personId,
+        existingPersonId: existingAction.personId
+      });
+      const personExists = await prisma.people.findUnique({
+        where: { id: body.personId, deletedAt: null }
+      });
+      if (!personExists) {
+        console.error('❌ [ACTIONS PATCH] Validation failed - person not found:', {
+          personId: body.personId,
+          context: { userId: authUser.id, workspaceId: authUser.workspaceId }
+        });
+        return NextResponse.json(
+          { success: false, error: `Person with ID ${body.personId} not found or has been deleted` },
+          { status: 400 }
+        );
+      }
+      console.log('✅ [ACTIONS PATCH] Person reference validated:', { personName: personExists.fullName || personExists.firstName });
+    }
+
     // Prepare update data with automatic completion handling
     const updateData: any = {
       ...body,
