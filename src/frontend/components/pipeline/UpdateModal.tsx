@@ -868,7 +868,15 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
 
   const renderTimelineTab = () => (
     <div className="p-6">
-      <UniversalActionsTab record={record} recordType={recordType} />
+      <UniversalActionsTab 
+        record={record} 
+        recordType={recordType}
+        onSave={async (field: string, value: string, recordId?: string, recordTypeParam?: string) => {
+          // Update the action via API
+          const updateData = { [field]: value };
+          await onUpdate(updateData);
+        }}
+      />
     </div>
   );
 

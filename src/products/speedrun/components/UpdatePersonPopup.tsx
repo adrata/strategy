@@ -276,7 +276,15 @@ export function UpdatePersonPopup({
       {/* Actions List Section */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-[var(--foreground)]">Existing Actions</h3>
-        <UniversalActionsTab record={person} recordType="people" />
+        <UniversalActionsTab 
+          record={person} 
+          recordType="people"
+          onSave={async (field: string, value: string, recordId?: string, recordTypeParam?: string) => {
+            // Update the action via API
+            const updateData = { [field]: value };
+            await onUpdate(updateData);
+          }}
+        />
       </div>
     </div>
   );
