@@ -575,12 +575,16 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         console.log(`🔄 [RECORD LOADING] Calling loadDirectRecord for fresh data: ${recordId}`);
         loadDirectRecord(recordId);
         return; // Exit early to skip cache checks
-      } else if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
-        console.log(`🔄 [PREVENT LOOP] Already loading or have record: ${recordId}`);
+      }
+      
+      // 🚫 PREVENT INFINITE LOOPS: Only skip if we already have the record AND no force-refresh flags
+      // If force-refresh flags exist, we should always reload even if we have the record
+      if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
+        console.log(`🔄 [PREVENT LOOP] Already loading or have record: ${recordId} (and no force-refresh flags)`);
         return;
       }
     } else if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
-      console.log(`🔄 [PREVENT LOOP] Already loading or have record: ${recordId}`);
+      console.log(`🔄 [PREVENT LOOP] Already loading or have record: ${recordId} (no window object)`);
       return;
     }
     
