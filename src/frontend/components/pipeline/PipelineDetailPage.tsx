@@ -533,9 +533,31 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       directRecordLoading,
       dataLength: data.length
     });
-    
-    // 🚫 PREVENT INFINITE LOOPS: Check if we're already loading this record
-    if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
+
+    // 🎯 CRITICAL FIX: Check for force-refresh flags FIRST
+    // This ensures saved changes are fetched fresh instead of serving stale cached data
+    if (typeof window !== 'undefined') {
+      const forceRefreshRecordKey = `force-refresh-${section}-${recordId}`;
+      const forceRefreshSectionKey = `force-refresh-${section}`;
+      const isForceRefresh = sessionStorage.getItem(forceRefreshRecordKey) === 'true' || 
+                            sessionStorage.getItem(forceRefreshSectionKey) === 'true';
+      
+      if (isForceRefresh) {
+        console.log(`🔄 [RECORD LOADING] Force refresh detected for ${section} record ${recordId}, clearing flags.`);
+        sessionStorage.removeItem(forceRefreshRecordKey);
+        sessionStorage.removeItem(forceRefreshSectionKey);
+        // Clear all related caches
+        sessionStorage.removeItem(`cached-${section}-${recordId}`);
+        sessionStorage.removeItem(`current-record-${section}`);
+        // 🎯 CRITICAL: Call loadDirectRecord directly to fetch fresh data
+        console.log(`🔄 [RECORD LOADING] Calling loadDirectRecord for fresh data: ${recordId}`);
+        loadDirectRecord(recordId);
+        return; // Exit early to skip cache checks
+      } else if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
+        console.log(`🔄 [PREVENT LOOP] Already loading or have record: ${recordId}`);
+        return;
+      }
+    } else if (directRecordLoading || (selectedRecord && selectedRecord.id === recordId)) {
       console.log(`🔄 [PREVENT LOOP] Already loading or have record: ${recordId}`);
       return;
     }
@@ -607,7 +629,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     
     // Cleanup timeout on unmount or dependency change
     return () => clearTimeout(timeoutId);
-  }, [slug, section, data.length, selectedRecord?.id]); // 🚀 FIX: Added data.length and selectedRecord.id to dependencies
+  }, [slug, section, data.length, selectedRecord?.id, loadDirectRecord]); // 🚀 FIX: Added loadDirectRecord to dependencies
 
   // Handle section navigation
   const handleSectionChange = (newSection: string) => {
