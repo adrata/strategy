@@ -378,37 +378,55 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     
     // Only check caches if NO force-refresh flags were detected
     if (!shouldSkipAllCaches) {
-      // 🚀 INDUSTRY BEST PRACTICE: Check for force-refresh flags first
-      const forceRefreshRecordKey = `force-refresh-${section}-${recordId}`;
-      const hasForceRefreshFlag = sessionStorage.getItem(forceRefreshRecordKey) === 'true';
+      // 🚀 CACHE VERSIONING: Check version-based staleness first
+      const versionKey = `edit-version-${section}-${recordId}`;
+      const currentVersion = parseInt(sessionStorage.getItem(versionKey) || '0', 10);
       
       // Check the optimized cache first
       const currentRecord = sessionStorage.getItem(`current-record-${section}`);
       if (currentRecord) {
         try {
-          const { id, data, timestamp } = JSON.parse(currentRecord);
+          const { id, data, timestamp, version: cachedVersion } = JSON.parse(currentRecord);
           const cacheAge = Date.now() - timestamp;
-          const isStale = cacheAge > 30000; // 30 seconds threshold
+          const isStaleByTime = cacheAge > 30000; // 30 seconds threshold
+          const isStaleByVersion = cachedVersion !== undefined && cachedVersion < currentVersion;
+          const isStale = isStaleByTime || isStaleByVersion;
           
-          console.log(`🔍 [CACHE CHECK] Optimized cache:`, {
-            recordId: id,
-            targetId: recordId,
-            cacheAge: `${Math.round(cacheAge / 1000)}s`,
-            isStale,
-            hasForceRefreshFlag,
-            willUseCache: id === recordId && !isStale && !hasForceRefreshFlag
-          });
+            console.log(`🔍 [CACHE CHECK] Optimized cache:`, {
+              recordId: id,
+              targetId: recordId,
+              cacheAge: `${Math.round(cacheAge / 1000)}s`,
+              currentVersion,
+              cachedVersion,
+              isStaleByTime,
+              isStaleByVersion,
+              isStale,
+              willUseCache: id === recordId && !isStale,
+              dataKeys: Object.keys(data || {}).length,
+              legalName: data?.legalName,
+              localName: data?.localName,
+              tradingName: data?.tradingName,
+              description: data?.description,
+              website: data?.website,
+              phone: data?.phone
+            });
           
-          if (id === recordId && !isStale && !hasForceRefreshFlag) {
+          if (id === recordId && !isStale) {
             console.log(`⚡ [INSTANT LOAD] Found fresh record in optimized cache - instant loading:`, data.name || data.fullName || recordId);
+            console.log(`🔍 [INSTANT LOAD DEBUG] Cached data:`, {
+              legalName: data?.legalName,
+              localName: data?.localName,
+              tradingName: data?.tradingName,
+              description: data?.description,
+              phone: data?.phone
+            });
             setSelectedRecord(data);
             console.log(`✅ [INSTANT LOAD] Record set from optimized cache: ${data.name || data.id}`);
             return;
-          } else if (isStale) {
+          } else if (isStaleByVersion) {
+            console.log(`🔄 [CACHE CHECK] Cache version is stale (${cachedVersion} < ${currentVersion}), fetching fresh data`);
+          } else if (isStaleByTime) {
             console.log(`🔄 [CACHE CHECK] Cache is stale (${Math.round(cacheAge / 1000)}s old), fetching fresh data`);
-          } else if (hasForceRefreshFlag) {
-            console.log(`🔄 [CACHE CHECK] Force refresh flag detected, fetching fresh data`);
-            sessionStorage.removeItem(forceRefreshRecordKey);
           }
         } catch (error) {
           console.warn('Failed to parse optimized cached record:', error);
@@ -421,27 +439,30 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
         try {
           const record = JSON.parse(cachedRecord);
           const recordAge = record.updatedAt ? Date.now() - new Date(record.updatedAt).getTime() : 0;
-          const isStale = recordAge > 30000; // 30 seconds threshold
+          const isStaleByTime = recordAge > 30000; // 30 seconds threshold
+          const isStaleByVersion = currentVersion > 0; // If we have edits, this cache is definitely stale
+          const isStale = isStaleByTime || isStaleByVersion;
           
           console.log(`🔍 [CACHE CHECK] SessionStorage cache:`, {
             recordId: record.id,
             targetId: recordId,
             recordAge: `${Math.round(recordAge / 1000)}s`,
+            currentVersion,
+            isStaleByTime,
+            isStaleByVersion,
             isStale,
-            hasForceRefreshFlag,
-            willUseCache: record.id === recordId && !isStale && !hasForceRefreshFlag
+            willUseCache: record.id === recordId && !isStale
           });
           
-          if (record.id === recordId && !isStale && !hasForceRefreshFlag) {
+          if (record.id === recordId && !isStale) {
             console.log(`⚡ [INSTANT LOAD] Found fresh record in sessionStorage - instant loading:`, record.name || record.fullName || recordId);
             setSelectedRecord(record);
             console.log(`✅ [INSTANT LOAD] Record set from sessionStorage: ${record.name || record.id}`);
             return;
-          } else if (isStale) {
+          } else if (isStaleByVersion) {
+            console.log(`🔄 [CACHE CHECK] SessionStorage cache is stale due to version (${currentVersion} > 0), fetching fresh data`);
+          } else if (isStaleByTime) {
             console.log(`🔄 [CACHE CHECK] SessionStorage cache is stale (${Math.round(recordAge / 1000)}s old), fetching fresh data`);
-          } else if (hasForceRefreshFlag) {
-            console.log(`🔄 [CACHE CHECK] Force refresh flag detected, fetching fresh data`);
-            sessionStorage.removeItem(forceRefreshRecordKey);
           }
         } catch (error) {
           console.warn('Failed to parse cached record:', error);
@@ -540,9 +561,10 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           
           // Cache the record for future use
           if (typeof window !== 'undefined') {
+            const currentVersion = parseInt(sessionStorage.getItem(`edit-version-${section}-${recordId}`) || '0', 10);
             sessionStorage.setItem(`cached-${section}-${recordId}`, JSON.stringify(record));
-            sessionStorage.setItem(`current-record-${section}`, JSON.stringify({ id: recordId, data: record, timestamp: Date.now() }));
-            console.log(`💾 [CACHE] Cached ${section} record for future instant loading`);
+            sessionStorage.setItem(`current-record-${section}`, JSON.stringify({ id: recordId, data: record, timestamp: Date.now(), version: currentVersion }));
+            console.log(`💾 [CACHE] Cached ${section} record for future instant loading with version ${currentVersion}`);
           }
           
           setSelectedRecord(record);

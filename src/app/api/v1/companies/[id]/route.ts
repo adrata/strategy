@@ -361,12 +361,40 @@ export async function PATCH(
       // SBI fields
       'confidence', 'sources', 'lastVerified', 'parentCompanyName', 'parentCompanyDomain',
       // Additional fields found in UI
+      'companySize', // Used in UniversalRecordTemplate.tsx Overview tab
+      'targetIndustry', // Used in UniversalCompanyTab.tsx
+      'accountValue', 'growthRate', 'expansionPotential', // Used in UniversalBusinessTab.tsx
+      'healthScore', 'roiAchieved', 'timeToValue', // Used in UniversalSuccessTab.tsx
+      'performanceScore', 'partnerRevenue', 'revenueGrowth', 'dealsClosed', // Used in UniversalPerformanceTab.tsx
+      'activeOpportunities', 'jointRevenue', 'activeProjects', // Used in UniversalCollaborationTab.tsx
+      // Additional fields found in tabs
+      'hqRegion', // Used in UniversalCompanyTab.tsx
     ];
 
     // Filter body to only allowed fields FIRST
-    updateData = Object.keys(body)
-      .filter(key => ALLOWED_COMPANY_FIELDS.includes(key))
-      .reduce((obj, key) => ({ ...obj, [key]: body[key] }), {});
+    const requestedFields = Object.keys(body);
+    const allowedFields = requestedFields.filter(key => ALLOWED_COMPANY_FIELDS.includes(key));
+    const filteredFields = requestedFields.filter(key => !ALLOWED_COMPANY_FIELDS.includes(key));
+    
+    updateData = allowedFields.reduce((obj, key) => ({ ...obj, [key]: body[key] }), {});
+    
+    // Log field filtering for debugging
+    if (filteredFields.length > 0) {
+      console.warn('⚠️ [COMPANY API] Fields filtered out (not in whitelist):', {
+        filteredFields,
+        requestedFields,
+        allowedFields,
+        companyId: id
+      });
+    }
+    
+    console.log('🔍 [COMPANY API] Field processing:', {
+      requestedFields,
+      allowedFields,
+      filteredFields,
+      updateDataKeys: Object.keys(updateData),
+      companyId: id
+    });
 
     // Sanitize date fields - convert "-" or empty strings to null
     const DATE_FIELDS = [
@@ -457,8 +485,11 @@ export async function PATCH(
     // Log what actually got updated in the database
     console.log(`✅ [COMPANY API AUDIT] Database update completed:`, {
       companyId: id,
-      updatedFields: Object.keys(updateData),
+      fieldsUpdated: Object.keys(updateData),
       updatedValues: updateData,
+      actualLegalName: updatedCompany.legalName,
+      actualDescription: updatedCompany.description,
+      actualPhone: updatedCompany.phone,
       prismaResult: {
         id: updatedCompany.id,
         name: updatedCompany.name,

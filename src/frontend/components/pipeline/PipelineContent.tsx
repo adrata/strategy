@@ -628,11 +628,27 @@ export const PipelineContent = React.memo(function PipelineContent({
       sessionStorage.setItem(`cached-${section}-${record.id}`, JSON.stringify(record));
       
       // Pre-cache in a more accessible format for faster retrieval
+      // Include version number to enable staleness detection
+      const currentVersion = parseInt(sessionStorage.getItem(`edit-version-${section}-${record.id}`) || '0', 10);
+      
+      console.log(`💾 [LIST CACHE] Caching record from list view:`, {
+        recordId: record.id,
+        recordName,
+        currentVersion,
+        legalName: record.legalName,
+        localName: record.localName,
+        tradingName: record.tradingName,
+        description: record.description,
+        website: record.website,
+        phone: record.phone
+      });
+      
       sessionStorage.setItem(`current-record-${section}`, JSON.stringify({
         id: record.id,
         name: recordName,
         data: record,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        version: currentVersion
       }));
       
       const cacheEndTime = performance.now();

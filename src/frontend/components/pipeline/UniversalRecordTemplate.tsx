@@ -1728,7 +1728,29 @@ export function UniversalRecordTemplate({
       const companyFields = [
         'company', 'companyName', 'companyDomain', 'industry',
         'companySize', 'website', 'revenue', 'employeeCount',
-        'foundedYear', 'headquarters', 'companyType'
+        'foundedYear', 'headquarters', 'companyType',
+        'legalName', 'tradingName', 'localName', 'description',
+        'phone', 'email', 'fax', 'address', 'city', 'state', 'country', 'postalCode',
+        'sector', 'size', 'currency', 'domain', 'logoUrl', 'status', 'priority',
+        // Additional company fields from API whitelist
+        'registrationNumber', 'taxId', 'vatNumber', 'tags', 'notes',
+        'lastAction', 'lastActionDate', 'nextAction', 'nextActionDate',
+        'nextActionReasoning', 'nextActionPriority', 'nextActionType',
+        'actionStatus', 'globalRank', 'entityId', 'mainSellerId',
+        'actualCloseDate', 'expectedCloseDate', 'opportunityAmount',
+        'opportunityProbability', 'opportunityStage', 'acquisitionDate',
+        'competitors', 'businessChallenges', 'businessPriorities',
+        'competitiveAdvantages', 'growthOpportunities', 'strategicInitiatives',
+        'successMetrics', 'marketThreats', 'keyInfluencers', 'decisionTimeline',
+        'marketPosition', 'digitalMaturity', 'techStack', 'linkedinUrl',
+        'linkedinNavigatorUrl', 'linkedinFollowers', 'twitterUrl', 'twitterFollowers',
+        'facebookUrl', 'instagramUrl', 'youtubeUrl', 'githubUrl',
+        'hqLocation', 'hqFullAddress', 'hqCity', 'hqState', 'hqStreet',
+        'hqZipcode', 'hqRegion', 'hqCountryIso2', 'hqCountryIso3',
+        'lastFundingAmount', 'lastFundingDate', 'stockSymbol', 'isPublic',
+        'naicsCodes', 'sicCodes', 'activeJobPostings', 'numTechnologiesUsed',
+        'technologiesUsed', 'confidence', 'sources', 'lastVerified',
+        'parentCompanyName', 'parentCompanyDomain', 'targetIndustry'
       ];
       
       // Determine which model to update based on the field
@@ -1861,6 +1883,17 @@ export function UniversalRecordTemplate({
         targetId,
         recordType
       });
+      
+      // Special debug for legalName
+      if (field === 'legalName') {
+        console.log(`🔍 [LEGAL NAME DEBUG] Field mapping for legalName:`, {
+          field,
+          apiField,
+          value,
+          targetModel,
+          recordType
+        });
+      }
       
       // Validate that the mapped field is appropriate for the target model
       if (targetModel === 'companies' && !['name', 'legalName', 'tradingName', 'localName', 'description', 'website', 'email', 'phone', 'fax', 'address', 'city', 'state', 'country', 'postalCode', 'industry', 'sector', 'size', 'revenue', 'currency', 'employeeCount', 'foundedYear', 'registrationNumber', 'taxId', 'vatNumber', 'domain', 'logoUrl', 'status', 'priority', 'tags', 'customFields', 'notes', 'lastAction', 'lastActionDate', 'nextAction', 'nextActionDate', 'nextActionReasoning', 'nextActionPriority', 'nextActionType', 'actionStatus', 'globalRank', 'entityId', 'mainSellerId', 'actualCloseDate', 'expectedCloseDate', 'opportunityAmount', 'opportunityProbability', 'opportunityStage', 'acquisitionDate', 'competitors', 'businessChallenges', 'businessPriorities', 'competitiveAdvantages', 'growthOpportunities', 'strategicInitiatives', 'successMetrics', 'marketThreats', 'keyInfluencers', 'decisionTimeline', 'marketPosition', 'digitalMaturity', 'techStack', 'linkedinUrl', 'linkedinNavigatorUrl', 'linkedinFollowers', 'twitterUrl', 'twitterFollowers', 'facebookUrl', 'instagramUrl', 'youtubeUrl', 'githubUrl', 'hqLocation', 'hqFullAddress', 'hqCity', 'hqState', 'hqStreet', 'hqZipcode', 'hqRegion', 'hqCountryIso2', 'hqCountryIso3', 'lastFundingAmount', 'lastFundingDate', 'stockSymbol', 'isPublic', 'naicsCodes', 'sicCodes', 'activeJobPostings', 'numTechnologiesUsed', 'technologiesUsed', 'confidence', 'sources', 'lastVerified', 'parentCompanyName', 'parentCompanyDomain', 'targetIndustry'].includes(apiField)) {
@@ -2172,6 +2205,16 @@ export function UniversalRecordTemplate({
         });
       }, 3000);
       
+      // 🚀 CACHE VERSIONING: Increment version counter for this record
+      // This allows us to detect stale cache even within the 30-second window
+      if (typeof window !== 'undefined') {
+        const versionKey = `edit-version-${recordType}-${record.id}`;
+        const currentVersion = parseInt(sessionStorage.getItem(versionKey) || '0', 10);
+        const newVersion = currentVersion + 1;
+        sessionStorage.setItem(versionKey, newVersion.toString());
+        console.log(`🔄 [CACHE VERSION] Incremented version for ${recordType} ${record.id}: ${currentVersion} → ${newVersion}`);
+      }
+      
       // 🚀 CACHE INVALIDATION & REVALIDATION: Prepare updated record data
       const updatedRecord = onRecordUpdate && result.data ? { ...record, ...result.data } : { ...record, [field]: value };
       
@@ -2189,7 +2232,7 @@ export function UniversalRecordTemplate({
       // CRITICAL FIX: Don't update sessionStorage cache here - we'll clear it anyway
       // Updating the cache then immediately clearing it creates a race condition
       // Instead, we'll let the next page load fetch fresh data from the API
-      console.log('🚫 [CACHE] Skipping sessionStorage cache update - will use force-refresh instead');
+      console.log('🚫 [CACHE] Skipping sessionStorage cache update - will use version-based staleness detection instead');
       
       // 🚀 SERVER REVALIDATION: Trigger background refresh to ensure data consistency
       // Use a longer delay to allow the optimistic update and parent state update to settle
@@ -5443,8 +5486,8 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
             <div>
               <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Company</label>
               <InlineEditField
-                value={record?.company || record?.companyName || ''}
-                field="company"
+                value={record?.name || record?.company || record?.companyName || ''}
+                field="name"
                 recordId={record?.id || ''}
                 recordType={recordType}
                 placeholder="Enter company name"
@@ -5456,7 +5499,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Company Domain</label>
               <InlineEditField
                 value={record?.companyDomain || record?.domain || ''}
-                field="companyDomain"
+                field="domain"
                 recordId={record?.id || ''}
                 recordType={recordType}
                 inputType="url"
@@ -5480,8 +5523,8 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
             <div>
               <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Total Employees</label>
               <InlineEditField
-                value={record?.companySize || record?.employeeCount || ''}
-                field="companySize"
+                value={record?.employeeCount || record?.size || ''}
+                field="employeeCount"
                 recordId={record?.id || ''}
                 recordType={recordType}
                 type="text"

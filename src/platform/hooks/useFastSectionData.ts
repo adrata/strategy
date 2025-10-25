@@ -284,6 +284,13 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       
       // Check if we got a valid response
       if (!result || typeof result !== 'object') {
+        console.error(`❌ [FAST SECTION DATA] Invalid API response format for ${section}:`, {
+          url,
+          result,
+          resultType: typeof result,
+          isNull: result === null,
+          isUndefined: result === undefined
+        });
         throw new Error('Invalid API response format');
       }
 
@@ -293,7 +300,10 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           url,
           responseStatus: response.status,
           responseHeaders: Object.fromEntries(response.headers.entries()),
-          result
+          result,
+          workspaceId,
+          userId,
+          hasCredentials: typeof window !== 'undefined' && document.cookie.length > 0
         });
         throw new Error('API returned empty response - this may indicate a server-side error');
       }
@@ -358,7 +368,12 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           firstItem: responseData?.[0] ? {
             rank: responseData[0].rank,
             name: responseData[0].name,
-            company: responseData[0].company?.name || responseData[0].company
+            company: responseData[0].company?.name || responseData[0].company,
+            legalName: responseData[0].legalName,
+            localName: responseData[0].localName,
+            description: responseData[0].description,
+            website: responseData[0].website,
+            phone: responseData[0].phone
           } : null
         });
       } else {
@@ -397,12 +412,16 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         fullError: err,
         errorType: typeof err,
         errorConstructor: err?.constructor?.name,
-        errorKeys: err && typeof err === 'object' ? Object.keys(err) : 'not an object'
+        errorKeys: err && typeof err === 'object' ? Object.keys(err) : 'not an object',
+        errorStringified: JSON.stringify(err, null, 2),
+        errorToString: err?.toString(),
+        errorMessage: err?.message,
+        errorStack: err?.stack
       });
       
       // Don't set error for network failures - just log and continue
-      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
-        console.warn(`⚠️ [FAST SECTION DATA] Network error for ${section} - will retry later`);
+      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError') || errorMessage.includes('HTTP')) {
+        console.warn(`⚠️ [FAST SECTION DATA] Network/HTTP error for ${section} - will retry later`);
         
         // In development mode, provide mock data to prevent UI issues
         if (process.env.NODE_ENV === 'development') {
