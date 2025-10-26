@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
       let speedrunPeople;
       try {
         speedrunPeople = await prisma.people.findMany({
-        where: {
+          where: {
           workspaceId: context.workspaceId,
           deletedAt: null,
           // Remove companyId requirement temporarily to see if we have any people at all
@@ -214,8 +214,7 @@ export async function GET(request: NextRequest) {
             },
             select: {
               id: true,
-              type: true,
-              metadata: true
+              type: true
             }
           }
         }
@@ -307,13 +306,12 @@ export async function GET(request: NextRequest) {
           }
         }
 
-        // Count meaningful actions (matching Actions tab logic exactly)
+        // Count meaningful actions (using only type field since metadata doesn't exist)
         const totalActions = person.actions?.length || 0;
         const meaningfulActionCount = person.actions ? 
           person.actions.filter(action => {
-            // Use the same logic as Actions tab: metadata?.type || type
-            const eventType = action.metadata?.type || action.type;
-            return eventType && isMeaningfulAction(eventType);
+            // Use only type field since metadata doesn't exist in actions table
+            return action.type && isMeaningfulAction(action.type);
           }).length : 0;
         
         // Debug logging for action counts - show more details for high counts
@@ -323,31 +321,22 @@ export async function GET(request: NextRequest) {
             meaningfulActions: meaningfulActionCount,
             personId: person.id,
             actionTypes: person.actions?.map(a => a.type) || [],
-            metadataTypes: person.actions?.map(a => a.metadata?.type) || [],
-            eventTypes: person.actions?.map(a => a.metadata?.type || a.type) || [],
             meaningfulTypes: person.actions?.filter(a => {
-              const eventType = a.metadata?.type || a.type;
-              return eventType && isMeaningfulAction(eventType);
-            }).map(a => a.metadata?.type || a.type) || [],
+              return a.type && isMeaningfulAction(a.type);
+            }).map(a => a.type) || [],
             // Show sample of actions that are being counted as meaningful
             sampleMeaningfulActions: person.actions?.filter(a => {
-              const eventType = a.metadata?.type || a.type;
-              return eventType && isMeaningfulAction(eventType);
+              return a.type && isMeaningfulAction(a.type);
             }).slice(0, 5).map(a => ({
               id: a.id,
-              type: a.type,
-              metadataType: a.metadata?.type,
-              eventType: a.metadata?.type || a.type
+              type: a.type
             })) || [],
             // Show sample of actions that are being filtered out
             sampleFilteredOutActions: person.actions?.filter(a => {
-              const eventType = a.metadata?.type || a.type;
-              return eventType && !isMeaningfulAction(eventType);
+              return a.type && !isMeaningfulAction(a.type);
             }).slice(0, 5).map(a => ({
               id: a.id,
-              type: a.type,
-              metadataType: a.metadata?.type,
-              eventType: a.metadata?.type || a.type
+              type: a.type
             })) || []
           });
         }
