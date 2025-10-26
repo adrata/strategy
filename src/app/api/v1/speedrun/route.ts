@@ -55,48 +55,54 @@ export async function GET(request: NextRequest) {
       console.log(`🚀 [SPEEDRUN API] Loading top ${limit} speedrun prospects for workspace: ${context.workspaceId}, user: ${context.userId}`);
 
       // 🔍 DIAGNOSTIC: Check what data actually exists
-      const [peopleWithCompanies, peopleWithRank, peopleWithBoth] = await Promise.all([
-        prisma.people.count({
-          where: {
-            workspaceId: context.workspaceId,
-            deletedAt: null,
-            companyId: { not: null },
-            ...(isDemoMode ? {} : {
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ]
-            })
-          }
-        }),
-        prisma.people.count({
-          where: {
-            workspaceId: context.workspaceId,
-            deletedAt: null,
-            globalRank: { not: null },
-            ...(isDemoMode ? {} : {
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ]
-            })
-          }
-        }),
-        prisma.people.count({
-          where: {
-            workspaceId: context.workspaceId,
-            deletedAt: null,
-            companyId: { not: null },
-            globalRank: { not: null },
-            ...(isDemoMode ? {} : {
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ]
-            })
-          }
-        })
-      ]);
+      let peopleWithCompanies, peopleWithRank, peopleWithBoth;
+      try {
+        [peopleWithCompanies, peopleWithRank, peopleWithBoth] = await Promise.all([
+          prisma.people.count({
+            where: {
+              workspaceId: context.workspaceId,
+              deletedAt: null,
+              companyId: { not: null },
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { mainSellerId: context.userId },
+                  { mainSellerId: null }
+                ]
+              })
+            }
+          }),
+          prisma.people.count({
+            where: {
+              workspaceId: context.workspaceId,
+              deletedAt: null,
+              globalRank: { not: null },
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { mainSellerId: context.userId },
+                  { mainSellerId: null }
+                ]
+              })
+            }
+          }),
+          prisma.people.count({
+            where: {
+              workspaceId: context.workspaceId,
+              deletedAt: null,
+              companyId: { not: null },
+              globalRank: { not: null },
+              ...(isDemoMode ? {} : {
+                OR: [
+                  { mainSellerId: context.userId },
+                  { mainSellerId: null }
+                ]
+              })
+            }
+          })
+        ]);
+      } catch (dbError) {
+        console.error('❌ [SPEEDRUN API] Database count query failed:', dbError);
+        throw new Error(`Database query failed: ${dbError instanceof Error ? dbError.message : String(dbError)}`);
+      }
 
       console.log(`🔍 [SPEEDRUN API] Data diagnostic:`, {
         peopleWithCompanies,
@@ -106,7 +112,9 @@ export async function GET(request: NextRequest) {
       });
 
       // 🚀 OPTIMIZED QUERY: Get top 50 people (most permissive - show any people)
-      const speedrunPeople = await prisma.people.findMany({
+      let speedrunPeople;
+      try {
+        speedrunPeople = await prisma.people.findMany({
         where: {
           workspaceId: context.workspaceId,
           deletedAt: null,
@@ -212,6 +220,10 @@ export async function GET(request: NextRequest) {
           }
         }
       });
+      } catch (queryError) {
+        console.error('❌ [SPEEDRUN API] Main database query failed:', queryError);
+        throw new Error(`Main query failed: ${queryError instanceof Error ? queryError.message : String(queryError)}`);
+      }
 
       // 🚀 TRANSFORM: Pre-format data for frontend (no additional processing needed)
       const speedrunData = speedrunPeople.map((person, index) => {

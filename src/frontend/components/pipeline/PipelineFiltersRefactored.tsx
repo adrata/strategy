@@ -199,7 +199,7 @@ export function PipelineFiltersRefactored({
               <FunnelIcon className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm font-medium hidden xs:inline">Filters</span>
               {activeFilterCount > 0 && (
-                <span className="bg-blue-600 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
+                <span className="bg-blue-100 text-blue-600 text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
                   {activeFilterCount}
                 </span>
               )}

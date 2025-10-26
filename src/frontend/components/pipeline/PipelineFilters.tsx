@@ -712,7 +712,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
             Filter
           </span>
           {activeFilterCount > 0 && (
-            <span className="ml-1.5 bg-blue-600 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
+            <span className="ml-1.5 bg-blue-100 text-blue-600 text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
               {activeFilterCount}
             </span>
           )}
@@ -853,7 +853,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                     Sort
                   </span>
                   {hasNonDefaultSort && (
-                    <span className="ml-1.5 bg-blue-600 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
+                    <span className="ml-1.5 bg-blue-100 text-blue-600 text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
                       1
                     </span>
                   )}
@@ -961,7 +961,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
                     {section === 'opportunities' ? 'Show' : 'Columns'}
                   </span>
                   {hasNonDefaultColumns && (
-                    <span className="ml-1.5 bg-blue-600 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
+                    <span className="ml-1.5 bg-blue-100 text-blue-600 text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
                       1
                     </span>
                   )}
