@@ -254,6 +254,114 @@ export function getLastActionTime(record: any): Date | null {
 }
 
 /**
+ * Check if a date falls on a weekend (Saturday or Sunday)
+ * @param date - The date to check
+ * @returns true if the date is a weekend
+ */
+export function isWeekend(date: Date): boolean {
+  const day = date.getDay();
+  return day === 0 || day === 6; // Sunday or Saturday
+}
+
+/**
+ * Add business days to a date, skipping weekends
+ * @param startDate - The starting date
+ * @param daysToAdd - Number of business days to add
+ * @returns The new date with business days added
+ */
+export function addBusinessDays(startDate: Date, daysToAdd: number): Date {
+  let currentDate = new Date(startDate);
+  let addedDays = 0;
+  
+  while (addedDays < daysToAdd) {
+    currentDate.setDate(currentDate.getDate() + 1);
+    if (!isWeekend(currentDate)) {
+      addedDays++;
+    }
+  }
+  
+  return currentDate;
+}
+
+/**
+ * Get the next business day from a given date
+ * @param date - The starting date
+ * @returns The next business day
+ */
+export function getNextBusinessDay(date: Date): Date {
+  const nextDay = new Date(date);
+  nextDay.setDate(nextDay.getDate() + 1);
+  
+  // If it's Saturday, move to Monday
+  if (nextDay.getDay() === 6) {
+    nextDay.setDate(nextDay.getDate() + 2);
+  }
+  // If it's Sunday, move to Monday
+  else if (nextDay.getDay() === 0) {
+    nextDay.setDate(nextDay.getDate() + 1);
+  }
+  
+  return nextDay;
+}
+
+/**
+ * Calculate business days between two dates
+ * @param startDate - The start date
+ * @param endDate - The end date
+ * @returns Number of business days between the dates
+ */
+export function getBusinessDaysBetween(startDate: Date, endDate: Date): number {
+  let count = 0;
+  const current = new Date(startDate);
+  
+  while (current < endDate) {
+    if (!isWeekend(current)) {
+      count++;
+    }
+    current.setDate(current.getDate() + 1);
+  }
+  
+  return count;
+}
+
+/**
+ * Get prospect temperature based on engagement signals and deal stage
+ * @param record - The pipeline record
+ * @returns Temperature level for timing adjustments
+ */
+export function getProspectTemperature(record: any): 'hot' | 'warm' | 'cold' {
+  // Check for hot signals
+  const hotSignals = [
+    record?.status?.toLowerCase().includes('qualified'),
+    record?.status?.toLowerCase().includes('proposal'),
+    record?.status?.toLowerCase().includes('negotiation'),
+    record?.priority === 'high',
+    record?.score >= 85,
+    record?.engagementLevel === 'high'
+  ];
+  
+  if (hotSignals.some(signal => signal)) {
+    return 'hot';
+  }
+  
+  // Check for warm signals
+  const warmSignals = [
+    record?.status?.toLowerCase().includes('active'),
+    record?.status?.toLowerCase().includes('interested'),
+    record?.priority === 'medium',
+    record?.score >= 60,
+    record?.engagementLevel === 'medium'
+  ];
+  
+  if (warmSignals.some(signal => signal)) {
+    return 'warm';
+  }
+  
+  // Default to cold
+  return 'cold';
+}
+
+/**
  * Get a smart last action description from a record
  * @param record - The pipeline record
  * @returns A formatted last action description
@@ -429,48 +537,71 @@ export function getLeadsNextAction(record: any, index: number): { timing: string
   }
   
   const now = new Date();
-  const diffDays = Math.floor((now.getTime() - lastActionTime.getTime()) / (1000 * 60 * 60 * 24));
   
-  // Calculate optimal next action timing based on last action type
-  let optimalDays = 3; // Default
+  // Calculate business days since last action (Skip Miller principle: B2B sales happen Mon-Fri)
+  const diffBusinessDays = getBusinessDaysBetween(lastActionTime, now);
+  
+  // Get prospect temperature for context-aware timing
+  const temperature = getProspectTemperature(record);
+  
+  // Skip Miller ProActive Selling timing rules
+  let optimalDays = 4; // Default: 4 business days
   
   if (lastAction.toLowerCase().includes('linkedin')) {
-    optimalDays = 2; // LinkedIn actions: 2-3 days
+    optimalDays = 3; // LinkedIn actions: 3-4 business days (cold outreach standard)
   } else if (lastAction.toLowerCase().includes('email')) {
-    optimalDays = 4; // Email: 3-5 days
+    optimalDays = 4; // Email: 3-5 business days (depends on stage)
   } else if (lastAction.toLowerCase().includes('call') || lastAction.toLowerCase().includes('phone')) {
-    optimalDays = 2; // Phone call: 1-2 days
+    optimalDays = 2; // Phone call: 2-3 business days
   } else if (lastAction.toLowerCase().includes('meeting')) {
-    optimalDays = 7; // Meeting follow-up: 1 week
+    optimalDays = 1; // Meeting follow-up: 1 business day (critical window)
   }
   
-  const daysUntilNext = optimalDays - diffDays;
+  // Apply temperature-based adjustments
+  const temperatureMultiplier = temperature === 'hot' ? 0.7 : temperature === 'warm' ? 1.0 : 1.3;
+  optimalDays = Math.round(optimalDays * temperatureMultiplier);
   
-  if (daysUntilNext <= 0) {
+  // Calculate days until next action
+  const daysUntilNext = optimalDays - diffBusinessDays;
+  
+  // Grace period: 2 business days before marking as "Overdue"
+  const gracePeriod = 2;
+  
+  if (daysUntilNext < -gracePeriod) {
     return {
       timing: 'Overdue',
       timingColor: 'bg-red-100 text-red-800 border border-red-200',
       action: getSmartNextAction(record)
     };
-  }
-  if (daysUntilNext === 1) {
+  } else if (daysUntilNext <= 0) {
+    return {
+      timing: 'Due soon',
+      timingColor: 'bg-orange-100 text-orange-800 border border-orange-200',
+      action: getSmartNextAction(record)
+    };
+  } else if (daysUntilNext === 1) {
     return {
       timing: 'Tomorrow',
       timingColor: 'bg-orange-100 text-orange-800 border border-orange-200',
       action: getSmartNextAction(record)
     };
-  }
-  if (daysUntilNext <= 3) {
+  } else if (daysUntilNext <= 3) {
     return {
       timing: 'This week',
       timingColor: 'bg-yellow-100 text-yellow-800 border border-yellow-200',
       action: getSmartNextAction(record)
     };
+  } else if (daysUntilNext <= 7) {
+    return {
+      timing: 'Next week',
+      timingColor: 'bg-blue-100 text-blue-800 border border-blue-200',
+      action: getSmartNextAction(record)
+    };
   }
   
   return {
-    timing: 'Next week',
-    timingColor: 'bg-blue-100 text-blue-800 border border-blue-200',
+    timing: 'Future',
+    timingColor: 'bg-gray-100 text-gray-800 border border-gray-200',
     action: getSmartNextAction(record)
   };
 }

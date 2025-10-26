@@ -200,14 +200,13 @@ export async function GET(request: NextRequest) {
               createdAt: true
             }
           },
-          _count: {
+          actions: {
+            where: {
+              deletedAt: null
+            },
             select: {
-              actions: {
-                where: {
-                  deletedAt: null,
-                  status: 'COMPLETED'
-                }
-              }
+              id: true,
+              type: true
             }
           }
         }
@@ -295,6 +294,25 @@ export async function GET(request: NextRequest) {
           }
         }
 
+        // Count meaningful actions (matching Actions tab logic)
+        const totalActions = person.actions?.length || 0;
+        const meaningfulActionCount = person.actions ? 
+          person.actions.filter(action => isMeaningfulAction(action.type)).length : 0;
+        
+        // Debug logging for action counts
+        if (index < 3) { // Only log first 3 records to avoid spam
+          console.log(`🔍 [SPEEDRUN API] Person ${person.fullName} action count:`, {
+            totalActions,
+            meaningfulActions: meaningfulActionCount,
+            actionTypes: person.actions?.map(a => a.type) || [],
+            meaningfulTypes: person.actions?.filter(a => isMeaningfulAction(a.type)).map(a => a.type) || []
+          });
+        }
+        
+        // For now, use total actions to see if we have any data at all
+        // TODO: Switch back to meaningfulActionCount once we verify data exists
+        const actionCountToShow = totalActions;
+
         return {
           id: person.id,
           rank: index + 1, // Sequential ranking starting from 1
@@ -330,7 +348,11 @@ export async function GET(request: NextRequest) {
           coSellers: coSellersNames,
           mainSellerData: person.mainSeller,
           coSellersData: person.coSellers ? person.coSellers.filter((coSeller: any) => coSeller.user.id !== context.userId) : [],
-          currentUserId: context.userId
+          currentUserId: context.userId,
+          // Add action count for Actions column
+          _count: {
+            actions: actionCountToShow
+          }
         };
       });
 

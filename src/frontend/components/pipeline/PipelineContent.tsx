@@ -422,6 +422,10 @@ export const PipelineContent = React.memo(function PipelineContent({
       case 'hqState':
         return record.hqState || record.state || record.company?.hqState || record.company?.state || '';
       
+      case 'actions':
+        // Handle action count for sorting
+        return record._count?.actions || 0;
+      
       default:
         // Fallback to direct property access
         return record[field] || '';
@@ -566,7 +570,9 @@ export const PipelineContent = React.memo(function PipelineContent({
         const bRank = parseInt(b.winningScore?.rank || b.rank || '999', 10);
         return sortDirection === 'asc' ? aRank - bRank : bRank - aRank;
       });
-    } else if (sortField) {
+    }
+    
+    if (sortField) {
       // Regular field sorting with robust field handling
       console.log(`🔧 [SORT FIX] Applying sort: field=${sortField}, direction=${sortDirection}, section=${section}`);
       filtered = [...filtered].sort((a: any, b: any) => {

@@ -29,8 +29,8 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
       columnOrder: ['company', 'state', 'lastAction', 'nextAction']
     },
     speedrun: {
-      columns: ['Rank', 'Name', 'Company', 'Status', 'Actions', 'MAIN-SELLER', 'CO-SELLERS', 'LAST ACTION', 'NEXT ACTION'],
-      columnOrder: ['rank', 'name', 'company', 'status', 'actions', 'mainSeller', 'coSellers', 'lastAction', 'nextAction']
+      columns: ['Rank', 'Name', 'Company', 'Status', 'Actions', 'LAST ACTION', 'NEXT ACTION'],
+      columnOrder: ['rank', 'name', 'company', 'status', 'actions', 'lastAction', 'nextAction']
     },
     prospects: {
       columns: ['Name', 'Company', 'Title', 'Actions', 'Last Action', 'Next Action'],

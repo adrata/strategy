@@ -103,6 +103,10 @@ function getNextActionTiming(record: PipelineRecord) {
       return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (nextActionTiming === 'Today') {
       return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+    } else if (nextActionTiming === 'Due soon') {
+      return { text: nextActionTiming, color: 'bg-orange-100 text-orange-800' };
+    } else if (nextActionTiming === 'Overdue') {
+      return { text: nextActionTiming, color: 'bg-red-100 text-red-800' };
     } else {
       return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     }
@@ -120,7 +124,7 @@ function getNextActionTiming(record: PipelineRecord) {
   const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
   
   if (diffDays < 0) {
-    return { text: 'Overdue', color: 'bg-[var(--hover)] text-gray-800' };
+    return { text: 'Overdue', color: 'bg-red-100 text-red-800' };
   } else if (diffDays === 0) {
     return { text: 'Today', color: 'bg-[var(--hover)] text-gray-800' };
   } else if (diffDays === 1) {
@@ -148,8 +152,7 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
       'Name',
       'Company',
       'Status',
-      'MAIN-SELLER',
-      'CO-SELLERS',
+      'Actions',
       'LAST ACTION',
       'NEXT ACTION'
     ];
@@ -472,6 +475,9 @@ export function PipelineTable({
                       case 'co-sellers':
                       case 'cosellers':
                         cellContent = record['coSellers'] && record['coSellers'] !== '-' ? record['coSellers'] : '-';
+                        break;
+                      case 'actions':
+                        cellContent = String(record._count?.actions || 0);
                         break;
                       default:
                         const value = record[header.toLowerCase()] || record[header];

@@ -88,7 +88,9 @@ function getNextActionTiming(record: PipelineRecord) {
   if (nextActionTiming) {
     // All timing pills now use light gray color
     if (nextActionTiming === 'Overdue') {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-red-100 text-red-800' };
+    } else if (nextActionTiming === 'Due soon') {
+      return { text: nextActionTiming, color: 'bg-orange-100 text-orange-800' };
     } else if (nextActionTiming === 'Today') {
       return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (nextActionTiming === 'Tomorrow') {
@@ -152,7 +154,7 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
       'clients': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'partners': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'sellers': ['Rank', 'Person', 'Company', 'Title', 'Last Action', 'Next Action'],
-      'speedrun': ['Rank', 'Company', 'Person', 'Stage', 'Last Action', 'Next Action']
+      'speedrun': ['Rank', 'Company', 'Person', 'Stage', 'Actions', 'Last Action', 'Next Action']
     };
     
     return defaultHeaders[section || 'companies'] || defaultHeaders['companies'];
@@ -209,14 +211,14 @@ export function PipelineTable({
   } = usePipelineData({ 
     data, 
     pageSize,
-        disableSorting: section === 'people' || section === 'leads' || section === 'prospects' || section === 'speedrun', // Disable sorting for people, leads, and prospects to preserve API ranking
+        disableSorting: section === 'people' || section === 'leads' || section === 'prospects', // Disable sorting for people, leads, and prospects to preserve API ranking
     searchQuery, // Pass search query to hook
     totalCount, // Pass totalCount for correct pagination
     externalSortField: sortField, // Pass external sort field
     externalSortDirection: sortDirection // Pass external sort direction
   });
   
-  console.log(`🔧 [PipelineTableRefactored] Section: ${section}, disableSorting: ${section === 'people' || section === 'leads' || section === 'prospects' || section === 'speedrun'}`);
+  console.log(`🔧 [PipelineTableRefactored] Section: ${section}, disableSorting: ${section === 'people' || section === 'leads' || section === 'prospects'}`);
   
   
   // Action handling
@@ -477,6 +479,9 @@ export function PipelineTable({
                             cellContent = 'Offline';
                           }
                         }
+                        break;
+                      case 'actions':
+                        cellContent = String(record._count?.actions || 0);
                         break;
                       default:
                         cellContent = record[header.toLowerCase()] || record[header] || '-';

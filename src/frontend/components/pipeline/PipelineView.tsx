@@ -784,6 +784,10 @@ export const PipelineView = React.memo(function PipelineView({
       case 'hqState':
         return record.hqState || record.state || record.company?.hqState || record.company?.state || '';
       
+      case 'actions':
+        // Handle action count for sorting
+        return record._count?.actions || 0;
+      
       default:
         // Fallback to direct property access
         return record[field] || '';
@@ -963,7 +967,9 @@ export const PipelineView = React.memo(function PipelineView({
         const bRank = parseInt(b.winningScore?.rank || b.rank || '999', 10);
         return aRank - bRank; // Lower rank number first (1, 2, 3...)
       });
-    } else if (sortField === 'smart_rank' || (verticalFilter !== 'all' || revenueFilter !== 'all' || lastContactedFilter !== 'all')) {
+    }
+    
+    if (sortField === 'smart_rank' || (verticalFilter !== 'all' || revenueFilter !== 'all' || lastContactedFilter !== 'all')) {
       // Smart combined ranking based on multiple criteria
       filtered = [...filtered].sort((a: any, b: any) => {
         // Calculate smart ranking score for each record

@@ -10,7 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import jwt from 'jsonwebtoken';
-import { calculateLastActionTiming, calculateNextActionTiming } from '@/platform/utils/actionUtils';
+import { calculateLastActionTiming, calculateNextActionTiming, addBusinessDays } from '@/platform/utils/actionUtils';
 import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
@@ -481,19 +481,21 @@ export async function GET(request: NextRequest) {
           let nextAction = person.nextAction;
           let nextActionDate = person.nextActionDate;
           
-          // Auto-populate nextActionDate if missing
+          // Auto-populate nextActionDate if missing (Skip Miller ProActive Selling timing)
           if (!nextActionDate) {
             const rank = person.globalRank || 1000;
             const lastActionDateForCalc = lastActionDate || person.createdAt;
-            let daysToAdd = 7; // Default 1 week
-            if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
-            else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
-            else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
-            else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
-            else daysToAdd = 14; // Others: 2 weeks
             
-            nextActionDate = new Date(lastActionDateForCalc);
-            nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+            // Skip Miller timing based on prospect priority
+            let businessDaysToAdd = 7; // Default: 1 week
+            if (rank <= 10) businessDaysToAdd = 2; // Hot: 2 business days
+            else if (rank <= 50) businessDaysToAdd = 3; // Warm: 3 business days
+            else if (rank <= 100) businessDaysToAdd = 5; // Active: 5 business days
+            else if (rank <= 500) businessDaysToAdd = 7; // Nurture: 1 week
+            else businessDaysToAdd = 14; // Cold: 2 weeks
+            
+            // Use business days calculation (skips weekends)
+            nextActionDate = addBusinessDays(new Date(lastActionDateForCalc), businessDaysToAdd);
           }
           
           // Auto-populate nextAction text if missing
@@ -711,19 +713,21 @@ export async function GET(request: NextRequest) {
           let nextAction = person.nextAction;
           let nextActionDate = person.nextActionDate;
           
-          // Auto-populate nextActionDate if missing
+          // Auto-populate nextActionDate if missing (Skip Miller ProActive Selling timing)
           if (!nextActionDate) {
             const rank = person.globalRank || 1000;
             const lastActionDateForCalc = lastActionDate || person.createdAt;
-            let daysToAdd = 7; // Default 1 week
-            if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
-            else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
-            else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
-            else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
-            else daysToAdd = 14; // Others: 2 weeks
             
-            nextActionDate = new Date(lastActionDateForCalc);
-            nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+            // Skip Miller timing based on prospect priority
+            let businessDaysToAdd = 7; // Default: 1 week
+            if (rank <= 10) businessDaysToAdd = 2; // Hot: 2 business days
+            else if (rank <= 50) businessDaysToAdd = 3; // Warm: 3 business days
+            else if (rank <= 100) businessDaysToAdd = 5; // Active: 5 business days
+            else if (rank <= 500) businessDaysToAdd = 7; // Nurture: 1 week
+            else businessDaysToAdd = 14; // Cold: 2 weeks
+            
+            // Use business days calculation (skips weekends)
+            nextActionDate = addBusinessDays(new Date(lastActionDateForCalc), businessDaysToAdd);
           }
           
           // Auto-populate nextAction text if missing
@@ -978,19 +982,21 @@ export async function GET(request: NextRequest) {
             nextActionDate = upcomingAction.scheduledAt;
           }
           
-          // Auto-populate nextActionDate if missing
+          // Auto-populate nextActionDate if missing (Skip Miller ProActive Selling timing)
           if (!nextActionDate) {
             const rank = company.globalRank || 1000;
             const lastActionDateForCalc = lastActionDate || company.createdAt;
-            let daysToAdd = 7; // Default 1 week
-            if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
-            else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
-            else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
-            else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
-            else daysToAdd = 14; // Others: 2 weeks
             
-            nextActionDate = new Date(lastActionDateForCalc);
-            nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+            // Skip Miller timing based on prospect priority
+            let businessDaysToAdd = 7; // Default: 1 week
+            if (rank <= 10) businessDaysToAdd = 2; // Hot: 2 business days
+            else if (rank <= 50) businessDaysToAdd = 3; // Warm: 3 business days
+            else if (rank <= 100) businessDaysToAdd = 5; // Active: 5 business days
+            else if (rank <= 500) businessDaysToAdd = 7; // Nurture: 1 week
+            else businessDaysToAdd = 14; // Cold: 2 weeks
+            
+            // Use business days calculation (skips weekends)
+            nextActionDate = addBusinessDays(new Date(lastActionDateForCalc), businessDaysToAdd);
           }
           
           // Auto-populate nextAction text if missing

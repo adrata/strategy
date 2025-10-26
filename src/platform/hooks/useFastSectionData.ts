@@ -136,6 +136,13 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     if (!shouldForceRefresh) {
       try {
         const storageKey = `adrata-${section}-${workspaceId}`;
+        
+        // TEMPORARY: Clear speedrun cache to force API call for debugging
+        if (section === 'speedrun') {
+          console.log('🔄 [DEBUG] Clearing speedrun cache to force API call');
+          localStorage.removeItem(storageKey);
+        }
+        
         const cached = localStorage.getItem(storageKey);
         if (cached) {
           const parsed = JSON.parse(cached);

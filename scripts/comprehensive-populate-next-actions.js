@@ -17,39 +17,49 @@ function calculateRankBasedDate(globalRank, lastActionDate) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   
-  // Check if last action was today
-  const lastActionToday = lastActionDate && 
-    lastActionDate.getFullYear() === now.getFullYear() &&
-    lastActionDate.getMonth() === now.getMonth() &&
-    lastActionDate.getDate() === now.getDate();
-  
-  let targetDate;
-  
-  // Rank-based date calculation (Speedrun integration)
-  if (!globalRank || globalRank <= 50) {
-    // Top 50 (Speedrun tier): TODAY (or tomorrow if action already today)
-    targetDate = lastActionToday ? new Date(today.getTime() + 24 * 60 * 60 * 1000) : today;
-  } else if (globalRank <= 200) {
-    // High priority (51-200): THIS WEEK (2-3 days)
-    const daysOut = lastActionToday ? 3 : 2;
-    targetDate = new Date(today.getTime() + daysOut * 24 * 60 * 60 * 1000);
+  // Skip Miller ProActive Selling timing based on prospect priority
+  let businessDaysToAdd = 7; // Default: 1 week
+  if (!globalRank || globalRank <= 10) {
+    businessDaysToAdd = 2; // Hot: 2 business days
+  } else if (globalRank <= 50) {
+    businessDaysToAdd = 3; // Warm: 3 business days
+  } else if (globalRank <= 100) {
+    businessDaysToAdd = 5; // Active: 5 business days
   } else if (globalRank <= 500) {
-    // Medium priority (201-500): NEXT WEEK (7 days)
-    targetDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    businessDaysToAdd = 7; // Nurture: 1 week
   } else {
-    // Lower priority (500+): THIS MONTH (14 days)
-    targetDate = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
+    businessDaysToAdd = 14; // Cold: 2 weeks
   }
   
-  // Push weekend dates to Monday
-  const dayOfWeek = targetDate.getDay();
-  if (dayOfWeek === 0) { // Sunday
-    targetDate = new Date(targetDate.getTime() + 24 * 60 * 60 * 1000);
-  } else if (dayOfWeek === 6) { // Saturday
-    targetDate = new Date(targetDate.getTime() + 2 * 24 * 60 * 60 * 1000);
-  }
+  // Use business days calculation (skips weekends)
+  const targetDate = addBusinessDays(lastActionDate || today, businessDaysToAdd);
   
   return targetDate;
+}
+
+/**
+ * Add business days to a date, skipping weekends (Skip Miller principle: B2B sales happen Mon-Fri)
+ */
+function addBusinessDays(startDate, daysToAdd) {
+  let currentDate = new Date(startDate);
+  let addedDays = 0;
+  
+  while (addedDays < daysToAdd) {
+    currentDate.setDate(currentDate.getDate() + 1);
+    if (!isWeekend(currentDate)) {
+      addedDays++;
+    }
+  }
+  
+  return currentDate;
+}
+
+/**
+ * Check if a date falls on a weekend (Saturday or Sunday)
+ */
+function isWeekend(date) {
+  const day = date.getDay();
+  return day === 0 || day === 6; // Sunday or Saturday
 }
 
 /**

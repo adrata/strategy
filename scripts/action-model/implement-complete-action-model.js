@@ -328,29 +328,56 @@ function calculateNextActionDate(lastAction, nextActionType) {
   const lastActionDate = new Date(lastAction.createdAt);
   const now = new Date();
   
-  // Calculate days to add based on action type
-  let daysToAdd = 1;
+  // Skip Miller ProActive Selling timing based on action type
+  let businessDaysToAdd = 2; // Default: 2 business days
   
   switch (nextActionType) {
     case 'call':
-      daysToAdd = 2; // Follow up calls in 2 days
+      businessDaysToAdd = 2; // Follow up calls in 2 business days
       break;
     case 'email_conversation':
-      daysToAdd = 1; // Email follow-ups in 1 day
+      businessDaysToAdd = 3; // Email follow-ups in 3 business days
       break;
     case 'linkedin_connection':
-      daysToAdd = 3; // LinkedIn connections in 3 days
+      businessDaysToAdd = 3; // LinkedIn connections in 3 business days
       break;
     case 'meeting':
-      daysToAdd = 7; // Schedule meetings in 1 week
+      businessDaysToAdd = 1; // Meeting follow-ups in 1 business day (critical)
       break;
     default:
-      daysToAdd = 2; // Default 2 days
+      businessDaysToAdd = 2; // Default 2 business days
   }
   
-  // Add days and ensure it's in the future
-  const nextDate = new Date(lastActionDate.getTime() + (daysToAdd * 24 * 60 * 60 * 1000));
-  return nextDate > now ? nextDate : new Date(now.getTime() + (daysToAdd * 24 * 60 * 60 * 1000));
+  // Use business days calculation (skips weekends)
+  const nextDate = addBusinessDays(lastActionDate, businessDaysToAdd);
+  
+  // Ensure it's in the future
+  return nextDate > now ? nextDate : addBusinessDays(now, businessDaysToAdd);
+}
+
+/**
+ * Add business days to a date, skipping weekends (Skip Miller principle: B2B sales happen Mon-Fri)
+ */
+function addBusinessDays(startDate, daysToAdd) {
+  let currentDate = new Date(startDate);
+  let addedDays = 0;
+  
+  while (addedDays < daysToAdd) {
+    currentDate.setDate(currentDate.getDate() + 1);
+    if (!isWeekend(currentDate)) {
+      addedDays++;
+    }
+  }
+  
+  return currentDate;
+}
+
+/**
+ * Check if a date falls on a weekend (Saturday or Sunday)
+ */
+function isWeekend(date) {
+  const day = date.getDay();
+  return day === 0 || day === 6; // Sunday or Saturday
 }
 
 /**
