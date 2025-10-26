@@ -233,7 +233,7 @@ export async function GET(request: NextRequest) {
         }))
       );
 
-      // 🚀 TRANSFORM: Pre-format data for frontend (no additional processing needed)
+      // 🚀 TRANSFORM: Pre-format data for frontend (only people with actual ranks)
       const speedrunData = speedrunPeople.map((person, index) => {
         // Format owner name - show "Me" for current user
         const ownerName = person.mainSeller 
@@ -353,16 +353,23 @@ export async function GET(request: NextRequest) {
         // Use meaningful actions for accurate count
         const actionCountToShow = meaningfulActionCount;
 
+        // Determine if person has been contacted recently (within last 24 hours)
+        const hasRecentAction = lastActionDate && 
+          (new Date().getTime() - new Date(lastActionDate).getTime()) < (24 * 60 * 60 * 1000);
+        
+        // Determine contact status for styling
+        const contactStatus = hasRecentAction ? 'contacted' : 'pending';
+
         return {
           id: person.id,
-          rank: index + 1, // Sequential ranking starting from 1
+          rank: person.globalRank, // Use actual globalRank (no fallback)
           name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
           title: person.jobTitle || 'Unknown Title',
           email: person.email || '',
           phone: person.phone || '',
           linkedin: person.linkedinUrl || '',
           status: person.status || 'Unknown',
-          globalRank: person.globalRank || 0,
+          globalRank: person.globalRank,
           lastAction: lastAction || null,
           lastActionDate: lastActionDate || null,
           lastActionTime: lastActionTime,
@@ -392,7 +399,9 @@ export async function GET(request: NextRequest) {
           // Add action count for Actions column
           _count: {
             actions: actionCountToShow
-          }
+          },
+          // Add contact status for styling (contacted = light green, pending = normal)
+          contactStatus: contactStatus
         };
       });
 
