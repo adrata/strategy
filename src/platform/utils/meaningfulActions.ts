@@ -76,14 +76,25 @@ export function isMeaningfulAction(actionType: string): boolean {
     return false;
   }
   
+  const lowerType = actionType.toLowerCase();
+  
+  // FIRST: Explicitly reject system actions (these should never be counted)
+  if (lowerType.includes('created') || lowerType.includes('updated') || 
+      lowerType.includes('imported') || lowerType.includes('deleted') ||
+      lowerType.includes('viewed') || lowerType.includes('status_changed') ||
+      lowerType.includes('data_update') || lowerType.includes('field_updated') ||
+      lowerType.includes('note_added') || lowerType.includes('stage_advanced') ||
+      lowerType === 'person_created' || lowerType === 'company_created' ||
+      lowerType === 'record_created' || lowerType === 'record_updated') {
+    return false;
+  }
+  
   // Check exact match first
   if (MEANINGFUL_ACTION_TYPES.has(actionType)) {
     return true;
   }
   
   // Only check for specific partial matches to avoid false positives
-  const lowerType = actionType.toLowerCase();
-  
   // Check for common variations of meaningful actions
   if (lowerType.includes('linkedin') && 
       (lowerType.includes('connection') || lowerType.includes('message') || lowerType.includes('inmail'))) {
@@ -103,13 +114,7 @@ export function isMeaningfulAction(actionType: string): boolean {
     return true;
   }
   
-  // Reject system actions explicitly
-  if (lowerType.includes('created') || lowerType.includes('updated') || 
-      lowerType.includes('imported') || lowerType.includes('deleted') ||
-      lowerType.includes('viewed') || lowerType.includes('status_changed')) {
-    return false;
-  }
-  
+  // If we get here, it's not a meaningful action
   return false;
 }
 

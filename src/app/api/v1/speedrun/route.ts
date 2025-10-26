@@ -304,18 +304,39 @@ export async function GET(request: NextRequest) {
             return eventType && isMeaningfulAction(eventType);
           }).length : 0;
         
-        // Debug logging for action counts
-        if (index < 3) { // Only log first 3 records to avoid spam
+        // Debug logging for action counts - show more details for high counts
+        if (index < 5 || meaningfulActionCount > 50) { // Log first 5 records OR any with high counts
           console.log(`🔍 [SPEEDRUN API] Person ${person.fullName} action count:`, {
             totalActions,
             meaningfulActions: meaningfulActionCount,
+            personId: person.id,
             actionTypes: person.actions?.map(a => a.type) || [],
             metadataTypes: person.actions?.map(a => a.metadata?.type) || [],
             eventTypes: person.actions?.map(a => a.metadata?.type || a.type) || [],
             meaningfulTypes: person.actions?.filter(a => {
               const eventType = a.metadata?.type || a.type;
               return eventType && isMeaningfulAction(eventType);
-            }).map(a => a.metadata?.type || a.type) || []
+            }).map(a => a.metadata?.type || a.type) || [],
+            // Show sample of actions that are being counted as meaningful
+            sampleMeaningfulActions: person.actions?.filter(a => {
+              const eventType = a.metadata?.type || a.type;
+              return eventType && isMeaningfulAction(eventType);
+            }).slice(0, 5).map(a => ({
+              id: a.id,
+              type: a.type,
+              metadataType: a.metadata?.type,
+              eventType: a.metadata?.type || a.type
+            })) || [],
+            // Show sample of actions that are being filtered out
+            sampleFilteredOutActions: person.actions?.filter(a => {
+              const eventType = a.metadata?.type || a.type;
+              return eventType && !isMeaningfulAction(eventType);
+            }).slice(0, 5).map(a => ({
+              id: a.id,
+              type: a.type,
+              metadataType: a.metadata?.type,
+              eventType: a.metadata?.type || a.type
+            })) || []
           });
         }
         
