@@ -116,16 +116,16 @@ export async function GET(request: NextRequest) {
       try {
         speedrunPeople = await prisma.people.findMany({
           where: {
-          workspaceId: context.workspaceId,
-          deletedAt: null,
-          // Remove companyId requirement temporarily to see if we have any people at all
-          ...(isDemoMode ? {} : {
-            OR: [
-              { mainSellerId: context.userId },
-              { mainSellerId: null }
-            ]
-          })
-        },
+            workspaceId: context.workspaceId,
+            deletedAt: null,
+            companyId: { not: null }, // Only people with company relationships
+            ...(isDemoMode ? {} : {
+              OR: [
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
+              ]
+            })
+          },
         orderBy: [
           { globalRank: 'asc' }, // Ranked people first (nulls will be last)
           { createdAt: 'desc' } // Then by newest
@@ -223,6 +223,15 @@ export async function GET(request: NextRequest) {
         console.error('❌ [SPEEDRUN API] Main database query failed:', queryError);
         throw new Error(`Main query failed: ${queryError instanceof Error ? queryError.message : String(queryError)}`);
       }
+
+      console.log(`🔍 [SPEEDRUN API] Query returned ${speedrunPeople.length} people:`, 
+        speedrunPeople.slice(0, 10).map(p => ({
+          name: p.fullName,
+          rank: p.globalRank,
+          company: p.company?.name || 'No Company',
+          hasCompany: !!p.companyId
+        }))
+      );
 
       // 🚀 TRANSFORM: Pre-format data for frontend (no additional processing needed)
       const speedrunData = speedrunPeople.map((person, index) => {
