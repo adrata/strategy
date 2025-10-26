@@ -3,7 +3,7 @@
  * Handles data fetching, filtering, sorting, and pagination.
  */
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 
 // -------- Types --------
 interface PipelineRecord {
@@ -279,6 +279,20 @@ export function usePipelineData({
   // Pagination info - use totalCount prop if available, otherwise fall back to local data length
   const totalItems = totalCount || sortedData.length;
   const totalPages = Math.ceil(totalItems / pageSize);
+  
+  // Reset pagination to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    searchQuery,
+    statusFilter,
+    priorityFilter,
+    verticalFilter,
+    revenueFilter,
+    lastContactedFilter,
+    timezoneFilter,
+    externalSearchQuery
+  ]);
   
   // Actions
   const clearFilters = useCallback(() => {

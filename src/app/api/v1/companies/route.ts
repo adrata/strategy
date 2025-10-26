@@ -335,11 +335,103 @@ export async function GET(request: NextRequest) {
             }
           });
           
+          // Import isMeaningfulAction function
+          const { isMeaningfulAction } = await import('@/platform/utils/meaningfulActions');
+          
+          // Calculate lastActionTime for companies table display using meaningful actions (copy from speedrun)
+          let lastActionTime = 'Never';
+          let lastActionText = company.lastAction;
+          let lastActionDate = company.lastActionDate;
+          
+          // Check if we have a meaningful action from the database
+          if (lastAction && isMeaningfulAction(lastAction.type)) {
+            lastActionText = lastAction.subject || lastAction.type;
+            lastActionDate = lastAction.completedAt || lastAction.createdAt;
+          }
+          
+          // Only show real last actions if they exist and are meaningful
+          if (lastActionDate && lastActionText && lastActionText !== 'No action taken') {
+            // Real last action exists
+            const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          } else if (company.createdAt) {
+            // No real last action, show when data was added
+            const daysSince = Math.floor((new Date().getTime() - new Date(company.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          }
+
+          // Calculate nextActionTiming with fallback
+          let nextActionTiming = 'No date set';
+          let nextAction = company.nextAction;
+          let nextActionDate = company.nextActionDate;
+          
+          // Auto-populate nextActionDate if missing
+          if (!nextActionDate) {
+            const rank = company.globalRank || 1000;
+            const lastActionDateForCalc = lastActionDate || company.createdAt;
+            let daysToAdd = 7; // Default 1 week
+            if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
+            else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
+            else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
+            else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
+            else daysToAdd = 14; // Others: 2 weeks
+            
+            nextActionDate = new Date(lastActionDateForCalc);
+            nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+          }
+          
+          // Auto-populate nextAction text if missing
+          if (!nextAction) {
+            if (lastActionText && lastActionText !== 'No action taken') {
+              if (lastActionText.toLowerCase().includes('email')) {
+                nextAction = 'Schedule a call to discuss next steps';
+              } else if (lastActionText.toLowerCase().includes('call')) {
+                nextAction = 'Send follow-up email with meeting notes';
+              } else if (lastActionText.toLowerCase().includes('linkedin')) {
+                nextAction = 'Send personalized connection message';
+              } else if (lastActionText.toLowerCase().includes('created')) {
+                nextAction = 'Send initial outreach email';
+              } else {
+                nextAction = 'Follow up on previous contact';
+              }
+            } else {
+              nextAction = 'Send initial outreach email';
+            }
+          }
+          
+          // Calculate nextActionTiming
+          if (nextActionDate) {
+            const now = new Date();
+            const actionDate = new Date(nextActionDate);
+            const diffMs = actionDate.getTime() - now.getTime();
+            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) nextActionTiming = 'Overdue';
+            else if (diffDays === 0) nextActionTiming = 'Today';
+            else if (diffDays === 1) nextActionTiming = 'Tomorrow';
+            else if (diffDays <= 7) nextActionTiming = 'This week';
+            else if (diffDays <= 14) nextActionTiming = 'Next week';
+            else if (diffDays <= 30) nextActionTiming = 'This month';
+            else nextActionTiming = 'Future';
+          }
+          
           return {
             ...company,
             // Use computed lastAction if available, otherwise fall back to stored fields
-            lastAction: lastAction?.subject || company.lastAction,
-            lastActionDate: lastAction?.completedAt || company.lastActionDate,
+            lastAction: lastActionText || company.lastAction,
+            lastActionDate: lastActionDate || company.lastActionDate,
+            lastActionTime: lastActionTime, // NEW: Timing text
+            nextAction: nextAction || company.nextAction,
+            nextActionDate: nextActionDate || company.nextActionDate,
+            nextActionTiming: nextActionTiming, // NEW: Timing text
             lastActionType: lastAction?.type || null
           };
         } catch (error) {

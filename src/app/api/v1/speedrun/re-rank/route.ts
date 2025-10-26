@@ -68,28 +68,11 @@ export async function POST(request: NextRequest) {
       userId
     });
 
-    // Get all people in the workspace that haven't been completed today
-    const today = new Date().toDateString();
-    const completedToday = await prisma.actions.findMany({
-      where: {
-        workspaceId,
-        userId,
-        completedAt: {
-          gte: new Date(new Date().setHours(0, 0, 0, 0))
-        }
-      },
-      select: { personId: true }
-    });
-
-    const completedPersonIds = completedToday.map(action => action.personId);
-
-    // Get all people excluding those completed today
+    // 🎯 FIX: Get ALL people in the workspace (don't exclude recently contacted)
+    // The scoring algorithm will naturally rank recently contacted people lower
     const allPeople = await prisma.people.findMany({
       where: {
         workspaceId,
-        id: {
-          notIn: completedPersonIds
-        },
         isActive: true
       },
       include: {
@@ -115,6 +98,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log(`🔄 [RE-RANK] Found ${allPeople.length} people to rank (including recently contacted)`);
+
     // Transform data for ranking algorithm
     const crmRecords = allPeople.map(person => ({
       id: person.id,
@@ -128,7 +113,9 @@ export async function POST(request: NextRequest) {
       photo: person.photoUrl,
       priority: person.priority || 'Medium',
       status: person.status || 'New',
-      lastContact: person.lastContactAt?.toISOString() || new Date().toISOString(),
+      // 🎯 FIX: Use lastActionDate for scoring (this is what drives the penalty/bonus logic)
+      lastActionDate: person.lastActionDate?.toISOString() || undefined,
+      lastContact: person.lastActionDate?.toISOString() || new Date().toISOString(),
       nextAction: person.nextAction || 'No action planned',
       relationship: person.relationship || 'New',
       bio: person.bio || '',
@@ -152,6 +139,17 @@ export async function POST(request: NextRequest) {
 
     // Take the top 50 for the new batch
     const newBatch = rankedContacts.slice(0, 50);
+
+    // 🎯 DEBUG: Log ranking changes for recently contacted people
+    console.log(`🔄 [RE-RANK] Top 10 after re-ranking:`, 
+      newBatch.slice(0, 10).map((c, i) => ({
+        rank: i + 1,
+        name: c.name,
+        company: c.company,
+        lastActionDate: c.lastActionDate,
+        rankingScore: c.rankingScore
+      }))
+    );
 
     // Update database with new rankings
     const updatePromises = newBatch.map((contact, index) => 

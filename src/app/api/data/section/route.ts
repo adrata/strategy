@@ -387,7 +387,24 @@ export async function GET(request: NextRequest) {
             lastActionDate: true,
             nextAction: true,
             nextActionDate: true,
-            customFields: true
+            customFields: true,
+            actions: {
+              where: {
+                deletedAt: null,
+                status: 'COMPLETED'
+              },
+              orderBy: {
+                completedAt: 'desc'
+              },
+              take: 1,
+              select: {
+                id: true,
+                type: true,
+                subject: true,
+                completedAt: true,
+                createdAt: true
+              }
+            }
           }
         });
         
@@ -426,9 +443,93 @@ export async function GET(request: NextRequest) {
                                     coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
                                     coresignalData.experience?.[0]?.company_name;
           
-          // Calculate timing using shared utilities (matches speedrun pattern)
-          const lastActionTime = calculateLastActionTiming(person.lastActionDate || person.updatedAt, person.lastAction);
-          const nextActionTiming = calculateNextActionTiming(person.nextActionDate);
+          // Calculate lastActionTime for leads table display using meaningful actions (copy from speedrun)
+          let lastActionTime = 'Never';
+          let lastAction = person.lastAction;
+          let lastActionDate = person.lastActionDate;
+          
+          // Check if we have a meaningful action from the database
+          if (person.actions && person.actions.length > 0) {
+            const meaningfulAction = person.actions.find(action => isMeaningfulAction(action.type));
+            if (meaningfulAction) {
+              lastAction = meaningfulAction.subject || meaningfulAction.type;
+              lastActionDate = meaningfulAction.completedAt || meaningfulAction.createdAt;
+            }
+          }
+          
+          // Only show real last actions if they exist and are meaningful
+          if (lastActionDate && lastAction && lastAction !== 'No action taken') {
+            // Real last action exists
+            const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          } else if (person.createdAt) {
+            // No real last action, show when data was added
+            const daysSince = Math.floor((new Date().getTime() - new Date(person.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          }
+
+          // Calculate nextActionTiming with fallback
+          let nextActionTiming = 'No date set';
+          let nextAction = person.nextAction;
+          let nextActionDate = person.nextActionDate;
+          
+          // Auto-populate nextActionDate if missing
+          if (!nextActionDate) {
+            const rank = person.globalRank || 1000;
+            const lastActionDateForCalc = lastActionDate || person.createdAt;
+            let daysToAdd = 7; // Default 1 week
+            if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
+            else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
+            else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
+            else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
+            else daysToAdd = 14; // Others: 2 weeks
+            
+            nextActionDate = new Date(lastActionDateForCalc);
+            nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+          }
+          
+          // Auto-populate nextAction text if missing
+          if (!nextAction) {
+            if (lastAction && lastAction !== 'No action taken') {
+              if (lastAction.toLowerCase().includes('email')) {
+                nextAction = 'Schedule a call to discuss next steps';
+              } else if (lastAction.toLowerCase().includes('call')) {
+                nextAction = 'Send follow-up email with meeting notes';
+              } else if (lastAction.toLowerCase().includes('linkedin')) {
+                nextAction = 'Send personalized connection message';
+              } else if (lastAction.toLowerCase().includes('created')) {
+                nextAction = 'Send initial outreach email';
+              } else {
+                nextAction = 'Follow up on previous contact';
+              }
+            } else {
+              nextAction = 'Send initial outreach email';
+            }
+          }
+          
+          // Calculate nextActionTiming
+          if (nextActionDate) {
+            const now = new Date();
+            const actionDate = new Date(nextActionDate);
+            const diffMs = actionDate.getTime() - now.getTime();
+            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) nextActionTiming = 'Overdue';
+            else if (diffDays === 0) nextActionTiming = 'Today';
+            else if (diffDays === 1) nextActionTiming = 'Tomorrow';
+            else if (diffDays <= 7) nextActionTiming = 'This week';
+            else if (diffDays <= 14) nextActionTiming = 'Next week';
+            else if (diffDays <= 30) nextActionTiming = 'This month';
+            else nextActionTiming = 'Future';
+          }
           
           return {
             id: person.id,
@@ -438,11 +539,11 @@ export async function GET(request: NextRequest) {
             title: person.jobTitle || '-',
             email: person.email || 'Unknown Email',
             status: person.status || 'Unknown',
-            lastAction: person.lastAction || null,
-            lastActionDate: person.lastActionDate,
+            lastAction: lastAction || null,
+            lastActionDate: lastActionDate,
             lastActionTime: lastActionTime, // NEW: Timing text
-            nextAction: person.nextAction || null,
-            nextActionDate: person.nextActionDate,
+            nextAction: nextAction || null,
+            nextActionDate: nextActionDate,
             nextActionTiming: nextActionTiming, // NEW: Timing text
             createdAt: person.createdAt,
             updatedAt: person.updatedAt
@@ -516,7 +617,24 @@ export async function GET(request: NextRequest) {
             lastActionDate: true,
             nextAction: true,
             nextActionDate: true,
-            customFields: true
+            customFields: true,
+            actions: {
+              where: {
+                deletedAt: null,
+                status: 'COMPLETED'
+              },
+              orderBy: {
+                completedAt: 'desc'
+              },
+              take: 1,
+              select: {
+                id: true,
+                type: true,
+                subject: true,
+                completedAt: true,
+                createdAt: true
+              }
+            }
           }
         });
         
@@ -555,9 +673,93 @@ export async function GET(request: NextRequest) {
                                     coresignalData.experience?.find((exp: any) => exp.active_experience === 1)?.company_name || 
                                     coresignalData.experience?.[0]?.company_name;
           
-          // Calculate timing using shared utilities (matches speedrun pattern)
-          const lastActionTime = calculateLastActionTiming(person.lastActionDate || person.updatedAt, person.lastAction);
-          const nextActionTiming = calculateNextActionTiming(person.nextActionDate);
+          // Calculate lastActionTime for prospects table display using meaningful actions (copy from speedrun)
+          let lastActionTime = 'Never';
+          let lastAction = person.lastAction;
+          let lastActionDate = person.lastActionDate;
+          
+          // Check if we have a meaningful action from the database
+          if (person.actions && person.actions.length > 0) {
+            const meaningfulAction = person.actions.find(action => isMeaningfulAction(action.type));
+            if (meaningfulAction) {
+              lastAction = meaningfulAction.subject || meaningfulAction.type;
+              lastActionDate = meaningfulAction.completedAt || meaningfulAction.createdAt;
+            }
+          }
+          
+          // Only show real last actions if they exist and are meaningful
+          if (lastActionDate && lastAction && lastAction !== 'No action taken') {
+            // Real last action exists
+            const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          } else if (person.createdAt) {
+            // No real last action, show when data was added
+            const daysSince = Math.floor((new Date().getTime() - new Date(person.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          }
+
+          // Calculate nextActionTiming with fallback
+          let nextActionTiming = 'No date set';
+          let nextAction = person.nextAction;
+          let nextActionDate = person.nextActionDate;
+          
+          // Auto-populate nextActionDate if missing
+          if (!nextActionDate) {
+            const rank = person.globalRank || 1000;
+            const lastActionDateForCalc = lastActionDate || person.createdAt;
+            let daysToAdd = 7; // Default 1 week
+            if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
+            else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
+            else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
+            else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
+            else daysToAdd = 14; // Others: 2 weeks
+            
+            nextActionDate = new Date(lastActionDateForCalc);
+            nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+          }
+          
+          // Auto-populate nextAction text if missing
+          if (!nextAction) {
+            if (lastAction && lastAction !== 'No action taken') {
+              if (lastAction.toLowerCase().includes('email')) {
+                nextAction = 'Schedule a call to discuss next steps';
+              } else if (lastAction.toLowerCase().includes('call')) {
+                nextAction = 'Send follow-up email with meeting notes';
+              } else if (lastAction.toLowerCase().includes('linkedin')) {
+                nextAction = 'Send personalized connection message';
+              } else if (lastAction.toLowerCase().includes('created')) {
+                nextAction = 'Send initial outreach email';
+              } else {
+                nextAction = 'Follow up on previous contact';
+              }
+            } else {
+              nextAction = 'Send initial outreach email';
+            }
+          }
+          
+          // Calculate nextActionTiming
+          if (nextActionDate) {
+            const now = new Date();
+            const actionDate = new Date(nextActionDate);
+            const diffMs = actionDate.getTime() - now.getTime();
+            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) nextActionTiming = 'Overdue';
+            else if (diffDays === 0) nextActionTiming = 'Today';
+            else if (diffDays === 1) nextActionTiming = 'Tomorrow';
+            else if (diffDays <= 7) nextActionTiming = 'This week';
+            else if (diffDays <= 14) nextActionTiming = 'Next week';
+            else if (diffDays <= 30) nextActionTiming = 'This month';
+            else nextActionTiming = 'Future';
+          }
           
           return {
             id: person.id,
@@ -567,11 +769,11 @@ export async function GET(request: NextRequest) {
             title: person.jobTitle || '-',
             email: person.email || 'Unknown Email',
             status: person.status || 'Unknown',
-            lastAction: person.lastAction || null,
-            lastActionDate: person.lastActionDate,
+            lastAction: lastAction || null,
+            lastActionDate: lastActionDate,
             lastActionTime: lastActionTime, // NEW: Timing text
-            nextAction: person.nextAction || null,
-            nextActionDate: person.nextActionDate,
+            nextAction: nextAction || null,
+            nextActionDate: nextActionDate,
             nextActionTiming: nextActionTiming, // NEW: Timing text
             createdAt: person.createdAt,
             updatedAt: person.updatedAt
@@ -698,18 +900,28 @@ export async function GET(request: NextRequest) {
         
         // 🚀 COMPANIES AGGREGATION: Aggregate last/next actions from actions table
         sectionData = await Promise.all(deduplicatedCompanies.map(async (company, index) => {
-          // Find most recent action for this company from actions table
+          // Find most recent meaningful action for this company from actions table
           const recentAction = await prisma.actions.findFirst({
             where: {
               workspaceId,
-              companyId: company.id
+              companyId: company.id,
+              deletedAt: null,
+              status: 'COMPLETED'
             },
-            orderBy: { createdAt: 'desc' },
+            orderBy: { completedAt: 'desc' },
             select: {
+              type: true,
               subject: true,
+              completedAt: true,
               createdAt: true
             }
           });
+
+          // Filter for meaningful actions
+          let meaningfulAction = null;
+          if (recentAction && isMeaningfulAction(recentAction.type)) {
+            meaningfulAction = recentAction;
+          }
 
           // Find next upcoming action for this company
           const upcomingAction = await prisma.actions.findFirst({
@@ -725,14 +937,96 @@ export async function GET(request: NextRequest) {
             }
           });
 
-          // Calculate timing using shared utilities (matches speedrun pattern)
-          const lastActionTime = calculateLastActionTiming(
-            recentAction?.createdAt || company.lastActionDate, 
-            recentAction?.subject || company.lastAction
-          );
-          const nextActionTiming = calculateNextActionTiming(
-            upcomingAction?.scheduledAt || company.nextActionDate
-          );
+          // Calculate lastActionTime for companies table display using meaningful actions (copy from speedrun)
+          let lastActionTime = 'Never';
+          let lastAction = company.lastAction;
+          let lastActionDate = company.lastActionDate;
+          
+          // Use meaningful action if available
+          if (meaningfulAction) {
+            lastAction = meaningfulAction.subject || meaningfulAction.type;
+            lastActionDate = meaningfulAction.completedAt || meaningfulAction.createdAt;
+          }
+          
+          // Only show real last actions if they exist and are meaningful
+          if (lastActionDate && lastAction && lastAction !== 'No action taken') {
+            // Real last action exists
+            const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          } else if (company.createdAt) {
+            // No real last action, show when data was added
+            const daysSince = Math.floor((new Date().getTime() - new Date(company.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          }
+
+          // Calculate nextActionTiming with fallback
+          let nextActionTiming = 'No date set';
+          let nextAction = company.nextAction;
+          let nextActionDate = company.nextActionDate;
+          
+          // Use upcoming action if available
+          if (upcomingAction) {
+            nextAction = upcomingAction.subject;
+            nextActionDate = upcomingAction.scheduledAt;
+          }
+          
+          // Auto-populate nextActionDate if missing
+          if (!nextActionDate) {
+            const rank = company.globalRank || 1000;
+            const lastActionDateForCalc = lastActionDate || company.createdAt;
+            let daysToAdd = 7; // Default 1 week
+            if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
+            else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
+            else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
+            else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
+            else daysToAdd = 14; // Others: 2 weeks
+            
+            nextActionDate = new Date(lastActionDateForCalc);
+            nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+          }
+          
+          // Auto-populate nextAction text if missing
+          if (!nextAction) {
+            if (lastAction && lastAction !== 'No action taken') {
+              if (lastAction.toLowerCase().includes('email')) {
+                nextAction = 'Schedule a call to discuss next steps';
+              } else if (lastAction.toLowerCase().includes('call')) {
+                nextAction = 'Send follow-up email with meeting notes';
+              } else if (lastAction.toLowerCase().includes('linkedin')) {
+                nextAction = 'Send personalized connection message';
+              } else if (lastAction.toLowerCase().includes('created')) {
+                nextAction = 'Send initial outreach email';
+              } else {
+                nextAction = 'Follow up on previous contact';
+              }
+            } else {
+              nextAction = 'Send initial outreach email';
+            }
+          }
+          
+          // Calculate nextActionTiming
+          if (nextActionDate) {
+            const now = new Date();
+            const actionDate = new Date(nextActionDate);
+            const diffMs = actionDate.getTime() - now.getTime();
+            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) nextActionTiming = 'Overdue';
+            else if (diffDays === 0) nextActionTiming = 'Today';
+            else if (diffDays === 1) nextActionTiming = 'Tomorrow';
+            else if (diffDays <= 7) nextActionTiming = 'This week';
+            else if (diffDays <= 14) nextActionTiming = 'Next week';
+            else if (diffDays <= 30) nextActionTiming = 'This month';
+            else nextActionTiming = 'Future';
+          }
 
           return {
             id: company.id,
@@ -741,11 +1035,11 @@ export async function GET(request: NextRequest) {
             industry: company.industry || 'Unknown',
             size: company.size || 'Unknown',
             mainSellerId: company.mainSellerId, // 🆕 FIX: Include mainSellerId for company assignment filtering
-            lastAction: recentAction?.subject || company.lastAction || 'Never',
-            lastActionDate: recentAction?.createdAt || company.lastActionDate,
+            lastAction: lastAction || 'Never',
+            lastActionDate: lastActionDate,
             lastActionTime: lastActionTime, // NEW: Timing text
-            nextAction: upcomingAction?.subject || company.nextAction || 'No action planned',
-            nextActionDate: upcomingAction?.scheduledAt || company.nextActionDate,
+            nextAction: nextAction || 'No action planned',
+            nextActionDate: nextActionDate,
             nextActionTiming: nextActionTiming, // NEW: Timing text
             createdAt: company.createdAt,
             updatedAt: company.updatedAt
@@ -805,6 +1099,23 @@ export async function GET(request: NextRequest) {
                   name: true,
                   globalRank: true
                 }
+              },
+              actions: {
+                where: {
+                  deletedAt: null,
+                  status: 'COMPLETED'
+                },
+                orderBy: {
+                  completedAt: 'desc'
+                },
+                take: 1,
+                select: {
+                  id: true,
+                  type: true,
+                  subject: true,
+                  completedAt: true,
+                  createdAt: true
+                }
               }
               // Remove notes and bio from select to avoid string length issues
             }
@@ -837,9 +1148,93 @@ export async function GET(request: NextRequest) {
               return str.substring(0, maxLength) + '...';
             };
 
-            // Calculate timing using shared utilities (matches speedrun pattern)
-            const lastActionTime = calculateLastActionTiming(person.lastActionDate || person.updatedAt, person.lastAction);
-            const nextActionTiming = calculateNextActionTiming(person.nextActionDate);
+            // Calculate lastActionTime for people table display using meaningful actions (copy from speedrun)
+            let lastActionTime = 'Never';
+            let lastAction = person.lastAction;
+            let lastActionDate = person.lastActionDate;
+            
+            // Check if we have a meaningful action from the database
+            if (person.actions && person.actions.length > 0) {
+              const meaningfulAction = person.actions.find(action => isMeaningfulAction(action.type));
+              if (meaningfulAction) {
+                lastAction = meaningfulAction.subject || meaningfulAction.type;
+                lastActionDate = meaningfulAction.completedAt || meaningfulAction.createdAt;
+              }
+            }
+            
+            // Only show real last actions if they exist and are meaningful
+            if (lastActionDate && lastAction && lastAction !== 'No action taken') {
+              // Real last action exists
+              const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+              if (daysSince === 0) lastActionTime = 'Today';
+              else if (daysSince === 1) lastActionTime = 'Yesterday';
+              else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+              else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+              else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+            } else if (person.createdAt) {
+              // No real last action, show when data was added
+              const daysSince = Math.floor((new Date().getTime() - new Date(person.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+              if (daysSince === 0) lastActionTime = 'Today';
+              else if (daysSince === 1) lastActionTime = 'Yesterday';
+              else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+              else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+              else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+            }
+
+            // Calculate nextActionTiming with fallback
+            let nextActionTiming = 'No date set';
+            let nextAction = person.nextAction;
+            let nextActionDate = person.nextActionDate;
+            
+            // Auto-populate nextActionDate if missing
+            if (!nextActionDate) {
+              const rank = person.globalRank || 1000;
+              const lastActionDateForCalc = lastActionDate || person.createdAt;
+              let daysToAdd = 7; // Default 1 week
+              if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
+              else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
+              else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
+              else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
+              else daysToAdd = 14; // Others: 2 weeks
+              
+              nextActionDate = new Date(lastActionDateForCalc);
+              nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+            }
+            
+            // Auto-populate nextAction text if missing
+            if (!nextAction) {
+              if (lastAction && lastAction !== 'No action taken') {
+                if (lastAction.toLowerCase().includes('email')) {
+                  nextAction = 'Schedule a call to discuss next steps';
+                } else if (lastAction.toLowerCase().includes('call')) {
+                  nextAction = 'Send follow-up email with meeting notes';
+                } else if (lastAction.toLowerCase().includes('linkedin')) {
+                  nextAction = 'Send personalized connection message';
+                } else if (lastAction.toLowerCase().includes('created')) {
+                  nextAction = 'Send initial outreach email';
+                } else {
+                  nextAction = 'Follow up on previous contact';
+                }
+              } else {
+                nextAction = 'Send initial outreach email';
+              }
+            }
+            
+            // Calculate nextActionTiming
+            if (nextActionDate) {
+              const now = new Date();
+              const actionDate = new Date(nextActionDate);
+              const diffMs = actionDate.getTime() - now.getTime();
+              const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+              
+              if (diffDays < 0) nextActionTiming = 'Overdue';
+              else if (diffDays === 0) nextActionTiming = 'Today';
+              else if (diffDays === 1) nextActionTiming = 'Tomorrow';
+              else if (diffDays <= 7) nextActionTiming = 'This week';
+              else if (diffDays <= 14) nextActionTiming = 'Next week';
+              else if (diffDays <= 30) nextActionTiming = 'This month';
+              else nextActionTiming = 'Future';
+            }
 
             return {
               id: person.id,
@@ -852,11 +1247,11 @@ export async function GET(request: NextRequest) {
               phone: safeString(person.phone || 'Unknown Phone', 50),
               linkedin: safeString(person.linkedinUrl || 'Unknown LinkedIn', 500),
               status: safeString(person.status || 'Unknown', 20),
-              lastAction: safeString(person.lastAction || 'No action taken', 500),
-              lastActionDate: person.lastActionDate || null,
+              lastAction: safeString(lastAction || 'No action taken', 500),
+              lastActionDate: lastActionDate || null,
               lastActionTime: lastActionTime, // NEW: Timing text
-              nextAction: safeString(person.nextAction || 'No next action', 500),
-              nextActionDate: person.nextActionDate || null,
+              nextAction: safeString(nextAction || 'No next action', 500),
+              nextActionDate: nextActionDate || null,
               nextActionTiming: nextActionTiming, // NEW: Timing text
               mainSellerId: person.mainSellerId || null,
               workspaceId: person.workspaceId,

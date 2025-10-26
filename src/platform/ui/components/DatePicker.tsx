@@ -1,396 +1,220 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { CalendarIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon } from '@heroicons/react/24/outline';
+import * as Popover from '@radix-ui/react-popover';
+import { Calendar } from './calendar';
 import { 
   formatDateInput, 
   parseDateInput, 
   validateDateFormat, 
   getDateFormatPlaceholder,
   formatDateForInput,
-  isValidPartialDate
+  isValidPartialDate,
+  isValidDate,
+  formatDateForDisplay
 } from '@/platform/utils/dateInput';
-
-export interface DateOption {
-  id: string;
-  label: string;
-  duration?: number; // milliseconds
-  type: 'preset' | 'custom';
-}
 
 export interface DatePickerProps {
   value?: string | Date;
   onChange: (date: Date | null) => void;
   placeholder?: string;
   className?: string;
-  showTime?: boolean;
   minDate?: Date;
   maxDate?: Date;
   disabled?: boolean;
+  inModal?: boolean; // New prop to adjust positioning for modal context
 }
-
-// Quick date options similar to the snooze modal
-const QUICK_DATE_OPTIONS: DateOption[] = [
-  {
-    id: 'tomorrow',
-    label: 'Tomorrow',
-    duration: 24 * 60 * 60 * 1000, // 1 day
-    type: 'preset'
-  },
-  {
-    id: 'next-week',
-    label: 'Next Week',
-    duration: 7 * 24 * 60 * 60 * 1000, // 1 week
-    type: 'preset'
-  },
-  {
-    id: 'two-weeks',
-    label: 'Two Weeks',
-    duration: 14 * 24 * 60 * 60 * 1000, // 2 weeks
-    type: 'preset'
-  },
-  {
-    id: 'next-month',
-    label: 'Next Month',
-    duration: 30 * 24 * 60 * 60 * 1000, // ~1 month
-    type: 'preset'
-  },
-  {
-    id: 'custom',
-    label: 'Custom Date',
-    type: 'custom'
-  }
-];
 
 export function DatePicker({
   value,
   onChange,
   placeholder = 'Select date',
   className = '',
-  showTime = false,
   minDate,
   maxDate,
-  disabled = false
+  disabled = false,
+  inModal = false
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<DateOption | null>(null);
-  const [customDate, setCustomDate] = useState('');
-  const [customTime, setCustomTime] = useState('09:00');
-  const [isClient, setIsClient] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, positionAbove: false });
-  
-  // Manual input state
-  const [manualInput, setManualInput] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [isValidInput, setIsValidInput] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const manualInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Client-side rendering check
+  // Convert value to Date object
+  const selectedDate = React.useMemo(() => {
+    if (!value) return undefined;
+    const date = typeof value === 'string' ? new Date(value) : value;
+    return isValidDate(date) ? date : undefined;
+  }, [value]);
+
+  // Sync input value with selected date
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Calculate dropdown position
-  const calculatePosition = () => {
-    if (!triggerRef.current || !isClient) return;
-
-    const triggerRect = triggerRef.current.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const viewportWidth = window.innerWidth;
-    
-    // Estimate dropdown height (will be measured after render)
-    const estimatedDropdownHeight = 300; // Conservative estimate
-    const spaceBelow = viewportHeight - triggerRect.bottom;
-    const spaceAbove = triggerRect.top;
-    
-    // Determine if we should position above or below
-    const positionAbove = spaceBelow < estimatedDropdownHeight && spaceAbove > spaceBelow;
-    
-    // Calculate vertical position
-    const top = positionAbove 
-      ? triggerRect.top - estimatedDropdownHeight - 4
-      : triggerRect.bottom + 4;
-    
-    // Calculate horizontal position (center align, but keep within viewport)
-    let left = triggerRect.left;
-    const dropdownWidth = 280; // Estimated width
-    if (left + dropdownWidth > viewportWidth) {
-      left = viewportWidth - dropdownWidth - 16; // 16px margin from edge
-    }
-    if (left < 16) {
-      left = 16; // 16px margin from edge
-    }
-    
-    setDropdownPosition({ top, left, positionAbove });
-  };
-
-  // Recalculate position when dropdown opens
-  useEffect(() => {
-    if (isOpen && isClient) {
-      calculatePosition();
-    }
-  }, [isOpen, isClient]);
-
-  // Sync manual input with value prop
-  useEffect(() => {
-    if (value && !isTyping) {
-      const dateObj = typeof value === 'string' ? new Date(value) : value;
-      if (!isNaN(dateObj.getTime())) {
-        setManualInput(formatDateForInput(dateObj));
-        setIsValidInput(true);
-      }
-    } else if (!value && !isTyping) {
-      setManualInput('');
+    if (selectedDate && !isTyping) {
+      setInputValue(formatDateForInput(selectedDate));
+      setIsValidInput(true);
+    } else if (!selectedDate && !isTyping) {
+      setInputValue('');
       setIsValidInput(true);
     }
-  }, [value, isTyping]);
+  }, [selectedDate, isTyping]);
 
-  // Format the display value
-  const formatDisplayValue = (date: string | Date | undefined): string => {
-    if (!date) return placeholder;
-    
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
-    if (isNaN(dateObj.getTime())) return placeholder;
-    
-    if (showTime) {
-      return dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
+  // Focus input when component mounts or when opened
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
     }
-    
-    return dateObj.toLocaleDateString();
-  };
+  }, []);
 
-  // Handle quick option selection
-  const handleQuickOption = (option: DateOption) => {
-    if (option['type'] === 'custom') {
-      setSelectedOption(option);
-      return;
-    }
-
-    if (option.duration) {
-      const futureDate = new Date(Date.now() + option.duration);
-      onChange(futureDate);
-      setIsOpen(false);
-      setSelectedOption(null);
-    }
-  };
-
-  // Handle custom date selection
-  const handleCustomDate = () => {
-    if (!customDate) return;
-    
-    const dateTime = showTime 
-      ? new Date(`${customDate}T${customTime}`)
-      : new Date(customDate);
-    
-    onChange(dateTime);
-    setIsOpen(false);
-    setSelectedOption(null);
-  };
-
-  // Handle manual date input
-  const handleManualInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle input change with auto-formatting
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     const formattedValue = formatDateInput(inputValue);
-    setManualInput(formattedValue);
+    setInputValue(formattedValue);
     setIsTyping(true);
     
     // Validate the input
     const isValid = isValidPartialDate(formattedValue);
     setIsValidInput(isValid);
-    
-    // If it's a complete valid date, parse and update
-    if (isValid && formattedValue.length === 10) { // MM/DD/YYYY = 10 chars
-      const parsedDate = parseDateInput(formattedValue);
-      if (parsedDate) {
-        onChange(parsedDate);
-        setIsTyping(false);
-      }
-    }
   };
 
-  // Handle manual input blur (when user finishes typing)
-  const handleManualInputBlur = () => {
+  // Handle input blur - validate and update
+  const handleInputBlur = () => {
     setIsTyping(false);
-    if (manualInput && validateDateFormat(manualInput)) {
-      const parsedDate = parseDateInput(manualInput);
+    if (inputValue && validateDateFormat(inputValue)) {
+      const parsedDate = parseDateInput(inputValue);
       if (parsedDate) {
         onChange(parsedDate);
       }
+    } else if (!inputValue) {
+      onChange(null);
     }
   };
 
-  // Handle manual input key down
-  const handleManualInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  // Handle key down events
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      handleManualInputBlur();
+      handleInputBlur();
     } else if (e.key === 'Escape') {
-      setManualInput('');
+      setInputValue(selectedDate ? formatDateForInput(selectedDate) : '');
+      setIsValidInput(true);
+      setIsTyping(false);
+      inputRef.current?.blur();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setIsOpen(true);
+    }
+  };
+
+  // Handle calendar date selection
+  const handleCalendarSelect = (date: Date | undefined) => {
+    if (date) {
+      onChange(date);
+      setInputValue(formatDateForInput(date));
       setIsValidInput(true);
       setIsTyping(false);
     }
+    setIsOpen(false);
   };
 
-  // Handle direct date input (for calendar selection)
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = e.target.value ? new Date(e.target.value) : null;
-    onChange(newDate);
+  // Handle clear button
+  const handleClear = () => {
+    onChange(null);
+    setInputValue('');
+    setIsValidInput(true);
+    setIsTyping(false);
   };
-
-  const displayValue = formatDisplayValue(value);
 
   return (
     <div className={`relative ${className}`}>
-      {/* Clickable date display */}
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => !disabled && setIsOpen(!isOpen)}
-        disabled={disabled}
-        className={`
-          w-full px-3 py-2 text-left border border-[var(--border)] rounded-md 
-          bg-[var(--background)] text-[var(--foreground)] placeholder-gray-500
-          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-          hover:border-gray-400 transition-colors
-          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-        `}
-      >
-        <div className="flex items-center justify-between">
-          <span className={value ? 'text-[var(--foreground)]' : 'text-[var(--muted)]'}>
-            {displayValue}
-          </span>
-          <CalendarIcon className="w-4 h-4 text-[var(--muted)]" />
-        </div>
-      </button>
+      <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
+        <div className="relative">
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            disabled={disabled}
+            className={`
+              w-full px-3 py-2 pr-20 text-sm border rounded-md
+              bg-[var(--background)] text-[var(--foreground)]
+              placeholder:text-[var(--muted)] placeholder:italic
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+              disabled:opacity-50 disabled:cursor-not-allowed
+              transition-colors duration-200
+              ${!isValidInput && inputValue ? 'border-red-500' : 'border-[var(--border)]'}
+            `}
+          />
+          
+          {/* Calendar icon button */}
+          <Popover.Trigger asChild>
+            <button
+              type="button"
+              disabled={disabled}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+            >
+              <CalendarIcon className="w-4 h-4" />
+            </button>
+          </Popover.Trigger>
 
-      {/* Dropdown menu */}
-      {isOpen && !disabled && isClient && createPortal(
-        <div 
-          ref={dropdownRef}
-          className="fixed z-[9999] w-72 bg-[var(--background)] border border-[var(--border)] rounded-md shadow-lg max-h-80 overflow-y-auto"
-          style={{
-            top: dropdownPosition.top,
-            left: dropdownPosition.left,
-          }}
-        >
-          {/* Quick options */}
-          <div className="p-2">
-            <div className="text-xs font-medium text-[var(--muted)] mb-2 px-2">Quick Options</div>
-            {QUICK_DATE_OPTIONS.map((option) => (
-              <button
-                key={option.id}
-                onClick={() => handleQuickOption(option)}
-                className="w-full text-left px-2 py-1.5 text-sm text-gray-700 hover:bg-[var(--hover)] rounded"
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Custom date picker */}
-          {selectedOption?.type === 'custom' && (
-            <div className="border-t border-[var(--border)] p-3">
-              <div className="text-xs font-medium text-[var(--muted)] mb-2">Custom Date</div>
-              <div className="space-y-2">
-                <div>
-                  <input
-                    type="date"
-                    value={customDate}
-                    onChange={(e) => setCustomDate(e.target.value)}
-                    min={minDate?.toISOString().split('T')[0]}
-                    max={maxDate?.toISOString().split('T')[0]}
-                    className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                {showTime && (
-                  <div>
-                    <input
-                      type="time"
-                      value={customTime}
-                      onChange={(e) => setCustomTime(e.target.value)}
-                      className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                  </div>
-                )}
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleCustomDate}
-                    disabled={!customDate}
-                    className="flex-1 px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Set Date
-                  </button>
-                  <button
-                    onClick={() => setSelectedOption(null)}
-                    className="flex-1 px-3 py-1 text-xs border border-[var(--border)] text-gray-700 rounded hover:bg-[var(--panel-background)]"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
+          {/* Clear button */}
+          {inputValue && !disabled && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className="absolute right-8 top-1/2 -translate-y-1/2 p-1 text-[var(--muted)] hover:text-[var(--foreground)]"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           )}
+        </div>
 
-          {/* Manual date input */}
-          <div className="border-t border-[var(--border)] p-3">
-            <div className="text-xs font-medium text-[var(--muted)] mb-2">Or type a date</div>
-            <div className="space-y-2">
-              <input
-                ref={manualInputRef}
-                type="text"
-                value={manualInput}
-                onChange={handleManualInputChange}
-                onBlur={handleManualInputBlur}
-                onKeyDown={handleManualInputKeyDown}
-                placeholder={getDateFormatPlaceholder()}
-                className={`w-full px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${
-                  !isValidInput && manualInput ? 'border-red-500' : 'border-[var(--border)]'
-                }`}
-                autoComplete="off"
-              />
-              {!isValidInput && manualInput && (
-                <div className="text-xs text-red-500">
-                  Invalid date format. Use {getDateFormatPlaceholder()}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Calendar picker */}
-          <div className="border-t border-[var(--border)] p-3">
-            <div className="text-xs font-medium text-[var(--muted)] mb-2">Or pick from calendar</div>
-            <input
-              type={showTime ? 'datetime-local' : 'date'}
-              value={value ? (typeof value === 'string' ? value : value.toISOString().split('T')[0]) : ''}
-              onChange={handleDateChange}
-              min={minDate?.toISOString().split('T')[0]}
-              max={maxDate?.toISOString().split('T')[0]}
-              className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+        <Popover.Portal>
+          <Popover.Content
+            className={`w-auto p-0 bg-[var(--background)] border border-[var(--border)] rounded-md shadow-lg ${
+              inModal ? 'z-[60]' : 'z-50'
+            }`}
+            sideOffset={inModal ? 8 : 4}
+            align={inModal ? "center" : "start"}
+            side="bottom"
+            avoidCollisions={true}
+            collisionPadding={inModal ? 16 : 8}
+          >
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={handleCalendarSelect}
+              disabled={(date) => {
+                if (minDate && date < minDate) return true;
+                if (maxDate && date > maxDate) return true;
+                return false;
+              }}
+              initialFocus
             />
-          </div>
-        </div>,
-        document.body
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
+
+      {/* Validation error message */}
+      {!isValidInput && inputValue && (
+        <div className="absolute top-full left-0 mt-1 text-xs text-red-500">
+          Invalid date format. Use {getDateFormatPlaceholder()}
+        </div>
       )}
 
-      {/* Backdrop to close dropdown */}
-      {isOpen && isClient && createPortal(
-        <div
-          className="fixed inset-0 z-[9998]"
-          onClick={(e) => {
-            // Don't close if user is typing in manual input
-            if (!isTyping) {
-              setIsOpen(false);
-            }
-          }}
-        />,
-        document.body
+      {/* Helper text when empty */}
+      {!inputValue && (
+        <div className="absolute top-full left-0 mt-1 text-xs text-[var(--muted)]">
+          Type date or click calendar icon
+        </div>
       )}
     </div>
   );

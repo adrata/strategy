@@ -373,13 +373,128 @@ export async function GET(request: NextRequest) {
             }
           });
           
-          return {
+          // Import isMeaningfulAction function
+          const { isMeaningfulAction } = await import('@/platform/utils/meaningfulActions');
+          
+          // DEBUG: Log the person data to see what we're working with
+          console.log(`🔍 [V1 PEOPLE API] Processing person ${person.id}:`, {
+            name: person.fullName,
+            lastAction: person.lastAction,
+            lastActionDate: person.lastActionDate,
+            nextAction: person.nextAction,
+            nextActionDate: person.nextActionDate,
+            hasLastActionFromDB: !!lastAction,
+            lastActionType: lastAction?.type,
+            lastActionSubject: lastAction?.subject
+          });
+          
+          // Calculate lastActionTime for leads table display using meaningful actions (copy from speedrun)
+          let lastActionTime = 'Never';
+          let lastActionText = person.lastAction;
+          let lastActionDate = person.lastActionDate;
+          
+          // Check if we have a meaningful action from the database
+          if (lastAction && isMeaningfulAction(lastAction.type)) {
+            lastActionText = lastAction.subject || lastAction.type;
+            lastActionDate = lastAction.completedAt || lastAction.createdAt;
+          }
+          
+          // Only show real last actions if they exist and are meaningful
+          if (lastActionDate && lastActionText && lastActionText !== 'No action taken') {
+            // Real last action exists
+            const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          } else if (person.createdAt) {
+            // No real last action, show when data was added
+            const daysSince = Math.floor((new Date().getTime() - new Date(person.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+            if (daysSince === 0) lastActionTime = 'Today';
+            else if (daysSince === 1) lastActionTime = 'Yesterday';
+            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
+            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
+            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          }
+
+          // Calculate nextActionTiming with fallback
+          let nextActionTiming = 'No date set';
+          let nextAction = person.nextAction;
+          let nextActionDate = person.nextActionDate;
+          
+          // Auto-populate nextActionDate if missing
+          if (!nextActionDate) {
+            const rank = person.globalRank || 1000;
+            const lastActionDateForCalc = lastActionDate || person.createdAt;
+            let daysToAdd = 7; // Default 1 week
+            if (rank <= 10) daysToAdd = 1; // Top 10: tomorrow
+            else if (rank <= 50) daysToAdd = 3; // Top 50: 3 days
+            else if (rank <= 100) daysToAdd = 5; // Top 100: 5 days
+            else if (rank <= 500) daysToAdd = 7; // Top 500: 1 week
+            else daysToAdd = 14; // Others: 2 weeks
+            
+            nextActionDate = new Date(lastActionDateForCalc);
+            nextActionDate.setDate(nextActionDate.getDate() + daysToAdd);
+          }
+          
+          // Auto-populate nextAction text if missing
+          if (!nextAction) {
+            if (lastActionText && lastActionText !== 'No action taken') {
+              if (lastActionText.toLowerCase().includes('email')) {
+                nextAction = 'Schedule a call to discuss next steps';
+              } else if (lastActionText.toLowerCase().includes('call')) {
+                nextAction = 'Send follow-up email with meeting notes';
+              } else if (lastActionText.toLowerCase().includes('linkedin')) {
+                nextAction = 'Send personalized connection message';
+              } else if (lastActionText.toLowerCase().includes('created')) {
+                nextAction = 'Send initial outreach email';
+              } else {
+                nextAction = 'Follow up on previous contact';
+              }
+            } else {
+              nextAction = 'Send initial outreach email';
+            }
+          }
+          
+          // Calculate nextActionTiming
+          if (nextActionDate) {
+            const now = new Date();
+            const actionDate = new Date(nextActionDate);
+            const diffMs = actionDate.getTime() - now.getTime();
+            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) nextActionTiming = 'Overdue';
+            else if (diffDays === 0) nextActionTiming = 'Today';
+            else if (diffDays === 1) nextActionTiming = 'Tomorrow';
+            else if (diffDays <= 7) nextActionTiming = 'This week';
+            else if (diffDays <= 14) nextActionTiming = 'Next week';
+            else if (diffDays <= 30) nextActionTiming = 'This month';
+            else nextActionTiming = 'Future';
+          }
+          
+          const result = {
             ...person,
             // Use computed lastAction if available, otherwise fall back to stored fields
-            lastAction: lastAction?.subject || person.lastAction,
-            lastActionDate: lastAction?.completedAt || person.lastActionDate,
+            lastAction: lastActionText || person.lastAction,
+            lastActionDate: lastActionDate || person.lastActionDate,
+            lastActionTime: lastActionTime, // NEW: Timing text
+            nextAction: nextAction || person.nextAction,
+            nextActionDate: nextActionDate || person.nextActionDate,
+            nextActionTiming: nextActionTiming, // NEW: Timing text
             lastActionType: lastAction?.type || null
           };
+          
+          // DEBUG: Log the final result
+          console.log(`✅ [V1 PEOPLE API] Final result for person ${person.id}:`, {
+            name: result.fullName,
+            lastAction: result.lastAction,
+            lastActionTime: result.lastActionTime,
+            nextAction: result.nextAction,
+            nextActionTiming: result.nextActionTiming
+          });
+          
+          return result;
         } catch (error) {
           console.error(`❌ [PEOPLE API] Error computing lastAction for person ${person.id}:`, error);
           // Return original person data if computation fails

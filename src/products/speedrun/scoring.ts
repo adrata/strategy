@@ -233,16 +233,18 @@ export function detectEmailEngagement(record: CRMRecord): EmailEngagement {
     }
   });
 
-  // Recent activity bonus
+  // 🎯 FIX: Recent activity bonus - only give bonus if it's been a while (not same day)
   if (record.lastActionDate) {
     const daysSince = calculateDaysSinceContact(record.lastActionDate);
-    if (daysSince <= 7) {
-      emailScore += 20;
-      readyToBuyScore += 15;
-    } else if (daysSince <= 30) {
+    // Only give bonus if contacted 7-30 days ago (not too recent)
+    if (daysSince > 7 && daysSince <= 14) {
       emailScore += 10;
       readyToBuyScore += 10;
+    } else if (daysSince > 14 && daysSince <= 30) {
+      emailScore += 5;
+      readyToBuyScore += 5;
     }
+    // No bonus for very recent contact (0-7 days) - let the penalty apply
   }
 
   return {
@@ -253,6 +255,7 @@ export function detectEmailEngagement(record: CRMRecord): EmailEngagement {
 
 /**
  * Calculate timing urgency score
+ * 🎯 FIX: Penalize recent contact, reward people who need attention
  */
 export function calculateTimingUrgency(
   record: CRMRecord,
@@ -260,12 +263,15 @@ export function calculateTimingUrgency(
 ): number {
   let urgencyScore = 0;
 
-  // Time-based urgency (longer without contact = higher urgency)
-  if (daysSinceContact >= 30) urgencyScore += 10;
-  else if (daysSinceContact >= 14) urgencyScore += 8;
-  else if (daysSinceContact >= 7) urgencyScore += 6;
-  else if (daysSinceContact >= 3) urgencyScore += 4;
-  else if (daysSinceContact >= 1) urgencyScore += 2;
+  // 🎯 PENALTY for recent contact (they've been handled recently)
+  if (daysSinceContact === 0) urgencyScore -= 30;        // Contacted today = -30
+  else if (daysSinceContact === 1) urgencyScore -= 20;   // Yesterday = -20
+  else if (daysSinceContact <= 3) urgencyScore -= 15;    // 2-3 days ago = -15
+  else if (daysSinceContact <= 7) urgencyScore -= 10;    // This week = -10
+  // 🎯 BONUS for people who need attention (longer without contact = higher urgency)
+  else if (daysSinceContact >= 30) urgencyScore += 15;   // 30+ days = +15
+  else if (daysSinceContact >= 14) urgencyScore += 10;   // 14-29 days = +10
+  else if (daysSinceContact >= 7) urgencyScore += 5;     // 7-13 days = +5
 
   // Deal stage urgency
   const stageScore =
@@ -292,6 +298,7 @@ export function calculateTimingUrgency(
 
 /**
  * Calculate speed-focused score (quick wins)
+ * 🎯 FIX: Penalize recent contact, reward people who need attention
  */
 export function calculateSpeedScore(contact: RankedContact): number {
   let speedScore = 0;
@@ -303,9 +310,12 @@ export function calculateSpeedScore(contact: RankedContact): number {
     ] || 0;
   speedScore += relationshipScore;
 
-  // Recent activity (momentum)
-  if (contact.daysSinceLastContact <= 7) speedScore += 10;
-  else if (contact.daysSinceLastContact <= 30) speedScore += 5;
+  // 🎯 FIX: Penalize recent contact, reward people who need attention
+  if (contact.daysSinceLastContact === 0) speedScore -= 25;      // Contacted today = -25
+  else if (contact.daysSinceLastContact === 1) speedScore -= 15; // Yesterday = -15
+  else if (contact.daysSinceLastContact <= 7) speedScore -= 10;  // This week = -10
+  else if (contact.daysSinceLastContact >= 30) speedScore += 10; // 30+ days = +10
+  else if (contact.daysSinceLastContact >= 14) speedScore += 5;  // 14-29 days = +5
 
   // Email engagement (responsive)
   speedScore += (contact.emailEngagementScore || 0) * 0.1;

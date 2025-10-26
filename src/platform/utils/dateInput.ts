@@ -148,3 +148,39 @@ export function isValidPartialDate(value: string): boolean {
   // For longer inputs, use full validation
   return validateDateFormat(value);
 }
+
+/**
+ * Validates if a Date object is valid
+ */
+export function isValidDate(date: Date | null | undefined): boolean {
+  return date instanceof Date && !isNaN(date.getTime());
+}
+
+/**
+ * Formats a date for display in the UI
+ * Returns a user-friendly string or empty string for invalid dates
+ */
+export function formatDateForDisplay(date: Date | string | null | undefined): string {
+  if (!date) return '';
+  
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  if (!isValidDate(dateObj)) return '';
+  
+  return dateObj.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+}
+
+/**
+ * Clears a date value - converts empty strings, dashes, and invalid dates to null
+ */
+export function clearDateValue(value: string | null | undefined): string | null {
+  if (!value || value.trim() === '' || value === '-') return null;
+  
+  const date = new Date(value);
+  if (!isValidDate(date)) return null;
+  
+  return value;
+}

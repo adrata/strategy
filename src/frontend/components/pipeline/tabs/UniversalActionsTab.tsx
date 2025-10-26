@@ -99,6 +99,50 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     return userId;
   }, [users]);
 
+  // Optimistic onSave handler for inline edits
+  const handleOptimisticSave = useCallback(async (field: string, value: string, recordId?: string, recordTypeParam?: string) => {
+    if (!onSave) return;
+    
+    try {
+      // 1. Optimistically update the local state immediately
+      if (recordId && recordTypeParam === 'action') {
+        setActionEvents(prevEvents => 
+          prevEvents.map(event => 
+            event.id === recordId 
+              ? { ...event, [field]: value, metadata: { ...event.metadata, [field]: value } }
+              : event
+          )
+        );
+        console.log('🔄 [ACTIONS] Optimistically updated action in local state:', { recordId, field, value });
+      }
+      
+      // 2. Call the original onSave function
+      await onSave(field, value, recordId, recordTypeParam);
+      
+      // 3. Force a cache-busting refresh to ensure we have the latest data
+      const cacheKey = `actions-${record.id}`;
+      localStorage.removeItem(cacheKey);
+      
+      // 4. Trigger a force refresh to bypass any remaining cache
+      loadActionsFromAPI(true);
+      
+      console.log('✅ [ACTIONS] Inline edit completed with optimistic update and cache refresh');
+      
+    } catch (error) {
+      console.error('❌ [ACTIONS] Error in optimistic save:', error);
+      // Revert optimistic update on error
+      if (recordId && recordTypeParam === 'action') {
+        setActionEvents(prevEvents => 
+          prevEvents.map(event => 
+            event.id === recordId 
+              ? { ...event, [field]: event[field], metadata: { ...event.metadata, [field]: event[field] } }
+              : event
+          )
+        );
+      }
+      throw error; // Re-throw to let the UI handle the error
+    }
+  }, [onSave, record.id]);
 
   const toggleEventExpansion = (eventId: string) => {
     setExpandedEvents(prev => {
@@ -158,7 +202,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     return event.content && event.content.length > 150;
   };
 
-  const loadActionsFromAPI = useCallback(async () => {
+  const loadActionsFromAPI = useCallback(async (forceRefresh: boolean = false) => {
     if (!record?.id) {
       console.log('🚨 [ACTIONS] No record ID, skipping API load');
       setLoading(false);
@@ -167,10 +211,11 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     
     console.log('🔍 [ACTIONS] Loading actions for record:', {
       id: record.id,
-      type: recordType
+      type: recordType,
+      forceRefresh
     });
     
-    // ⚡ CACHE-FIRST: Check cache BEFORE setting loading state
+    // ⚡ CACHE-FIRST: Check cache BEFORE setting loading state (unless force refresh)
     const cacheKey = `actions-${record.id}`;
     const cacheVersionKey = `actions-version-${record.id}`;
     const currentCacheVersion = '2.0'; // Increment to clear old cache with incorrect format
@@ -188,7 +233,8 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     let activityEvents: ActionEvent[] = [];
     let noteEvents: ActionEvent[] = [];
     
-    if (cachedData) {
+    // Skip cache if force refresh is requested
+    if (!forceRefresh && cachedData) {
       try {
         const parsed = JSON.parse(cachedData);
         if (parsed.timestamp && Date.now() - parsed.timestamp < 5000 && parsed.version === currentCacheVersion) { // 5 second cache + version check
@@ -238,6 +284,11 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         actionsQuery = `personId=${record.id}&companyId=${record.id}`;
       }
       
+      // Add cache-busting parameter if force refresh is requested
+      if (forceRefresh) {
+        actionsQuery += `&t=${Date.now()}`;
+      }
+      
       console.log('🔍 [ACTIONS] Actions query:', actionsQuery);
       
       // 🚀 OPTIMIZED API CALLS: Only fetch what we need based on record type
@@ -247,7 +298,8 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       
       // Only fetch people for company records
       if (recordType === 'companies') {
-        apiCalls.push(authFetch(`/api/v1/people?companyId=${record.id}`));
+        const peopleQuery = `companyId=${record.id}${forceRefresh ? `&t=${Date.now()}` : ''}`;
+        apiCalls.push(authFetch(`/api/v1/people?${peopleQuery}`));
       }
       
       const responses = await Promise.allSettled(apiCalls);
@@ -394,7 +446,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         // Clear cache and reload
         const cacheKey = `actions-${record.id}`;
         localStorage.removeItem(cacheKey);
-        loadActionsFromAPI();
+        loadActionsFromAPI(true); // Force refresh
       }
     };
 
@@ -406,7 +458,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         // Clear cache and reload
         const cacheKey = `actions-${record.id}`;
         localStorage.removeItem(cacheKey);
-        loadActionsFromAPI();
+        loadActionsFromAPI(true); // Force refresh
       }
     };
 
@@ -546,7 +598,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                     <InlineEditField
                       value={event.description}
                       field="description"
-                      onSave={onSave || (() => Promise.resolve())}
+                      onSave={handleOptimisticSave || (() => Promise.resolve())}
                       recordId={event.id}
                       recordType="action"
                       onSuccess={handleSuccess}

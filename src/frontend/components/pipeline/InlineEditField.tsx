@@ -355,6 +355,7 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [pendingDate, setPendingDate] = useState<Date | null>(null);
 
   // Get current date for display
   const getCurrentDate = (): string => {
@@ -368,19 +369,35 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
   };
 
   const handleEditStart = () => {
+    // Initialize pending date with current value
+    if (value) {
+      try {
+        const date = new Date(value);
+        setPendingDate(isNaN(date.getTime()) ? null : date);
+      } catch {
+        setPendingDate(null);
+      }
+    } else {
+      setPendingDate(null);
+    }
     setIsEditing(true);
   };
 
-  const handleDateChange = (date: Date | undefined) => {
-    if (date) {
-      handleSave(date.toISOString());
-    }
+  const handleDateChange = (date: Date | null) => {
+    setPendingDate(date);
   };
 
-  const handleSave = async (dateValue: string) => {
+  const handleSave = async () => {
+    if (pendingDate === null && value === null) {
+      // No change, just close
+      setIsEditing(false);
+      return;
+    }
+
     setIsLoading(true);
     setIsSaving(true);
     try {
+      const dateValue = pendingDate ? pendingDate.toISOString() : null;
       await onSave(field, dateValue, recordId || '', recordType || '');
       
       const message = `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`;
@@ -402,8 +419,29 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
   };
 
   const handleEditCancel = () => {
+    setPendingDate(null);
     setIsEditing(false);
   };
+
+  // Handle keyboard events and focus management for the modal
+  useEffect(() => {
+    if (!isEditing) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleEditCancel();
+      }
+    };
+
+    // Focus the modal when it opens
+    const modal = document.querySelector('[data-date-modal]') as HTMLElement;
+    if (modal) {
+      modal.focus();
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isEditing]);
 
   const handleQuickDate = (dateType: 'today' | 'yesterday') => {
     const today = new Date();
@@ -416,48 +454,114 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
       targetDate.setDate(today.getDate() - 1);
     }
     
-    handleSave(targetDate.toISOString());
+    setPendingDate(targetDate);
   };
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-2">
-        {/* Quick action buttons */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => handleQuickDate('today')}
-            disabled={isLoading}
-            className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50"
-          >
-            Today
-          </button>
-          <button
-            onClick={() => handleQuickDate('yesterday')}
-            disabled={isLoading}
-            className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50"
-          >
-            Yesterday
-          </button>
-        </div>
-        
-        {/* Date picker */}
-        <div className="flex items-center gap-2">
-          <div className="flex-1">
-            <DatePicker
-              value={value ? new Date(value) : undefined}
-              onChange={handleDateChange}
-              placeholder={placeholder}
-              className={className}
-            />
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+        onClick={(e) => {
+          // Close modal when clicking backdrop
+          if (e.target === e.currentTarget) {
+            handleEditCancel();
+          }
+        }}
+      >
+        <div 
+          data-date-modal
+          tabIndex={-1}
+          className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-xl p-6 w-full max-w-md mx-4 focus:outline-none"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-[var(--foreground)]">
+              Edit {field.charAt(0).toUpperCase() + field.slice(1)}
+            </h3>
+            <button
+              onClick={handleEditCancel}
+              disabled={isLoading}
+              className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+              title="Close"
+            >
+              <XMarkIcon className="h-5 w-5" />
+            </button>
           </div>
-          <button
-            onClick={handleEditCancel}
-            disabled={isLoading}
-            className="p-1 text-[var(--error)] hover:text-[var(--error-text)] disabled:opacity-50"
-            title="Cancel"
-          >
-            <XMarkIcon className="h-4 w-4" />
-          </button>
+
+          {/* Date picker */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              Select Date
+            </label>
+            <div className="relative">
+              <DatePicker
+                value={pendingDate || undefined}
+                onChange={handleDateChange}
+                placeholder={placeholder || "Type date (MM/DD/YYYY) or click calendar"}
+                className="w-full"
+                inModal={true}
+              />
+            </div>
+            <p className="text-xs text-[var(--muted)] mt-1">
+              Type directly (e.g., "10242025" → "10/24/2025") or click the calendar icon
+            </p>
+          </div>
+          
+          {/* Quick action buttons */}
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => handleQuickDate('today')}
+              disabled={isLoading}
+              className="flex-1 px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 disabled:opacity-50 transition-colors"
+            >
+              Today
+            </button>
+            <button
+              onClick={() => handleQuickDate('yesterday')}
+              disabled={isLoading}
+              className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 disabled:opacity-50 transition-colors"
+            >
+              Yesterday
+            </button>
+            <button
+              onClick={() => setPendingDate(null)}
+              disabled={isLoading}
+              className="flex-1 px-3 py-2 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200 disabled:opacity-50 transition-colors"
+            >
+              Clear
+            </button>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={handleEditCancel}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-[var(--muted)] bg-[var(--panel-background)] border border-[var(--border)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <CheckIcon className="h-4 w-4" />
+                  Save
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     );
