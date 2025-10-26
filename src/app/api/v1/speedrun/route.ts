@@ -309,9 +309,8 @@ export async function GET(request: NextRequest) {
           });
         }
         
-        // For now, use total actions to see if we have any data at all
-        // TODO: Switch back to meaningfulActionCount once we verify data exists
-        const actionCountToShow = totalActions;
+        // Use meaningful actions for accurate count
+        const actionCountToShow = meaningfulActionCount;
 
         return {
           id: person.id,

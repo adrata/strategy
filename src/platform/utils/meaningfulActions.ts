@@ -81,13 +81,33 @@ export function isMeaningfulAction(actionType: string): boolean {
     return true;
   }
   
-  // Check for partial matches (case-insensitive)
+  // Only check for specific partial matches to avoid false positives
   const lowerType = actionType.toLowerCase();
-  for (const meaningfulType of MEANINGFUL_ACTION_TYPES) {
-    if (meaningfulType.toLowerCase().includes(lowerType) || 
-        lowerType.includes(meaningfulType.toLowerCase())) {
-      return true;
-    }
+  
+  // Check for common variations of meaningful actions
+  if (lowerType.includes('linkedin') && 
+      (lowerType.includes('connection') || lowerType.includes('message') || lowerType.includes('inmail'))) {
+    return true;
+  }
+  
+  if (lowerType.includes('phone') || lowerType.includes('call')) {
+    return true;
+  }
+  
+  if (lowerType.includes('email') && 
+      (lowerType.includes('sent') || lowerType.includes('received') || lowerType.includes('reply'))) {
+    return true;
+  }
+  
+  if (lowerType.includes('meeting') || lowerType.includes('appointment')) {
+    return true;
+  }
+  
+  // Reject system actions explicitly
+  if (lowerType.includes('created') || lowerType.includes('updated') || 
+      lowerType.includes('imported') || lowerType.includes('deleted') ||
+      lowerType.includes('viewed') || lowerType.includes('status_changed')) {
+    return false;
   }
   
   return false;
