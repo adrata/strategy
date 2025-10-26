@@ -206,7 +206,8 @@ export async function GET(request: NextRequest) {
             },
             select: {
               id: true,
-              type: true
+              type: true,
+              metadata: true
             }
           }
         }
@@ -294,10 +295,14 @@ export async function GET(request: NextRequest) {
           }
         }
 
-        // Count meaningful actions (matching Actions tab logic)
+        // Count meaningful actions (matching Actions tab logic exactly)
         const totalActions = person.actions?.length || 0;
         const meaningfulActionCount = person.actions ? 
-          person.actions.filter(action => isMeaningfulAction(action.type)).length : 0;
+          person.actions.filter(action => {
+            // Use the same logic as Actions tab: metadata?.type || type
+            const eventType = action.metadata?.type || action.type;
+            return eventType && isMeaningfulAction(eventType);
+          }).length : 0;
         
         // Debug logging for action counts
         if (index < 3) { // Only log first 3 records to avoid spam
@@ -305,7 +310,12 @@ export async function GET(request: NextRequest) {
             totalActions,
             meaningfulActions: meaningfulActionCount,
             actionTypes: person.actions?.map(a => a.type) || [],
-            meaningfulTypes: person.actions?.filter(a => isMeaningfulAction(a.type)).map(a => a.type) || []
+            metadataTypes: person.actions?.map(a => a.metadata?.type) || [],
+            eventTypes: person.actions?.map(a => a.metadata?.type || a.type) || [],
+            meaningfulTypes: person.actions?.filter(a => {
+              const eventType = a.metadata?.type || a.type;
+              return eventType && isMeaningfulAction(eventType);
+            }).map(a => a.metadata?.type || a.type) || []
           });
         }
         
