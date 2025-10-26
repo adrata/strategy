@@ -295,7 +295,6 @@ export async function GET(request: NextRequest) {
             buyerGroupRole: true,
             influenceLevel: true,
             engagementStrategy: true,
-            engagementPriority: true,
             buyerGroupStatus: true,
             isBuyerGroupMember: true,
             state: true,
