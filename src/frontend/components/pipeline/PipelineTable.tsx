@@ -319,14 +319,19 @@ export function PipelineTable({
     }
   };
   
-  // Handle column sort
+  // Handle column sort - three-state cycle
   const handleColumnSort = (columnName: string) => {
     if (onColumnSort) {
       onColumnSort(columnName);
     } else {
-      // Use internal sorting
+      // Use internal sorting with three-state cycle
       if (sortField === columnName) {
-        setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        if (sortDirection === 'asc') {
+          setSortDirection('desc');
+        } else if (sortDirection === 'desc') {
+          setSortField(null);
+          setSortDirection(null);
+        }
       } else {
         setSortField(columnName);
         setSortDirection('asc');

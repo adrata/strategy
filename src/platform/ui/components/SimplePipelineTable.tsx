@@ -14,17 +14,23 @@ export function SimplePipelineTable({ section, workspaceId, userId }: SimplePipe
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sortField, setSortField] = useState<string>('name');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [sortField, setSortField] = useState<string | null>('name');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>('asc');
 
   useEffect(() => {
     loadData();
   }, [section, workspaceId, userId]);
 
-  // Handle column sorting
+  // Handle column sorting - three-state cycle
   const handleColumnSort = (field: string) => {
     if (sortField === field) {
-      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+      // Three-state cycle: asc → desc → unsorted (null)
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortField(null);
+        setSortDirection(null);
+      }
     } else {
       setSortField(field);
       setSortDirection('asc');
@@ -34,6 +40,9 @@ export function SimplePipelineTable({ section, workspaceId, userId }: SimplePipe
   // Sort data based on current sort field and direction
   const sortedData = useMemo(() => {
     if (!data || data.length === 0) return data;
+    
+    // If no sort field or direction, return original data order
+    if (!sortField || !sortDirection) return data;
     
     return [...data].sort((a, b) => {
       let aValue = a[sortField] || '';

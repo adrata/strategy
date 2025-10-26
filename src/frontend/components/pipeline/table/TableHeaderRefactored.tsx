@@ -19,9 +19,9 @@ export interface ColumnConfig {
 
 export interface TableHeaderRefactoredProps {
   columns: ColumnConfig[];
-  sortField?: string;
-  sortDirection?: 'asc' | 'desc';
-  onSort?: (field: string, direction: 'asc' | 'desc') => void;
+  sortField?: string | null;
+  sortDirection?: 'asc' | 'desc' | null;
+  onSort?: (field: string, direction: 'asc' | 'desc' | null) => void;
   className?: string;
 }
 
@@ -33,18 +33,23 @@ export function TableHeaderRefactored({
   className = ''
 }: TableHeaderRefactoredProps) {
   
-  // Handle column sort
+  // Handle column sort - three-state cycle
   const handleSort = (column: ColumnConfig) => {
     if (!onSort || !column.sortable) return;
     
-    let newDirection: 'asc' | 'desc' = 'asc';
-    
-    // If clicking the same column, toggle direction
     if (sortField === column.key) {
-      newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      // Three-state cycle: asc → desc → unsorted (null)
+      if (sortDirection === 'asc') {
+        onSort(column.key, 'desc');
+      } else if (sortDirection === 'desc') {
+        onSort(column.key, null); // Third click: unsorted
+      } else {
+        onSort(column.key, 'asc'); // Should not happen, but fallback
+      }
+    } else {
+      // New column, start with ascending
+      onSort(column.key, 'asc');
     }
-    
-    onSort(column.key, newDirection);
   };
 
   // Get header classes
@@ -56,19 +61,27 @@ export function TableHeaderRefactored({
     return `${baseClasses} ${sortableClasses} ${widthClasses}`.trim();
   };
 
-  // Render sort icon
+  // Render sort icon - supports three states
   const renderSortIcon = (column: ColumnConfig) => {
     if (!column.sortable) return null;
     
     if (sortField === column.key) {
-      return sortDirection === 'asc' ? (
-        <ChevronUpIcon className="h-4 w-4 text-[var(--muted)]" />
-      ) : (
-        <ChevronDownIcon className="h-4 w-4 text-[var(--muted)]" />
-      );
+      if (sortDirection === 'asc') {
+        return <ChevronUpIcon className="h-4 w-4 text-[var(--muted)]" />;
+      } else if (sortDirection === 'desc') {
+        return <ChevronDownIcon className="h-4 w-4 text-[var(--muted)]" />;
+      } else {
+        // Unsorted state - show neutral icon
+        return <ChevronUpIcon className="h-4 w-4 text-gray-300" />;
+      }
     }
     
-    return <ChevronUpIcon className="h-4 w-4 text-gray-300" />;
+    // Show neutral sort icon on hover for unsorted columns
+    return (
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+        <ChevronUpIcon className="h-4 w-4 text-gray-300" />
+      </div>
+    );
   };
 
   return (

@@ -1,162 +1,219 @@
 # Zonar Enrichment Scripts
 
-This folder contains scripts to check and enrich people and companies in the Notary Everyday workspace using the Coresignal API.
+This directory contains comprehensive scripts for data enrichment, quality scoring, and AI intelligence generation for the Adrata platform.
 
-## Overview
+## Scripts Overview
 
-The Zonar enrichment system helps identify which records in the Notary Everyday workspace have been enriched with Coresignal data and attempts to enrich unenriched records.
+### Core Enrichment Scripts
 
-## Scripts
+#### 1. `enrich-people.js`
+Enriches person data using Coresignal API with search and collect operations.
+- **Features:** Search by LinkedIn URL, email, or name+company
+- **Data Quality:** Automatic quality scoring
+- **Rate Limiting:** Built-in delays and retry logic
 
-### `enrich-people.js`
-Enriches people records with Coresignal employee data.
+#### 2. `enrich-companies.js`
+Enriches company data using Coresignal API with search and collect operations.
+- **Features:** Search by company name, website, LinkedIn URL
+- **Data Quality:** Automatic quality scoring
+- **Rate Limiting:** Built-in delays and retry logic
 
-**Identifiers used:**
-- LinkedIn URL (primary)
-- Email (secondary) 
-- Full Name + Company (fallback)
+### Data Quality & Intelligence Scripts
 
-**Features:**
-- Checks if person is already enriched
-- Uses Coresignal employee search API
-- Updates person records with enriched data
-- Tracks API credits usage
-- Batch processing with rate limiting
+#### 3. `calculate-data-quality.js`
+Calculates and updates data quality scores for all people and companies.
+- **Scoring:** Core fields (40%) + Enrichment data (30%) + AI intelligence (20%) + Contact info (10%)
+- **Categories:** Excellent (90%+), Good (75-89%), Acceptable (60-74%), Poor (<60%)
+- **Updates:** `dataQualityScore`, `dataCompleteness`, `dataQualityBreakdown`
 
-### `enrich-companies.js`
-Enriches company records with Coresignal company data.
+#### 4. `generate-ai-intelligence.js`
+Systematically generates AI intelligence for all people with >60% data quality.
+- **AI Analysis:** Wants, pains, outreach strategy, overall insight
+- **Buyer Group:** Role identification, influence scoring, decision power
+- **Engagement:** Communication style, preferred contact, response time
+- **Storage:** `aiIntelligence` JSON field with full analysis
 
-**Identifiers used:**
-- LinkedIn URL (primary)
-- Website/Domain (secondary)
-- Email domain (tertiary)
+#### 5. `map-enrichment-data.js`
+Maps Coresignal data from customFields to proper schema fields.
+- **People:** Skills, experience, education, languages, LinkedIn data
+- **Companies:** Description, website, industry, size, revenue, location
+- **Quality:** Ensures data flows to typed fields, not just JSON
 
-**Features:**
-- Checks if company is already enriched
-- Uses Coresignal company search API
-- Updates company records with enriched data
-- Tracks API credits usage
-- Batch processing with rate limiting
+### Advanced Enrichment Scripts
 
-## Prerequisites
+#### 6. `waterfall-enrichment.js`
+Implements multi-provider enrichment waterfall system.
+- **Flow:** Coresignal → People Data Labs → Lusha → Perplexity validation
+- **Logic:** Check recent enrichment, try providers in order, validate results
+- **Quality:** Calculate final quality score after all enrichment
 
-### Environment Variables
+#### 7. `verify-employment.js`
+Verifies current employment status using multiple verification methods.
+- **Checks:** LinkedIn employment, email domain, company validity, data age
+- **Scoring:** Weighted verification score with confidence levels
+- **Actions:** Verify, flag unverified, quarantine invalid data
 
-Create a `.env` file in the project root with:
+### Testing & Verification Scripts
 
+#### 8. `test-enrichment.js`
+Test script to verify enrichment for a single person and company.
+- **Purpose:** Validate API calls and database storage
+- **Output:** Detailed logging of enrichment process
+
+#### 9. `verify-data.js`
+Verification script to confirm enriched data is stored correctly.
+- **Checks:** Database queries for enriched records
+- **Validation:** Confirms data structure and completeness
+
+## Setup
+
+1. Install dependencies:
 ```bash
-CORESIGNAL_API_KEY=your_coresignal_api_key_here
-DATABASE_URL=your_postgresql_connection_string
+npm install @prisma/client dotenv
 ```
 
-### Dependencies
-
-The scripts use the following dependencies (already installed in the project):
-- `@prisma/client` - Database access
-- `dotenv` - Environment variable loading
+2. Set environment variables in `.env`:
+```
+CORESIGNAL_API_KEY=your_coresignal_api_key
+PEOPLE_DATA_LABS_API_KEY=your_pdl_api_key
+LUSHA_API_KEY=your_lusha_api_key
+PERPLEXITY_API_KEY=your_perplexity_api_key
+DATABASE_URL=your_database_url
+```
 
 ## Usage
 
-### Enrich People
-
+### Phase 1: Data Quality Calculation
 ```bash
-node zonar/enrich-people.js
+# Calculate quality scores for all records
+node zonar/calculate-data-quality.js
 ```
 
-This will:
-1. Query all people in Notary Everyday workspace
-2. Check enrichment status for each person
-3. Attempt to enrich unenriched people
-4. Report statistics and credits used
-
-### Enrich Companies
-
+### Phase 2: AI Intelligence Generation
 ```bash
-node zonar/enrich-companies.js
+# Generate AI intelligence for high-quality records
+node zonar/generate-ai-intelligence.js
 ```
 
-This will:
-1. Query all companies in Notary Everyday workspace
-2. Check enrichment status for each company
-3. Attempt to enrich unenriched companies
-4. Report statistics and credits used
+### Phase 3: Field Mapping
+```bash
+# Map Coresignal data to schema fields
+node zonar/map-enrichment-data.js
+```
 
-## Enrichment Status Detection
+### Phase 4: Waterfall Enrichment
+```bash
+# Run multi-provider enrichment waterfall
+node zonar/waterfall-enrichment.js
+```
 
-### People
-A person is considered enriched if they have:
-- `coresignalId` in customFields
-- `coresignalData` in customFields
-- `lastEnrichedAt` timestamp in customFields
-- Substantial bio content (>100 characters)
+### Phase 5: Employment Verification
+```bash
+# Verify employment status for all people
+node zonar/verify-employment.js
+```
 
-### Companies
-A company is considered enriched if they have:
-- `coresignalId` in customFields
-- `coresignalData` in customFields
-- `lastEnrichedAt` timestamp in customFields
-- Substantial enriched description (>100 characters)
+### Testing
+```bash
+# Test enrichment for single records
+node zonar/test-enrichment.js
 
-## API Rate Limiting
+# Verify data storage
+node zonar/verify-data.js
+```
 
-The scripts implement rate limiting to respect Coresignal API limits:
-- Batch size: 10 records per batch
-- Delay between batches: 2 seconds
-- Error handling for rate limit responses
+## Data Quality Scoring
 
-## Output
+### People Scoring (100 points)
+- **Core Fields (40%):** Name, email, phone, LinkedIn
+- **Enrichment Data (30%):** Coresignal data, skills, experience
+- **AI Intelligence (20%):** AI analysis, buyer group, engagement
+- **Contact Info (10%):** Email, phone, social media
 
-Each script provides detailed output including:
-- Processing progress
-- Enrichment status for each record
-- Final statistics:
-  - Total records processed
-  - Already enriched
-  - Successfully enriched
-  - Failed enrichment
-  - API credits used
+### Companies Scoring (100 points)
+- **Core Fields (40%):** Name, website, LinkedIn, description
+- **Enrichment Data (40%):** Coresignal data, industry, size
+- **Business Data (20%):** Revenue, stock symbol, location
+
+### Quality Categories
+- **Excellent:** 90%+ data quality
+- **Good:** 75-89% data quality
+- **Acceptable:** 60-74% data quality
+- **Poor:** <60% data quality
+
+## AI Intelligence Features
+
+### Person Analysis
+- **Wants Analysis:** Primary and secondary wants based on role/industry
+- **Pains Analysis:** Key pain points and challenges
+- **Outreach Strategy:** Approach, messaging, channels, timing
+- **Overall Insight:** Summary and key insights
+
+### Buyer Group Analysis
+- **Role Identification:** Decision maker, influencer, user
+- **Influence Scoring:** High, medium, low influence levels
+- **Decision Power:** Scoring based on role and seniority
+- **Engagement Strategy:** Communication preferences and timing
+
+## Data Storage
+
+### Enrichment Data
+- `customFields.coresignalId` - Coresignal employee/company ID
+- `customFields.coresignalData` - Full Coresignal profile data
+- `customFields.lastEnrichedAt` - Timestamp of enrichment
+- `customFields.enrichmentSource` - Source of enrichment
+
+### Quality Metrics
+- `dataQualityScore` - Overall quality score (0-100)
+- `dataCompleteness` - Percentage of fields populated
+- `dataQualityBreakdown` - Detailed scoring breakdown
+- `enrichmentSources` - Array of enrichment sources used
+- `enrichmentVersion` - Version of enrichment system
+
+### AI Intelligence
+- `aiIntelligence` - Complete AI analysis JSON
+- `aiConfidence` - Confidence score for AI analysis
+- `aiLastUpdated` - Timestamp of last AI update
+- `buyerGroupRole` - Identified buyer group role
+- `influenceScore` - Calculated influence score
+- `engagementStrategy` - Generated engagement strategy
+
+## Error Handling
+
+- **Rate Limiting:** Built-in delays between API calls
+- **Retry Logic:** Automatic retry for failed requests
+- **Error Logging:** Comprehensive error tracking
+- **Graceful Degradation:** Continue processing on individual failures
+- **Data Validation:** Verify data before storage
+
+## Performance
+
+- **Batch Processing:** Process records in configurable batches
+- **Parallel Processing:** Concurrent API calls where possible
+- **Caching:** Avoid re-enriching recently processed records
+- **Progress Tracking:** Real-time progress reporting
+- **Memory Management:** Efficient data handling for large datasets
+
+## Monitoring
+
+- **Success Rates:** Track enrichment success by provider
+- **Quality Metrics:** Monitor data quality improvements
+- **Cost Tracking:** Track API usage and costs
+- **Error Rates:** Monitor and alert on high error rates
+- **Performance:** Track processing times and throughput
 
 ## Workspace Configuration
 
 The scripts are configured for the Notary Everyday workspace:
 - Workspace ID: `01K7DNYR5VZ7JY36KGKKN76XZ1`
 
-## Error Handling
-
-The scripts include comprehensive error handling:
-- API request failures
-- Database connection issues
-- Invalid responses
-- Rate limiting
-- Individual record processing errors
-
-## Data Storage
-
-Enriched data is stored in the `customFields` JSON column:
-```json
-{
-  "coresignalId": "employee_or_company_id",
-  "coresignalData": { /* full profile data */ },
-  "lastEnrichedAt": "2025-01-26T10:30:00.000Z",
-  "enrichmentSource": "coresignal"
-}
-```
-
-## Monitoring
-
-Monitor the scripts for:
-- API credit usage
-- Success/failure rates
-- Processing time
-- Database performance
-
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Missing API Key**
-   - Ensure `CORESIGNAL_API_KEY` is set in `.env`
-   - Verify the API key is valid and has sufficient credits
+1. **Missing API Keys**
+   - Ensure all required API keys are set in `.env`
+   - Verify API keys are valid and have sufficient credits
 
 2. **Database Connection**
    - Ensure `DATABASE_URL` is correct
@@ -168,7 +225,7 @@ Monitor the scripts for:
 
 4. **No Results Found**
    - Check if identifiers (LinkedIn, email, domain) are valid
-   - Verify company/person names match Coresignal data
+   - Verify company/person names match data provider records
 
 ### Debug Mode
 

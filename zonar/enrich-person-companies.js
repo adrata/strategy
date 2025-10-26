@@ -1,25 +1,25 @@
 #!/usr/bin/env node
 
 /**
- * Zonar Companies Enrichment Script
+ * Zonar Person Companies Enrichment Script
  * 
- * This script checks if companies in the Notary Everyday workspace are enriched
- * with Coresignal data and attempts to enrich unenriched companies.
+ * This script enriches companies that are tied to people in the Notary Everyday workspace.
+ * It focuses on companies that are actually associated with prospects.
  */
 
 require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
 
-class ZonarCompaniesEnrichment {
+class ZonarPersonCompaniesEnrichment {
   constructor() {
     this.prisma = new PrismaClient();
     this.apiKey = process.env.CORESIGNAL_API_KEY;
     this.workspaceId = '01K7DNYR5VZ7JY36KGKKN76XZ1'; // Notary Everyday workspace
-    this.batchSize = 10;
-    this.delayBetweenBatches = 2000; // 2 seconds
+    this.batchSize = 5; // Smaller batches for person companies
+    this.delayBetweenBatches = 3000; // 3 seconds between batches
     
     this.results = {
-      totalCompanies: 0,
+      totalPersonCompanies: 0,
       alreadyEnriched: 0,
       successfullyEnriched: 0,
       failedEnrichment: 0,
@@ -37,43 +37,64 @@ class ZonarCompaniesEnrichment {
 
   async run() {
     try {
-      console.log('🚀 Starting Zonar Companies Enrichment for Notary Everyday workspace...\n');
-      console.log('ℹ️  Note: Coresignal focuses on larger, established companies. Small local title companies may not be found.\n');
+      console.log('🚀 Starting Zonar Person Companies Enrichment for Notary Everyday workspace...\n');
+      console.log('ℹ️  Focus: Companies tied to people (prospects)\n');
       
-      // Get all companies in Notary Everyday workspace
-      const companies = await this.getCompanies();
-      this.results.totalCompanies = companies.length;
+      // Get all companies that are tied to people
+      const personCompanies = await this.getPersonCompanies();
+      this.results.totalPersonCompanies = personCompanies.length;
       
-      console.log(`📊 Found ${companies.length} companies in Notary Everyday workspace`);
+      console.log(`📊 Found ${personCompanies.length} companies tied to people in Notary Everyday workspace`);
       
-      if (companies.length === 0) {
-        console.log('❌ No companies found to process');
+      if (personCompanies.length === 0) {
+        console.log('❌ No person companies found to process');
         return;
       }
 
       // Process companies in batches
-      await this.processCompaniesInBatches(companies);
+      await this.processCompaniesInBatches(personCompanies);
       
       // Print final results
       this.printResults();
       
     } catch (error) {
-      console.error('❌ Error in companies enrichment:', error);
+      console.error('❌ Error in person companies enrichment:', error);
     } finally {
       await this.prisma.$disconnect();
     }
   }
 
-  async getCompanies() {
-    return await this.prisma.companies.findMany({
+  async getPersonCompanies() {
+    // Get companies that have people associated with them
+    const companies = await this.prisma.companies.findMany({
       where: {
         workspaceId: this.workspaceId,
-        deletedAt: null
+        deletedAt: null,
+        people: {
+          some: {
+            deletedAt: null
+          }
+        }
+      },
+      include: {
+        people: {
+          where: {
+            deletedAt: null
+          },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            jobTitle: true
+          }
+        }
       },
       orderBy: {
         createdAt: 'asc'
       }
     });
+
+    return companies;
   }
 
   async processCompaniesInBatches(companies) {
@@ -104,7 +125,11 @@ class ZonarCompaniesEnrichment {
   }
 
   async processCompany(company) {
+    const peopleCount = company.people.length;
+    const peopleNames = company.people.map(p => `${p.firstName} ${p.lastName}`).join(', ');
+    
     console.log(`   🔍 Processing: ${company.name}`);
+    console.log(`   👥 Associated people (${peopleCount}): ${peopleNames}`);
     
     // Check if company is already enriched
     if (this.isCompanyEnriched(company)) {
@@ -408,8 +433,8 @@ class ZonarCompaniesEnrichment {
         industry: profileData.industry || company.industry,
         // Update employee count if available
         employeeCount: profileData.employee_count || company.employeeCount,
-        // Update founded year if available
-        foundedYear: profileData.founded_year || company.foundedYear,
+        // Update founded year if available (convert to int)
+        foundedYear: profileData.founded_year ? parseInt(profileData.founded_year) : company.foundedYear,
         // Update quality metrics
         dataQualityScore: qualityScore,
         enrichmentSources: ['coresignal'],
@@ -486,52 +511,6 @@ class ZonarCompaniesEnrichment {
     };
   }
 
-  calculateCompanyNameSimilarity(name1, name2) {
-    if (!name1 || !name2) return 0;
-    
-    const normalize = (name) => name.toLowerCase().trim().replace(/[^\w\s]/g, '');
-    const n1 = normalize(name1);
-    const n2 = normalize(name2);
-    
-    if (n1 === n2) return 100;
-    
-    // Check for common company suffixes
-    const suffixes = ['inc', 'llc', 'corp', 'ltd', 'co', 'company', 'group', 'solutions', 'systems', 'technologies', 'tech'];
-    const n1Words = n1.split(' ');
-    const n2Words = n2.split(' ');
-    
-    let suffixMatch = 0;
-    for (const suffix of suffixes) {
-      if (n1Words.includes(suffix) && n2Words.includes(suffix)) {
-        suffixMatch += 10;
-      }
-    }
-    
-    // Levenshtein distance for overall similarity
-    const distance = this.levenshteinDistance(n1, n2);
-    const maxLength = Math.max(n1.length, n2.length);
-    const similarity = ((maxLength - distance) / maxLength) * 100;
-    
-    return Math.min(100, Math.round(similarity + suffixMatch));
-  }
-
-  calculateLocationSimilarity(location1, location2) {
-    if (!location1 || !location2) return 0;
-    
-    const normalize = (loc) => loc.toLowerCase().trim().replace(/[^\w\s]/g, '');
-    const l1 = normalize(location1);
-    const l2 = normalize(location2);
-    
-    if (l1 === l2) return 100;
-    
-    // Levenshtein distance
-    const distance = this.levenshteinDistance(l1, l2);
-    const maxLength = Math.max(l1.length, l2.length);
-    const similarity = ((maxLength - distance) / maxLength) * 100;
-    
-    return Math.round(similarity);
-  }
-
   normalizeDomain(domain) {
     if (!domain) return '';
     
@@ -562,56 +541,10 @@ class ZonarCompaniesEnrichment {
     return normalized;
   }
 
-  levenshteinDistance(str1, str2) {
-    const matrix = [];
-    
-    for (let i = 0; i <= str2.length; i++) {
-      matrix[i] = [i];
-    }
-    
-    for (let j = 0; j <= str1.length; j++) {
-      matrix[0][j] = j;
-    }
-    
-    for (let i = 1; i <= str2.length; i++) {
-      for (let j = 1; j <= str1.length; j++) {
-        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-          matrix[i][j] = matrix[i - 1][j - 1];
-        } else {
-          matrix[i][j] = Math.min(
-            matrix[i - 1][j - 1] + 1,
-            matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1
-          );
-        }
-      }
-    }
-    
-    return matrix[str2.length][str1.length];
-  }
-
-  generateMatchReasoning(factors) {
-    const reasoning = [];
-    
-    for (const factor of factors) {
-      if (factor.score >= 80) {
-        reasoning.push(`Strong ${factor.factor} match (${factor.score}%)`);
-      } else if (factor.score >= 60) {
-        reasoning.push(`Good ${factor.factor} match (${factor.score}%)`);
-      } else if (factor.score >= 40) {
-        reasoning.push(`Partial ${factor.factor} match (${factor.score}%)`);
-      } else {
-        reasoning.push(`Weak ${factor.factor} match (${factor.score}%)`);
-      }
-    }
-    
-    return reasoning.join(', ');
-  }
-
   printResults() {
-    console.log('\n📊 Zonar Companies Enrichment Results:');
-    console.log('=======================================');
-    console.log(`Total Companies: ${this.results.totalCompanies}`);
+    console.log('\n📊 Zonar Person Companies Enrichment Results:');
+    console.log('===============================================');
+    console.log(`Total Person Companies: ${this.results.totalPersonCompanies}`);
     console.log(`Already Enriched: ${this.results.alreadyEnriched}`);
     console.log(`Successfully Enriched: ${this.results.successfullyEnriched}`);
     console.log(`Failed Enrichment: ${this.results.failedEnrichment}`);
@@ -626,5 +559,5 @@ class ZonarCompaniesEnrichment {
 }
 
 // Run the script
-const enrichment = new ZonarCompaniesEnrichment();
+const enrichment = new ZonarPersonCompaniesEnrichment();
 enrichment.run().catch(console.error);

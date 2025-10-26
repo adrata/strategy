@@ -63,7 +63,7 @@ export function DynamicFilterDropdown({
                 setIsOpen(false);
               }}
               className={`w-full px-3 py-2 text-left text-sm hover:bg-[var(--hover)] transition-colors ${
-                value === 'all' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                value === 'all' ? 'bg-gray-50 text-gray-600 font-medium' : 'text-gray-700'
               }`}
             >
               {placeholder}
@@ -78,7 +78,7 @@ export function DynamicFilterDropdown({
                   setIsOpen(false);
                 }}
                 className={`w-full px-3 py-2 text-left text-sm hover:bg-[var(--hover)] transition-colors ${
-                  value === option.value ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'
+                  value === option.value ? 'bg-gray-50 text-gray-600 font-medium' : 'text-gray-700'
                 }`}
               >
                 <div className="flex items-center justify-between">

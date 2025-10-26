@@ -73,7 +73,7 @@ export function SimpleBulletproofPipelineView({ section }: SimpleBulletproofPipe
   // Show data table
   console.log(`🚨🚨🚨 [BULLETPROOF VIEW] Rendering table with ${data.length} records`);
   
-  const visibleColumns = ['rank', 'company', 'name', 'title', 'nextAction', 'lastAction', 'actions'];
+  const visibleColumns = ['rank', 'company', 'name', 'title', 'lastAction', 'nextAction', 'actions'];
   
   return (
     <div className="h-full bg-[var(--background)]">

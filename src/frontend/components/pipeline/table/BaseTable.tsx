@@ -14,9 +14,9 @@ export interface BaseTableProps {
   columns: ColumnConfig[];
   onRowClick?: (record: any) => void;
   onCellClick?: (column: ColumnConfig, record: any) => void;
-  onSort?: (field: string, direction: 'asc' | 'desc') => void;
-  sortField?: string;
-  sortDirection?: 'asc' | 'desc';
+  onSort?: (field: string, direction: 'asc' | 'desc' | null) => void;
+  sortField?: string | null;
+  sortDirection?: 'asc' | 'desc' | null;
   selectedRecord?: any;
   className?: string;
   emptyState?: React.ReactNode;

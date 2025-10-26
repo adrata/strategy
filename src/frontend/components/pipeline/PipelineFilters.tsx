@@ -102,8 +102,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
       { value: 'name', label: 'Name', icon: '👤' },
       { value: 'state', label: 'State', icon: '📍' },
       { value: 'title', label: 'Title', icon: '💼' },
-      { value: 'nextAction', label: 'Next Action', icon: '⏭️' },
       { value: 'lastAction', label: 'Last Action', icon: '📅' },
+      { value: 'nextAction', label: 'Next Action', icon: '⏭️' },
       { value: 'status', label: section === 'opportunities' ? 'Stage' : section === 'speedrun' ? 'Stage' : 'Status', icon: '📊' },
       { value: 'industry', label: 'Industry', icon: '🏭' },
       { value: 'email', label: 'Email', icon: '📧' },
@@ -113,7 +113,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     // Filter based on section
     if (section === 'leads') {
       return baseOptions.filter(option => 
-        ['all', 'rank', 'company', 'name', 'state', 'title', 'nextAction', 'lastAction'].includes(option.value)
+        ['all', 'rank', 'company', 'name', 'state', 'title', 'lastAction', 'nextAction'].includes(option.value)
       );
     }
     
@@ -131,7 +131,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
     
     if (section === 'speedrun') {
       return baseOptions.filter(option => 
-        ['all', 'rank', 'company', 'name', 'status', 'nextAction', 'lastAction', 'actions'].includes(option.value)
+        ['all', 'rank', 'company', 'name', 'status', 'lastAction', 'nextAction', 'actions'].includes(option.value)
       );
     }
     
@@ -712,7 +712,7 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
             Filter
           </span>
           {activeFilterCount > 0 && (
-            <span className="ml-1.5 bg-blue-100 text-blue-600 text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
+            <span className="ml-1.5 bg-gray-100 text-gray-600 text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-medium">
               {activeFilterCount}
             </span>
           )}

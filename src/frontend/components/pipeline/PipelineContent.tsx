@@ -145,17 +145,17 @@ export const PipelineContent = React.memo(function PipelineContent({
       case 'companies':
         return ['rank', 'company', 'actions', 'lastAction', 'nextAction'];
       case 'leads':
-        return ['rank', 'company', 'name', 'title', 'actions', 'nextAction', 'lastAction'];
+        return ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
       case 'prospects':
-        return ['rank', 'company', 'name', 'title', 'actions', 'nextAction', 'lastAction'];
+        return ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
       case 'opportunities':
-        return ['rank', 'name', 'company', 'status', 'nextAction', 'lastAction'];
+        return ['rank', 'name', 'company', 'status', 'lastAction', 'nextAction'];
       case 'people':
-        return ['rank', 'company', 'name', 'title', 'actions', 'nextAction', 'lastAction'];
+        return ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
       case 'clients':
-        return ['rank', 'company', 'industry', 'status', 'nextAction', 'lastAction'];
+        return ['rank', 'company', 'industry', 'status', 'lastAction', 'nextAction'];
       case 'partners':
-        return ['rank', 'company', 'nextAction', 'lastAction'];
+        return ['rank', 'company', 'lastAction', 'nextAction'];
       default:
         return ['rank', 'company', 'name', 'title', 'lastAction'];
     }
@@ -788,14 +788,20 @@ export const PipelineContent = React.memo(function PipelineContent({
 
   const handleSortChange = useCallback((field: string) => {
     if (sortField === field) {
-      // Toggle direction if same field
-      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+      // Three-state cycle: asc → desc → unsorted (null)
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        // Third click: reset to unsorted (use original data order)
+        setSortField(null);
+        setSortDirection('asc');
+      }
     } else {
       // New field, default to ascending
       setSortField(field);
       setSortDirection('asc');
     }
-    console.log(`🔧 Sort changed: ${field} ${sortField === field ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc'}`);
+    console.log(`🔧 [THREE-STATE SORT] Field: ${field}, Current: ${sortField}, Direction: ${sortDirection}, Next: ${sortField === field ? (sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? 'null' : 'asc') : 'asc'}`);
   }, [sortField, sortDirection]);
 
   // Handle sort from dropdown (different from column clicks)

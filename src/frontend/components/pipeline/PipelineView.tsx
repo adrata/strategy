@@ -1326,14 +1326,20 @@ export const PipelineView = React.memo(function PipelineView({
 
   const handleSortChange = useCallback((field: string) => {
     if (sortField === field) {
-      // Toggle direction if same field
-      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+      // Three-state cycle: asc → desc → unsorted (null)
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        // Third click: reset to unsorted (use original data order)
+        setSortField(null);
+        setSortDirection('asc');
+      }
     } else {
       // New field, default to ascending
       setSortField(field);
       setSortDirection('asc');
     }
-    console.log(`🔧 Sort changed: ${field} ${sortField === field ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc'}`);
+    console.log(`🔧 [THREE-STATE SORT] Field: ${field}, Current: ${sortField}, Direction: ${sortDirection}, Next: ${sortField === field ? (sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? 'null' : 'asc') : 'asc'}`);
   }, [sortField, sortDirection]);
 
   // Handle sort from dropdown (different from column clicks)

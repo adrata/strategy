@@ -9,8 +9,8 @@ import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 // -------- Types --------
 interface TableHeaderProps {
   headers: string[];
-  sortField?: string;
-  sortDirection?: 'asc' | 'desc';
+  sortField?: string | null;
+  sortDirection?: 'asc' | 'desc' | null;
   onColumnSort?: (columnName: string) => void;
   getColumnWidth?: (index: number) => string;
 }
@@ -60,16 +60,25 @@ function getDisplayName(fieldName: string): string {
   return DISPLAY_NAME_MAP[fieldName] || fieldName;
 }
 
-function getSortIcon(sortField: string, field: string, sortDirection?: 'asc' | 'desc') {
+function getSortIcon(sortField: string | null, field: string, sortDirection?: 'asc' | 'desc' | null) {
   if (sortField !== field) {
-    return null;
+    // Show neutral sort icon on hover for unsorted columns
+    return (
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+        <ChevronUpIcon className="w-4 h-4 text-gray-300" />
+      </div>
+    );
   }
   
-  return sortDirection === 'asc' ? (
-    <ChevronUpIcon className="w-4 h-4" />
-  ) : (
-    <ChevronDownIcon className="w-4 h-4" />
-  );
+  // Show appropriate icon for current sort state
+  if (sortDirection === 'asc') {
+    return <ChevronUpIcon className="w-4 h-4 text-[var(--muted)]" />;
+  } else if (sortDirection === 'desc') {
+    return <ChevronDownIcon className="w-4 h-4 text-[var(--muted)]" />;
+  } else {
+    // Unsorted state - show neutral icon
+    return <ChevronUpIcon className="w-4 h-4 text-gray-300" />;
+  }
 }
 
 // -------- Main Component --------
@@ -127,17 +136,7 @@ export function TableHeader({
                 }}>{displayName}</span>
                 {onColumnSort && (
                   <div className="flex items-center ml-2">
-                    {isCurrentSort ? (
-                      sortDirection === 'asc' ? (
-                        <ChevronUpIcon className="w-4 h-4 text-[var(--muted)]" />
-                      ) : (
-                        <ChevronDownIcon className="w-4 h-4 text-[var(--muted)]" />
-                      )
-                    ) : (
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ChevronUpIcon className="w-4 h-4 text-[var(--muted)]" />
-                      </div>
-                    )}
+                    {getSortIcon(sortField, field, sortDirection)}
                   </div>
                 )}
               </div>

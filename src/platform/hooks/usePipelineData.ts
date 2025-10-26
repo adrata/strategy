@@ -25,8 +25,8 @@ interface UsePipelineDataProps {
   disableSorting?: boolean; // Add option to disable sorting
   searchQuery?: string; // Allow external search query to be passed in
   totalCount?: number; // Add totalCount for correct pagination
-  externalSortField?: string; // Allow external sort field to be passed in
-  externalSortDirection?: 'asc' | 'desc'; // Allow external sort direction to be passed in
+  externalSortField?: string | null; // Allow external sort field to be passed in
+  externalSortDirection?: 'asc' | 'desc' | null; // Allow external sort direction to be passed in
 }
 
 interface UsePipelineDataReturn {
@@ -251,6 +251,12 @@ export function usePipelineData({
       // For companies, preserve the API ranking order
       return filteredData;
     }
+    
+    // If no sort field or direction, return original order
+    if (!sortField || !sortDirection) {
+      return filteredData;
+    }
+    
     return sortData(filteredData, sortField, sortDirection);
   }, [filteredData, sortField, sortDirection, disableSorting]);
   

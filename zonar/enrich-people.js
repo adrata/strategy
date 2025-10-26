@@ -167,7 +167,16 @@ class ZonarPeopleEnrichment {
       }
 
       const searchData = await searchResponse.json();
-      const employeeIds = Array.isArray(searchData) ? searchData : [];
+      
+      // Handle different response formats
+      let employeeIds = [];
+      if (Array.isArray(searchData)) {
+        employeeIds = searchData;
+      } else if (searchData.hits?.hits) {
+        employeeIds = searchData.hits.hits.map(hit => hit._id || hit._source?.id);
+      } else if (searchData.hits) {
+        employeeIds = searchData.hits;
+      }
 
       if (employeeIds.length === 0) {
         console.log(`   ⚠️ No Coresignal data found for ${person.fullName}`);
@@ -175,27 +184,56 @@ class ZonarPeopleEnrichment {
         return;
       }
 
-      // Get the first matching profile
-      const employeeId = employeeIds[0];
-      const collectResponse = await fetch(`https://api.coresignal.com/cdapi/v2/employee_multi_source/collect/${employeeId}`, {
-        headers: { 
-          'apikey': this.apiKey,
-          'Accept': 'application/json'
+      // Get profiles for all matches and calculate confidence scores
+      let bestMatch = null;
+      let bestConfidence = 0;
+      
+      for (const employeeId of employeeIds.slice(0, 3)) { // Check top 3 matches
+        try {
+          const collectResponse = await fetch(`https://api.coresignal.com/cdapi/v2/employee_multi_source/collect/${employeeId}`, {
+            headers: { 
+              'apikey': this.apiKey,
+              'Accept': 'application/json'
+            }
+          });
+
+          this.results.creditsUsed.collect++;
+
+          if (!collectResponse.ok) {
+            console.log(`   ⚠️ Failed to collect profile ${employeeId}: ${collectResponse.status}`);
+            continue;
+          }
+
+          const profileData = await collectResponse.json();
+          
+          // Calculate match confidence
+          const matchResult = this.calculatePersonMatchConfidence(person, profileData);
+          
+          console.log(`   🔍 Match confidence for ${employeeId}: ${matchResult.confidence}%`);
+          console.log(`   📊 Match factors:`, matchResult.factors);
+          
+          if (matchResult.confidence > bestConfidence) {
+            bestConfidence = matchResult.confidence;
+            bestMatch = { employeeId, profileData, matchResult };
+          }
+          
+        } catch (error) {
+          console.log(`   ⚠️ Error collecting profile ${employeeId}:`, error.message);
+          continue;
         }
-      });
-
-      this.results.creditsUsed.collect++;
-
-      if (!collectResponse.ok) {
-        throw new Error(`Coresignal collect failed: ${collectResponse.status} ${collectResponse.statusText}`);
       }
 
-      const profileData = await collectResponse.json();
+      // Only proceed if we have a high-confidence match
+      if (!bestMatch || bestConfidence < 80) {
+        console.log(`   ❌ No high-confidence match found for ${person.fullName} (best: ${bestConfidence}%)`);
+        this.results.failedEnrichment++;
+        return;
+      }
 
-      // Update person with Coresignal data
-      await this.updatePersonWithCoresignalData(person, employeeId, profileData);
+      // Update person with Coresignal data including match confidence
+      await this.updatePersonWithCoresignalData(person, bestMatch.employeeId, bestMatch.profileData, bestMatch.matchResult);
       
-      console.log(`   ✅ Enriched: ${person.fullName} (Coresignal ID: ${employeeId})`);
+      console.log(`   ✅ Enriched: ${person.fullName} (Coresignal ID: ${bestMatch.employeeId}, Confidence: ${bestConfidence}%)`);
       this.results.successfullyEnriched++;
 
     } catch (error) {
@@ -253,13 +291,19 @@ class ZonarPeopleEnrichment {
     return query;
   }
 
-  async updatePersonWithCoresignalData(person, coresignalId, profileData) {
+  async updatePersonWithCoresignalData(person, coresignalId, profileData, matchResult) {
     const enrichedData = {
       coresignalId: coresignalId,
       coresignalData: profileData,
       lastEnrichedAt: new Date().toISOString(),
-      enrichmentSource: 'coresignal'
+      enrichmentSource: 'coresignal',
+      matchConfidence: matchResult.confidence,
+      matchFactors: matchResult.factors,
+      matchReasoning: matchResult.reasoning
     };
+
+    // Calculate data quality score
+    const qualityScore = this.calculateDataQualityScore(person, profileData);
 
     await this.prisma.people.update({
       where: { id: person.id },
@@ -272,9 +316,185 @@ class ZonarPeopleEnrichment {
         bio: profileData.summary || person.bio,
         // Update LinkedIn URL if more complete
         linkedinUrl: profileData.linkedin_url || person.linkedinUrl,
+        // Update quality metrics
+        dataQualityScore: qualityScore,
+        enrichmentSources: ['coresignal'],
+        enrichmentVersion: '1.0',
+        lastEnriched: new Date(),
         updatedAt: new Date()
       }
     });
+  }
+
+  calculateDataQualityScore(person, profileData) {
+    let score = 0;
+    let maxScore = 0;
+
+    // Core fields (40 points)
+    maxScore += 40;
+    if (person.fullName) score += 10;
+    if (person.email) score += 10;
+    if (person.phone) score += 10;
+    if (person.linkedinUrl || profileData.linkedin_url) score += 10;
+
+    // Coresignal data (40 points)
+    maxScore += 40;
+    if (profileData.summary) score += 10;
+    if (profileData.skills && profileData.skills.length > 0) score += 10;
+    if (profileData.experience && profileData.experience.length > 0) score += 10;
+    if (profileData.education && profileData.education.length > 0) score += 10;
+
+    // Professional data (20 points)
+    maxScore += 20;
+    if (person.jobTitle || person.title) score += 10;
+    if (profileData.total_experience || person.totalExperience) score += 10;
+
+    return Math.round((score / maxScore) * 100);
+  }
+
+  calculatePersonMatchConfidence(person, coresignalProfile) {
+    let score = 0;
+    let factors = [];
+    
+    // Name match (40 points)
+    const nameScore = this.calculateNameSimilarity(person.fullName, coresignalProfile.full_name);
+    score += nameScore * 0.4;
+    factors.push({ factor: 'name', score: nameScore, weight: 0.4 });
+    
+    // Company match (30 points)
+    if (person.company?.linkedinUrl && coresignalProfile.current_company_linkedin_url) {
+      const companyMatch = person.company.linkedinUrl === coresignalProfile.current_company_linkedin_url;
+      score += companyMatch ? 30 : 0;
+      factors.push({ factor: 'company', score: companyMatch ? 100 : 0, weight: 0.3 });
+    }
+    
+    // LinkedIn match (20 points) - highest confidence
+    if (person.linkedinUrl && coresignalProfile.linkedin_url) {
+      const linkedinMatch = this.normalizeLinkedInUrl(person.linkedinUrl) === 
+                            this.normalizeLinkedInUrl(coresignalProfile.linkedin_url);
+      score += linkedinMatch ? 20 : 0;
+      factors.push({ factor: 'linkedin', score: linkedinMatch ? 100 : 0, weight: 0.2 });
+    }
+    
+    // Title similarity (10 points)
+    if (person.jobTitle && coresignalProfile.title) {
+      const titleScore = this.calculateTitleSimilarity(person.jobTitle, coresignalProfile.title);
+      score += titleScore * 0.1;
+      factors.push({ factor: 'title', score: titleScore, weight: 0.1 });
+    }
+    
+    return { 
+      confidence: Math.round(score), 
+      factors, 
+      reasoning: this.generateMatchReasoning(factors) 
+    };
+  }
+
+  calculateNameSimilarity(name1, name2) {
+    if (!name1 || !name2) return 0;
+    
+    const normalize = (name) => name.toLowerCase().trim().replace(/[^\w\s]/g, '');
+    const n1 = normalize(name1);
+    const n2 = normalize(name2);
+    
+    if (n1 === n2) return 100;
+    
+    // Levenshtein distance
+    const distance = this.levenshteinDistance(n1, n2);
+    const maxLength = Math.max(n1.length, n2.length);
+    const similarity = ((maxLength - distance) / maxLength) * 100;
+    
+    return Math.round(similarity);
+  }
+
+  calculateTitleSimilarity(title1, title2) {
+    if (!title1 || !title2) return 0;
+    
+    const normalize = (title) => title.toLowerCase().trim().replace(/[^\w\s]/g, '');
+    const t1 = normalize(title1);
+    const t2 = normalize(title2);
+    
+    if (t1 === t2) return 100;
+    
+    // Check for key role words
+    const roleWords = ['manager', 'director', 'vp', 'vice president', 'ceo', 'cto', 'cfo', 'president', 'head', 'lead', 'senior', 'junior', 'associate'];
+    const t1Words = t1.split(' ');
+    const t2Words = t2.split(' ');
+    
+    let roleMatch = 0;
+    for (const word of roleWords) {
+      if (t1Words.includes(word) && t2Words.includes(word)) {
+        roleMatch += 20;
+      }
+    }
+    
+    // Levenshtein distance for overall similarity
+    const distance = this.levenshteinDistance(t1, t2);
+    const maxLength = Math.max(t1.length, t2.length);
+    const similarity = ((maxLength - distance) / maxLength) * 100;
+    
+    return Math.min(100, Math.round(similarity + roleMatch));
+  }
+
+  normalizeLinkedInUrl(url) {
+    if (!url) return '';
+    
+    // Remove protocol and www
+    let normalized = url.replace(/^https?:\/\/(www\.)?/, '');
+    
+    // Remove trailing slash
+    normalized = normalized.replace(/\/$/, '');
+    
+    // Convert to lowercase
+    normalized = normalized.toLowerCase();
+    
+    return normalized;
+  }
+
+  levenshteinDistance(str1, str2) {
+    const matrix = [];
+    
+    for (let i = 0; i <= str2.length; i++) {
+      matrix[i] = [i];
+    }
+    
+    for (let j = 0; j <= str1.length; j++) {
+      matrix[0][j] = j;
+    }
+    
+    for (let i = 1; i <= str2.length; i++) {
+      for (let j = 1; j <= str1.length; j++) {
+        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j] + 1
+          );
+        }
+      }
+    }
+    
+    return matrix[str2.length][str1.length];
+  }
+
+  generateMatchReasoning(factors) {
+    const reasoning = [];
+    
+    for (const factor of factors) {
+      if (factor.score >= 80) {
+        reasoning.push(`Strong ${factor.factor} match (${factor.score}%)`);
+      } else if (factor.score >= 60) {
+        reasoning.push(`Good ${factor.factor} match (${factor.score}%)`);
+      } else if (factor.score >= 40) {
+        reasoning.push(`Partial ${factor.factor} match (${factor.score}%)`);
+      } else {
+        reasoning.push(`Weak ${factor.factor} match (${factor.score}%)`);
+      }
+    }
+    
+    return reasoning.join(', ');
   }
 
   printResults() {
