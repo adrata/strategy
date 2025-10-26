@@ -415,34 +415,11 @@ export async function GET(request: NextRequest) {
       return result;
     };
 
-    if (!forceRefresh) {
-      try {
-        const result = await cache.get(cacheKey, fetchSpeedrunData, {
-          ttl: SPEEDRUN_CACHE_TTL,
-          priority: 'high',
-          tags: ['speedrun', context.workspaceId, context.userId]
-        });
-        console.log(`⚡ [SPEEDRUN API] Cache hit - returning cached data in ${Date.now() - startTime}ms`);
-        return NextResponse.json(result);
-      } catch (error) {
-        console.warn('⚠️ [SPEEDRUN API] Cache read failed, proceeding with database query:', error);
-      }
-    }
-
-    // If force refresh or cache failed, fetch data directly
+    // TEMPORARILY DISABLE CACHE TO DEBUG ISSUE
+    console.log('🔍 [SPEEDRUN API] Bypassing cache to debug issue');
+    
+    // Fetch data directly
     const result = await fetchSpeedrunData();
-
-    // 🚀 CACHE: Store in Redis for future requests
-    try {
-      await cache.set(cacheKey, result, {
-        ttl: SPEEDRUN_CACHE_TTL,
-        priority: 'high',
-        tags: ['speedrun', context.workspaceId, context.userId]
-      });
-      console.log(`💾 [SPEEDRUN API] Cached result for key: ${cacheKey}`);
-    } catch (error) {
-      console.warn('⚠️ [SPEEDRUN API] Cache write failed:', error);
-    }
 
     const responseTime = Date.now() - startTime;
     console.log(`✅ [SPEEDRUN API] Loaded ${result.data.length} speedrun prospects in ${responseTime}ms`);
