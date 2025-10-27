@@ -180,7 +180,7 @@ export function TableRow({
         <tr 
           key={record.id || index} 
           className={`cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)] ${
-            isCompleted ? 'bg-green-50 opacity-75' : ''
+            isCompleted ? 'bg-green-50 border-green-200' : ''
           }`}
           onClick={handleRowClick}
           onContextMenu={handleContextMenu}

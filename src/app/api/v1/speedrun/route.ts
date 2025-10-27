@@ -254,8 +254,8 @@ export async function GET(request: NextRequest) {
           const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
           
           if (diffMinutes < 1) lastActionTime = 'Just now';
-          else if (diffMinutes < 60) lastActionTime = `${diffMinutes} minutes ago`;
-          else if (diffHours < 24) lastActionTime = `${diffHours} hours ago`;
+          else if (diffMinutes < 60) lastActionTime = `${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
+          else if (diffHours < 24) lastActionTime = `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
           else if (diffDays === 1) lastActionTime = 'Yesterday';
           else if (diffDays <= 7) lastActionTime = `${diffDays} days ago`;
           else if (diffDays <= 30) lastActionTime = `${Math.floor(diffDays / 7)} weeks ago`;
@@ -270,8 +270,8 @@ export async function GET(request: NextRequest) {
           const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
           
           if (diffMinutes < 1) lastActionTime = 'Just now';
-          else if (diffMinutes < 60) lastActionTime = `${diffMinutes} minutes ago`;
-          else if (diffHours < 24) lastActionTime = `${diffHours} hours ago`;
+          else if (diffMinutes < 60) lastActionTime = `${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
+          else if (diffHours < 24) lastActionTime = `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
           else if (diffDays === 1) lastActionTime = 'Yesterday';
           else if (diffDays <= 7) lastActionTime = `${diffDays} days ago`;
           else if (diffDays <= 30) lastActionTime = `${Math.floor(diffDays / 7)} weeks ago`;

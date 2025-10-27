@@ -156,7 +156,7 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
       'clients': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'partners': ['Rank', 'Company', 'Last Action', 'Next Action'],
       'sellers': ['Rank', 'Person', 'Company', 'Title', 'Last Action', 'Next Action'],
-      'speedrun': ['Rank', 'Company', 'Person', 'Stage', 'Actions', 'Last Action', 'Next Action']
+      'speedrun': ['Rank', 'Name', 'Company', 'State', 'Stage', 'Actions', 'LAST ACTION', 'NEXT ACTION']
     };
     
     return defaultHeaders[section || 'companies'] || defaultHeaders['companies'];
@@ -180,6 +180,15 @@ export function PipelineTable({
   searchQuery,
   totalCount,
 }: PipelineTableProps) {
+  
+  // 🎯 SPEEDRUN REVERSE ORDER: For Speedrun section, reverse the data to show 50-1
+  const processedData = React.useMemo(() => {
+    if (section === 'speedrun') {
+      // Reverse the array to show 50-1 instead of 1-50
+      return [...data].reverse();
+    }
+    return data;
+  }, [data, section]);
   
   // Get workspace context
   const { user: authUser } = useUnifiedAuth();
@@ -211,7 +220,7 @@ export function PipelineTable({
     setSortField,
     setSortDirection,
   } = usePipelineData({ 
-    data, 
+    data: processedData, 
     pageSize,
         disableSorting: section === 'people' || section === 'leads' || section === 'prospects', // Disable sorting for people, leads, and prospects to preserve API ranking
     searchQuery, // Pass search query to hook
