@@ -8,7 +8,7 @@ import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
 import { usePipelineActions } from '@/platform/hooks/usePipelineActions';
-import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
+import { getRealtimeActionTiming, getStageColor, getStateColor } from '@/platform/utils/statusUtils';
 import { TableHeader } from './table/TableHeader';
 import { TableRow } from './table/TableRow';
 import { Pagination } from './table/Pagination';
@@ -181,11 +181,56 @@ export function PipelineTable({
   totalCount,
 }: PipelineTableProps) {
   
-  // 🎯 SPEEDRUN REVERSE ORDER: For Speedrun section, reverse the data to show 50-1
-  const processedData = React.useMemo(() => {
+  // 🎯 REAL-TIME UPDATES: State for current time to update Last Action times
+  const [currentTime, setCurrentTime] = useState(Date.now());
+  
+  // Update current time every minute for real-time Last Action updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 60000); // Update every minute
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Process data to sort by rank highest to lowest and move completed items to bottom for speedrun
+  const processedData = useMemo(() => {
     if (section === 'speedrun') {
-      // Reverse the array to show 50-1 instead of 1-50
-      return [...data].reverse();
+      // Separate completed and active items first
+      const completedItems = [];
+      const activeItems = [];
+      
+      data.forEach(record => {
+        // Check if item is completed (last action today)
+        const isCompleted = record['lastActionDate'] && (() => {
+          const lastActionDate = new Date(record['lastActionDate']);
+          const today = new Date();
+          return lastActionDate.toDateString() === today.toDateString();
+        })();
+        
+        if (isCompleted) {
+          completedItems.push(record);
+        } else {
+          activeItems.push(record);
+        }
+      });
+      
+      // Sort active items by rank descending (highest to lowest)
+      activeItems.sort((a, b) => {
+        const rankA = parseInt(a['globalRank'] || a['rank'] || '0', 10);
+        const rankB = parseInt(b['globalRank'] || b['rank'] || '0', 10);
+        return rankB - rankA; // Descending order (50, 49, 48...)
+      });
+      
+      // Sort completed items by rank descending too
+      completedItems.sort((a, b) => {
+        const rankA = parseInt(a['globalRank'] || a['rank'] || '0', 10);
+        const rankB = parseInt(b['globalRank'] || b['rank'] || '0', 10);
+        return rankB - rankA; // Descending order
+      });
+      
+      // Return active items first (highest to lowest), then completed items at bottom
+      return [...activeItems, ...completedItems];
     }
     return data;
   }, [data, section]);
@@ -195,8 +240,14 @@ export function PipelineTable({
   const workspaceId = authUser?.activeWorkspaceId || '';
   const workspaceName = authUser?.workspaces?.find(w => w['id'] === workspaceId)?.['name'] || '';
   
-  // Get table headers
-  const headers = getTableHeaders(visibleColumns, section);
+  // Get table headers and filter out STATUS for speedrun
+  const headers = useMemo(() => {
+    const baseHeaders = getTableHeaders(visibleColumns, section);
+    if (section === 'speedrun') {
+      return baseHeaders.filter(h => h.toLowerCase() !== 'status');
+    }
+    return baseHeaders;
+  }, [visibleColumns, section]);
   
   const maxViewportHeight = typeof window !== 'undefined' ? window.innerHeight - 180 : 500;
   
@@ -356,10 +407,23 @@ export function PipelineTable({
           {/* Table body */}
           <tbody>
             {useMemo(() => paginatedData.map((record, index) => {
+              // Check if this record is completed (for speedrun section) - based on last action today
+              const isCompleted = section === 'speedrun' && (() => {
+                if (record['lastActionDate']) {
+                  const lastActionDate = new Date(record['lastActionDate']);
+                  const today = new Date();
+                  // Check if last action was today (same day)
+                  return lastActionDate.toDateString() === today.toDateString();
+                }
+                return false;
+              })();
+              
               return (
                   <tr
                     key={record.id}
-                    className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+                    className={`cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)] relative ${
+                      isCompleted ? 'bg-green-50 border-green-200' : ''
+                    }`}
                     onClick={() => onRecordClick(record)}
                   >
                   {headers.map((header, headerIndex) => {
@@ -368,11 +432,23 @@ export function PipelineTable({
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
                       case 'rank':
-                        // 🎯 PER-USER RANKING: Display simple sequential rank for speedrun
+                        // Use rank from API - production behavior
                         let displayRank;
                         if (section === 'speedrun') {
-                          // For speedrun, show simple sequential rank (1-50)
-                          displayRank = record['globalRank'] || record['rank'] || (currentPage - 1) * pageSize + index + 1;
+                          // Check if item is completed (last action today)
+                          const isCompleted = record['lastActionDate'] && (() => {
+                            const lastActionDate = new Date(record['lastActionDate']);
+                            const today = new Date();
+                            return lastActionDate.toDateString() === today.toDateString();
+                          })();
+                          
+                          if (isCompleted) {
+                            // Show checkmark for completed items
+                            displayRank = '✓';
+                          } else {
+                            // For speedrun, use rank directly from API
+                            displayRank = record['globalRank'] || record['rank'] || index + 1;
+                          }
                         } else {
                           // For other sections, keep hierarchical ranking if available
                           const companyRank = record['companyRank'] || record['company']?.rank || 0;
@@ -416,7 +492,12 @@ export function PipelineTable({
                         cellContent = record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || record.name || '-';
                         break;
                       case 'state':
-                        cellContent = record['hqState'] || record['state'] || record['location'] || '-';
+                        const state = record['hqState'] || record['state'] || record['location'] || '-';
+                        if (state !== '-') {
+                          cellContent = <span className="rounded-full px-4 py-1 text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">{state}</span>;
+                        } else {
+                          cellContent = '-';
+                        }
                         break;
                       case 'title':
                         const title = record['title'] || 
@@ -429,9 +510,30 @@ export function PipelineTable({
                         cellContent = (title && title !== 'Unknown Title' && title.trim() !== '') ? title : '-';
                         break;
                       case 'last action':
-                        // Use pre-formatted lastActionTime from speedrun API if available
-                        const lastActionTime = record['lastActionTime'] || 'Never';
+                        // Use pre-formatted lastActionTime from speedrun API if available, or calculate real-time
+                        let lastActionTime = record['lastActionTime'] || 'Never';
                         const lastActionText = record['lastAction'] || record['lastActionDescription'] || record['lastContactType'];
+                        
+                        // If we have a last action date, calculate real-time relative time
+                        if (record['lastActionDate'] && lastActionTime !== 'Never') {
+                          const lastActionDate = new Date(record['lastActionDate']);
+                          const diffMs = currentTime - lastActionDate.getTime();
+                          const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                          const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                          const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                          
+                          if (diffMinutes < 1) lastActionTime = 'Just now';
+                          else if (diffMinutes < 60) lastActionTime = `${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
+                          else if (diffHours < 24) lastActionTime = `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+                          else if (diffDays < 7) lastActionTime = `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+                          else if (diffDays < 30) {
+                            const weeks = Math.floor(diffDays / 7);
+                            lastActionTime = `${weeks} week${weeks === 1 ? '' : 's'} ago`;
+                          } else {
+                            const months = Math.floor(diffDays / 30);
+                            lastActionTime = `${months} month${months === 1 ? '' : 's'} ago`;
+                          }
+                        }
                         
                         // If timing is "Never", show dash instead of action text
                         if (lastActionTime === 'Never' || !lastActionText) {
@@ -453,6 +555,7 @@ export function PipelineTable({
                         }
                         break;
                       case 'stage':
+                        // Production uses plain text, no pills
                         cellContent = record['stage'] || record['status'] || '-';
                         break;
                       case 'value':
@@ -473,13 +576,9 @@ export function PipelineTable({
                         }
                         break;
                       case 'status':
-                      case 'stage':
-                        // Check if this is a lead/person stage (LEAD, PROSPECT, OPPORTUNITY, etc.)
-                        const personStage = record['status'];
-                        if (personStage && typeof personStage === 'string' && 
-                            ['LEAD', 'PROSPECT', 'OPPORTUNITY', 'CUSTOMER', 'CLIENT', 'SUPERFAN', 'Lead', 'Prospect', 'Opportunity', 'Customer', 'Client', 'Superfan'].includes(personStage)) {
-                          // Display lead pipeline stage
-                          cellContent = personStage;
+                        // STATUS column removed for speedrun - skip rendering
+                        if (section === 'speedrun') {
+                          cellContent = null; // Don't render anything for speedrun
                         } else {
                           // For sellers, show online/offline status with indicator
                           const metadata = record['metadata'] || {};
@@ -516,6 +615,11 @@ export function PipelineTable({
                     return (
                       <td key={headerIndex} className="px-6 py-3 text-sm text-[var(--foreground)]">
                         {(() => {
+                          // Skip rendering if cellContent is null (for removed STATUS column in speedrun)
+                          if (cellContent === null) {
+                            return null;
+                          }
+                          
                           // Handle both camelCase and spaced versions of headers
                           const headerLower = header.toLowerCase();
                           const isLastAction = headerLower === 'last action' || headerLower === 'lastaction';
@@ -627,7 +731,7 @@ export function PipelineTable({
                   })}
                 </tr>
               );
-            }), [paginatedData, headers, timestampRefresh])}
+            }), [paginatedData, headers, timestampRefresh, currentTime, section])}
           </tbody>
         </table>
       </div>

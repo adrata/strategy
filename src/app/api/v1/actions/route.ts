@@ -4,6 +4,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse } from 
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 import { cache } from '@/platform/services/unified-cache';
 import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
+import { isEngagementAction } from '@/platform/utils/actionUtils';
 
 const prisma = new PrismaClient();
 
