@@ -57,7 +57,7 @@ class BuyerGroupFinder {
     this.analysisParallelism = options.analysisParallelism || 3;
     
     // API settings
-    this.maxPreviewPages = options.maxPreviewPages || 20; // 200 employees
+    this.maxPreviewPages = options.maxPreviewPages || 5; // 50 employees max for testing
     this.previewPageSize = 10; // Fixed by Coresignal
     
     // Processing settings
@@ -213,42 +213,41 @@ class BuyerGroupFinder {
   async discoverAllEmployees() {
     const allEmployees = [];
     
-    for (const department of this.targetDepartments) {
-      console.log(`🔍 Discovering employees in ${department}...`);
-      
-      let page = 1;
-      let hasMore = true;
-      let departmentEmployees = [];
-      
-      while (hasMore && page <= this.maxPreviewPages) {
-        try {
-          const employees = await this.searchEmployeesByDepartment(department, page);
-          
-          if (employees.length > 0) {
-            departmentEmployees.push(...employees);
-            page++;
-            this.results.discoveryMetrics.previewPagesProcessed++;
-          } else {
-            hasMore = false;
-          }
-          
-          // Delay between pages
-          await this.delay(this.delayBetweenRequests);
-          
-        } catch (error) {
-          console.error(`❌ Failed to search page ${page} for ${department}:`, error.message);
+    console.log(`🔍 Discovering employees for company...`);
+    
+    let page = 1;
+    let hasMore = true;
+    
+    while (hasMore && page <= this.maxPreviewPages) {
+      try {
+        console.log(`   📄 Searching page ${page}/${this.maxPreviewPages}...`);
+        const employees = await this.searchEmployeesByDepartment('all', page);
+        
+        if (employees.length > 0) {
+          allEmployees.push(...employees);
+          console.log(`   ✅ Found ${employees.length} employees on page ${page}`);
+          page++;
+          this.results.discoveryMetrics.previewPagesProcessed++;
+        } else {
+          console.log(`   ⚠️ No employees found on page ${page}, stopping search`);
           hasMore = false;
         }
+        
+        // Delay between pages
+        await this.delay(this.delayBetweenRequests);
+        
+      } catch (error) {
+        console.error(`❌ Failed to search page ${page}:`, error.message);
+        hasMore = false;
       }
-      
-      console.log(`📊 Found ${departmentEmployees.length} employees in ${department}`);
-      allEmployees.push(...departmentEmployees);
     }
     
     // Remove duplicates
     const uniqueEmployees = this.removeDuplicateEmployees(allEmployees);
     this.results.discoveryMetrics.totalEmployeesFound = uniqueEmployees.length;
-    this.results.discoveryMetrics.departmentsSearched = this.targetDepartments.length;
+    this.results.discoveryMetrics.departmentsSearched = 1;
+    
+    console.log(`📊 Found ${uniqueEmployees.length} total employees`);
     
     return uniqueEmployees;
   }
@@ -257,34 +256,14 @@ class BuyerGroupFinder {
    * Search employees by department using Preview API
    */
   async searchEmployeesByDepartment(department, page = 1) {
+    // Simplified query - just search by company LinkedIn URL first
     const searchQuery = {
       "query": {
         "bool": {
           "must": [
             {
-              "nested": {
-                "path": "experience",
-                "query": {
-                  "bool": {
-                    "must": [
-                      {
-                        "match": {
-                          "experience.company_linkedin_url": this.targetCompanyLinkedInUrl
-                        }
-                      },
-                      {
-                        "term": {
-                          "experience.active_experience": 1
-                        }
-                      },
-                      {
-                        "match": {
-                          "experience.active_experience_department": department
-                        }
-                      }
-                    ]
-                  }
-                }
+              "match": {
+                "company_linkedin_url": this.targetCompanyLinkedInUrl
               }
             }
           ]

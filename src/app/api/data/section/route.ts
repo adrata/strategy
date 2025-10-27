@@ -1233,7 +1233,10 @@ export async function GET(request: NextRequest) {
               const diffMs = actionDate.getTime() - now.getTime();
               const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
               
-              if (diffDays < 0) nextActionTiming = 'Overdue';
+              // For Speedrun (top 50), convert "Overdue" to "Today" to ensure records are always actionable
+              if (diffDays < 0) {
+                nextActionTiming = 'Today'; // Was: 'Overdue' - Speedrun records should never be overdue
+              }
               else if (diffDays === 0) nextActionTiming = 'Today';
               else if (diffDays === 1) nextActionTiming = 'Tomorrow';
               else if (diffDays <= 7) nextActionTiming = 'This week';
