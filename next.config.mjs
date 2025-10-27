@@ -121,7 +121,9 @@ const buildConfig = {
   
   // Environment variables
   env: {
-    NEXT_PUBLIC_BUILD_TARGET: "web"
+    NEXT_PUBLIC_BUILD_TARGET: "web",
+    // Disable Next.js tracing to avoid OpenTelemetry issues
+    NEXT_TELEMETRY_DISABLED: "1"
   },
   
   // Webpack configuration

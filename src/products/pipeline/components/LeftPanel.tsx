@@ -15,6 +15,7 @@ import { useFastCounts } from "@/platform/hooks/useFastCounts";
 import { getWorkspaceBySlug } from "@/platform/config/workspace-mapping";
 import { useChronicleCount } from "@/platform/hooks/useChronicleCount";
 import { useMetricsCount } from "@/platform/hooks/useMetricsCount";
+import { getPlatform } from "@/platform/platform-detection";
 
 
 // Utility function to convert hex color to CSS filter for SVG recoloring
@@ -82,12 +83,17 @@ function PipelineSections({
   const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || authUser?.activeWorkspaceId;
   const userId = authUser?.id;
   
-  console.log('🔍 [LEFT PANEL] Using provider workspace:', {
-    acquisitionDataExists: !!acquisitionData,
-    providerWorkspaceId: workspaceId,
-    userActiveWorkspaceId: authUser?.activeWorkspaceId,
-    userId: userId
-  });
+  // Get workspace name for Nova visibility check
+  const activeWorkspace = authUser?.workspaces?.find(w => w['id'] === workspaceId);
+  const workspaceName = activeWorkspace?.name || "";
+  
+  // Debug logging for Nova visibility (can be removed in production)
+  if (authUser?.email === "ross@adrata.com") {
+    console.log('🌌 Nova visibility check:', {
+      workspaceName: workspaceName,
+      novaVisible: authUser?.email === "ross@adrata.com" && workspaceName.toLowerCase() === "adrata"
+    });
+  }
   
   // 🚀 WORKSPACE-AWARE: Always call hooks (React rule) but pass null for invalid IDs
   const safeWorkspaceId = (workspaceId && workspaceId !== 'default') ? workspaceId : undefined;
@@ -734,11 +740,11 @@ function PipelineSections({
       visible: true
     },
     {
-      id: "galaxy",
-      name: "Galaxy",
+      id: "nova",
+      name: "Nova",
       description: "Native web browser",
       count: "🌌",
-      visible: authUser?.email === "ross@adrata.com" && workspaceId === "adrata"
+      visible: authUser?.email === "ross@adrata.com" && workspaceName.toLowerCase() === "adrata" && getPlatform() === "desktop"
     },
     {
       id: "metrics",
@@ -910,11 +916,9 @@ export function PipelineLeftPanelStandalone({
   const handleSectionClick = (section: string) => {
     console.log('🔄 Pipeline section clicked:', section);
     
-    // Special handling for Galaxy browser
-    if (section === "galaxy") {
-      // Open Galaxy browser in a new tab/window
-      window.open("/galaxy.html", "_blank", "width=1200,height=800,scrollbars=yes,resizable=yes");
-      return;
+    // Special debug for Nova
+    if (section === "nova") {
+      console.log('🌌 Nova clicked - calling onSectionChange');
     }
     
     onSectionChange(section);

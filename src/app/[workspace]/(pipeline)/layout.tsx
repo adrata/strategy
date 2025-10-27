@@ -20,6 +20,7 @@ import { useStacks, StacksProvider } from "@/products/stacks/context/StacksProvi
 import { useUnifiedAuth } from "@/platform/auth";
 import { SettingsPopup } from "@/frontend/components/pipeline/SettingsPopup";
 import { useSettingsPopup } from "@/platform/ui/components/SettingsPopupContext";
+import { NovaBrowser } from "@/products/pipeline/components/NovaBrowser";
 
 // Oasis Context
 interface OasisContextType {
@@ -81,7 +82,8 @@ function PipelineLayoutContent({
   isCustomersVisible,
   setIsCustomersVisible,
   isPartnersVisible,
-  setIsPartnersVisible
+  setIsPartnersVisible,
+  isNovaActive
 }: {
   children: React.ReactNode;
   currentSection: string;
@@ -98,6 +100,7 @@ function PipelineLayoutContent({
   setIsCustomersVisible: (visible: boolean) => void;
   isPartnersVisible: boolean;
   setIsPartnersVisible: (visible: boolean) => void;
+  isNovaActive: boolean;
 }) {
   // Now we can use the context hooks since we're inside the providers
   const { ui } = useAcquisitionOS();
@@ -115,7 +118,7 @@ function PipelineLayoutContent({
     if (pathname.includes('/oasis')) {
       return <OasisLeftPanel />;
     } else if (pathname.includes('/stacks')) {
-      return <StacksLeftPanel />;
+      return <StacksLeftPanel activeSubSection="stacks" onSubSectionChange={() => {}} />;
     } else if (pathname.includes('/speedrun/sprint')) {
       // Special left panel for sprint view - use SprintContext
       return <SprintLeftPanelWrapper />;
@@ -123,8 +126,8 @@ function PipelineLayoutContent({
       // Default to Speedrun left panel for other routes
       return (
         <LeftPanel 
-          key={`left-panel-${currentSection}`}
-          activeSection={currentSection}
+          key={`left-panel-${isNovaActive ? "nova" : currentSection}`}
+          activeSection={isNovaActive ? "nova" : currentSection}
           onSectionChange={onSectionChange}
           isSpeedrunVisible={isSpeedrunVisible}
           setIsSpeedrunVisible={setIsSpeedrunVisible}
@@ -175,7 +178,7 @@ function PipelineLayoutContent({
       <PanelLayout
         thinLeftPanel={null}
         leftPanel={getLeftPanel()}
-        middlePanel={children}
+        middlePanel={isNovaActive ? <NovaBrowser /> : children}
         rightPanel={getRightPanel()}
         zoom={100}
         isLeftPanelVisible={isLeftPanelVisible}
@@ -219,6 +222,16 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
 
   const currentSection = getCurrentSection();
   
+  // State for Nova section (since it doesn't have a route)
+  const [isNovaActive, setIsNovaActive] = useState(false);
+  
+  // Debug logging
+  console.log('🔍 [PipelineLayout] Current state:', {
+    currentSection,
+    isNovaActive,
+    finalSection: isNovaActive ? "nova" : currentSection
+  });
+  
   // State for left panel visibility controls
   const [isSpeedrunVisible, setIsSpeedrunVisible] = useState(true);
   const [isOpportunitiesVisible, setIsOpportunitiesVisible] = useState(true);
@@ -243,6 +256,17 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
   const handleSectionChange = (section: string) => {
     console.log(`🔄 [PipelineLayout] Section change requested: ${section}`);
     
+    // Special handling for Nova - don't navigate, just update state
+    if (section === "nova") {
+      console.log('🌌 [PipelineLayout] Nova section - setting isNovaActive to true');
+      setIsNovaActive(true);
+      return;
+    }
+    
+    // Reset Nova state when navigating to other sections
+    console.log(`🔄 [PipelineLayout] Non-Nova section - resetting Nova state`);
+    setIsNovaActive(false);
+    
     // Extract workspace from pathname
     const segments = pathname.split('/').filter(Boolean);
     const workspaceSlug = segments[0]; // First segment is the workspace slug
@@ -264,7 +288,7 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
                   <ProfilePopupProvider>
                     <SettingsPopupProvider>
                       <PipelineLayoutContent
-                        currentSection={currentSection}
+                        currentSection={isNovaActive ? "nova" : currentSection}
                         onSectionChange={handleSectionChange}
                         isSpeedrunVisible={isSpeedrunVisible}
                         setIsSpeedrunVisible={setIsSpeedrunVisible}
@@ -278,6 +302,7 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
                         setIsCustomersVisible={setIsCustomersVisible}
                         isPartnersVisible={isPartnersVisible}
                         setIsPartnersVisible={setIsPartnersVisible}
+                        isNovaActive={isNovaActive}
                       >
                         {children}
                       </PipelineLayoutContent>
