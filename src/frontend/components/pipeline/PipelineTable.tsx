@@ -101,7 +101,7 @@ function getNextActionTiming(record: PipelineRecord) {
   if (nextActionTiming) {
     // All timing pills now use light gray color
     if (nextActionTiming === 'Now') {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-blue-100 text-blue-800' }; // Highlight "Now" differently
     } else if (nextActionTiming === 'Today') {
       return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
     } else if (nextActionTiming === 'Due soon') {

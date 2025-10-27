@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { getStatusColor, getPriorityColor, getStageColor } from '@/platform/utils/statusUtils';
 import { getLastActionTime, getSmartNextAction, getHealthStatus, getLeadsNextAction, getSmartLastActionDescription, formatLastActionTime } from '@/platform/utils/actionUtils';
 import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
@@ -115,6 +116,24 @@ export function TableRow({
 }: TableRowProps) {
   const [contextMenu, setContextMenu] = useState<{x: number, y: number} | null>(null);
 
+  // Check if this record is completed (for speedrun section)
+  const isCompleted = React.useMemo(() => {
+    if (section !== 'speedrun') return false;
+    
+    if (typeof window !== 'undefined') {
+      try {
+        const today = new Date().toDateString();
+        const stored = localStorage.getItem(`speedrun-done-contacts-${today}`);
+        const doneContacts = stored ? JSON.parse(stored) : [];
+        return doneContacts.some((contact: any) => contact.id === record.id);
+      } catch (error) {
+        console.warn('Failed to check completed status:', error);
+        return false;
+      }
+    }
+    return false;
+  }, [section, record.id]);
+
   const handleRowClick = () => {
     onRecordClick(record);
   };
@@ -160,7 +179,9 @@ export function TableRow({
       <>
         <tr 
           key={record.id || index} 
-          className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+          className={`cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)] ${
+            isCompleted ? 'bg-green-50 opacity-75' : ''
+          }`}
           onClick={handleRowClick}
           onContextMenu={handleContextMenu}
            >
@@ -322,19 +343,31 @@ export function TableRow({
                 return (
                   <td key="nextAction" className={textClasses}>
                     <div className="flex items-center gap-2">
-                      {(() => {
-                        const nextAction = getLeadsNextAction(record, index);
-                        return (
-                          <>
-                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
-                              {nextAction.timing}
-                            </span>
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {nextAction.action}
-                            </span>
-                          </>
-                        );
-                      })()}
+                      {isCompleted ? (
+                        <>
+                          <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-green-100 text-green-800 flex items-center gap-1">
+                            <CheckCircleIcon className="w-3 h-3" />
+                            Completed
+                          </span>
+                          <span className="text-sm text-green-600 font-normal truncate max-w-32">
+                            Action completed
+                          </span>
+                        </>
+                      ) : (
+                        (() => {
+                          const nextAction = getLeadsNextAction(record, index);
+                          return (
+                            <>
+                              <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
+                                {nextAction.timing}
+                              </span>
+                              <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                                {nextAction.action}
+                              </span>
+                            </>
+                          );
+                        })()
+                      )}
                     </div>
                   </td>
                 );
@@ -588,19 +621,31 @@ export function TableRow({
                 return (
                   <td key="nextAction" className={textClasses}>
                     <div className="flex items-center gap-2">
-                      {(() => {
-                        const nextAction = getLeadsNextAction(record, index);
-                        return (
-                          <>
-                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
-                              {nextAction.timing}
-                            </span>
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {nextAction.action}
-                            </span>
-                          </>
-                        );
-                      })()}
+                      {isCompleted ? (
+                        <>
+                          <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-green-100 text-green-800 flex items-center gap-1">
+                            <CheckCircleIcon className="w-3 h-3" />
+                            Completed
+                          </span>
+                          <span className="text-sm text-green-600 font-normal truncate max-w-32">
+                            Action completed
+                          </span>
+                        </>
+                      ) : (
+                        (() => {
+                          const nextAction = getLeadsNextAction(record, index);
+                          return (
+                            <>
+                              <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
+                                {nextAction.timing}
+                              </span>
+                              <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                                {nextAction.action}
+                              </span>
+                            </>
+                          );
+                        })()
+                      )}
                     </div>
                   </td>
                 );
@@ -768,19 +813,31 @@ export function TableRow({
                 return (
                   <td key="nextAction" className={textClasses}>
                     <div className="flex items-center gap-2">
-                      {(() => {
-                        const nextAction = getLeadsNextAction(record, index);
-                        return (
-                          <>
-                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
-                              {nextAction.timing}
-                            </span>
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {nextAction.action}
-                            </span>
-                          </>
-                        );
-                      })()}
+                      {isCompleted ? (
+                        <>
+                          <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-green-100 text-green-800 flex items-center gap-1">
+                            <CheckCircleIcon className="w-3 h-3" />
+                            Completed
+                          </span>
+                          <span className="text-sm text-green-600 font-normal truncate max-w-32">
+                            Action completed
+                          </span>
+                        </>
+                      ) : (
+                        (() => {
+                          const nextAction = getLeadsNextAction(record, index);
+                          return (
+                            <>
+                              <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
+                                {nextAction.timing}
+                              </span>
+                              <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                                {nextAction.action}
+                              </span>
+                            </>
+                          );
+                        })()
+                      )}
                     </div>
                   </td>
                 );
@@ -929,19 +986,31 @@ export function TableRow({
                 return (
                   <td key="nextAction" className={textClasses}>
                     <div className="flex items-center gap-2">
-                      {(() => {
-                        const nextAction = getLeadsNextAction(record, index);
-                        return (
-                          <>
-                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
-                              {nextAction.timing}
-                            </span>
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {nextAction.action}
-                            </span>
-                          </>
-                        );
-                      })()}
+                      {isCompleted ? (
+                        <>
+                          <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-green-100 text-green-800 flex items-center gap-1">
+                            <CheckCircleIcon className="w-3 h-3" />
+                            Completed
+                          </span>
+                          <span className="text-sm text-green-600 font-normal truncate max-w-32">
+                            Action completed
+                          </span>
+                        </>
+                      ) : (
+                        (() => {
+                          const nextAction = getLeadsNextAction(record, index);
+                          return (
+                            <>
+                              <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
+                                {nextAction.timing}
+                              </span>
+                              <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                                {nextAction.action}
+                              </span>
+                            </>
+                          );
+                        })()
+                      )}
                     </div>
                   </td>
                 );

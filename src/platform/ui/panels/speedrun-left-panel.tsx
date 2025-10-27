@@ -172,6 +172,44 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
     }
   }, [currentView]);
 
+  // Listen for speedrun action completion events
+  useEffect(() => {
+    const handleSpeedrunActionLogged = (event: CustomEvent) => {
+      const { currentRecord } = event.detail;
+      console.log('🎯 [SPEEDRUN LEFT PANEL] Action logged for:', currentRecord.name);
+      
+      // Add to done contacts
+      const newDoneContacts = [...doneContacts, currentRecord];
+      setDoneContacts(newDoneContacts);
+      
+      // Save to localStorage for persistence
+      if (typeof window !== 'undefined') {
+        const today = new Date().toDateString();
+        localStorage.setItem(`speedrun-done-contacts-${today}`, JSON.stringify(newDoneContacts));
+      }
+      
+      // Remove from active contacts
+      setActiveContacts(prev => prev.filter(contact => contact.id !== currentRecord.id));
+      
+      // If this was the selected person, move to next
+      if (selectedPerson && selectedPerson.id === currentRecord.id) {
+        const remainingContacts = activeContacts.filter(contact => contact.id !== currentRecord.id);
+        if (remainingContacts.length > 0) {
+          setSelectedPerson(remainingContacts[0]);
+          if (setSelectedRecord) {
+            setSelectedRecord(remainingContacts[0]);
+          }
+        }
+      }
+    };
+
+    document.addEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+    
+    return () => {
+      document.removeEventListener('speedrunActionLogged', handleSpeedrunActionLogged as EventListener);
+    };
+  }, [doneContacts, activeContacts, selectedPerson, setSelectedPerson, setSelectedRecord]);
+
   const loadSalesActions = async () => {
     setLoadingActions(true);
     try {

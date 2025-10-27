@@ -272,20 +272,36 @@ export async function GET(request: NextRequest) {
         
         // Only show real last actions if they exist and are meaningful
         if (lastActionDate && lastAction && lastAction !== 'No action taken') {
-          const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
-          if (daysSince === 0) lastActionTime = 'Today';
-          else if (daysSince === 1) lastActionTime = 'Yesterday';
-          else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
-          else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
-          else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          const now = new Date();
+          const actionDate = new Date(lastActionDate);
+          const diffMs = now.getTime() - actionDate.getTime();
+          const diffMinutes = Math.floor(diffMs / (1000 * 60));
+          const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+          const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+          
+          if (diffMinutes < 1) lastActionTime = 'Just now';
+          else if (diffMinutes < 60) lastActionTime = `${diffMinutes} minutes ago`;
+          else if (diffHours < 24) lastActionTime = `${diffHours} hours ago`;
+          else if (diffDays === 1) lastActionTime = 'Yesterday';
+          else if (diffDays <= 7) lastActionTime = `${diffDays} days ago`;
+          else if (diffDays <= 30) lastActionTime = `${Math.floor(diffDays / 7)} weeks ago`;
+          else lastActionTime = `${Math.floor(diffDays / 30)} months ago`;
         } else if (person.createdAt) {
           // Fallback to creation date if no meaningful actions
-          const daysSince = Math.floor((new Date().getTime() - new Date(person.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-          if (daysSince === 0) lastActionTime = 'Today';
-          else if (daysSince === 1) lastActionTime = 'Yesterday';
-          else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
-          else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
-          else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
+          const now = new Date();
+          const createdDate = new Date(person.createdAt);
+          const diffMs = now.getTime() - createdDate.getTime();
+          const diffMinutes = Math.floor(diffMs / (1000 * 60));
+          const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+          const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+          
+          if (diffMinutes < 1) lastActionTime = 'Just now';
+          else if (diffMinutes < 60) lastActionTime = `${diffMinutes} minutes ago`;
+          else if (diffHours < 24) lastActionTime = `${diffHours} hours ago`;
+          else if (diffDays === 1) lastActionTime = 'Yesterday';
+          else if (diffDays <= 7) lastActionTime = `${diffDays} days ago`;
+          else if (diffDays <= 30) lastActionTime = `${Math.floor(diffDays / 7)} weeks ago`;
+          else lastActionTime = `${Math.floor(diffDays / 30)} months ago`;
         }
 
         // Calculate nextActionTiming for speedrun table display
@@ -296,23 +312,17 @@ export async function GET(request: NextRequest) {
           const now = new Date();
           const actionDate = new Date(nextActionDate);
           const diffMs = actionDate.getTime() - now.getTime();
-          const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
           
-          if (diffDays < 0) {
+          // Check if overdue
+          if (diffMs < 0) {
             nextActionTiming = 'Overdue';
-          } else if (diffDays === 0) {
-            nextActionTiming = 'Today';
-          } else if (diffDays === 1) {
-            nextActionTiming = 'Tomorrow';
-          } else if (diffDays <= 7) {
-            nextActionTiming = 'This week';
-          } else if (diffDays <= 14) {
-            nextActionTiming = 'Next week';
-          } else if (diffDays <= 30) {
-            nextActionTiming = 'This month';
           } else {
-            nextActionTiming = 'Future';
+            // First record gets "Now", rest get "Today"
+            nextActionTiming = index === 0 ? 'Now' : 'Today';
           }
+        } else {
+          // If no date set, still show "Now" for first, "Today" for rest
+          nextActionTiming = index === 0 ? 'Now' : 'Today';
         }
 
         // Count meaningful actions (using only type field since metadata doesn't exist)

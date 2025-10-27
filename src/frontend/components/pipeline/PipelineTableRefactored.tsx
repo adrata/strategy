@@ -87,7 +87,9 @@ function getNextActionTiming(record: PipelineRecord) {
   
   if (nextActionTiming) {
     // All timing pills now use light gray color
-    if (nextActionTiming === 'Overdue') {
+    if (nextActionTiming === 'Now') {
+      return { text: nextActionTiming, color: 'bg-blue-100 text-blue-800' }; // Highlight "Now" differently
+    } else if (nextActionTiming === 'Overdue') {
       return { text: nextActionTiming, color: 'bg-red-100 text-red-800' };
     } else if (nextActionTiming === 'Due soon') {
       return { text: nextActionTiming, color: 'bg-orange-100 text-orange-800' };
