@@ -130,17 +130,21 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       // 2. Call the original onSave function
       await onSave(field, value, recordId, recordTypeParam);
       
-      // 3. Force a cache-busting refresh to ensure we have the latest data
-      const cacheKey = `actions-${record.id}`;
-      localStorage.removeItem(cacheKey);
+      // 3. Show success message
+      handleSuccess(`Updated successfully`);
       
-      // 4. Trigger a force refresh to bypass any remaining cache
-      loadActionsFromAPI(true);
+      // Note: We don't refresh from API immediately after save because:
+      // - The optimistic update (above) already shows the correct value in the UI
+      // - The API call in onSave persists the change to the database
+      // - Immediate refresh can cause stale data to overwrite the optimistic update
+      // - Cache will naturally expire after 1 second and reload fresh data
       
-      console.log('✅ [ACTIONS] Inline edit completed with optimistic update and cache refresh');
+      console.log('✅ [ACTIONS] Inline edit completed with optimistic update');
       
     } catch (error) {
       console.error('❌ [ACTIONS] Error in optimistic save:', error);
+      handleError('Failed to update action');
+      
       // Revert optimistic update on error
       if (recordId && recordTypeParam === 'action') {
         setActionEvents(prevEvents => 
