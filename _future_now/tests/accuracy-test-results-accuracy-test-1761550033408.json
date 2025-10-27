@@ -1,0 +1,2580 @@
+{
+  "testRunId": "accuracy-test-1761550033408",
+  "timestamp": "2025-10-27T07:27:13.408Z",
+  "companies": {
+    "Nike": {
+      "company": {
+        "name": "Nike",
+        "website": "nike.com",
+        "employeeCount": 75000,
+        "size": "Enterprise",
+        "industry": "Apparel & Fashion",
+        "expectedBuyerGroupSize": {
+          "min": 12,
+          "max": 18
+        }
+      },
+      "tests": [
+        {
+          "implementation": "Future Now",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Future Now",
+            "buyerGroup": {
+              "totalMembers": 9,
+              "composition": {
+                "decision_maker": 2,
+                "champion": 2,
+                "stakeholder": 2,
+                "blocker": 1,
+                "introducer": 2
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "Chief Executive Officer",
+                  "role": "decision_maker",
+                  "confidence": 91,
+                  "email": "john.smith@nike.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "VP of Sales",
+                  "role": "champion",
+                  "confidence": 95,
+                  "email": "sarah.johnson@nike.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Director of Marketing",
+                  "role": "stakeholder",
+                  "confidence": 90,
+                  "email": "mike.davis@nike.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 87,
+                  "email": "lisa.chen@nike.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "VP of Business Development",
+                  "role": "introducer",
+                  "confidence": 93,
+                  "email": "david.wilson@nike.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 85,
+              "processingTime": 4000,
+              "creditsUsed": 15
+            },
+            "quality": {
+              "roleCoverage": 100,
+              "dataQuality": 90,
+              "relevanceScore": 80,
+              "consistency": 95
+            }
+          }
+        },
+        {
+          "implementation": "Intelligence Engine",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Intelligence Engine",
+            "buyerGroup": {
+              "totalMembers": 12,
+              "composition": {
+                "decision_maker": 3,
+                "champion": 3,
+                "stakeholder": 3,
+                "blocker": 2,
+                "introducer": 1
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "Chief Executive Officer",
+                  "role": "decision_maker",
+                  "confidence": 77,
+                  "email": "john.smith@nike.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "VP of Sales",
+                  "role": "champion",
+                  "confidence": 70,
+                  "email": "sarah.johnson@nike.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Director of Marketing",
+                  "role": "stakeholder",
+                  "confidence": 78,
+                  "email": "mike.davis@nike.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 81,
+                  "email": "lisa.chen@nike.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "VP of Business Development",
+                  "role": "introducer",
+                  "confidence": 71,
+                  "email": "david.wilson@nike.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 75,
+              "processingTime": 8000,
+              "creditsUsed": 25
+            },
+            "quality": {
+              "roleCoverage": 80,
+              "dataQuality": 85,
+              "relevanceScore": 70,
+              "consistency": 80
+            }
+          }
+        },
+        {
+          "implementation": "Pipeline",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Pipeline",
+            "buyerGroup": {
+              "totalMembers": 15,
+              "composition": {
+                "decision_maker": 4,
+                "champion": 4,
+                "stakeholder": 4,
+                "blocker": 2,
+                "introducer": 1
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "Chief Executive Officer",
+                  "role": "decision_maker",
+                  "confidence": 74,
+                  "email": "john.smith@nike.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "VP of Sales",
+                  "role": "champion",
+                  "confidence": 60,
+                  "email": "sarah.johnson@nike.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Director of Marketing",
+                  "role": "stakeholder",
+                  "confidence": 76,
+                  "email": "mike.davis@nike.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 69,
+                  "email": "lisa.chen@nike.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "VP of Business Development",
+                  "role": "introducer",
+                  "confidence": 70,
+                  "email": "david.wilson@nike.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 70,
+              "processingTime": 12000,
+              "creditsUsed": 35
+            },
+            "quality": {
+              "roleCoverage": 60,
+              "dataQuality": 75,
+              "relevanceScore": 65,
+              "consistency": 70
+            }
+          }
+        }
+      ],
+      "conflicts": [
+        {
+          "type": "SIZE_CONFLICT",
+          "description": "Different implementations identify different numbers of buyer group members",
+          "details": [
+            {
+              "impl": "Future Now",
+              "size": 9
+            },
+            {
+              "impl": "Intelligence Engine",
+              "size": 12
+            },
+            {
+              "impl": "Pipeline",
+              "size": 15
+            }
+          ],
+          "severity": "HIGH"
+        },
+        {
+          "type": "ROLE_COMPOSITION_CONFLICT",
+          "description": "Different implementations assign different numbers of people to each role",
+          "details": [
+            {
+              "role": "decision_maker",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 2
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 3
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 4
+                }
+              ],
+              "variance": 2
+            },
+            {
+              "role": "champion",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 2
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 3
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 4
+                }
+              ],
+              "variance": 2
+            },
+            {
+              "role": "stakeholder",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 2
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 3
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 4
+                }
+              ],
+              "variance": 2
+            },
+            {
+              "role": "blocker",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 2
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 2
+                }
+              ],
+              "variance": 1
+            },
+            {
+              "role": "introducer",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 2
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 1
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 1
+                }
+              ],
+              "variance": 1
+            }
+          ],
+          "severity": "HIGH"
+        }
+      ],
+      "accuracyIssues": [
+        {
+          "type": "SIZE_ACCURACY",
+          "implementation": "futureNow",
+          "description": "Buyer group size 9 is not appropriate for Enterprise company (expected 12-18)",
+          "severity": "HIGH",
+          "actual": 9,
+          "expected": {
+            "min": 12,
+            "max": 18
+          }
+        },
+        {
+          "type": "ROLE_COVERAGE",
+          "implementation": "pipeline",
+          "description": "Only 60% of required roles are represented",
+          "severity": "MEDIUM",
+          "actual": 60,
+          "expected": 80
+        },
+        {
+          "type": "DATA_QUALITY",
+          "implementation": "pipeline",
+          "description": "Data quality score 75% is below acceptable threshold",
+          "severity": "MEDIUM",
+          "actual": 75,
+          "expected": 85
+        }
+      ],
+      "buyerGroups": {
+        "futureNow": {
+          "success": true,
+          "implementation": "Future Now",
+          "buyerGroup": {
+            "totalMembers": 9,
+            "composition": {
+              "decision_maker": 2,
+              "champion": 2,
+              "stakeholder": 2,
+              "blocker": 1,
+              "introducer": 2
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "Chief Executive Officer",
+                "role": "decision_maker",
+                "confidence": 91,
+                "email": "john.smith@nike.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "VP of Sales",
+                "role": "champion",
+                "confidence": 95,
+                "email": "sarah.johnson@nike.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Director of Marketing",
+                "role": "stakeholder",
+                "confidence": 90,
+                "email": "mike.davis@nike.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 87,
+                "email": "lisa.chen@nike.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "VP of Business Development",
+                "role": "introducer",
+                "confidence": 93,
+                "email": "david.wilson@nike.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 85,
+            "processingTime": 4000,
+            "creditsUsed": 15
+          },
+          "quality": {
+            "roleCoverage": 100,
+            "dataQuality": 90,
+            "relevanceScore": 80,
+            "consistency": 95
+          }
+        },
+        "intelligence": {
+          "success": true,
+          "implementation": "Intelligence Engine",
+          "buyerGroup": {
+            "totalMembers": 12,
+            "composition": {
+              "decision_maker": 3,
+              "champion": 3,
+              "stakeholder": 3,
+              "blocker": 2,
+              "introducer": 1
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "Chief Executive Officer",
+                "role": "decision_maker",
+                "confidence": 77,
+                "email": "john.smith@nike.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "VP of Sales",
+                "role": "champion",
+                "confidence": 70,
+                "email": "sarah.johnson@nike.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Director of Marketing",
+                "role": "stakeholder",
+                "confidence": 78,
+                "email": "mike.davis@nike.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 81,
+                "email": "lisa.chen@nike.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "VP of Business Development",
+                "role": "introducer",
+                "confidence": 71,
+                "email": "david.wilson@nike.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 75,
+            "processingTime": 8000,
+            "creditsUsed": 25
+          },
+          "quality": {
+            "roleCoverage": 80,
+            "dataQuality": 85,
+            "relevanceScore": 70,
+            "consistency": 80
+          }
+        },
+        "pipeline": {
+          "success": true,
+          "implementation": "Pipeline",
+          "buyerGroup": {
+            "totalMembers": 15,
+            "composition": {
+              "decision_maker": 4,
+              "champion": 4,
+              "stakeholder": 4,
+              "blocker": 2,
+              "introducer": 1
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "Chief Executive Officer",
+                "role": "decision_maker",
+                "confidence": 74,
+                "email": "john.smith@nike.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "VP of Sales",
+                "role": "champion",
+                "confidence": 60,
+                "email": "sarah.johnson@nike.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Director of Marketing",
+                "role": "stakeholder",
+                "confidence": 76,
+                "email": "mike.davis@nike.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 69,
+                "email": "lisa.chen@nike.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "VP of Business Development",
+                "role": "introducer",
+                "confidence": 70,
+                "email": "david.wilson@nike.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 70,
+            "processingTime": 12000,
+            "creditsUsed": 35
+          },
+          "quality": {
+            "roleCoverage": 60,
+            "dataQuality": 75,
+            "relevanceScore": 65,
+            "consistency": 70
+          }
+        }
+      },
+      "recommendations": [
+        {
+          "type": "SIZE_ADAPTATION",
+          "priority": "HIGH",
+          "description": "Implement adaptive buyer group sizing for Enterprise companies",
+          "details": "Current implementations use fixed sizing. Nike (75000 employees) needs 12-18 people, not fixed 8-15."
+        },
+        {
+          "type": "CONSISTENCY",
+          "priority": "HIGH",
+          "description": "Implement single source of truth for buyer group data",
+          "details": "2 conflicts found between implementations. Need consolidated approach."
+        },
+        {
+          "type": "QUALITY_IMPROVEMENT",
+          "priority": "MEDIUM",
+          "description": "Improve role coverage and data quality validation",
+          "details": "2 quality issues found. Need better validation mechanisms."
+        }
+      ]
+    },
+    "Salesforce": {
+      "company": {
+        "name": "Salesforce",
+        "website": "salesforce.com",
+        "employeeCount": 50000,
+        "size": "Enterprise",
+        "industry": "Software",
+        "expectedBuyerGroupSize": {
+          "min": 12,
+          "max": 18
+        }
+      },
+      "tests": [
+        {
+          "implementation": "Future Now",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Future Now",
+            "buyerGroup": {
+              "totalMembers": 9,
+              "composition": {
+                "decision_maker": 2,
+                "champion": 2,
+                "stakeholder": 2,
+                "blocker": 1,
+                "introducer": 2
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "Chief Executive Officer",
+                  "role": "decision_maker",
+                  "confidence": 94,
+                  "email": "john.smith@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "VP of Sales",
+                  "role": "champion",
+                  "confidence": 88,
+                  "email": "sarah.johnson@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Director of Marketing",
+                  "role": "stakeholder",
+                  "confidence": 89,
+                  "email": "mike.davis@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 87,
+                  "email": "lisa.chen@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "VP of Business Development",
+                  "role": "introducer",
+                  "confidence": 91,
+                  "email": "david.wilson@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 85,
+              "processingTime": 4000,
+              "creditsUsed": 15
+            },
+            "quality": {
+              "roleCoverage": 100,
+              "dataQuality": 90,
+              "relevanceScore": 80,
+              "consistency": 95
+            }
+          }
+        },
+        {
+          "implementation": "Intelligence Engine",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Intelligence Engine",
+            "buyerGroup": {
+              "totalMembers": 12,
+              "composition": {
+                "decision_maker": 3,
+                "champion": 3,
+                "stakeholder": 3,
+                "blocker": 2,
+                "introducer": 1
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "Chief Executive Officer",
+                  "role": "decision_maker",
+                  "confidence": 73,
+                  "email": "john.smith@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "VP of Sales",
+                  "role": "champion",
+                  "confidence": 77,
+                  "email": "sarah.johnson@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Director of Marketing",
+                  "role": "stakeholder",
+                  "confidence": 78,
+                  "email": "mike.davis@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 81,
+                  "email": "lisa.chen@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "VP of Business Development",
+                  "role": "introducer",
+                  "confidence": 81,
+                  "email": "david.wilson@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 75,
+              "processingTime": 8000,
+              "creditsUsed": 25
+            },
+            "quality": {
+              "roleCoverage": 80,
+              "dataQuality": 85,
+              "relevanceScore": 70,
+              "consistency": 80
+            }
+          }
+        },
+        {
+          "implementation": "Pipeline",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Pipeline",
+            "buyerGroup": {
+              "totalMembers": 15,
+              "composition": {
+                "decision_maker": 4,
+                "champion": 4,
+                "stakeholder": 4,
+                "blocker": 2,
+                "introducer": 1
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "Chief Executive Officer",
+                  "role": "decision_maker",
+                  "confidence": 70,
+                  "email": "john.smith@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "VP of Sales",
+                  "role": "champion",
+                  "confidence": 62,
+                  "email": "sarah.johnson@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Director of Marketing",
+                  "role": "stakeholder",
+                  "confidence": 78,
+                  "email": "mike.davis@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 61,
+                  "email": "lisa.chen@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "VP of Business Development",
+                  "role": "introducer",
+                  "confidence": 60,
+                  "email": "david.wilson@salesforce.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 70,
+              "processingTime": 12000,
+              "creditsUsed": 35
+            },
+            "quality": {
+              "roleCoverage": 60,
+              "dataQuality": 75,
+              "relevanceScore": 65,
+              "consistency": 70
+            }
+          }
+        }
+      ],
+      "conflicts": [
+        {
+          "type": "SIZE_CONFLICT",
+          "description": "Different implementations identify different numbers of buyer group members",
+          "details": [
+            {
+              "impl": "Future Now",
+              "size": 9
+            },
+            {
+              "impl": "Intelligence Engine",
+              "size": 12
+            },
+            {
+              "impl": "Pipeline",
+              "size": 15
+            }
+          ],
+          "severity": "HIGH"
+        },
+        {
+          "type": "ROLE_COMPOSITION_CONFLICT",
+          "description": "Different implementations assign different numbers of people to each role",
+          "details": [
+            {
+              "role": "decision_maker",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 2
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 3
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 4
+                }
+              ],
+              "variance": 2
+            },
+            {
+              "role": "champion",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 2
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 3
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 4
+                }
+              ],
+              "variance": 2
+            },
+            {
+              "role": "stakeholder",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 2
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 3
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 4
+                }
+              ],
+              "variance": 2
+            },
+            {
+              "role": "blocker",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 2
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 2
+                }
+              ],
+              "variance": 1
+            },
+            {
+              "role": "introducer",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 2
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 1
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 1
+                }
+              ],
+              "variance": 1
+            }
+          ],
+          "severity": "HIGH"
+        }
+      ],
+      "accuracyIssues": [
+        {
+          "type": "SIZE_ACCURACY",
+          "implementation": "futureNow",
+          "description": "Buyer group size 9 is not appropriate for Enterprise company (expected 12-18)",
+          "severity": "HIGH",
+          "actual": 9,
+          "expected": {
+            "min": 12,
+            "max": 18
+          }
+        },
+        {
+          "type": "ROLE_COVERAGE",
+          "implementation": "pipeline",
+          "description": "Only 60% of required roles are represented",
+          "severity": "MEDIUM",
+          "actual": 60,
+          "expected": 80
+        },
+        {
+          "type": "DATA_QUALITY",
+          "implementation": "pipeline",
+          "description": "Data quality score 75% is below acceptable threshold",
+          "severity": "MEDIUM",
+          "actual": 75,
+          "expected": 85
+        }
+      ],
+      "buyerGroups": {
+        "futureNow": {
+          "success": true,
+          "implementation": "Future Now",
+          "buyerGroup": {
+            "totalMembers": 9,
+            "composition": {
+              "decision_maker": 2,
+              "champion": 2,
+              "stakeholder": 2,
+              "blocker": 1,
+              "introducer": 2
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "Chief Executive Officer",
+                "role": "decision_maker",
+                "confidence": 94,
+                "email": "john.smith@salesforce.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "VP of Sales",
+                "role": "champion",
+                "confidence": 88,
+                "email": "sarah.johnson@salesforce.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Director of Marketing",
+                "role": "stakeholder",
+                "confidence": 89,
+                "email": "mike.davis@salesforce.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 87,
+                "email": "lisa.chen@salesforce.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "VP of Business Development",
+                "role": "introducer",
+                "confidence": 91,
+                "email": "david.wilson@salesforce.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 85,
+            "processingTime": 4000,
+            "creditsUsed": 15
+          },
+          "quality": {
+            "roleCoverage": 100,
+            "dataQuality": 90,
+            "relevanceScore": 80,
+            "consistency": 95
+          }
+        },
+        "intelligence": {
+          "success": true,
+          "implementation": "Intelligence Engine",
+          "buyerGroup": {
+            "totalMembers": 12,
+            "composition": {
+              "decision_maker": 3,
+              "champion": 3,
+              "stakeholder": 3,
+              "blocker": 2,
+              "introducer": 1
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "Chief Executive Officer",
+                "role": "decision_maker",
+                "confidence": 73,
+                "email": "john.smith@salesforce.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "VP of Sales",
+                "role": "champion",
+                "confidence": 77,
+                "email": "sarah.johnson@salesforce.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Director of Marketing",
+                "role": "stakeholder",
+                "confidence": 78,
+                "email": "mike.davis@salesforce.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 81,
+                "email": "lisa.chen@salesforce.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "VP of Business Development",
+                "role": "introducer",
+                "confidence": 81,
+                "email": "david.wilson@salesforce.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 75,
+            "processingTime": 8000,
+            "creditsUsed": 25
+          },
+          "quality": {
+            "roleCoverage": 80,
+            "dataQuality": 85,
+            "relevanceScore": 70,
+            "consistency": 80
+          }
+        },
+        "pipeline": {
+          "success": true,
+          "implementation": "Pipeline",
+          "buyerGroup": {
+            "totalMembers": 15,
+            "composition": {
+              "decision_maker": 4,
+              "champion": 4,
+              "stakeholder": 4,
+              "blocker": 2,
+              "introducer": 1
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "Chief Executive Officer",
+                "role": "decision_maker",
+                "confidence": 70,
+                "email": "john.smith@salesforce.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "VP of Sales",
+                "role": "champion",
+                "confidence": 62,
+                "email": "sarah.johnson@salesforce.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Director of Marketing",
+                "role": "stakeholder",
+                "confidence": 78,
+                "email": "mike.davis@salesforce.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 61,
+                "email": "lisa.chen@salesforce.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "VP of Business Development",
+                "role": "introducer",
+                "confidence": 60,
+                "email": "david.wilson@salesforce.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 70,
+            "processingTime": 12000,
+            "creditsUsed": 35
+          },
+          "quality": {
+            "roleCoverage": 60,
+            "dataQuality": 75,
+            "relevanceScore": 65,
+            "consistency": 70
+          }
+        }
+      },
+      "recommendations": [
+        {
+          "type": "SIZE_ADAPTATION",
+          "priority": "HIGH",
+          "description": "Implement adaptive buyer group sizing for Enterprise companies",
+          "details": "Current implementations use fixed sizing. Salesforce (50000 employees) needs 12-18 people, not fixed 8-15."
+        },
+        {
+          "type": "CONSISTENCY",
+          "priority": "HIGH",
+          "description": "Implement single source of truth for buyer group data",
+          "details": "2 conflicts found between implementations. Need consolidated approach."
+        },
+        {
+          "type": "QUALITY_IMPROVEMENT",
+          "priority": "MEDIUM",
+          "description": "Improve role coverage and data quality validation",
+          "details": "2 quality issues found. Need better validation mechanisms."
+        }
+      ]
+    },
+    "HubSpot": {
+      "company": {
+        "name": "HubSpot",
+        "website": "hubspot.com",
+        "employeeCount": 5000,
+        "size": "Mid-market",
+        "industry": "SaaS",
+        "expectedBuyerGroupSize": {
+          "min": 8,
+          "max": 12
+        }
+      },
+      "tests": [
+        {
+          "implementation": "Future Now",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Future Now",
+            "buyerGroup": {
+              "totalMembers": 7,
+              "composition": {
+                "decision_maker": 1,
+                "champion": 1,
+                "stakeholder": 1,
+                "blocker": 1,
+                "introducer": 1
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "President",
+                  "role": "decision_maker",
+                  "confidence": 92,
+                  "email": "john.smith@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "Sales Director",
+                  "role": "champion",
+                  "confidence": 87,
+                  "email": "sarah.johnson@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Marketing Manager",
+                  "role": "stakeholder",
+                  "confidence": 87,
+                  "email": "mike.davis@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 93,
+                  "email": "lisa.chen@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "Business Development Manager",
+                  "role": "introducer",
+                  "confidence": 92,
+                  "email": "david.wilson@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 85,
+              "processingTime": 4000,
+              "creditsUsed": 15
+            },
+            "quality": {
+              "roleCoverage": 100,
+              "dataQuality": 90,
+              "relevanceScore": 80,
+              "consistency": 95
+            }
+          }
+        },
+        {
+          "implementation": "Intelligence Engine",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Intelligence Engine",
+            "buyerGroup": {
+              "totalMembers": 8,
+              "composition": {
+                "decision_maker": 2,
+                "champion": 2,
+                "stakeholder": 2,
+                "blocker": 2,
+                "introducer": 0
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "President",
+                  "role": "decision_maker",
+                  "confidence": 81,
+                  "email": "john.smith@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "Sales Director",
+                  "role": "champion",
+                  "confidence": 74,
+                  "email": "sarah.johnson@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Marketing Manager",
+                  "role": "stakeholder",
+                  "confidence": 78,
+                  "email": "mike.davis@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 80,
+                  "email": "lisa.chen@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "Business Development Manager",
+                  "role": "introducer",
+                  "confidence": 80,
+                  "email": "david.wilson@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 75,
+              "processingTime": 8000,
+              "creditsUsed": 25
+            },
+            "quality": {
+              "roleCoverage": 80,
+              "dataQuality": 85,
+              "relevanceScore": 70,
+              "consistency": 80
+            }
+          }
+        },
+        {
+          "implementation": "Pipeline",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Pipeline",
+            "buyerGroup": {
+              "totalMembers": 10,
+              "composition": {
+                "decision_maker": 2,
+                "champion": 3,
+                "stakeholder": 3,
+                "blocker": 2,
+                "introducer": 0
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "President",
+                  "role": "decision_maker",
+                  "confidence": 74,
+                  "email": "john.smith@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "Sales Director",
+                  "role": "champion",
+                  "confidence": 76,
+                  "email": "sarah.johnson@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Marketing Manager",
+                  "role": "stakeholder",
+                  "confidence": 78,
+                  "email": "mike.davis@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 66,
+                  "email": "lisa.chen@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "Business Development Manager",
+                  "role": "introducer",
+                  "confidence": 78,
+                  "email": "david.wilson@hubspot.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 70,
+              "processingTime": 12000,
+              "creditsUsed": 35
+            },
+            "quality": {
+              "roleCoverage": 60,
+              "dataQuality": 75,
+              "relevanceScore": 65,
+              "consistency": 70
+            }
+          }
+        }
+      ],
+      "conflicts": [
+        {
+          "type": "SIZE_CONFLICT",
+          "description": "Different implementations identify different numbers of buyer group members",
+          "details": [
+            {
+              "impl": "Future Now",
+              "size": 7
+            },
+            {
+              "impl": "Intelligence Engine",
+              "size": 8
+            },
+            {
+              "impl": "Pipeline",
+              "size": 10
+            }
+          ],
+          "severity": "HIGH"
+        },
+        {
+          "type": "ROLE_COMPOSITION_CONFLICT",
+          "description": "Different implementations assign different numbers of people to each role",
+          "details": [
+            {
+              "role": "decision_maker",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 2
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 2
+                }
+              ],
+              "variance": 1
+            },
+            {
+              "role": "champion",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 2
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 3
+                }
+              ],
+              "variance": 2
+            },
+            {
+              "role": "stakeholder",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 2
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 3
+                }
+              ],
+              "variance": 2
+            },
+            {
+              "role": "blocker",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 2
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 2
+                }
+              ],
+              "variance": 1
+            },
+            {
+              "role": "introducer",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 0
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 0
+                }
+              ],
+              "variance": 1
+            }
+          ],
+          "severity": "HIGH"
+        }
+      ],
+      "accuracyIssues": [
+        {
+          "type": "SIZE_ACCURACY",
+          "implementation": "futureNow",
+          "description": "Buyer group size 7 is not appropriate for Mid-market company (expected 8-12)",
+          "severity": "HIGH",
+          "actual": 7,
+          "expected": {
+            "min": 8,
+            "max": 12
+          }
+        },
+        {
+          "type": "ROLE_COVERAGE",
+          "implementation": "pipeline",
+          "description": "Only 60% of required roles are represented",
+          "severity": "MEDIUM",
+          "actual": 60,
+          "expected": 80
+        },
+        {
+          "type": "DATA_QUALITY",
+          "implementation": "pipeline",
+          "description": "Data quality score 75% is below acceptable threshold",
+          "severity": "MEDIUM",
+          "actual": 75,
+          "expected": 85
+        }
+      ],
+      "buyerGroups": {
+        "futureNow": {
+          "success": true,
+          "implementation": "Future Now",
+          "buyerGroup": {
+            "totalMembers": 7,
+            "composition": {
+              "decision_maker": 1,
+              "champion": 1,
+              "stakeholder": 1,
+              "blocker": 1,
+              "introducer": 1
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "President",
+                "role": "decision_maker",
+                "confidence": 92,
+                "email": "john.smith@hubspot.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "Sales Director",
+                "role": "champion",
+                "confidence": 87,
+                "email": "sarah.johnson@hubspot.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Marketing Manager",
+                "role": "stakeholder",
+                "confidence": 87,
+                "email": "mike.davis@hubspot.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 93,
+                "email": "lisa.chen@hubspot.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "Business Development Manager",
+                "role": "introducer",
+                "confidence": 92,
+                "email": "david.wilson@hubspot.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 85,
+            "processingTime": 4000,
+            "creditsUsed": 15
+          },
+          "quality": {
+            "roleCoverage": 100,
+            "dataQuality": 90,
+            "relevanceScore": 80,
+            "consistency": 95
+          }
+        },
+        "intelligence": {
+          "success": true,
+          "implementation": "Intelligence Engine",
+          "buyerGroup": {
+            "totalMembers": 8,
+            "composition": {
+              "decision_maker": 2,
+              "champion": 2,
+              "stakeholder": 2,
+              "blocker": 2,
+              "introducer": 0
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "President",
+                "role": "decision_maker",
+                "confidence": 81,
+                "email": "john.smith@hubspot.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "Sales Director",
+                "role": "champion",
+                "confidence": 74,
+                "email": "sarah.johnson@hubspot.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Marketing Manager",
+                "role": "stakeholder",
+                "confidence": 78,
+                "email": "mike.davis@hubspot.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 80,
+                "email": "lisa.chen@hubspot.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "Business Development Manager",
+                "role": "introducer",
+                "confidence": 80,
+                "email": "david.wilson@hubspot.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 75,
+            "processingTime": 8000,
+            "creditsUsed": 25
+          },
+          "quality": {
+            "roleCoverage": 80,
+            "dataQuality": 85,
+            "relevanceScore": 70,
+            "consistency": 80
+          }
+        },
+        "pipeline": {
+          "success": true,
+          "implementation": "Pipeline",
+          "buyerGroup": {
+            "totalMembers": 10,
+            "composition": {
+              "decision_maker": 2,
+              "champion": 3,
+              "stakeholder": 3,
+              "blocker": 2,
+              "introducer": 0
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "President",
+                "role": "decision_maker",
+                "confidence": 74,
+                "email": "john.smith@hubspot.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "Sales Director",
+                "role": "champion",
+                "confidence": 76,
+                "email": "sarah.johnson@hubspot.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Marketing Manager",
+                "role": "stakeholder",
+                "confidence": 78,
+                "email": "mike.davis@hubspot.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 66,
+                "email": "lisa.chen@hubspot.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "Business Development Manager",
+                "role": "introducer",
+                "confidence": 78,
+                "email": "david.wilson@hubspot.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 70,
+            "processingTime": 12000,
+            "creditsUsed": 35
+          },
+          "quality": {
+            "roleCoverage": 60,
+            "dataQuality": 75,
+            "relevanceScore": 65,
+            "consistency": 70
+          }
+        }
+      },
+      "recommendations": [
+        {
+          "type": "SIZE_ADAPTATION",
+          "priority": "HIGH",
+          "description": "Implement adaptive buyer group sizing for Mid-market companies",
+          "details": "Current implementations use fixed sizing. HubSpot (5000 employees) needs 8-12 people, not fixed 8-15."
+        },
+        {
+          "type": "CONSISTENCY",
+          "priority": "HIGH",
+          "description": "Implement single source of truth for buyer group data",
+          "details": "2 conflicts found between implementations. Need consolidated approach."
+        },
+        {
+          "type": "QUALITY_IMPROVEMENT",
+          "priority": "MEDIUM",
+          "description": "Improve role coverage and data quality validation",
+          "details": "2 quality issues found. Need better validation mechanisms."
+        }
+      ]
+    },
+    "First Premier Bank": {
+      "company": {
+        "name": "First Premier Bank",
+        "website": "firstpremier.com",
+        "employeeCount": 500,
+        "size": "SMB",
+        "industry": "Banking",
+        "expectedBuyerGroupSize": {
+          "min": 4,
+          "max": 8
+        }
+      },
+      "tests": [
+        {
+          "implementation": "Future Now",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Future Now",
+            "buyerGroup": {
+              "totalMembers": 5,
+              "composition": {
+                "decision_maker": 1,
+                "champion": 1,
+                "stakeholder": 1,
+                "blocker": 1,
+                "introducer": 1
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "Owner",
+                  "role": "decision_maker",
+                  "confidence": 92,
+                  "email": "john.smith@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "Sales Manager",
+                  "role": "champion",
+                  "confidence": 90,
+                  "email": "sarah.johnson@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Marketing Coordinator",
+                  "role": "stakeholder",
+                  "confidence": 93,
+                  "email": "mike.davis@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 85,
+                  "email": "lisa.chen@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "Account Manager",
+                  "role": "introducer",
+                  "confidence": 89,
+                  "email": "david.wilson@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 85,
+              "processingTime": 4000,
+              "creditsUsed": 15
+            },
+            "quality": {
+              "roleCoverage": 100,
+              "dataQuality": 90,
+              "relevanceScore": 80,
+              "consistency": 95
+            }
+          }
+        },
+        {
+          "implementation": "Intelligence Engine",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Intelligence Engine",
+            "buyerGroup": {
+              "totalMembers": 6,
+              "composition": {
+                "decision_maker": 2,
+                "champion": 2,
+                "stakeholder": 2,
+                "blocker": 2,
+                "introducer": 0
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "Owner",
+                  "role": "decision_maker",
+                  "confidence": 74,
+                  "email": "john.smith@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "Sales Manager",
+                  "role": "champion",
+                  "confidence": 83,
+                  "email": "sarah.johnson@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Marketing Coordinator",
+                  "role": "stakeholder",
+                  "confidence": 78,
+                  "email": "mike.davis@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 80,
+                  "email": "lisa.chen@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "Account Manager",
+                  "role": "introducer",
+                  "confidence": 82,
+                  "email": "david.wilson@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 75,
+              "processingTime": 8000,
+              "creditsUsed": 25
+            },
+            "quality": {
+              "roleCoverage": 80,
+              "dataQuality": 85,
+              "relevanceScore": 70,
+              "consistency": 80
+            }
+          }
+        },
+        {
+          "implementation": "Pipeline",
+          "status": "PASS",
+          "details": {
+            "success": true,
+            "implementation": "Pipeline",
+            "buyerGroup": {
+              "totalMembers": 8,
+              "composition": {
+                "decision_maker": 2,
+                "champion": 3,
+                "stakeholder": 3,
+                "blocker": 2,
+                "introducer": 0
+              },
+              "members": [
+                {
+                  "name": "John Smith",
+                  "title": "Owner",
+                  "role": "decision_maker",
+                  "confidence": 61,
+                  "email": "john.smith@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/johnsmith",
+                  "department": "Executive",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "Sarah Johnson",
+                  "title": "Sales Manager",
+                  "role": "champion",
+                  "confidence": 79,
+                  "email": "sarah.johnson@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/sarahjohnson",
+                  "department": "Sales",
+                  "seniority": "VP-Level"
+                },
+                {
+                  "name": "Mike Davis",
+                  "title": "Marketing Coordinator",
+                  "role": "stakeholder",
+                  "confidence": 63,
+                  "email": "mike.davis@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/mikedavis",
+                  "department": "Marketing",
+                  "seniority": "Director-Level"
+                },
+                {
+                  "name": "Lisa Chen",
+                  "title": "Chief Legal Officer",
+                  "role": "blocker",
+                  "confidence": 64,
+                  "email": "lisa.chen@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/lisachen",
+                  "department": "Legal",
+                  "seniority": "C-Level"
+                },
+                {
+                  "name": "David Wilson",
+                  "title": "Account Manager",
+                  "role": "introducer",
+                  "confidence": 78,
+                  "email": "david.wilson@firstpremier.com",
+                  "linkedin": "https://linkedin.com/in/davidwilson",
+                  "department": "Business Development",
+                  "seniority": "VP-Level"
+                }
+              ],
+              "confidence": 70,
+              "processingTime": 12000,
+              "creditsUsed": 35
+            },
+            "quality": {
+              "roleCoverage": 60,
+              "dataQuality": 75,
+              "relevanceScore": 65,
+              "consistency": 70
+            }
+          }
+        }
+      ],
+      "conflicts": [
+        {
+          "type": "SIZE_CONFLICT",
+          "description": "Different implementations identify different numbers of buyer group members",
+          "details": [
+            {
+              "impl": "Future Now",
+              "size": 5
+            },
+            {
+              "impl": "Intelligence Engine",
+              "size": 6
+            },
+            {
+              "impl": "Pipeline",
+              "size": 8
+            }
+          ],
+          "severity": "HIGH"
+        },
+        {
+          "type": "ROLE_COMPOSITION_CONFLICT",
+          "description": "Different implementations assign different numbers of people to each role",
+          "details": [
+            {
+              "role": "decision_maker",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 2
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 2
+                }
+              ],
+              "variance": 1
+            },
+            {
+              "role": "champion",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 2
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 3
+                }
+              ],
+              "variance": 2
+            },
+            {
+              "role": "stakeholder",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 2
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 3
+                }
+              ],
+              "variance": 2
+            },
+            {
+              "role": "blocker",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 2
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 2
+                }
+              ],
+              "variance": 1
+            },
+            {
+              "role": "introducer",
+              "counts": [
+                {
+                  "impl": "Future Now",
+                  "count": 1
+                },
+                {
+                  "impl": "Intelligence Engine",
+                  "count": 0
+                },
+                {
+                  "impl": "Pipeline",
+                  "count": 0
+                }
+              ],
+              "variance": 1
+            }
+          ],
+          "severity": "HIGH"
+        }
+      ],
+      "accuracyIssues": [
+        {
+          "type": "ROLE_COVERAGE",
+          "implementation": "pipeline",
+          "description": "Only 60% of required roles are represented",
+          "severity": "MEDIUM",
+          "actual": 60,
+          "expected": 80
+        },
+        {
+          "type": "DATA_QUALITY",
+          "implementation": "pipeline",
+          "description": "Data quality score 75% is below acceptable threshold",
+          "severity": "MEDIUM",
+          "actual": 75,
+          "expected": 85
+        }
+      ],
+      "buyerGroups": {
+        "futureNow": {
+          "success": true,
+          "implementation": "Future Now",
+          "buyerGroup": {
+            "totalMembers": 5,
+            "composition": {
+              "decision_maker": 1,
+              "champion": 1,
+              "stakeholder": 1,
+              "blocker": 1,
+              "introducer": 1
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "Owner",
+                "role": "decision_maker",
+                "confidence": 92,
+                "email": "john.smith@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "Sales Manager",
+                "role": "champion",
+                "confidence": 90,
+                "email": "sarah.johnson@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Marketing Coordinator",
+                "role": "stakeholder",
+                "confidence": 93,
+                "email": "mike.davis@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 85,
+                "email": "lisa.chen@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "Account Manager",
+                "role": "introducer",
+                "confidence": 89,
+                "email": "david.wilson@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 85,
+            "processingTime": 4000,
+            "creditsUsed": 15
+          },
+          "quality": {
+            "roleCoverage": 100,
+            "dataQuality": 90,
+            "relevanceScore": 80,
+            "consistency": 95
+          }
+        },
+        "intelligence": {
+          "success": true,
+          "implementation": "Intelligence Engine",
+          "buyerGroup": {
+            "totalMembers": 6,
+            "composition": {
+              "decision_maker": 2,
+              "champion": 2,
+              "stakeholder": 2,
+              "blocker": 2,
+              "introducer": 0
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "Owner",
+                "role": "decision_maker",
+                "confidence": 74,
+                "email": "john.smith@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "Sales Manager",
+                "role": "champion",
+                "confidence": 83,
+                "email": "sarah.johnson@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Marketing Coordinator",
+                "role": "stakeholder",
+                "confidence": 78,
+                "email": "mike.davis@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 80,
+                "email": "lisa.chen@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "Account Manager",
+                "role": "introducer",
+                "confidence": 82,
+                "email": "david.wilson@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 75,
+            "processingTime": 8000,
+            "creditsUsed": 25
+          },
+          "quality": {
+            "roleCoverage": 80,
+            "dataQuality": 85,
+            "relevanceScore": 70,
+            "consistency": 80
+          }
+        },
+        "pipeline": {
+          "success": true,
+          "implementation": "Pipeline",
+          "buyerGroup": {
+            "totalMembers": 8,
+            "composition": {
+              "decision_maker": 2,
+              "champion": 3,
+              "stakeholder": 3,
+              "blocker": 2,
+              "introducer": 0
+            },
+            "members": [
+              {
+                "name": "John Smith",
+                "title": "Owner",
+                "role": "decision_maker",
+                "confidence": 61,
+                "email": "john.smith@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/johnsmith",
+                "department": "Executive",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "Sarah Johnson",
+                "title": "Sales Manager",
+                "role": "champion",
+                "confidence": 79,
+                "email": "sarah.johnson@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/sarahjohnson",
+                "department": "Sales",
+                "seniority": "VP-Level"
+              },
+              {
+                "name": "Mike Davis",
+                "title": "Marketing Coordinator",
+                "role": "stakeholder",
+                "confidence": 63,
+                "email": "mike.davis@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/mikedavis",
+                "department": "Marketing",
+                "seniority": "Director-Level"
+              },
+              {
+                "name": "Lisa Chen",
+                "title": "Chief Legal Officer",
+                "role": "blocker",
+                "confidence": 64,
+                "email": "lisa.chen@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/lisachen",
+                "department": "Legal",
+                "seniority": "C-Level"
+              },
+              {
+                "name": "David Wilson",
+                "title": "Account Manager",
+                "role": "introducer",
+                "confidence": 78,
+                "email": "david.wilson@firstpremier.com",
+                "linkedin": "https://linkedin.com/in/davidwilson",
+                "department": "Business Development",
+                "seniority": "VP-Level"
+              }
+            ],
+            "confidence": 70,
+            "processingTime": 12000,
+            "creditsUsed": 35
+          },
+          "quality": {
+            "roleCoverage": 60,
+            "dataQuality": 75,
+            "relevanceScore": 65,
+            "consistency": 70
+          }
+        }
+      },
+      "recommendations": [
+        {
+          "type": "CONSISTENCY",
+          "priority": "HIGH",
+          "description": "Implement single source of truth for buyer group data",
+          "details": "2 conflicts found between implementations. Need consolidated approach."
+        },
+        {
+          "type": "QUALITY_IMPROVEMENT",
+          "priority": "MEDIUM",
+          "description": "Improve role coverage and data quality validation",
+          "details": "2 quality issues found. Need better validation mechanisms."
+        }
+      ]
+    }
+  },
+  "summary": {
+    "totalTests": 12,
+    "passedTests": 12,
+    "failedTests": 0,
+    "conflictsFound": 8,
+    "accuracyIssues": 11
+  }
+}
