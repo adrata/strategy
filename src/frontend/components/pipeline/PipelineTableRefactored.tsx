@@ -557,8 +557,23 @@ export function PipelineTable({
                         }
                         break;
                       case 'stage':
-                        // Production uses plain text, no pills
-                        cellContent = record['stage'] || record['status'] || '-';
+                        const stageValue = record['stage'] || record['status'] || '-';
+                        if (stageValue !== '-' && section === 'speedrun') {
+                          // Speedrun: Show stage with colored pills
+                          const stageColors: Record<string, string> = {
+                            'LEAD': 'bg-orange-100 text-orange-800 border-orange-200',
+                            'PROSPECT': 'bg-blue-100 text-blue-800 border-blue-200',
+                            'OPPORTUNITY': 'bg-indigo-100 text-indigo-800 border-indigo-200',
+                            'CUSTOMER': 'bg-green-100 text-green-800 border-green-200',
+                            'CLIENT': 'bg-green-100 text-green-800 border-green-200',
+                            'SUPERFAN': 'bg-purple-100 text-purple-800 border-purple-200'
+                          };
+                          const colorClass = stageColors[stageValue.toUpperCase()] || 'bg-gray-100 text-gray-800 border-gray-200';
+                          cellContent = <span className={`inline-flex items-center rounded-full px-4 py-1 text-xs font-medium ${colorClass} border`}>{stageValue}</span>;
+                        } else {
+                          // Other sections: Plain text
+                          cellContent = stageValue;
+                        }
                         break;
                       case 'value':
                         cellContent = record['value'] || record['amount'] || record['revenue'] || '-';
