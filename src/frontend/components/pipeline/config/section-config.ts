@@ -247,7 +247,7 @@ export const SECTION_CONFIGURATIONS: Record<string, SectionConfig> = {
     id: 'speedrun',
     label: 'Speedrun',
     dataSource: 'speedrunItems',
-    defaultColumns: ['name', 'title', 'company', 'email', 'phone', 'status', 'priority', 'lastContacted', 'timezone'],
+    defaultColumns: ['name', 'title', 'company', 'state', 'status', 'priority', 'lastContacted', 'timezone'],
     availableFilters: ['search', 'vertical', 'status', 'priority', 'revenue', 'lastActionDate', 'timezone'],
     sortOptions: [
       { value: 'name', label: 'Name' },

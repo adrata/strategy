@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
-import { getStatusColor, getPriorityColor, getStageColor } from '@/platform/utils/statusUtils';
+import { getStatusColor, getPriorityColor, getStageColor, getStateColor } from '@/platform/utils/statusUtils';
 import { getLastActionTime, getSmartNextAction, getHealthStatus, getLeadsNextAction, getSmartLastActionDescription, formatLastActionTime } from '@/platform/utils/actionUtils';
 import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
 import { formatDate } from '@/platform/utils/dateUtils';
@@ -576,6 +576,14 @@ export function TableRow({
                     className={nameClasses}
                     onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
                   />
+                );
+              case 'state':
+                return (
+                  <td key="state" className={textClasses}>
+                    <span className={`rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap ${getStateColor(record['state'] || record['hqState'])}`}>
+                      {record['state'] || record['hqState'] || '-'}
+                    </span>
+                  </td>
                 );
               case 'stage':
                 return (

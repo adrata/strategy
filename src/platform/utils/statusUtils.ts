@@ -84,6 +84,16 @@ export function getSpeedrunStatusColor(status?: string): StatusColor {
   return 'bg-[var(--hover)] text-gray-800';
 }
 
+// -------- State Colors --------
+export function getStateColor(state?: string): StatusColor {
+  if (!state) return 'bg-[var(--hover)] text-gray-800';
+  
+  const stateLower = state.toLowerCase();
+  
+  // Use purple theme for states (consistent with location styling)
+  return 'bg-purple-100 text-purple-800 border border-purple-200';
+}
+
 // -------- Speedrun Status Labels --------
 export function getSpeedrunStatusLabel(status?: string): string {
   if (!status) return 'Unknown';

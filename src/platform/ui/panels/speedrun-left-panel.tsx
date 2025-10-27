@@ -590,6 +590,11 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
     return "bg-[var(--hover)] text-gray-800 border border-[var(--border)]";
   };
 
+  const getStateColor = (state: string) => {
+    if (!state) return 'bg-[var(--hover)] text-gray-800';
+    return 'bg-purple-100 text-purple-800 border border-purple-200';
+  };
+
   return (
     <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] border-r border-[var(--border)] flex flex-col h-full">
       

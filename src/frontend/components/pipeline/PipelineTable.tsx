@@ -152,6 +152,7 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
       'Rank',
       'Name',
       'Company',
+      'State',
       'Stage',
       'Actions',
       'LAST ACTION',
