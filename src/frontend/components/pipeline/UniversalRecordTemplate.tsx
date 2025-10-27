@@ -785,6 +785,47 @@ export function UniversalRecordTemplate({
   // This matches the user's implementation
   // handleInlineFieldSave is already implemented by the user
 
+  // Helper function to parse full name into firstName and lastName
+  const parseFullName = (fullName: string): { firstName: string; lastName: string } => {
+    const trimmedName = fullName.trim();
+    
+    // Handle empty names
+    if (!trimmedName) {
+      return { firstName: '', lastName: '' };
+    }
+    
+    const nameParts = trimmedName.split(/\s+/); // Split on one or more spaces
+    
+    // Check if first part is a valid name (contains at least one letter)
+    const isValidFirstName = (part: string): boolean => {
+      return /[a-zA-Z]/.test(part);
+    };
+    
+    // Single name case
+    if (nameParts.length === 1) {
+      if (isValidFirstName(nameParts[0])) {
+        return { firstName: nameParts[0], lastName: '' };
+      } else {
+        // If single part is invalid (like "."), treat as lastName
+        return { firstName: '', lastName: nameParts[0] };
+      }
+    }
+    
+    // Multiple parts - check if first part is valid
+    if (isValidFirstName(nameParts[0])) {
+      return {
+        firstName: nameParts[0],
+        lastName: nameParts.slice(1).join(' ')
+      };
+    } else {
+      // First part is invalid (like "."), treat everything as lastName
+      return {
+        firstName: '',
+        lastName: trimmedName
+      };
+    }
+  };
+
   // Handle record updates
   const handleUpdateSubmit = async (updatedData: any, actionData?: any) => {
     try {
@@ -848,10 +889,10 @@ export function UniversalRecordTemplate({
           // For companies, 'name' is the company name
           updatePayload['name'] = updatedData['name'].trim();
         } else {
-          // For people, split name into firstName/lastName
-          const nameParts = updatedData['name'].trim().split(' ');
-          updatePayload['firstName'] = nameParts[0] || 'Unknown';
-          updatePayload['lastName'] = nameParts.slice(1).join(' ') || 'User';
+          // For people, split name into firstName/lastName with validation
+          const { firstName, lastName } = parseFullName(updatedData['name']);
+          updatePayload['firstName'] = firstName || 'Unknown';
+          updatePayload['lastName'] = lastName || 'User';
           updatePayload['fullName'] = updatedData['name'].trim();
         }
       }
@@ -1910,9 +1951,9 @@ export function UniversalRecordTemplate({
       // Handle name field specially - split into firstName/lastName/fullName
       // BUT ONLY for people-related records, NOT for companies
       if ((field === 'name' || field === 'fullName') && targetModel !== 'companies') {
-        const nameParts = value.trim().split(' ');
-        updateData['firstName'] = nameParts[0] || '';
-        updateData['lastName'] = nameParts.slice(1).join(' ') || '';
+        const { firstName, lastName } = parseFullName(value);
+        updateData['firstName'] = firstName || '';
+        updateData['lastName'] = lastName || '';
         updateData['fullName'] = value.trim();
         console.log(`🔄 [UNIVERSAL] Name field update - original: ${value}, firstName: ${updateData['firstName']}, lastName: ${updateData['lastName']}, fullName: ${updateData['fullName']}`);
       }
