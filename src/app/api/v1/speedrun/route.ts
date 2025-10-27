@@ -291,12 +291,25 @@ export async function GET(request: NextRequest) {
           if (diffMs < 0) {
             nextActionTiming = 'Overdue';
           } else {
-            // First record gets "Now", rest get "Today"
-            nextActionTiming = index === 0 ? 'Now' : 'Today';
+            // Calculate actual timing based on date difference
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffHours < 2) {
+              nextActionTiming = 'Now';
+            } else if (diffHours < 24) {
+              nextActionTiming = `in ${diffHours}h`;
+            } else if (diffDays === 1) {
+              nextActionTiming = 'Tomorrow';
+            } else if (diffDays <= 7) {
+              nextActionTiming = `in ${diffDays}d`;
+            } else {
+              nextActionTiming = `in ${Math.ceil(diffDays / 7)}w`;
+            }
           }
         } else {
-          // If no date set, still show "Now" for first, "Today" for rest
-          nextActionTiming = index === 0 ? 'Now' : 'Today';
+          // If no date set, show "No date set"
+          nextActionTiming = 'No date set';
         }
 
         // Count meaningful actions (using only type field since metadata doesn't exist)

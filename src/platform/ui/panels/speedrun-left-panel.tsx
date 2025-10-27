@@ -968,13 +968,13 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             {doneContacts.map((contact) => (
               <div
                 key={`done-${contact.id}`}
-                className="p-2 rounded border border-[var(--border)] bg-[var(--hover)]"
+                className="p-2 rounded border border-green-200 bg-green-50"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[var(--foreground)]">{contact.name}</span>
-                  <span className="text-xs text-[var(--muted)]">✓</span>
+                  <span className="text-xs font-medium text-green-800">{contact.name}</span>
+                  <span className="text-xs text-green-600">✓</span>
                 </div>
-                <p className="text-xs text-[var(--muted)]">{contact.company}</p>
+                <p className="text-xs text-green-600">{contact.company}</p>
               </div>
             ))}
           </div>

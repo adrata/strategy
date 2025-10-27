@@ -41,12 +41,18 @@ export function getStageColor(stage?: string): StatusColor {
   
   const stageLower = stage.toLowerCase().replace(/\s+/g, '-');
   
-  // Closed stages
+  // Speedrun/Lead pipeline stages (priority over deal stages)
+  if (['lead', 'new'].includes(stageLower)) return 'bg-orange-100 text-orange-800 border border-orange-200';
+  if (['prospect', 'contacted', 'qualified'].includes(stageLower)) return 'bg-blue-100 text-blue-800 border border-blue-200';
+  if (['opportunity'].includes(stageLower)) return 'bg-indigo-100 text-indigo-800 border border-indigo-200';
+  if (['customer', 'client', 'superfan'].includes(stageLower)) return 'bg-green-100 text-green-800 border border-green-200';
+  
+  // Deal stages
   if (['won', 'closed-won'].includes(stageLower)) return 'bg-green-100 text-green-800';
   if (['lost', 'closed-lost'].includes(stageLower)) return 'bg-[var(--hover)] text-gray-800';
   if (stageLower === 'closed-lost-to-competition') return 'bg-red-100 text-red-800 border border-red-200';
   
-  // Active stages  
+  // Active deal stages  
   if (['proposal', 'proposal-price-quote'].includes(stageLower)) return 'bg-navy-100 text-navy-800';
   if (['negotiation', 'negotiation-review'].includes(stageLower)) return 'bg-orange-100 text-orange-800';
   if (['discovery', 'qualification', 'needs-analysis'].includes(stageLower)) return 'bg-[var(--hover)] text-gray-800';
