@@ -141,7 +141,7 @@ export const PipelineContent = React.memo(function PipelineContent({
     // Fallback to default configuration (display names)
     switch (section) {
       case 'speedrun':
-        return ['rank', 'name', 'company', 'status', 'actions', 'mainSeller', 'coSellers', 'lastAction', 'nextAction'];
+        return ['rank', 'name', 'company', 'state', 'stage', 'actions', 'lastAction', 'nextAction'];
       case 'companies':
         return ['rank', 'company', 'actions', 'lastAction', 'nextAction'];
       case 'leads':
@@ -163,6 +163,10 @@ export const PipelineContent = React.memo(function PipelineContent({
   
   const [visibleColumns, setVisibleColumns] = useState<string[]>(getDefaultVisibleColumns(section));
   
+  // 🆕 CRITICAL FIX: Get workspace ID early for localStorage access
+  const currentWorkspaceId = user?.activeWorkspaceId || null;
+  const currentUserId = user?.id || null;
+  
   // Update visible columns and sort when section changes
   useEffect(() => {
     setVisibleColumns(getDefaultVisibleColumns(section));
@@ -175,6 +179,32 @@ export const PipelineContent = React.memo(function PipelineContent({
       setSortDirection('asc'); // Lowest rank first (1, 2, 3...)
     }
   }, [section]);
+  
+  // Load saved sort preferences from localStorage for speedrun section
+  useEffect(() => {
+    if (section === 'speedrun' && currentWorkspaceId && typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`speedrun-sort-${currentWorkspaceId}`);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed.field) setSortField(parsed.field);
+          if (parsed.direction) setSortDirection(parsed.direction);
+        } catch (e) {
+          console.warn('Failed to parse saved sort preferences:', e);
+        }
+      }
+    }
+  }, [section, currentWorkspaceId]);
+  
+  // Save sort preferences to localStorage for speedrun section
+  useEffect(() => {
+    if (section === 'speedrun' && currentWorkspaceId && typeof window !== 'undefined') {
+      localStorage.setItem(`speedrun-sort-${currentWorkspaceId}`, JSON.stringify({
+        field: sortField,
+        direction: sortDirection
+      }));
+    }
+  }, [sortField, sortDirection, section, currentWorkspaceId]);
   
   // Monaco Signal popup state for Speedrun section
   const [isSlideUpVisible, setIsSlideUpVisible] = useState(false);
@@ -204,10 +234,6 @@ export const PipelineContent = React.memo(function PipelineContent({
   // Use single data source from useAcquisitionOS for dashboard only
   const { data: acquisitionData } = useAcquisitionOS();
   
-  // 🆕 CRITICAL FIX: Use workspace ID directly from user object (synchronous)
-  const currentWorkspaceId = user?.activeWorkspaceId || null;
-  const currentUserId = user?.id || null;
-
   const workspaceId = currentWorkspaceId;
   
   // Map workspace to correct user ID
@@ -312,6 +338,33 @@ export const PipelineContent = React.memo(function PipelineContent({
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isSlideUpVisible, activeSignal, acceptSignal]);
+  
+  // Listen for action creation events to refresh speedrun data
+  useEffect(() => {
+    if (section !== 'speedrun') return;
+    
+    const handleActionCreated = (event: CustomEvent) => {
+      console.log('🔄 [PipelineContent] Action created event received for speedrun refresh:', event.detail);
+      // Clear any relevant caches and refresh data
+      fastSectionData.clearCache();
+      fastSectionData.refresh();
+    };
+
+    const handleSpeedrunRefresh = (event: CustomEvent) => {
+      console.log('🔄 [PipelineContent] Speedrun refresh event received:', event.detail);
+      // Clear any relevant caches and refresh data
+      fastSectionData.clearCache();
+      fastSectionData.refresh();
+    };
+
+    document.addEventListener('actionCreated', handleActionCreated as EventListener);
+    document.addEventListener('speedrunRefresh', handleSpeedrunRefresh as EventListener);
+    
+    return () => {
+      document.removeEventListener('actionCreated', handleActionCreated as EventListener);
+      document.removeEventListener('speedrunRefresh', handleSpeedrunRefresh as EventListener);
+    };
+  }, [section, fastSectionData]);
   
     
   // CRITICAL FIX: Add metrics for metrics section compatibility
@@ -564,12 +617,8 @@ export const PipelineContent = React.memo(function PipelineContent({
 
     // Apply smart ranking or sorting
     if (section === 'speedrun' && (!sortField || sortField === 'rank')) {
-      // For speedrun, default sort by rank but respect sort direction
-      filtered = [...filtered].sort((a: any, b: any) => {
-        const aRank = parseInt(a.winningScore?.rank || a.rank || '999', 10);
-        const bRank = parseInt(b.winningScore?.rank || b.rank || '999', 10);
-        return sortDirection === 'asc' ? aRank - bRank : bRank - aRank;
-      });
+      // For speedrun, trust processedData from PipelineTableRefactored - don't re-sort
+      // The processedData already handles 50-1 ordering and completed items at bottom
     }
     
     if (sortField) {

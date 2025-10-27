@@ -30,9 +30,11 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { users } = useWorkspaceUsers();
   
-  // Success message state
+  // Success and error message state
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   
   // Delete confirmation state
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -42,7 +44,13 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
     setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 3000);
+    setTimeout(() => setShowSuccessMessage(false), 4000);
+  };
+
+  const handleError = (message: string) => {
+    setErrorMessage(message);
+    setShowErrorMessage(true);
+    setTimeout(() => setShowErrorMessage(false), 4000);
   };
 
   const handleDeleteClick = (actionId: string) => {
@@ -63,6 +71,9 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
 
       if (response && response.success) {
         handleSuccess('Action deleted successfully');
+        // Clear cached actions data
+        const cacheKey = `actions-${record.id}`;
+        localStorage.removeItem(cacheKey);
         // Refresh the actions list
         setRefreshTrigger(prev => prev + 1);
       } else {
@@ -70,7 +81,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       }
     } catch (error) {
       console.error('Error deleting action:', error);
-      handleSuccess('Failed to delete action');
+      handleError('Failed to delete action');
     } finally {
       setShowDeleteConfirm(false);
       setDeleteActionId(null);
@@ -237,7 +248,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     if (!forceRefresh && cachedData) {
       try {
         const parsed = JSON.parse(cachedData);
-        if (parsed.timestamp && Date.now() - parsed.timestamp < 5000 && parsed.version === currentCacheVersion) { // 5 second cache + version check
+        if (parsed.timestamp && Date.now() - parsed.timestamp < 1000 && parsed.version === currentCacheVersion) { // 1 second cache + version check
           activityEvents = parsed.activities || [];
           noteEvents = parsed.notes || [];
           console.log('⚡ [ACTIONS] Using cached actions data');
@@ -480,19 +491,66 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
 
   const isPastEvent = (date: Date) => date <= new Date();
 
-  // Group actions by type
-  const groupedActions = actionEvents.reduce((groups, event) => {
-    const type = event.metadata?.type || event.type || 'Other';
-    if (!groups[type]) {
-      groups[type] = [];
-    }
-    groups[type].push(event);
+  // Group actions by time periods
+  const groupActionsByTime = (events: ActionEvent[]) => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const thisWeekStart = new Date(today);
+    thisWeekStart.setDate(today.getDate() - today.getDay());
+    
+    const lastWeekStart = new Date(thisWeekStart);
+    lastWeekStart.setDate(thisWeekStart.getDate() - 7);
+    
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    const groups: Record<string, ActionEvent[]> = {
+      'Today': [],
+      'Yesterday': [],
+      'This Week': [],
+      'Last Week': [],
+      'This Month': [],
+      'Earlier': []
+    };
+    
+    events.forEach(event => {
+      const eventDate = event.date instanceof Date ? event.date : new Date(event.date);
+      const eventDay = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+      
+      if (eventDay.getTime() === today.getTime()) {
+        groups['Today'].push(event);
+      } else if (eventDay.getTime() === yesterday.getTime()) {
+        groups['Yesterday'].push(event);
+      } else if (eventDate >= thisWeekStart && eventDate < today) {
+        groups['This Week'].push(event);
+      } else if (eventDate >= lastWeekStart && eventDate < thisWeekStart) {
+        groups['Last Week'].push(event);
+      } else if (eventDate >= thisMonthStart && eventDate < lastWeekStart) {
+        groups['This Month'].push(event);
+      } else {
+        groups['Earlier'].push(event);
+      }
+    });
+    
+    // Sort events within each group by date (newest first)
+    Object.keys(groups).forEach(key => {
+      groups[key].sort((a, b) => {
+        const dateA = a.date instanceof Date ? a.date : new Date(a.date);
+        const dateB = b.date instanceof Date ? b.date : new Date(b.date);
+        return dateB.getTime() - dateA.getTime();
+      });
+    });
+    
     return groups;
-  }, {} as Record<string, ActionEvent[]>);
+  };
 
-  // Sort action types by count (most common first)
-  const sortedActionTypes = Object.keys(groupedActions).sort((a, b) => 
-    groupedActions[b].length - groupedActions[a].length
+  const groupedActions = groupActionsByTime(actionEvents);
+  
+  // Get time periods that have actions
+  const timePeriodsWithActions = Object.keys(groupedActions).filter(period => 
+    groupedActions[period].length > 0
   );
 
   return (
@@ -508,10 +566,10 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
             </span>
             {!loading && actionEvents.length > 0 && (
               <div className="flex items-center gap-2">
-                {sortedActionTypes.map((actionType, index) => (
-                  <span key={actionType} className="text-xs text-[var(--muted)]">
-                    {groupedActions[actionType].length} {actionType}
-                    {index < sortedActionTypes.length - 1 && ', '}
+                {timePeriodsWithActions.map((timePeriod, index) => (
+                  <span key={timePeriod} className="text-xs text-[var(--muted)]">
+                    {groupedActions[timePeriod].length} {timePeriod.toLowerCase()}
+                    {index < timePeriodsWithActions.length - 1 && ', '}
                   </span>
                 ))}
               </div>
@@ -548,25 +606,28 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         </div>
       ) : (
         <div className="space-y-8">
-          {sortedActionTypes.map((actionType, typeIndex) => (
-            <div key={actionType} className="space-y-4">
-              {/* Action Type Header */}
+          {timePeriodsWithActions.map((timePeriod, periodIndex) => (
+            <div key={timePeriod} className="space-y-4">
+              {/* Time Period Header */}
               <div className="flex items-center gap-3">
                 <h3 className="text-lg font-semibold text-[var(--foreground)]">
-                  {actionType}
+                  {timePeriod}
                 </h3>
+                <span className="text-sm text-[var(--muted)]">
+                  ({groupedActions[timePeriod].length} {groupedActions[timePeriod].length === 1 ? 'action' : 'actions'})
+                </span>
               </div>
               
-              {/* Actions for this type */}
+              {/* Actions for this time period */}
               <div className="space-y-4">
-                {groupedActions[actionType].map((event, index) => (
+                {groupedActions[timePeriod].map((event, index) => (
                   <div key={event.id} className="flex items-start gap-4">
                     {/* Action indicator */}
                     <div className="flex flex-col items-center pt-1">
                       <div className="w-8 h-8 rounded bg-[var(--background)] border-2 border-[var(--border)] flex items-center justify-center">
                         {getEventIcon(event.type)}
                       </div>
-                      {index < groupedActions[actionType].length - 1 && (
+                      {index < groupedActions[timePeriod].length - 1 && (
                         <div className="w-px h-12 bg-[var(--loading-bg)] mt-2" />
                       )}
                     </div>
@@ -576,6 +637,10 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
+                          {/* Action type badge - now first and bold */}
+                          <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700 font-semibold">
+                            {event.metadata?.type || event.type || 'Action'}
+                          </span>
                           {!isPastEvent(event.date) && event.metadata?.status?.toUpperCase() !== 'COMPLETED' && (
                             <span className="px-4 py-1 bg-red-100 text-red-800 text-xs rounded-full whitespace-nowrap">
                               Scheduled
@@ -590,10 +655,6 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                               {event.metadata.status.toUpperCase()}
                             </span>
                           )}
-                          {/* Action type badge */}
-                          <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">
-                            {event.metadata?.type || event.type || 'Action'}
-                          </span>
                         </div>
                     <InlineEditField
                       value={event.description}
@@ -698,6 +759,30 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       )}
 
 
+
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <div className="fixed top-4 right-4 z-50 bg-green-50 border border-green-200 rounded-lg shadow-lg px-4 py-3 max-w-sm">
+          <div className="flex items-center">
+            <svg className="h-5 w-5 text-green-500 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <p className="text-sm text-green-700 font-medium">{successMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {showErrorMessage && (
+        <div className="fixed top-4 right-4 z-50 bg-red-50 border border-red-200 rounded-lg shadow-lg px-4 py-3 max-w-sm">
+          <div className="flex items-center">
+            <svg className="h-5 w-5 text-red-500 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <p className="text-sm text-red-700 font-medium">{errorMessage}</p>
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (

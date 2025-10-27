@@ -13,7 +13,7 @@ const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
  * Dedicated optimized endpoint for speedrun data
  * - Top 50 people with companies (prioritizes ranked people, includes unranked)
  * - Only includes people with company relationships
- * - Ordered by globalRank ascending (ranked first), then by creation date
+ * - Ordered by globalRank ascending (1-50), then by creation date
  * - Pre-formatted response (no transformation needed)
  * - Aggressive Redis caching (5 min TTL)
  * - Leverages composite indexes for <200ms queries
@@ -419,14 +419,11 @@ export async function GET(request: NextRequest) {
       return result;
     };
 
-    // TEMPORARILY DISABLE CACHE TO DEBUG ISSUE
-    console.log('🔍 [SPEEDRUN API] Bypassing cache to debug issue');
-    
-    // Fetch data directly
-    const result = await fetchSpeedrunData();
+    // 🚀 CACHE: Use cache with proper invalidation
+    const result = await cache.get(cacheKey, fetchSpeedrunData, { ttl: SPEEDRUN_CACHE_TTL });
 
     const responseTime = Date.now() - startTime;
-    console.log(`✅ [SPEEDRUN API] Loaded ${result.data.length} speedrun prospects in ${responseTime}ms`);
+    console.log(`✅ [SPEEDRUN API] Loaded ${result.data.length} speedrun prospects in ${responseTime}ms (cached: ${result.meta?.cached || false})`);
 
     return NextResponse.json(result);
 

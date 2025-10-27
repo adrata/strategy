@@ -197,8 +197,8 @@ export function PipelineTable({
   const processedData = useMemo(() => {
     if (section === 'speedrun') {
       // Separate completed and active items first
-      const completedItems = [];
-      const activeItems = [];
+      const completedItems: any[] = [];
+      const activeItems: any[] = [];
       
       data.forEach(record => {
         // Check if item is completed (last action today)

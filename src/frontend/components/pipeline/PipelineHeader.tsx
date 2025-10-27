@@ -480,6 +480,17 @@ export function PipelineHeader({
             timestamp: new Date().toISOString()
           }
         }));
+        
+        // Dispatch speedrun-specific refresh event for table updates
+        if (section === 'speedrun') {
+          document.dispatchEvent(new CustomEvent('speedrunRefresh', {
+            detail: {
+              recordId: actionData.personId,
+              actionId: result.data?.id,
+              timestamp: new Date().toISOString()
+            }
+          }));
+        }
       }
 
       if (actionData.companyId) {
