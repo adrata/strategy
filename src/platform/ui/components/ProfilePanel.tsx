@@ -39,10 +39,18 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   currentApp = 'revenueos',
 }) => {
   const router = useRouter();
-  const { signOut, isDesktop } = useUnifiedAuth();
+  const { signOut, isDesktop, user: authUser } = useUnifiedAuth();
   const { setIsSettingsOpen } = useSettingsPopup();
 
   const initial = user.name?.charAt(0).toUpperCase() || "?";
+
+  // Check if user is in Adrata workspace
+  const isAdrataWorkspace = () => {
+    const activeWorkspace = authUser?.workspaces?.find(
+      w => w['id'] === authUser?.activeWorkspaceId
+    );
+    return activeWorkspace?.name?.toLowerCase() === 'adrata';
+  };
 
   const handleNavigation = (path: string) => {
     console.log(`🧭 ProfilePanel: Navigating to ${path}`);
@@ -185,18 +193,20 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
           <span className="font-medium">AcquisitionOS</span>
         </button>
 
-        {/* Oasis */}
-        <button
-          className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-            currentApp === 'oasis' 
-              ? 'bg-orange-100 text-orange-700' 
-              : 'text-[var(--foreground)] hover:bg-[var(--hover)]'
-          }`}
-          onClick={() => handleNavigation("/oasis")}
-        >
-          <MessageSquare className="w-4 h-4 mr-3" />
-          <span className="font-medium">Oasis</span>
-        </button>
+        {/* Oasis - Only show for Adrata workspace users */}
+        {isAdrataWorkspace() && (
+          <button
+            className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+              currentApp === 'oasis' 
+                ? 'bg-orange-100 text-orange-700' 
+                : 'text-[var(--foreground)] hover:bg-[var(--hover)]'
+            }`}
+            onClick={() => handleNavigation("/oasis")}
+          >
+            <MessageSquare className="w-4 h-4 mr-3" />
+            <span className="font-medium">Oasis</span>
+          </button>
+        )}
 
         {/* Settings */}
         <button

@@ -47,8 +47,38 @@ export function useTableEdit(options: UseTableEditOptions = {}) {
       );
 
       if (result?.success) {
-        const message = `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`;
-        onSuccess?.(message);
+        // If this is a rank update, trigger re-ranking
+        if (field === 'globalRank' || field === 'rank') {
+          console.log(`🔄 [TABLE EDIT] Triggering re-ranking after rank update`);
+          try {
+            const rerankResponse = await authFetch('/api/v1/speedrun/re-rank', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                manualRankUpdate: {
+                  personId: recordId,
+                  newRank: parseInt(value)
+                }
+              }),
+            });
+            
+            if (rerankResponse?.success) {
+              console.log(`✅ [TABLE EDIT] Re-ranking completed successfully`);
+              onSuccess?.(`✅ Rank updated to ${value} and other prospects re-ranked automatically!`);
+            } else {
+              console.warn(`⚠️ [TABLE EDIT] Re-ranking failed, but rank update succeeded`);
+              onSuccess?.(`✅ Rank updated to ${value}!`);
+            }
+          } catch (rerankError) {
+            console.warn(`⚠️ [TABLE EDIT] Re-ranking failed:`, rerankError);
+            onSuccess?.(`✅ Rank updated to ${value}!`);
+          }
+        } else {
+          const message = `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`;
+          onSuccess?.(message);
+        }
         console.log(`✅ [TABLE EDIT] Successfully updated ${recordType} ${recordId}`);
         return true;
       } else {

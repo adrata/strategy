@@ -111,8 +111,25 @@ export async function POST(request: NextRequest) {
       userId
     });
 
-    // 🎯 PER-USER RANKING: Get only people assigned to this user (mainSellerId = userId)
-    // This ensures each user gets their own ranked list 1-50
+    // 🎯 PER-USER RANKING: Get companies and people assigned to this user (mainSellerId = userId)
+    // This ensures each user gets their own ranked list 1-N for both companies and people
+    
+    // First, get companies assigned to this user
+    const allCompanies = await prisma.companies.findMany({
+      where: {
+        workspaceId,
+        deletedAt: null,
+        mainSellerId: userId // Only rank companies assigned to this specific user
+      },
+      include: {
+        _count: {
+          select: { people: true }
+        }
+      },
+      take: 1000
+    });
+
+    // Then, get people assigned to this user
     const allPeople = await prisma.people.findMany({
       where: {
         workspaceId,
@@ -144,90 +161,165 @@ export async function POST(request: NextRequest) {
 
     console.log(`🔄 [RE-RANK] Found ${allPeople.length} people to rank (including recently contacted)`);
 
-    // Transform data for ranking algorithm
-    const crmRecords = allPeople.map(person => ({
-      id: person.id,
-      name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim(),
-      company: person.company?.name || 'Unknown Company',
-      title: person.jobTitle || person.title || 'No Title',
-      email: person.email,
-      phone: person.phone,
-      mobilePhone: person.mobilePhone,
-      linkedin: person.linkedinUrl,
-      photo: person.photoUrl,
-      priority: person.priority || 'Medium',
-      status: person.status || 'New',
-      // 🎯 FIX: Use lastActionDate for scoring (this is what drives the penalty/bonus logic)
-      lastActionDate: person.lastActionDate?.toISOString() || undefined,
-      lastContact: person.lastActionDate?.toISOString() || new Date().toISOString(),
-      nextAction: person.nextAction || 'No action planned',
-      relationship: person.relationship || 'New',
-      bio: person.bio || '',
-      interests: person.interests || [],
-      recentActivity: person.recentActivity || '',
-      commission: person.commission || '0',
-      // Add ranking-specific fields
-      companySize: person.company?.size || 'Unknown',
-      industry: person.company?.industry || 'Unknown',
-      location: person.company?.location || 'Unknown',
+    console.log(`🔄 [RE-RANK] Found ${allCompanies.length} companies and ${allPeople.length} people to rank`);
+
+    // Step 1: Rank companies first (1-N per user)
+    console.log(`🏢 [RE-RANK] Ranking ${allCompanies.length} companies...`);
+    
+    // Create company ranking data
+    const companyRankingData = allCompanies.map(company => ({
+      id: company.id,
+      name: company.name,
+      industry: company.industry,
+      size: company.size,
+      location: company.location,
+      peopleCount: company._count.people,
+      status: company.status,
       // Add any existing ranking data
-      globalRank: person.globalRank || 999999,
-      rank: person.rank || 999999
+      globalRank: company.globalRank || 999999
     }));
 
-    // Get user settings for ranking
-    const userSettings = getDefaultUserSettings('AE'); // Default to AE role
+    // Sort companies by priority (industry, size, people count, etc.)
+    const sortedCompanies = companyRankingData.sort((a, b) => {
+      // Priority 1: Industry (title/real estate companies first)
+      const industryScore = (company) => {
+        const industry = (company.industry || '').toLowerCase();
+        if (industry.includes('title') || industry.includes('real estate') || industry.includes('escrow')) return 3;
+        if (industry.includes('insurance') || industry.includes('legal')) return 2;
+        return 1;
+      };
+      
+      const industryDiff = industryScore(b) - industryScore(a);
+      if (industryDiff !== 0) return industryDiff;
+      
+      // Priority 2: Company size (larger companies first)
+      const sizeScore = (company) => {
+        const size = (company.size || '').toLowerCase();
+        if (size.includes('large') || size.includes('enterprise')) return 3;
+        if (size.includes('medium') || size.includes('mid')) return 2;
+        return 1;
+      };
+      
+      const sizeDiff = sizeScore(b) - sizeScore(a);
+      if (sizeDiff !== 0) return sizeDiff;
+      
+      // Priority 3: People count (more people = higher priority)
+      return (b.peopleCount || 0) - (a.peopleCount || 0);
+    });
 
-    // Apply ranking algorithm with user's preferred mode
-    const rankedContacts = rankContacts(crmRecords, userSettings, rankingMode, stateOrder);
+    // Update company global ranks in database
+    console.log(`🏢 [RE-RANK] Updating company global ranks...`);
+    for (let i = 0; i < sortedCompanies.length; i++) {
+      const company = sortedCompanies[i];
+      await prisma.companies.update({
+        where: { id: company.id },
+        data: { globalRank: i + 1 }
+      });
+    }
+
+    console.log(`✅ [RE-RANK] Updated ${sortedCompanies.length} company ranks (1-${sortedCompanies.length})`);
+
+    // Step 2: Rank people with company hierarchy
+    console.log(`👥 [RE-RANK] Ranking ${allPeople.length} people with company hierarchy...`);
+    
+    // Create a map of company ranks for quick lookup
+    const companyRankMap = new Map();
+    sortedCompanies.forEach((company, index) => {
+      companyRankMap.set(company.name, index + 1);
+    });
+
+    // Group people by company and sort by company rank
+    const peopleByCompany = new Map();
+    allPeople.forEach(person => {
+      const companyName = person.company?.name || 'Unknown Company';
+      if (!peopleByCompany.has(companyName)) {
+        peopleByCompany.set(companyName, []);
+      }
+      peopleByCompany.get(companyName).push(person);
+    });
+
+    // Sort companies by their rank and then people within each company
+    const sortedPeopleByCompany = Array.from(peopleByCompany.entries())
+      .sort(([companyA], [companyB]) => {
+        const rankA = companyRankMap.get(companyA) || 999999;
+        const rankB = companyRankMap.get(companyB) || 999999;
+        return rankA - rankB;
+      });
+
+    // Rank people sequentially across all companies
+    let globalPersonRank = 1;
+    const rankedPeople = [];
+
+    for (const [companyName, companyPeople] of sortedPeopleByCompany) {
+      // Sort people within each company by priority
+      const sortedCompanyPeople = companyPeople.sort((a, b) => {
+        // Priority 1: Status (LEAD > PROSPECT > etc.)
+        const statusPriority = { 'LEAD': 3, 'PROSPECT': 2, 'OPPORTUNITY': 4, 'CUSTOMER': 5 };
+        const statusDiff = (statusPriority[b.status] || 1) - (statusPriority[a.status] || 1);
+        if (statusDiff !== 0) return statusDiff;
+        
+        // Priority 2: Job title seniority
+        const titleScore = (title) => {
+          const t = (title || '').toLowerCase();
+          if (t.includes('ceo') || t.includes('president') || t.includes('owner')) return 5;
+          if (t.includes('vp') || t.includes('vice president') || t.includes('director')) return 4;
+          if (t.includes('manager') || t.includes('head')) return 3;
+          if (t.includes('senior') || t.includes('lead')) return 2;
+          return 1;
+        };
+        
+        const titleDiff = titleScore(b.jobTitle) - titleScore(a.jobTitle);
+        if (titleDiff !== 0) return titleDiff;
+        
+        // Priority 3: Last contact date (more recent = higher priority)
+        const lastContactA = a.lastActionDate || new Date(0);
+        const lastContactB = b.lastActionDate || new Date(0);
+        return lastContactB.getTime() - lastContactA.getTime();
+      });
+
+      // Assign sequential ranks to people in this company
+      for (const person of sortedCompanyPeople) {
+        rankedPeople.push({
+          ...person,
+          globalRank: globalPersonRank,
+          companyRank: companyRankMap.get(companyName) || 999999
+        });
+        globalPersonRank++;
+      }
+    }
+
+    // Update people global ranks and nextActionDate in database
+    console.log(`👥 [RE-RANK] Updating people global ranks and nextActionDate...`);
+    for (const person of rankedPeople) {
+      const nextActionDate = calculateRankBasedDate(person.globalRank, person.lastActionDate);
+      
+      await prisma.people.update({
+        where: { id: person.id },
+        data: { 
+          globalRank: person.globalRank,
+          nextActionDate: nextActionDate
+        }
+      });
+    }
+
+    console.log(`✅ [RE-RANK] Updated ${rankedPeople.length} people ranks (1-${rankedPeople.length}) with nextActionDate`);
 
     // Take the top 50 for the new batch
-    const newBatch = rankedContacts.slice(0, 50);
+    const newBatch = rankedPeople.slice(0, 50);
 
     // 🎯 DEBUG: Log ranking changes for recently contacted people
     console.log(`🔄 [RE-RANK] Top 10 after re-ranking:`, 
-      newBatch.slice(0, 10).map((c, i) => ({
-        rank: i + 1,
-        name: c.name,
-        company: c.company,
-        lastActionDate: c.lastActionDate,
-        rankingScore: c.rankingScore
+      newBatch.slice(0, 10).map((person, i) => ({
+        rank: person.globalRank,
+        name: person.fullName,
+        company: person.company?.name,
+        companyRank: person.companyRank,
+        status: person.status,
+        title: person.jobTitle
       }))
     );
 
-    // 🎯 PER-USER RANKING: Assign simple sequential ranks 1-50 for this user's people
-    // Store user-specific rank in a custom field to avoid conflicts with other users
-    const updatePromises = newBatch.map((contact, index) => {
-      const newRank = index + 1;
-      const newNextActionDate = calculateRankBasedDate(newRank, contact.lastActionDate ? new Date(contact.lastActionDate) : null);
-      
-      return prisma.people.update({
-        where: { id: contact.id },
-        data: {
-          // Use globalRank for per-user sequential ranking (1-50)
-          globalRank: newRank, // Simple sequential rank for this user
-          // 🎯 FIX: Update nextActionDate based on new rank
-          nextActionDate: newNextActionDate,
-          // Store user-specific ranking data in customFields
-          customFields: {
-            userRank: newRank, // Per-user rank 1-50
-            userId: userId, // Track which user this rank belongs to
-            rankingMode: rankingMode,
-            // Keep state-based ranking fields if available
-            ...(contact.stateRank && { 
-              stateRank: contact.stateRank,
-              companyRankInState: contact.companyRankInState,
-              personRankInCompany: contact.personRankInCompany
-            })
-          },
-          updatedAt: new Date()
-        }
-      });
-    });
-
-    await Promise.all(updatePromises);
-
-    console.log(`✅ Successfully re-ranked and updated ${newBatch.length} records`);
+    console.log(`✅ Successfully re-ranked ${rankedPeople.length} people and ${sortedCompanies.length} companies`);
 
     // 🎯 AUTO RE-RANKING: Log completion for debugging
     if (trigger) {

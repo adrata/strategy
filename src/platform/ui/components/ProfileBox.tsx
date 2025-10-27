@@ -127,6 +127,14 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
 
   const initial = user.name?.charAt(0).toUpperCase() || "?";
 
+  // Check if user is in Adrata workspace
+  const isAdrataWorkspace = () => {
+    const activeWorkspace = authUser?.workspaces?.find(
+      w => w['id'] === authUser?.activeWorkspaceId
+    );
+    return activeWorkspace?.name?.toLowerCase() === 'adrata';
+  };
+
   // Get current workspace info
   const currentWorkspaceId = authUser?.activeWorkspaceId;
   const currentWorkspace = authUser?.workspaces?.find(ws => ws['id'] === currentWorkspaceId);
@@ -601,25 +609,27 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           AcquisitionOS
         </div>
 
-        {/* Oasis */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={() => {
-            console.log("Oasis clicked - navigating to oasis");
-            setIsProfileOpen(false);
-            handleNavigation("./oasis");
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e['key'] === "Enter") {
+        {/* Oasis - Only show for Adrata workspace users */}
+        {isAdrataWorkspace() && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+            onClick={() => {
+              console.log("Oasis clicked - navigating to oasis");
               setIsProfileOpen(false);
               handleNavigation("./oasis");
-            }
-          }}
-        >
-          Oasis
-        </div>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e['key'] === "Enter") {
+                setIsProfileOpen(false);
+                handleNavigation("./oasis");
+              }
+            }}
+          >
+            Oasis
+          </div>
+        )}
 
         {/* Settings */}
         <div

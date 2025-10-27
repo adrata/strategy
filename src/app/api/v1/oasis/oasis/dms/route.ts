@@ -12,14 +12,12 @@ import { prisma } from '@/lib/prisma';
 // GET /api/oasis/dms - List user's DMs
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Fix authentication - temporarily bypassing for development
-    // const session = await getServerSession(authOptions);
-    // if (!session?.user?.id) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     
-    // For now, use a hardcoded user ID for development
-    const userId = '01K7469230N74BVGK2PABPNNZ9'; // Ross Sylvester's ID
+    const userId = session.user.id;
 
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get('workspaceId');

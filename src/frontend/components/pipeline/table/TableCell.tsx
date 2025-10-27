@@ -42,7 +42,7 @@ export function TableCell({
   }, [isEditing]);
 
   // Don't make certain fields editable
-  const readOnlyFields = ['id', 'createdAt', 'updatedAt', 'lastActionTime', 'nextActionTime', 'rank'];
+  const readOnlyFields = ['id', 'createdAt', 'updatedAt', 'lastActionTime', 'nextActionTime'];
   const isFieldEditable = isEditable && !readOnlyFields.includes(field);
 
   const handleClick = () => {
@@ -117,13 +117,16 @@ export function TableCell({
         <div className="relative">
           <input
             ref={inputRef}
-            type="text"
+            type={field === 'rank' || field === 'globalRank' ? 'number' : 'text'}
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             className="w-full px-2 py-1 text-sm bg-[var(--background)] border border-[var(--border)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent"
             disabled={isLoading}
+            min={field === 'rank' || field === 'globalRank' ? 1 : undefined}
+            max={field === 'rank' || field === 'globalRank' ? 999 : undefined}
+            placeholder={field === 'rank' || field === 'globalRank' ? 'Enter rank (1-999)' : ''}
           />
           {isLoading && (
             <div className="absolute right-2 top-1/2 transform -translate-y-1/2">

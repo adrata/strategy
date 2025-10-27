@@ -130,10 +130,42 @@ function PipelineLayoutInner({
   const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
   const isAdminUser = ADMIN_EMAILS.includes(currentUserEmail || '');
 
+  // Check if user is in Adrata workspace
+  const isAdrataWorkspace = () => {
+    const activeWorkspace = authUser?.workspaces?.find(
+      w => w['id'] === authUser?.activeWorkspaceId
+    );
+    return activeWorkspace?.name?.toLowerCase() === 'adrata';
+  };
+
   // Determine which left panel to show based on the current route
   const getLeftPanel = () => {
     if (pathname.includes('/oasis')) {
-      return <OasisLeftPanel />;
+      // Only show Oasis left panel for Adrata workspace users
+      if (isAdrataWorkspace()) {
+        return <OasisLeftPanel />;
+      } else {
+        // Redirect non-Adrata users to default panel
+        return (
+          <LeftPanel 
+            key={`left-panel-${isNovaActive ? "nova" : currentSection}`}
+            activeSection={isNovaActive ? "nova" : currentSection}
+            onSectionChange={onSectionChange}
+            isSpeedrunVisible={isSpeedrunVisible}
+            setIsSpeedrunVisible={setIsSpeedrunVisible}
+            isOpportunitiesVisible={isOpportunitiesVisible}
+            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+            isProspectsVisible={isProspectsVisible}
+            setIsProspectsVisible={setIsProspectsVisible}
+            isLeadsVisible={isLeadsVisible}
+            setIsLeadsVisible={setIsLeadsVisible}
+            isCustomersVisible={isCustomersVisible}
+            setIsCustomersVisible={setIsCustomersVisible}
+            isPartnersVisible={isPartnersVisible}
+            setIsPartnersVisible={setIsPartnersVisible}
+          />
+        );
+      }
     } else if (pathname.includes('/stacks')) {
       return <StacksLeftPanel activeSubSection="stacks" onSubSectionChange={() => {}} />;
     } else if (pathname.includes('/speedrun/sprint')) {

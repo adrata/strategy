@@ -176,7 +176,7 @@ export const PipelineContent = React.memo(function PipelineContent({
       setSortDirection('asc'); // Oldest first
     } else {
       setSortField('rank');
-      setSortDirection('asc'); // Lowest rank first (1, 2, 3...)
+      setSortDirection('desc'); // Highest rank first (largest to smallest)
     }
   }, [section]);
   
@@ -615,12 +615,7 @@ export const PipelineContent = React.memo(function PipelineContent({
       return matchesSearch && matchesVertical && matchesRevenue && matchesStatus && matchesPriority && matchesTimezone && matchesCompanySize && matchesLocation && matchesLastContacted;
     });
 
-    // Apply smart ranking or sorting
-    if (section === 'speedrun' && (!sortField || sortField === 'rank')) {
-      // For speedrun, trust processedData from PipelineTableRefactored - don't re-sort
-      // The processedData already handles 50-1 ordering and completed items at bottom
-    }
-    
+    // Apply sorting for all fields including rank
     if (sortField) {
       // Regular field sorting with robust field handling
       console.log(`🔧 [SORT FIX] Applying sort: field=${sortField}, direction=${sortDirection}, section=${section}`);

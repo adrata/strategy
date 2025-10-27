@@ -135,7 +135,7 @@ export const PipelineView = React.memo(function PipelineView({
   // Initialize persistence hook with section-specific defaults
   const defaultColumns = getDefaultVisibleColumns(section);
   const defaultSortField = section === 'prospects' ? 'lastContactDate' : 'rank';
-  const defaultSortDirection = section === 'prospects' ? 'asc' : 'asc';
+  const defaultSortDirection = section === 'prospects' ? 'asc' : 'desc';
   
   const {
     preferences,
@@ -965,7 +965,7 @@ export const PipelineView = React.memo(function PipelineView({
       filtered = [...filtered].sort((a: any, b: any) => {
         const aRank = parseInt(a.winningScore?.rank || a.rank || '999', 10);
         const bRank = parseInt(b.winningScore?.rank || b.rank || '999', 10);
-        return aRank - bRank; // Lower rank number first (1, 2, 3...)
+        return bRank - aRank; // Higher rank number first (largest to smallest)
       });
     }
     
