@@ -493,10 +493,12 @@ export function PipelineTable({
                         break;
                       case 'state':
                         const state = record['hqState'] || record['state'] || record['location'] || '-';
-                        if (state !== '-') {
+                        if (state !== '-' && section === 'speedrun') {
+                          // Speedrun: Show state with purple pills
                           cellContent = <span className="rounded-full px-4 py-1 text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">{state}</span>;
                         } else {
-                          cellContent = '-';
+                          // Other sections: Plain text
+                          cellContent = state;
                         }
                         break;
                       case 'title':
