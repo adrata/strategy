@@ -391,6 +391,20 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         eventTypes: activityEvents.map(e => e.metadata?.type),
         sampleEvent: activityEvents[0]
       });
+      
+      // Debug: Log each event's type checking
+      activityEvents.forEach((event, index) => {
+        const eventType = event.metadata?.type || event.type;
+        const isMeaningful = isMeaningfulAction(eventType);
+        console.log(`🔍 [ACTIONS] Event ${index}:`, {
+          id: event.id,
+          eventType,
+          metadataType: event.metadata?.type,
+          directType: event.type,
+          isMeaningful,
+          title: event.title
+        });
+      });
 
       activityEvents = activityEvents.filter(event => {
         // Check both metadata.type and direct type field
