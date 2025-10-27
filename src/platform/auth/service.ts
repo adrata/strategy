@@ -320,6 +320,18 @@ export class UnifiedAuthService {
         }
       );
 
+      // Check if response is OK before parsing JSON
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Auth API returned error:', response.status, text);
+        return {
+          success: false,
+          error: response.status === 401 
+            ? "Invalid credentials" 
+            : "Authentication failed - please try again"
+        };
+      }
+
       const data = await response.json();
 
       if (!data.success) {
@@ -392,24 +404,32 @@ export class UnifiedAuthService {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email }),
-        },
-        {
-          success: false,
-          error: "Password reset request failed",
-        },
+        }
       );
 
-      if (response.success) {
+      // Check if response is OK before parsing JSON
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Forgot password API returned error:', response.status, text);
+        return {
+          success: false,
+          error: "Password reset request failed"
+        };
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
         console.log("✅ [FORGOT PASSWORD] Reset request successful");
         return {
           success: true,
-          message: (response as any).message || "If an account with that email exists, you will receive a password reset link.",
+          message: data.message || "If an account with that email exists, you will receive a password reset link.",
         };
       } else {
-        console.log("❌ [FORGOT PASSWORD] Reset request failed:", response.error);
+        console.log("❌ [FORGOT PASSWORD] Reset request failed:", data.error);
         return {
           success: false,
-          error: response.error || "Password reset request failed",
+          error: data.error || "Password reset request failed",
         };
       }
     } catch (error) {
@@ -432,24 +452,32 @@ export class UnifiedAuthService {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, newPassword }),
-        },
-        {
-          success: false,
-          error: "Password reset failed",
-        },
+        }
       );
 
-      if (response.success) {
+      // Check if response is OK before parsing JSON
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Reset password API returned error:', response.status, text);
+        return {
+          success: false,
+          error: "Password reset failed"
+        };
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
         console.log("✅ [RESET PASSWORD] Password reset successful");
         return {
           success: true,
-          message: (response as any).message || "Password has been reset successfully.",
+          message: data.message || "Password has been reset successfully.",
         };
       } else {
-        console.log("❌ [RESET PASSWORD] Password reset failed:", response.error);
+        console.log("❌ [RESET PASSWORD] Password reset failed:", data.error);
         return {
           success: false,
-          error: response.error || "Password reset failed",
+          error: data.error || "Password reset failed",
         };
       }
     } catch (error) {
@@ -482,21 +510,25 @@ export class UnifiedAuthService {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ refreshToken: currentSession.refreshToken }),
           credentials: "include",
-        },
-        {
-          success: false,
-          error: "Token refresh failed",
-          accessToken: "",
-          refreshToken: "",
-          expires: "",
-        },
+        }
       );
 
-      if (response.success) {
+      // Check if response is OK before parsing JSON
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Token refresh API returned error:', response.status, text);
+        return {
+          success: false,
+          error: "Token refresh failed"
+        };
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
         console.log("✅ [TOKEN REFRESH] Token refresh successful");
 
         // Type-safe check for user property
-        const data = response as any;
         if (!data.user) {
           return { success: false, error: "Token refresh failed" };
         }
@@ -547,26 +579,34 @@ export class UnifiedAuthService {
         `${AUTH_API_ROUTES.RESET_PASSWORD}?token=${encodeURIComponent(token)}`,
         {
           method: "GET",
-        },
-        {
-          valid: false,
-          error: "Token validation failed",
-        },
+        }
       );
 
-      if (response.valid) {
+      // Check if response is OK before parsing JSON
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Token validation API returned error:', response.status, text);
+        return {
+          success: false,
+          error: "Token validation failed"
+        };
+      }
+
+      const data = await response.json();
+
+      if (data.valid) {
         console.log("✅ [VALIDATE TOKEN] Token is valid");
         return {
           success: true,
           message: "Token is valid",
           // Pass through additional data like email and expiry
-          ...response,
+          ...data,
         };
       } else {
-        console.log("❌ [VALIDATE TOKEN] Token is invalid:", response.error);
+        console.log("❌ [VALIDATE TOKEN] Token is invalid:", data.error);
         return {
           success: false,
-          error: response.error || "Invalid or expired token",
+          error: data.error || "Invalid or expired token",
         };
       }
     } catch (error) {

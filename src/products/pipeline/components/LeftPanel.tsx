@@ -734,6 +734,13 @@ function PipelineSections({
       visible: true
     },
     {
+      id: "galaxy",
+      name: "Galaxy",
+      description: "Native web browser",
+      count: "🌌",
+      visible: authUser?.email === "ross@adrata.com" && workspaceId === "adrata"
+    },
+    {
       id: "metrics",
       name: "Metrics",
       description: "Weekly Sales Performance",
@@ -902,6 +909,14 @@ export function PipelineLeftPanelStandalone({
   // Handle section click
   const handleSectionClick = (section: string) => {
     console.log('🔄 Pipeline section clicked:', section);
+    
+    // Special handling for Galaxy browser
+    if (section === "galaxy") {
+      // Open Galaxy browser in a new tab/window
+      window.open("/galaxy.html", "_blank", "width=1200,height=800,scrollbars=yes,resizable=yes");
+      return;
+    }
+    
     onSectionChange(section);
   };
 

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Browser - Adrata</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .browser-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .nav-btn {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #374151;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .address-bar {
+            flex: 1;
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #374151;
+        }
+        
+        .address-bar:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .refresh-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .refresh-btn:hover {
+            background: #2563eb;
+        }
+        
+        .browser-content {
+            flex: 1;
+            position: relative;
+        }
+        
+        .webview {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0 16px;
+        }
+        
+        .tab {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            padding: 8px 16px;
+            margin-right: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #6b7280;
+            position: relative;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #374151;
+            border-color: #e5e7eb;
+        }
+        
+        .tab-close {
+            margin-left: 8px;
+            color: #9ca3af;
+            cursor: pointer;
+        }
+        
+        .tab-close:hover {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="browser-header">
+        <div class="nav-buttons">
+            <button class="nav-btn" id="backBtn" disabled>←</button>
+            <button class="nav-btn" id="forwardBtn" disabled>→</button>
+        </div>
+        <input type="text" class="address-bar" id="addressBar" placeholder="Enter URL or search..." value="https://www.google.com">
+        <button class="refresh-btn" id="refreshBtn">Refresh</button>
+    </div>
+    
+    <div class="tabs">
+        <div class="tab active" id="tab1">
+            Google
+            <span class="tab-close" onclick="closeTab(1)">×</span>
+        </div>
+    </div>
+    
+    <div class="browser-content">
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+            <div>Loading Galaxy Browser...</div>
+        </div>
+        <iframe class="webview" id="webview" src="https://www.google.com" style="display: none;"></iframe>
+    </div>
+
+    <script>
+        // Browser functionality
+        const addressBar = document.getElementById('addressBar');
+        const webview = document.getElementById('webview');
+        const backBtn = document.getElementById('backBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        let currentUrl = 'https://www.google.com';
+        let history = [currentUrl];
+        let historyIndex = 0;
+        
+        // Custom User-Agent to avoid detection
+        const customUserAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+        
+        // Initialize browser
+        function initBrowser() {
+            // Set custom User-Agent (this will be handled by Tauri webview configuration)
+            console.log('Galaxy Browser initialized with User-Agent:', customUserAgent);
+            
+            // Show webview after a short delay
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                webview.style.display = 'block';
+            }, 1000);
+        }
+        
+        // Navigate to URL
+        function navigateToUrl(url) {
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                // Check if it looks like a domain
+                if (url.includes('.') && !url.includes(' ')) {
+                    url = 'https://' + url;
+                } else {
+                    // Treat as search query
+                    url = 'https://www.google.com/search?q=' + encodeURIComponent(url);
+                }
+            }
+            
+            currentUrl = url;
+            webview.src = url;
+            
+            // Add to history
+            if (history[historyIndex] !== url) {
+                history = history.slice(0, historyIndex + 1);
+                history.push(url);
+                historyIndex = history.length - 1;
+            }
+            
+            updateNavButtons();
+        }
+        
+        // Update navigation buttons
+        function updateNavButtons() {
+            backBtn.disabled = historyIndex <= 0;
+            forwardBtn.disabled = historyIndex >= history.length - 1;
+        }
+        
+        // Event listeners
+        addressBar.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                navigateToUrl(addressBar.value);
+            }
+        });
+        
+        backBtn.addEventListener('click', () => {
+            if (historyIndex > 0) {
+                historyIndex--;
+                const url = history[historyIndex];
+                addressBar.value = url;
+                webview.src = url;
+                updateNavButtons();
+            }
+        });
+        
+        forwardBtn.addEventListener('click', () => {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                const url = history[historyIndex];
+                addressBar.value = url;
+                webview.src = url;
+                updateNavButtons();
+            }
+        });
+        
+        refreshBtn.addEventListener('click', () => {
+            webview.src = webview.src;
+        });
+        
+        // Update address bar when webview navigates
+        webview.addEventListener('load', () => {
+            try {
+                const url = webview.contentWindow.location.href;
+                if (url && url !== 'about:blank') {
+                    addressBar.value = url;
+                }
+            } catch (e) {
+                // Cross-origin restrictions may prevent access
+                console.log('Cannot access webview URL due to CORS');
+            }
+        });
+        
+        // Tab management
+        function closeTab(tabId) {
+            // For now, just reload the page
+            webview.src = 'https://www.google.com';
+            addressBar.value = 'https://www.google.com';
+        }
+        
+        // Initialize
+        initBrowser();
+        
+        // Expose functions for Tauri integration
+        window.galaxyBrowser = {
+            navigateToUrl,
+            getCurrentUrl: () => currentUrl,
+            getUserAgent: () => customUserAgent
+        };
+    </script>
+</body>
+</html>
