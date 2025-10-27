@@ -536,11 +536,11 @@ export function PipelineTable({
                                 // Apply theme colors for lead pipeline status
                                 const statusLower = personStatus.toLowerCase();
                                 if (statusLower === 'lead' || statusLower === 'new') {
-                                  statusColor = 'bg-orange-50 text-orange-700 border border-orange-200'; // Orange theme (leads)
-                                } else if (statusLower === 'prospect' || statusLower === 'contacted' || statusLower === 'qualified') {
-                                  statusColor = 'bg-blue-50 text-blue-700 border border-blue-200'; // Blue theme (prospects)
+                                  statusColor = 'bg-orange-100 text-orange-800 border border-orange-200'; // Orange theme (leads)
+                                } else                                 if (statusLower === 'prospect' || statusLower === 'contacted' || statusLower === 'qualified') {
+                                  statusColor = 'bg-blue-100 text-blue-800 border border-blue-200'; // Blue theme (prospects)
                                 } else if (statusLower === 'opportunity') {
-                                  statusColor = 'bg-indigo-50 text-indigo-700 border border-indigo-200'; // Indigo theme (opportunities)
+                                  statusColor = 'bg-indigo-100 text-indigo-800 border border-indigo-200'; // Indigo theme (opportunities)
                                 } else if (statusLower === 'customer' || statusLower === 'client') {
                                   statusColor = 'bg-green-50 text-green-700 border border-green-200'; // Green theme (customers)
                                 } else if (statusLower === 'person' || statusLower === 'people') {
