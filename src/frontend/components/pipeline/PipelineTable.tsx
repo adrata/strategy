@@ -255,6 +255,15 @@ export function PipelineTable({
     tableHeight = maxViewportHeight;
   }
   
+  // 🎯 SPEEDRUN REVERSE ORDER: For Speedrun section, reverse the data to show 50-1
+  const processedData = React.useMemo(() => {
+    if (section === 'speedrun') {
+      // Reverse the array to show 50-1 instead of 1-50
+      return [...data].reverse();
+    }
+    return data;
+  }, [data, section]);
+
   // Use custom hooks for data and actions
   const {
     paginatedData,
@@ -264,7 +273,7 @@ export function PipelineTable({
     setCurrentPage,
     setSortField,
     setSortDirection,
-  } = usePipelineData({ data, pageSize });
+  } = usePipelineData({ data: processedData, pageSize });
   
   // Real-time timestamp refresh state
   const [timestampRefresh, setTimestampRefresh] = useState(0);
