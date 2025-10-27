@@ -2989,6 +2989,16 @@ export function UniversalRecordTemplate({
           }
         }));
         
+        // Dispatch event with full action data for optimistic update
+        document.dispatchEvent(new CustomEvent('actionCreatedWithData', {
+          detail: {
+            recordId: record.id,
+            recordType: recordType,
+            actionData: result.data, // Full action data from API response
+            timestamp: new Date().toISOString()
+          }
+        }));
+        
         // Close the modal
         setIsAddActionModalOpen(false);
         

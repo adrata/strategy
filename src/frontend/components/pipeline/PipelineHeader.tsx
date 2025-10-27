@@ -481,6 +481,16 @@ export function PipelineHeader({
           }
         }));
         
+        // Dispatch event with full action data for optimistic update
+        document.dispatchEvent(new CustomEvent('actionCreatedWithData', {
+          detail: {
+            recordId: actionData.personId,
+            recordType: section,
+            actionData: result.data, // Full action data from API response
+            timestamp: new Date().toISOString()
+          }
+        }));
+        
         // Dispatch speedrun-specific refresh event for table updates
         if (section === 'speedrun') {
           document.dispatchEvent(new CustomEvent('speedrunRefresh', {
@@ -503,6 +513,16 @@ export function PipelineHeader({
             recordId: actionData.companyId,
             recordType: 'companies',
             actionId: result.data?.id,
+            timestamp: new Date().toISOString()
+          }
+        }));
+        
+        // Dispatch event with full action data for optimistic update
+        document.dispatchEvent(new CustomEvent('actionCreatedWithData', {
+          detail: {
+            recordId: actionData.companyId,
+            recordType: 'companies',
+            actionData: result.data, // Full action data from API response
             timestamp: new Date().toISOString()
           }
         }));

@@ -461,6 +461,55 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       }
     };
 
+    const handleActionCreatedWithData = (event: CustomEvent) => {
+      const { recordId, actionData } = event.detail || {};
+      if (recordId === record?.id && actionData) {
+        console.log('⚡ [ACTIONS] Optimistically adding new action immediately:', actionData);
+        
+        // Optimistically add the new action to the list immediately
+        const newEvent: ActionEvent = {
+          id: actionData.id,
+          type: 'activity' as const,
+          date: new Date(actionData.completedAt || actionData.createdAt || Date.now()),
+          title: actionData.type || 'Activity',
+          description: actionData.subject || '',
+          content: actionData.description || '',
+          user: getUserName(actionData.userId || 'System'),
+          metadata: {
+            type: actionData.type,
+            status: actionData.status,
+            priority: actionData.priority
+          }
+        };
+        
+        // Add to state immediately
+        setActionEvents(prev => {
+          // Check if action already exists (avoid duplicates)
+          const exists = prev.some(e => e.id === newEvent.id);
+          if (exists) {
+            console.log('⚠️ [ACTIONS] Action already exists, skipping optimistic add');
+            return prev;
+          }
+          
+          // Add new event and re-sort
+          const updated = [newEvent, ...prev];
+          const sorted = updated.sort((a, b) => {
+            const dateA = a.date instanceof Date ? a.date : new Date(a.date || 0);
+            const dateB = b.date instanceof Date ? b.date : new Date(b.date || 0);
+            return dateB.getTime() - dateA.getTime();
+          });
+          
+          console.log('✅ [ACTIONS] Added action optimistically, total count:', sorted.length);
+          return sorted;
+        });
+        
+        // Still clear cache and refresh in background to ensure consistency
+        const cacheKey = `actions-${record.id}`;
+        localStorage.removeItem(cacheKey);
+        setTimeout(() => loadActionsFromAPI(true), 100);
+      }
+    };
+
     const handleActionUpdated = (event: CustomEvent) => {
       const { recordId, actionId } = event.detail || {};
       // Match by recordId only - don't check recordType to avoid mismatches
@@ -474,13 +523,15 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     };
 
     document.addEventListener('actionCreated', handleActionCreated as EventListener);
+    document.addEventListener('actionCreatedWithData', handleActionCreatedWithData as EventListener);
     document.addEventListener('actionUpdated', handleActionUpdated as EventListener);
     
     return () => {
       document.removeEventListener('actionCreated', handleActionCreated as EventListener);
+      document.removeEventListener('actionCreatedWithData', handleActionCreatedWithData as EventListener);
       document.removeEventListener('actionUpdated', handleActionUpdated as EventListener);
     };
-  }, [record?.id, recordType, loadActionsFromAPI]);
+  }, [record?.id, recordType, loadActionsFromAPI, getUserName]);
 
   useEffect(() => {
     if (record?.id) {
@@ -639,11 +690,11 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                         <div className="flex items-center gap-2 mb-1">
                           {/* Action type badge - now first and bold */}
                           {event.metadata?.type === 'LinkedIn Connection' || event.type === 'LinkedIn Connection' ? (
-                            <span className="text-sm font-bold text-gray-800">
+                            <span className="text-base font-bold text-gray-800">
                               {event.metadata?.type || event.type || 'Action'}
                             </span>
                           ) : (
-                            <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700 font-semibold">
+                            <span className="px-2 py-1 text-sm rounded-full bg-gray-100 text-gray-700 font-semibold">
                               {event.metadata?.type || event.type || 'Action'}
                             </span>
                           )}
