@@ -191,23 +191,6 @@ export async function GET(request: NextRequest) {
               state: true
             }
           },
-          lastAction: {
-            where: {
-              deletedAt: null,
-              status: 'COMPLETED'
-            },
-            orderBy: {
-              completedAt: 'desc'
-            },
-            take: 1,
-            select: {
-              id: true,
-              type: true,
-              subject: true,
-              completedAt: true,
-              createdAt: true
-            }
-          },
           actions: {
             where: {
               deletedAt: null
@@ -261,11 +244,8 @@ export async function GET(request: NextRequest) {
         let lastAction = person.lastAction;
         let lastActionDate = person.lastActionDate;
         
-        // Check if we have a meaningful action from the database
-        if (person.lastAction) {
-          lastAction = person.lastAction.subject || person.lastAction.type;
-          lastActionDate = person.lastAction.completedAt || person.lastAction.createdAt;
-        }
+        // lastAction is now a scalar field, so use it directly
+        // If we need to get the most recent meaningful action, we'll use the actions relation
         
         // Only show real last actions if they exist and are meaningful
         if (lastActionDate && lastAction && lastAction !== 'No action taken') {
