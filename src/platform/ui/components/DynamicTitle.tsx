@@ -192,6 +192,25 @@ export function DynamicTitle() {
             title = 'Database • Records';
           } else if (pathname.includes('/atrium')) {
             title = 'Atrium • Documents';
+          } else if (pathname.includes('/oasis')) {
+            // Extract channel or DM name from URL
+            const pathSegments = pathname.split('/').filter(Boolean);
+            const oasisIndex = pathSegments.findIndex(segment => segment === 'oasis');
+            
+            if (oasisIndex !== -1 && pathSegments.length > oasisIndex + 1) {
+              const type = pathSegments[oasisIndex + 1]; // 'channels' or 'dms'
+              const name = pathSegments[oasisIndex + 2]; // channel or DM name
+              
+              if (type === 'channels' && name) {
+                title = `Oasis • #${name}`;
+              } else if (type === 'dms' && name) {
+                title = `Oasis • ${name}`;
+              } else {
+                title = 'Oasis • Channels';
+              }
+            } else {
+              title = 'Oasis • Channels';
+            }
           }
           
           console.log('🔍 [DYNAMIC TITLE] Setting document title to:', title);

@@ -6,6 +6,12 @@ export const metadata: Metadata = {
   description: "Publicly shared chronicle report",
 };
 
+// Required for static export
+export async function generateStaticParams() {
+  // Return empty array for dynamic routes that don't need pre-generation
+  return [];
+}
+
 export default function ChronicleSharedPage() {
   return <ChronicleSharedView />;
 }

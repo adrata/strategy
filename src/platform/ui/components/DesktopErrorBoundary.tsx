@@ -218,7 +218,7 @@ export class DesktopErrorBoundary extends Component<Props, State> {
 
   private getErrorSummary = () => {
     const { error, errorDetails } = this.state;
-    if (!error) return "Unknown error";
+    if (!error) return "Something went wrong";
 
     // Analyze common error patterns
     const message = error.message || "";
@@ -227,37 +227,37 @@ export class DesktopErrorBoundary extends Component<Props, State> {
 
     // ChunkLoadError - specific handling for webpack chunk loading failures
     if (errorName === "ChunkLoadError" || message.includes("Loading chunk") || message.includes("Failed to fetch dynamically imported module")) {
-      return "ChunkLoadError";
+      return "App Update Available";
     }
     if (
       message.includes("Cannot read property") ||
       message.includes("Cannot read properties")
     ) {
-      return "Property Access Error - Likely accessing undefined/null object";
+      return "Data loading issue";
     }
     if (message.includes("is not a function")) {
-      return "Function Call Error - Trying to call undefined function";
+      return "Feature temporarily unavailable";
     }
     if (message.includes("localStorage")) {
-      return "Local Storage Error - Storage access issue";
+      return "Storage access issue";
     }
     if (message.includes("JSON")) {
-      return "JSON Parse Error - Invalid JSON data";
+      return "Data format issue";
     }
     if (message.includes("import") || message.includes("module")) {
-      return "Module Import Error - Failed to load component/module";
+      return "Component loading failed";
     }
     if (stack.includes("page.tsx")) {
-      return "Page Component Error - Error in main page component";
+      return "Page loading issue";
     }
     if (stack.includes("layout.tsx")) {
-      return "Layout Component Error - Error in layout wrapper";
+      return "Layout loading issue";
     }
     if (message.includes("hydration") || message.includes("Hydration")) {
-      return "Hydration Mismatch - Server/client render difference";
+      return "Display synchronization issue";
     }
 
-    return error.name || "Unknown Error Type";
+    return "Something unexpected happened";
   };
 
   private getPossibleSolutions = () => {
@@ -270,30 +270,30 @@ export class DesktopErrorBoundary extends Component<Props, State> {
 
     // ChunkLoadError - specific solutions for webpack chunk loading failures
     if (errorName === "ChunkLoadError" || message.includes("Loading chunk") || message.includes("Failed to fetch dynamically imported module")) {
-      solutions.push("Reloading the page will fix this issue");
-      solutions.push("This happens when code updates while the app is running");
+      solutions.push("Reloading the app will fix this issue");
+      solutions.push("This happens when the app updates while running");
       return solutions; // Return early for ChunkLoadError
     }
 
     if (message.includes("localStorage")) {
-      solutions.push("Try clearing browser data");
-      solutions.push("Check if localStorage is available in this context");
+      solutions.push("Clear app data may help");
+      solutions.push("Try refreshing the app");
     }
     if (message.includes("JSON")) {
-      solutions.push("Clear corrupted stored data");
-      solutions.push("Reset application state");
+      solutions.push("Clear corrupted data and restart");
+      solutions.push("Reset the app to default settings");
     }
     if (message.includes("Cannot read property")) {
-      solutions.push("Check for missing data or failed API calls");
-      solutions.push("Verify component props are properly passed");
+      solutions.push("Try refreshing the page");
+      solutions.push("Check your internet connection");
     }
     if (message.includes("is not a function")) {
-      solutions.push("Check import statements");
-      solutions.push("Verify function definitions");
+      solutions.push("Try reloading the app");
+      solutions.push("Restart the application");
     }
 
     solutions.push("Clear all data and reload");
-    solutions.push("Check browser console for more details");
+    solutions.push("Try refreshing the page");
 
     return solutions;
   };
@@ -348,9 +348,9 @@ export class DesktopErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen bg-[var(--panel-background)] flex flex-col items-center justify-center p-8">
           <div className="max-w-2xl w-full bg-[var(--background)] rounded-lg shadow-lg p-6">
             <div className="text-center mb-6">
-              <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                 <svg
-                  className="w-8 h-8 text-red-600"
+                  className="w-8 h-8 text-blue-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -359,17 +359,23 @@ export class DesktopErrorBoundary extends Component<Props, State> {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 18.5c-.77.833.192 2.5 1.732 2.5z"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
               </div>
 
               <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
-                Desktop Application Error
+                Something unexpected happened
               </h2>
 
-              <div className="bg-red-50 border border-red-200 rounded p-3 mb-4">
-                <p className="text-sm font-medium text-red-800">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-sm font-medium text-blue-700">
                   {errorSummary}
                 </p>
               </div>
@@ -379,14 +385,14 @@ export class DesktopErrorBoundary extends Component<Props, State> {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button
                   onClick={this.handleReset}
-                  className="w-full px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
                   Try Again
                 </button>
 
                 <button
                   onClick={this.handleReload}
-                  className="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
                 >
                   Reload App
                 </button>
@@ -395,26 +401,26 @@ export class DesktopErrorBoundary extends Component<Props, State> {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button
                   onClick={this.showErrorLogs}
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  className="w-full px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm transition-colors"
                 >
-                  Show Debug Info
+                  View Technical Details
                 </button>
 
                 <button
                   onClick={this.clearAllData}
-                  className="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                  className="w-full px-4 py-2 bg-blue-300 text-blue-800 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 text-sm transition-colors"
                 >
-                  Clear All Data
+                  Clear Data & Reset
                 </button>
               </div>
             </div>
 
             {solutions.length > 0 && (
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded">
-                <h3 className="text-sm font-medium text-blue-800 mb-2">
-                  Suggested Solutions:
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 className="text-sm font-medium text-blue-700 mb-2">
+                  Quick fixes to try:
                 </h3>
-                <ul className="text-xs text-blue-700 space-y-1">
+                <ul className="text-xs text-blue-600 space-y-1">
                   {solutions.map((solution, index) => (
                     <li key={index}>• {solution}</li>
                   ))}
@@ -423,16 +429,16 @@ export class DesktopErrorBoundary extends Component<Props, State> {
             )}
 
             <details className="mt-6">
-              <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-[var(--foreground)]">
-                Technical Details & Debug Information
+              <summary className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800">
+                Technical Information (for support)
               </summary>
               <div className="mt-3 p-4 bg-[var(--hover)] rounded text-xs font-mono text-gray-800 max-h-80 overflow-auto">
                 <div className="space-y-3">
                   <div>
-                    <div className="font-semibold text-red-700 mb-1">
+                    <div className="font-semibold text-blue-700 mb-1">
                       Error Message:
                     </div>
-                    <div className="text-red-600 mb-2">
+                    <div className="text-blue-600 mb-2">
                       {this.state.error?.message || "No message"}
                     </div>
                   </div>

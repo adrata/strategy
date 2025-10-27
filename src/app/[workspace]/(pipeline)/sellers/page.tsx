@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Sellers management",
 };
 
+
+
 export default function WorkspaceSellersPage() {
   // Use the simplified PipelineContent component (LeftPanel is now in layout)
   return <PipelineContent section="sellers" />;

@@ -7,6 +7,8 @@ export function PanelLayout({
   leftPanel,
   middlePanel,
   rightPanel,
+  profilePanel,
+  isProfilePanelVisible = false,
   zoom = 100,
   isLeftPanelVisible = true,
   isRightPanelVisible = true,
@@ -18,6 +20,8 @@ export function PanelLayout({
   leftPanel: React.ReactNode;
   middlePanel: React.ReactNode;
   rightPanel: React.ReactNode;
+  profilePanel?: React.ReactNode;
+  isProfilePanelVisible?: boolean;
   zoom?: number;
   isLeftPanelVisible?: boolean;
   isRightPanelVisible?: boolean;
@@ -316,8 +320,8 @@ export function PanelLayout({
         }
       }
 
-      // Command/Ctrl + Shift + E: Toggle left panel (updated to avoid conflicts)
-      if (isModifierPressed && e['shiftKey'] && (e['key'] === "e" || e['key'] === "E")) {
+      // Command/Ctrl + B: Toggle left panel
+      if (isModifierPressed && e['key'] === "b") {
         if (onToggleLeftPanel) {
           e.preventDefault();
           onToggleLeftPanel();
@@ -396,6 +400,12 @@ export function PanelLayout({
       style={{ position: "relative" }}
     >
       <div ref={containerRef} className="flex h-full w-full relative">
+        {/* Profile Panel - Slides in from left */}
+        {isProfilePanelVisible && profilePanel && (
+          <div className="flex-shrink-0 z-50">
+            {profilePanel}
+          </div>
+        )}
         {/* Thin Left Panel */}
         {thinLeftPanel && (
           <div

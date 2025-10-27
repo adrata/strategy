@@ -20,6 +20,8 @@ import { MessageList } from './MessageList';
 import { WelcomeSection } from './WelcomeSection';
 import { AIActionsView } from './AIActionsView';
 import { TeamWinsView } from './TeamWinsView';
+import { DMChatInterface } from './DMChatInterface';
+import { DirectMessagesList } from './DirectMessagesList';
 
 // Types
 interface ChatMessage {
@@ -140,6 +142,65 @@ export function RightPanel() {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>('default');
 
   const { activeSubApp } = ui;
+
+  // Direct Messages state
+  const [showDirectMessagesList, setShowDirectMessagesList] = useState(false);
+  const [selectedDM, setSelectedDM] = useState<any>(null);
+  const [showDMChat, setShowDMChat] = useState(false);
+  const [dms, setDms] = useState<any[]>([]);
+  const [dmsLoading, setDmsLoading] = useState(false);
+
+  // Load DMs from Oasis system
+  const loadDMs = async () => {
+    setDmsLoading(true);
+    try {
+      // Get workspace ID for Oasis
+      const workspaceId = user?.activeWorkspaceId || '';
+      
+      // Fetch DMs from Oasis API
+      const response = await fetch(`/api/oasis/dms?workspaceId=${workspaceId}`);
+      if (response.ok) {
+        const oasisDMs = await response.json();
+        
+        // Convert Oasis DM format to our format
+        const convertedDMs = oasisDMs.map((dm: any) => ({
+          id: dm.id,
+          name: dm.participants[0]?.name || 'Unknown User',
+          lastMessage: dm.lastMessage?.content || 'No messages yet',
+          lastMessageTime: dm.lastMessage?.createdAt ? new Date(dm.lastMessage.createdAt) : new Date(),
+          unreadCount: 0, // TODO: Calculate unread count from Oasis data
+          isOnline: true // TODO: Get real online status from Oasis presence
+        }));
+        
+        setDms(convertedDMs);
+      } else {
+        // Fallback to mock data if API fails
+        setDms([
+          {
+            id: '1',
+            name: 'John Doe',
+            lastMessage: 'Hey, how are you?',
+            lastMessageTime: new Date(Date.now() - 1000 * 60 * 30),
+            unreadCount: 0,
+            isOnline: true
+          },
+          {
+            id: '2',
+            name: 'Jane Smith',
+            lastMessage: 'Thanks for the update!',
+            lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 2),
+            unreadCount: 0,
+            isOnline: false
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('Failed to load DMs from Oasis:', error);
+      // Fallback to empty array
+      setDms([]);
+    }
+    setDmsLoading(false);
+  };
 
   // Voice functionality disabled for now - will be implemented properly later
 
@@ -1946,60 +2007,88 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         overflow: 'hidden'
       }}>
       
-      <ConversationHeader
-        conversations={conversations}
-        activeConversationId={activeConversationId}
-        showConversationHistory={showConversationHistory}
-        showMenuPopup={showMenuPopup}
-        onSwitchConversation={switchToConversation}
-        onCreateNewConversation={createNewConversation}
-        onToggleConversationHistory={() => setShowConversationHistory(!showConversationHistory)}
-        onToggleMenuPopup={() => setShowMenuPopup(!showMenuPopup)}
-        onCloseConversation={closeConversation}
-        onSetViewMode={setViewMode}
-        onClosePanel={() => ui.toggleRightPanel()}
-        onReorderConversations={handleReorderConversations}
-        menuPopupRef={menuPopupRef}
-        conversationHistoryRef={conversationHistoryRef}
-      />
+      {/* Only show main header when in AI chat mode */}
+      {!showDirectMessagesList && !showDMChat && (
+        <ConversationHeader
+          conversations={conversations}
+          activeConversationId={activeConversationId}
+          showConversationHistory={showConversationHistory}
+          showMenuPopup={showMenuPopup}
+          onSwitchConversation={switchToConversation}
+          onCreateNewConversation={createNewConversation}
+          onToggleConversationHistory={() => setShowConversationHistory(!showConversationHistory)}
+          onToggleMenuPopup={() => setShowMenuPopup(!showMenuPopup)}
+          onCloseConversation={closeConversation}
+          onSetViewMode={setViewMode}
+          onClosePanel={() => ui.toggleRightPanel()}
+          onReorderConversations={handleReorderConversations}
+          menuPopupRef={menuPopupRef}
+          conversationHistoryRef={conversationHistoryRef}
+          showChatIcon={!pathname.includes('/oasis')}
+          onToggleDirectMessages={() => {
+            setShowDirectMessagesList(true);
+            loadDMs();
+          }}
+        />
+      )}
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 px-6 py-0 overflow-y-auto ai-panel-scroll" style={{ 
-          scrollBehavior: 'smooth',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          
-          <ChatQueueManager 
-            onProcessNext={async (query) => {
-              await processMessageWithQueue(query);
+        {showDMChat ? (
+          <DMChatInterface
+            selectedDM={selectedDM}
+            onBack={() => {
+              setShowDMChat(false);
+              setSelectedDM(null);
             }}
           />
-
-          <MessageList
-            messages={chatMessages}
-            chatEndRef={chatEndRef}
-            onUpdateChatSessions={chat.setChatSessions}
-            activeSubApp={activeSubApp}
-            onRecordSearch={handleRecordSearch}
+        ) : showDirectMessagesList ? (
+          <DirectMessagesList
+            dms={dms}
+            loading={dmsLoading}
+            onSelectDM={(dm) => {
+              setSelectedDM(dm);
+              setShowDMChat(true);
+            }}
+            onBack={() => setShowDirectMessagesList(false)}
           />
+        ) : (
+          <div className="flex-1 px-6 py-0 overflow-y-auto ai-panel-scroll" style={{ 
+            scrollBehavior: 'smooth',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            
+            <ChatQueueManager 
+              onProcessNext={async (query) => {
+                await processMessageWithQueue(query);
+              }}
+            />
 
-          {chatMessages['length'] === 0 && (
-            <div className="flex-1 flex items-end">
-              <WelcomeSection
-                activeSubApp={activeSubApp}
-                workspaceId={workspaceId || 'demo-workspace'}
-                isPersonFinderMinimized={isPersonFinderMinimized}
-                onMinimizePersonFinder={() => setIsPersonFinderMinimized(true)}
-                onExpandPersonFinder={() => setIsPersonFinderMinimized(false)}
-                onQuickAction={handleQuickAction}
-                getWelcomeMessage={getWelcomeMessage}
-                quickActions={quickActions}
-                activeConversationId={activeConversationId}
-              />
-            </div>
-          )}
-        </div>
+            <MessageList
+              messages={chatMessages}
+              chatEndRef={chatEndRef}
+              onUpdateChatSessions={chat.setChatSessions}
+              activeSubApp={activeSubApp}
+              onRecordSearch={handleRecordSearch}
+            />
+
+            {chatMessages['length'] === 0 && (
+              <div className="flex-1 flex items-end">
+                <WelcomeSection
+                  activeSubApp={activeSubApp}
+                  workspaceId={workspaceId || 'demo-workspace'}
+                  isPersonFinderMinimized={isPersonFinderMinimized}
+                  onMinimizePersonFinder={() => setIsPersonFinderMinimized(true)}
+                  onExpandPersonFinder={() => setIsPersonFinderMinimized(false)}
+                  onQuickAction={handleQuickAction}
+                  getWelcomeMessage={getWelcomeMessage}
+                  quickActions={quickActions}
+                  activeConversationId={activeConversationId}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <ChatInput
@@ -2029,6 +2118,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         chatHistory={chatMessages.filter(msg => msg['type'] === 'user').map(msg => msg.content).slice(-20)} // Last 20 user messages
       />
       </div>
+
     </>
   );
 }

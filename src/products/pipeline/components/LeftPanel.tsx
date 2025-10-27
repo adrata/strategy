@@ -12,9 +12,11 @@ import { useUnifiedAuth } from "@/platform/auth";
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useFastCounts } from "@/platform/hooks/useFastCounts";
+import { useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
 import { getWorkspaceBySlug } from "@/platform/config/workspace-mapping";
 import { useChronicleCount } from "@/platform/hooks/useChronicleCount";
 import { useMetricsCount } from "@/platform/hooks/useMetricsCount";
+import { getPlatform } from "@/platform/platform-detection";
 
 
 // Utility function to convert hex color to CSS filter for SVG recoloring
@@ -82,12 +84,17 @@ function PipelineSections({
   const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || authUser?.activeWorkspaceId;
   const userId = authUser?.id;
   
-  console.log('🔍 [LEFT PANEL] Using provider workspace:', {
-    acquisitionDataExists: !!acquisitionData,
-    providerWorkspaceId: workspaceId,
-    userActiveWorkspaceId: authUser?.activeWorkspaceId,
-    userId: userId
-  });
+  // Get workspace name for Nova visibility check
+  const activeWorkspace = authUser?.workspaces?.find(w => w['id'] === workspaceId);
+  const workspaceName = activeWorkspace?.name || "";
+  
+  // Debug logging for Nova visibility (can be removed in production)
+  if (authUser?.email === "ross@adrata.com") {
+    console.log('🌌 Nova visibility check:', {
+      workspaceName: workspaceName,
+      novaVisible: authUser?.email === "ross@adrata.com" && workspaceName.toLowerCase() === "adrata"
+    });
+  }
   
   // 🚀 WORKSPACE-AWARE: Always call hooks (React rule) but pass null for invalid IDs
   const safeWorkspaceId = (workspaceId && workspaceId !== 'default') ? workspaceId : undefined;
@@ -734,11 +741,11 @@ function PipelineSections({
       visible: true
     },
     {
-      id: "galaxy",
-      name: "Galaxy",
+      id: "nova",
+      name: "Nova",
       description: "Native web browser",
       count: "🌌",
-      visible: authUser?.email === "ross@adrata.com" && workspaceId === "adrata"
+      visible: authUser?.email === "ross@adrata.com" && workspaceName.toLowerCase() === "adrata" && getPlatform() === "desktop"
     },
     {
       id: "metrics",
@@ -880,6 +887,9 @@ export function PipelineLeftPanelStandalone({
     setProfileAnchor
   } = useProfilePopup();
 
+  // Use profile panel context
+  const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
+
   // Dashboard stats state with neutral defaults (will be replaced by real data)
   const [dashboardStats, setDashboardStats] = useState({
     revenue: '$0.0M', // Will be replaced by real data from API
@@ -910,52 +920,24 @@ export function PipelineLeftPanelStandalone({
   const handleSectionClick = (section: string) => {
     console.log('🔄 Pipeline section clicked:', section);
     
-    // Special handling for Galaxy browser
-    if (section === "galaxy") {
-      // Open Galaxy browser in a new tab/window
-      window.open("/galaxy.html", "_blank", "width=1200,height=800,scrollbars=yes,resizable=yes");
-      return;
+    // Special debug for Nova
+    if (section === "nova") {
+      console.log('🌌 Nova clicked - calling onSectionChange');
     }
     
     onSectionChange(section);
   };
 
-  // Handle profile click
+  // Handle profile click - now opens profile panel instead of popup
   const handleProfileClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log('🔘 Profile button clicked!', { 
-      isProfileOpen, 
-      profileAnchor,
-      user,
-      company,
-      workspace,
-      setIsProfileOpen: typeof setIsProfileOpen,
-      setProfileAnchor: typeof setProfileAnchor
-    });
+    console.log('🔘 Profile button clicked! Opening profile panel');
     event.preventDefault();
     event.stopPropagation();
     
-    const buttonElement = event.currentTarget;
-    console.log('🎯 Setting profile anchor:', buttonElement);
-    console.log('🎯 Button rect:', buttonElement.getBoundingClientRect());
-    setProfileAnchor(buttonElement);
-    
-    // Using Pipeline context - no refresh needed as user is static
-    
-    const newState = !isProfileOpen;
-    console.log('🔄 Toggling profile open state:', isProfileOpen, '->', newState);
-    setIsProfileOpen(newState);
-    
-    // Additional debugging
-    setTimeout(() => {
-      console.log('🔍 After state change:', { 
-        isProfileOpen: newState, 
-        profileAnchor: buttonElement,
-        shouldRenderPopup: newState && buttonElement,
-        user,
-        company,
-        workspace
-      });
-    }, 100);
+    // Toggle profile panel visibility
+    const newState = !isProfilePanelVisible;
+    console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
+    setIsProfilePanelVisible(newState);
   };
 
   // Load workspace branding data
@@ -1013,34 +995,24 @@ export function PipelineLeftPanelStandalone({
             <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200 overflow-hidden" style={{ filter: 'none' }}>
               <span className="text-lg font-bold text-black">
                 {(() => {
-                  const companyName = (workspace || "Sales Acceleration").trim();
-                  // Special handling for TOP Engineering Plus - show "TOP" in icon
-                  if (companyName === "TOP Engineering Plus" || companyName === "TOP Engineers Plus") {
-                    return "TOP";
+                  const companyName = (workspace || "Adrata").trim();
+                  // Special handling for specific companies
+                  if (companyName === "Notary Everyday") {
+                    return "NE";
                   }
-                  // Default behavior for other workspaces
-                  return companyName.split(' ').map(word => word.charAt(0).toUpperCase()).join('').slice(0, 3) || 'AD';
+                  if (companyName === "Adrata") {
+                    return "A";
+                  }
+                  // Default behavior for other workspaces - take first two letters
+                  return companyName.split(' ').map(word => word.charAt(0).toUpperCase()).join('').slice(0, 2) || 'AD';
                 })()}
               </span>
             </div>
             <div className="flex-1">
               <div className="flex items-center mb-1">
                 <h3 className="text-lg font-bold leading-tight" style={{ margin: 0, padding: 0 }}>
-                  {(() => {
-                    const companyName = (workspace || "Sales Acceleration").trim();
-                    console.log('🔍 Company name debug:', { companyName, length: companyName.length });
-                    
-                    // Special handling for TOP Engineering Plus - show truncated name
-                    if (companyName === "TOP Engineering Plus" || companyName === "TOP Engineers Plus") {
-                      return "Top E...";
-                    }
-                    
-                    return companyName.length > 7 ? `${companyName.slice(0, 7)}...` : companyName;
-                  })()}
+                  RevenueOS
                 </h3>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white text-gray-800 border border-gray-200">
-                  Pro
-                </span>
               </div>
               <div className="text-xs text-[var(--muted)] font-medium" style={{ marginTop: '-1px' }}>
                 Sales Acceleration

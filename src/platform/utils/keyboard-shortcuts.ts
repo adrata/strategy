@@ -57,7 +57,7 @@ export const COMMON_SHORTCUTS = {
   AI_ASSISTANT: ['⌘+J', 'Ctrl+J'],
   
   // Panel shortcuts
-  TOGGLE_LEFT_PANEL: ['⌘+Shift+E', 'Ctrl+Shift+E'],
+  TOGGLE_LEFT_PANEL: ['⌘+B', 'Ctrl+B'],
   TOGGLE_RIGHT_PANEL: ['⌘+Shift+B', 'Ctrl+Shift+B'],
   
   // App navigation

@@ -62,6 +62,7 @@ lru = "0.12"  # LRU cache for intelligent data caching
 
 # Random number generation for message IDs
 rand = "0.8"
+regex = "1.11"
 tauri-plugin-websocket = "2.4.0"
 
 [features]

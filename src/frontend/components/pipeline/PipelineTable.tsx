@@ -8,6 +8,7 @@ import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
 import { usePipelineActions } from '@/platform/hooks/usePipelineActions';
+import { useTableEdit } from '@/platform/hooks/useTableEdit';
 import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
 import { getLeadsNextAction } from '@/platform/utils/actionUtils';
 import { TableHeader } from './table/TableHeader';
@@ -212,6 +213,33 @@ export function PipelineTable({
   const workspaceId = authUser?.activeWorkspaceId || '';
   const workspaceName = authUser?.workspaces?.find(w => w['id'] === workspaceId)?.['name'] || '';
   
+  // Table editing functionality
+  const { updateRecord, deleteRecord } = useTableEdit({
+    onSuccess: (message) => {
+      console.log('✅ Table edit success:', message);
+      // Optionally show a toast notification
+    },
+    onError: (message) => {
+      console.error('❌ Table edit error:', message);
+      // Optionally show an error toast
+    },
+  });
+
+  // Handle record updates
+  const handleUpdateRecord = async (recordId: string, field: string, value: string): Promise<boolean> => {
+    return await updateRecord(section, recordId, field, value);
+  };
+
+  // Handle record deletion
+  const handleDeleteRecord = async (record: PipelineRecord) => {
+    const success = await deleteRecord(section, record.id);
+    if (success) {
+      // Refresh the data by calling the parent's refresh function if available
+      // This would typically trigger a data refetch
+      console.log('Record deleted successfully, refreshing data...');
+    }
+  };
+  
   // Get table headers
   const headers = getTableHeaders(visibleColumns, section);
   
@@ -393,176 +421,23 @@ export function PipelineTable({
                 }
               });
               
-              // Simple table row for debugging
+              // Use TableRow component with editing support
               return (
-                  <tr
-                    key={record.id}
-                    className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
-                    onClick={() => onRecordClick(record)}
-                  >
-                  {headers.map((header, headerIndex) => {
-                    let cellContent = '';
-                    
-                    // Simple cell content mapping
-                    switch (header.toLowerCase()) {
-                      case 'rank':
-                        // 🏆 HIERARCHICAL RANKING: Display company rank and person rank
-                        const companyRank = record['companyRank'] || record['company']?.rank || 0;
-                        const personRank = record['personRank'] || record['rank'] || 0;
-                        const globalRank = record['globalPersonRank'] || record['rank'] || (currentPage - 1) * pageSize + index + 1;
-                        
-                        // Display hierarchical ranking based on section
-                        let displayRank;
-                        if (section === 'people' && companyRank > 0) {
-                          // Show "Company Rank: Person Rank" format
-                          displayRank = `${companyRank}:${personRank}`;
-                        } else if (section === 'speedrun' && companyRank > 0) {
-                          // Show "Company Rank: Person Rank" format for speedrun
-                          displayRank = `${companyRank}:${personRank}`;
-                        } else {
-                          // Fallback to global rank
-                          displayRank = globalRank;
-                        }
-                        
-                        cellContent = String(displayRank);
-                        break;
-                      case 'company':
-                        // Handle both string and object company data
-                        const company = record['company'];
-                        let companyName = '';
-                        
-                        if (typeof company === 'object' && company !== null) {
-                          companyName = company.name || company.companyName || '';
-                        } else {
-                          companyName = company || record['companyName'] || '';
-                        }
-                        
-                        // Show dash for "Unknown Company" or empty values
-                        cellContent = (companyName && companyName !== 'Unknown Company' && companyName.trim() !== '') ? companyName : '-';
-                        break;
-                      case 'person':
-                      case 'name':
-                        cellContent = record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || record.name || 'Person';
-                        break;
-                      case 'state':
-                        cellContent = record['state'] || record['status'] || record['location'] || 'State';
-                        break;
-                      case 'title':
-                        const title = record['title'] || 
-                                     record['jobTitle'] || 
-                                     record['position'] || 
-                                     record?.customFields?.enrichedData?.overview?.title ||
-                                     record?.customFields?.rawData?.active_experience_title;
-                        
-                        // Show dash for "Unknown Title" or empty values
-                        cellContent = (title && title !== 'Unknown Title' && title.trim() !== '') ? title : '-';
-                        break;
-                      case 'status':
-                        cellContent = record['status'] || '-';
-                        break;
-                      case 'last action':
-                        // Format last action with timing badge and description
-                        const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
-                        const lastTiming = getRealtimeActionTiming(lastActionDate);
-                        const lastActionText = record['lastActionDescription'] || record['lastAction'] || record['lastContactType'] || '-';
-                        cellContent = `${lastTiming.text} | ${lastActionText}`;
-                        break;
-                      case 'next action':
-                        // Format next action with timing badge and description
-                        const nextAction = getLeadsNextAction(record, index);
-                        cellContent = `${nextAction.timing} | ${nextAction.action}`;
-                        break;
-                      case 'owner':
-                      case 'main-seller':
-                      case 'mainseller':
-                        cellContent = record['mainSeller'] || record['owner'] || '-';
-                        break;
-                      case 'co-sellers':
-                      case 'cosellers':
-                        cellContent = record['coSellers'] && record['coSellers'] !== '-' ? record['coSellers'] : '-';
-                        break;
-                      case 'actions':
-                        cellContent = String(record._count?.actions || 0);
-                        break;
-                      default:
-                        const value = record[header.toLowerCase()] || record[header];
-                        cellContent = value ? String(value) : '';
-                    }
-                    
-                    return (
-                      <td
-                        key={`${record.id}-${header}`}
-                        className="px-6 py-3 whitespace-nowrap text-sm text-[var(--foreground)]"
-                        style={{ width: getColumnWidth(headerIndex) }}
-                      >
-                        {header.toLowerCase() === 'last action' || header.toLowerCase() === 'next action' ? (
-                          <div className="flex items-center gap-2">
-                            {(() => {
-                              const timing = header.toLowerCase() === 'last action' 
-                                ? getLastActionTiming(record)
-                                : getNextActionTiming(record);
-                              return (
-                                <>
-                                  <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
-                                    {timing.text}
-                                  </span>
-                                  <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                                    {cellContent}
-                                  </span>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        ) : header.toLowerCase() === 'owner' || header.toLowerCase() === 'main-seller' || header.toLowerCase() === 'mainseller' ? (
-                          <div className="flex items-center gap-2">
-                            {record['mainSellerData'] || record['ownerData'] ? (
-                              <ProfileAvatar
-                                name={record['mainSellerData']?.name || record['ownerData']?.name}
-                                firstName={record['mainSellerData']?.firstName || record['ownerData']?.firstName}
-                                lastName={record['mainSellerData']?.lastName || record['ownerData']?.lastName}
-                                email={record['mainSellerData']?.email || record['ownerData']?.email}
-                                profilePictureUrl={record['mainSellerData']?.profilePictureUrl || record['ownerData']?.profilePictureUrl || undefined}
-                                size="sm"
-                                showAsMe={true}
-                                currentUserId={record['currentUserId']}
-                                userId={record['mainSellerData']?.id || record['ownerData']?.id}
-                              />
-                            ) : null}
-                            <span className="text-sm text-[var(--foreground)] truncate max-w-24">
-                              {cellContent}
-                            </span>
-                          </div>
-                        ) : header.toLowerCase() === 'co-sellers' || header.toLowerCase() === 'cosellers' ? (
-                          <div className="flex items-center gap-2">
-                            {record['coSellersData'] && record['coSellersData'].length > 0 ? (
-                              <ProfileAvatarGroup
-                                users={record['coSellersData'].map((coSeller: any) => ({
-                                  name: coSeller.user?.name,
-                                  firstName: coSeller.user?.firstName,
-                                  lastName: coSeller.user?.lastName,
-                                  email: coSeller.user?.email,
-                                  profilePictureUrl: coSeller.user?.profilePictureUrl || undefined,
-                                  userId: coSeller.user?.id,
-                                }))}
-                                maxVisible={2}
-                                size="sm"
-                                showAsMe={true}
-                                currentUserId={record['currentUserId']}
-                              />
-                            ) : null}
-                            <span className="text-sm text-[var(--foreground)] truncate max-w-24">
-                              {cellContent}
-                            </span>
-                          </div>
-                        ) : (
-                          <div className="text-sm text-[var(--foreground)] truncate">
-                            {cellContent}
-                          </div>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
+                <TableRow
+                  key={record.id}
+                  record={record}
+                  headers={headers}
+                  section={section}
+                  index={index}
+                  workspaceId={workspaceId}
+                  workspaceName={workspaceName}
+                  visibleColumns={visibleColumns}
+                  currentUserId={authUser?.id}
+                  onRecordClick={onRecordClick}
+                  onUpdateRecord={handleUpdateRecord}
+                  onDeleteRecord={handleDeleteRecord}
+                  getColumnWidth={getColumnWidth}
+                />
               );
             })}
           </tbody>

@@ -40,8 +40,8 @@ export function useGlobalKeyboardShortcuts({
         }
       }
 
-      // Command/Ctrl + Shift + E: Toggle left panel (updated to avoid conflicts)
-      if ((e.metaKey || e.ctrlKey) && e['shiftKey'] && (e['key'] === "e" || e['key'] === "E")) {
+      // Command/Ctrl + B: Toggle left panel
+      if ((e.metaKey || e.ctrlKey) && e['key'] === "b") {
         const target = e.target as HTMLElement;
         const isInput =
           target['tagName'] === "INPUT" ||

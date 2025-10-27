@@ -100,7 +100,7 @@ export const UNIVERSAL_SHORTCUTS: KeyboardShortcut[] = [
   // Panel Controls
   {
     id: "toggle-left-panel",
-    keys: ["⌘+Shift+E", "Ctrl+Shift+E"],
+    keys: ["⌘+B", "Ctrl+B"],
     description: "Toggle left sidebar",
     category: "view",
     context: ["global"],

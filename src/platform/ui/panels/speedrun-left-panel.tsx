@@ -550,8 +550,15 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             {isPipelineContext ? 'Back to Pipeline' : 'Back to Monaco'}
           </button>
         )}
-        <h2 className="font-semibold text-lg text-[var(--foreground)]">Today's Speedrun</h2>
-        <p className="text-sm text-[var(--muted)]">Prepare to win</p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-white border border-[var(--border)] rounded-xl flex items-center justify-center">
+            <span className="text-lg font-bold text-[var(--foreground)]">A</span>
+          </div>
+          <div>
+            <h2 className="text-base font-semibold text-[var(--foreground)]">Adrata</h2>
+            <p className="text-xs text-[var(--muted)]">Pro Sales Acceleration</p>
+          </div>
+        </div>
       </div>
 
       {/* Today Section */}

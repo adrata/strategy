@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Backlog management and task prioritization",
 };
 
+
+
 export default function WorkspaceStacksBacklogPage() {
   return <StacksContent section="backlog" />;
 }

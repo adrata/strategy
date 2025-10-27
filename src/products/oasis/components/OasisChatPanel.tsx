@@ -2,10 +2,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useOasis } from '@/app/[workspace]/(pipeline)/layout';
+import { useUnifiedAuth } from "@/platform/auth";
+import { useOasisMessages } from '@/products/oasis/hooks/useOasisMessages';
+import { useOasisTyping } from '@/products/oasis/hooks/useOasisTyping';
+import { VideoCallService } from '@/platform/services/video-call-service';
 import { 
   PaperAirplaneIcon,
-  PaperClipIcon,
-  FaceSmileIcon,
   CheckIcon,
   ClockIcon,
   ChatBubbleLeftRightIcon,
@@ -13,8 +15,13 @@ import {
   AtSymbolIcon,
   StarIcon,
   ArchiveBoxIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  ArrowLeftIcon,
+  HashtagIcon,
+  VideoCameraIcon,
+  PlusIcon
 } from '@heroicons/react/24/outline';
+import { CompleteActionModal } from '@/platform/ui/components/CompleteActionModal';
 
 interface Message {
   id: string;
@@ -35,82 +42,135 @@ interface Message {
   threadCount?: number;
 }
 
-// Mock data for demonstration
-const mockMessages: Message[] = [
-  {
-    id: '1',
-    content: 'Hey team, just wanted to update everyone on the project status. We\'re making great progress on the new features.',
-    author: {
-      id: 'user1',
-      name: 'Sarah Chen',
-      avatar: 'SC',
-      status: 'online'
-    },
-    timestamp: '2m ago',
-    isRead: true,
-    reactions: [
-      { emoji: '👍', count: 3, users: ['user2', 'user3', 'user4'] },
-      { emoji: '🚀', count: 1, users: ['user5'] }
-    ],
-    threadCount: 2
-  },
-  {
-    id: '2',
-    content: 'Thanks for the update Sarah! The new dashboard looks amazing.',
-    author: {
-      id: 'user2',
-      name: 'Mike Johnson',
-      avatar: 'MJ',
-      status: 'away'
-    },
-    timestamp: '1m ago',
-    isRead: true
-  },
-  {
-    id: '3',
-    content: 'I have a question about the API integration. Should we use REST or GraphQL?',
-    author: {
-      id: 'user3',
-      name: 'Alex Rodriguez',
-      avatar: 'AR',
-      status: 'online'
-    },
-    timestamp: '30s ago',
-    isRead: false
-  }
-];
+interface OasisChatPanelProps {
+  onShowThread?: () => void;
+}
 
-export function OasisChatPanel() {
+// Mock data will be replaced with real data from hooks
+
+export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
   const { activeSection, selectedChannel } = useOasis();
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
+  const { user: authUser } = useUnifiedAuth();
+  
+  // Get workspace ID from auth user
+  const workspaceId = authUser?.activeWorkspaceId || '';
+  
+  // Real data hooks - only call when we have a selected channel
+  const { 
+    messages: realMessages, 
+    loading: messagesLoading, 
+    sendMessage, 
+    editMessage, 
+    deleteMessage, 
+    addReaction, 
+    removeReaction,
+    markAsRead
+  } = useOasisMessages(
+    workspaceId,
+    selectedChannel?.type === 'channel' ? selectedChannel.id : undefined,
+    selectedChannel?.type === 'dm' ? selectedChannel.id : undefined
+  );
+  
+  const { typingUsers, startTyping, stopTyping } = useOasisTyping(
+    workspaceId,
+    selectedChannel?.type === 'channel' ? selectedChannel.id : undefined,
+    selectedChannel?.type === 'dm' ? selectedChannel.id : undefined
+  );
+  
   const [messageInput, setMessageInput] = useState('');
+  const [hoveredMessage, setHoveredMessage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Add Action Modal state
+  const [showAddActionModal, setShowAddActionModal] = useState(false);
+  const [isSubmittingAction, setIsSubmittingAction] = useState(false);
+
+  // Video call functionality
+  const handleVideoCall = async () => {
+    try {
+      const roomName = `${selectedChannel?.type}-${selectedChannel?.name}`;
+      
+      // Create video call room
+      const room = await VideoCallService.createRoom(
+        roomName,
+        [authUser?.id || ''], // Start with current user, add others later
+        60 // 1 hour duration
+      );
+      
+      // Open video call in new window
+      window.open(room.url, '_blank', 'width=1200,height=800');
+      
+      console.log('📹 Started video call for:', selectedChannel?.name, 'Room:', room.id);
+    } catch (error) {
+      console.error('Failed to start video call:', error);
+      alert('Failed to start video call. Please try again.');
+    }
+  };
+
+  // Handle action submission
+  const handleActionSubmit = async (actionData: any) => {
+    setIsSubmittingAction(true);
+    try {
+      const response = await fetch('/api/v1/actions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: actionData.type,
+          subject: actionData.action.length > 100 ? actionData.action.substring(0, 100) + '...' : actionData.action,
+          description: actionData.action,
+          status: 'COMPLETED',
+          completedAt: new Date().toISOString(),
+          // Include person/company IDs if available
+          ...(actionData.personId && actionData.personId.trim() !== '' && { personId: actionData.personId }),
+          ...(actionData.companyId && actionData.companyId.trim() !== '' && { companyId: actionData.companyId })
+        })
+      });
+
+      if (response.ok) {
+        setShowAddActionModal(false);
+        console.log('✅ Action logged successfully from Oasis');
+      } else {
+        throw new Error('Failed to log action');
+      }
+    } catch (error) {
+      console.error('Failed to log action:', error);
+      alert('Failed to log action. Please try again.');
+    } finally {
+      setIsSubmittingAction(false);
+    }
+  };
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [realMessages]);
+
+  // Mark messages as read when they are viewed
+  useEffect(() => {
+    if (realMessages.length > 0) {
+      const unreadMessageIds = realMessages
+        .filter(msg => msg.senderId !== authUser?.id) // Only mark others' messages as read
+        .map(msg => msg.id);
+      
+      if (unreadMessageIds.length > 0) {
+        markAsRead(unreadMessageIds);
+      }
+    }
+  }, [realMessages, authUser?.id, markAsRead]);
 
   // Handle sending a message
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!messageInput.trim()) return;
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      content: messageInput,
-      author: {
-        id: 'current-user',
-        name: 'You',
-        avatar: 'JD',
-        status: 'online'
-      },
-      timestamp: 'now',
-      isRead: true
-    };
-
-    setMessages(prev => [...prev, newMessage]);
-    setMessageInput('');
+    try {
+      await sendMessage(messageInput);
+      setMessageInput('');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
   };
 
   // Get status color
@@ -124,85 +184,15 @@ export function OasisChatPanel() {
   };
 
   // Show different content based on active section
-  if (activeSection === 'channels' && !selectedChannel) {
+  if (!selectedChannel) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[var(--panel-background)]">
+      <div className="flex-1 flex items-center justify-center bg-[var(--background)]">
         <div className="text-center">
-          <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full flex items-center justify-center mx-auto mb-4">
-            <ChatBubbleLeftRightIcon className="w-8 h-8 text-[var(--muted)]" />
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ChatBubbleLeftRightIcon className="w-8 h-8 text-white" />
           </div>
           <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Welcome to Oasis</h3>
-          <p className="text-[var(--muted)]">Select a channel from the left panel to start communicating</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (activeSection === 'direct-messages') {
-    return (
-      <div className="flex-1 flex items-center justify-center bg-[var(--panel-background)]">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full flex items-center justify-center mx-auto mb-4">
-            <UserGroupIcon className="w-8 h-8 text-[var(--muted)]" />
-          </div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Direct Messages</h3>
-          <p className="text-[var(--muted)]">Start a conversation with a team member</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (activeSection === 'mentions') {
-    return (
-      <div className="flex-1 flex items-center justify-center bg-[var(--panel-background)]">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full flex items-center justify-center mx-auto mb-4">
-            <AtSymbolIcon className="w-8 h-8 text-[var(--muted)]" />
-          </div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Mentions</h3>
-          <p className="text-[var(--muted)]">Messages that mention you will appear here</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (activeSection === 'starred') {
-    return (
-      <div className="flex-1 flex items-center justify-center bg-[var(--panel-background)]">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full flex items-center justify-center mx-auto mb-4">
-            <StarIcon className="w-8 h-8 text-[var(--muted)]" />
-          </div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Starred Messages</h3>
-          <p className="text-[var(--muted)]">Your starred messages will appear here</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (activeSection === 'archived') {
-    return (
-      <div className="flex-1 flex items-center justify-center bg-[var(--panel-background)]">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full flex items-center justify-center mx-auto mb-4">
-            <ArchiveBoxIcon className="w-8 h-8 text-[var(--muted)]" />
-          </div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Archived</h3>
-          <p className="text-[var(--muted)]">Archived conversations will appear here</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (activeSection === 'settings') {
-    return (
-      <div className="flex-1 flex items-center justify-center bg-[var(--panel-background)]">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full flex items-center justify-center mx-auto mb-4">
-            <Cog6ToothIcon className="w-8 h-8 text-[var(--muted)]" />
-          </div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Settings</h3>
-          <p className="text-[var(--muted)]">Communication preferences and settings</p>
+          <p className="text-[var(--muted)]">Select a conversation from the left panel to start chatting</p>
         </div>
       </div>
     );
@@ -210,93 +200,185 @@ export function OasisChatPanel() {
 
   // Chat view with messages
   return (
-    <div className="flex-1 flex flex-col bg-[var(--background)]">
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
-        {messages.map((message) => (
-          <div key={message.id} className="flex gap-3">
-            <div className="flex-shrink-0">
-              <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
-                  <span className="text-sm font-medium text-white">{message.author.avatar}</span>
+    <div className="flex-1 flex flex-col bg-[var(--background)] h-full">
+      {/* Chat Header */}
+      <div className="flex-shrink-0 p-4 border-b border-[var(--border)] bg-[var(--background)]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {selectedChannel.type === 'channel' && (
+              <HashtagIcon className="w-5 h-5 text-[var(--muted)]" />
+            )}
+            {selectedChannel.type === 'dm' && (
+              <div className="w-8 h-8 bg-white border border-[var(--border)] rounded flex items-center justify-center">
+                <span className="text-sm font-medium text-[var(--foreground)]">
+                  {selectedChannel.name.charAt(0)}
+                </span>
+              </div>
+            )}
+            <div>
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
+                {selectedChannel.type === 'channel' ? `#${selectedChannel.name}` : selectedChannel.name}
+              </h2>
+              {selectedChannel.type === 'dm' && selectedChannel.status && (
+                <p className="text-sm text-[var(--muted)]">
+                  {selectedChannel.status === 'online' ? 'Online' : 
+                   selectedChannel.status === 'away' ? 'Away' : 'Offline'}
+                </p>
+              )}
+            </div>
+          </div>
+          
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2">
+            {/* Add Action Button */}
+            <button
+              onClick={() => setShowAddActionModal(true)}
+              className="flex items-center gap-2 px-3 py-1.5 bg-[var(--panel-background)] hover:bg-[var(--hover)] text-[var(--foreground)] rounded-md transition-colors"
+            >
+              <PlusIcon className="w-4 h-4" />
+              <span className="text-sm font-medium">Add Action</span>
+            </button>
+            
+            {/* Video Call Button */}
+            <button
+              onClick={handleVideoCall}
+              className="flex items-center gap-2 px-3 py-1.5 bg-orange-100 hover:bg-orange-200 text-orange-600 rounded-md transition-colors"
+            >
+              <VideoCameraIcon className="w-4 h-4" />
+              <span className="text-sm font-medium">Video Call</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-4 flex flex-col justify-end">
+        {messagesLoading ? (
+          <div className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex gap-3 px-2">
+                <div className="w-10 h-10 bg-[var(--loading-bg)] rounded animate-pulse" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-[var(--loading-bg)] rounded w-1/4 animate-pulse" />
+                  <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse" />
+                  <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse" />
                 </div>
-                <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(message.author.status)}`}></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          realMessages.map((message) => (
+          <div 
+            key={message.id} 
+            className="flex gap-3 group hover:bg-gray-50 rounded-lg p-2 -m-2 cursor-pointer transition-colors"
+            onMouseEnter={() => setHoveredMessage(message.id)}
+            onMouseLeave={() => setHoveredMessage(null)}
+            onClick={() => onShowThread?.()}
+          >
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 bg-white border border-[var(--border)] rounded flex items-center justify-center">
+                <span className="text-base font-medium text-[var(--foreground)]">{message.senderName.charAt(0)}</span>
               </div>
             </div>
             
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-medium text-[var(--foreground)]">{message.author.name}</span>
-                <span className="text-sm text-[var(--muted)]">{message.timestamp}</span>
-                {message.isRead && (
-                  <CheckIcon className="w-4 h-4 text-blue-500" />
-                )}
+                <span className="text-sm font-medium text-[var(--foreground)]">{message.senderName}</span>
+                <span className="text-xs text-[var(--muted)]">{new Date(message.createdAt).toLocaleTimeString()}</span>
               </div>
               
-              <p className="text-gray-700 mb-2">{message.content}</p>
+              <p className="text-xs text-gray-700 mb-2">{message.content}</p>
               
               {/* Reactions */}
               {message.reactions && message.reactions.length > 0 && (
                 <div className="flex gap-2 mb-2">
-                  {message.reactions.map((reaction, index) => (
+                  {message.reactions.map((reaction) => (
                     <button
-                      key={index}
+                      key={reaction.id}
                       className="flex items-center gap-1 px-2 py-1 bg-[var(--hover)] hover:bg-[var(--loading-bg)] rounded-full text-sm transition-colors"
                     >
                       <span>{reaction.emoji}</span>
-                      <span className="text-[var(--muted)]">{reaction.count}</span>
+                      <span className="text-[var(--muted)]">{reaction.userName}</span>
                     </button>
                   ))}
                 </div>
               )}
               
               {/* Thread indicator */}
-              {message.threadCount && (
-                <button className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+              {message.threadCount > 0 && (
+                <button 
+                  className="text-xs text-[var(--muted)] hover:text-[var(--foreground)] flex items-center gap-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onShowThread?.();
+                  }}
+                >
                   <span>{message.threadCount} replies</span>
                 </button>
               )}
             </div>
+            
           </div>
-        ))}
+        ))
+        )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
-      <div className="flex-shrink-0 p-6 border-t border-[var(--border)] bg-[var(--background)]">
-        <form onSubmit={handleSendMessage} className="flex gap-2">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-              placeholder={`Message ${selectedChannel ? `#${selectedChannel.name}` : 'in this channel'}...`}
-              className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-            />
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
-              <button
-                type="button"
-                className="p-1.5 text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
-              >
-                <PaperClipIcon className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                className="p-1.5 text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
-              >
-                <FaceSmileIcon className="w-4 h-4" />
-              </button>
-            </div>
+      {/* Typing Indicators */}
+      {typingUsers.length > 0 && (
+        <div className="flex-shrink-0 px-4 py-2 border-t border-[var(--border)] bg-[var(--background)]">
+          <div className="text-sm text-[var(--muted)]">
+            {typingUsers.map((user, index) => (
+              <span key={user.userId}>
+                {user.userName} is typing
+                {index < typingUsers.length - 1 && ', '}
+              </span>
+            ))}
           </div>
-          <button
-            type="submit"
-            disabled={!messageInput.trim()}
-            className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <PaperAirplaneIcon className="w-4 h-4" />
-          </button>
+        </div>
+      )}
+
+      {/* Message Input - Bottom Aligned */}
+      <div className="flex-shrink-0 p-4 border-t border-[var(--border)] bg-[var(--background)]">
+        <form onSubmit={handleSendMessage} className="relative">
+          <input
+            type="text"
+            value={messageInput}
+            onChange={(e) => {
+              setMessageInput(e.target.value);
+              if (e.target.value.trim()) {
+                startTyping();
+              } else {
+                stopTyping();
+              }
+            }}
+            onBlur={() => stopTyping()}
+            placeholder={`Message ${selectedChannel.type === 'channel' ? `#${selectedChannel.name}` : selectedChannel.name}...`}
+            className="w-full px-4 py-8 pr-20 border border-[var(--border)] rounded-lg focus:outline-none focus:border-[var(--muted)] text-sm bg-white"
+          />
+          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
+            <button
+              type="submit"
+              disabled={!messageInput.trim()}
+              className="px-2 py-1.5 bg-white border border-[var(--border)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+            >
+              <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
+            </button>
+          </div>
         </form>
       </div>
+
+      {/* Add Action Modal */}
+      <CompleteActionModal
+        isOpen={showAddActionModal}
+        onClose={() => setShowAddActionModal(false)}
+        onSubmit={handleActionSubmit}
+        isLoading={isSubmittingAction}
+        section="oasis"
+      />
     </div>
   );
 }
+

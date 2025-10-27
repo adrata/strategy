@@ -165,33 +165,34 @@ export function useSpeedrunDataLoader() {
           email: item.email || '',
           company: company,
           title: item.title || item.jobTitle || 'Unknown Title',
-        phone: (() => {
-          const rawPhone = item.phone || item.phoneNumber || '';
-          const validation = validatePhoneNumber(rawPhone);
-          return validation.isValid ? validation.phone : '';
-        })(),
-        location: item.location || item.city || '',
-        industry: item.industry || determineVerticalFromData(item),
-        status: item.status || 'Lead',
-        priority: item.priority || 'medium',
-        lastContact: item.lastContact || item.updatedAt,
-        lastAction: item.lastAction || 'No action taken',
-        lastActionDate: item.lastActionDate || null,
-        lastActionTime: item.lastActionTime || 'Never',
-        notes: item.notes || '',
-        tags: item.tags || [],
-        source: item.source || 'speedrun',
-        enrichmentScore: item.enrichmentScore || 0,
-        buyerGroupRole: item.buyerGroupRole || 'unknown',
-        currentStage: item.currentStage || 'initial',
-        nextAction: item.nextAction || '',
-        nextActionDate: item.nextActionDate || '',
-        createdAt: item.createdAt || new Date().toISOString(),
-        updatedAt: item.updatedAt || new Date().toISOString(),
-        assignedUser: item.assignedUser || null,
-        workspaceId: item.workspaceId || '',
-        ...item // Include any additional fields
-      }));
+          phone: (() => {
+            const rawPhone = item.phone || item.phoneNumber || '';
+            const validation = validatePhoneNumber(rawPhone);
+            return validation.isValid ? validation.phone : '';
+          })(),
+          location: item.location || item.city || '',
+          industry: item.industry || determineVerticalFromData(item),
+          status: item.status || 'Lead',
+          priority: item.priority || 'medium',
+          lastContact: item.lastContact || item.updatedAt,
+          lastAction: item.lastAction || 'No action taken',
+          lastActionDate: item.lastActionDate || null,
+          lastActionTime: item.lastActionTime || 'Never',
+          notes: item.notes || '',
+          tags: item.tags || [],
+          source: item.source || 'speedrun',
+          enrichmentScore: item.enrichmentScore || 0,
+          buyerGroupRole: item.buyerGroupRole || 'unknown',
+          currentStage: item.currentStage || 'initial',
+          nextAction: item.nextAction || '',
+          nextActionDate: item.nextActionDate || '',
+          createdAt: item.createdAt || new Date().toISOString(),
+          updatedAt: item.updatedAt || new Date().toISOString(),
+          assignedUser: item.assignedUser || null,
+          workspaceId: item.workspaceId || '',
+          ...item // Include any additional fields
+        };
+      });
 
       console.log(`🔄 [TRANSFORMED] ${transformedData.length} speedrun people`);
 

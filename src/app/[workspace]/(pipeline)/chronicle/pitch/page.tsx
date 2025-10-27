@@ -7,6 +7,8 @@ import { sampleChronicleReports } from '@/lib/chronicle-sample-data';
 import { PresentationView } from '@/frontend/components/pipeline/PresentationView';
 import { PitchRegularView } from '@/frontend/components/pipeline/PitchRegularView';
 
+
+
 export default function PitchPage() {
   const { user } = useUnifiedAuth();
   const { data: acquisitionData } = useAcquisitionOS();

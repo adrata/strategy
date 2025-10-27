@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "People management",
 };
 
+
+
 export default function WorkspacePeoplePage() {
   // Use the original PipelineView component with proper providers
   return <PipelineContent section="people" />;

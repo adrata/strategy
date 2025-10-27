@@ -18,7 +18,89 @@ export class DesktopAPIClient {
 
   // Check if we're running in Tauri
   private isTauri(): boolean {
-    return typeof window !== 'undefined' && window.__TAURI__;
+    return typeof window !== 'undefined' && !!window.__TAURI__;
+  }
+
+  // Browser methods
+  async openBrowser(url: string, title?: string, width?: number, height?: number): Promise<{ success: boolean; message: string }> {
+    if (!this.isTauri()) {
+      return {
+        success: false,
+        message: 'Nova Browser is only available in the desktop app'
+      };
+    }
+
+    try {
+      const { invoke } = await import('@tauri-apps/api/core');
+      return await invoke('create_browser_window', {
+        config: {
+          url,
+          title: title || 'Nova Browser',
+          width: width || 1200,
+          height: height || 800
+        }
+      });
+    } catch (error) {
+      console.error('Failed to open browser:', error);
+      return {
+        success: false,
+        message: `Failed to open browser: ${error}`
+      };
+    }
+  }
+
+  async navigateBrowser(windowId: string, url: string): Promise<{ success: boolean; message: string }> {
+    if (!this.isTauri()) {
+      return {
+        success: false,
+        message: 'Nova Browser is only available in the desktop app'
+      };
+    }
+
+    try {
+      const { invoke } = await import('@tauri-apps/api/core');
+      return await invoke('navigate_browser_window', { windowId, url });
+    } catch (error) {
+      console.error('Failed to navigate browser:', error);
+      return {
+        success: false,
+        message: `Failed to navigate browser: ${error}`
+      };
+    }
+  }
+
+  async closeBrowser(windowId: string): Promise<{ success: boolean; message: string }> {
+    if (!this.isTauri()) {
+      return {
+        success: false,
+        message: 'Nova Browser is only available in the desktop app'
+      };
+    }
+
+    try {
+      const { invoke } = await import('@tauri-apps/api/core');
+      return await invoke('close_browser_window', { windowId });
+    } catch (error) {
+      console.error('Failed to close browser:', error);
+      return {
+        success: false,
+        message: `Failed to close browser: ${error}`
+      };
+    }
+  }
+
+  async listBrowserWindows(): Promise<string[]> {
+    if (!this.isTauri()) {
+      return [];
+    }
+
+    try {
+      const { invoke } = await import('@tauri-apps/api/core');
+      return await invoke('list_browser_windows');
+    } catch (error) {
+      console.error('Failed to list browser windows:', error);
+      return [];
+    }
   }
 
   // Generic API call that routes to Tauri commands
@@ -188,11 +270,11 @@ export function useDesktopAPI() {
   return {
     api: desktopAPI,
     endpoints: desktopEndpoints,
-    isTauri: typeof window !== 'undefined' && window.__TAURI__,
+    isTauri: typeof window !== 'undefined' && !!window.__TAURI__,
   };
 }
 
 // Utility function to check if running in Tauri
 export function isTauriEnvironment(): boolean {
-  return typeof window !== 'undefined' && window.__TAURI__;
+  return typeof window !== 'undefined' && !!window.__TAURI__;
 }

@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Opportunities management",
 };
 
+
+
 export default function WorkspaceOpportunitiesPage() {
   // Use the original PipelineView component with proper providers
   return <PipelineContent section="opportunities" />;

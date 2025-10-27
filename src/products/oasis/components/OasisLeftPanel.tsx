@@ -3,61 +3,55 @@
 /**
  * Oasis Left Panel Component
  * 
- * Left navigation panel for Oasis communication hub.
- * Standardized design matching Speedrun style.
+ * Slack-like left navigation panel for Oasis communication hub.
+ * Shows conversations, channels, DMs, and external company chats.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { useOasis } from '@/app/[workspace]/(pipeline)/layout';
+import { useOasisChannels } from '@/products/oasis/hooks/useOasisChannels';
+import { useOasisDMs } from '@/products/oasis/hooks/useOasisDMs';
+import { useOasisPresence } from '@/products/oasis/hooks/useOasisPresence';
+import { AddChannelModal } from '@/products/oasis/components/AddChannelModal';
+import { AddDMModal } from '@/products/oasis/components/AddDMModal';
+import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
+import { saveLastConversation } from '@/products/oasis/utils/conversation-persistence';
+import { 
+  HashtagIcon, 
+  UserGroupIcon, 
+  AtSymbolIcon, 
+  StarIcon, 
+  ArchiveBoxIcon, 
+  Cog6ToothIcon,
+  PlusIcon,
+  BuildingOfficeIcon
+} from '@heroicons/react/24/outline';
 
-interface NavigationItem {
+interface Conversation {
   id: string;
-  label: string;
-  description: string;
-  count?: number;
+  name: string;
+  type: 'channel' | 'dm' | 'external';
+  unread: number;
+  isActive: boolean;
+  isMuted?: boolean;
+  isStarred?: boolean;
+  lastMessage?: string;
+  lastMessageTime?: string;
+  company?: string;
+  participants?: number;
+  status?: 'online' | 'away' | 'offline';
+  isWorkspaceMember?: boolean;
 }
 
-const navigationItems: NavigationItem[] = [
-  {
-    id: 'channels',
-    label: 'Channels',
-    description: 'Team communication channels',
-    count: 3
-  },
-  {
-    id: 'direct-messages',
-    label: 'Direct Messages',
-    description: 'Private conversations',
-    count: 5
-  },
-  {
-    id: 'mentions',
-    label: 'Mentions',
-    description: 'Messages mentioning you',
-    count: 2
-  },
-  {
-    id: 'starred',
-    label: 'Starred',
-    description: 'Important messages',
-    count: 8
-  },
-  {
-    id: 'archived',
-    label: 'Archived',
-    description: 'Old conversations',
-    count: 12
-  },
-  {
-    id: 'settings',
-    label: 'Settings',
-    description: 'Communication preferences'
-  }
-];
+// Mock data will be replaced with real data from hooks
+
+// No navigation items - just channels and DMs
 
 export function OasisLeftPanel() {
+  const router = useRouter();
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { data: acquisitionData } = useAcquisitionOS();
   
@@ -76,12 +70,120 @@ export function OasisLeftPanel() {
     );
   }
   
-  const { activeSection, setActiveSection, setSelectedChannel } = oasisContext;
+  const { selectedChannel, setSelectedChannel } = oasisContext;
+  const { setIsProfilePanelVisible } = useProfilePanel();
+  const params = useParams();
+  
+  // Get workspace ID from auth user or acquisition data
+  const workspaceId = authUser?.activeWorkspaceId || acquisitionData?.auth?.authUser?.activeWorkspaceId || '';
+  
+  console.log('🔍 [OASIS LEFT PANEL] Auth user:', authUser);
+  console.log('🔍 [OASIS LEFT PANEL] Acquisition data:', acquisitionData?.auth?.authUser);
+  console.log('🔍 [OASIS LEFT PANEL] URL params:', params);
+  console.log('🔍 [OASIS LEFT PANEL] Workspace ID:', workspaceId);
+  
+  // Real data hooks
+  const { channels, loading: channelsLoading, createChannel } = useOasisChannels(workspaceId);
+  const { dms, loading: dmsLoading, createDM } = useOasisDMs(workspaceId);
+  const { userCount, isConnected } = useOasisPresence(workspaceId);
+  
+  // State for creating new channels/DMs
+  const [showAddChannelModal, setShowAddChannelModal] = useState(false);
+  const [showAddDMModal, setShowAddDMModal] = useState(false);
 
-  const handleSectionClick = (sectionId: string) => {
-    setActiveSection(sectionId as any);
-    setSelectedChannel(null); // Clear selected channel when switching sections
+  const handleConversationClick = (conversation: Conversation) => {
+    setSelectedChannel(conversation);
+    
+    // Navigate to the conversation with human-readable URLs
+    const currentPath = window.location.pathname;
+    const segments = currentPath.split('/').filter(Boolean);
+    const workspaceSlug = segments[0];
+    
+    // Generate URL-friendly slug from name
+    const generateSlug = (name: string) => {
+      return name.toLowerCase().replace(/\s+/g, '-');
+    };
+    
+    // Save last conversation to localStorage
+    if (workspaceId) {
+      saveLastConversation(
+        workspaceId,
+        conversation.id,
+        conversation.type as 'channel' | 'dm' | 'external',
+        conversation.name
+      );
+    }
+    
+    if (conversation.type === 'channel') {
+      // Format: general-abc123
+      const slug = `${generateSlug(conversation.name)}-${conversation.id}`;
+      router.push(`/${workspaceSlug}/oasis/${slug}`);
+    } else if (conversation.type === 'dm') {
+      // Format: dan-mirolli-xyz789
+      const slug = `${generateSlug(conversation.name)}-${conversation.id}`;
+      router.push(`/${workspaceSlug}/oasis/${slug}`);
+    } else if (conversation.type === 'external') {
+      // Format: ryan-hoffman-abc123
+      const slug = `${generateSlug(conversation.name)}-${conversation.id}`;
+      router.push(`/${workspaceSlug}/oasis/${slug}`);
+    }
   };
+
+  const handleAddChannel = () => {
+    setShowAddChannelModal(true);
+  };
+
+  const handleChannelConfirm = async (name: string, description?: string) => {
+    try {
+      const newChannel = await createChannel(name, description);
+      console.log('Channel created:', newChannel);
+    } catch (error) {
+      console.error('Failed to create channel:', error);
+      alert('Failed to create channel. Please try again.');
+    }
+  };
+
+  const handleAddDM = () => {
+    setShowAddDMModal(true);
+  };
+
+  const handleDMConfirm = async (userIds: string[]) => {
+    try {
+      const newDM = await createDM(userIds);
+      console.log('DM created:', newDM);
+    } catch (error) {
+      console.error('Failed to create DM:', error);
+      alert('Failed to create DM. Please try again.');
+    }
+  };
+
+  const handleProfileClick = () => {
+    setIsProfilePanelVisible(true);
+  };
+
+  // Convert real data to Conversation format
+  const channelConversations: Conversation[] = channels.map(channel => ({
+    id: channel.id,
+    name: channel.name,
+    type: 'channel' as const,
+    unread: channel.recentMessageCount,
+    isActive: selectedChannel?.id === channel.id,
+    lastMessage: 'Channel created',
+    lastMessageTime: 'now',
+    isWorkspaceMember: true
+  }));
+
+  const dmConversations: Conversation[] = dms.map(dm => ({
+    id: dm.id,
+    name: dm.participants[0]?.name || 'Unknown User',
+    type: 'dm' as const,
+    unread: 0, // TODO: Calculate unread count
+    isActive: selectedChannel?.id === dm.id,
+    lastMessage: dm.lastMessage?.content || 'Started conversation',
+    lastMessageTime: dm.lastMessage?.createdAt ? new Date(dm.lastMessage.createdAt).toLocaleTimeString() : 'now',
+    status: 'online' as const,
+    isWorkspaceMember: true
+  }));
 
   // Show loading state while auth is loading
   if (authLoading) {
@@ -96,123 +198,146 @@ export function OasisLeftPanel() {
 
   return (
     <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
-      {/* Fixed Header Section */}
-      <div className="flex-shrink-0 pt-0 pr-2 pl-2">
-        {/* Header - matching Speedrun style */}
-        <div className="mx-2 mt-4 mb-2">
-          {/* Company Icon */}
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--background)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
-              <span className="text-lg font-bold text-black">O</span>
-            </div>
-            <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Oasis</h2>
-              <p className="text-xs text-[var(--muted)]">Communication Hub</p>
-            </div>
+      {/* Header */}
+      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-white border border-[var(--border)] rounded-xl flex items-center justify-center">
+            <span className="text-lg font-bold text-[var(--foreground)]">
+              {(() => {
+                // Get workspace from auth user
+                const workspaceName = authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || "Adrata";
+                // Special handling for specific companies
+                if (workspaceName === "Notary Everyday") {
+                  return "NE";
+                }
+                if (workspaceName === "Adrata") {
+                  return "A";
+                }
+                // Default behavior for other workspaces - take first two letters
+                return workspaceName.split(' ').map(word => word.charAt(0).toUpperCase()).join('').slice(0, 2) || 'AD';
+              })()}
+            </span>
           </div>
-        </div>
-
-        {/* Communication Activity Dashboard */}
-        <div className="mx-2 mb-4 p-3 bg-[var(--hover)] rounded-lg border border-[var(--border)]">
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Messages</span>
-              <span className="text-xs font-semibold text-black">
-                {navigationItems.reduce((sum, item) => sum + (item.count || 0), 0)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Channels</span>
-              <span className="text-xs font-semibold text-black">
-                {navigationItems.find(item => item.id === 'channels')?.count || 0}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Mentions</span>
-              <span className="text-xs font-semibold text-black">
-                {navigationItems.find(item => item.id === 'mentions')?.count || 0}
-              </span>
-            </div>
+          <div>
+            <h2 className="text-lg font-bold text-[var(--foreground)]">Oasis</h2>
+            <p className="text-xs text-[var(--muted)]">Communication Hub</p>
           </div>
         </div>
       </div>
 
-      {/* Scrollable Middle Section - Navigation */}
-      <div className="flex-1 overflow-y-auto invisible-scrollbar px-2">
-        <nav className="space-y-1">
-          {navigationItems.map((item) => {
-            const isActive = activeSection === item.id;
-            
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleSectionClick(item.id)}
-                className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                    : 'hover:bg-[var(--panel-background)] text-gray-700'
-                }`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-sm">{item.label}</span>
-                  {item.count && (
-                    <span className="text-sm text-[var(--muted)]">
-                      {item.count}
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs text-[var(--muted)] mt-1">
-                  {item.description}
-                </div>
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Channels List - Show when channels section is active */}
-        {activeSection === 'channels' && (
-          <div className="mt-4 pt-4 border-t border-[var(--border)]">
-            <div className="px-3 mb-2">
-              <h3 className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Channels</h3>
-            </div>
-            <div className="space-y-1">
-              {[
-                { id: 'general', name: 'general', unread: 3, members: 12 },
-                { id: 'design', name: 'design', unread: 0, members: 5 },
-                { id: 'dev-team', name: 'dev-team', unread: 7, members: 8 }
-              ].map((channel) => (
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto invisible-scrollbar">
+        {/* Channels Section */}
+        <div className="p-2">
+          <div className="flex items-center justify-between px-2 py-1 mb-2">
+            <h3 className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Channels</h3>
+            <button 
+              onClick={handleAddChannel}
+              className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              title="Add Channel"
+            >
+              <PlusIcon className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="space-y-1">
+            {channelsLoading ? (
+              <div className="space-y-1">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="flex gap-2 px-2 py-1.5">
+                    <div className="h-4 bg-[var(--loading-bg)] rounded w-4 animate-pulse"></div>
+                    <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse"></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              channelConversations.map((channel) => (
                 <button
                   key={channel.id}
-                  onClick={() => setSelectedChannel(channel)}
-                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-[var(--panel-background)] text-gray-700 transition-colors"
+                  onClick={() => handleConversationClick(channel)}
+                  className={`w-full text-left px-2 py-1.5 rounded-md transition-colors flex items-center gap-2 ${
+                    selectedChannel?.id === channel.id
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'hover:bg-gray-100 text-gray-700'
+                  }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-[var(--muted)]">#{channel.name}</span>
-                    {channel.unread > 0 && (
-                      <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded-full">
-                        {channel.unread}
+                  <HashtagIcon className="w-3 h-3 text-[var(--muted)]" />
+                  <span className="text-sm font-medium truncate">#{channel.name}</span>
+                  {channel.unread > 0 && (
+                    <span className="ml-auto px-2 py-1 bg-blue-500 text-white text-xs font-medium rounded-full min-w-[1.25rem] text-center">
+                      {channel.unread}
+                    </span>
+                  )}
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Direct Messages Section */}
+        <div className="p-2 border-t border-[var(--border)]">
+          <div className="flex items-center justify-between px-2 py-1 mb-2">
+            <h3 className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Direct Messages</h3>
+            <button 
+              onClick={handleAddDM}
+              className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              title="Add DM"
+            >
+              <PlusIcon className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="space-y-1">
+            {dmsLoading ? (
+              <div className="space-y-1">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex gap-2 px-2 py-1.5">
+                    <div className="h-4 bg-[var(--loading-bg)] rounded w-4 animate-pulse"></div>
+                    <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse"></div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              dmConversations.map((dm) => (
+                <button
+                  key={dm.id}
+                  onClick={() => handleConversationClick(dm)}
+                  className={`w-full text-left px-2 py-1.5 rounded-md transition-colors flex items-center gap-2 ${
+                    selectedChannel?.id === dm.id
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'hover:bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  <div className="relative">
+                    <div className="w-4 h-4 bg-white border border-[var(--border)] rounded flex items-center justify-center">
+                      <span className="text-xs font-medium text-[var(--foreground)]">
+                        {dm.name.charAt(0)}
                       </span>
+                    </div>
+                    {dm.status === 'online' && (
+                      <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-blue-400 rounded-full border border-white"></div>
                     )}
                   </div>
-                  <div className="text-xs text-[var(--muted)] mt-1">
-                    {channel.members} members
-                  </div>
+                  <span className="text-sm font-medium truncate">{dm.name}</span>
+                  {dm.unread > 0 && (
+                    <span className="ml-auto px-2 py-1 bg-blue-500 text-white text-xs font-medium rounded-full min-w-[1.25rem] text-center">
+                      {dm.unread}
+                    </span>
+                  )}
                 </button>
-              ))}
-            </div>
+              ))
+            )}
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Fixed Bottom Section - Profile Button */}
-      <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
+      {/* Profile Section */}
+      <div className="flex-shrink-0 p-2 border-t border-[var(--border)]" style={{ paddingBottom: '15px' }}>
         <button
+          onClick={handleProfileClick}
           className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--hover)] transition-colors"
           title="Profile"
         >
-          <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
-            <span className="text-sm font-medium text-gray-700">
+          <div className="w-8 h-8 bg-white border border-[var(--border)] rounded-xl flex items-center justify-center">
+            <span className="text-sm font-medium text-[var(--foreground)]">
               {authUser?.name?.charAt(0)?.toUpperCase() || 'U'}
             </span>
           </div>
@@ -226,6 +351,20 @@ export function OasisLeftPanel() {
           </div>
         </button>
       </div>
+
+      {/* Modals */}
+      <AddChannelModal
+        isOpen={showAddChannelModal}
+        onClose={() => setShowAddChannelModal(false)}
+        onConfirm={handleChannelConfirm}
+      />
+      
+      <AddDMModal
+        isOpen={showAddDMModal}
+        onClose={() => setShowAddDMModal(false)}
+        onConfirm={handleDMConfirm}
+        workspaceId={workspaceId}
+      />
     </div>
   );
 }

@@ -568,56 +568,80 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         </div>
       </div>
 
-      {/* Profile Content - no tabs */}
+      {/* Profile Content - Simplified Menu */}
       <div className="pl-4 pr-2 pt-2 pb-2">
-        {/* Download Button - Show only for web users and admin users */}
-        {!isDesktop && isAdminUser && (
-          <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center"
-            onClick={handleDownloadDesktopApp}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && handleDownloadDesktopApp()}
-          >
-            <PlatformIcon className="w-4 h-4 mr-2" />
-            Download
-          </div>
-        )}
+        {/* Download */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center"
+          onClick={handleDownloadDesktopApp}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Enter" && handleDownloadDesktopApp()}
+        >
+          <PlatformIcon className="w-4 h-4 mr-2" />
+          Download
+        </div>
 
-        {/* Demo Section - Show for Adrata users (dan and ross) */}
-        {isAdrataUser && (
-          <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-            onClick={handleDemoWorkspaceClick}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e['key'] === "Enter" && handleDemoWorkspaceClick()}
-          >
-            Demo
-          </div>
-        )}
-
-        {/* Docs - Documentation System - Admin only */}
-        {isAdminUser && (
-          <div
-            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-            onClick={() => {
-              console.log("📚 Docs clicked - navigating to documentation");
+        {/* RevenueOS */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+          onClick={() => {
+            console.log("RevenueOS clicked - navigating to speedrun");
+            setIsProfileOpen(false);
+            handleNavigation("./speedrun");
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e['key'] === "Enter") {
               setIsProfileOpen(false);
-              handleNavigation("./docs");
-            }}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e['key'] === "Enter") {
-                setIsProfileOpen(false);
-                handleNavigation("./docs");
-              }
-            }}
-          >
-            Docs
-          </div>
-        )}
+              handleNavigation("./speedrun");
+            }
+          }}
+        >
+          RevenueOS
+        </div>
+
+        {/* Oasis */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+          onClick={() => {
+            console.log("Oasis clicked - navigating to oasis");
+            setIsProfileOpen(false);
+            handleNavigation("./oasis");
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e['key'] === "Enter") {
+              setIsProfileOpen(false);
+              handleNavigation("./oasis");
+            }
+          }}
+        >
+          Oasis
+        </div>
+
+        {/* Settings */}
+        <div
+          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+          onClick={() => {
+            console.log("Settings clicked");
+            setIsProfileOpen(false);
+            setIsSettingsOpen(true);
+          }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e['key'] === "Enter") {
+              setIsProfileOpen(false);
+              setIsSettingsOpen(true);
+            }
+          }}
+        >
+          Settings
+        </div>
+
 
         {/* Workspace Apps - Admin only */}
         {isAdminUser && (

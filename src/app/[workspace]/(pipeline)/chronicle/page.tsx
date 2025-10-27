@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Weekly reports and chronicles",
 };
 
+
+
 export default function WorkspaceChroniclePage() {
   return <PipelineContent section="chronicle" />;
 }

@@ -106,13 +106,16 @@ fn clean_website_url(url: Option<String>) -> Option<String> {
     let mut cleaned = url.trim().to_string();
     
     // Remove common typos in protocol
-    cleaned = cleaned.replace(/^https?\/\/?:?/i, "");
+    let protocol_regex = regex::Regex::new(r"^https?/?/?\??").unwrap();
+    cleaned = protocol_regex.replace_all(&cleaned, "").to_string();
     
     // Remove leading www. if present
-    cleaned = cleaned.replace(/^www\./i, "");
+    let www_regex = regex::Regex::new(r"^www\.").unwrap();
+    cleaned = www_regex.replace_all(&cleaned, "").to_string();
     
     // If no protocol exists, prepend https://
-    if !cleaned.matches(/^https?:\/\//i).any(|_| true) {
+    let has_protocol = regex::Regex::new(r"^https?://").unwrap();
+    if !has_protocol.is_match(&cleaned) {
         cleaned = format!("https://{}", cleaned);
     }
     

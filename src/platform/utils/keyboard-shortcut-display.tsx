@@ -62,7 +62,7 @@ export const DISPLAY_SHORTCUTS = {
   AI_ASSISTANT: formatShortcutForDisplay(['⌘+J', 'Ctrl+J']),
   QUICK_SEARCH: formatShortcutForDisplay(['⌘+/', 'Ctrl+/']),
   PREFERENCES: formatShortcutForDisplay(['⌘+,', 'Ctrl+,']),
-  TOGGLE_LEFT_PANEL: formatShortcutForDisplay(['⌘+Shift+E', 'Ctrl+Shift+E']),
+  TOGGLE_LEFT_PANEL: formatShortcutForDisplay(['⌘+B', 'Ctrl+B']),
   TOGGLE_RIGHT_PANEL: formatShortcutForDisplay(['⌘+Shift+B', 'Ctrl+Shift+B']),
   GO_AOS: formatShortcutForDisplay(['⌘+1', 'Ctrl+1']),
   GO_MONACO: formatShortcutForDisplay(['⌘+2', 'Ctrl+2']),

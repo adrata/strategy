@@ -3,13 +3,15 @@
  * Handles individual row rendering and cell content formatting.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { getStatusColor, getPriorityColor, getStageColor } from '@/platform/utils/statusUtils';
 import { getLastActionTime, getSmartNextAction, getHealthStatus, getLeadsNextAction, getSmartLastActionDescription, formatLastActionTime } from '@/platform/utils/actionUtils';
 import { getRealtimeActionTiming } from '@/platform/utils/statusUtils';
 import { formatDate } from '@/platform/utils/dateUtils';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { ProfileAvatar, ProfileAvatarGroup } from '@/platform/ui/components/ProfileAvatar';
+import { ContextMenu } from './ContextMenu';
+import { TableCell } from './TableCell';
 
 // -------- Types --------
 interface PipelineRecord {
@@ -35,6 +37,8 @@ interface TableRowProps {
   visibleColumns?: string[];
   currentUserId?: string;
   onRecordClick: (record: PipelineRecord) => void;
+  onUpdateRecord?: (recordId: string, field: string, value: string) => Promise<boolean>;
+  onDeleteRecord?: (record: PipelineRecord) => void;
   getColumnWidth: (index: number) => string;
 }
 
@@ -105,10 +109,29 @@ export function TableRow({
   visibleColumns,
   currentUserId,
   onRecordClick,
+  onUpdateRecord,
+  onDeleteRecord,
   getColumnWidth,
 }: TableRowProps) {
+  const [contextMenu, setContextMenu] = useState<{x: number, y: number} | null>(null);
+
   const handleRowClick = () => {
     onRecordClick(record);
+  };
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('🖱️ Context menu triggered for record:', record.id);
+    setContextMenu({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  const handleDelete = (recordToDelete: PipelineRecord) => {
+    onDeleteRecord?.(recordToDelete);
   };
 
   // Handle placeholder records
@@ -134,10 +157,12 @@ export function TableRow({
   // Render based on section
   if (section === 'leads' || section === 'prospects') {
     return (
-           <tr 
-             key={record.id || index} 
-             className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
-             onClick={handleRowClick}
+      <>
+        <tr 
+          key={record.id || index} 
+          className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+          onClick={handleRowClick}
+          onContextMenu={handleContextMenu}
            >
         {(() => {
           // Use workspace-specific column order for leads/prospects
@@ -247,27 +272,43 @@ export function TableRow({
               case 'person':
               case 'name':
                 return (
-                  <td key="name" className={nameClasses}>
-                    <div className="truncate max-w-32">{displayName}</div>
-                  </td>
+                  <TableCell
+                    key="name"
+                    value={displayName}
+                    field="name"
+                    recordId={record.id}
+                    recordType={section}
+                    className={nameClasses}
+                    onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
+                  />
                 );
               case 'state':
                 return (
-                  <td key="state" className={textClasses}>
-                    <div className="truncate max-w-32">{record.hqState || record.state || record.company?.hqState || record.company?.state || '-'}</div>
-                  </td>
+                  <TableCell
+                    key="state"
+                    value={record.hqState || record.state || record.company?.hqState || record.company?.state || '-'}
+                    field="state"
+                    recordId={record.id}
+                    recordType={section}
+                    className={textClasses}
+                    onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
+                  />
                 );
               case 'title':
                 return (
-                  <td key="title" className={textClasses}>
-                    <div className="truncate max-w-32">
-                      {record['title'] || 
-                       record['jobTitle'] || 
-                       record?.['customFields']?.enrichedData?.overview?.title ||
-                       record?.['customFields']?.rawData?.active_experience_title ||
-                       '-'}
-                    </div>
-                  </td>
+                  <TableCell
+                    key="title"
+                    value={record['title'] || 
+                           record['jobTitle'] || 
+                           record?.['customFields']?.enrichedData?.overview?.title ||
+                           record?.['customFields']?.rawData?.active_experience_title ||
+                           '-'}
+                    field="title"
+                    recordId={record.id}
+                    recordType={section}
+                    className={textClasses}
+                    onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
+                  />
                 );
               case 'actions':
                 return (
@@ -422,18 +463,31 @@ export function TableRow({
             }
           });
         })()}
-      </tr>
+        </tr>
+        {contextMenu && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            record={record}
+            section={section}
+            onClose={handleCloseContextMenu}
+            onDelete={handleDelete}
+          />
+        )}
+      </>
     );
   }
 
   // Opportunities section rendering
   if (section === 'opportunities') {
     return (
-      <tr 
-        key={record.id || index} 
-        className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
-        onClick={handleRowClick}
-      >
+      <>
+        <tr 
+          key={record.id || index} 
+          className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+          onClick={handleRowClick}
+          onContextMenu={handleContextMenu}
+        >
         {(() => {
           // Use workspace-specific column order for opportunities
           const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
@@ -478,17 +532,27 @@ export function TableRow({
                 );
               case 'name':
                 return (
-                  <td key="name" className={nameClasses}>
-                    <div className="truncate max-w-32">{record['name'] || record['opportunityName'] || '-'}</div>
-                  </td>
+                  <TableCell
+                    key="name"
+                    value={record['name'] || record['opportunityName'] || '-'}
+                    field="name"
+                    recordId={record.id}
+                    recordType={section}
+                    className={nameClasses}
+                    onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
+                  />
                 );
               case 'stage':
                 return (
-                  <td key="stage" className={textClasses}>
-                    <div className="truncate max-w-32">
-                      {record['stage'] || record['status'] || '-'}
-                    </div>
-                  </td>
+                  <TableCell
+                    key="stage"
+                    value={record['stage'] || record['status'] || '-'}
+                    field="stage"
+                    recordId={record.id}
+                    recordType={section}
+                    className={textClasses}
+                    onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
+                  />
                 );
               case 'value':
               case 'amount':
@@ -584,18 +648,31 @@ export function TableRow({
             }
           });
         })()}
-      </tr>
+        </tr>
+        {contextMenu && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            record={record}
+            section={section}
+            onClose={handleCloseContextMenu}
+            onDelete={handleDelete}
+          />
+        )}
+      </>
     );
   }
 
   // People section rendering
   if (section === 'people') {
     return (
-      <tr 
-        key={record.id || index} 
-        className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
-        onClick={handleRowClick}
-      >
+      <>
+        <tr 
+          key={record.id || index} 
+          className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+          onClick={handleRowClick}
+          onContextMenu={handleContextMenu}
+        >
         {(() => {
           // Use workspace-specific column order for people
           const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
@@ -653,21 +730,31 @@ export function TableRow({
               case 'person':
               case 'name':
                 return (
-                  <td key="name" className={nameClasses}>
-                    <div className="truncate max-w-32">{displayName}</div>
-                  </td>
+                  <TableCell
+                    key="name"
+                    value={displayName}
+                    field="name"
+                    recordId={record.id}
+                    recordType={section}
+                    className={nameClasses}
+                    onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
+                  />
                 );
               case 'title':
                 return (
-                  <td key="title" className={textClasses}>
-                    <div className="truncate max-w-32">
-                      {record['title'] || 
-                       record['jobTitle'] || 
-                       record?.['customFields']?.enrichedData?.overview?.title ||
-                       record?.['customFields']?.rawData?.active_experience_title ||
-                       '-'}
-                    </div>
-                  </td>
+                  <TableCell
+                    key="title"
+                    value={record['title'] || 
+                           record['jobTitle'] || 
+                           record?.['customFields']?.enrichedData?.overview?.title ||
+                           record?.['customFields']?.rawData?.active_experience_title ||
+                           '-'}
+                    field="title"
+                    recordId={record.id}
+                    recordType={section}
+                    className={textClasses}
+                    onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
+                  />
                 );
               case 'actions':
                 return (
@@ -741,18 +828,31 @@ export function TableRow({
             }
           });
         })()}
-      </tr>
+        </tr>
+        {contextMenu && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            record={record}
+            section={section}
+            onClose={handleCloseContextMenu}
+            onDelete={handleDelete}
+          />
+        )}
+      </>
     );
   }
 
   // Companies section rendering
   if (section === 'companies') {
     return (
-      <tr 
-        key={record.id || index} 
-        className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
-        onClick={handleRowClick}
-      >
+      <>
+        <tr 
+          key={record.id || index} 
+          className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+          onClick={handleRowClick}
+          onContextMenu={handleContextMenu}
+        >
         {(() => {
           // Use workspace-specific column order for companies
           const sectionConfig = getSectionColumns(workspaceId, section, workspaceName);
@@ -889,29 +989,54 @@ export function TableRow({
             }
           });
         })()}
-      </tr>
+        </tr>
+        {contextMenu && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            record={record}
+            section={section}
+            onClose={handleCloseContextMenu}
+            onDelete={handleDelete}
+          />
+        )}
+      </>
     );
   }
 
   // Default rendering for other sections
     return (
-         <tr
-           className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
-           onClick={handleRowClick}
-         >
+      <>
+        <tr
+          className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+          onClick={handleRowClick}
+          onContextMenu={handleContextMenu}
+        >
       {headers.map((header, index) => {
+        const value = String(record[header.toLowerCase()] || record[header] || '-');
         return (
-          <td
+          <TableCell
             key={`${record.id}-${header}`}
+            value={value}
+            field={header.toLowerCase()}
+            recordId={record.id}
+            recordType={section}
             className={textClasses}
-            style={{ width: getColumnWidth(index) }}
-          >
-            <div className="text-sm text-[var(--foreground)] truncate">
-              {String(record[header.toLowerCase()] || record[header] || '-')}
-            </div>
-          </td>
+            onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
+          />
         );
       })}
-    </tr>
-  );
+        </tr>
+        {contextMenu && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            record={record}
+            section={section}
+            onClose={handleCloseContextMenu}
+            onDelete={handleDelete}
+          />
+        )}
+      </>
+    );
 }

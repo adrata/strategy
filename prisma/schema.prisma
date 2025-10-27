@@ -99,6 +99,7 @@ model workspaces {
   newsSources               String[]                    @default([])
   oasis_channels            OasisChannel[]
   oasis_direct_messages     OasisDirectMessage[]
+  oasis_external_connections OasisExternalConnection[] @relation("OasisExternalConnections")
   stacks_projects           StacksProject[]
   actions                   actions[]
   ai_conversations          ai_conversations[]
@@ -140,6 +141,8 @@ model users {
   oasis_dm_participants     OasisDMParticipant[]
   oasis_messages            OasisMessage[]
   oasis_reactions           OasisReaction[]
+  oasis_external_connections OasisExternalConnection[] @relation("OasisExternalConnections")
+  oasis_external_connections_external OasisExternalConnection[] @relation("OasisExternalConnectionsExternal")
   stacks_story_assignees    StacksStory[]
   stacks_task_assignees     StacksTask[]
   assigned_actions          actions[]                   @relation("AssignedActions")
@@ -714,21 +717,25 @@ model OasisDMParticipant {
 }
 
 model OasisMessage {
-  id        String              @id @default(cuid())
-  content   String
-  channelId String?
-  dmId      String?
-  senderId  String              @db.VarChar(30)
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
-  channel   OasisChannel?       @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  dm        OasisDirectMessage? @relation(fields: [dmId], references: [id], onDelete: Cascade)
-  sender    users               @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  reactions OasisReaction[]
+  id              String              @id @default(cuid())
+  content         String
+  channelId       String?
+  dmId            String?
+  senderId        String              @db.VarChar(30)
+  parentMessageId String?             // For thread support
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  channel         OasisChannel?       @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  dm              OasisDirectMessage? @relation(fields: [dmId], references: [id], onDelete: Cascade)
+  sender          users               @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  parentMessage   OasisMessage?       @relation("MessageThread", fields: [parentMessageId], references: [id], onDelete: Cascade)
+  threadMessages  OasisMessage[]      @relation("MessageThread")
+  reactions       OasisReaction[]
 
   @@index([channelId])
   @@index([dmId])
   @@index([senderId])
+  @@index([parentMessageId])
   @@index([createdAt])
 }
 
@@ -744,6 +751,25 @@ model OasisReaction {
   @@unique([messageId, userId, emoji])
   @@index([messageId])
   @@index([userId])
+}
+
+model OasisExternalConnection {
+  id                String     @id @default(cuid())
+  userId            String     @db.VarChar(30)
+  externalUserId    String     @db.VarChar(30)
+  externalWorkspaceId String   @db.VarChar(30)
+  status            String     @default("pending") // pending, accepted, blocked
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  user              users      @relation("OasisExternalConnections", fields: [userId], references: [id], onDelete: Cascade)
+  externalUser      users      @relation("OasisExternalConnectionsExternal", fields: [externalUserId], references: [id], onDelete: Cascade)
+  externalWorkspace workspaces @relation("OasisExternalConnections", fields: [externalWorkspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, externalUserId, externalWorkspaceId])
+  @@index([userId])
+  @@index([externalUserId])
+  @@index([externalWorkspaceId])
+  @@index([status])
 }
 
 /// Stacks - Project Management (Jira-like)

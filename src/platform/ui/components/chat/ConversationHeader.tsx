@@ -37,6 +37,8 @@ interface ConversationHeaderProps {
   onReorderConversations?: (newOrder: Conversation[]) => void;
   menuPopupRef: React.RefObject<HTMLDivElement>;
   conversationHistoryRef: React.RefObject<HTMLDivElement>;
+  showChatIcon?: boolean;
+  onToggleDirectMessages?: () => void;
 }
 
 function formatTimeAgo(date: Date): string {
@@ -67,7 +69,9 @@ export function ConversationHeader({
   onClosePanel,
   onReorderConversations,
   menuPopupRef,
-  conversationHistoryRef
+  conversationHistoryRef,
+  showChatIcon = false,
+  onToggleDirectMessages
 }: ConversationHeaderProps) {
   // Drag and drop state
   const [draggedConversation, setDraggedConversation] = useState<string | null>(null);
@@ -170,6 +174,16 @@ export function ConversationHeader({
             <ClockIcon className="w-5 h-5" />
           </button>
           
+          {/* Direct Messages Button - only show when not on Oasis */}
+          {showChatIcon && onToggleDirectMessages && (
+            <button
+              onClick={onToggleDirectMessages}
+              className="w-7 h-7 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors flex items-center justify-center"
+              title="Direct Messages"
+            >
+              <ChatBubbleLeftRightIcon className="w-5 h-5" />
+            </button>
+          )}
           
           <XMarkIcon 
             className="w-6 h-6 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors" 

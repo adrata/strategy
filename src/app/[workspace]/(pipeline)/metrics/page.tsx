@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Sales performance metrics and KPIs",
 };
 
+
+
 export default function WorkspaceMetricsPage() {
   return <PipelineContent section="metrics" />;
 }

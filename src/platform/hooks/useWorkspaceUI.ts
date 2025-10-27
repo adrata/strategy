@@ -17,6 +17,7 @@ interface UseUIReturn {
   isThemeModalOpen: boolean;
   isProfileOpen: boolean;
   profileAnchor: HTMLElement | null;
+  isProfilePanelVisible: boolean;
   isAddModalOpen: boolean;
   isEditModalOpen: boolean;
 
@@ -63,6 +64,7 @@ interface UseUIReturn {
   setIsThemeModalOpen: (open: boolean) => void;
   setIsProfileOpen: (open: boolean) => void;
   setProfileAnchor: (anchor: HTMLElement | null) => void;
+  setIsProfilePanelVisible: (visible: boolean) => void;
   setIsAddModalOpen: (open: boolean) => void;
   setIsEditModalOpen: (open: boolean) => void;
   setSearchQuery: (query: string) => void;
@@ -164,6 +166,7 @@ export function useUI(): UseUIReturn {
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [profileAnchor, setProfileAnchor] = useState<HTMLElement | null>(null);
+  const [isProfilePanelVisible, setIsProfilePanelVisible] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -719,6 +722,7 @@ export function useUI(): UseUIReturn {
     isThemeModalOpen,
     isProfileOpen,
     profileAnchor,
+    isProfilePanelVisible,
     isAddModalOpen,
     isEditModalOpen,
     searchQuery,
@@ -742,6 +746,7 @@ export function useUI(): UseUIReturn {
     setIsThemeModalOpen,
     setIsProfileOpen,
     setProfileAnchor,
+    setIsProfilePanelVisible,
     setIsAddModalOpen,
     setIsEditModalOpen,
     setSearchQuery,

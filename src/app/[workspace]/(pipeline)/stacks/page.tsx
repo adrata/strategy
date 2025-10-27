@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Project management and task tracking",
 };
 
+
+
 export default function WorkspaceStacksPage() {
   return (
     <div className="h-full">

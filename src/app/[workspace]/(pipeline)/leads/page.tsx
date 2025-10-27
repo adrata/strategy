@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description: "Leads management",
 };
 
+
 export default function WorkspaceLeadsPage() {
   // Use the simplified PipelineContent component (LeftPanel is now in layout)
   return <PipelineContent section="leads" />;

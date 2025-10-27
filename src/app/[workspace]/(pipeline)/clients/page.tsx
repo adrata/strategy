@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Clients management",
 };
 
+
+
 export default function WorkspaceClientsPage() {
   // Use the simplified PipelineContent component (LeftPanel is now in layout)
   return <PipelineContent section="clients" />;

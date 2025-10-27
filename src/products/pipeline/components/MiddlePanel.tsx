@@ -11,6 +11,7 @@ import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
 import { useFastSectionData } from "@/platform/hooks/useFastSectionData";
 import { useUI } from "@/platform/ui/context/UIProvider";
+import { NovaBrowser } from "./NovaBrowser";
 
 interface MiddlePanelProps {
   activeSection: string;
@@ -173,6 +174,11 @@ export function MiddlePanel({
   };
 
   console.log(`✅ [MIDDLE PANEL] Rendering PipelineTable with ${pipelineData.data.length} ${activeSection} records`);
+
+  // Special case for Nova browser
+  if (activeSection === "nova") {
+    return <NovaBrowser />;
+  }
 
   // Note: Removed special case for sellers - now uses standard PipelineTable rendering
 

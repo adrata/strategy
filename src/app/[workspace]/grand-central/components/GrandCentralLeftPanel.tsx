@@ -18,8 +18,7 @@ export function GrandCentralLeftPanel() {
   // Determine current tab from pathname
   const currentTab = pathname.includes('/apis') ? 'apis' :
                     pathname.includes('/mcps') ? 'mcps' :
-                    pathname.includes('/atrium') ? 'atrium' :
-                    pathname.includes('/connectors') ? 'all-connectors' : 'atrium';
+                    pathname.includes('/connectors') ? 'all-connectors' : 'apis';
 
   return (
     <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
@@ -59,26 +58,6 @@ export function GrandCentralLeftPanel() {
 
       {/* Navigation Sections */}
       <div className="flex-1 space-y-1 p-2">
-        {/* Atrium Section */}
-        <button
-          onClick={() => window.location.href = `/${workspace}/grand-central/atrium`}
-          className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-            currentTab === 'atrium'
-              ? 'bg-[var(--hover)] text-[var(--foreground)]'
-              : 'hover:bg-[var(--panel-background)] text-gray-700'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <span className="font-medium text-sm">Atrium</span>
-            <span className="text-sm text-[var(--muted)]">
-              24
-            </span>
-          </div>
-          <div className="text-xs text-[var(--muted)] mt-1">
-            Document management
-          </div>
-        </button>
-
         {/* APIs Section */}
         <button
           onClick={() => window.location.href = `/${workspace}/grand-central/apis`}

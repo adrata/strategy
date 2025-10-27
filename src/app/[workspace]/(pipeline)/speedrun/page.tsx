@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description: "Pipeline speedrun management",
 };
 
+
 export default function WorkspaceSpeedrunPage() {
   return (
     <div className="h-full">

@@ -28,6 +28,7 @@ mod demo_scenarios;
 mod encode;
 mod sync;
 mod api;
+mod browser;
 // mod entity; // Removed - entities table doesn't exist in streamlined schema
 
 // Import modules for command generation
@@ -274,7 +275,13 @@ pub fn run() {
                 api::invalidate_speedrun_cache,
                 api::get_chronicle_reports,
                 api::create_chronicle_report,
-                api::get_chronicle_report_by_id
+                api::get_chronicle_report_by_id,
+
+                // Browser Commands
+                browser::create_browser_window,
+                browser::navigate_browser_window,
+                browser::close_browser_window,
+                browser::list_browser_windows
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

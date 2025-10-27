@@ -102,6 +102,8 @@ function cleanup() {
     } catch (error) {
       console.warn('⚠️ Could not restore API routes:', error.message);
     }
+  } else {
+    console.log('ℹ️ API backup directory was removed during build (this is normal for desktop builds)');
   }
   
   // Clean up build artifacts
@@ -170,6 +172,17 @@ async function main() {
       console.log('✅ API routes moved temporarily');
     } catch (error) {
       throw new Error(`Failed to move API routes: ${error.message}`);
+    }
+    
+    // Step 4.5: Remove API backup directory to avoid import conflicts
+    console.log('🗑️ Removing API backup directory to avoid import conflicts...');
+    try {
+      if (fileExists(API_BACKUP_DIR)) {
+        fs.rmSync(API_BACKUP_DIR, { recursive: true, force: true });
+        console.log('✅ API backup directory removed');
+      }
+    } catch (error) {
+      console.warn('⚠️ Could not remove API backup directory:', error.message);
     }
     
     // Step 5: Clean previous builds
