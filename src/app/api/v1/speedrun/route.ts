@@ -359,14 +359,14 @@ export async function GET(request: NextRequest) {
 
         return {
           id: person.id,
-          rank: person.globalRank, // Use actual globalRank (no fallback)
+          // Remove redundant 'rank' field - table will use index-based ranking for Speedrun
           name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
           title: person.jobTitle || 'Unknown Title',
           email: person.email || '',
           phone: person.phone || '',
           linkedin: person.linkedinUrl || '',
           status: person.status || 'Unknown',
-          globalRank: person.globalRank,
+          globalRank: person.globalRank, // Keep for metadata, but table won't use for display
           lastAction: lastAction || null,
           lastActionDate: lastActionDate || null,
           lastActionTime: lastActionTime,

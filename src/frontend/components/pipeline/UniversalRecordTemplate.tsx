@@ -2979,34 +2979,6 @@ export function UniversalRecordTemplate({
         localStorage.removeItem(cacheKey);
         console.log('🗑️ [UNIVERSAL] Cleared actions cache for record:', record.id);
         
-        // Dispatch event to trigger actions refresh
-        document.dispatchEvent(new CustomEvent('actionCreated', {
-          detail: {
-            recordId: record.id,
-            recordType: recordType,
-            actionId: result.data?.id,
-            timestamp: new Date().toISOString()
-          }
-        }));
-        
-        // Dispatch event with full action data for optimistic update
-        console.log('📤 [UNIVERSAL] Dispatching actionCreatedWithData event:', {
-          recordId: record.id,
-          recordType: recordType,
-          actionDataId: result.data?.id,
-          actionDataType: result.data?.type,
-          hasActionData: !!result.data
-        });
-
-        document.dispatchEvent(new CustomEvent('actionCreatedWithData', {
-          detail: {
-            recordId: record.id,
-            recordType: recordType,
-            actionData: result.data, // Full action data from API response
-            timestamp: new Date().toISOString()
-          }
-        }));
-        
         // Close the modal
         setIsAddActionModalOpen(false);
         
@@ -3032,6 +3004,41 @@ export function UniversalRecordTemplate({
           // Trigger record update to refresh any activity lists
           onRecordUpdate(record);
         }
+        
+        // IMPORTANT: Dispatch events AFTER onRecordUpdate to ensure event listeners are active
+        // onRecordUpdate causes component re-renders, which can cleanup/recreate event listeners
+        // By dispatching after, we ensure the new listeners catch the events
+        console.log('📤 [UNIVERSAL] Dispatching events after record update');
+        
+        // Use setTimeout to ensure events are dispatched after React has finished re-rendering
+        setTimeout(() => {
+          console.log('📤 [UNIVERSAL] Dispatching actionCreated event');
+          document.dispatchEvent(new CustomEvent('actionCreated', {
+            detail: {
+              recordId: record.id,
+              recordType: recordType,
+              actionId: result.data?.id,
+              timestamp: new Date().toISOString()
+            }
+          }));
+          
+          console.log('📤 [UNIVERSAL] Dispatching actionCreatedWithData event:', {
+            recordId: record.id,
+            recordType: recordType,
+            actionDataId: result.data?.id,
+            actionDataType: result.data?.type,
+            hasActionData: !!result.data
+          });
+
+          document.dispatchEvent(new CustomEvent('actionCreatedWithData', {
+            detail: {
+              recordId: record.id,
+              recordType: recordType,
+              actionData: result.data, // Full action data from API response
+              timestamp: new Date().toISOString()
+            }
+          }));
+        }, 100); // Small delay to ensure React has finished re-rendering
       } else {
         throw new Error(result.error || 'Failed to log action');
       }

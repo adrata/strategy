@@ -554,6 +554,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     document.addEventListener('actionUpdated', handleActionUpdated as EventListener);
     
     return () => {
+      console.log('🧹 [ACTIONS] Cleaning up event listeners for record:', record?.id);
       document.removeEventListener('actionCreated', handleActionCreated as EventListener);
       document.removeEventListener('actionCreatedWithData', handleActionCreatedWithData as EventListener);
       document.removeEventListener('actionUpdated', handleActionUpdated as EventListener);

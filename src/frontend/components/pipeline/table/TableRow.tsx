@@ -209,8 +209,21 @@ export function TableRow({
                 // 🎯 PER-USER RANKING: Display simple sequential rank for speedrun
                 let displayRank;
                 if (section === 'speedrun') {
-                  // For speedrun, show simple sequential rank (1-50)
-                  displayRank = record['globalRank'] || record['rank'] || (index + 1);
+                  // For speedrun, always use sequential index-based ranking (1-50)
+                  // This ensures consistent behavior between dev and production
+                  displayRank = index + 1;
+                  
+                  // Add defensive check to prevent showing record IDs
+                  if (typeof displayRank !== 'number' || displayRank > 1000) {
+                    console.warn(`⚠️ [SPEEDRUN RANK] Suspicious rank value detected:`, {
+                      displayRank,
+                      recordId: record.id,
+                      globalRank: record['globalRank'],
+                      rank: record['rank'],
+                      index
+                    });
+                    displayRank = index + 1; // Force sequential ranking
+                  }
                 } else {
                   // For other sections, keep hierarchical ranking if available
                   const companyRank = record['companyRank'] || record['company']?.rank || 0;
