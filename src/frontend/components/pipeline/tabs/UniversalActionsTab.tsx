@@ -465,6 +465,13 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
   useEffect(() => {
     const handleActionCreated = (event: CustomEvent) => {
       const { recordId, actionId } = event.detail || {};
+      console.log('🔍 [ACTIONS] actionCreated event received:', {
+        eventRecordId: recordId,
+        currentRecordId: record?.id,
+        actionId: actionId,
+        matches: recordId === record?.id
+      });
+      
       // Match by recordId only - don't check recordType to avoid mismatches
       if (recordId === record?.id) {
         console.log('🔄 [ACTIONS] Action created event matches current record, refreshing actions');
@@ -541,6 +548,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
       }
     };
 
+    console.log('👂 [ACTIONS] Attaching event listeners for record:', record?.id);
     document.addEventListener('actionCreated', handleActionCreated as EventListener);
     document.addEventListener('actionCreatedWithData', handleActionCreatedWithData as EventListener);
     document.addEventListener('actionUpdated', handleActionUpdated as EventListener);
