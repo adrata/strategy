@@ -136,11 +136,65 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDropdown]);
 
-  // Sync activeContacts with dynamic speedrun data
+  // Sync activeContacts with dynamic speedrun data and handle carryover
   useEffect(() => {
     // Always use dynamic data - context always provides an array
     const doneIds = new Set(doneContacts.map(c => c.id));
-    const availableContacts = dynamicRtpProspects.filter(contact => !doneIds.has(contact.id));
+    let availableContacts = dynamicRtpProspects.filter(contact => !doneIds.has(contact.id));
+    
+    // 🔄 CARRYOVER: Check for incomplete records from previous day and prioritize them
+    try {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayString = yesterday.toDateString();
+      
+      // Get yesterday's completed records from speedrun state
+      const yesterdayStateKey = `speedrun-state-${yesterdayString}`;
+      const yesterdayState = localStorage.getItem(yesterdayStateKey);
+      
+      if (yesterdayState) {
+        const parsedState = JSON.parse(yesterdayState);
+        const yesterdayCompleted = parsedState.completedLeads || [];
+        
+        // Get yesterday's fetched records
+        const yesterdayFetchedKey = `speedrun-fetched-${yesterdayString}`;
+        const yesterdayFetched = JSON.parse(localStorage.getItem(yesterdayFetchedKey) || '[]');
+        
+        // Find incomplete records from yesterday
+        const yesterdayIncomplete = yesterdayFetched.filter((recordId: string) => 
+          !yesterdayCompleted.includes(recordId)
+        );
+        
+        if (yesterdayIncomplete.length > 0) {
+          console.log(`🔄 [SPEEDRUN LEFT PANEL] Found ${yesterdayIncomplete.length} incomplete records from yesterday, prioritizing them`);
+          
+          // Filter today's data to get incomplete records from yesterday
+          const incompleteRecords = availableContacts.filter(contact => 
+            yesterdayIncomplete.includes(contact.id)
+          );
+          
+          // Filter today's data to get new records (not from yesterday)
+          const newRecords = availableContacts.filter(contact => 
+            !yesterdayIncomplete.includes(contact.id)
+          );
+          
+          // Prioritize incomplete records first, then new records
+          availableContacts = [...incompleteRecords, ...newRecords];
+          
+          console.log(`✅ [SPEEDRUN LEFT PANEL] Reordered data: ${incompleteRecords.length} incomplete + ${newRecords.length} new = ${availableContacts.length} total`);
+        }
+      }
+      
+      // Store today's fetched records for tomorrow's carryover
+      const todayString = new Date().toDateString();
+      const todayFetchedKey = `speedrun-fetched-${todayString}`;
+      localStorage.setItem(todayFetchedKey, JSON.stringify(dynamicRtpProspects.map(r => r.id)));
+      
+    } catch (carryoverError) {
+      console.warn('⚠️ [SPEEDRUN LEFT PANEL] Carryover logic failed, using original data:', carryoverError);
+      // Continue with original data if carryover fails
+    }
+    
     setActiveContacts(availableContacts);
     console.log(`🔥 Speedrun Left Panel: Using dynamic data - ${availableContacts.length} contacts for current workspace`);
   }, [dynamicRtpProspects, doneContacts, unifiedSpeedrunData, contextProspects]);
@@ -186,6 +240,19 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
       if (typeof window !== 'undefined') {
         const today = new Date().toDateString();
         localStorage.setItem(`speedrun-done-contacts-${today}`, JSON.stringify(newDoneContacts));
+        
+        // Update speedrun state for weekly tracking
+        try {
+          const { getDailySpeedrunState, saveDailySpeedrunState } = require('@/products/speedrun/state');
+          const speedrunState = getDailySpeedrunState();
+          if (!speedrunState.completedLeads.includes(currentRecord.id)) {
+            speedrunState.completedLeads.push(currentRecord.id);
+            saveDailySpeedrunState(speedrunState);
+            console.log('✅ [SPEEDRUN LEFT PANEL] Updated speedrun state for weekly tracking');
+          }
+        } catch (error) {
+          console.warn('⚠️ [SPEEDRUN LEFT PANEL] Failed to update speedrun state:', error);
+        }
       }
       
       // Remove from active contacts

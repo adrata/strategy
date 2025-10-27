@@ -191,7 +191,7 @@ export async function GET(request: NextRequest) {
               state: true
             }
           },
-          actions: {
+          lastAction: {
             where: {
               deletedAt: null,
               status: 'COMPLETED'
@@ -229,7 +229,7 @@ export async function GET(request: NextRequest) {
           name: p.fullName,
           rank: p.globalRank,
           company: p.company?.name || 'No Company',
-          hasCompany: !!p.companyId
+          hasCompany: !!p.company?.id
         }))
       );
 
@@ -262,12 +262,9 @@ export async function GET(request: NextRequest) {
         let lastActionDate = person.lastActionDate;
         
         // Check if we have a meaningful action from the database
-        if (person.actions && person.actions.length > 0) {
-          const meaningfulAction = person.actions.find(action => isMeaningfulAction(action.type));
-          if (meaningfulAction) {
-            lastAction = meaningfulAction.subject || meaningfulAction.type;
-            lastActionDate = meaningfulAction.completedAt || meaningfulAction.createdAt;
-          }
+        if (person.lastAction) {
+          lastAction = person.lastAction.subject || person.lastAction.type;
+          lastActionDate = person.lastAction.completedAt || person.lastAction.createdAt;
         }
         
         // Only show real last actions if they exist and are meaningful
