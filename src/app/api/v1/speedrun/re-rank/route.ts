@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/platform/database/prisma-client';
 import { rankContacts } from '@/products/speedrun/ranking';
 import { getDefaultUserSettings } from '@/products/speedrun/state';
 import { StateRankingService } from '@/products/speedrun/state-ranking';
