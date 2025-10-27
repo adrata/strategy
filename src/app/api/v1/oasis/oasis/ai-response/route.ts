@@ -12,11 +12,11 @@ import { OasisRealtimeService } from '@/platform/services/oasis-realtime-service
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { messageContent, dmId, workspaceId } = body;
+    const { messageContent, channelId, dmId, workspaceId } = body;
 
-    if (!messageContent || !dmId || !workspaceId) {
+    if (!messageContent || !workspaceId || (!channelId && !dmId)) {
       return NextResponse.json(
-        { error: 'Message content, DM ID, and workspace ID required' },
+        { error: 'Message content, workspace ID, and channel or DM ID required' },
         { status: 400 }
       );
     }
@@ -33,50 +33,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify this is a DM with Adrata AI
-    const dm = await prisma.oasisDirectMessage.findFirst({
-      where: {
-        id: dmId,
-        workspaceId,
-        participants: {
-          some: {
-            userId: adrataAI.id
-          }
-        }
-      },
-      include: {
-        participants: {
-          include: {
-            user: true
-          }
-        }
-      }
-    });
-
-    if (!dm) {
-      return NextResponse.json(
-        { error: 'DM with Adrata AI not found' },
-        { status: 404 }
-      );
-    }
-
-    // Get the other participant (not Adrata AI)
-    const otherParticipant = dm.participants.find(p => p.userId !== adrataAI.id);
-    if (!otherParticipant) {
-      return NextResponse.json(
-        { error: 'Other participant not found' },
-        { status: 404 }
-      );
-    }
-
     // Generate AI response based on message content
-    let aiResponse = generateAIResponse(messageContent, otherParticipant.user.name);
+    let aiResponse = generateAIResponse(messageContent, 'User');
 
     // Create the AI response message
     const aiMessage = await prisma.oasisMessage.create({
       data: {
         content: aiResponse,
-        dmId: dmId,
+        channelId: channelId || undefined,
+        dmId: dmId || undefined,
         senderId: adrataAI.id,
       },
       include: {
@@ -87,7 +52,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Broadcast the AI response
-    await OasisRealtimeService.broadcastMessageSent(workspaceId, aiMessage, undefined, dmId);
+    await OasisRealtimeService.broadcastMessageSent(workspaceId, aiMessage, channelId, dmId);
 
     return NextResponse.json(aiMessage, { status: 201 });
 

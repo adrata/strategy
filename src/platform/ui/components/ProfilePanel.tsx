@@ -215,7 +215,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         <button
           className="w-full flex items-center px-3 py-2.5 text-sm text-[var(--foreground)] rounded-md hover:bg-[var(--hover)] transition-colors group"
           onClick={() => {
-            onClose();
             setIsSettingsOpen(true);
           }}
         >

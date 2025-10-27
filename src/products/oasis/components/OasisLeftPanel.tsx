@@ -173,17 +173,32 @@ export function OasisLeftPanel() {
     isWorkspaceMember: true
   }));
 
-  const dmConversations: Conversation[] = dms.map(dm => ({
-    id: dm.id,
-    name: dm.participants[0]?.name || 'Unknown User',
-    type: 'dm' as const,
-    unread: 0, // TODO: Calculate unread count
-    isActive: selectedChannel?.id === dm.id,
-    lastMessage: dm.lastMessage?.content || 'Started conversation',
-    lastMessageTime: dm.lastMessage?.createdAt ? new Date(dm.lastMessage.createdAt).toLocaleTimeString() : 'now',
-    status: 'online' as const,
-    isWorkspaceMember: true
-  }));
+  const dmConversations: Conversation[] = [
+    // Add "Me" self-DM at the top
+    {
+      id: 'me-self-dm',
+      name: 'Me',
+      type: 'dm' as const,
+      unread: 0,
+      isActive: selectedChannel?.id === 'me-self-dm',
+      lastMessage: 'Personal notes and thoughts',
+      lastMessageTime: 'now',
+      status: 'online' as const,
+      isWorkspaceMember: true
+    },
+    // Add other DMs
+    ...dms.map(dm => ({
+      id: dm.id,
+      name: dm.participants[0]?.name || 'Unknown User',
+      type: 'dm' as const,
+      unread: 0, // TODO: Calculate unread count
+      isActive: selectedChannel?.id === dm.id,
+      lastMessage: dm.lastMessage?.content || 'Started conversation',
+      lastMessageTime: dm.lastMessage?.createdAt ? new Date(dm.lastMessage.createdAt).toLocaleTimeString() : 'now',
+      status: 'online' as const,
+      isWorkspaceMember: true
+    }))
+  ];
 
   // Show loading state while auth is loading
   if (authLoading) {
@@ -263,7 +278,7 @@ export function OasisLeftPanel() {
                   <HashtagIcon className="w-3 h-3 text-[var(--muted)]" />
                   <span className="text-sm font-medium truncate">#{channel.name}</span>
                   {channel.unread > 0 && (
-                    <span className="ml-auto px-2 py-1 bg-blue-500 text-white text-xs font-medium rounded-full min-w-[1.25rem] text-center">
+                    <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded min-w-[1.25rem] text-center">
                       {channel.unread}
                     </span>
                   )}
@@ -309,7 +324,7 @@ export function OasisLeftPanel() {
                   <div className="relative">
                     <div className="w-4 h-4 bg-white border border-[var(--border)] rounded flex items-center justify-center">
                       <span className="text-xs font-medium text-[var(--foreground)]">
-                        {dm.name.charAt(0)}
+                        {dm.id === 'me-self-dm' ? (authUser?.name?.charAt(0) || 'M') : dm.name.charAt(0)}
                       </span>
                     </div>
                     {dm.status === 'online' && (
@@ -318,7 +333,7 @@ export function OasisLeftPanel() {
                   </div>
                   <span className="text-sm font-medium truncate">{dm.name}</span>
                   {dm.unread > 0 && (
-                    <span className="ml-auto px-2 py-1 bg-blue-500 text-white text-xs font-medium rounded-full min-w-[1.25rem] text-center">
+                    <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded min-w-[1.25rem] text-center">
                       {dm.unread}
                     </span>
                   )}

@@ -152,11 +152,9 @@ export function useOasisMessages(
       // Add message to list (optimistic update)
       setMessages(prev => [data.message, ...prev]);
       
-      // Trigger AI response if this is a DM with Adrata AI
-      if (dmId && workspaceId) {
+      // Trigger AI response for all messages (channels and DMs)
+      if (workspaceId) {
         try {
-          // Check if this is a DM with Adrata AI by looking at the message sender
-          // We'll trigger AI response for any DM (assuming it's with Adrata AI for now)
           const aiResponse = await fetch('/api/v1/oasis/oasis/ai-response', {
             method: 'POST',
             headers: {
@@ -164,6 +162,7 @@ export function useOasisMessages(
             },
             body: JSON.stringify({
               messageContent: content,
+              channelId,
               dmId,
               workspaceId
             }),

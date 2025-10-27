@@ -295,7 +295,6 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         // Workspace apps - only for admin users
         ...(isAdminUser ? [
           "./stacks",
-          "./atrium", 
           "./particle",
           "./tower",
           "./olympus",
@@ -666,25 +665,6 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
               Stacks
             </div>
 
-            {/* Atrium */}
-            <div
-              className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-              onClick={() => {
-                console.log("🏛️ Atrium clicked - navigating to atrium");
-                setIsProfileOpen(false);
-                handleNavigation("./atrium");
-              }}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e['key'] === "Enter") {
-                  setIsProfileOpen(false);
-                  handleNavigation("./atrium");
-                }
-              }}
-            >
-              Atrium
-            </div>
 
             {/* Particle */}
             <div
