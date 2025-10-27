@@ -638,9 +638,15 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           {/* Action type badge - now first and bold */}
-                          <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700 font-semibold">
-                            {event.metadata?.type || event.type || 'Action'}
-                          </span>
+                          {event.metadata?.type === 'LinkedIn Connection' || event.type === 'LinkedIn Connection' ? (
+                            <span className="text-sm font-bold text-gray-800">
+                              {event.metadata?.type || event.type || 'Action'}
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700 font-semibold">
+                              {event.metadata?.type || event.type || 'Action'}
+                            </span>
+                          )}
                           {!isPastEvent(event.date) && event.metadata?.status?.toUpperCase() !== 'COMPLETED' && (
                             <span className="px-4 py-1 bg-red-100 text-red-800 text-xs rounded-full whitespace-nowrap">
                               Scheduled
