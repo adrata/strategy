@@ -5278,6 +5278,18 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
           <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2">Basic Information</h3>
           <div className="space-y-3">
             <div>
+              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Stage</label>
+              <InlineEditField
+                value={record?.status || 'new'}
+                field="status"
+                recordId={record?.id || ''}
+                recordType={recordType}
+                type="text"
+                onSave={handleInlineSave}
+                className="text-sm"
+              />
+            </div>
+            <div>
               <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Full Name</label>
               <InlineEditField
                 value={record?.fullName || record?.name || ''}
@@ -5335,18 +5347,6 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 recordId={record?.id || ''}
                 recordType={recordType}
                 placeholder="Enter department"
-                onSave={handleInlineSave}
-                className="text-sm"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Status</label>
-              <InlineEditField
-                value={record?.status || 'new'}
-                field="status"
-                recordId={record?.id || ''}
-                recordType={recordType}
-                type="text"
                 onSave={handleInlineSave}
                 className="text-sm"
               />

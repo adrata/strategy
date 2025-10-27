@@ -432,12 +432,16 @@ export async function PATCH(
       .filter(key => ALLOWED_PEOPLE_FIELDS.includes(key))
       .reduce((obj, key) => ({ ...obj, [key]: body[key] }), {});
 
-    // Handle company linking if company is provided
-    if (updateData.company && !updateData.companyId) {
+    // Handle company linking - process company field regardless of companyId presence
+    if (updateData.company) {
       try {
         let companyName: string;
         
-        if (typeof updateData.company === 'string') {
+        // If companyId is already provided, just remove the company string field
+        if (updateData.companyId) {
+          console.log(`🏢 [PEOPLE API PATCH] CompanyId provided (${updateData.companyId}), removing company string field`);
+          delete updateData.company;
+        } else if (typeof updateData.company === 'string') {
           // String company name - find or create company
           companyName = updateData.company.trim();
           if (companyName) {
@@ -447,14 +451,14 @@ export async function PATCH(
               existingPerson.workspaceId
             );
             updateData.companyId = companyResult.id;
-            delete updateData.company; // Remove string field, we're using companyId
+            delete updateData.company;
             console.log(`✅ [PEOPLE API PATCH] ${companyResult.isNew ? 'Created' : 'Found'} company: ${companyResult.name} (${companyResult.id})`);
           }
         } else if (typeof updateData.company === 'object' && updateData.company.id) {
           // Company object with ID - use the existing company
           console.log(`🏢 [PEOPLE API PATCH] Using existing company: ${updateData.company.name} (${updateData.company.id})`);
           updateData.companyId = updateData.company.id;
-          delete updateData.company; // Remove object field, we're using companyId
+          delete updateData.company;
         } else if (typeof updateData.company === 'object' && updateData.company.name) {
           // Company object without ID - find or create company
           companyName = updateData.company.name.trim();
@@ -465,14 +469,14 @@ export async function PATCH(
               existingPerson.workspaceId
             );
             updateData.companyId = companyResult.id;
-            delete updateData.company; // Remove object field, we're using companyId
+            delete updateData.company;
             console.log(`✅ [PEOPLE API PATCH] ${companyResult.isNew ? 'Created' : 'Found'} company: ${companyResult.name} (${companyResult.id})`);
           }
         }
       } catch (error) {
         console.error('⚠️ [PEOPLE API PATCH] Failed to link company:', error);
         // Continue without company linking rather than failing the entire request
-        delete updateData.company; // Remove the field to avoid schema issues
+        delete updateData.company;
       }
     }
 

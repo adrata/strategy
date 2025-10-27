@@ -58,7 +58,7 @@ function getColumnWidth(index: number): string {
     '200px',  // Company
     '180px',  // Person/Name
     '150px',  // Title
-    '120px',  // Status
+    '120px',  // Stage
     '160px',  // Last Action (increased from 140px)
     '180px',  // Next Action (increased from 160px)
     '100px',  // Amount
@@ -152,7 +152,7 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
       'Rank',
       'Name',
       'Company',
-      'Status',
+      'Stage',
       'Actions',
       'LAST ACTION',
       'NEXT ACTION'
@@ -165,11 +165,10 @@ function getTableHeaders(visibleColumns?: string[], section?: string): string[] 
     'Company',
     'Person',
     'Title',
-    'Status',
+    'Stage',
     'Last Action',
     'Next Action',
     'Amount',
-    'Stage',
     'Priority',
     'Industry',
     'Email',

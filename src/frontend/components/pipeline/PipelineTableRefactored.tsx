@@ -462,12 +462,13 @@ export function PipelineTable({
                         }
                         break;
                       case 'status':
-                        // Check if this is a lead/person status (LEAD, PROSPECT, OPPORTUNITY, etc.)
-                        const personStatus = record['status'];
-                        if (personStatus && typeof personStatus === 'string' && 
-                            ['LEAD', 'PROSPECT', 'OPPORTUNITY', 'CUSTOMER', 'CLIENT', 'Lead', 'Prospect', 'Opportunity', 'Customer', 'Client'].includes(personStatus)) {
-                          // Display lead pipeline status
-                          cellContent = personStatus;
+                      case 'stage':
+                        // Check if this is a lead/person stage (LEAD, PROSPECT, OPPORTUNITY, etc.)
+                        const personStage = record['status'];
+                        if (personStage && typeof personStage === 'string' && 
+                            ['LEAD', 'PROSPECT', 'OPPORTUNITY', 'CUSTOMER', 'CLIENT', 'SUPERFAN', 'Lead', 'Prospect', 'Opportunity', 'Customer', 'Client', 'Superfan'].includes(personStage)) {
+                          // Display lead pipeline stage
+                          cellContent = personStage;
                         } else {
                           // For sellers, show online/offline status with indicator
                           const metadata = record['metadata'] || {};

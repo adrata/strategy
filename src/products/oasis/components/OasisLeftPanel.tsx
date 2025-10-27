@@ -86,6 +86,78 @@ export function OasisLeftPanel() {
   const { channels, loading: channelsLoading, createChannel } = useOasisChannels(workspaceId);
   const { dms, loading: dmsLoading, createDM } = useOasisDMs(workspaceId);
   const { userCount, isConnected } = useOasisPresence(workspaceId);
+
+  // Auto-select channel when channels load and no channel is selected
+  useEffect(() => {
+    if (channels.length > 0 && !selectedChannel && !channelsLoading) {
+      // Check if we're on a specific channel URL
+      const currentPath = window.location.pathname;
+      const pathSegments = currentPath.split('/');
+      const oasisIndex = pathSegments.findIndex(segment => segment === 'oasis');
+      
+      if (oasisIndex !== -1 && pathSegments[oasisIndex + 1]) {
+        // Extract conversation ID from URL (format: name-id)
+        const conversationSlug = pathSegments[oasisIndex + 1];
+        const lastHyphenIndex = conversationSlug.lastIndexOf('-');
+        
+        if (lastHyphenIndex > 0) {
+          const conversationId = conversationSlug.substring(lastHyphenIndex + 1);
+          const conversationName = conversationSlug.substring(0, lastHyphenIndex);
+          
+          // Find matching channel or DM
+          const matchingChannel = channels.find(channel => channel.id === conversationId);
+          const matchingDM = dms.find(dm => dm.id === conversationId);
+          
+          if (matchingChannel) {
+            const conversation = {
+              id: matchingChannel.id,
+              name: matchingChannel.name,
+              type: 'channel' as const,
+              unread: matchingChannel.recentMessageCount,
+              isActive: true,
+              lastMessage: 'Channel created',
+              lastMessageTime: 'now',
+              isWorkspaceMember: true
+            };
+            setSelectedChannel(conversation);
+            return;
+          } else if (matchingDM) {
+            const conversation = {
+              id: matchingDM.id,
+              name: matchingDM.participants[0]?.name || 'Unknown User',
+              type: 'dm' as const,
+              unread: 0,
+              isActive: true,
+              lastMessage: matchingDM.lastMessage?.content || 'Started conversation',
+              lastMessageTime: matchingDM.lastMessage?.createdAt ? new Date(matchingDM.lastMessage.createdAt).toLocaleTimeString() : 'now',
+              status: 'online' as const,
+              isWorkspaceMember: true
+            };
+            setSelectedChannel(conversation);
+            return;
+          }
+        }
+      }
+      
+      // No URL match or no specific conversation, select #general or first channel
+      const generalChannel = channels.find(channel => channel.name === 'general');
+      const targetChannel = generalChannel || channels[0];
+      
+      if (targetChannel) {
+        const conversation = {
+          id: targetChannel.id,
+          name: targetChannel.name,
+          type: 'channel' as const,
+          unread: targetChannel.recentMessageCount,
+          isActive: true,
+          lastMessage: 'Channel created',
+          lastMessageTime: 'now',
+          isWorkspaceMember: true
+        };
+        setSelectedChannel(conversation);
+      }
+    }
+  }, [channels, dms, selectedChannel, channelsLoading, setSelectedChannel]);
   
   // State for creating new channels/DMs
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);

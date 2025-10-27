@@ -871,7 +871,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 </div>
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Status:</span>
+                <span className="text-sm text-[var(--muted)] w-24">Stage:</span>
                 <InlineEditField
                   value={recordData.status || null}
                   field="status"

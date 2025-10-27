@@ -29,8 +29,8 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
       columnOrder: ['company', 'state', 'lastAction', 'nextAction']
     },
     speedrun: {
-      columns: ['Rank', 'Name', 'Company', 'Status', 'Actions', 'LAST ACTION', 'NEXT ACTION'],
-      columnOrder: ['rank', 'name', 'company', 'status', 'actions', 'lastAction', 'nextAction']
+      columns: ['Rank', 'Name', 'Company', 'Stage', 'Actions', 'LAST ACTION', 'NEXT ACTION'],
+      columnOrder: ['rank', 'name', 'company', 'stage', 'actions', 'lastAction', 'nextAction']
     },
     prospects: {
       columns: ['Name', 'Company', 'Title', 'Actions', 'Last Action', 'Next Action'],
@@ -65,8 +65,8 @@ export function getWorkspaceTableConfig(workspaceId: string, workspaceName?: str
 export function getSectionColumns(workspaceId: string, section: string, workspaceName?: string) {
   const config = getWorkspaceTableConfig(workspaceId, workspaceName);
   return config.sections[section] || DEFAULT_CONFIG.sections[section] || {
-    columns: ['Rank', 'Name', 'Details', 'Status', 'Last Action', 'Next Action'],
-    columnOrder: ['rank', 'name', 'details', 'status', 'lastAction', 'nextAction']
+    columns: ['Rank', 'Name', 'Details', 'Stage', 'Last Action', 'Next Action'],
+    columnOrder: ['rank', 'name', 'details', 'stage', 'lastAction', 'nextAction']
   };
 }
 

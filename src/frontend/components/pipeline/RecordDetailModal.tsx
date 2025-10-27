@@ -150,7 +150,7 @@ export function RecordDetailModal({ record, recordType, isOpen, onClose }: Recor
             {/* Status and Priority Row */}
             <div className="flex items-center gap-6 pt-4 border-t border-[var(--border)]">
               <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-[var(--foreground)]">Status</span>
+                <span className="text-sm font-medium text-[var(--foreground)]">Stage</span>
                 <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800`}>
                   {record.status || 'Unknown'}
                 </span>
