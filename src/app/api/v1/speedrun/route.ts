@@ -13,7 +13,7 @@ const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
  * Dedicated optimized endpoint for speedrun data
  * - Top 50 people with companies (prioritizes ranked people, includes unranked)
  * - Only includes people with company relationships
- * - Ordered by globalRank ascending (ranked first), then by creation date
+ * - Ordered by globalRank descending (50-1), then by creation date
  * - Pre-formatted response (no transformation needed)
  * - Aggressive Redis caching (5 min TTL)
  * - Leverages composite indexes for <200ms queries
@@ -124,7 +124,7 @@ export async function GET(request: NextRequest) {
             })
           },
         orderBy: [
-          { globalRank: 'asc' }, // Use per-user ranking (1-50)
+          { globalRank: 'desc' }, // Use per-user ranking (50-1)
           { createdAt: 'desc' } // Then by newest
         ],
         take: limit, // Take exactly the first 50 results
