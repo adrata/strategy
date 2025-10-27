@@ -377,6 +377,9 @@ export async function GET(request: NextRequest) {
           workspaceId: person.workspaceId,
           createdAt: person.createdAt,
           updatedAt: person.updatedAt,
+          // Add state fields at top level for table display
+          state: person.company?.hqState || person.company?.state || '',
+          hqState: person.company?.hqState || '',
           company: person.company ? {
             id: person.company.id,
             name: person.company.name,
