@@ -477,6 +477,13 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
 
     const handleActionCreatedWithData = (event: CustomEvent) => {
       const { recordId, actionData } = event.detail || {};
+      console.log('🔍 [ACTIONS] actionCreatedWithData event received:', {
+        eventRecordId: recordId,
+        currentRecordId: record?.id,
+        hasActionData: !!actionData,
+        actionData: actionData
+      });
+      
       if (recordId === record?.id && actionData) {
         console.log('⚡ [ACTIONS] Optimistically adding new action immediately:', actionData);
         
