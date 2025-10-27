@@ -4,6 +4,49 @@ import { rankContacts } from '@/products/speedrun/ranking';
 import { getDefaultUserSettings } from '@/products/speedrun/state';
 import { StateRankingService } from '@/products/speedrun/state-ranking';
 
+/**
+ * Calculate next action date based on global rank
+ * This matches the logic from /api/v1/next-action/regenerate/route.ts
+ */
+function calculateRankBasedDate(globalRank: number | null, lastActionDate: Date | null): Date {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  
+  // Check if last action was today
+  const lastActionToday = lastActionDate && 
+    lastActionDate.getFullYear() === now.getFullYear() &&
+    lastActionDate.getMonth() === now.getMonth() &&
+    lastActionDate.getDate() === now.getDate();
+  
+  let targetDate: Date;
+  
+  // Rank-based date calculation (Speedrun integration)
+  if (!globalRank || globalRank <= 50) {
+    // Top 50 (Speedrun tier): TODAY (or tomorrow if action already today)
+    targetDate = lastActionToday ? new Date(today.getTime() + 24 * 60 * 60 * 1000) : today;
+  } else if (globalRank <= 200) {
+    // High priority (51-200): THIS WEEK (2-3 days)
+    const daysOut = lastActionToday ? 3 : 2;
+    targetDate = new Date(today.getTime() + daysOut * 24 * 60 * 60 * 1000);
+  } else if (globalRank <= 500) {
+    // Medium priority (201-500): NEXT WEEK (7 days)
+    targetDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+  } else {
+    // Lower priority (500+): THIS MONTH (14 days)
+    targetDate = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
+  }
+  
+  // Push weekend dates to Monday
+  const dayOfWeek = targetDate.getDay();
+  if (dayOfWeek === 0) { // Sunday
+    targetDate = new Date(targetDate.getTime() + 24 * 60 * 60 * 1000);
+  } else if (dayOfWeek === 6) { // Saturday
+    targetDate = new Date(targetDate.getTime() + 2 * 24 * 60 * 60 * 1000);
+  }
+  
+  return targetDate;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -154,15 +197,20 @@ export async function POST(request: NextRequest) {
 
     // 🎯 PER-USER RANKING: Assign simple sequential ranks 1-50 for this user's people
     // Store user-specific rank in a custom field to avoid conflicts with other users
-    const updatePromises = newBatch.map((contact, index) => 
-      prisma.people.update({
+    const updatePromises = newBatch.map((contact, index) => {
+      const newRank = index + 1;
+      const newNextActionDate = calculateRankBasedDate(newRank, contact.lastActionDate ? new Date(contact.lastActionDate) : null);
+      
+      return prisma.people.update({
         where: { id: contact.id },
         data: {
           // Use globalRank for per-user sequential ranking (1-50)
-          globalRank: index + 1, // Simple sequential rank for this user
+          globalRank: newRank, // Simple sequential rank for this user
+          // 🎯 FIX: Update nextActionDate based on new rank
+          nextActionDate: newNextActionDate,
           // Store user-specific ranking data in customFields
           customFields: {
-            userRank: index + 1, // Per-user rank 1-50
+            userRank: newRank, // Per-user rank 1-50
             userId: userId, // Track which user this rank belongs to
             rankingMode: rankingMode,
             // Keep state-based ranking fields if available
@@ -174,8 +222,8 @@ export async function POST(request: NextRequest) {
           },
           updatedAt: new Date()
         }
-      })
-    );
+      });
+    });
 
     await Promise.all(updatePromises);
 
