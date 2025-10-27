@@ -74,8 +74,8 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         // Clear cached actions data
         const cacheKey = `actions-${record.id}`;
         localStorage.removeItem(cacheKey);
-        // Refresh the actions list
-        setRefreshTrigger(prev => prev + 1);
+        // Refresh the actions list immediately
+        loadActionsFromAPI(true);
       } else {
         throw new Error(response?.error || 'Failed to delete action');
       }
@@ -847,7 +847,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
 
       {/* Success Message */}
       {showSuccessMessage && (
-        <div className="fixed top-4 right-4 z-50 bg-green-50 border border-green-200 rounded-lg shadow-lg px-4 py-3 max-w-sm">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-green-50 border border-green-200 rounded-lg shadow-lg px-4 py-3 max-w-sm">
           <div className="flex items-center">
             <svg className="h-5 w-5 text-green-500 mr-3" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -859,7 +859,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
 
       {/* Error Message */}
       {showErrorMessage && (
-        <div className="fixed top-4 right-4 z-50 bg-red-50 border border-red-200 rounded-lg shadow-lg px-4 py-3 max-w-sm">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-50 border border-red-200 rounded-lg shadow-lg px-4 py-3 max-w-sm">
           <div className="flex items-center">
             <svg className="h-5 w-5 text-red-500 mr-3" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
