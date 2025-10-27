@@ -14,6 +14,7 @@ interface InlineEditFieldProps {
   variant?: 'text' | 'textarea' | 'company' | 'date';
   recordId?: string;
   recordType?: string;
+  companyId?: string;
   inputType?: string;
   options?: Array<{ value: string; label: string }>; // Added for select fields
   successMessage?: string;
@@ -30,6 +31,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
   variant,
   recordId,
   recordType,
+  companyId,
   inputType,
   options,
   successMessage,
@@ -46,6 +48,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
         placeholder={placeholder}
         recordId={recordId}
         recordType={recordType}
+        companyId={companyId}
         onSuccess={onSuccess}
       />
     );

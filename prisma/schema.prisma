@@ -212,6 +212,7 @@ model reset_tokens {
   userId    String
   expiresAt DateTime
   used      Boolean  @default(false)
+  metadata  Json?
   createdAt DateTime @default(now())
   user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 

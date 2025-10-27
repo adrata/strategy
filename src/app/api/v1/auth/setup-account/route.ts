@@ -11,11 +11,19 @@ import jwt from 'jsonwebtoken';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { token, password, confirmPassword } = body;
+    const { token, username, email, password, confirmPassword } = body;
 
     if (!token || !password || !confirmPassword) {
       return createErrorResponse(
         'Token, password, and password confirmation are required',
+        'MISSING_REQUIRED_FIELDS',
+        400
+      );
+    }
+
+    if (!username || !email) {
+      return createErrorResponse(
+        'Username and email are required',
         'MISSING_REQUIRED_FIELDS',
         400
       );
@@ -83,10 +91,12 @@ export async function POST(request: NextRequest) {
     // Hash the new password
     const hashedPassword = await bcrypt.hash(password, 12);
     
-    // Update the user's password in the database
+    // Update the user's password and account details in the database
     await prisma.users.update({
       where: { id: tokenRecord.user.id },
       data: { 
+        name: username,
+        email: email.toLowerCase(),
         password: hashedPassword,
         updatedAt: new Date(),
         // Set active workspace if not already set

@@ -581,11 +581,11 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           Download
         </div>
 
-        {/* RevenueOS */}
+        {/* AcquisitionOS */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={() => {
-            console.log("RevenueOS clicked - navigating to speedrun");
+            console.log("AcquisitionOS clicked - navigating to speedrun");
             setIsProfileOpen(false);
             handleNavigation("./speedrun");
           }}
@@ -598,7 +598,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
             }
           }}
         >
-          RevenueOS
+          AcquisitionOS
         </div>
 
         {/* Oasis */}

@@ -206,22 +206,24 @@ export function TableRow({
             
             switch (column) {
               case 'rank':
-                // 🏆 HIERARCHICAL RANKING: Display company rank and person rank
-                const companyRank = record['companyRank'] || record['company']?.rank || 0;
-                const personRank = record['personRank'] || record['rank'] || (index + 1);
-                const globalRank = record['globalPersonRank'] || record['rank'] || (index + 1);
-                
-                // Display hierarchical ranking based on section
+                // 🎯 PER-USER RANKING: Display simple sequential rank for speedrun
                 let displayRank;
-                if (section === 'people' && companyRank > 0) {
-                  // Show "Company Rank: Person Rank" format
-                  displayRank = `${companyRank}:${personRank}`;
-                } else if (section === 'speedrun' && companyRank > 0) {
-                  // Show "Company Rank: Person Rank" format for speedrun
-                  displayRank = `${companyRank}:${personRank}`;
+                if (section === 'speedrun') {
+                  // For speedrun, show simple sequential rank (1-50)
+                  displayRank = record['globalRank'] || record['rank'] || (index + 1);
                 } else {
-                  // Fallback to global rank
-                  displayRank = globalRank;
+                  // For other sections, keep hierarchical ranking if available
+                  const companyRank = record['companyRank'] || record['company']?.rank || 0;
+                  const personRank = record['personRank'] || record['rank'] || (index + 1);
+                  const globalRank = record['globalPersonRank'] || record['rank'] || (index + 1);
+                  
+                  if (companyRank > 0) {
+                    // Show "Company Rank: Person Rank" format
+                    displayRank = `${companyRank}:${personRank}`;
+                  } else {
+                    // Fallback to global rank
+                    displayRank = globalRank;
+                  }
                 }
                 
                 return (
@@ -577,15 +579,11 @@ export function TableRow({
                 );
               case 'stage':
                 return (
-                  <TableCell
-                    key="stage"
-                    value={record['stage'] || record['status'] || '-'}
-                    field="stage"
-                    recordId={record.id}
-                    recordType={section}
-                    className={textClasses}
-                    onUpdate={onUpdateRecord || (() => Promise.resolve(false))}
-                  />
+                  <td key="stage" className={textClasses}>
+                    <span className={`rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap ${getStageColor(record['stage'] || record['status'])}`}>
+                      {record['stage'] || record['status'] || '-'}
+                    </span>
+                  </td>
                 );
               case 'value':
               case 'amount':
@@ -950,9 +948,9 @@ export function TableRow({
               case 'status':
                 return (
                   <td key="status" className={textClasses}>
-                    <div className="truncate max-w-32">
+                    <span className={`rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap ${getStatusColor(record['status'] || record['stage'])}`}>
                       {record['status'] || record['stage'] || '-'}
-                    </div>
+                    </span>
                   </td>
                 );
               case 'arr':

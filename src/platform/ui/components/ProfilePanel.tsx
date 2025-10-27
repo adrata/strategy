@@ -2,7 +2,7 @@
  * ProfilePanel Component
  * 
  * Sliding left panel that appears when profile is clicked.
- * Contains the simplified menu: Download, RevenueOS, Oasis, Settings, Sign Out
+ * Contains the simplified menu: AcquisitionOS, Oasis, Settings, Sign Out
  */
 
 import React, { useEffect } from "react";
@@ -176,39 +176,26 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         <button
           className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
             currentApp === 'revenueos' 
-              ? 'bg-blue-100 text-blue-700' 
+              ? 'bg-orange-100 text-orange-700' 
               : 'text-[var(--foreground)] hover:bg-[var(--hover)]'
           }`}
           onClick={() => handleNavigation("/speedrun")}
         >
           <ChartBarIcon className="w-4 h-4 mr-3" />
-          <span className="font-medium">RevenueOS</span>
+          <span className="font-medium">AcquisitionOS</span>
         </button>
 
         {/* Oasis */}
         <button
           className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
             currentApp === 'oasis' 
-              ? 'bg-blue-100 text-blue-700' 
+              ? 'bg-orange-100 text-orange-700' 
               : 'text-[var(--foreground)] hover:bg-[var(--hover)]'
           }`}
           onClick={() => handleNavigation("/oasis")}
         >
           <MessageSquare className="w-4 h-4 mr-3" />
           <span className="font-medium">Oasis</span>
-        </button>
-
-        {/* Atrium */}
-        <button
-          className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-            currentApp === 'atrium' 
-              ? 'bg-blue-100 text-blue-700' 
-              : 'text-[var(--foreground)] hover:bg-[var(--hover)]'
-          }`}
-          onClick={() => handleNavigation("/atrium")}
-        >
-          <FileText className="w-4 h-4 mr-3" />
-          <span className="font-medium">Atrium</span>
         </button>
 
         {/* Settings */}
@@ -223,16 +210,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         </button>
       </div>
 
-      {/* Footer - Download and Sign Out */}
+      {/* Footer - Sign Out */}
       <div className="p-3 space-y-0.5">
-        <button
-          className="w-full flex items-center px-3 py-2.5 text-sm text-[var(--foreground)] rounded-md hover:bg-[var(--hover)] transition-colors group"
-          onClick={handleDownloadDesktopApp}
-        >
-          <PlatformIcon className="w-4 h-4 mr-3 text-[var(--muted-foreground)] group-hover:text-[var(--foreground)]" />
-          <span className="font-medium">Download</span>
-        </button>
-        
         <button
           className="w-full flex items-center px-3 py-2.5 text-sm text-red-600 rounded-md hover:bg-red-50 transition-colors group"
           onClick={handleSignOut}

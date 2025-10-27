@@ -703,9 +703,13 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date()
     };
 
-    // Add mainSellerId if provided
+    // Add mainSellerId if provided, or auto-assign Dan for Adrata workspace
     if (body.mainSellerId) {
       companyData.mainSellerId = body.mainSellerId;
+    } else if (context.workspaceId === '01K7464TNANHQXPCZT1FYX205V') {
+      // Auto-assign Dan as main seller for Adrata workspace
+      companyData.mainSellerId = '01K7B327HWN9G6KGWA97S1TK43';
+      console.log('🎯 [V1 COMPANIES API] Auto-assigned Dan as main seller for Adrata workspace');
     }
 
     // Create company and action in a transaction

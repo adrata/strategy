@@ -121,7 +121,7 @@ function PipelineLayoutInner({
   const getCurrentApp = () => {
     if (pathname.includes('/oasis')) return 'oasis';
     if (pathname.includes('/atrium')) return 'atrium';
-    return 'revenueos'; // Default to RevenueOS
+    return 'revenueos'; // Default to AcquisitionOS
   };
   const currentApp = getCurrentApp();
 

@@ -75,6 +75,12 @@ export async function GET(request: NextRequest) {
       orderBy: { updatedAt: 'desc' }
     });
 
+    // Get workspace name for pill display
+    const workspace = await prisma.workspaces.findUnique({
+      where: { id: workspaceId },
+      select: { name: true }
+    });
+
     const dmsWithStats = dms.map(dm => {
       const otherParticipants = dm.participants.filter(p => p.userId !== userId);
       const lastMessage = dm.messages[0];
@@ -84,7 +90,8 @@ export async function GET(request: NextRequest) {
         participants: otherParticipants.map(p => ({
           id: p.user.id,
           name: p.user.name,
-          username: p.user.username
+          username: p.user.username,
+          workspaceName: workspace?.name || 'Unknown Workspace'
         })),
         lastMessage: lastMessage ? {
           id: lastMessage.id,

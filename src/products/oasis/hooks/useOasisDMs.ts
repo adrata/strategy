@@ -19,6 +19,7 @@ export interface OasisDMParticipant {
   id: string;
   name: string;
   username: string | null;
+  workspaceName?: string;
 }
 
 export interface OasisDMLastMessage {

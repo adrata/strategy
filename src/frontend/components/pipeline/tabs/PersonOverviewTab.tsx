@@ -415,6 +415,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}
+                  companyId={record.companyId || (typeof record.company === 'object' && record.company?.id) || null}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />

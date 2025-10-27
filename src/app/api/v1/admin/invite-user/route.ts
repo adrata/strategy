@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+import { createRossDM } from '@/lib/oasis-dm-utils';
 import crypto from 'crypto';
 import { sendInvitationEmail } from '@/platform/services/InvitationEmailService';
 
@@ -217,6 +218,19 @@ export async function POST(request: NextRequest) {
     });
 
     console.log(`✅ [INVITE USER] Added user to workspace: ${user.email} -> ${workspace.name}`);
+
+    // Create DM with Ross for invited user
+    try {
+      const dmResult = await createRossDM(workspaceId, user.id);
+      if (dmResult.success) {
+        console.log(`✅ [INVITE USER] Created DM with Ross for user ${user.name} (${user.id})`);
+      } else {
+        console.warn(`⚠️ [INVITE USER] Failed to create DM with Ross for user ${user.name}: ${dmResult.error}`);
+      }
+    } catch (error) {
+      console.error(`❌ [INVITE USER] Error creating DM with Ross for user ${user.name}:`, error);
+      // Don't fail invitation if DM creation fails
+    }
 
     return createSuccessResponse({
       user: {

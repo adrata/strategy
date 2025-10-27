@@ -729,7 +729,7 @@ export async function POST(request: NextRequest) {
           companyRank: body.companyRank || 0,
           workspaceId: context.workspaceId,
           companyId: body.companyId,
-          mainSellerId: body.mainSellerId,
+          mainSellerId: body.mainSellerId || (context.workspaceId === '01K7464TNANHQXPCZT1FYX205V' ? '01K7B327HWN9G6KGWA97S1TK43' : body.mainSellerId), // Auto-assign Dan for Adrata workspace
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -753,6 +753,22 @@ export async function POST(request: NextRequest) {
           },
         },
       });
+
+      // Auto-assign Ross as co-seller for Adrata workspace
+      if (context.workspaceId === '01K7464TNANHQXPCZT1FYX205V') {
+        try {
+          await tx.person_co_sellers.create({
+            data: {
+              personId: person.id,
+              userId: '01K7469230N74BVGK2PABPNNZ9' // Ross's user ID
+            }
+          });
+          console.log('🎯 [V1 PEOPLE API] Auto-assigned Ross as co-seller for Adrata workspace');
+        } catch (coSellerError) {
+          console.warn('⚠️ [V1 PEOPLE API] Could not add Ross as co-seller:', coSellerError);
+          // Don't fail the entire request if co-seller assignment fails
+        }
+      }
 
       // Create action for person creation
       const action = await tx.actions.create({

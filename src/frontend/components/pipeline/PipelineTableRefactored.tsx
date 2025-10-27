@@ -359,22 +359,24 @@ export function PipelineTable({
                     // Simple cell content mapping
                     switch (header.toLowerCase()) {
                       case 'rank':
-                        // 🏆 HIERARCHICAL RANKING: Display company rank and person rank
-                        const companyRank = record['companyRank'] || record['company']?.rank || 0;
-                        const personRank = record['personRank'] || record['rank'] || 0;
-                        const globalRank = record['globalPersonRank'] || record['rank'] || (currentPage - 1) * pageSize + index + 1;
-                        
-                        // Display hierarchical ranking based on section
+                        // 🎯 PER-USER RANKING: Display simple sequential rank for speedrun
                         let displayRank;
-                        if (section === 'people' && companyRank > 0) {
-                          // Show "Company Rank: Person Rank" format
-                          displayRank = `${companyRank}:${personRank}`;
-                        } else if (section === 'speedrun' && companyRank > 0) {
-                          // Show "Company Rank: Person Rank" format for speedrun
-                          displayRank = `${companyRank}:${personRank}`;
+                        if (section === 'speedrun') {
+                          // For speedrun, show simple sequential rank (1-50)
+                          displayRank = record['globalRank'] || record['rank'] || (currentPage - 1) * pageSize + index + 1;
                         } else {
-                          // Fallback to global rank
-                          displayRank = globalRank;
+                          // For other sections, keep hierarchical ranking if available
+                          const companyRank = record['companyRank'] || record['company']?.rank || 0;
+                          const personRank = record['personRank'] || record['rank'] || 0;
+                          const globalRank = record['globalPersonRank'] || record['rank'] || (currentPage - 1) * pageSize + index + 1;
+                          
+                          if (companyRank > 0) {
+                            // Show "Company Rank: Person Rank" format
+                            displayRank = `${companyRank}:${personRank}`;
+                          } else {
+                            // Fallback to global rank
+                            displayRank = globalRank;
+                          }
                         }
                         
                         cellContent = String(displayRank);

@@ -24,6 +24,8 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
     userEmail,
     userName 
   } = data;
+  
+  const firstName = userName?.split(' ')[0] || userEmail.split('@')[0];
 
   const displayName = userName || userEmail.split('@')[0];
   const expirationDate = expiresAt.toLocaleDateString('en-US', {
@@ -46,53 +48,52 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #000000;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f8fafc;
+            background-color: #ffffff;
         }
         .container {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e5e5;
             overflow: hidden;
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #000000;
             color: white;
-            padding: 40px 30px;
+            padding: 30px;
             text-align: center;
         }
         .header h1 {
             margin: 0;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 600;
         }
         .header p {
-            margin: 8px 0 0 0;
-            opacity: 0.9;
+            margin: 10px 0 0 0;
             font-size: 16px;
+            color: #cccccc;
         }
         .content {
-            padding: 40px 30px;
+            padding: 30px;
         }
         .greeting {
             font-size: 18px;
             margin-bottom: 20px;
-            color: #1f2937;
+            color: #000000;
+            font-weight: 600;
         }
         .workspace-info {
-            background: #f3f4f6;
-            border-radius: 8px;
+            background: #f9f9f9;
+            border: 1px solid #e5e5e5;
             padding: 20px;
             margin: 20px 0;
-            border-left: 4px solid #667eea;
         }
         .workspace-name {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
-            color: #1f2937;
+            color: #000000;
             margin-bottom: 8px;
         }
         .workspace-details {
@@ -101,55 +102,53 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
         }
         .cta-button {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #3b82f6;
             color: white;
             text-decoration: none;
-            padding: 16px 32px;
-            border-radius: 8px;
+            padding: 14px 28px;
+            border-radius: 4px;
             font-weight: 600;
             font-size: 16px;
-            margin: 30px 0;
+            margin: 20px 0;
             text-align: center;
-            transition: transform 0.2s ease;
+            border: 1px solid #2563eb;
         }
         .cta-button:hover {
-            transform: translateY(-1px);
+            background: #2563eb;
         }
         .expiration-notice {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 16px;
+            background: #f9f9f9;
+            border: 1px solid #e5e5e5;
+            padding: 15px;
             margin: 20px 0;
-            color: #92400e;
+            color: #000000;
             font-size: 14px;
         }
         .expiration-notice strong {
-            color: #b45309;
+            color: #000000;
         }
         .footer {
-            background: #f9fafb;
-            padding: 30px;
+            background: #f9f9f9;
+            padding: 20px 30px;
             text-align: center;
-            color: #6b7280;
+            color: #666666;
             font-size: 14px;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid #e5e5e5;
         }
         .footer a {
-            color: #667eea;
+            color: #3b82f6;
             text-decoration: none;
         }
         .security-note {
-            background: #ecfdf5;
-            border: 1px solid #10b981;
-            border-radius: 8px;
-            padding: 16px;
+            background: #f9f9f9;
+            border: 1px solid #e5e5e5;
+            padding: 15px;
             margin: 20px 0;
-            color: #065f46;
+            color: #000000;
             font-size: 14px;
         }
         .security-note strong {
-            color: #047857;
+            color: #000000;
         }
         @media (max-width: 600px) {
             body {
@@ -168,17 +167,16 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
     <div class="container">
         <div class="header">
             <h1>You're Invited!</h1>
-            <p>Join ${workspaceName} on Adrata</p>
+            <p>${workspaceName === 'Adrata' ? 'Join Adrata on Adrata' : `Join ${workspaceName} Workspace on Adrata`}</p>
         </div>
         
         <div class="content">
             <div class="greeting">
-                Hi ${displayName},
+                Hi ${firstName},
             </div>
             
             <p>
-                <strong>${inviterName}</strong> (${inviterEmail}) has invited you to join 
-                <strong>${workspaceName}</strong> on Adrata, our intelligent sales platform.
+                You've been invited to join <strong>${workspaceName}</strong> on Adrata, our intelligent sales platform.
             </p>
             
             <div class="workspace-info">
@@ -199,12 +197,12 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
             </div>
             
             <div class="expiration-notice">
-                <strong>⏰ This invitation expires on ${expirationDate}</strong><br>
+                <strong>This invitation expires on ${expirationDate}</strong><br>
                 Please set up your account before this date to ensure access.
             </div>
             
             <div class="security-note">
-                <strong>🔒 Security Note:</strong> This invitation link is unique to you and can only be used once. 
+                <strong>Security Note:</strong> This invitation link is unique to you and can only be used once. 
                 If you didn't expect this invitation, please contact ${inviterEmail}.
             </div>
             
@@ -219,13 +217,13 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
             </ul>
             
             <p>
-                If you have any questions, feel free to reach out to ${inviterName} at ${inviterEmail}.
+                If you have any questions, feel free to reach out to Adrata Client Team.
             </p>
         </div>
         
         <div class="footer">
             <p>
-                This invitation was sent by ${inviterName} via Adrata.<br>
+                This invitation was sent by Adrata Client Team via Adrata.<br>
                 If you're having trouble with the button above, copy and paste this link into your browser:<br>
                 <a href="${invitationLink}">${invitationLink}</a>
             </p>
@@ -253,7 +251,8 @@ export function generateInvitationEmailText(data: InvitationEmailData): string {
     userName 
   } = data;
 
-  const displayName = userName || userEmail.split('@')[0];
+  const firstName = userName?.split(' ')[0] || userEmail.split('@')[0];
+  const headerText = workspaceName === 'Adrata' ? 'Join Adrata on Adrata' : `Join ${workspaceName} Workspace on Adrata`;
   const expirationDate = expiresAt.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
@@ -264,20 +263,20 @@ export function generateInvitationEmailText(data: InvitationEmailData): string {
   });
 
   return `
-You're Invited to Join ${workspaceName} on Adrata
+You're Invited to ${headerText}
 
-Hi ${displayName},
+Hi ${firstName},
 
-${inviterName} (${inviterEmail}) has invited you to join ${workspaceName} on Adrata, our intelligent sales platform.
+You've been invited to join ${workspaceName} on Adrata, our intelligent sales platform.
 
 You'll be able to collaborate with your team, manage prospects, and leverage AI-powered insights to accelerate your sales process.
 
 Set up your account here: ${invitationLink}
 
-⏰ This invitation expires on ${expirationDate}
+This invitation expires on ${expirationDate}
 Please set up your account before this date to ensure access.
 
-🔒 Security Note: This invitation link is unique to you and can only be used once. If you didn't expect this invitation, please contact ${inviterEmail}.
+Security Note: This invitation link is unique to you and can only be used once. If you didn't expect this invitation, please contact ${inviterEmail}.
 
 Once you've set up your account, you'll be able to:
 • Access your personalized dashboard
@@ -285,10 +284,10 @@ Once you've set up your account, you'll be able to:
 • Leverage AI-powered sales insights
 • Manage your pipeline and prospects
 
-If you have any questions, feel free to reach out to ${inviterName} at ${inviterEmail}.
+If you have any questions, feel free to reach out to Adrata Client Team.
 
 ---
-This invitation was sent by ${inviterName} via Adrata.
+This invitation was sent by Adrata Client Team via Adrata.
 © ${new Date().getFullYear()} Adrata. All rights reserved.
   `.trim();
 }
@@ -298,9 +297,13 @@ This invitation was sent by ${inviterName} via Adrata.
  */
 export async function sendInvitationEmail(data: InvitationEmailData): Promise<{ success: boolean; error?: string }> {
   try {
+    const subjectText = data.workspaceName === 'Adrata' 
+      ? 'Invitation to join Adrata on Adrata'
+      : `Invitation to join ${data.workspaceName} workspace on Adrata`;
+
     const emailResult = await sendEmail({
       to: data.to,
-      subject: `You're invited to join ${data.workspaceName} on Adrata`,
+      subject: subjectText,
       html: generateInvitationEmailHTML(data),
       text: generateInvitationEmailText(data),
       from: "Adrata <noreply@adrata.com>",

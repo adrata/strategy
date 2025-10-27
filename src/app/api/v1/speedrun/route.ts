@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
         willShowData: peopleWithBoth > 0
       });
 
-      // 🚀 OPTIMIZED QUERY: Get top 50 people (most permissive - show any people)
+      // 🎯 PER-USER RANKING: Get only people assigned to this user for their personal speedrun
       let speedrunPeople;
       try {
         speedrunPeople = await prisma.people.findMany({
@@ -120,14 +120,11 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             companyId: { not: null }, // Only people with company relationships
             ...(isDemoMode ? {} : {
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ]
+              mainSellerId: context.userId // Only show people assigned to this user
             })
           },
         orderBy: [
-          { globalRank: 'asc' }, // Ranked people first (nulls will be last)
+          { globalRank: 'asc' }, // Use per-user ranking (1-50)
           { createdAt: 'desc' } // Then by newest
         ],
         take: limit, // Take exactly the first 50 results

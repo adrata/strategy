@@ -103,12 +103,12 @@ function generateAIResponse(messageContent: string, userName: string): string {
   
   // Questions about Adrata
   if (lowerContent.includes('adrata') || lowerContent.includes('platform')) {
-    return `Adrata is your all-in-one sales platform! It includes RevenueOS for pipeline management, Atrium for documentation, and Oasis for team communication. Is there something specific you'd like to know about?`;
+    return `Adrata is your all-in-one sales platform! It includes AcquisitionOS for pipeline management, Atrium for documentation, and Oasis for team communication. Is there something specific you'd like to know about?`;
   }
   
   // Questions about features
   if (lowerContent.includes('feature') || lowerContent.includes('how to') || lowerContent.includes('how do')) {
-    return `I'd be happy to help you learn about Adrata's features! You can ask me about RevenueOS, Atrium, Oasis, or any other part of the platform. What would you like to explore?`;
+    return `I'd be happy to help you learn about Adrata's features! You can ask me about AcquisitionOS, Atrium, Oasis, or any other part of the platform. What would you like to explore?`;
   }
   
   // Thank you responses

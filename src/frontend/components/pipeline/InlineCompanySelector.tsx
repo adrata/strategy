@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PencilIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { authFetch } from '@/platform/api-fetch';
+import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
+import { generateSlug } from '@/platform/utils/url-utils';
 
 interface Company {
   id: string;
@@ -16,6 +18,7 @@ interface InlineCompanySelectorProps {
   placeholder?: string;
   recordId?: string;
   recordType?: string;
+  companyId?: string;
   onSuccess?: (message: string) => void;
 }
 
@@ -27,6 +30,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
   placeholder = 'Search or add company',
   recordId,
   recordType,
+  companyId,
   onSuccess,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -46,6 +50,9 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Navigation hook for workspace-aware routing
+  const { navigateToPipelineItem } = useWorkspaceNavigation();
 
   // Get current company name for display
   const getCurrentCompanyName = (): string => {
@@ -476,8 +483,16 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
   const handleCompanyClick = () => {
     const companyName = getCurrentCompanyName();
     if (companyName && companyName !== '-') {
-      // Navigate to company record
-      window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
+      // Use companyId if available, otherwise fall back to searching by name
+      if (companyId) {
+        // Navigate to the actual company record using workspace-aware navigation
+        navigateToPipelineItem('companies', companyId, companyName);
+      } else {
+        // Fallback: search for company by name and navigate to first result
+        // This is less ideal but maintains functionality
+        console.warn('No companyId provided, falling back to search navigation');
+        window.location.href = `/workspace/companies?search=${encodeURIComponent(companyName)}`;
+      }
     }
   };
 
@@ -485,7 +500,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     <div className="group flex items-center gap-2">
       <button
         onClick={handleCompanyClick}
-        className={`${className} ${!getCurrentCompanyName() ? 'text-[var(--muted)]' : 'text-[#2563EB] hover:text-[#1d4ed8] hover:underline cursor-pointer'} transition-colors`}
+        className={`${className} ${!getCurrentCompanyName() ? 'text-[var(--muted)]' : 'text-blue-600 hover:text-blue-700 hover:underline cursor-pointer'} transition-colors`}
         title={getCurrentCompanyName() ? `View ${getCurrentCompanyName()} company details` : ''}
       >
         {getCurrentCompanyName() || '-'}

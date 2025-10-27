@@ -68,12 +68,13 @@ export async function POST(request: NextRequest) {
       userId
     });
 
-    // 🎯 FIX: Get ALL people in the workspace (don't exclude recently contacted)
-    // The scoring algorithm will naturally rank recently contacted people lower
+    // 🎯 PER-USER RANKING: Get only people assigned to this user (mainSellerId = userId)
+    // This ensures each user gets their own ranked list 1-50
     const allPeople = await prisma.people.findMany({
       where: {
         workspaceId,
-        isActive: true
+        isActive: true,
+        mainSellerId: userId // Only rank people assigned to this specific user
       },
       include: {
         company: true,
@@ -151,23 +152,26 @@ export async function POST(request: NextRequest) {
       }))
     );
 
-    // Update database with new rankings
+    // 🎯 PER-USER RANKING: Assign simple sequential ranks 1-50 for this user's people
+    // Store user-specific rank in a custom field to avoid conflicts with other users
     const updatePromises = newBatch.map((contact, index) => 
       prisma.people.update({
         where: { id: contact.id },
         data: {
-          globalRank: index + 1,
-          rank: index + 1,
-          // Add state-based ranking fields if available
-          ...(contact.stateRank && { 
-            customFields: {
-              ...(contact.customFields || {}),
+          // Use globalRank for per-user sequential ranking (1-50)
+          globalRank: index + 1, // Simple sequential rank for this user
+          // Store user-specific ranking data in customFields
+          customFields: {
+            userRank: index + 1, // Per-user rank 1-50
+            userId: userId, // Track which user this rank belongs to
+            rankingMode: rankingMode,
+            // Keep state-based ranking fields if available
+            ...(contact.stateRank && { 
               stateRank: contact.stateRank,
               companyRankInState: contact.companyRankInState,
-              personRankInCompany: contact.personRankInCompany,
-              rankingMode: rankingMode
-            }
-          }),
+              personRankInCompany: contact.personRankInCompany
+            })
+          },
           updatedAt: new Date()
         }
       })

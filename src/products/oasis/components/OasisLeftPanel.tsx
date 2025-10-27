@@ -7,7 +7,7 @@
  * Shows conversations, channels, DMs, and external company chats.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useUnifiedAuth } from "@/platform/auth";
 import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
@@ -44,6 +44,7 @@ interface Conversation {
   participants?: number;
   status?: 'online' | 'away' | 'offline';
   isWorkspaceMember?: boolean;
+  workspaceName?: string; // Add workspace name for pill display
 }
 
 // Mock data will be replaced with real data from hooks
@@ -86,6 +87,7 @@ export function OasisLeftPanel() {
   const { channels, loading: channelsLoading, createChannel } = useOasisChannels(workspaceId);
   const { dms, loading: dmsLoading, createDM } = useOasisDMs(workspaceId);
   const { userCount, isConnected } = useOasisPresence(workspaceId);
+
 
   // Auto-select channel when channels load and no channel is selected
   useEffect(() => {
@@ -268,7 +270,8 @@ export function OasisLeftPanel() {
       lastMessage: dm.lastMessage?.content || 'Started conversation',
       lastMessageTime: dm.lastMessage?.createdAt ? new Date(dm.lastMessage.createdAt).toLocaleTimeString() : 'now',
       status: 'online' as const,
-      isWorkspaceMember: true
+      isWorkspaceMember: true,
+      workspaceName: dm.participants[0]?.workspaceName // Add workspace name for pill display
     }))
   ];
 
@@ -403,7 +406,14 @@ export function OasisLeftPanel() {
                       <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full border border-white"></div>
                     )}
                   </div>
-                  <span className="text-sm font-medium truncate">{dm.name}</span>
+                  <div className="flex-1 flex items-center gap-2 min-w-0">
+                    <span className="text-sm font-medium truncate">{dm.name}</span>
+                    {dm.workspaceName && (
+                      <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full whitespace-nowrap">
+                        🏷️ {dm.workspaceName}
+                      </span>
+                    )}
+                  </div>
                   {dm.unread > 0 && (
                     <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
                       {dm.unread}
