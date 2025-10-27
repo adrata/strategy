@@ -2990,6 +2990,14 @@ export function UniversalRecordTemplate({
         }));
         
         // Dispatch event with full action data for optimistic update
+        console.log('📤 [UNIVERSAL] Dispatching actionCreatedWithData event:', {
+          recordId: record.id,
+          recordType: recordType,
+          actionDataId: result.data?.id,
+          actionDataType: result.data?.type,
+          hasActionData: !!result.data
+        });
+
         document.dispatchEvent(new CustomEvent('actionCreatedWithData', {
           detail: {
             recordId: record.id,
