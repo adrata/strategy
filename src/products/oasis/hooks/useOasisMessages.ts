@@ -40,6 +40,33 @@ export interface OasisThreadMessage {
   createdAt: string;
 }
 
+// Helper function to check if AI should respond
+async function checkIfShouldTriggerAI(workspaceId: string, dmId?: string, channelId?: string, content?: string): Promise<boolean> {
+  try {
+    // If it's a DM, check if it's with Adrata AI
+    if (dmId) {
+      const response = await fetch(`/api/v1/oasis/oasis/dms/${dmId}?workspaceId=${workspaceId}`);
+      if (response.ok) {
+        const dm = await response.json();
+        // Check if Adrata AI is a participant
+        const hasAdrataAI = dm.participants?.some((p: any) => p.email === 'ai@adrata.com');
+        return hasAdrataAI;
+      }
+    }
+    
+    // If it's a channel, check if message mentions Adrata
+    if (channelId && content) {
+      const lowerContent = content.toLowerCase();
+      return lowerContent.includes('@adrata') || lowerContent.includes('adrata');
+    }
+    
+    return false;
+  } catch (error) {
+    console.warn('Failed to check if should trigger AI:', error);
+    return false;
+  }
+}
+
 export function useOasisMessages(
   workspaceId: string,
   channelId?: string,
@@ -104,6 +131,32 @@ export function useOasisMessages(
         setMessages(data.messages);
         setOffset(50);
         
+        // Check if conversation is empty and trigger initial greeting
+        if (data.messages.length === 0 && workspaceId) {
+          try {
+            const aiResponse = await fetch('/api/v1/oasis/oasis/ai-response', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                channelId,
+                dmId,
+                workspaceId,
+                isInitial: true
+              }),
+            });
+
+            if (aiResponse.ok) {
+              const aiMessage = await aiResponse.json();
+              // Add initial greeting to messages
+              setMessages([aiMessage]);
+            }
+          } catch (aiError) {
+            console.warn('Failed to create initial greeting:', aiError);
+          }
+        }
+        
         // Cache the messages
         if (typeof window !== 'undefined') {
           sessionStorage.setItem(cacheKey, JSON.stringify({
@@ -152,26 +205,31 @@ export function useOasisMessages(
       // Add message to list (optimistic update)
       setMessages(prev => [data.message, ...prev]);
       
-      // Trigger AI response for all messages (channels and DMs)
+      // Trigger AI response only when Adrata is directly engaged
       if (workspaceId) {
         try {
-          const aiResponse = await fetch('/api/v1/oasis/oasis/ai-response', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              messageContent: content,
-              channelId,
-              dmId,
-              workspaceId
-            }),
-          });
+          // Check if this is a DM with Adrata or if message mentions Adrata
+          const shouldTriggerAI = await checkIfShouldTriggerAI(workspaceId, dmId, channelId, content);
+          
+          if (shouldTriggerAI) {
+            const aiResponse = await fetch('/api/v1/oasis/oasis/ai-response', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                messageContent: content,
+                channelId,
+                dmId,
+                workspaceId
+              }),
+            });
 
-          if (aiResponse.ok) {
-            const aiMessage = await aiResponse.json();
-            // Add AI response to messages
-            setMessages(prev => [aiMessage, ...prev]);
+            if (aiResponse.ok) {
+              const aiMessage = await aiResponse.json();
+              // Add AI response to messages
+              setMessages(prev => [aiMessage, ...prev]);
+            }
           }
         } catch (aiError) {
           // Don't fail the main message send if AI response fails

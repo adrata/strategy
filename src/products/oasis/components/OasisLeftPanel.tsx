@@ -271,14 +271,14 @@ export function OasisLeftPanel() {
                   onClick={() => handleConversationClick(channel)}
                   className={`w-full text-left px-2 py-1.5 rounded-md transition-colors flex items-center gap-2 ${
                     selectedChannel?.id === channel.id
-                      ? 'bg-gray-100 text-gray-900'
+                      ? 'bg-green-100 text-gray-900'
                       : 'hover:bg-gray-100 text-gray-700'
                   }`}
                 >
                   <HashtagIcon className="w-3 h-3 text-[var(--muted)]" />
                   <span className="text-sm font-medium truncate">#{channel.name}</span>
                   {channel.unread > 0 && (
-                    <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded min-w-[1.25rem] text-center">
+                    <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
                       {channel.unread}
                     </span>
                   )}
@@ -317,7 +317,7 @@ export function OasisLeftPanel() {
                   onClick={() => handleConversationClick(dm)}
                   className={`w-full text-left px-2 py-1.5 rounded-md transition-colors flex items-center gap-2 ${
                     selectedChannel?.id === dm.id
-                      ? 'bg-gray-100 text-gray-900'
+                      ? 'bg-green-100 text-gray-900'
                       : 'hover:bg-gray-100 text-gray-700'
                   }`}
                 >
@@ -328,12 +328,12 @@ export function OasisLeftPanel() {
                       </span>
                     </div>
                     {dm.status === 'online' && (
-                      <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-blue-400 rounded-full border border-white"></div>
+                      <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full border border-white"></div>
                     )}
                   </div>
                   <span className="text-sm font-medium truncate">{dm.name}</span>
                   {dm.unread > 0 && (
-                    <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded min-w-[1.25rem] text-center">
+                    <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
                       {dm.unread}
                     </span>
                   )}

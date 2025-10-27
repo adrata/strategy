@@ -12,11 +12,19 @@ import { OasisRealtimeService } from '@/platform/services/oasis-realtime-service
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { messageContent, channelId, dmId, workspaceId } = body;
+    const { messageContent, channelId, dmId, workspaceId, isInitial } = body;
 
-    if (!messageContent || !workspaceId || (!channelId && !dmId)) {
+    if (!workspaceId || (!channelId && !dmId)) {
       return NextResponse.json(
-        { error: 'Message content, workspace ID, and channel or DM ID required' },
+        { error: 'Workspace ID and channel or DM ID required' },
+        { status: 400 }
+      );
+    }
+
+    // For initial greetings, messageContent is optional
+    if (!isInitial && !messageContent) {
+      return NextResponse.json(
+        { error: 'Message content required for non-initial responses' },
         { status: 400 }
       );
     }
@@ -33,8 +41,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate AI response based on message content
-    let aiResponse = generateAIResponse(messageContent, 'User');
+    // Generate AI response based on message content or initial greeting
+    let aiResponse;
+    if (isInitial) {
+      aiResponse = generateInitialGreeting(channelId ? 'channel' : 'dm');
+    } else {
+      aiResponse = generateAIResponse(messageContent, 'User');
+    }
 
     // Create the AI response message
     const aiMessage = await prisma.oasisMessage.create({
@@ -62,6 +75,15 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to generate AI response' },
       { status: 500 }
     );
+  }
+}
+
+// Generate initial greeting based on conversation type
+function generateInitialGreeting(conversationType: 'channel' | 'dm'): string {
+  if (conversationType === 'channel') {
+    return "Hi! I'm Adrata. What would you like to work on today?";
+  } else {
+    return "Hi! I'm Adrata. What would you like to work on today?";
   }
 }
 

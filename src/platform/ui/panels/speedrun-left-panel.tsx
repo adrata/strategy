@@ -119,6 +119,9 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
   const [dailySchedule, setDailySchedule] = useState<DailySchedule | null>(null);
   const [loadingActions, setLoadingActions] = useState(false);
   const [loadingSchedule, setLoadingSchedule] = useState(false);
+  
+  // Real-time timestamp refresh state
+  const [timestampRefresh, setTimestampRefresh] = useState(0);
 
   // Services
   const salesActionsService = SpeedrunSalesActionsService.getInstance();
@@ -135,6 +138,15 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDropdown]);
+
+  // Auto-refresh timestamps every 60 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimestampRefresh(prev => prev + 1);
+    }, 60000); // 60 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Sync activeContacts with dynamic speedrun data and handle carryover
   useEffect(() => {

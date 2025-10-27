@@ -3,7 +3,7 @@
  * Clean, modular table that handles all pipeline sections with proper TypeScript safety.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
@@ -266,6 +266,18 @@ export function PipelineTable({
     setSortDirection,
   } = usePipelineData({ data, pageSize });
   
+  // Real-time timestamp refresh state
+  const [timestampRefresh, setTimestampRefresh] = useState(0);
+  
+  // Auto-refresh timestamps every 60 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimestampRefresh(prev => prev + 1);
+    }, 60000); // 60 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+  
   console.log('🔍 [PipelineTable] usePipelineData results:', {
     inputDataLength: data?.length,
     paginatedDataLength: paginatedData?.length,
@@ -403,7 +415,7 @@ export function PipelineTable({
           
           {/* Table body */}
           <tbody>
-            {paginatedData.map((record, index) => {
+            {useMemo(() => paginatedData.map((record, index) => {
               console.log(`🔍 [PipelineTable] Rendering row ${index}:`, {
                 recordId: record.id,
                 recordName: record.name || record['fullName'],
@@ -439,7 +451,7 @@ export function PipelineTable({
                   getColumnWidth={getColumnWidth}
                 />
               );
-            })}
+            }), [paginatedData, headers, visibleColumns, timestampRefresh])}
           </tbody>
         </table>
       </div>

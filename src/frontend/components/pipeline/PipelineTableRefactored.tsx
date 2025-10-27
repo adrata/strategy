@@ -3,7 +3,7 @@
  * Clean, modular table that handles all pipeline sections with proper TypeScript safety.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns, isColumnHidden } from '@/platform/config/workspace-table-config';
 import { usePipelineData } from '@/platform/hooks/usePipelineData';
@@ -247,6 +247,18 @@ export function PipelineTable({
   const [addingAction, setAddingAction] = useState<PipelineRecord | null>(null);
   const [viewingRecord, setViewingRecord] = useState<PipelineRecord | null>(null);
   
+  // Real-time timestamp refresh state
+  const [timestampRefresh, setTimestampRefresh] = useState(0);
+  
+  // Auto-refresh timestamps every 60 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimestampRefresh(prev => prev + 1);
+    }, 60000); // 60 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+  
   // Handle record click
   const handleRecordClick = (record: PipelineRecord) => {
     onRecordClick(record);
@@ -334,7 +346,7 @@ export function PipelineTable({
           
           {/* Table body */}
           <tbody>
-            {paginatedData.map((record, index) => {
+            {useMemo(() => paginatedData.map((record, index) => {
               return (
                   <tr
                     key={record.id}
@@ -603,7 +615,7 @@ export function PipelineTable({
                   })}
                 </tr>
               );
-            })}
+            }), [paginatedData, headers, timestampRefresh])}
           </tbody>
         </table>
       </div>
