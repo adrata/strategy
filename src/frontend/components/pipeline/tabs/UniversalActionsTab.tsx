@@ -503,10 +503,8 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
           return sorted;
         });
         
-        // Still clear cache and refresh in background to ensure consistency
-        const cacheKey = `actions-${record.id}`;
-        localStorage.removeItem(cacheKey);
-        setTimeout(() => loadActionsFromAPI(true), 100);
+        // Cache clearing and refresh are handled by the handleActionCreated event listener
+        // No need for duplicate background refresh that causes race conditions
       }
     };
 
