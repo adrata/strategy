@@ -268,73 +268,83 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
       onClick={onClose}
     >
       <div 
-        className="bg-[var(--background)] rounded-2xl shadow-2xl border border-[var(--border)] max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden"
+        className="bg-[var(--background)] rounded-2xl shadow-2xl border border-[var(--border)] max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden flex"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header with gradient icon */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-[var(--accent)] to-[var(--info)] rounded-lg flex items-center justify-center">
-              <CogIcon className="w-6 h-6 text-[var(--button-text)]" />
-            </div>
+        {/* Left Sidebar Navigation */}
+        <div className="w-64 bg-[var(--background)] border-r border-[var(--border)] flex flex-col">
+          {/* Header */}
+          <div className="p-6 border-b border-[var(--border)]">
             <div>
-              <h2 className="text-xl font-semibold text-[var(--foreground)]">Settings</h2>
-              <p className="text-sm text-[var(--muted)]">Customize your Adrata experience</p>
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">Settings</h2>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
-          >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
-          </button>
+
+          {/* Navigation Items */}
+          <div className="flex-1 p-4">
+            <nav className="space-y-1">
+              <button
+                onClick={() => setActiveTab('profile')}
+                className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'profile'
+                    ? 'bg-[var(--accent)] text-white'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                }`}
+              >
+                Profile
+              </button>
+              <button
+                onClick={() => setActiveTab('security')}
+                className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'security'
+                    ? 'bg-[var(--accent)] text-white'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                }`}
+              >
+                Security
+              </button>
+              <button
+                onClick={() => setActiveTab('notifications')}
+                className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'notifications'
+                    ? 'bg-[var(--accent)] text-white'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                }`}
+              >
+                Notifications
+              </button>
+            </nav>
+          </div>
+
+          {/* Close Button */}
+          <div className="p-4 border-t border-[var(--border)]">
+            <button
+              onClick={onClose}
+              className="w-full text-left px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] rounded-lg transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-[var(--border)]">
-          <button
-            onClick={() => setActiveTab('profile')}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'profile'
-                ? 'text-[var(--accent)] border-b-2 border-[var(--accent)] bg-[var(--info-bg)]'
-                : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--panel-background)]'
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <UserIcon className="w-4 h-4" />
-              Profile
+        {/* Right Content Area */}
+        <div className="flex-1 flex flex-col min-h-0">
+          {/* Breadcrumb */}
+          <div className="px-6 py-4 border-b border-[var(--border)] bg-[var(--background)] flex-shrink-0">
+            <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
+              <span>Settings</span>
+              <span>›</span>
+              <span className="text-[var(--foreground)] font-medium">
+                {activeTab === 'profile' && 'Profile'}
+                {activeTab === 'security' && 'Security'}
+                {activeTab === 'notifications' && 'Notifications'}
+              </span>
             </div>
-          </button>
-          <button
-            onClick={() => setActiveTab('security')}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'security'
-                ? 'text-[var(--accent)] border-b-2 border-[var(--accent)] bg-[var(--info-bg)]'
-                : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--panel-background)]'
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <ShieldCheckIcon className="w-4 h-4" />
-              Security
-            </div>
-          </button>
-          <button
-            onClick={() => setActiveTab('notifications')}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-              activeTab === 'notifications'
-                ? 'text-[var(--accent)] border-b-2 border-[var(--accent)] bg-[var(--info-bg)]'
-                : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--panel-background)]'
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <BellIcon className="w-4 h-4" />
-              Notifications
-            </div>
-          </button>
-        </div>
+          </div>
 
-        {/* Content */}
-        <div className="max-h-96 overflow-y-auto p-6">
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-6 min-h-0">
+            <div className="transition-all duration-200 ease-in-out">
           {activeTab === 'profile' ? (
             <div className="space-y-6">
               {/* User Profile Information */}
@@ -684,6 +694,8 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
               </div>
             </div>
           )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

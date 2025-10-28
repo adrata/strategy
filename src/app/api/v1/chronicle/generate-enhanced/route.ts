@@ -72,11 +72,14 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Unauthorized', 401);
     }
 
-    const { reportType, workspaceId } = await request.json();
+    const { reportType, workspaceId, userId, targetDate } = await request.json();
     
     if (!reportType || !workspaceId) {
       return createErrorResponse('Report type and workspace ID are required', 400);
     }
+
+    // Use provided userId or fall back to session user
+    const reportUserId = userId || session.user.id;
 
     // Check if this is Notary Everyday workspace
     const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || 
@@ -87,8 +90,15 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Enhanced reports only available for Notary Everyday workspace', 400);
     }
 
+    // Parse target date if provided
+    const reportDate = targetDate ? new Date(targetDate) : new Date();
+    
     // Generate report data based on Notary Everyday model
-    const reportData = await generateNotaryEverydayReport(reportType, workspaceId, session.user.id);
+    const reportData = await generateNotaryEverydayReport(reportType, workspaceId, reportUserId, reportDate);
+    
+    // Calculate week start and end dates
+    const weekStart = getStartDate(reportType, reportDate);
+    const weekEnd = getEndDate(reportType, reportDate);
     
     // Create report in database
     const report = await prisma.chronicleReport.create({
@@ -96,15 +106,15 @@ export async function POST(request: NextRequest) {
         title: reportData.title,
         reportType: reportData.reportType,
         content: reportData.content,
-        weekStart: new Date(),
-        weekEnd: new Date(),
+        weekStart,
+        weekEnd,
         workspaceId,
-        userId: session.user.id
+        userId: reportUserId
       }
     });
 
     // Store in Atrium as well
-    await storeInAtrium(reportData, workspaceId, session.user.id);
+    await storeInAtrium(reportData, workspaceId, reportUserId);
 
     return createSuccessResponse(report);
 
@@ -117,9 +127,10 @@ export async function POST(request: NextRequest) {
 async function generateNotaryEverydayReport(
   reportType: 'DAILY' | 'WEEKLY' | 'BIWEEKLY',
   workspaceId: string,
-  userId: string
+  userId: string,
+  targetDate: Date = new Date()
 ): Promise<ChronicleReportData> {
-  const now = new Date();
+  const now = targetDate;
   const period = getPeriodLabel(reportType, now);
   
   // Get current metrics data
@@ -243,7 +254,7 @@ async function getNotaryEverydayMetrics(workspaceId: string) {
 
 async function getActivityData(workspaceId: string, reportType: string, date: Date) {
   const startDate = getStartDate(reportType, date);
-  const endDate = date;
+  const endDate = getEndDate(reportType, date);
 
   const actions = await prisma.actions.findMany({
     where: {
@@ -448,6 +459,23 @@ function getStartDate(reportType: string, date: Date): Date {
     const start = new Date(date.getFullYear(), date.getMonth(), 1);
     start.setHours(0, 0, 0, 0);
     return start;
+  }
+}
+
+function getEndDate(reportType: string, date: Date): Date {
+  if (reportType === 'DAILY') {
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+    return end;
+  } else if (reportType === 'WEEKLY') {
+    const end = new Date(date);
+    end.setDate(date.getDate() - date.getDay() + 6); // End of week (Saturday)
+    end.setHours(23, 59, 59, 999);
+    return end;
+  } else {
+    const end = new Date(date.getFullYear(), date.getMonth() + 1, 0); // Last day of month
+    end.setHours(23, 59, 59, 999);
+    return end;
   }
 }
 
