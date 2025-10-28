@@ -754,8 +754,8 @@ function PipelineSections({
       id: "metrics",
       name: "Metrics",
       description: "Performance metrics",
-      count: isNotaryEveryday ? metricsCount : 0,
-      visible: isNotaryEveryday
+      count: hasMetrics ? metricsCount : 0,
+      visible: hasMetrics
     },
     {
       id: "nova",

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { generateFavicon, updateFavicon, getAppThemeFromPath, generateInitials } from '@/platform/utils/favicon-generator';
-import { useUnifiedAuth } from '@/platform/auth/hooks/useUnifiedAuth';
+import { useUnifiedAuth } from '@/platform/hooks/useUnifiedAuthCompat';
 
 interface DynamicFaviconProps {
   isWebsite?: boolean;

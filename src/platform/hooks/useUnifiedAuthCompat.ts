@@ -48,3 +48,6 @@ export function useUnifiedAuthCompat() {
     initAuth: async () => {},
   };
 }
+
+// Export with the expected name
+export const useUnifiedAuth = useUnifiedAuthCompat;

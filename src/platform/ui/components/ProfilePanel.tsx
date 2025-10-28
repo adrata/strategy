@@ -85,7 +85,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const router = useRouter();
   const { signOut, isDesktop } = useUnifiedAuth();
   const { setIsSettingsOpen } = useSettingsPopup();
-  const { hasDesktopDownload } = useFeatureAccess();
+  const { hasOasis, hasStacks, hasAtrium, hasDesktopDownload } = useFeatureAccess();
 
   const initial = user.name?.charAt(0).toUpperCase() || "?";
   
@@ -345,43 +345,49 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             </button>
 
             {/* Oasis */}
-            <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'oasis' 
-                  ? 'bg-blue-100 text-blue-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
-              }`}
-              onClick={() => handleNavigation("/oasis")}
-            >
-              <ChatBubbleLeftRightIcon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Oasis</span>
-            </button>
+            {hasOasis && (
+              <button
+                className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                  currentApp === 'oasis' 
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                }`}
+                onClick={() => handleNavigation("/oasis")}
+              >
+                <ChatBubbleLeftRightIcon className="w-4 h-4 mr-3" />
+                <span className="font-medium">Oasis</span>
+              </button>
+            )}
 
             {/* Stacks */}
-            <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'stacks' 
-                  ? 'bg-blue-100 text-blue-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
-              }`}
-              onClick={() => handleNavigation("/stacks")}
-            >
-              <Squares2X2Icon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Stacks</span>
-            </button>
+            {hasStacks && (
+              <button
+                className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                  currentApp === 'stacks' 
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                }`}
+                onClick={() => handleNavigation("/stacks")}
+              >
+                <Squares2X2Icon className="w-4 h-4 mr-3" />
+                <span className="font-medium">Stacks</span>
+              </button>
+            )}
 
             {/* Atrium */}
-            <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'atrium' 
-                  ? 'bg-blue-100 text-blue-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
-              }`}
-              onClick={() => handleNavigation("/atrium")}
-            >
-              <DocumentDuplicateIcon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Atrium</span>
-            </button>
+            {hasAtrium && (
+              <button
+                className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                  currentApp === 'atrium' 
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                }`}
+                onClick={() => handleNavigation("/atrium")}
+              >
+                <DocumentDuplicateIcon className="w-4 h-4 mr-3" />
+                <span className="font-medium">Atrium</span>
+              </button>
+            )}
 
             {/* Settings */}
             <button
