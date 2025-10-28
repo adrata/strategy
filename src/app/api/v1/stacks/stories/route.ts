@@ -1,33 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getSecureApiContext, createErrorResponse } from '@/platform/services/secure-api-helper';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
     console.log('🔍 [STACKS API] GET request received');
     console.log('🔍 [STACKS API] Request URL:', request.url);
-    console.log('🔍 [STACKS API] Request headers:', Object.fromEntries(request.headers.entries()));
     
-    const session = await getServerSession(authOptions);
-    console.log('🔍 [STACKS API] Session:', session ? 'exists' : 'null');
-    console.log('🔍 [STACKS API] User ID:', session?.user?.id);
-    console.log('🔍 [STACKS API] User email:', session?.user?.email);
-    
-    if (!session?.user?.id) {
-      console.log('❌ [STACKS API] No session or user ID');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Use platform's unified authentication system
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      console.log('❌ [STACKS API] Authentication failed');
+      return response; // Return error response if authentication failed
     }
 
+    if (!context) {
+      console.log('❌ [STACKS API] No context after authentication');
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Get workspace ID from authenticated context
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
+    
+    console.log('✅ [STACKS API] Authenticated user:', userId, 'workspace:', workspaceId);
+
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
     const category = searchParams.get('category'); // 'build' or 'sell'
     const status = searchParams.get('status');
     const epicId = searchParams.get('epicId');
     const assigneeId = searchParams.get('assigneeId');
 
     if (!workspaceId) {
-      return NextResponse.json({ error: 'Workspace ID is required' }, { status: 400 });
+      return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
     }
 
     // Build where clause
@@ -76,8 +85,7 @@ export async function GET(request: NextRequest) {
         project: {
           select: {
             id: true,
-            name: true,
-            category: true
+            name: true
           }
         }
       },
@@ -106,8 +114,7 @@ export async function GET(request: NextRequest) {
       } : null,
       project: story.project ? {
         id: story.project.id,
-        name: story.project.name,
-        category: story.project.category
+        name: story.project.name
       } : null,
       dueDate: null, // dueDate field doesn't exist in schema yet
       tags: [], // tags field doesn't exist in schema yet
@@ -127,16 +134,25 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Use platform's unified authentication system
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const body = await request.json();
     const { title, description, status, priority, assigneeId, epicId, projectId } = body;
 
     if (!title || !projectId) {
-      return NextResponse.json({ error: 'Title and project ID are required' }, { status: 400 });
+      return createErrorResponse('Title and project ID are required', 'MISSING_REQUIRED_FIELDS', 400);
     }
 
     const story = await prisma.stacksStory.create({
@@ -171,8 +187,7 @@ export async function POST(request: NextRequest) {
         project: {
           select: {
             id: true,
-            name: true,
-            category: true
+            name: true
           }
         }
       }
@@ -188,16 +203,25 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Use platform's unified authentication system
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const body = await request.json();
     const { id, title, description, status, priority, assigneeId, epicId } = body;
 
     if (!id) {
-      return NextResponse.json({ error: 'Story ID is required' }, { status: 400 });
+      return createErrorResponse('Story ID is required', 'MISSING_STORY_ID', 400);
     }
 
     const story = await prisma.stacksStory.update({
@@ -231,8 +255,7 @@ export async function PUT(request: NextRequest) {
         project: {
           select: {
             id: true,
-            name: true,
-            category: true
+            name: true
           }
         }
       }
@@ -248,16 +271,25 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Use platform's unified authentication system
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
     if (!id) {
-      return NextResponse.json({ error: 'Story ID is required' }, { status: 400 });
+      return createErrorResponse('Story ID is required', 'MISSING_STORY_ID', 400);
     }
 
     await prisma.stacksStory.delete({

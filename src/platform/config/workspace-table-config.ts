@@ -38,7 +38,8 @@ const DEFAULT_CONFIG: WorkspaceTableConfig = {
     },
     leads: {
       columns: ['Name', 'Company', 'State', 'Title', 'Email', 'Last Action', 'Next Action'],
-      columnOrder: ['name', 'company', 'state', 'title', 'email', 'lastAction', 'nextAction']
+      columnOrder: ['name', 'company', 'state', 'title', 'email', 'lastAction', 'nextAction'],
+      hiddenColumns: ['rank']
     },
     opportunities: {
       columns: ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action'],

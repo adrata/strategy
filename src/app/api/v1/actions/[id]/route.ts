@@ -135,9 +135,38 @@ export async function PUT(
       updatedAt: new Date(),
     };
 
+    // 🔄 BIDIRECTIONAL SYNC: Handle status ↔ completedAt synchronization
+    
     // If status is being changed to COMPLETED, set completedAt
     if (body.status === 'COMPLETED' && existingAction.status !== 'COMPLETED') {
       updateData.completedAt = new Date();
+      console.log('🔄 [ACTIONS PUT] Auto-syncing completedAt due to status change to COMPLETED:', {
+        actionId: id,
+        status: body.status,
+        completedAt: updateData.completedAt
+      });
+    }
+    
+    // If completedAt is being set, automatically set status to COMPLETED
+    if (body.completedAt && body.status !== 'COMPLETED') {
+      updateData.status = 'COMPLETED';
+      updateData.completedAt = new Date(body.completedAt);
+      console.log('🔄 [ACTIONS PUT] Auto-syncing status to COMPLETED due to completedAt date:', {
+        actionId: id,
+        completedAt: updateData.completedAt,
+        status: updateData.status
+      });
+    }
+    
+    // If completedAt is being cleared (set to null), set status back to PLANNED
+    if (body.completedAt === null && existingAction.completedAt && body.status !== 'PLANNED') {
+      updateData.status = 'PLANNED';
+      updateData.completedAt = null;
+      console.log('🔄 [ACTIONS PUT] Auto-syncing status to PLANNED due to completedAt being cleared:', {
+        actionId: id,
+        completedAt: updateData.completedAt,
+        status: updateData.status
+      });
     }
 
     // Update action
@@ -354,9 +383,38 @@ export async function PATCH(
       updatedAt: new Date(),
     };
 
+    // 🔄 BIDIRECTIONAL SYNC: Handle status ↔ completedAt synchronization
+    
     // If status is being changed to COMPLETED, set completedAt
     if (body.status === 'COMPLETED' && existingAction.status !== 'COMPLETED') {
       updateData.completedAt = new Date();
+      console.log('🔄 [ACTIONS PATCH] Auto-syncing completedAt due to status change to COMPLETED:', {
+        actionId: id,
+        status: body.status,
+        completedAt: updateData.completedAt
+      });
+    }
+    
+    // If completedAt is being set, automatically set status to COMPLETED
+    if (body.completedAt && body.status !== 'COMPLETED') {
+      updateData.status = 'COMPLETED';
+      updateData.completedAt = new Date(body.completedAt);
+      console.log('🔄 [ACTIONS PATCH] Auto-syncing status to COMPLETED due to completedAt date:', {
+        actionId: id,
+        completedAt: updateData.completedAt,
+        status: updateData.status
+      });
+    }
+    
+    // If completedAt is being cleared (set to null), set status back to PLANNED
+    if (body.completedAt === null && existingAction.completedAt && body.status !== 'PLANNED') {
+      updateData.status = 'PLANNED';
+      updateData.completedAt = null;
+      console.log('🔄 [ACTIONS PATCH] Auto-syncing status to PLANNED due to completedAt being cleared:', {
+        actionId: id,
+        completedAt: updateData.completedAt,
+        status: updateData.status
+      });
     }
 
     // Update action with partial data

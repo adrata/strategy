@@ -1402,10 +1402,11 @@ export async function GET(request: NextRequest) {
     try {
       switch (section) {
         case 'leads':
-          // Use same logic as counts API (leads table without user filters)
-          totalCount = await prisma.leads.count({
+          // Use same logic as counts API (people table with LEAD status)
+          totalCount = await prisma.people.count({
             where: {
               workspaceId,
+              status: 'LEAD',
               deletedAt: null
             }
           });

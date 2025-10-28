@@ -672,6 +672,33 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
             <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Stage:</span>
+                <InlineEditField
+                  value={recordData.status || recordData.stage || 'LEAD'}
+                  field="status"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'LEAD', label: 'Lead' },
+                    { value: 'PROSPECT', label: 'Prospect' },
+                    { value: 'OPPORTUNITY', label: 'Opportunity' },
+                    { value: 'CLIENT', label: 'Client' },
+                    { value: 'SUPERFAN', label: 'Superfan' }
+                  ]}
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                    (recordData.status || recordData.stage) === 'LEAD' ? 'bg-blue-100 text-blue-800' :
+                    (recordData.status || recordData.stage) === 'PROSPECT' ? 'bg-purple-100 text-purple-800' :
+                    (recordData.status || recordData.stage) === 'OPPORTUNITY' ? 'bg-yellow-100 text-yellow-800' :
+                    (recordData.status || recordData.stage) === 'CLIENT' ? 'bg-green-100 text-green-800' :
+                    (recordData.status || recordData.stage) === 'SUPERFAN' ? 'bg-pink-100 text-pink-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}
+                />
+              </div>
+              <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Name:</span>
                 <InlineEditField
                   value={recordData.name}
@@ -929,18 +956,6 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                     className="text-sm font-medium text-[var(--foreground)]"
                   />
                 </div>
-              </div>
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Stage:</span>
-                <InlineEditField
-                  value={recordData.status || null}
-                  field="status"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
               </div>
                   </div>
                 </div>

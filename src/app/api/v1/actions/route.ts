@@ -288,6 +288,16 @@ export async function POST(request: NextRequest) {
       ...(body.personId && { personId: body.personId })
     };
 
+    // 🔄 BIDIRECTIONAL SYNC: If completedAt is provided, automatically set status to COMPLETED
+    if (body.completedAt && actionData.status !== 'COMPLETED') {
+      actionData.status = 'COMPLETED';
+      console.log('🔄 [ACTIONS API] Auto-syncing status to COMPLETED due to completedAt date:', {
+        actionId: 'new',
+        completedAt: actionData.completedAt,
+        status: actionData.status
+      });
+    }
+
     console.log('📝 [ACTIONS API] Action data prepared:', {
       type: actionData.type,
       subject: actionData.subject,

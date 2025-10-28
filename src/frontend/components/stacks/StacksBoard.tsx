@@ -229,7 +229,30 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     fetchStories();
   }, [ui.activeWorkspace?.id, isNotaryEveryday]);
   
-  // Removed mock data functions
+  // Helper function to filter selling stories
+  const filterSellingStories = (stories: any[]): any[] => {
+    // For now, return all stories since we don't have category filtering yet
+    // In the future, this could filter by project category or other criteria
+    return stories;
+  };
+
+  // Helper function to convert Notary story to StackCard format
+  const convertNotaryStoryToStackCard = (story: any): StackCard => {
+    return {
+      id: story.id,
+      title: story.title,
+      description: story.description,
+      priority: story.priority || 'medium',
+      status: story.status,
+      assignee: story.assignee ? `${story.assignee.firstName} ${story.assignee.lastName}` : undefined,
+      dueDate: story.dueDate,
+      tags: story.tags || [],
+      epic: story.epic,
+      timeInStatus: story.timeInStatus,
+      createdAt: story.createdAt,
+      updatedAt: story.updatedAt
+    };
+  };
 
   // Helper function to format relative time
   const formatRelativeTime = (dateString: string): string => {

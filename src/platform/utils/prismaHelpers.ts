@@ -14,36 +14,40 @@ const prisma = new PrismaClient();
  * Use these instead of direct prisma calls to ensure consistency
  */
 export const safePrisma = {
-  // LEADS
+  // LEADS (now using people table with status filter)
   lead: {
-    findMany: (args: any = {}) => prisma.leads.findMany({
+    findMany: (args: any = {}) => prisma.people.findMany({
       ...args,
       where: {
         ...args.where,
+        status: 'LEAD',
         deletedAt: null
       }
     }),
     
-    findFirst: (args: any = {}) => prisma.leads.findFirst({
+    findFirst: (args: any = {}) => prisma.people.findFirst({
       ...args,
       where: {
         ...args.where,
+        status: 'LEAD',
         deletedAt: null
       }
     }),
     
-    findUnique: (args: any = {}) => prisma.leads.findFirst({
+    findUnique: (args: any = {}) => prisma.people.findFirst({
       ...args,
       where: {
         ...args.where,
+        status: 'LEAD',
         deletedAt: null
       }
     }),
     
-    count: (args: any = {}) => prisma.leads.count({
+    count: (args: any = {}) => prisma.people.count({
       ...args,
       where: {
         ...args.where,
+        status: 'LEAD',
         deletedAt: null
       }
     })
@@ -209,19 +213,21 @@ export function withSoftDeleteFilter(where: any = {}, includeDeleted = false): a
  */
 export const deletedRecords = {
   lead: {
-    findMany: (args: any = {}) => prisma.leads.findMany({
+    findMany: (args: any = {}) => prisma.people.findMany({
       ...args,
       where: {
         ...args.where,
+        status: 'LEAD',
         deletedAt: { not: null }
       },
       orderBy: { deletedAt: 'desc' }
     }),
     
-    count: (args: any = {}) => prisma.leads.count({
+    count: (args: any = {}) => prisma.people.count({
       ...args,
       where: {
         ...args.where,
+        status: 'LEAD',
         deletedAt: { not: null }
       }
     })
@@ -326,9 +332,9 @@ export async function auditSoftDeleteCompliance(queries: Array<{ model: string; 
     try {
       switch (model) {
         case 'lead':
-          activeCount = await prisma.leads.count({ where: { ...where, deletedAt: null } });
-          deletedCount = await prisma.leads.count({ where: { ...where, deletedAt: { not: null } } });
-          totalCount = await prisma.leads.count({ where });
+          activeCount = await prisma.people.count({ where: { ...where, status: 'LEAD', deletedAt: null } });
+          deletedCount = await prisma.people.count({ where: { ...where, status: 'LEAD', deletedAt: { not: null } } });
+          totalCount = await prisma.people.count({ where: { ...where, status: 'LEAD' } });
           break;
         case 'prospect':
           activeCount = await prisma.prospect.count({ where: { ...where, deletedAt: null } });

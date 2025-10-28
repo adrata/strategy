@@ -220,7 +220,7 @@ async function processLeadData(leadData: any) {
         }
       });
 
-      const leadRecord = await prisma.leads.upsert({
+      const leadRecord = await prisma.people.upsert({
         where: {
           id: `zoho_lead_${leadData.id || Date.now()}`
         },
@@ -236,7 +236,7 @@ async function processLeadData(leadData: any) {
           company: leadData.Company || '',
           title: leadData.Title || leadData.Designation || '',
           source: 'Zoho CRM',
-          status: 'New',
+          status: 'LEAD',
           zohoId: leadData.id,
           description: description,
           ownerId: '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
@@ -249,6 +249,7 @@ async function processLeadData(leadData: any) {
           phone: leadData.Phone || '',
           company: leadData.Company || '',
           title: leadData.Title || leadData.Designation || '',
+          status: 'LEAD',
           description: description,
           updatedAt: new Date()
         }

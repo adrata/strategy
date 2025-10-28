@@ -427,7 +427,7 @@ export class ClaudeAIService {
         prisma.people.count({ where: { workspaceId, deletedAt: null } }),
         prisma.companies.count({ where: { workspaceId, deletedAt: null } }),
         prisma.prospects.count({ where: { workspaceId, deletedAt: null } }),
-        prisma.leads.count({ where: { workspaceId, deletedAt: null } }),
+        prisma.people.count({ where: { workspaceId, status: 'LEAD', deletedAt: null } }),
         prisma.opportunities.count({ where: { workspaceId, deletedAt: null } })
       ]);
 
@@ -499,8 +499,8 @@ export class ClaudeAIService {
             }
           });
         } else if (request.recordType === 'leads') {
-          currentRecordDetails = await prisma.leads.findUnique({
-            where: { id: recordId },
+          currentRecordDetails = await prisma.people.findFirst({
+            where: { id: recordId, status: 'LEAD' },
             include: {
               company: { 
                 select: { 

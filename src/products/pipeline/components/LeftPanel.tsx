@@ -695,11 +695,11 @@ function PipelineSections({
       description: "Business Intelligence Reports",
       count: isNotaryEveryday ? (
         chronicleUnreadCount > 0 ? (
-          <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+          <span className="bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full">
             New
           </span>
         ) : (
-          chronicleCount
+          chronicleCount || 0
         )
       ) : 0,
       visible: allowedSections.includes('chronicle') && hasChronicle
@@ -753,7 +753,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.partners,
-      visible: allowedSections.includes('partners') && false // Hidden as requested
+      visible: allowedSections.includes('partners') && isNotaryEveryday
     },
     {
       id: "clients",

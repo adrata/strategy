@@ -144,27 +144,77 @@ export async function GET(request: NextRequest) {
     console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);
     
     if (search) {
-      // Combine search with assignment filter
-      where.AND = [
-        {
-          OR: [
-            { mainSellerId: context.userId },
-            { mainSellerId: null }
-          ]
-        },
-        {
-          OR: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { legalName: { contains: search, mode: 'insensitive' } },
-            { tradingName: { contains: search, mode: 'insensitive' } },
-            { email: { contains: search, mode: 'insensitive' } },
-            { website: { contains: search, mode: 'insensitive' } },
-            { domain: { contains: search, mode: 'insensitive' } },
-          ]
+      const searchTerm = search.trim();
+      
+      // Only search if the search term is meaningful (at least 2 characters)
+      if (searchTerm.length >= 2) {
+        // Create intelligent search conditions with priority order
+        const searchConditions = [];
+        
+        // Exact matches (highest priority)
+        searchConditions.push(
+          { name: { equals: searchTerm, mode: 'insensitive' } },
+          { legalName: { equals: searchTerm, mode: 'insensitive' } },
+          { tradingName: { equals: searchTerm, mode: 'insensitive' } }
+        );
+        
+        // Starts with matches (high priority)
+        searchConditions.push(
+          { name: { startsWith: searchTerm, mode: 'insensitive' } },
+          { legalName: { startsWith: searchTerm, mode: 'insensitive' } },
+          { tradingName: { startsWith: searchTerm, mode: 'insensitive' } }
+        );
+        
+        // Email exact matches
+        searchConditions.push(
+          { email: { equals: searchTerm, mode: 'insensitive' } }
+        );
+        
+        // Website/domain exact matches
+        searchConditions.push(
+          { website: { equals: searchTerm, mode: 'insensitive' } },
+          { domain: { equals: searchTerm, mode: 'insensitive' } }
+        );
+        
+        // Email contains (for partial email matches)
+        if (searchTerm.includes('@')) {
+          searchConditions.push(
+            { email: { contains: searchTerm, mode: 'insensitive' } }
+          );
         }
-      ];
-      // Remove the top-level OR since we're using AND now
-      delete where.OR;
+        
+        // Website/domain contains (for partial URL matches)
+        if (searchTerm.includes('.') || searchTerm.includes('http')) {
+          searchConditions.push(
+            { website: { contains: searchTerm, mode: 'insensitive' } },
+            { domain: { contains: searchTerm, mode: 'insensitive' } }
+          );
+        }
+        
+        // Name contains (only for longer search terms to avoid irrelevant matches)
+        if (searchTerm.length >= 3) {
+          searchConditions.push(
+            { name: { contains: searchTerm, mode: 'insensitive' } },
+            { legalName: { contains: searchTerm, mode: 'insensitive' } },
+            { tradingName: { contains: searchTerm, mode: 'insensitive' } }
+          );
+        }
+        
+        // Combine search with assignment filter
+        where.AND = [
+          {
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ]
+          },
+          {
+            OR: searchConditions
+          }
+        ];
+        // Remove the top-level OR since we're using AND now
+        delete where.OR;
+      }
     }
 
     // Pipeline status filtering (PROSPECT, CLIENT, ACTIVE, INACTIVE, OPPORTUNITY)
