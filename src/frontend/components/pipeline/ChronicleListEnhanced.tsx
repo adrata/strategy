@@ -394,7 +394,7 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
                     </span>
                     <div className="flex items-center gap-2">
                       {!report.isRead && (
-                        <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                        <span className="bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full">
                           New
                         </span>
                       )}
