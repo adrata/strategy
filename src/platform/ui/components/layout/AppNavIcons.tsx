@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/navigation";
+import { useUnifiedAuth } from "@/platform/auth";
 import {
   DocumentDuplicateIcon,
   BuildingOffice2Icon,
@@ -69,7 +70,29 @@ export function AppNavIcons({
   onCloseAppSwitcher,
 }: AppNavIconsProps) {
   const router = useRouter();
-  const icons = appIconConfig[context] || appIconConfig["pipeline"];
+  const { user: authUser } = useUnifiedAuth();
+  
+  // Check if user is in Adrata workspace
+  const isAdrataWorkspace = () => {
+    const activeWorkspace = authUser?.workspaces?.find(
+      w => w['id'] === authUser?.activeWorkspaceId
+    );
+    return activeWorkspace?.name?.toLowerCase() === 'adrata';
+  };
+
+  // Get icons and filter out Oasis for non-Adrata users
+  const getFilteredIcons = () => {
+    const baseIcons = appIconConfig[context] || appIconConfig["pipeline"];
+    
+    // Filter out Oasis-related icons for non-Adrata users
+    if (!isAdrataWorkspace()) {
+      return baseIcons.filter(icon => icon.slug !== "oasis");
+    }
+    
+    return baseIcons;
+  };
+  
+  const icons = getFilteredIcons();
 
   const isActiveTab = (slug: string) => {
     if (showAppSwitcher) return false;

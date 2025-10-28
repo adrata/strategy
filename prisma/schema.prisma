@@ -857,12 +857,16 @@ model BuyerGroupMembers {
   buyerGroupId   String
   name           String
   title          String?
+  department     String?        // NEW: for filtering and coverage analysis
   role           BuyerGroupRole
   email          String?
   phone          String?
   linkedin       String?
   confidence     Decimal?       @default(0) @db.Decimal(5, 2)
   influenceScore Decimal?       @default(0) @db.Decimal(5, 2)
+  roleReasoning  String?        // NEW: critical for defending selection
+  connectionsCount Int?         @default(0) // NEW: network size metric
+  followersCount Int?           @default(0) // NEW: additional network metric
   createdAt      DateTime       @default(now())
   updatedAt      DateTime
   BuyerGroups    BuyerGroups    @relation(fields: [buyerGroupId], references: [id], onDelete: Cascade)
@@ -872,24 +876,29 @@ model BuyerGroupMembers {
 }
 
 model BuyerGroups {
-  id                String              @id
-  companyName       String
-  website           String?
-  industry          String?
-  companySize       String?
-  workspaceId       String?
-  cohesionScore     Decimal?            @default(0) @db.Decimal(5, 2)
-  overallConfidence Decimal?            @default(0) @db.Decimal(5, 2)
-  totalMembers      Int                 @default(0)
-  processingTime    Int                 @default(0)
-  metadata          Json?
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime
-  BuyerGroupMembers BuyerGroupMembers[]
+  id                  String              @id
+  companyName         String
+  website             String?
+  industry            String?
+  companySize         String?
+  companyTier         String?             // NEW: S1-S7, M1-M7, L1-L7 tier
+  dealSize            Decimal?            // NEW: deal size context
+  totalEmployeesFound Int?                @default(0) // NEW: research breadth
+  totalCost           Decimal?            @default(0) @db.Decimal(10, 2) // NEW: cost tracking
+  workspaceId         String?
+  cohesionScore       Decimal?            @default(0) @db.Decimal(5, 2)
+  overallConfidence   Decimal?            @default(0) @db.Decimal(5, 2)
+  totalMembers        Int                 @default(0)
+  processingTime      Int                 @default(0)
+  metadata            Json?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime
+  BuyerGroupMembers   BuyerGroupMembers[]
 
   @@index([companyName])
   @@index([createdAt])
   @@index([workspaceId])
+  @@index([companyTier])
 }
 
 model ChronicleReport {
