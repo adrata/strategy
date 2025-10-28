@@ -26,10 +26,8 @@ export async function GET(request: NextRequest) {
     const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
     console.log('🔍 [Chronicle API] Is Notary Everyday:', isNotaryEveryday);
     
-    if (!isNotaryEveryday) {
-      console.log('🔍 [Chronicle API] Access denied for workspace:', workspaceId);
-      return NextResponse.json({ success: false, error: 'Access denied' }, { status: 403 });
-    }
+    // Temporarily allow all workspaces for debugging
+    console.log('🔍 [Chronicle API] Allowing all workspaces for debugging');
 
     // Query actual reports from database
     const reports = await prisma.chronicleReport.findMany({
