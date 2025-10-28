@@ -132,7 +132,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       }
     }
 
-    // 🚀 TEMPORARY FIX: Skip localStorage cache for speedrun to force fresh data
+    // 🚀 SPEEDRUN: Skip localStorage cache for speedrun to ensure fresh ranking data
+    // Speedrun uses dynamic per-user rankings that update based on actions, so we always
+    // fetch fresh data from the API which has proper Redis caching with invalidation
     if (!shouldForceRefresh && section !== 'speedrun') {
       try {
         const storageKey = `adrata-${section}-${workspaceId}`;
@@ -159,8 +161,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       }
     }
 
-    // 🚀 PERFORMANCE: Skip if we already loaded this section (unless force refresh)
-    if (!shouldForceRefresh && loadedSections.has(section)) {
+    // 🚀 PERFORMANCE: Skip if we already loaded this section (unless force refresh or speedrun)
+    if (!shouldForceRefresh && section !== 'speedrun' && loadedSections.has(section)) {
       console.log(`⚡ [FAST SECTION DATA] Skipping fetch - section ${section} already loaded in memory`);
       setLoading(false);
       return;
