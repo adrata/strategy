@@ -51,27 +51,34 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
     const fetchReports = async () => {
       try {
         setLoading(true);
+        console.log('🔍 [ChronicleList] Fetching reports for workspace:', workspaceId);
         const response = await fetch(`/api/v1/chronicle/reports?workspaceId=${workspaceId}&limit=20`, {
           credentials: 'include'
         });
         
+        console.log('🔍 [ChronicleList] API response status:', response.status);
+        
         if (!response.ok) {
           // No fallback - use real data only
-          console.log('API failed, no fallback data available');
+          console.log('🔍 [ChronicleList] API failed, status:', response.status);
+          console.log('🔍 [ChronicleList] API failed, no fallback data available');
           // For all other users/workspaces, just set empty array instead of throwing error
-          console.log('API failed for non-Ryan Serrato user, setting empty reports');
+          console.log('🔍 [ChronicleList] API failed for non-Ryan Serrato user, setting empty reports');
           setReports([]);
           setLoading(false);
           return;
         }
         
         const data = await response.json();
+        console.log('🔍 [ChronicleList] API response data:', data);
+        console.log('🔍 [ChronicleList] Reports from API:', data.data?.reports);
+        console.log('🔍 [ChronicleList] Reports count:', data.data?.reports?.length || 0);
         setReports(data.data.reports || []);
       } catch (err) {
-        console.error('Error fetching Chronicle reports:', err);
+        console.error('🔍 [ChronicleList] Error fetching Chronicle reports:', err);
         
         // No fallback - use real data only
-        console.log('Error occurred, no fallback data available');
+        console.log('🔍 [ChronicleList] Error occurred, no fallback data available');
         setError(err instanceof Error ? err.message : 'Failed to fetch reports');
       } finally {
         setLoading(false);

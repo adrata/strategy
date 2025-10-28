@@ -15,14 +15,19 @@ export async function GET(request: NextRequest) {
     const workspaceId = searchParams.get('workspaceId') || session.user.activeWorkspaceId;
     const limit = parseInt(searchParams.get('limit') || '20');
     
+    console.log('🔍 [Chronicle API] Request from user:', session.user.id);
+    console.log('🔍 [Chronicle API] Workspace ID:', workspaceId);
+    
     if (!workspaceId) {
       return NextResponse.json({ success: false, error: 'Workspace ID required' }, { status: 400 });
     }
 
     // Check if this is Notary Everyday workspace
     const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
+    console.log('🔍 [Chronicle API] Is Notary Everyday:', isNotaryEveryday);
     
     if (!isNotaryEveryday) {
+      console.log('🔍 [Chronicle API] Access denied for workspace:', workspaceId);
       return NextResponse.json({ success: false, error: 'Access denied' }, { status: 403 });
     }
 
@@ -39,6 +44,9 @@ export async function GET(request: NextRequest) {
         ChronicleShare: true
       }
     });
+
+    console.log('🔍 [Chronicle API] Found reports in database:', reports.length);
+    console.log('🔍 [Chronicle API] Reports:', reports.map(r => ({ id: r.id, title: r.title, type: r.reportType })));
 
     // If no reports in database, fall back to sample data
     if (reports.length === 0) {
