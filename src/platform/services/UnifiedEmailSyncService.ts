@@ -1,6 +1,46 @@
 import { prisma } from '@/lib/prisma';
 import { NangoService } from '@/app/[workspace]/grand-central/services/NangoService';
 
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1000; // 1 second base delay
+const MAX_RETRY_DELAY_MS = 30000; // 30 seconds max delay
+
+/**
+ * Retry with exponential backoff
+ */
+async function retryWithBackoff<T>(
+  operation: () => Promise<T>,
+  operationName: string,
+  maxRetries: number = MAX_RETRIES
+): Promise<T> {
+  let lastError: Error;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+      
+      if (attempt === maxRetries) {
+        console.error(`❌ ${operationName} failed after ${maxRetries} attempts:`, lastError);
+        throw lastError;
+      }
+      
+      // Calculate delay with exponential backoff
+      const delay = Math.min(
+        RETRY_DELAY_MS * Math.pow(2, attempt - 1),
+        MAX_RETRY_DELAY_MS
+      );
+      
+      console.warn(`⚠️ ${operationName} failed (attempt ${attempt}/${maxRetries}), retrying in ${delay}ms:`, lastError.message);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  throw lastError!;
+}
+
 /**
  * Unified Email Sync Service
  * 
@@ -99,11 +139,9 @@ export class UnifiedEmailSyncService {
           q: `after:${Math.floor(lastSync.getTime() / 1000)}`
         };
     
-    const result = await NangoService.executeOperation(
-      operation,
-      params,
-      workspaceId,
-      userId
+    const result = await retryWithBackoff(
+      () => NangoService.executeOperation(operation, params, workspaceId, userId),
+      `Email fetch from ${provider}`
     );
     
     if (!result.success) {

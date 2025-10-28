@@ -132,8 +132,8 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       }
     }
 
-    // 🚀 PERFORMANCE: Check localStorage cache (only if not force refreshing)
-    if (!shouldForceRefresh) {
+    // 🚀 TEMPORARY FIX: Skip localStorage cache for speedrun to force fresh data
+    if (!shouldForceRefresh && section !== 'speedrun') {
       try {
         const storageKey = `adrata-${section}-${workspaceId}`;
         const cached = localStorage.getItem(storageKey);

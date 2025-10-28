@@ -1,6 +1,53 @@
 import { NextRequest } from 'next/server';
 import { UnifiedEmailSyncService } from '@/platform/services/UnifiedEmailSyncService';
 import { prisma } from '@/lib/prisma';
+import crypto from 'crypto';
+
+// Simple in-memory rate limiting (in production, use Redis)
+const webhookAttempts = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_ATTEMPTS = 10; // Max 10 webhooks per minute per IP
+
+/**
+ * Verify Nango webhook signature
+ */
+function verifyNangoSignature(payload: string, signature: string, secret: string): boolean {
+  try {
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(payload)
+      .digest('hex');
+    
+    return crypto.timingSafeEqual(
+      Buffer.from(signature, 'hex'),
+      Buffer.from(expectedSignature, 'hex')
+    );
+  } catch (error) {
+    console.error('❌ Error verifying webhook signature:', error);
+    return false;
+  }
+}
+
+/**
+ * Check rate limit for webhook requests
+ */
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const attempt = webhookAttempts.get(ip);
+  
+  if (!attempt || now > attempt.resetTime) {
+    // Reset or create new attempt
+    webhookAttempts.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  
+  if (attempt.count >= RATE_LIMIT_MAX_ATTEMPTS) {
+    return false;
+  }
+  
+  attempt.count++;
+  return true;
+}
 
 /**
  * Nango Email Webhook Handler
@@ -10,8 +57,36 @@ import { prisma } from '@/lib/prisma';
  */
 export async function POST(request: NextRequest) {
   try {
-    const payload = await request.json();
-    console.log('📧 Received Nango email webhook:', JSON.stringify(payload, null, 2));
+    // Rate limiting
+    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+    if (!checkRateLimit(ip)) {
+      console.warn(`⚠️ Rate limit exceeded for IP: ${ip}`);
+      return Response.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
+    // Get webhook secret from environment
+    const webhookSecret = process.env.NANGO_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      console.error('❌ NANGO_WEBHOOK_SECRET not configured');
+      return Response.json({ error: 'Webhook secret not configured' }, { status: 500 });
+    }
+
+    // Verify webhook signature
+    const signature = request.headers.get('x-nango-signature');
+    if (!signature) {
+      console.error('❌ Missing webhook signature');
+      return Response.json({ error: 'Missing signature' }, { status: 401 });
+    }
+
+    const payload = await request.text();
+    const payloadObj = JSON.parse(payload);
+    
+    if (!verifyNangoSignature(payload, signature, webhookSecret)) {
+      console.error('❌ Invalid webhook signature');
+      return Response.json({ error: 'Invalid signature' }, { status: 401 });
+    }
+
+    console.log('📧 Received verified Nango email webhook:', JSON.stringify(payloadObj, null, 2));
     
     // Extract webhook data
     const { 
@@ -20,7 +95,7 @@ export async function POST(request: NextRequest) {
       workspaceId, 
       userId,
       data 
-    } = payload;
+    } = payloadObj;
     
     if (!connectionId) {
       console.error('❌ Missing connectionId in webhook payload');

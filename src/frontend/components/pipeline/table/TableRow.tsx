@@ -211,10 +211,10 @@ export function TableRow({
                 let rankValue;
                 
                 if (section === 'speedrun') {
-                  // For speedrun, use globalRank for editing, displayRank for display
+                  // For speedrun, use globalRank for editing and display (1-50 per user)
                   rankValue = record['globalRank'] || record['rank'] || (index + 1);
                   
-                  // Use actual rank value for display, fallback to index + 1 if no rank
+                  // Show actual globalRank (1-50 per user)
                   displayRank = record['globalRank'] || record['rank'] || (index + 1);
                   
                   // Add defensive check to prevent showing record IDs

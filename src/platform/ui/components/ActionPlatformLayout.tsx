@@ -29,6 +29,7 @@ import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { WorkspaceDataRouter } from "@/platform/services/workspace-data-router";
 import { ACTION_PLATFORM_APPS } from "@/platform/config";
 import { useUnifiedAuth } from "@/platform/auth";
+import { getFilteredSectionsForWorkspace } from "@/platform/utils/section-filter";
 import { AddModal } from "./AddModal";
 // import { SettingsModal } from "./SettingsModal"; // Deprecated, using SettingsPopup instead
 import { RossWelcomeToast } from "@/platform/ui/components/RossWelcomeToast";
@@ -317,6 +318,9 @@ function AcquisitionOSLayoutInner({
 
   // Get filtered and sorted apps - include all platform apps for admin users
   const getDisplayApps = (): ActionPlatformApp[] => {
+    // Get workspace context for section filtering
+    const workspaceSlug = workspaceContext?.workspaceName || authUser?.activeWorkspaceId || 'default';
+    
     // For admin users, show all platform apps from ThinLeftPanel
     const isAdminUser = authUser?.email && ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'].includes(authUser.email);
     
@@ -337,28 +341,45 @@ function AcquisitionOSLayoutInner({
         { id: "settings", name: "Settings", description: "Configure your workspace.", icon: Cog6ToothIcon, color: "#6B7280", sections: ["apps", "preferences"] },
       ];
       
+      // Apply section filtering for admin users too (based on workspace)
+      const filteredApps = allPlatformApps.map(app => ({
+        ...app,
+        sections: getFilteredSectionsForWorkspace({
+          workspaceSlug,
+          appId: app.id
+        })
+      }));
+      
       if (appPreferences['length'] === 0) {
-        return allPlatformApps;
+        return filteredApps;
       }
 
       // Filter out hidden apps and sort by order
       return appPreferences
         .filter((pref) => pref.isVisible)
         .sort((a, b) => a.order - b.order)
-        .map((pref) => allPlatformApps.find((app) => app['id'] === pref.id))
+        .map((pref) => filteredApps.find((app) => app['id'] === pref.id))
         .filter(Boolean) as ActionPlatformApp[];
     }
 
-    // For non-admin users, use the original logic
+    // For non-admin users, apply section filtering to ACTION_PLATFORM_APPS
+    const filteredApps = ACTION_PLATFORM_APPS.map(app => ({
+      ...app,
+      sections: getFilteredSectionsForWorkspace({
+        workspaceSlug,
+        appId: app.id
+      })
+    }));
+
     if (appPreferences['length'] === 0) {
-      return ACTION_PLATFORM_APPS;
+      return filteredApps;
     }
 
     // Filter out hidden apps and sort by order
     return appPreferences
       .filter((pref) => pref.isVisible)
       .sort((a, b) => a.order - b.order)
-      .map((pref) => ACTION_PLATFORM_APPS.find((app) => app['id'] === pref.id))
+      .map((pref) => filteredApps.find((app) => app['id'] === pref.id))
       .filter(Boolean) as ActionPlatformApp[];
   };
 

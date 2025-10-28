@@ -446,8 +446,8 @@ export function PipelineTable({
                             // Show checkmark for completed items
                             displayRank = '✓';
                           } else {
-                            // For speedrun, always use sequential index-based ranking (1-50)
-                            displayRank = index + 1;
+                            // For speedrun, show actual globalRank (1-50 per user)
+                            displayRank = record['globalRank'] || record['rank'] || (index + 1);
                           }
                         } else {
                           // For other sections, keep hierarchical ranking if available

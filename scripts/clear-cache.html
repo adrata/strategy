@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Speedrun Cache</title>
+</head>
+<body>
+    <h1>Clearing Speedrun Cache</h1>
+    <div id="status">Clearing cache...</div>
+    <script>
+        console.log('Clearing localStorage cache...');
+        
+        // Clear all speedrun-related cache
+        const workspaceId = '01K75ZD7DWHG1XF16HAF2YVKCK';
+        const keysToRemove = [];
+        
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.includes('speedrun') || key.includes(workspaceId))) {
+                keysToRemove.push(key);
+            }
+        }
+        
+        console.log('Keys to remove:', keysToRemove);
+        
+        keysToRemove.forEach(key => {
+            localStorage.removeItem(key);
+            console.log('Removed:', key);
+        });
+        
+        // Also clear sessionStorage
+        const sessionKeysToRemove = [];
+        for (let i = 0; i < sessionStorage.length; i++) {
+            const key = sessionStorage.key(i);
+            if (key && (key.includes('speedrun') || key.includes(workspaceId))) {
+                sessionKeysToRemove.push(key);
+            }
+        }
+        
+        console.log('Session keys to remove:', sessionKeysToRemove);
+        
+        sessionKeysToRemove.forEach(key => {
+            sessionStorage.removeItem(key);
+            console.log('Removed session:', key);
+        });
+        
+        document.getElementById('status').innerHTML = 'Cache cleared! Keys removed: ' + keysToRemove.length + ' localStorage, ' + sessionKeysToRemove.length + ' sessionStorage';
+        console.log('Cache clearing complete');
+    </script>
+</body>
+</html>
+    
