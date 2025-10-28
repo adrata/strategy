@@ -34,6 +34,9 @@ export function getSimpleFeatureAccess(
   // If either workspace or role has full access, enable all features
   const hasFullAccess = hasFullWorkspaceAccess || hasFullRoleAccess;
   
+  // Special case: DESKTOP_DOWNLOAD only for Adrata workspace
+  const hasDesktopDownloadAccess = workspaceSlug.toLowerCase() === 'adrata' || hasFullRoleAccess;
+  
   if (hasFullAccess) {
     return {
       OASIS: true,
@@ -42,7 +45,7 @@ export function getSimpleFeatureAccess(
       REVENUEOS: true,
       METRICS: true,
       CHRONICLE: true,
-      DESKTOP_DOWNLOAD: true
+      DESKTOP_DOWNLOAD: hasDesktopDownloadAccess
     };
   }
   
@@ -54,7 +57,7 @@ export function getSimpleFeatureAccess(
     REVENUEOS: false,
     METRICS: false,
     CHRONICLE: false,
-    DESKTOP_DOWNLOAD: false
+    DESKTOP_DOWNLOAD: hasDesktopDownloadAccess
   };
 }
 
