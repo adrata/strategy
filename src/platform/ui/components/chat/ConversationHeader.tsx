@@ -7,12 +7,14 @@ import {
   XMarkIcon, 
   EllipsisHorizontalIcon,
   ChatBubbleLeftRightIcon,
+  ChatBubbleLeftIcon,
   DocumentTextIcon,
   TrophyIcon,
   FlagIcon,
   CalendarIcon,
   ChartBarIcon
 } from "@heroicons/react/24/outline";
+import { useOasisAccess } from '@/platform/ui/context/FeatureAccessProvider';
 
 interface Conversation {
   id: string;
@@ -73,6 +75,9 @@ export function ConversationHeader({
   showChatIcon = false,
   onToggleDirectMessages
 }: ConversationHeaderProps) {
+  // Feature access control
+  const hasOasis = useOasisAccess();
+  
   // Drag and drop state
   const [draggedConversation, setDraggedConversation] = useState<string | null>(null);
   
@@ -174,14 +179,14 @@ export function ConversationHeader({
             <ClockIcon className="w-5 h-5" />
           </button>
           
-          {/* Direct Messages Button - only show when not on Oasis */}
-          {showChatIcon && onToggleDirectMessages && (
+          {/* Direct Messages Button - only show when not on Oasis and user has Oasis access */}
+          {showChatIcon && hasOasis && onToggleDirectMessages && (
             <button
               onClick={onToggleDirectMessages}
               className="w-7 h-7 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors flex items-center justify-center"
               title="Direct Messages"
             >
-              <ChatBubbleLeftRightIcon className="w-5 h-5" />
+              <ChatBubbleLeftIcon className="w-5 h-5" />
             </button>
           )}
           

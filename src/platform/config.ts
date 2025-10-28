@@ -15,10 +15,10 @@ import {
   CalendarDaysIcon,
   UsersIcon,
 } from "@heroicons/react/24/outline";
-import type { AcquisitionOSApp } from "./types";
+import type { RevenueOSApp } from "./types";
 import { BullIcon } from "./ui/components/BullIcon";
 
-export const ACQUISITION_OS_APPS: AcquisitionOSApp[] = [
+export const REVENUE_OS_APPS: RevenueOSApp[] = [
   {
     id: "Speedrun",
     name: "Speedrun",
@@ -53,8 +53,9 @@ export const ACQUISITION_OS_APPS: AcquisitionOSApp[] = [
   },
 ];
 
-// Legacy alias for backwards compatibility
-export const ACTION_PLATFORM_APPS = ACQUISITION_OS_APPS;
+// Legacy aliases for backwards compatibility
+export const ACTION_PLATFORM_APPS = REVENUE_OS_APPS;
+export const ACQUISITION_OS_APPS = REVENUE_OS_APPS;
 
 export const SECTION_TITLES: Record<string, string> = {
   leads: "Leads",
@@ -129,6 +130,26 @@ export const QUICK_ACTIONS: Record<string, string[]> = {
     "Show top prospects",
     "Start Speedrun mode",
     "Pipeline health check",
+  ],
+  stacks: [
+    "Create a new story",
+    "Move story to next column",
+    "Organize backlog by priority",
+    "Generate epic breakdown",
+    "Update story status",
+    "Assign story to team member",
+  ],
+  oasis: [
+    "Send message to team",
+    "Create new channel",
+    "Schedule video call",
+    "Share file in chat",
+  ],
+  atrium: [
+    "Create new document",
+    "Organize knowledge base",
+    "Generate meeting notes",
+    "Update project status",
   ],
   settings: ["Reorder apps", "Hide apps", "Reset layout", "Export settings"],
 };

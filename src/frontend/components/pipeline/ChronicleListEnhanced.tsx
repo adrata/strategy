@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useRouter } from 'next/navigation';
 import { PresentationView } from './PresentationView';
 import { PitchRegularView } from './PitchRegularView';
@@ -30,7 +30,7 @@ interface ChronicleListEnhancedProps {
 
 export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedProps) {
   const { user } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const router = useRouter();
   const [reports, setReports] = useState<ChronicleReport[]>([]);
   const [loading, setLoading] = useState(true);

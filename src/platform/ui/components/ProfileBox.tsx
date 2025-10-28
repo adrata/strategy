@@ -374,10 +374,10 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         // 🚀 PERFORMANCE: Use optimized redirect
         if (isDesktop) {
           console.log("🖥️ ProfileBox: Desktop - using optimized redirect...");
-          window.location.replace('/sign-in');
+          window.location.replace('/sign-in?logout=true');
         } else {
           // For web, use optimized redirect
-          const homeUrl = "/sign-in";
+          const homeUrl = "/sign-in?logout=true";
           
           console.log("🌐 ProfileBox: Web - Redirecting to sign-in form");
           console.log("🌐 ProfileBox: Before redirect - current URL:", window.location.href);
@@ -581,11 +581,11 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           Download
         </div>
 
-        {/* AcquisitionOS */}
+        {/* RevenueOS */}
         <div
           className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
           onClick={() => {
-            console.log("AcquisitionOS clicked - navigating to speedrun");
+            console.log("RevenueOS clicked - navigating to speedrun");
             setIsProfileOpen(false);
             handleNavigation("./speedrun");
           }}
@@ -598,7 +598,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
             }
           }}
         >
-          AcquisitionOS
+          RevenueOS
         </div>
 
         {/* Oasis */}

@@ -8,11 +8,11 @@
 "use client";
 
 import React from 'react';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { renderAppComponent, getAppComponent, getAppConfig } from '@/platform/config/app-registry';
 
 export function ActionPlatformMiddlePanelV2() {
-  const { activeSubApp } = useAcquisitionOS();
+  const { activeSubApp } = useRevenueOS();
 
   // Use configuration to render the appropriate component instead of switch statement
   const renderContent = () => {

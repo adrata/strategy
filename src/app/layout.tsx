@@ -14,8 +14,9 @@ const inter = Inter({
 import Script from "next/script";
 import { ThemeProvider } from "@/platform/ui/components/ThemeProvider";
 import { DesktopErrorBoundary } from "@/platform/ui/components/DesktopErrorBoundary";
-import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
+import { FeatureAccessProvider } from "@/platform/ui/context/FeatureAccessProvider";
 import { DynamicFavicon } from "@/platform/ui/components/DynamicFavicon";
 import { DynamicTitle } from "@/platform/ui/components/DynamicTitle";
 import { SafariImmediateFix } from "@/platform/components/SafariImmediateFix";
@@ -145,7 +146,9 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
       <SafariImmediateFix />
       <DesktopErrorBoundary>
         <ThemeProvider>
-          <Suspense fallback={<SuspenseLoading />}>{children}</Suspense>
+          <FeatureAccessProvider>
+            <Suspense fallback={<SuspenseLoading />}>{children}</Suspense>
+          </FeatureAccessProvider>
         </ThemeProvider>
       </DesktopErrorBoundary>
     </body>

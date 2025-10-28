@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAtrium } from "../layout";
 import { FolderTree } from "./FolderTree";
 import { useUnifiedAuth } from "@/platform/auth";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { 
   DocumentTextIcon,
   ShareIcon,
@@ -36,7 +36,7 @@ export function AtriumLeftPanel() {
   } = useAtrium();
 
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
 
   const [documentCounts, setDocumentCounts] = useState({
     myDocuments: 0,

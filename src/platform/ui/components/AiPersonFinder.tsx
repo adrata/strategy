@@ -12,7 +12,7 @@ import {
   BuildingOfficeIcon,
   MinusIcon,
 } from "@heroicons/react/24/outline";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 
 interface PersonSuggestion {
   name: string;
@@ -50,7 +50,7 @@ export function AiPersonFinder({
   const {
     ui: { activeSubApp },
     chat: { setChatSessions },
-  } = useAcquisitionOS();
+  } = useRevenueOS();
   const [search, setSearch] = useState<CompanySearch>({
     query: "",
     isLoading: false,

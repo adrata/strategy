@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
 import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
 import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
@@ -146,7 +146,7 @@ export default function SellerCompaniesPage() {
               const keysToRemove = [];
               for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if (key && (key.includes('acquisition-os') || key.includes('companies'))) {
+                if (key && (key.includes('revenue-os') || key.includes('companies'))) {
                   keysToRemove.push(key);
                 }
               }
@@ -263,7 +263,7 @@ export default function SellerCompaniesPage() {
   // Show loading while authentication is loading
   if (authLoading) {
     return (
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <PipelineProvider>
           <SpeedrunDataProvider>
             <RecordContextProvider>
@@ -284,13 +284,13 @@ export default function SellerCompaniesPage() {
             </RecordContextProvider>
           </SpeedrunDataProvider>
         </PipelineProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     );
   }
 
   if (loading) {
     return (
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <PipelineProvider>
           <SpeedrunDataProvider>
             <RecordContextProvider>
@@ -311,7 +311,7 @@ export default function SellerCompaniesPage() {
             </RecordContextProvider>
           </SpeedrunDataProvider>
         </PipelineProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     );
   }
 
@@ -334,7 +334,7 @@ export default function SellerCompaniesPage() {
   }
 
   return (
-    <AcquisitionOSProvider>
+    <RevenueOSProvider>
       <PipelineProvider>
         <SpeedrunDataProvider>
           <RecordContextProvider>
@@ -486,6 +486,6 @@ export default function SellerCompaniesPage() {
           </RecordContextProvider>
         </SpeedrunDataProvider>
       </PipelineProvider>
-    </AcquisitionOSProvider>
+    </RevenueOSProvider>
   );
 }

@@ -93,9 +93,9 @@ jest.mock('@/frontend/components/pipeline/tabs/UniversalActionsTab', () => ({
   UniversalActionsTab: () => <div data-testid="actions-tab">Actions Tab</div>,
 }));
 
-// Mock the AcquisitionOSProvider context
-jest.mock('@/platform/ui/context/AcquisitionOSProvider', () => ({
-  useAcquisitionOS: () => ({
+// Mock the RevenueOSProvider context
+jest.mock('@/platform/ui/context/RevenueOSProvider', () => ({
+  useRevenueOS: () => ({
     workspaceId: 'test-workspace-id',
     userId: 'test-user-id',
     isAuthenticated: true,

@@ -5,21 +5,18 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getUnifiedAuthUser } from '@/platform/api-auth';
 import { prisma } from '@/lib/prisma';
 
 // GET /api/oasis/dms - List user's DMs
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Fix authentication - temporarily bypassing for development
-    // const session = await getServerSession(authOptions);
-    // if (!session?.user?.id) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    const authUser = await getUnifiedAuthUser(request);
+    if (!authUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     
-    // For now, use a hardcoded user ID for development
-    const userId = '01K7469230N74BVGK2PABPNNZ9'; // Ross Sylvester's ID
+    const userId = authUser.id;
 
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get('workspaceId');
@@ -42,9 +39,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Get DMs where user is a participant
+    // Strategy: Get all DMs where user is a participant, then filter and deduplicate
     const dms = await prisma.oasisDirectMessage.findMany({
       where: {
-        workspaceId,
         participants: {
           some: {
             userId: userId
@@ -75,15 +72,65 @@ export async function GET(request: NextRequest) {
       orderBy: { updatedAt: 'desc' }
     });
 
-    // Get workspace name for pill display
+    // Get workspace names for pill display
     const workspace = await prisma.workspaces.findUnique({
       where: { id: workspaceId },
       select: { name: true }
     });
 
-    const dmsWithStats = dms.map(dm => {
+    // Filter and deduplicate DMs based on business rules
+    const filteredDMs = dms.filter(dm => {
+      const otherParticipants = dm.participants.filter(p => p.userId !== userId);
+      
+      // If DM is in current workspace, always include it
+      if (dm.workspaceId === workspaceId) {
+        return true;
+      }
+      
+      // If DM is with Adrata users (Dan or Ross), include it
+      const hasAdrataUser = otherParticipants.some(p => 
+        p.user.email === 'dan@adrata.com' || p.user.email === 'ross@adrata.com'
+      );
+      
+      if (hasAdrataUser) {
+        return true;
+      }
+      
+      // If current user is in Notary Everyday workspace, include DMs with other NE users
+      if (workspaceId === 'cmezxb1ez0001pc94yry3ntjk') {
+        // Check if the DM is also in NE workspace
+        return dm.workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
+      }
+      
+      return false;
+    });
+
+    // Deduplicate DMs by participant combination
+    const uniqueDMs = filteredDMs.filter((dm, index, self) => {
+      const otherParticipants = dm.participants.filter(p => p.userId !== userId);
+      const participantIds = otherParticipants.map(p => p.userId).sort().join(',');
+      
+      return index === self.findIndex(d => {
+        const dOtherParticipants = d.participants.filter(p => p.userId !== userId);
+        const dParticipantIds = dOtherParticipants.map(p => p.userId).sort().join(',');
+        return dParticipantIds === participantIds;
+      });
+    });
+
+    // Get unread message counts for each DM
+    const dmsWithStats = await Promise.all(uniqueDMs.map(async (dm) => {
       const otherParticipants = dm.participants.filter(p => p.userId !== userId);
       const lastMessage = dm.messages[0];
+      
+      // Calculate unread count for this DM
+      // For now, we'll count all messages from other users as "unread"
+      // TODO: Implement proper read receipt tracking in the future
+      const unreadCount = await prisma.oasisMessage.count({
+        where: {
+          dmId: dm.id,
+          senderId: { not: userId } // Only count messages from other users
+        }
+      });
       
       return {
         id: dm.id,
@@ -91,7 +138,18 @@ export async function GET(request: NextRequest) {
           id: p.user.id,
           name: p.user.name,
           username: p.user.username,
-          workspaceName: workspace?.name || 'Unknown Workspace'
+          workspaceName: (() => {
+            // If DM is in current workspace, show current workspace name
+            if (dm.workspaceId === workspaceId) {
+              return workspace?.name || 'Unknown Workspace';
+            }
+            // If participant is Adrata user (Dan or Ross), show "Adrata"
+            if (p.user.email === 'dan@adrata.com' || p.user.email === 'ross@adrata.com') {
+              return 'Adrata';
+            }
+            // For other cross-workspace DMs, show "External"
+            return 'External';
+          })()
         })),
         lastMessage: lastMessage ? {
           id: lastMessage.id,
@@ -99,10 +157,11 @@ export async function GET(request: NextRequest) {
           senderName: lastMessage.sender.name,
           createdAt: lastMessage.createdAt
         } : null,
+        unreadCount,
         createdAt: dm.createdAt,
         updatedAt: dm.updatedAt
       };
-    });
+    }));
 
     return NextResponse.json({ dms: dmsWithStats });
 
@@ -118,10 +177,12 @@ export async function GET(request: NextRequest) {
 // POST /api/oasis/dms - Create new DM conversation
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const authUser = await getUnifiedAuthUser(request);
+    if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
+    const userId = authUser.id;
 
     const body = await request.json();
     const { workspaceId, participantIds } = body;

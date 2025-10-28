@@ -7,14 +7,15 @@
  * Shows conversations, channels, DMs, and external company chats.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useUnifiedAuth } from "@/platform/auth";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useOasis } from '@/app/[workspace]/(pipeline)/layout';
 import { useOasisChannels } from '@/products/oasis/hooks/useOasisChannels';
 import { useOasisDMs } from '@/products/oasis/hooks/useOasisDMs';
 import { useOasisPresence } from '@/products/oasis/hooks/useOasisPresence';
+import { useAutoCreateRossDMs } from '@/products/oasis/hooks/useAutoCreateRossDMs';
 import { AddChannelModal } from '@/products/oasis/components/AddChannelModal';
 import { AddDMModal } from '@/products/oasis/components/AddDMModal';
 import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
@@ -51,10 +52,10 @@ interface Conversation {
 
 // No navigation items - just channels and DMs
 
-export function OasisLeftPanel() {
+export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   const router = useRouter();
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   
   // Add error boundary for context usage
   let oasisContext;
@@ -87,11 +88,30 @@ export function OasisLeftPanel() {
   const { channels, loading: channelsLoading, createChannel } = useOasisChannels(workspaceId);
   const { dms, loading: dmsLoading, createDM } = useOasisDMs(workspaceId);
   const { userCount, isConnected } = useOasisPresence(workspaceId);
+  const { autoCreateRossDMs } = useAutoCreateRossDMs();
 
+  // Ref to track if initial channel selection has been made
+  const hasInitialSelection = useRef(false);
+  const hasAutoCreatedRossDMs = useRef(false);
+
+  // Auto-create DMs with Ross when component loads (only once per workspace)
+  useEffect(() => {
+    if (workspaceId && !hasAutoCreatedRossDMs.current) {
+      hasAutoCreatedRossDMs.current = true;
+      console.log('🤖 [OASIS LEFT PANEL] Auto-creating Ross DMs for workspace:', workspaceId);
+      autoCreateRossDMs(workspaceId)
+        .then(result => {
+          console.log('✅ [OASIS LEFT PANEL] Auto-creation completed:', result);
+        })
+        .catch(error => {
+          console.error('❌ [OASIS LEFT PANEL] Failed to auto-create Ross DMs:', error);
+        });
+    }
+  }, [workspaceId, autoCreateRossDMs]);
 
   // Auto-select channel when channels load and no channel is selected
   useEffect(() => {
-    if (channels.length > 0 && !selectedChannel && !channelsLoading) {
+    if (channels.length > 0 && !selectedChannel && !channelsLoading && !hasInitialSelection.current) {
       // Check if we're on a specific channel URL
       const currentPath = window.location.pathname;
       const pathSegments = currentPath.split('/');
@@ -122,6 +142,7 @@ export function OasisLeftPanel() {
               isWorkspaceMember: true
             };
             setSelectedChannel(conversation);
+            hasInitialSelection.current = true;
             return;
           } else if (matchingDM) {
             const conversation = {
@@ -136,6 +157,7 @@ export function OasisLeftPanel() {
               isWorkspaceMember: true
             };
             setSelectedChannel(conversation);
+            hasInitialSelection.current = true;
             return;
           }
         }
@@ -157,9 +179,10 @@ export function OasisLeftPanel() {
           isWorkspaceMember: true
         };
         setSelectedChannel(conversation);
+        hasInitialSelection.current = true;
       }
     }
-  }, [channels, dms, selectedChannel, channelsLoading, setSelectedChannel]);
+  }, [channels, dms, channelsLoading, setSelectedChannel]);
   
   // State for creating new channels/DMs
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
@@ -232,6 +255,7 @@ export function OasisLeftPanel() {
   };
 
   const handleProfileClick = () => {
+    console.log('🔘 Profile clicked in OasisLeftPanel!');
     setIsProfilePanelVisible(true);
   };
 
@@ -248,10 +272,10 @@ export function OasisLeftPanel() {
   }));
 
   const dmConversations: Conversation[] = [
-    // Add "Me" self-DM at the top
+    // Add "Me (FirstName)" self-DM at the top
     {
       id: 'me-self-dm',
-      name: 'Me',
+      name: `Me (${authUser?.firstName || authUser?.name?.split(' ')[0] || 'You'})`,
       type: 'dm' as const,
       unread: 0,
       isActive: selectedChannel?.id === 'me-self-dm',
@@ -265,7 +289,7 @@ export function OasisLeftPanel() {
       id: dm.id,
       name: dm.participants[0]?.name || 'Unknown User',
       type: 'dm' as const,
-      unread: 0, // TODO: Calculate unread count
+      unread: dm.unreadCount || 0, // Use unread count from API
       isActive: selectedChannel?.id === dm.id,
       lastMessage: dm.lastMessage?.content || 'Started conversation',
       lastMessageTime: dm.lastMessage?.createdAt ? new Date(dm.lastMessage.createdAt).toLocaleTimeString() : 'now',
@@ -346,7 +370,7 @@ export function OasisLeftPanel() {
                   onClick={() => handleConversationClick(channel)}
                   className={`w-full text-left px-2 py-1.5 rounded-md transition-colors flex items-center gap-2 ${
                     selectedChannel?.id === channel.id
-                      ? 'bg-green-100 text-gray-900'
+                      ? 'bg-gray-100 text-gray-900'
                       : 'hover:bg-gray-100 text-gray-700'
                   }`}
                 >
@@ -392,7 +416,7 @@ export function OasisLeftPanel() {
                   onClick={() => handleConversationClick(dm)}
                   className={`w-full text-left px-2 py-1.5 rounded-md transition-colors flex items-center gap-2 ${
                     selectedChannel?.id === dm.id
-                      ? 'bg-green-100 text-gray-900'
+                      ? 'bg-gray-100 text-gray-900'
                       : 'hover:bg-gray-100 text-gray-700'
                   }`}
                 >
@@ -409,8 +433,9 @@ export function OasisLeftPanel() {
                   <div className="flex-1 flex items-center gap-2 min-w-0">
                     <span className="text-sm font-medium truncate">{dm.name}</span>
                     {dm.workspaceName && (
-                      <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full whitespace-nowrap">
-                        🏷️ {dm.workspaceName}
+                      <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full whitespace-nowrap flex items-center gap-1">
+                        <BuildingOfficeIcon className="w-3 h-3" />
+                        {dm.workspaceName === "Notary Everyday" ? "NE" : dm.workspaceName === "Adrata" ? "A" : dm.workspaceName}
                       </span>
                     )}
                   </div>
@@ -464,4 +489,4 @@ export function OasisLeftPanel() {
       />
     </div>
   );
-}
+});

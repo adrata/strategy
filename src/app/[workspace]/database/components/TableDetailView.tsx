@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 
 interface TableDetailViewProps {
   tableName: string;
@@ -12,7 +12,7 @@ interface TableDetailViewProps {
 export function TableDetailView({ tableName }: TableDetailViewProps) {
   const router = useRouter();
   const { user: authUser } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const [tableData, setTableData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

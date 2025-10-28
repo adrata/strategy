@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { PipelineDetailPage } from "@/frontend/components/pipeline/PipelineDetailPage";
-import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
 import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
 import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
@@ -15,7 +15,7 @@ export default function ClientDetailPage() {
   
   return (
     <ZoomProvider>
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <PipelineProvider>
           <SpeedrunDataProvider>
             <RecordContextProvider>
@@ -28,7 +28,7 @@ export default function ClientDetailPage() {
             </RecordContextProvider>
           </SpeedrunDataProvider>
         </PipelineProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     </ZoomProvider>
   );
 }

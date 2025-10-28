@@ -97,6 +97,7 @@ model workspaces {
   newsEnabled               Boolean?                    @default(false)
   newsIndustries            String[]                    @default([])
   newsSources               String[]                    @default([])
+  enabledFeatures           String[]                    @default([])
   oasis_channels            OasisChannel[]
   oasis_direct_messages     OasisDirectMessage[]
   oasis_external_connections OasisExternalConnection[] @relation("OasisExternalConnections")
@@ -1074,6 +1075,13 @@ enum Permission {
   ACTION_VIEW
   AUDIT_VIEW
   AUDIT_EXPORT
+  OASIS_ACCESS
+  STACKS_ACCESS
+  ATRIUM_ACCESS
+  REVENUEOS_ACCESS
+  METRICS_ACCESS
+  CHRONICLE_ACCESS
+  DESKTOP_DOWNLOAD_ACCESS
 }
 
 enum ActionStatus {

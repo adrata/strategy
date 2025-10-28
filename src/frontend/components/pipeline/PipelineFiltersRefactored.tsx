@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon, FunnelIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { 
   getSectionConfig, 
   getSectionDefaultColumns, 
@@ -61,7 +61,7 @@ export function PipelineFiltersRefactored({
   const sortOptions = getSectionSortOptions(section);
   
   // Get data from acquisition context
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const data = mapAcquisitionDataToSection(acquisitionData?.acquireData, section);
   
   // Local state for filters

@@ -3,7 +3,7 @@ import { PipelineSkeleton } from "@/platform/ui/components/Loader";
 import { formatRelativeDate } from "@/platform/utils";
 import { PipelineDataService, type OpportunityWithDetails } from "@/platform/services/pipeline-data-service";
 import { getPlatformConfig } from "@/platform/platform-detection";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 import { SuccessMessage } from "@/platform/ui/components/SuccessMessage";
@@ -51,7 +51,7 @@ export const OpportunityDetails: React.FC<OpportunityDetailsProps> = ({
   onNavigateToBuyerGroups,
   onNavigateToLeads,
 }) => {
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   const { navigateToPipelineItem } = useWorkspaceNavigation();
   const [activeTab, setActiveTab] = useState("Overview");
   const [currentOpportunity, setCurrentOpportunity] = useState(opportunity);

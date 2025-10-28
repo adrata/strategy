@@ -7,10 +7,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { OasisRealtimeService } from '@/platform/services/oasis-realtime-service';
+import { getUnifiedAuthUser } from '@/platform/api-auth';
+import { promptInjectionGuard } from '@/platform/security/prompt-injection-guard';
+import { aiResponseValidator } from '@/platform/security/ai-response-validator';
+import { rateLimiter } from '@/platform/security/rate-limiter';
 
 // POST /api/v1/oasis/oasis/ai-response - Generate AI response
 export async function POST(request: NextRequest) {
   try {
+    // 1. AUTHENTICATION CHECK - Critical security requirement
+    const authUser = await getUnifiedAuthUser(request);
+    if (!authUser) {
+      return NextResponse.json({
+        error: 'Authentication required',
+        code: 'AUTH_REQUIRED'
+      }, { status: 401 });
+    }
+
     const body = await request.json();
     const { messageContent, channelId, dmId, workspaceId, isInitial } = body;
 
@@ -27,6 +40,66 @@ export async function POST(request: NextRequest) {
         { error: 'Message content required for non-initial responses' },
         { status: 400 }
       );
+    }
+
+    // 2. INPUT VALIDATION AND SANITIZATION - Critical security requirement
+    if (messageContent) {
+      const injectionDetection = promptInjectionGuard.detectInjection(messageContent, {
+        userId: authUser.id,
+        workspaceId: authUser.workspaceId || workspaceId
+      });
+
+      // Block critical and high-risk injection attempts
+      if (injectionDetection.isInjection && 
+          (injectionDetection.riskLevel === 'critical' || injectionDetection.riskLevel === 'high')) {
+        console.warn('🚨 [OASIS AI] Prompt injection blocked:', {
+          userId: authUser.id,
+          workspaceId: authUser.workspaceId || workspaceId,
+          attackType: injectionDetection.attackType,
+          riskLevel: injectionDetection.riskLevel,
+          confidence: injectionDetection.confidence,
+          blockedPatterns: injectionDetection.blockedPatterns
+        });
+
+        return NextResponse.json({
+          error: 'Invalid input detected. Please rephrase your message.',
+          code: 'INJECTION_BLOCKED',
+          riskLevel: injectionDetection.riskLevel
+        }, { status: 400 });
+      }
+    }
+
+    // 3. RATE LIMITING - Prevent abuse and DoS attacks
+    const rateLimitResult = rateLimiter.checkRateLimit(
+      authUser.id,
+      'ai_response',
+      authUser.workspaceId || workspaceId
+    );
+
+    if (!rateLimitResult.allowed) {
+      console.warn('🚨 [OASIS AI] Rate limit exceeded:', {
+        userId: authUser.id,
+        workspaceId: authUser.workspaceId || workspaceId,
+        totalHits: rateLimitResult.totalHits,
+        limit: rateLimitResult.limit,
+        retryAfter: rateLimitResult.retryAfter
+      });
+
+      return NextResponse.json({
+        error: 'Rate limit exceeded. Please try again later.',
+        code: 'RATE_LIMIT_EXCEEDED',
+        retryAfter: rateLimitResult.retryAfter,
+        limit: rateLimitResult.limit,
+        remaining: rateLimitResult.remaining
+      }, { 
+        status: 429,
+        headers: {
+          'Retry-After': rateLimitResult.retryAfter?.toString() || '60',
+          'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+          'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+          'X-RateLimit-Reset': rateLimitResult.resetTime.toString()
+        }
+      });
     }
 
     // Get Adrata AI user
@@ -46,13 +119,47 @@ export async function POST(request: NextRequest) {
     if (isInitial) {
       aiResponse = generateInitialGreeting(channelId ? 'channel' : 'dm');
     } else {
-      aiResponse = generateAIResponse(messageContent, 'User');
+      // Use sanitized input for AI response generation
+      const sanitizedMessage = messageContent ? 
+        promptInjectionGuard.detectInjection(messageContent, {
+          userId: authUser.id,
+          workspaceId: authUser.workspaceId || workspaceId
+        }).sanitizedInput : messageContent;
+      
+      aiResponse = generateAIResponse(sanitizedMessage, 'User');
     }
+
+    // 3. RESPONSE VALIDATION - Critical security requirement
+    const responseValidation = aiResponseValidator.validateResponse(aiResponse, {
+      userId: authUser.id,
+      workspaceId: authUser.workspaceId || workspaceId
+    });
+
+    // Block critical and high-risk responses
+    if (!responseValidation.isValid && 
+        (responseValidation.riskLevel === 'critical' || responseValidation.riskLevel === 'high')) {
+      console.warn('🚨 [OASIS AI] Response validation failed:', {
+        userId: authUser.id,
+        workspaceId: authUser.workspaceId || workspaceId,
+        riskLevel: responseValidation.riskLevel,
+        issues: responseValidation.issues,
+        confidence: responseValidation.confidence
+      });
+
+      return NextResponse.json({
+        error: 'Response validation failed. Please try again.',
+        code: 'RESPONSE_VALIDATION_FAILED',
+        riskLevel: responseValidation.riskLevel
+      }, { status: 400 });
+    }
+
+    // Use sanitized response
+    const sanitizedResponse = responseValidation.sanitizedResponse;
 
     // Create the AI response message
     const aiMessage = await prisma.oasisMessage.create({
       data: {
-        content: aiResponse,
+        content: sanitizedResponse,
         channelId: channelId || undefined,
         dmId: dmId || undefined,
         senderId: adrataAI.id,
@@ -66,6 +173,14 @@ export async function POST(request: NextRequest) {
 
     // Broadcast the AI response
     await OasisRealtimeService.broadcastMessageSent(workspaceId, aiMessage, channelId, dmId);
+
+    // Record successful request for rate limiting
+    rateLimiter.recordRequest(
+      authUser.id,
+      'ai_response',
+      authUser.workspaceId || workspaceId,
+      true
+    );
 
     return NextResponse.json(aiMessage, { status: 201 });
 

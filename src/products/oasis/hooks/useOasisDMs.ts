@@ -11,6 +11,7 @@ export interface OasisDM {
   id: string;
   participants: OasisDMParticipant[];
   lastMessage: OasisDMLastMessage | null;
+  unreadCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -44,7 +45,9 @@ export function useOasisDMs(workspaceId: string) {
       setError(null);
 
       console.log('🔍 [OASIS DMS] Fetching DMs for workspace:', workspaceId);
-      const response = await fetch(`/api/v1/oasis/oasis/dms?workspaceId=${workspaceId}`);
+      const response = await fetch(`/api/v1/oasis/oasis/dms?workspaceId=${workspaceId}`, {
+        credentials: 'include'
+      });
       
       console.log('📡 [OASIS DMS] Response status:', response.status);
       
@@ -80,6 +83,7 @@ export function useOasisDMs(workspaceId: string) {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           workspaceId,
           participantIds
@@ -111,6 +115,7 @@ export function useOasisDMs(workspaceId: string) {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ userId }),
       });
 

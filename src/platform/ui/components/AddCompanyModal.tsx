@@ -20,6 +20,11 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
   // Get section-specific colors
   const colors = getCategoryColors(section);
   const { user } = useUnifiedAuth();
+  
+  // Check if this is Notary Everyday workspace
+  const isNotaryEveryday = user?.activeWorkspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || 
+                          user?.activeWorkspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || 
+                          user?.activeWorkspaceId === 'cmezxb1ez0001pc94yry3ntjk';
 
   // Debug: Log modal lifecycle
   useEffect(() => {
@@ -37,7 +42,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
   const [formData, setFormData] = useState({
     name: "",
     website: "",
-    notes: ""
+    notes: "",
+    state: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -54,7 +60,8 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
       setFormData({
         name: "",
         website: "",
-        notes: ""
+        notes: "",
+        state: ""
       });
       setErrorMessage('');
     } else {
@@ -151,6 +158,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
           name: formData.name,
           website: formData.website?.trim() || undefined,
           notes: formData.notes?.trim() || undefined,
+          state: formData.state?.trim() || undefined,
           ...(user?.id && { mainSellerId: user.id }) // Only include if user exists
         }),
         timeout: 30000 // Increase timeout to 30 seconds
@@ -173,11 +181,25 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
         setFormData({
           name: "",
           website: "",
-          notes: ""
+          notes: "",
+          state: ""
         });
         
-        // Note: Cache invalidation is handled by the parent component
-        // The company creation will trigger a refresh in the parent context
+        // Dispatch refresh events for immediate table update
+        window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+          detail: { 
+            section: 'companies',
+            type: 'record-created',
+            recordId: result.data.id 
+          }
+        }));
+        
+        window.dispatchEvent(new CustomEvent('refresh-counts', {
+          detail: { 
+            section: 'companies',
+            type: 'record-created'
+          }
+        }));
         
         // Call callback to close modal, show success message, and refresh list
         onCompanyAdded(result.data);
@@ -413,6 +435,22 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
             />
           </div>
+
+          {/* State field - only for Notary Everyday workspace */}
+          {isNotaryEveryday && (
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                State
+              </label>
+              <input
+                type="text"
+                value={formData.state}
+                onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value }))}
+                placeholder="e.g., California, TX"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+              />
+            </div>
+          )}
 
               {/* Notes */}
               <div>

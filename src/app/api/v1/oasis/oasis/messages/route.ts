@@ -5,32 +5,37 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getUnifiedAuthUser } from '@/platform/api-auth';
 import { prisma } from '@/lib/prisma';
 import { OasisRealtimeService } from '@/platform/services/oasis-realtime-service';
 
 // GET /api/oasis/messages - Get messages for channel or DM
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Fix authentication - temporarily bypassing for development
-    // const session = await getServerSession(authOptions);
-    // if (!session?.user?.id) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    const authUser = await getUnifiedAuthUser(request);
+    if (!authUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     
-    // For now, use a hardcoded user ID for development
-    const userId = '01K7469230N74BVGK2PABPNNZ9'; // Ross Sylvester's ID
+    const userId = authUser.id;
 
     const { searchParams } = new URL(request.url);
     const channelId = searchParams.get('channelId');
     const dmId = searchParams.get('dmId');
+    const workspaceId = searchParams.get('workspaceId');
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
     if (!channelId && !dmId) {
       return NextResponse.json(
         { error: 'Channel ID or DM ID required' },
+        { status: 400 }
+      );
+    }
+
+    if (!workspaceId) {
+      return NextResponse.json(
+        { error: 'Workspace ID required' },
         { status: 400 }
       );
     }
@@ -146,10 +151,12 @@ export async function GET(request: NextRequest) {
 // POST /api/oasis/messages - Send message
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const authUser = await getUnifiedAuthUser(request);
+    if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
+    const userId = authUser.id;
 
     const body = await request.json();
     const { channelId, dmId, content, parentMessageId } = body;

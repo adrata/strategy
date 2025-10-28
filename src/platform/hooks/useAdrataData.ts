@@ -360,14 +360,14 @@ export function useAcquisitionData(
     };
   }, [workspaceId, userId]);
 
-  const cacheKey = 'acquisition-os';
+  const cacheKey = 'revenue-os';
 
   return useAdrataData(cacheKey, fetchFn, {
     ...options,
     workspaceId,
     userId,
     priority: 'high',
-    tags: ['acquisition-os', workspaceId || '', userId || '']
+    tags: ['revenue-os', workspaceId || '', userId || '']
   });
 }
 

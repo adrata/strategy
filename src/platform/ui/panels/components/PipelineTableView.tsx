@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 // Removed deleted PipelineDataStore - using unified data system
 import { useUnifiedAuth } from "@/platform/auth";
 interface PipelineTableViewProps {
@@ -9,7 +9,7 @@ interface PipelineTableViewProps {
 }
 
 export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
-  const { ui, data } = useAcquisitionOS();
+  const { ui, data } = useRevenueOS();
   
   // Get workspace and user IDs from unified auth
   const { user } = useUnifiedAuth();
@@ -21,12 +21,12 @@ export function PipelineTableView({ activeSection }: PipelineTableViewProps) {
   // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
   // const pipelineData = usePipelineData(activeSection as any, workspaceId, userId);
   
-  // Use single data source from useAcquisitionOS instead
-  const { data: acquisitionData } = useAcquisitionOS();
+  // Use single data source from useRevenueOS instead
+  const { data: acquisitionData } = useRevenueOS();
   
   // CRITICAL FIX: Map acquisition data to pipeline format for compatibility
   const getSectionData = (section: string) => {
-    // 🎯 FIXED: Use data from AcquisitionOSProvider context for all sections
+    // 🎯 FIXED: Use data from RevenueOSProvider context for all sections
     if (section === 'leads') {
       // Get leads data from the context (people with LEAD status)
       const peopleData = acquisitionData?.acquireData?.people || [];

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
-import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 import { TowerLeftPanel } from "./components/TowerLeftPanel";
@@ -77,7 +77,7 @@ export default function TowerLayout({ children }: TowerLayoutProps) {
 
   return (
     <TowerContext.Provider value={{ selectedMetric, setSelectedMetric, refreshMetrics }}>
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <ZoomProvider>
           <ProfilePopupProvider>
             <TowerLayoutContent 
@@ -88,7 +88,7 @@ export default function TowerLayout({ children }: TowerLayoutProps) {
             </TowerLayoutContent>
           </ProfilePopupProvider>
         </ZoomProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     </TowerContext.Provider>
   );
 }
@@ -153,7 +153,7 @@ function TowerLayoutContent({
   onSectionChange: (section: string) => void;
 }) {
   // Now we can use the context hooks since we're inside the providers
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
 
   return (
     <PanelLayout

@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
-import { ACQUISITION_OS_APPS, SECTION_TITLES } from "@/platform/config";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
+import { REVENUE_OS_APPS, SECTION_TITLES } from "@/platform/config";
 // import { ModularSpeedrunContainer } from "../speedrun/ModularSpeedrunContainer";
 import { MonacoLeftPanel } from "@/products/monaco/components/MonacoLeftPanel";
 import { MonacoProvider } from "@/products/monaco/context/MonacoContext";
@@ -11,7 +11,7 @@ import { SpeedrunLeftPanel } from "@/platform/ui/panels/speedrun-left-panel";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { flushSync } from "react-dom";
 
-export function AcquisitionOSLeftPanel() {
+export function RevenueOSLeftPanel() {
   const {
     ui: {
       activeSubApp,
@@ -28,11 +28,11 @@ export function AcquisitionOSLeftPanel() {
       setSortBy,
     },
     data: { acquireData },
-  } = useAcquisitionOS();
+  } = useRevenueOS();
 
   // Debug logging to see what activeSubApp we're getting
-  console.log("🔥 AcquisitionOSLeftPanel: activeSubApp =", activeSubApp);
-  console.log("🔥 AcquisitionOSLeftPanel: activeSection =", activeSection);
+  console.log("🔥 RevenueOSLeftPanel: activeSubApp =", activeSubApp);
+  console.log("🔥 RevenueOSLeftPanel: activeSection =", activeSection);
 
   // Local state for tab management
   const [activeTab, setActiveTab] = React.useState<"BUILD" | "CLOSE">("BUILD");
@@ -44,12 +44,12 @@ export function AcquisitionOSLeftPanel() {
 
   // Get current app
   const currentSubApp =
-    ACQUISITION_OS_APPS.find((app: any) => app['id'] === activeSubApp) ||
-    ACQUISITION_OS_APPS[0]!;
+    REVENUE_OS_APPS.find((app: any) => app['id'] === activeSubApp) ||
+    REVENUE_OS_APPS[0]!;
 
   // Special case for Monaco app - Monaco handles its own left panel now
   if (activeSubApp === "monaco") {
-    console.log("🔥 AcquisitionOSLeftPanel: Rendering Monaco left panel");
+    console.log("🔥 RevenueOSLeftPanel: Rendering Monaco left panel");
     return (
       <MonacoProvider>
         <MonacoLeftPanel />
@@ -60,13 +60,13 @@ export function AcquisitionOSLeftPanel() {
   // Special case for Speedrun app - Speedrun uses its own left panel
   // Note: SpeedrunProvider is provided at app level, no need to wrap again
   if (activeSubApp === "Speedrun") {
-    console.log("🔥 AcquisitionOSLeftPanel: Rendering Speedrun left panel");
+    console.log("🔥 RevenueOSLeftPanel: Rendering Speedrun left panel");
     return <SpeedrunLeftPanel />;
   }
 
   // Special case for Pipeline app - Pipeline uses its own left panel
   if (activeSubApp === "pipeline") {
-    console.log("🔥 AcquisitionOSLeftPanel: Rendering Pipeline left panel");
+    console.log("🔥 RevenueOSLeftPanel: Rendering Pipeline left panel");
     return (
       <LeftPanel 
         activeSection={activeSection} 
@@ -77,7 +77,7 @@ export function AcquisitionOSLeftPanel() {
     );
   }
 
-  console.log("🔥 AcquisitionOSLeftPanel: Rendering default AOS left panel for activeSubApp =", activeSubApp);
+  console.log("🔥 RevenueOSLeftPanel: Rendering default ROS left panel for activeSubApp =", activeSubApp);
 
   // Import deduplication function
   const deduplicateLeads = (leads: any[]): any[] => {
@@ -436,5 +436,6 @@ export function AcquisitionOSLeftPanel() {
   );
 }
 
-// Legacy alias for backwards compatibility
-export const ActionPlatformLeftPanel = AcquisitionOSLeftPanel;
+// Legacy aliases for backwards compatibility
+export const ActionPlatformLeftPanel = RevenueOSLeftPanel;
+export const AcquisitionOSLeftPanel = RevenueOSLeftPanel;

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { authFetch } from '@/platform/api-fetch';
 
 interface ChronicleReport {
@@ -28,7 +28,7 @@ interface ChronicleListProps {
 
 export function ChronicleList({ onReportSelect }: ChronicleListProps) {
   const { user } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const [reports, setReports] = useState<ChronicleReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

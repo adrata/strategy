@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
 import { useUnifiedAuth } from "@/platform/auth";
 import { QUICK_ACTIONS } from "@/platform/config";
@@ -101,7 +101,7 @@ interface ContextFile {
  * - Modular component architecture
  */
 export function RightPanel() {
-  const { ui, chat } = useAcquisitionOS();
+  const { ui, chat } = useRevenueOS();
   const router = useRouter();
   const pathname = usePathname();
   
@@ -158,7 +158,7 @@ export function RightPanel() {
       const workspaceId = user?.activeWorkspaceId || '';
       
       // Fetch DMs from Oasis API
-      const response = await fetch(`/api/oasis/dms?workspaceId=${workspaceId}`);
+      const response = await fetch(`/api/v1/oasis/oasis/dms?workspaceId=${workspaceId}`);
       if (response.ok) {
         const oasisDMs = await response.json();
         
@@ -2091,32 +2091,35 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         )}
       </div>
 
-      <ChatInput
-        rightChatInput={rightChatInput}
-        setRightChatInput={setRightChatInput}
-        textareaHeight={textareaHeight}
-        setTextareaHeight={setTextareaHeight}
-        contextFiles={contextFiles}
-        setContextFiles={setContextFiles}
-        selectedAIModel={selectedAIModel}
-        setSelectedAIModel={setSelectedAIModel}
-        isDragOver={isDragOver}
-        showAddFilesPopup={showAddFilesPopup}
-        setShowAddFilesPopup={setShowAddFilesPopup}
-        workspaceId={workspaceId}
-        onSubmit={handleSubmit}
-        onFileSelect={handleFileSelect}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        fileInputRef={fileInputRef}
-        textareaRef={textareaRef}
-        addFilesPopupRef={addFilesPopupRef}
-        isEnterHandledRef={isEnterHandledRef}
-        processMessageWithQueue={processMessageWithQueue}
-        scrollToBottom={scrollToBottom}
-        chatHistory={chatMessages.filter(msg => msg['type'] === 'user').map(msg => msg.content).slice(-20)} // Last 20 user messages
-      />
+      {/* Only show ChatInput when not in DM views */}
+      {!showDirectMessagesList && !showDMChat && (
+        <ChatInput
+          rightChatInput={rightChatInput}
+          setRightChatInput={setRightChatInput}
+          textareaHeight={textareaHeight}
+          setTextareaHeight={setTextareaHeight}
+          contextFiles={contextFiles}
+          setContextFiles={setContextFiles}
+          selectedAIModel={selectedAIModel}
+          setSelectedAIModel={setSelectedAIModel}
+          isDragOver={isDragOver}
+          showAddFilesPopup={showAddFilesPopup}
+          setShowAddFilesPopup={setShowAddFilesPopup}
+          workspaceId={workspaceId}
+          onSubmit={handleSubmit}
+          onFileSelect={handleFileSelect}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          fileInputRef={fileInputRef}
+          textareaRef={textareaRef}
+          addFilesPopupRef={addFilesPopupRef}
+          isEnterHandledRef={isEnterHandledRef}
+          processMessageWithQueue={processMessageWithQueue}
+          scrollToBottom={scrollToBottom}
+          chatHistory={chatMessages.filter(msg => msg['type'] === 'user').map(msg => msg.content).slice(-20)} // Last 20 user messages
+        />
+      )}
       </div>
 
     </>

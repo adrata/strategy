@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useSpeedrunDataContext } from "@/platform/services/speedrun-data-context";
 import { useWorkspaceSpeedrunSettings } from "@/platform/hooks/useWorkspaceSpeedrunSettings";
 import { 
@@ -45,11 +45,11 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
   const pathname = usePathname();
   const { settings: workspaceSettings } = useWorkspaceSpeedrunSettings();
   
-  // Use AcquisitionOS context for proper sync with middle panel
+  // Use RevenueOS context for proper sync with middle panel
   const {
     ui: { selectedRecord, setSelectedRecord },
     data: { acquireData }
-  } = useAcquisitionOS();
+  } = useRevenueOS();
 
   // Use selectedRecord as selectedPerson for consistency
   const selectedPerson = selectedRecord;

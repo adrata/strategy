@@ -10,7 +10,7 @@ console.log('🧹 Clearing all application cache...\n');
 
 // Browser storage keys to clear
 const cacheKeys = [
-  'acquisition-os-data-cache',
+  'revenue-os-data-cache',
   'adrata-panel-ratio',
   'adrata-theme',
   'adrata-settings',

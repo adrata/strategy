@@ -53,7 +53,7 @@ export function DirectMessagesList({
         >
           <ArrowLeftIcon className="w-5 h-5" />
         </button>
-        <button className="px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 transition-colors">
+        <button className="px-3 py-1.5 bg-gradient-to-r from-blue-400 to-blue-600 text-white text-sm font-medium rounded-md hover:from-blue-500 hover:to-blue-700 transition-all shadow-sm">
           Start Conversation
         </button>
       </div>

@@ -14,7 +14,7 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
 }
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
-import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 import { OlympusLeftPanel } from "./components/OlympusLeftPanel";
@@ -166,7 +166,7 @@ export default function OlympusLayout({ children }: OlympusLayoutProps) {
 
   return (
     <OlympusContext.Provider value={{ selectedStep, setSelectedStep, addWorkflowSteps, activeSection }}>
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <ZoomProvider>
           <ProfilePopupProvider>
             <OlympusLayoutContent 
@@ -177,7 +177,7 @@ export default function OlympusLayout({ children }: OlympusLayoutProps) {
             </OlympusLayoutContent>
           </ProfilePopupProvider>
         </ZoomProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     </OlympusContext.Provider>
   );
 }
@@ -354,7 +354,7 @@ function OlympusLayoutContent({
   onSectionChange: (section: string) => void;
 }) {
   // Now we can use the context hooks since we're inside the providers
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
 
   return (
     <PanelLayout

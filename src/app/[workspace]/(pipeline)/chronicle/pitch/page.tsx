@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { sampleChronicleReports } from '@/lib/chronicle-sample-data';
 import { PresentationView } from '@/frontend/components/pipeline/PresentationView';
 import { PitchRegularView } from '@/frontend/components/pipeline/PitchRegularView';
@@ -11,7 +11,7 @@ import { PitchRegularView } from '@/frontend/components/pipeline/PitchRegularVie
 
 export default function PitchPage() {
   const { user } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const [isPresentationMode, setIsPresentationMode] = useState(false);
   const [pitchData, setPitchData] = useState<any>(null);
   const [loading, setLoading] = useState(true);

@@ -21,7 +21,7 @@ import { WorkspaceDataRouter } from "@/platform/services/workspace-data-router";
 import { Person } from "../types";
 import { PipelineProgress } from "@/platform/shared/components/ui/PipelineProgress";
 import { PainIntelligence, PainIntelligenceData, ExamplePainData } from "./PainIntelligence";
-import { useCompanyIntelligence } from "@/platform/hooks/useCompanyIntelligence";
+import { useCompanyData } from "@/platform/hooks/useCompanyData";
 import { useUnifiedAuth } from "@/platform/auth";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 
@@ -631,9 +631,9 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
   const { user } = useUnifiedAuth();
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id || 'demo-workspace';
   
-  // 🚀 PERFORMANCE: Memoize company intelligence to prevent unnecessary re-fetches
+  // 🚀 PERFORMANCE: Memoize company data to prevent unnecessary re-fetches
   const memoizedCompanyName = useMemo(() => person.company || '', [person.company]);
-  const { intelligence, loading: intelligenceLoading, error: intelligenceError } = useCompanyIntelligence(
+  const { companyData, loading: companyLoading, error: companyError } = useCompanyData(
     memoizedCompanyName,
     workspaceId
   );
@@ -2002,341 +2002,185 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
         return (
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-[var(--foreground)]">
-              Company Intelligence
+              Company Information
             </h2>
             
-            {/* Company Overview */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
-                Company Overview
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
-                      Company Name
-                    </label>
-                    <p className="text-lg text-[var(--foreground)]">
-                      {enhancedPerson.company || "ADP"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
-                      Industry
-                    </label>
-                    <p className="text-lg text-[var(--foreground)]">
-                      {enhancedPerson.industry || (enhancedPerson['company'] === "ADP" ? "Human Resources & Payroll Technology" :
-                       enhancedPerson['company'] === "Nike" ? "Athletic Footwear & Apparel" :
-                       enhancedPerson['company'] === "DataCorp Solutions" ? "Enterprise Data Analytics" :
-                       "Technology Services")}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
-                      Total Employees
-                    </label>
-                    <p className="text-lg text-[var(--foreground)]">
-                      {enhancedPerson.employeeCount ? `${enhancedPerson.employeeCount.toLocaleString()}+ employees` :
-                       (enhancedPerson['company'] === "ADP" ? "58,000+ employees" :
-                       enhancedPerson['company'] === "Nike" ? "79,100+ employees" :
-                       enhancedPerson['company'] === "DataCorp Solutions" ? "1,200+ employees" :
-                       "5,000+ employees")}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
-                      Annual Revenue
-                    </label>
-                    <p className="text-lg text-[var(--foreground)]">
-                      {person['company'] === "ADP" ? "$15.4B (2024)" :
-                       person['company'] === "Nike" ? "$51.2B (2024)" :
-                       person['company'] === "DataCorp Solutions" ? "$450M (2024)" :
-                       "$2.1B (2024)"}
-                    </p>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
-                      HQ Location
-                    </label>
-                    <p className="text-lg text-[var(--foreground)]">
-                      {person['company'] === "ADP" ? "Roseland, New Jersey, USA" :
-                       person['company'] === "Nike" ? "Beaverton, Oregon, USA" :
-                       person['company'] === "DataCorp Solutions" ? "San Francisco, California, USA" :
-                       person.location || "San Francisco, California, USA"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
-                      Founded
-                    </label>
-                    <p className="text-lg text-[var(--foreground)]">
-                      {person['company'] === "ADP" ? "1949 (75 years)" :
-                       person['company'] === "Nike" ? "1964 (60 years)" :
-                       person['company'] === "DataCorp Solutions" ? "2010 (14 years)" :
-                       "2015 (9 years)"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
-                      Stock Symbol
-                    </label>
-                    <p className="text-lg text-[var(--foreground)]">
-                      {person['company'] === "ADP" ? "NASDAQ: ADP" :
-                       person['company'] === "Nike" ? "NYSE: NKE" :
-                       person['company'] === "DataCorp Solutions" ? "Private Company" :
-                       "Private Company"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
-                      Market Capitalization
-                    </label>
-                    <p className="text-lg text-[var(--foreground)]">
-                      {person['company'] === "ADP" ? "$108.5B" :
-                       person['company'] === "Nike" ? "$112.8B" :
-                       person['company'] === "DataCorp Solutions" ? "N/A (Private)" :
-                       "N/A (Private)"}
-                    </p>
-                  </div>
-                </div>
+            {companyLoading ? (
+              <div className="text-center py-8">
+                <div className="text-sm text-[var(--muted)]">Loading company data...</div>
               </div>
-            </div>
-
-            {/* Financial Performance */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
-                Financial Performance & Growth
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">
-                    {person['company'] === "ADP" ? "+8.2%" :
-                     person['company'] === "Nike" ? "+10.1%" :
-                     person['company'] === "DataCorp Solutions" ? "+32.5%" :
-                     "+15.3%"}
-                  </div>
-                  <p className="text-sm text-[var(--muted)]">Revenue Growth (YoY)</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
-                    {person['company'] === "ADP" ? "$3.2B" :
-                     person['company'] === "Nike" ? "$6.7B" :
-                     person['company'] === "DataCorp Solutions" ? "$85M" :
-                     "$420M"}
-                  </div>
-                  <p className="text-sm text-[var(--muted)]">Operating Income</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">
-                    {person['company'] === "ADP" ? "18.4%" :
-                     person['company'] === "Nike" ? "13.1%" :
-                     person['company'] === "DataCorp Solutions" ? "18.9%" :
-                     "20.1%"}
-                  </div>
-                  <p className="text-sm text-[var(--muted)]">Profit Margin</p>
-                </div>
+            ) : companyError ? (
+              <div className="text-center py-8">
+                <div className="text-sm text-red-600">Error loading company data: {companyError}</div>
               </div>
-            </div>
-
-            {/* Technology & Infrastructure */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
-                Technology Stack & Infrastructure
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-3">Cloud Infrastructure</h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--muted)]">Primary Cloud Provider</span>
-                      <span className="text-sm text-[var(--foreground)]">
-                        {person['company'] === "ADP" ? "Microsoft Azure" :
-                         person['company'] === "Nike" ? "Amazon AWS" :
-                         person['company'] === "DataCorp Solutions" ? "Google Cloud Platform" :
-                         "Amazon AWS"}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--muted)]">Cloud Adoption</span>
-                      <span className="text-sm text-[var(--foreground)]">
-                        {person['company'] === "ADP" ? "85% Cloud-Native" :
-                         person['company'] === "Nike" ? "70% Cloud-Native" :
-                         person['company'] === "DataCorp Solutions" ? "95% Cloud-Native" :
-                         "60% Cloud-Native"}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--muted)]">Security Posture</span>
-                      <span className="text-sm text-[var(--foreground)]">
-                        {person['company'] === "ADP" ? "SOC 2 Type II Certified" :
-                         person['company'] === "Nike" ? "ISO 27001 Certified" :
-                         person['company'] === "DataCorp Solutions" ? "FedRAMP Authorized" :
-                         "SOC 2 Compliant"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-3">Development Stack</h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--muted)]">Primary Languages</span>
-                      <span className="text-sm text-[var(--foreground)]">
-                        {person['company'] === "ADP" ? "Java, Python, C#" :
-                         person['company'] === "Nike" ? "JavaScript, Java, Python" :
-                         person['company'] === "DataCorp Solutions" ? "Python, Go, TypeScript" :
-                         "JavaScript, Python, Java"}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--muted)]">Architecture</span>
-                      <span className="text-sm text-[var(--foreground)]">
-                        {person['company'] === "ADP" ? "Microservices + Legacy" :
-                         person['company'] === "Nike" ? "Hybrid Architecture" :
-                         person['company'] === "DataCorp Solutions" ? "Cloud-Native Microservices" :
-                         "Microservices"}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[var(--muted)]">DevOps Maturity</span>
-                      <span className="text-sm text-[var(--foreground)]">
-                        {person['company'] === "ADP" ? "Advanced (CI/CD)" :
-                         person['company'] === "Nike" ? "Intermediate" :
-                         person['company'] === "DataCorp Solutions" ? "Expert (Full Automation)" :
-                         "Intermediate"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+            ) : !companyData ? (
+              <div className="text-center py-8">
+                <div className="text-sm text-[var(--muted)]">No company data available for "{enhancedPerson.company}"</div>
               </div>
-            </div>
-
-            {/* Business Challenges & Opportunities */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
-                Business Challenges & Strategic Priorities
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-medium text-red-600 mb-3">Key Challenges</h4>
-                  <div className="space-y-3">
-                    {person['company'] === "ADP" ? [
-                      "Legacy system modernization across 24B+ annual transactions",
-                      "Quantum computing threats to encryption infrastructure", 
-                      "Competitive pressure from Workday and emerging HR tech"
-                    ] : person['company'] === "Nike" ? [
-                      "Direct-to-consumer digital transformation acceleration",
-                      "Supply chain optimization and sustainability goals",
-                      "E-commerce platform scalability during peak seasons"
-                    ] : person['company'] === "DataCorp Solutions" ? [
-                      "Scaling infrastructure for 300% customer growth",
-                      "Data privacy compliance across global markets",
-                      "Real-time analytics performance at enterprise scale"
-                    ] : [
-                      "Digital transformation and cloud migration",
-                      "Cybersecurity and data protection compliance",
-                      "Scaling technology infrastructure for growth"
-                    ].map((challenge, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <div className="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0"></div>
-                        <p className="text-sm text-[var(--foreground)]">{challenge}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-medium text-green-600 mb-3">Strategic Opportunities</h4>
-                  <div className="space-y-3">
-                    {person['company'] === "ADP" ? [
-                      "AI-powered workforce analytics and predictions",
-                      "Global expansion into emerging markets",
-                      "Zero-trust security architecture implementation"
-                    ] : person['company'] === "Nike" ? [
-                      "Personalized customer experience through AI",
-                      "Sustainable manufacturing technology adoption",
-                      "Global market expansion in Asia-Pacific"
-                    ] : person['company'] === "DataCorp Solutions" ? [
-                      "Enterprise AI/ML platform development",
-                      "Strategic partnerships with cloud providers", 
-                      "International market expansion (Europe/APAC)"
-                    ] : [
-                      "Cloud-first architecture modernization",
-                      "AI and machine learning integration",
-                      "Strategic technology partnerships"
-                    ].map((opportunity, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
-                        <p className="text-sm text-[var(--foreground)]">{opportunity}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Leadership Team */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
-                Executive Leadership Team
-              </h3>
-              {intelligenceLoading ? (
-                <div className="text-center py-4">
-                  <div className="text-sm text-[var(--muted)]">Loading executive data...</div>
-                </div>
-              ) : intelligenceError ? (
-                <div className="text-center py-4">
-                  <div className="text-sm text-red-600">Error loading executive data</div>
-                </div>
-              ) : intelligence.executives.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {intelligence.executives.map((executive, index) => (
-                    <div key={executive.id || index} className="p-3 border border-[var(--border)] rounded-lg">
-                      <div className="font-medium text-[var(--foreground)]">{executive.name}</div>
-                      <div className="text-sm text-[var(--muted)]">{executive.title}</div>
-                      <div className="text-xs text-[var(--muted)] mt-1">{executive.tenure} at company</div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-4">
-                  <div className="text-sm text-[var(--muted)]">No executive data available</div>
-                </div>
-              )}
-            </div>
-
-            {/* Recent Company News */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
-                Recent Company News & Updates
-              </h3>
-              {intelligenceLoading ? (
-                <div className="text-center py-4">
-                  <div className="text-sm text-[var(--muted)]">Loading company news...</div>
-                </div>
-              ) : intelligenceError ? (
-                <div className="text-center py-4">
-                  <div className="text-sm text-red-600">Error loading company news</div>
-                </div>
-              ) : intelligence.companyNews.length > 0 ? (
-                <div className="space-y-4">
-                  {intelligence.companyNews.map((news, index) => (
-                    <div key={index} className="flex items-start gap-3 p-3 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20">
-                      <CalendarIcon className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
+            ) : (
+              <>
+                {/* Company Overview */}
+                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                    Company Overview
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
                       <div>
-                        <div className="text-xs text-blue-600 font-medium">{news.date} • {news.source}</div>
-                        <div className="text-sm text-[var(--foreground)] font-medium mt-1">{news.headline}</div>
+                        <label className="text-sm font-medium text-[var(--muted)]">
+                          Company Name
+                        </label>
+                        <p className="text-lg text-[var(--foreground)]">
+                          {companyData.name || enhancedPerson.company || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-[var(--muted)]">
+                          Industry
+                        </label>
+                        <p className="text-lg text-[var(--foreground)]">
+                          {companyData.industry || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-[var(--muted)]">
+                          Total Employees
+                        </label>
+                        <p className="text-lg text-[var(--foreground)]">
+                          {companyData.employeeCount ? `${companyData.employeeCount.toLocaleString()}+ employees` :
+                           companyData.size || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-[var(--muted)]">
+                          Annual Revenue
+                        </label>
+                        <p className="text-lg text-[var(--foreground)]">
+                          {companyData.revenue || "N/A"}
+                        </p>
                       </div>
                     </div>
-                  ))}
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-sm font-medium text-[var(--muted)]">
+                          HQ Location
+                        </label>
+                        <p className="text-lg text-[var(--foreground)]">
+                          {companyData.hqLocation || 
+                           (companyData.hqCity && companyData.hqState ? `${companyData.hqCity}, ${companyData.hqState}` : null) ||
+                           companyData.hqCity || 
+                           "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-[var(--muted)]">
+                          Founded
+                        </label>
+                        <p className="text-lg text-[var(--foreground)]">
+                          {companyData.foundedYear ? `${companyData.foundedYear} (${new Date().getFullYear() - companyData.foundedYear} years)` : "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-[var(--muted)]">
+                          Stock Symbol
+                        </label>
+                        <p className="text-lg text-[var(--foreground)]">
+                          {companyData.stockSymbol || (companyData.isPublic ? "Public Company" : "Private Company")}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-[var(--muted)]">
+                          Website
+                        </label>
+                        <p className="text-lg text-[var(--foreground)]">
+                          {companyData.website ? (
+                            <a 
+                              href={companyData.website} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 underline"
+                            >
+                              {companyData.website.replace(/^https?:\/\//, '')}
+                            </a>
+                          ) : "N/A"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {companyData.description && (
+                    <div className="mt-4 pt-4 border-t border-[var(--border)]">
+                      <label className="text-sm font-medium text-[var(--muted)]">
+                        Description
+                      </label>
+                      <p className="text-[var(--foreground)] mt-1">
+                        {companyData.description}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="text-center py-4">
-                  <div className="text-sm text-[var(--muted)]">No company news available</div>
-                </div>
-              )}
-            </div>
+
+                {/* Technology Stack - Only show if we have data */}
+                {companyData.techStack && companyData.techStack.length > 0 && (
+                  <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                      Technology Stack
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {companyData.techStack.map((tech, index) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1 bg-[var(--hover)] text-[var(--foreground)] rounded-full text-sm"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Business Challenges & Opportunities - Only show if we have data */}
+                {(companyData.businessChallenges && companyData.businessChallenges.length > 0) || 
+                 (companyData.businessPriorities && companyData.businessPriorities.length > 0) ||
+                 (companyData.competitiveAdvantages && companyData.competitiveAdvantages.length > 0) ||
+                 (companyData.growthOpportunities && companyData.growthOpportunities.length > 0) ? (
+                  <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                      Business Intelligence
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {companyData.businessChallenges && companyData.businessChallenges.length > 0 && (
+                        <div>
+                          <h4 className="font-medium text-red-600 mb-3">Key Challenges</h4>
+                          <div className="space-y-3">
+                            {companyData.businessChallenges.map((challenge, index) => (
+                              <div key={index} className="flex items-start gap-2">
+                                <div className="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0"></div>
+                                <p className="text-sm text-[var(--foreground)]">{challenge}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {companyData.growthOpportunities && companyData.growthOpportunities.length > 0 && (
+                        <div>
+                          <h4 className="font-medium text-green-600 mb-3">Growth Opportunities</h4>
+                          <div className="space-y-3">
+                            {companyData.growthOpportunities.map((opportunity, index) => (
+                              <div key={index} className="flex items-start gap-2">
+                                <div className="w-2 h-2 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
+                                <p className="text-sm text-[var(--foreground)]">{opportunity}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+              </>
+            )}
           </div>
         );
 

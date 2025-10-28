@@ -45,7 +45,9 @@ async function checkIfShouldTriggerAI(workspaceId: string, dmId?: string, channe
   try {
     // If it's a DM, check if it's with Adrata AI
     if (dmId) {
-      const response = await fetch(`/api/v1/oasis/oasis/dms/${dmId}?workspaceId=${workspaceId}`);
+      const response = await fetch(`/api/v1/oasis/oasis/dms/${dmId}?workspaceId=${workspaceId}`, {
+        credentials: 'include'
+      });
       if (response.ok) {
         const dm = await response.json();
         // Check if Adrata AI is a participant
@@ -119,7 +121,9 @@ export function useOasisMessages(
       if (channelId) params.append('channelId', channelId);
       if (dmId) params.append('dmId', dmId);
 
-      const response = await fetch(`/api/v1/oasis/oasis/messages?${params}`);
+      const response = await fetch(`/api/v1/oasis/oasis/messages?${params}`, {
+        credentials: 'include'
+      });
       
       if (!response.ok) {
         throw new Error('Failed to fetch messages');
@@ -139,6 +143,7 @@ export function useOasisMessages(
               headers: {
                 'Content-Type': 'application/json',
               },
+              credentials: 'include',
               body: JSON.stringify({
                 channelId,
                 dmId,
@@ -188,6 +193,7 @@ export function useOasisMessages(
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           channelId,
           dmId,
@@ -217,6 +223,7 @@ export function useOasisMessages(
               headers: {
                 'Content-Type': 'application/json',
               },
+              credentials: 'include',
               body: JSON.stringify({
                 messageContent: content,
                 channelId,
@@ -253,6 +260,7 @@ export function useOasisMessages(
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ content }),
       });
 
@@ -284,6 +292,7 @@ export function useOasisMessages(
     try {
       const response = await fetch(`/api/v1/oasis/oasis/messages/${messageId}`, {
         method: 'DELETE',
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -307,6 +316,7 @@ export function useOasisMessages(
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ emoji }),
       });
 
@@ -338,6 +348,7 @@ export function useOasisMessages(
     try {
       const response = await fetch(`/api/v1/oasis/oasis/messages/${messageId}/reactions?emoji=${emoji}`, {
         method: 'DELETE',
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -372,11 +383,12 @@ export function useOasisMessages(
   // Mark messages as read
   const markAsRead = async (messageIds: string[]) => {
     try {
-      const response = await fetch('/api/oasis/read-receipt', {
+      const response = await fetch('/api/v1/oasis/oasis/read-receipt', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           messageIds,
           workspaceId,
@@ -392,6 +404,15 @@ export function useOasisMessages(
       console.error('❌ [OASIS MESSAGES] Mark as read error:', error);
     }
   };
+
+  // Mark messages as read when they are displayed
+  useEffect(() => {
+    if (messages.length > 0 && workspaceId) {
+      // Mark all visible messages as read
+      const messageIds = messages.map(msg => msg.id);
+      markAsRead(messageIds);
+    }
+  }, [messages, workspaceId, markAsRead]);
 
   // Initial fetch
   useEffect(() => {

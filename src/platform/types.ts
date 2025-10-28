@@ -1,7 +1,7 @@
 // Hook imports removed to prevent circular dependencies
 // Hook types are now defined in ./types/hooks.ts
 
-export interface AcquisitionOSApp {
+export interface RevenueOSApp {
   id: string;
   name: string;
   description: string;
@@ -123,7 +123,7 @@ export interface PartnershipLead {
   partnership?: Partnership;
 }
 
-export interface AcquisitionOSState {
+export interface RevenueOSState {
   activeSubApp: string;
   activeSection: string;
   expandedSection: string | null;
@@ -154,7 +154,7 @@ export interface AcquisitionOSState {
   isLoadingLeads: boolean;
 }
 
-export type AcquisitionOSContextType = {
+export type RevenueOSContextType = {
   auth: ReturnType<typeof useAuth>;
   ui: ReturnType<typeof useUI>;
   data: ReturnType<typeof useData>;
@@ -164,6 +164,9 @@ export type AcquisitionOSContextType = {
 };
 
 // Legacy aliases for backwards compatibility
-export type ActionPlatformApp = AcquisitionOSApp;
-export type ActionPlatformState = AcquisitionOSState;
-export type ActionPlatformContextType = AcquisitionOSContextType;
+export type ActionPlatformApp = RevenueOSApp;
+export type ActionPlatformState = RevenueOSState;
+export type ActionPlatformContextType = RevenueOSContextType;
+export type AcquisitionOSApp = RevenueOSApp;
+export type AcquisitionOSState = RevenueOSState;
+export type AcquisitionOSContextType = RevenueOSContextType;

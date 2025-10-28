@@ -11,7 +11,7 @@ import { UpdatePersonPopup } from "./UpdatePersonPopup";
 import { TABS } from "./lead-details/LeadDetailsTypes";
 
 // Import Action Platform context
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useUnifiedAuth } from "@/platform/auth";
 import { CompanyDetailView } from "@/platform/ui/components/CompanyDetailView";
 
@@ -62,7 +62,7 @@ export function SpeedrunLeadDetails({
   onComplete,
 }: SpeedrunLeadDetailsProps) {
   // Get Action Platform context for company navigation
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   const { user } = useUnifiedAuth();
   
   // Get user context for API calls

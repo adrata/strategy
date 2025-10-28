@@ -30,14 +30,14 @@ async function linkExistingPersonToCompany(companyId: string, personId: string) 
   try {
     // First, get the person to verify they exist
     const personResponse = await authFetch(`/api/v1/people/${personId}`);
-    if (!personResponse.ok) {
+    if (!personResponse.success) {
       return NextResponse.json(
         { error: 'Person not found' },
         { status: 404 }
       );
     }
     
-    const person = await personResponse.json();
+    const person = personResponse.data;
     
     // Update the person with the company information
     const updateResponse = await authFetch(`/api/v1/people/${personId}`, {
@@ -52,14 +52,14 @@ async function linkExistingPersonToCompany(companyId: string, personId: string) 
       })
     });
     
-    if (!updateResponse.ok) {
+    if (!updateResponse.success) {
       return NextResponse.json(
-        { error: 'Failed to link person to company' },
+        { error: updateResponse.error || 'Failed to link person to company' },
         { status: 500 }
       );
     }
     
-    const updatedPerson = await updateResponse.json();
+    const updatedPerson = updateResponse.data;
     
     return NextResponse.json({
       success: true,
@@ -82,8 +82,8 @@ async function createNewPersonForCompany(companyId: string, personData: any) {
     const companyResponse = await authFetch(`/api/v1/companies/${companyId}`);
     let companyName = 'Unknown Company';
     
-    if (companyResponse.ok) {
-      const company = await companyResponse.json();
+    if (companyResponse.success) {
+      const company = companyResponse.data;
       companyName = company.name || companyName;
     }
     
@@ -104,15 +104,14 @@ async function createNewPersonForCompany(companyId: string, personData: any) {
       body: JSON.stringify(createPersonData)
     });
     
-    if (!createResponse.ok) {
-      const errorData = await createResponse.json().catch(() => ({}));
+    if (!createResponse.success) {
       return NextResponse.json(
-        { error: errorData.error || 'Failed to create person' },
-        { status: createResponse.status }
+        { error: createResponse.error || 'Failed to create person' },
+        { status: 500 }
       );
     }
     
-    const newPerson = await createResponse.json();
+    const newPerson = createResponse.data;
     
     return NextResponse.json({
       success: true,

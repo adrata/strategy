@@ -10,8 +10,8 @@ import userEvent from '@testing-library/user-event';
 import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 
 // Mock all the dependencies
-jest.mock('@/platform/ui/context/AcquisitionOSProvider', () => ({
-  useAcquisitionOS: () => ({
+jest.mock('@/platform/ui/context/RevenueOSProvider', () => ({
+  useRevenueOS: () => ({
     ui: {
       toggleRightPanel: jest.fn(),
       activeSubApp: 'Speedrun'

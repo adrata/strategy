@@ -1,6 +1,6 @@
 /**
  * Dynamic Favicon Generator
- * Creates circular favicons with app letters and color themes
+ * Creates circular favicons with app letters, client initials, and color themes
  */
 
 export interface AppTheme {
@@ -10,11 +10,11 @@ export interface AppTheme {
 }
 
 export const APP_THEMES: Record<string, AppTheme> = {
-  // AcquisitionOS (pipeline apps)
+  // RevenueOS (pipeline apps)
   'acquisition': {
     letter: 'A',
     color: '#dbeafe', // blue-100 (light blue background)
-    name: 'AcquisitionOS'
+    name: 'RevenueOS'
   },
   // Atrium
   'atrium': {
@@ -72,9 +72,34 @@ function getTextColorForBackground(backgroundColor: string): string {
 }
 
 /**
- * Generate a squircle favicon with centered letter
+ * Generate initials from workspace name
+ * Extracts first letter of each word (e.g., "ZeroPoint" → "ZP", "Acme Corp" → "AC")
  */
-export function generateFavicon(letter: string, color: string, size: number = 32): string {
+export function generateInitials(workspaceName: string): string {
+  if (!workspaceName || typeof workspaceName !== 'string') {
+    return '';
+  }
+  
+  // Clean the workspace name and split by spaces
+  const words = workspaceName.trim().split(/\s+/).filter(word => word.length > 0);
+  
+  if (words.length === 0) {
+    return '';
+  }
+  
+  // Extract first letter of each word, up to 2 characters
+  const initials = words
+    .slice(0, 2) // Take first 2 words max
+    .map(word => word.charAt(0).toUpperCase())
+    .join('');
+  
+  return initials;
+}
+
+/**
+ * Generate a squircle favicon with centered text (letter or initials)
+ */
+export function generateFavicon(text: string, color: string, size: number = 32): string {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   
@@ -108,13 +133,25 @@ export function generateFavicon(letter: string, color: string, size: number = 32
   ctx.closePath();
   ctx.fill();
 
-  // Draw darker letter in center with better positioning
+  // Draw text in center with better positioning
   const textColor = getTextColorForBackground(color);
   ctx.fillStyle = textColor;
   
-  // Adjust font size based on letter width - wider letters need smaller font
-  const isWideLetter = ['G', 'O', 'Q', 'W', 'M'].includes(letter);
-  const fontSize = isWideLetter ? Math.floor(size * 0.35) : Math.floor(size * 0.45);
+  // Adjust font size based on text length and character width
+  const isWideLetter = ['G', 'O', 'Q', 'W', 'M'].includes(text);
+  const isTwoCharacters = text.length === 2;
+  
+  let fontSize: number;
+  if (isTwoCharacters) {
+    // Smaller font for 2 characters to fit better
+    fontSize = Math.floor(size * 0.35);
+  } else if (isWideLetter) {
+    // Smaller font for wide single characters
+    fontSize = Math.floor(size * 0.35);
+  } else {
+    // Standard font size for single characters
+    fontSize = Math.floor(size * 0.45);
+  }
   
   ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
   ctx.textAlign = 'center';
@@ -122,7 +159,7 @@ export function generateFavicon(letter: string, color: string, size: number = 32
   
   // Adjust vertical position to account for font metrics
   const textY = size / 2 + (size * 0.15); // Move down slightly to center better
-  ctx.fillText(letter, size / 2, textY);
+  ctx.fillText(text, size / 2, textY);
 
   return canvas.toDataURL('image/png');
 }
@@ -172,7 +209,7 @@ export function getAppThemeFromPath(pathname: string): AppTheme {
     return APP_THEMES.tower;
   }
   
-  // Check for pipeline apps (AcquisitionOS)
+  // Check for pipeline apps (RevenueOS)
   const pipelineApps = [
     '/speedrun', '/opportunities', '/leads', '/prospects', 
     '/companies', '/people', '/clients', '/sellers', 

@@ -49,7 +49,7 @@ interface OasisChatPanelProps {
 // Mock data will be replaced with real data from hooks
 
 export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
-  const { activeSection, selectedChannel } = useOasis();
+  const { activeSection, selectedChannel, setIsVideoCallActive, setVideoCallRoom } = useOasis();
   const { user: authUser } = useUnifiedAuth();
   
   // Get workspace ID from auth user
@@ -97,8 +97,9 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
         60 // 1 hour duration
       );
       
-      // Open video call in new window
-      window.open(room.url, '_blank', 'width=1200,height=800');
+      // Set video call state in Oasis context
+      setIsVideoCallActive(true);
+      setVideoCallRoom({ id: room.id, name: roomName });
       
       console.log('📹 Started video call for:', selectedChannel?.name, 'Room:', room.id);
     } catch (error) {
@@ -284,10 +285,10 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-sm font-medium text-[var(--foreground)]">{message.senderName}</span>
-                <span className="text-xs text-[var(--muted)]">{new Date(message.createdAt).toLocaleTimeString()}</span>
+                <span className="text-sm text-[var(--muted)]">{new Date(message.createdAt).toLocaleTimeString()}</span>
               </div>
               
-              <p className="text-xs text-gray-700 mb-2">{message.content}</p>
+              <p className="text-sm text-gray-700 mb-2">{message.content}</p>
               
               {/* Reactions */}
               {message.reactions && message.reactions.length > 0 && (
@@ -307,7 +308,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
               {/* Thread indicator */}
               {message.threadCount > 0 && (
                 <button 
-                  className="text-xs text-[var(--muted)] hover:text-[var(--foreground)] flex items-center gap-1"
+                  className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] flex items-center gap-1"
                   onClick={(e) => {
                     e.stopPropagation();
                     onShowThread?.();

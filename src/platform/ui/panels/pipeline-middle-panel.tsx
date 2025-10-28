@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { useWorkspacePipelineStages, DatabaseOnlyDataLayer } from "@/platform/services/database-only-data-layer";
 import { OpportunityDetails } from "@/products/pipeline/OpportunityDetails";
@@ -21,7 +21,7 @@ import { usePeopleData } from '@/platform/hooks/usePeopleData';
 import { useCompaniesData } from '@/platform/hooks/useCompaniesData';
 
 export function PipelineMiddlePanel() {
-  const { ui, data } = useAcquisitionOS();
+  const { ui, data } = useRevenueOS();
   const { navigateToPipeline, navigateToPipelineItem } = useWorkspaceNavigation();
   const { activeSection, selectedRecord } = ui;
   
@@ -30,18 +30,18 @@ export function PipelineMiddlePanel() {
   const workspaceId = authUser?.workspaces?.[0]?.id || ui.activeWorkspace?.id;
   const userId = authUser?.id;
   
-  // 🎯 FIXED: Use data from AcquisitionOSProvider context instead of duplicate API calls
+  // 🎯 FIXED: Use data from RevenueOSProvider context instead of duplicate API calls
   // const leadsData = useLeadsData(); // REMOVED: This was causing duplicate API calls
   
   // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
   // const pipelineData = usePipelineData(activeSection as any, workspaceId, userId);
   
-  // Use single data source from useAcquisitionOS instead
-  const { data: acquisitionData } = useAcquisitionOS();
+  // Use single data source from useRevenueOS instead
+  const { data: acquisitionData } = useRevenueOS();
   
   // CRITICAL FIX: Map acquisition data to pipeline format for compatibility
   const getSectionData = (section: string) => {
-    // 🎯 FIXED: Use data from AcquisitionOSProvider context for all sections
+    // 🎯 FIXED: Use data from RevenueOSProvider context for all sections
     if (section === 'leads') {
       // Get leads data from the context (people with LEAD status)
       const peopleData = acquisitionData?.acquireData?.people || [];

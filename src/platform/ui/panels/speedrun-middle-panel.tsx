@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 // CRITICAL FIX: Remove duplicate data loading from SpeedrunDataProvider
 // import { useSpeedrunDataContext } from "@/platform/services/speedrun-data-context";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { 
   FireIcon,
   CheckCircleIcon,
@@ -30,7 +30,7 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
   const {
     ui: { selectedRecord, setSelectedRecord },
     data
-  } = useAcquisitionOS();
+  } = useRevenueOS();
 
   // View state for dropdown - start with now as the main speedrun feature
   const [currentView, setCurrentView] = useState<SpeedrunView>('now');

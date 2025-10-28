@@ -52,8 +52,9 @@ export async function GET(request: NextRequest) {
     const vertical = searchParams.get('vertical') || '';
     const revenue = searchParams.get('revenue') || '';
     const timezone = searchParams.get('timezone') || '';
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    // Use alphabetical sorting by default for all person queries (UX best practice)
+    const sortBy = searchParams.get('sortBy') || 'fullName';
+    const sortOrder = searchParams.get('sortOrder') || 'asc';
     
     // Validate sort field
     const validSortFields = ['globalRank', 'fullName', 'firstName', 'lastName', 'email', 'jobTitle', 'lastActionDate', 'createdAt', 'status', 'priority'];

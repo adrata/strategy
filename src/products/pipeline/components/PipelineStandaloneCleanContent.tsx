@@ -3,10 +3,10 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Kbd, formatShortcutForDisplay } from '@/platform/utils/keyboard-shortcut-display';
 import { useRouter } from "next/navigation";
-import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
-import { AcquisitionOSLayout } from "@/platform/ui/components/ActionPlatformLayout";
-import { AcquisitionOSLeftPanel } from "@/platform/ui/components/ActionPlatformLeftPanel";
-import { AcquisitionOSMiddlePanel } from "@/platform/ui/components/ActionPlatformMiddlePanel";
+import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
+import { RevenueOSLayout } from "@/platform/ui/components/ActionPlatformLayout";
+import { RevenueOSLeftPanel } from "@/platform/ui/components/ActionPlatformLeftPanel";
+import { RevenueOSMiddlePanel } from "@/platform/ui/components/ActionPlatformMiddlePanel";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 
 import { useSpeedrunDataContext } from "@/platform/services/speedrun-data-context";
@@ -15,7 +15,7 @@ import { useSpeedrunDataContext } from "@/platform/services/speedrun-data-contex
  * Pipeline Speedrun Sprint - Exact Monaco Layout with Pipeline Branding
  * 
  * This component replicates Monaco's SpeedrunModeLayout exactly:
- * 1. Uses AcquisitionOSProvider with "Speedrun" app (same as Monaco)
+ * 1. Uses RevenueOSProvider with "Speedrun" app (same as Monaco)
  * 2. Shows contact list on left, contact details in middle, chat on right
  * 3. Auto-selects first contact on load
  * 4. Shows "Back to Pipeline" instead of "Back to Monaco"
@@ -118,15 +118,15 @@ export function PipelineStandaloneCleanContent() {
   // Use the EXACT same setup as Monaco's SpeedrunModeLayout
   return (
     <>
-      <AcquisitionOSProvider initialApp="Speedrun" initialSection="inbox">
-          <AcquisitionOSLayout
-            leftPanel={<AcquisitionOSLeftPanel />}
-            middlePanel={<AcquisitionOSMiddlePanel />}
+      <RevenueOSProvider initialApp="Speedrun" initialSection="inbox">
+          <RevenueOSLayout
+            leftPanel={<RevenueOSLeftPanel />}
+            middlePanel={<RevenueOSMiddlePanel />}
             rightPanel={<RightPanel />}
             shouldShowLeftPanel={true}
             shouldShowThinLeftPanel={false}
           />
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
 
       {/* Monaco Signal Popup - Pipeline Speedrun Version */}
       {isSlideUpVisible && (

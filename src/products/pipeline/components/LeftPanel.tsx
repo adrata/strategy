@@ -10,13 +10,15 @@ import { ProfileBox } from "@/platform/ui/components/ProfileBox";
 import { useUnifiedAuth } from "@/platform/auth";
 // CRITICAL FIX: Re-enable PipelineDataStore for proper data loading
 import { usePipelineData } from "@/platform/hooks/useAdrataData";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useFastCounts } from "@/platform/hooks/useFastCounts";
 import { useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
 import { getWorkspaceBySlug } from "@/platform/config/workspace-mapping";
 import { useChronicleCount } from "@/platform/hooks/useChronicleCount";
 import { useMetricsCount } from "@/platform/hooks/useMetricsCount";
 import { getPlatform } from "@/platform/platform-detection";
+import { useStacksAccess, useOasisAccess, useAtriumAccess, useMetricsAccess, useChronicleAccess, useDesktopDownloadAccess } from "@/platform/ui/context/FeatureAccessProvider";
+import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 
 // Utility function to convert hex color to CSS filter for SVG recoloring
@@ -78,11 +80,19 @@ function PipelineSections({
   // Get auth context in this component
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   // 🆕 CRITICAL FIX: Use provider workspace instead of URL detection
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   
   // 🆕 CRITICAL FIX: Use provider workspace instead of URL detection
   const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || authUser?.activeWorkspaceId;
   const userId = authUser?.id;
+
+  // Feature access hooks
+  const hasOasis = useOasisAccess();
+  const hasStacks = useStacksAccess();
+  const hasAtrium = useAtriumAccess();
+  const hasMetrics = useMetricsAccess();
+  const hasChronicle = useChronicleAccess();
+  const hasDesktopDownload = useDesktopDownloadAccess();
   
   // Get workspace name for Nova visibility check
   const activeWorkspace = authUser?.workspaces?.find(w => w['id'] === workspaceId);
@@ -660,7 +670,7 @@ function PipelineSections({
       name: "Chronicle",
       description: "Business Intelligence Reports",
       count: isNotaryEveryday ? chronicleCount : 0, // Show count for Notary Everyday
-      visible: false // Hidden for now
+      visible: hasChronicle
     },
     {
       id: "news",
@@ -705,15 +715,6 @@ function PipelineSections({
       visible: isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (isOpportunitiesVisible ?? true)
     },
     {
-      id: "clients",
-      name: "Clients",
-      description: "Earned Relationships",
-      count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : productionCounts.clients,
-      visible: isDemoMode ? demoModeVisibility.isCustomersVisible : (isCustomersVisible ?? true)
-    },
-    {
       id: "partners",
       name: "Partners",
       description: "Strategic Alliances",
@@ -721,6 +722,15 @@ function PipelineSections({
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.partners,
       visible: false // Hidden as requested
+    },
+    {
+      id: "clients",
+      name: "Clients",
+      description: "Earned Relationships",
+      count: loading ? (
+        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+      ) : productionCounts.clients,
+      visible: isNotaryEveryday
     },
     {
       id: "people",
@@ -741,20 +751,18 @@ function PipelineSections({
       visible: true
     },
     {
+      id: "metrics",
+      name: "Metrics",
+      description: "Performance metrics",
+      count: isNotaryEveryday ? metricsCount : 0,
+      visible: isNotaryEveryday
+    },
+    {
       id: "nova",
       name: "Nova",
       description: "Native web browser",
       count: "🌌",
-      visible: authUser?.email === "ross@adrata.com" && workspaceName.toLowerCase() === "adrata" && getPlatform() === "desktop"
-    },
-    {
-      id: "metrics",
-      name: "Metrics",
-      description: "Weekly Sales Performance",
-      count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : "9", // 9 different metrics displayed on the page
-      visible: false // Hidden for now
+      visible: false // Hidden for everyone
     },
     // SELLERS: Show only for demo workspace
     {
@@ -766,6 +774,7 @@ function PipelineSections({
       ) : productionCounts.sellers, // Use production counts like other sections
       visible: isDemoMode // Show only for demo workspace
     },
+    // DESKTOP DOWNLOAD: Show only for specific workspaces
   ];
 
   // 🛡️ VALIDATION: Ensure we have valid workspace and user IDs before proceeding
@@ -813,9 +822,20 @@ function PipelineSections({
     );
   }
 
+  // State for "More" dropdown
+  const [isMoreExpanded, setIsMoreExpanded] = useState(false);
+  
+  // Filter visible sections
+  const visibleSections = sections.filter(section => section.visible);
+  
+  // Split sections: first 7 visible, rest in "More"
+  const mainSections = visibleSections.slice(0, 7);
+  const moreSections = visibleSections.slice(7);
+  
   return (
     <div className="flex-1 space-y-1">
-      {sections.filter(section => section.visible).map((section) => (
+      {/* Render first 7 sections */}
+      {mainSections.map((section) => (
         <button
           key={section.id}
           onClick={() => handleSectionClick(section.id)}
@@ -838,6 +858,57 @@ function PipelineSections({
           </div>
         </button>
       ))}
+      
+      {/* Render "More" dropdown if there are more than 7 sections */}
+      {moreSections.length > 0 && (
+        <>
+          <button
+            onClick={() => setIsMoreExpanded(!isMoreExpanded)}
+            className={`w-full text-left px-3 py-2 rounded-lg transition-colors hover:bg-[var(--panel-background)] text-gray-700`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-sm">More</span>
+              {isMoreExpanded ? (
+                <ChevronDownIcon className="w-4 h-4" />
+              ) : (
+                <ChevronRightIcon className="w-4 h-4" />
+              )}
+            </div>
+            <div className="text-xs text-[var(--muted)] mt-1">
+              Additional sections
+            </div>
+          </button>
+          
+          {/* Expanded sections inline - stay expanded when clicking items */}
+          {isMoreExpanded && moreSections.map((section) => (
+            <button
+              key={section.id}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSectionClick(section.id);
+                // Keep expanded - don't close
+              }}
+              className={`w-full text-left px-3 py-2 pl-8 rounded-lg transition-colors ${
+                    activeSection === section.id
+                      ? 'bg-[var(--background)] text-gray-800 border-l-2 border-[var(--accent)]'
+                      : 'hover:bg-[var(--panel-background)] text-gray-700'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-sm">{section.name}</span>
+                <span className="text-sm text-[var(--muted)]">
+                  {typeof section['count'] === 'number' ? section.count.toLocaleString() : 
+                   typeof section['count'] === 'string' && !isNaN(Number(section.count)) ? Number(section.count).toLocaleString() : 
+                   section.count}
+                </span>
+              </div>
+              <div className="text-xs text-[var(--muted)] mt-1">
+                {section.description}
+              </div>
+            </button>
+          ))}
+        </>
+      )}
     </div>
   );
 }
@@ -864,10 +935,13 @@ export function PipelineLeftPanelStandalone({
   const currentUserId = authUser?.id;
   
   // Get acquisition data for dashboard stats
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   
   // 🚀 PERFORMANCE: Use fast counts hook for instant navigation counts
   const { counts: fastCounts, loading: fastCountsLoading, forceRefresh: forceRefreshCounts } = useFastCounts();
+  
+  // Feature access control
+  const hasStacks = useStacksAccess();
 
   // 🔄 REMOVED: Automatic refresh to prevent infinite loops
   // The useFastCounts hook handles workspace switching automatically via events
@@ -982,7 +1056,7 @@ export function PipelineLeftPanelStandalone({
   }, [authUser?.activeWorkspaceId, authLoading]);
 
   // DISABLED: Dashboard stats now use the same data source as other left panel items
-  // No separate API call needed - uses acquisitionData from useAcquisitionOS hook
+  // No separate API call needed - uses acquisitionData from useRevenueOS hook
 
   return (
     <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">

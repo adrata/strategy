@@ -14,7 +14,7 @@ import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 import { StacksLeftPanel } from './StacksLeftPanel';
 import { StacksMiddlePanel } from './StacksMiddlePanel';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { ProfilePopupProvider } from '@/platform/ui/components/ProfilePopupContext';
 
 interface StacksContentProps {
@@ -25,7 +25,7 @@ export function StacksContent({ section }: StacksContentProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, workspace } = useUnifiedAuth();
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   
   // State management
   const [activeSubSection, setActiveSubSection] = useState<string>('stacks');

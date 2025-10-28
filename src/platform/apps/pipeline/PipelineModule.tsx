@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 
 export function PipelineContentModule() {
   const { 
     ui: { activeSection },
     data: { acquireData } 
-  } = useAcquisitionOS();
+  } = useRevenueOS();
 
   const renderContent = () => {
     switch (activeSection) {

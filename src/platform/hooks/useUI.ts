@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ACTION_PLATFORM_APPS } from "@/platform/config";
+import { REVENUE_OS_APPS } from "@/platform/config";
 import type { Workspace } from "@/platform/auth";
 
 interface UseUIReturn {
@@ -217,6 +217,12 @@ export function useUI(): UseUIReturn {
           appFromUrl = 'Speedrun';
         } else if (path.includes('/aos/pipeline')) {
           appFromUrl = 'pipeline';
+        } else if (path.includes('/stacks')) {
+          appFromUrl = 'stacks';
+        } else if (path.includes('/oasis')) {
+          appFromUrl = 'oasis';
+        } else if (path.includes('/atrium')) {
+          appFromUrl = 'atrium';
         } else if (path.includes('/dashboard') || path.includes('/leads') || path.includes('/opportunities') || path.includes('/companies') || path.includes('/people') || path.includes('/partners') || path.includes('/prospects') || path.includes('/sellers') || path.includes('/clients') || path.includes('/metrics') || path.includes('/speedrun')) {
           // Standalone pipeline routes - use a different app name to distinguish from embedded
           appFromUrl = 'standalone-pipeline';
@@ -405,7 +411,7 @@ export function useUI(): UseUIReturn {
   useEffect(() => {
     // Defer validation to avoid blocking immediate UI updates
     const timeoutId = setTimeout(() => {
-      const currentApp = ACTION_PLATFORM_APPS.find(
+      const currentApp = REVENUE_OS_APPS.find(
         (app) => app['id'] === activeSubApp,
       );
       if (currentApp && currentApp.sections.length > 0) {
@@ -764,5 +770,6 @@ export function useUI(): UseUIReturn {
   };
 }
 
-// Legacy alias for backwards compatibility
+// Legacy aliases for backwards compatibility
 export const useActionPlatformUI = useUI;
+export const useRevenueOSUI = useUI;

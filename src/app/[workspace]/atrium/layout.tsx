@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
-import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 import { AtriumLeftPanel } from "./components/AtriumLeftPanel";
@@ -119,7 +119,7 @@ export default function AtriumLayout({ children }: AtriumLayoutProps) {
         isShareModalOpen,
         setIsShareModalOpen,
       }}>
-        <AcquisitionOSProvider>
+        <RevenueOSProvider>
           <ZoomProvider>
             <ProfilePopupProvider>
               <AtriumLayoutContent>
@@ -127,7 +127,7 @@ export default function AtriumLayout({ children }: AtriumLayoutProps) {
               </AtriumLayoutContent>
             </ProfilePopupProvider>
           </ZoomProvider>
-        </AcquisitionOSProvider>
+        </RevenueOSProvider>
       </AtriumContext.Provider>
     </QueryClientProvider>
   );
@@ -140,7 +140,7 @@ function AtriumRightPanel() {
 
 // Layout content component that can use context hooks
 function AtriumLayoutContent({ children }: { children: React.ReactNode }) {
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
 
   return (
     <PanelLayout

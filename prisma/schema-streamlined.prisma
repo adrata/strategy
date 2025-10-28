@@ -97,8 +97,10 @@ model workspaces {
   newsEnabled               Boolean?                    @default(false)
   newsIndustries            String[]                    @default([])
   newsSources               String[]                    @default([])
+  enabledFeatures           String[]                    @default([])
   oasis_channels            OasisChannel[]
   oasis_direct_messages     OasisDirectMessage[]
+  OasisExternalConnection   OasisExternalConnection[]
   stacks_projects           StacksProject[]
   actions                   actions[]
   ai_conversations          ai_conversations[]
@@ -114,6 +116,10 @@ model workspaces {
   user_roles                user_roles[]
   users                     users[]
   workspace_users           workspace_users[]
+  
+  // Atrium relations
+  atriumDocuments           atriumDocument[]
+  atriumFolders            atriumFolder[]
 
   @@index([slug])
   @@index([isActive])
@@ -122,40 +128,51 @@ model workspaces {
 
 /// User accounts and authentication
 model users {
-  id                        String                      @id @default(ulid())
-  email                     String                      @unique
-  password                  String?
-  name                      String
-  firstName                 String?
-  lastName                  String?
-  timezone                  String?                     @db.VarChar(50)
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime
-  lastLoginAt               DateTime?
-  isActive                  Boolean                     @default(true)
-  activeWorkspaceId         String?                     @db.VarChar(30)
-  username                  String?                     @unique @db.VarChar(50)
-  speedrunRankingMode       String?                     @db.VarChar(50)
-  oasis_channel_members     OasisChannelMember[]
-  oasis_dm_participants     OasisDMParticipant[]
-  oasis_messages            OasisMessage[]
-  oasis_reactions           OasisReaction[]
-  stacks_story_assignees    StacksStory[]
-  stacks_task_assignees     StacksTask[]
-  assigned_actions          actions[]                   @relation("AssignedActions")
-  ai_conversations          ai_conversations[]
-  api_cost_tracking         api_cost_tracking[]
-  audit_logs                audit_logs[]
-  auth_sessions             auth_sessions[]
-  main_seller_companies     companies[]                 @relation("MainSellerCompanies")
-  grand_central_connections grand_central_connections[]
-  grand_central_workflows   grand_central_workflows[]
-  main_seller_people        people[]                    @relation("MainSellerPeople")
-  person_co_sellers         person_co_sellers[]
-  reset_tokens              reset_tokens[]
-  user_roles                user_roles[]
-  workspaces                workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
-  workspace_users           workspace_users[]
+  id                                                                    String                      @id @default(ulid())
+  email                                                                 String                      @unique
+  password                                                              String?
+  name                                                                  String
+  firstName                                                             String?
+  lastName                                                              String?
+  timezone                                                              String?                     @db.VarChar(50)
+  createdAt                                                             DateTime                    @default(now())
+  updatedAt                                                             DateTime
+  lastLoginAt                                                           DateTime?
+  isActive                                                              Boolean                     @default(true)
+  activeWorkspaceId                                                     String?                     @db.VarChar(30)
+  username                                                              String?                     @unique @db.VarChar(50)
+  speedrunRankingMode                                                   String?                     @db.VarChar(50)
+  oasis_channel_members                                                 OasisChannelMember[]
+  oasis_dm_participants                                                 OasisDMParticipant[]
+  OasisExternalConnection_OasisExternalConnection_externalUserIdTousers OasisExternalConnection[]   @relation("OasisExternalConnection_externalUserIdTousers")
+  OasisExternalConnection_OasisExternalConnection_userIdTousers         OasisExternalConnection[]   @relation("OasisExternalConnection_userIdTousers")
+  oasis_messages                                                        OasisMessage[]
+  oasis_reactions                                                       OasisReaction[]
+  stacks_story_assignees                                                StacksStory[]
+  stacks_task_assignees                                                 StacksTask[]
+  assigned_actions                                                      actions[]                   @relation("AssignedActions")
+  ai_conversations                                                      ai_conversations[]
+  api_cost_tracking                                                     api_cost_tracking[]
+  audit_logs                                                            audit_logs[]
+  auth_sessions                                                         auth_sessions[]
+  main_seller_companies                                                 companies[]                 @relation("MainSellerCompanies")
+  grand_central_connections                                             grand_central_connections[]
+  grand_central_workflows                                               grand_central_workflows[]
+  main_seller_people                                                    people[]                    @relation("MainSellerPeople")
+  person_co_sellers                                                     person_co_sellers[]
+  reset_tokens                                                          reset_tokens[]
+  user_roles                                                            user_roles[]
+  workspaces                                                            workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
+  workspace_users                                                       workspace_users[]
+  
+  // Atrium relations
+  atriumDocumentsOwned                                                 atriumDocument[]            @relation("AtriumDocumentOwner")
+  atriumDocumentsCreated                                               atriumDocument[]            @relation("AtriumDocumentCreatedBy")
+  atriumFoldersOwned                                                   atriumFolder[]
+  atriumSharesCreated                                                  atriumShare[]
+  atriumVersionsCreated                                                atriumVersion[]
+  atriumCommentsCreated                                                atriumComment[]
+  atriumActivitiesPerformed                                            atriumActivity[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -210,6 +227,7 @@ model reset_tokens {
   expiresAt DateTime
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
+  metadata  Json?
   user      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([expiresAt])
@@ -344,6 +362,7 @@ model companies {
   workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   emails                 email_messages[]
   people                 people[]
+  atriumDocuments        atriumDocument[]
 
   @@index([workspaceId])
   @@index([mainSellerId])
@@ -767,22 +786,26 @@ model OasisDMParticipant {
 }
 
 model OasisMessage {
-  id        String              @id @default(cuid())
-  content   String
-  channelId String?
-  dmId      String?
-  senderId  String              @db.VarChar(30)
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
-  channel   OasisChannel?       @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  dm        OasisDirectMessage? @relation(fields: [dmId], references: [id], onDelete: Cascade)
-  sender    users               @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  reactions OasisReaction[]
+  id                 String              @id @default(cuid())
+  content            String
+  channelId          String?
+  dmId               String?
+  senderId           String              @db.VarChar(30)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  parentMessageId    String?
+  channel            OasisChannel?       @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  dm                 OasisDirectMessage? @relation(fields: [dmId], references: [id], onDelete: Cascade)
+  OasisMessage       OasisMessage?       @relation("OasisMessageToOasisMessage", fields: [parentMessageId], references: [id], onDelete: Cascade)
+  other_OasisMessage OasisMessage[]      @relation("OasisMessageToOasisMessage")
+  sender             users               @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  reactions          OasisReaction[]
 
   @@index([channelId])
   @@index([dmId])
   @@index([senderId])
   @@index([createdAt])
+  @@index([parentMessageId])
 }
 
 model OasisReaction {
@@ -888,12 +911,24 @@ model BuyerGroupMembers {
   linkedin       String?
   confidence     Decimal?       @default(0) @db.Decimal(5, 2)
   influenceScore Decimal?       @default(0) @db.Decimal(5, 2)
+  // V2 Enhancement fields - all optional to preserve existing data
+  coresignalId   String?
+  department     String?
+  seniorityLevel String?
+  location       String?
+  profilePicture String?
+  summary        String?
+  experience     Json?
+  skills         String[]       @default([])
+  priority       Int?           @default(5)
+  customFields   Json?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime
   BuyerGroups    BuyerGroups    @relation(fields: [buyerGroupId], references: [id], onDelete: Cascade)
 
   @@index([buyerGroupId])
   @@index([role])
+  @@index([coresignalId])
 }
 
 model BuyerGroups {
@@ -908,6 +943,13 @@ model BuyerGroups {
   totalMembers      Int                 @default(0)
   processingTime    Int                 @default(0)
   metadata          Json?
+  // V2 Enhancement fields - all optional to preserve existing data
+  companyId         String?
+  status            String?             @default("active")
+  enrichmentLevel   String?             @default("enrich")
+  composition       Json?
+  qualityMetrics    Json?
+  creditsUsed       Json?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime
   BuyerGroupMembers BuyerGroupMembers[]
@@ -915,6 +957,8 @@ model BuyerGroups {
   @@index([companyName])
   @@index([createdAt])
   @@index([workspaceId])
+  @@index([companyId])
+  @@index([status])
 }
 
 model ChronicleReport {
@@ -1019,6 +1063,207 @@ model email_messages {
   @@index([from])
 }
 
+model OasisExternalConnection {
+  id                                                  String     @id
+  userId                                              String     @db.VarChar(30)
+  externalUserId                                      String     @db.VarChar(30)
+  externalWorkspaceId                                 String     @db.VarChar(30)
+  status                                              String     @default("pending")
+  createdAt                                           DateTime   @default(now())
+  updatedAt                                           DateTime
+  users_OasisExternalConnection_externalUserIdTousers users      @relation("OasisExternalConnection_externalUserIdTousers", fields: [externalUserId], references: [id], onDelete: Cascade)
+  workspaces                                          workspaces @relation(fields: [externalWorkspaceId], references: [id], onDelete: Cascade)
+  users_OasisExternalConnection_userIdTousers         users      @relation("OasisExternalConnection_userIdTousers", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, externalUserId, externalWorkspaceId])
+  @@index([externalUserId])
+  @@index([externalWorkspaceId])
+  @@index([status])
+  @@index([userId])
+}
+
+/// Atrium Document Management System
+model atriumDocument {
+  id                String   @id @default(ulid())
+  title             String   @db.VarChar(500)
+  description       String?
+  content           Json?
+  fileUrl           String?  @db.VarChar(1000)
+  fileType          String   @default("text/plain") @db.VarChar(100)
+  fileSize          Int?
+  documentType      String   @default("paper") @db.VarChar(20) // paper, pitch, grid, code, matrix
+  status            String   @default("draft") @db.VarChar(20) // draft, published, archived, deleted
+  version           String   @default("1.0") @db.VarChar(20)
+  
+  // Security & Classification
+  isEncrypted       Boolean  @default(false)
+  classification    String   @default("internal") @db.VarChar(50)
+  requiresAuth      Boolean  @default(true)
+  
+  // Organization
+  folderId          String?  @db.VarChar(30)
+  tags              String[] @default([])
+  isStarred         Boolean  @default(false)
+  isTemplate        Boolean  @default(false)
+  
+  // Ownership & Workspace
+  ownerId           String   @db.VarChar(30)
+  workspaceId       String   @db.VarChar(30)
+  companyId         String?  @db.VarChar(30)
+  
+  // Analytics
+  viewCount         Int      @default(0)
+  downloadCount     Int      @default(0)
+  lastAccessedAt    DateTime?
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  publishedAt       DateTime?
+  archivedAt        DateTime?
+  deletedAt         DateTime?
+  
+  // Report-specific fields (for Chronicle integration)
+  reportType        String?  @db.VarChar(50)
+  sourceRecordId    String?  @db.VarChar(30)
+  sourceRecordType  String?  @db.VarChar(50)
+  generatedByAI     Boolean  @default(false)
+  metadata          Json     @default("{}")
+  createdById       String   @db.VarChar(30)
+  
+  // Relations
+  owner             users    @relation("AtriumDocumentOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  workspace         workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  company           companies? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy         users    @relation("AtriumDocumentCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  folder            atriumFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  shares            atriumShare[]
+  versions          atriumVersion[]
+  comments          atriumComment[]
+  activities        atriumActivity[]
+
+  @@index([workspaceId])
+  @@index([ownerId])
+  @@index([companyId])
+  @@index([folderId])
+  @@index([documentType])
+  @@index([status])
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@index([workspaceId, documentType])
+  @@index([workspaceId, status])
+  @@index([reportType])
+  @@index([sourceRecordType, sourceRecordId])
+}
+
+model atriumFolder {
+  id          String   @id @default(ulid())
+  name        String   @db.VarChar(255)
+  description String?
+  parentId    String?  @db.VarChar(30)
+  workspaceId String   @db.VarChar(30)
+  ownerId     String   @db.VarChar(30)
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+  
+  // Relations
+  parent      atriumFolder? @relation("AtriumFolderParent", fields: [parentId], references: [id], onDelete: Cascade)
+  children    atriumFolder[] @relation("AtriumFolderParent")
+  workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner       users    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  documents   atriumDocument[]
+
+  @@index([workspaceId])
+  @@index([parentId])
+  @@index([ownerId])
+  @@index([deletedAt])
+}
+
+model atriumShare {
+  id          String    @id @default(ulid())
+  documentId  String    @db.VarChar(30)
+  shareToken  String    @unique @db.VarChar(100)
+  shareUrl    String?   @db.VarChar(500)
+  permissions String[]  @default(["READ"]) // READ, WRITE, COMMENT
+  expiresAt   DateTime?
+  viewCount   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdById String    @db.VarChar(30)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  document    atriumDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy   users    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([shareToken])
+  @@index([expiresAt])
+  @@index([isActive])
+}
+
+model atriumVersion {
+  id                String   @id @default(ulid())
+  documentId        String   @db.VarChar(30)
+  versionNumber     Int
+  content           Json?
+  contentHash       String?  @db.VarChar(64)
+  changeDescription String?  @db.VarChar(500)
+  createdById       String   @db.VarChar(30)
+  createdAt         DateTime @default(now())
+  
+  // Relations
+  document          atriumDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy         users    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, versionNumber])
+  @@index([documentId])
+  @@index([createdAt])
+}
+
+model atriumComment {
+  id          String   @id @default(ulid())
+  documentId  String   @db.VarChar(30)
+  parentId    String?  @db.VarChar(30)
+  content     String   @db.Text
+  createdById String   @db.VarChar(30)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+  
+  // Relations
+  document    atriumDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  parent      atriumComment? @relation("AtriumCommentParent", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     atriumComment[] @relation("AtriumCommentParent")
+  createdBy   users    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([parentId])
+  @@index([createdAt])
+  @@index([deletedAt])
+}
+
+model atriumActivity {
+  id            String   @id @default(ulid())
+  documentId    String   @db.VarChar(30)
+  activityType  String   @db.VarChar(50) // CREATED, UPDATED, VIEWED, SHARED, COMMENTED, DELETED
+  description   String?  @db.VarChar(500)
+  metadata      Json?    @default("{}")
+  performedById String   @db.VarChar(30)
+  createdAt     DateTime @default(now())
+  
+  // Relations
+  document      atriumDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  performedBy   users    @relation(fields: [performedById], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([activityType])
+  @@index([createdAt])
+  @@index([performedById])
+}
+
 enum UserRole {
   SUPER_ADMIN
   WORKSPACE_ADMIN
@@ -1050,6 +1295,13 @@ enum Permission {
   ACTION_VIEW
   AUDIT_VIEW
   AUDIT_EXPORT
+  OASIS_ACCESS
+  STACKS_ACCESS
+  ATRIUM_ACCESS
+  REVENUEOS_ACCESS
+  METRICS_ACCESS
+  CHRONICLE_ACCESS
+  DESKTOP_DOWNLOAD_ACCESS
 }
 
 enum ActionStatus {

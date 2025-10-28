@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
-import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 import { ActionGuideLeftPanel } from "./components/ActionGuideLeftPanel";
@@ -84,7 +84,7 @@ export default function ActionGuideLayout({ children }: ActionGuideLayoutProps) 
       searchQuery,
       setSearchQuery
     }}>
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <ZoomProvider>
           <ProfilePopupProvider>
             <ActionGuideLayoutContent>
@@ -92,13 +92,13 @@ export default function ActionGuideLayout({ children }: ActionGuideLayoutProps) 
             </ActionGuideLayoutContent>
           </ProfilePopupProvider>
         </ZoomProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     </ActionGuideContext.Provider>
   );
 }
 
 function ActionGuideLayoutContent({ children }: { children: React.ReactNode }) {
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
 
   return (
     <PanelLayout

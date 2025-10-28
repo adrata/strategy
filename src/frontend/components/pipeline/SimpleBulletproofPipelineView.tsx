@@ -10,7 +10,7 @@
 import React from 'react';
 // Removed deleted PipelineDataStore - using unified data system
 import { PipelineTable } from './PipelineTable';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 
 interface SimpleBulletproofPipelineViewProps {
   section: string;
@@ -19,10 +19,10 @@ interface SimpleBulletproofPipelineViewProps {
 export function SimpleBulletproofPipelineView({ section }: SimpleBulletproofPipelineViewProps) {
   console.log(`🚨🚨🚨 [BULLETPROOF VIEW] Starting for section: ${section}`);
   
-  // 🆕 CRITICAL FIX: Use useAcquisitionOS for consistent data source
-  const { data: acquisitionData } = useAcquisitionOS();
+  // 🆕 CRITICAL FIX: Use useRevenueOS for consistent data source
+  const { data: acquisitionData } = useRevenueOS();
   
-  console.log(`🚨🚨🚨 [BULLETPROOF VIEW] Using useAcquisitionOS data source`);
+  console.log(`🚨🚨🚨 [BULLETPROOF VIEW] Using useRevenueOS data source`);
   
   // Map acquisition data to the requested section
   const getSectionData = (section: string) => {

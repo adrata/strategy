@@ -25,7 +25,7 @@ import {
   ProfilePopupProvider,
   useProfilePopup,
 } from "@/platform/ui/components/ProfilePopupContext";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { WorkspaceDataRouter } from "@/platform/services/workspace-data-router";
 import { ACTION_PLATFORM_APPS } from "@/platform/config";
 import { useUnifiedAuth } from "@/platform/auth";
@@ -95,7 +95,7 @@ function AcquisitionOSLayoutInner({
       toggleLeftPanel,
       detailViewType,
     },
-  } = useAcquisitionOS();
+  } = useRevenueOS();
 
   // Left panel visibility - allow all apps to show left panel
   const effectiveLeftPanelVisible = shouldShowLeftPanel;

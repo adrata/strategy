@@ -176,7 +176,7 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-semibold text-[var(--foreground)]">
-              {getChatDisplayName(chats.find((c) => c['id'] === selectedChat.id))}
+              {selectedChat['type'] === "channel" ? `#${selectedChat.name}` : getChatDisplayName(chats.find((c) => c['id'] === selectedChat.id))}
             </h1>
             {selectedChat['type'] === "channel" && (
               <div className="text-sm text-[var(--muted)]">
@@ -263,7 +263,7 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
                         )}
                     </div>
                   )}
-                  <div className="text-[var(--foreground)] text-sm leading-relaxed whitespace-pre-wrap break-words">
+                  <div className="text-[var(--foreground)] text-base leading-relaxed whitespace-pre-wrap break-words">
                     {isEditing ? (
                       <div className="flex flex-col gap-2">
                         <textarea

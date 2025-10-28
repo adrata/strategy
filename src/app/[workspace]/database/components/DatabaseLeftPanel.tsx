@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useDatabase } from "../layout";
 import { DatabaseTable } from "../types";
 import { getStreamlinedModels, ParsedModel } from "../utils/schemaParser";
@@ -16,7 +16,7 @@ interface DatabaseLeftPanelProps {
 export function DatabaseLeftPanel({ activeSection, onSectionChange }: DatabaseLeftPanelProps) {
   const router = useRouter();
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const { setSelectedTable, setViewMode } = useDatabase();
   
   const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || authUser?.activeWorkspaceId;

@@ -381,6 +381,16 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
           };
         });
 
+        // Filter out current person when showing co-workers (for person/lead/prospect records)
+        const filteredPeopleList = peopleList.filter((person: any) => {
+          // For co-workers view, exclude the current person
+          if (['people', 'leads', 'prospects'].includes(recordType)) {
+            return !person.isPrimary;
+          }
+          // For company view, show all people including the current person
+          return true;
+        });
+
         // Sort people: Decision Makers > Champions > Stakeholders > Introducers
         const rolePriority = {
           'Decision Maker': 1,
@@ -396,7 +406,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
           'low': 3
         };
 
-        const sortedPeople = peopleList.sort((a, b) => {
+        const sortedPeople = filteredPeopleList.sort((a, b) => {
           // Primary sort: by rank
           const aRank = a.rank || 999;
           const bRank = b.rank || 999;
@@ -481,10 +491,13 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
         <div className="text-center py-12">
           <BuildingOfficeIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
           <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
-            No People Found
+            {['people', 'leads', 'prospects'].includes(recordType) ? 'No Co-Workers Found' : 'No People Found'}
           </h3>
           <p className="text-[var(--muted)]">
-            This company doesn&apos;t have any people associated with it yet.
+            {['people', 'leads', 'prospects'].includes(recordType) 
+              ? 'This person doesn\'t have any co-workers at their company yet.'
+              : 'This company doesn\'t have any people associated with it yet.'
+            }
           </p>
         </div>
       )}
@@ -492,7 +505,9 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       {/* People List */}
       {!loading && people.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">People</h3>
+          <h3 className="text-lg font-semibold text-[var(--foreground)]">
+            {['people', 'leads', 'prospects'].includes(recordType) ? 'Co-Workers' : 'People'}
+          </h3>
           <div className="space-y-3">
             {people.map((person, index) => {
               const riskAssessment = riskAssessments[person.id] || calculatePersonRisk(person);

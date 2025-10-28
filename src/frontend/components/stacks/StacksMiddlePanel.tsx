@@ -17,12 +17,17 @@ import {
 import { StacksMetrics } from './StacksMetrics';
 import { StacksItemList } from './StacksItemList';
 import { StacksItemDetail } from './StacksItemDetail';
+import { StacksBoard } from './StacksBoard';
+import { StacksBacklogList } from './StacksBacklogList';
+import { StacksBacklogTable } from './StacksBacklogTable';
+import { StacksFilters } from './StacksFilters';
 
 interface StacksMiddlePanelProps {
   activeSubSection: string;
   selectedItem: any;
   onItemClick: (item: any) => void;
   isLoading: boolean;
+  storyId?: string;
 }
 
 interface StacksItem {
@@ -171,12 +176,71 @@ export function StacksMiddlePanel({
   activeSubSection, 
   selectedItem, 
   onItemClick, 
-  isLoading 
+  isLoading,
+  storyId
 }: StacksMiddlePanelProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [detailItem, setDetailItem] = useState<StacksItem | null>(null);
+  const [sortField, setSortField] = useState('priority');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [visibleColumns, setVisibleColumns] = useState(['title', 'priority', 'status', 'assignee', 'epic', 'workstream', 'dueDate', 'timeInStatus']);
+  const [filters, setFilters] = useState({
+    priority: 'all',
+    status: 'all',
+    workstream: 'all',
+    assignee: 'all'
+  });
+
+  // Handle story detail view when storyId is provided
+  useEffect(() => {
+    if (storyId && !selectedItem) {
+      // TODO: Fetch story details from API using storyId
+      // For now, we'll show a placeholder
+      console.log('Loading story details for:', storyId);
+    }
+  }, [storyId, selectedItem]);
+
+  // Show story detail view if storyId is provided
+  if (storyId) {
+    return (
+      <div className="h-full flex flex-col bg-[var(--background)]">
+        {/* Header */}
+        <div className="p-4 border-b border-[var(--border)]">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold text-[var(--foreground)]">
+                Story Details
+              </h1>
+              <p className="text-sm text-[var(--muted)] mt-1">
+                Story ID: {storyId}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Story Detail Content */}
+        <div className="flex-1 overflow-hidden p-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-200 rounded w-full"></div>
+                <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                <div className="h-3 bg-gray-200 rounded w-4/6"></div>
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 mt-4">
+              Story detail view coming soon...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Get items based on active section
   const getItemsForSection = (section: string): StacksItem[] => {
@@ -215,6 +279,28 @@ export function StacksMiddlePanel({
   const handleCloseDetail = () => {
     setShowDetailModal(false);
     setDetailItem(null);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleSortChange = (field: string) => {
+    setSortField(field);
+    // Toggle direction if same field, otherwise default to desc
+    if (sortField === field) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortDirection('desc');
+    }
+  };
+
+  const handleFilterChange = (newFilters: any) => {
+    setFilters(newFilters);
+  };
+
+  const handleColumnVisibilityChange = (columns: string[]) => {
+    setVisibleColumns(columns);
   };
 
   // Handle special sections that don't use the item list interface
@@ -295,7 +381,7 @@ export function StacksMiddlePanel({
             </div>
             <button
               onClick={handleCreateItem}
-              className="flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-lg hover:bg-[var(--primary)]/90 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
             >
               <PlusIcon className="h-4 w-4" />
               New {activeSubSection.slice(0, -1)}
@@ -305,13 +391,12 @@ export function StacksMiddlePanel({
           {/* Search and Filters */}
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-md">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
               <input
                 type="text"
                 placeholder={`Search ${activeSubSection}...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
               />
             </div>
             
@@ -353,7 +438,65 @@ export function StacksMiddlePanel({
     );
   }
 
-  // Default fallback for other sections (like 'stacks', 'backlog')
+  // Handle stacks section
+  if (activeSubSection === 'stacks' || activeSubSection === 'stacks-build') {
+    return (
+      <div className="h-full flex flex-col bg-[var(--background)]">
+        {/* Header */}
+        <div className="p-4 border-b border-[var(--border)]">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold text-[var(--foreground)]">
+                Stacks
+              </h1>
+              <p className="text-sm text-[var(--muted)] mt-1">
+                Visual task management board
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+                <button
+                  onClick={handleCreateItem}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  Add Story
+                </button>
+            </div>
+          </div>
+
+          {/* Search and Filters */}
+          <StacksFilters
+            section="stories"
+            totalCount={0} // TODO: Get actual count from data
+            onSearchChange={handleSearchChange}
+            onSortChange={handleSortChange}
+            onFilterChange={handleFilterChange}
+            onColumnVisibilityChange={handleColumnVisibilityChange}
+            visibleColumns={visibleColumns}
+            sortField={sortField}
+            sortDirection={sortDirection}
+          />
+        </div>
+
+        {/* Stacks Board Content */}
+        <div className="flex-1 overflow-hidden">
+          <StacksBoard onCardClick={onItemClick} />
+        </div>
+      </div>
+    );
+  }
+
+  // Handle backlog section (both sell and build)
+  if (activeSubSection === 'backlog' || activeSubSection === 'backlog-build') {
+    return <StacksBacklogTable onItemClick={onItemClick} />;
+  }
+
+  // Handle deep backlog section (both sell and build)
+  if (activeSubSection === 'deep-backlog' || activeSubSection === 'deep-backlog-build') {
+    return <StacksBacklogList onItemClick={onItemClick} />;
+  }
+
+  // Default fallback for other sections
   return (
     <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Header */}
@@ -369,7 +512,7 @@ export function StacksMiddlePanel({
           </div>
           <button
             onClick={handleCreateItem}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-lg hover:bg-[var(--primary)]/90 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
           >
             <PlusIcon className="h-4 w-4" />
             New Task
@@ -378,29 +521,29 @@ export function StacksMiddlePanel({
 
         {/* Search and Filters */}
         <div className="flex items-center gap-4">
-          <div className="relative flex-1 max-w-md">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
+          <div className="relative flex-1">
             <input
               type="text"
-              placeholder="Search tasks..."
+              placeholder="Search Stacks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
             />
           </div>
           
           <div className="flex items-center gap-2">
-            <FunnelIcon className="h-4 w-4 text-[var(--muted)]" />
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-            >
-              <option value="all">All Status</option>
-              <option value="todo">To Do</option>
-              <option value="in-progress">In Progress</option>
-              <option value="done">Done</option>
-            </select>
+            <button className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] border border-[var(--border)] rounded-lg transition-colors">
+              <AdjustmentsHorizontalIcon className="h-4 w-4" />
+              Sort
+            </button>
+            <button className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] border border-[var(--border)] rounded-lg transition-colors">
+              <FunnelIcon className="h-4 w-4" />
+              Filter
+            </button>
+            <button className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] border border-[var(--border)] rounded-lg transition-colors">
+              <AdjustmentsHorizontalIcon className="h-4 w-4" />
+              Columns
+            </button>
           </div>
         </div>
       </div>

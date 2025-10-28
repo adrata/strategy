@@ -7,6 +7,8 @@
  */
 
 import { ApplicationContextService } from './ApplicationContextService';
+import { promptInjectionGuard } from '@/platform/security/prompt-injection-guard';
+import { systemPromptProtector } from '@/platform/security/system-prompt-protector';
 
 export interface OpenRouterRequest {
   message: string;
@@ -229,6 +231,48 @@ export class OpenRouterService {
       return this.generateFallbackResponse(request, startTime);
     }
 
+    // SECURITY: Input sanitization and injection detection
+    const injectionDetection = promptInjectionGuard.detectInjection(request.message, {
+      userId: request.userId,
+      workspaceId: request.workspaceId,
+      conversationHistory: request.conversationHistory
+    });
+
+    // Block critical and high-risk injection attempts
+    if (injectionDetection.isInjection && 
+        (injectionDetection.riskLevel === 'critical' || injectionDetection.riskLevel === 'high')) {
+      console.warn('🚨 [OPENROUTER] Prompt injection blocked:', {
+        userId: request.userId,
+        workspaceId: request.workspaceId,
+        attackType: injectionDetection.attackType,
+        riskLevel: injectionDetection.riskLevel,
+        confidence: injectionDetection.confidence,
+        blockedPatterns: injectionDetection.blockedPatterns
+      });
+
+      return {
+        response: "I'm sorry, but I cannot process that request. Please rephrase your message and try again.",
+        model: 'blocked',
+        provider: 'Security',
+        tokensUsed: 0,
+        cost: 0,
+        processingTime: Date.now() - startTime,
+        confidence: 0.1,
+        routingInfo: {
+          complexity: 0,
+          selectedModel: 'blocked',
+          fallbackUsed: false,
+          failoverChain: []
+        }
+      };
+    }
+
+    // Use sanitized input
+    const sanitizedRequest = {
+      ...request,
+      message: injectionDetection.sanitizedInput
+    };
+
     try {
       // Generate cache key
       const cacheKey = this.generateCacheKey(request);
@@ -244,18 +288,18 @@ export class OpenRouterService {
       }
 
       // Analyze query complexity
-      const complexity = this.analyzeQueryComplexity(request);
+      const complexity = this.analyzeQueryComplexity(sanitizedRequest);
       console.log('🧠 [OPENROUTER] Query complexity:', complexity);
 
       // Select appropriate model chain
-      const modelChain = this.selectModelChain(complexity, request);
+      const modelChain = this.selectModelChain(complexity, sanitizedRequest);
       console.log('🎯 [OPENROUTER] Model chain:', modelChain);
 
       // Try models in order with failover
       let lastError: Error | null = null;
       for (const modelId of modelChain) {
         try {
-          const response = await this.callOpenRouter(modelId, request, complexity);
+          const response = await this.callOpenRouter(modelId, sanitizedRequest, complexity);
           
           // Cache successful response
           this.responseCache.set(cacheKey, response);
@@ -581,7 +625,7 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
   private buildSystemPrompt(request: OpenRouterRequest, complexity: any): string {
     const { appType, currentRecord, recordType, pageContext } = request;
     
-    let prompt = `You are Adrata's AI assistant, specialized in sales intelligence and pipeline optimization. `;
+    let basePrompt = `You are Adrata's AI assistant, specialized in sales intelligence and pipeline optimization. `;
     
     // Add comprehensive page context using ApplicationContextService
     if (pageContext) {
@@ -643,9 +687,16 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
       prompt += `\n\nThis is a simple query. Provide a concise, direct answer.`;
     }
 
-    prompt += `\n\nAlways be helpful, accurate, and focused on sales intelligence and business outcomes.`;
+    basePrompt += `\n\nAlways be helpful, accurate, and focused on sales intelligence and business outcomes.`;
 
-    return prompt;
+    // SECURITY: Protect the system prompt with injection resistance
+    const protectedPrompt = systemPromptProtector.createSecureTemplate(
+      basePrompt,
+      'openrouter',
+      { protectionLevel: 'enhanced' }
+    );
+
+    return protectedPrompt;
   }
 
   /**

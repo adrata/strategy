@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useUnifiedAuth } from "@/platform/auth";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 
 interface TowerLeftPanelProps {
   activeSection: string;
@@ -11,7 +11,7 @@ interface TowerLeftPanelProps {
 
 export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPanelProps) {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   
   const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || authUser?.activeWorkspaceId;
   const userId = authUser?.id;

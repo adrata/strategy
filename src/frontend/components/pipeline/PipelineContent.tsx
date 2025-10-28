@@ -22,7 +22,7 @@ import { StandardHeader } from '@/platform/ui/components/layout/StandardHeader';
 import { useUnifiedAuth } from '@/platform/auth';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
 // Removed usePipelineData import - using useFastSectionData exclusively
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 import { Pagination } from './table/Pagination';
@@ -73,7 +73,7 @@ export const PipelineContent = React.memo(function PipelineContent({
   const router = useRouter();
   const { navigateToPipeline, navigateToPipelineItem } = useWorkspaceNavigation();
   const { user } = useUnifiedAuth();
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   
   // Pipeline context for user data
   const { 
@@ -231,8 +231,8 @@ export const PipelineContent = React.memo(function PipelineContent({
     }
   }, [section]);
   
-  // Use single data source from useAcquisitionOS for dashboard only
-  const { data: acquisitionData } = useAcquisitionOS();
+  // Use single data source from useRevenueOS for dashboard only
+  const { data: acquisitionData } = useRevenueOS();
   
   const workspaceId = currentWorkspaceId;
   

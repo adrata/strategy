@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 
 interface UseWorkspaceContextReturn {
   workspaceId: string | null;
@@ -25,7 +25,7 @@ interface UseWorkspaceContextReturn {
 
 export function useWorkspaceContext(): UseWorkspaceContextReturn {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   
   const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);

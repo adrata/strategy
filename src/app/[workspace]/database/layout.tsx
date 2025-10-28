@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
-import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 import { DatabaseLeftPanel } from "./components/DatabaseLeftPanel";
@@ -58,7 +58,7 @@ export default function DatabaseLayout({ children }: DatabaseLayoutProps) {
       setViewMode, 
       refreshData 
     }}>
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <ZoomProvider>
           <ProfilePopupProvider>
             <DatabaseLayoutContent 
@@ -69,7 +69,7 @@ export default function DatabaseLayout({ children }: DatabaseLayoutProps) {
             </DatabaseLayoutContent>
           </ProfilePopupProvider>
         </ZoomProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     </DatabaseContext.Provider>
   );
 }
@@ -130,7 +130,7 @@ function DatabaseLayoutContent({
   onSectionChange: (section: string) => void;
 }) {
   // Now we can use the context hooks since we're inside the providers
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
 
   return (
     <PanelLayout

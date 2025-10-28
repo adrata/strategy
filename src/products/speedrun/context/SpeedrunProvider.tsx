@@ -12,7 +12,7 @@ import {
   getWeeklyProgress,
 } from "../state";
 import { useUnifiedAuth } from "@/platform/auth";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
 import { dailyResetService } from "../services/daily-reset-service";
 import { authFetch } from "@/platform/api-fetch";
@@ -144,7 +144,7 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
   }
 
   try {
-    const actionPlatformResult = useAcquisitionOS();
+    const actionPlatformResult = useRevenueOS();
     acquireData = actionPlatformResult?.data?.acquireData;
     console.log(
       "✅ SpeedrunProvider: useActionPlatform successful",

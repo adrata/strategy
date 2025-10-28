@@ -139,6 +139,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
             { id: 'actions', label: 'Actions' },
             { id: 'intelligence', label: 'Intelligence' },
             { id: 'company', label: 'Company' },
+            { id: 'co-workers', label: 'Co-Workers' },
             { id: 'career', label: 'Career' },
             { id: 'notes', label: 'Notes' }
           ];
@@ -148,6 +149,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         { id: 'actions', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'company', label: 'Company' },
+        { id: 'co-workers', label: 'Co-Workers' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
       ];
@@ -177,6 +179,7 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
         { id: 'actions', label: 'Actions' },
         { id: 'intelligence', label: 'Intelligence' },
         { id: 'company', label: 'Company' },
+        { id: 'co-workers', label: 'Co-Workers' },
         { id: 'career', label: 'Career' },
         { id: 'notes', label: 'Notes' }
       ];
@@ -379,8 +382,18 @@ export function UniversalRecordTemplate({
   const [deleteConfirmName, setDeleteConfirmName] = useState('');
 
   const tabs = useMemo(() => {
-    return customTabs || getTabsForRecordType(recordType, record);
-  }, [customTabs, recordType, record?.company, record?.companyName]);
+    const baseTabs = customTabs || getTabsForRecordType(recordType, record);
+    
+    // Filter out co-workers tab if person doesn't have a company associated
+    if (['leads', 'prospects', 'people'].includes(recordType)) {
+      const hasCompany = record?.companyId || record?.company;
+      if (!hasCompany) {
+        return baseTabs.filter(tab => tab.id !== 'co-workers');
+      }
+    }
+    
+    return baseTabs;
+  }, [customTabs, recordType, record?.company, record?.companyName, record?.companyId]);
   
   // Function to update URL with tab parameter
   const updateURLTab = (tabId: string) => {
@@ -1194,10 +1207,10 @@ export function UniversalRecordTemplate({
         localStorage.removeItem(`adrata-fast-counts-${workspaceId}`);   // all record types affect counts
         
         // Clear acquisition OS cache (used by PipelineDetailPage)
-        // The unified cache system uses keys like: adrata-cache-acquisition-os:v4:${workspaceId}:${userId}
+        // The unified cache system uses keys like: adrata-cache-revenue-os:v4:${workspaceId}:${userId}
         const cacheKeys = Object.keys(localStorage);
         cacheKeys.forEach(key => {
-          if (key.startsWith('adrata-cache-acquisition-os:') && key.includes(workspaceId)) {
+          if (key.startsWith('adrata-cache-revenue-os:') && key.includes(workspaceId)) {
             localStorage.removeItem(key);
             console.log(`🗑️ [CACHE] Cleared unified cache: ${key}`);
           }
@@ -1208,7 +1221,7 @@ export function UniversalRecordTemplate({
           const swrCache = (window as any).__SWR_CACHE__;
           const swrKeys = Array.from(swrCache.keys()) as string[];
           swrKeys.forEach((key: string) => {
-            if (key.includes('acquisition-os') && key.includes(workspaceId)) {
+            if (key.includes('revenue-os') && key.includes(workspaceId)) {
               swrCache.delete(key);
               console.log(`🗑️ [CACHE] Cleared SWR cache: ${key}`);
             }
@@ -1227,7 +1240,7 @@ export function UniversalRecordTemplate({
             `adrata-companies-${workspaceId}`,
             `adrata-speedrun-${workspaceId}`,
             `adrata-fast-counts-${workspaceId}`,
-            'acquisition-os:*'
+            'revenue-os:*'
           ]
         });
         
@@ -1595,7 +1608,7 @@ export function UniversalRecordTemplate({
               // Clear unified cache system
               const cacheKeys = Object.keys(localStorage);
               cacheKeys.forEach(key => {
-                if (key.startsWith('adrata-cache-acquisition-os:') && key.includes(workspaceId)) {
+                if (key.startsWith('adrata-cache-revenue-os:') && key.includes(workspaceId)) {
                   localStorage.removeItem(key);
                 }
               });
@@ -1605,7 +1618,7 @@ export function UniversalRecordTemplate({
                 const swrCache = (window as any).__SWR_CACHE__;
                 const swrKeys = Array.from(swrCache.keys()) as string[];
                 swrKeys.forEach((key: string) => {
-                  if (key.includes('acquisition-os') && key.includes(workspaceId)) {
+                  if (key.includes('revenue-os') && key.includes(workspaceId)) {
                     swrCache.delete(key);
                   }
                 });
@@ -1712,7 +1725,7 @@ export function UniversalRecordTemplate({
                 // Clear unified cache system
                 const cacheKeys = Object.keys(localStorage);
                 cacheKeys.forEach(key => {
-                  if (key.startsWith('adrata-cache-acquisition-os:') && key.includes(workspaceId)) {
+                  if (key.startsWith('adrata-cache-revenue-os:') && key.includes(workspaceId)) {
                     localStorage.removeItem(key);
                   }
                 });
@@ -1722,7 +1735,7 @@ export function UniversalRecordTemplate({
                   const swrCache = (window as any).__SWR_CACHE__;
                   const swrKeys = Array.from(swrCache.keys()) as string[];
                   swrKeys.forEach((key: string) => {
-                    if (key.includes('acquisition-os') && key.includes(workspaceId)) {
+                    if (key.includes('revenue-os') && key.includes(workspaceId)) {
                       swrCache.delete(key);
                     }
                   });
@@ -1924,6 +1937,21 @@ export function UniversalRecordTemplate({
         targetId,
         recordType
       });
+
+      // Special logging for linkedinNavigatorUrl field
+      if (field === 'linkedinNavigatorUrl') {
+        console.log(`🔍 [LINKEDIN NAVIGATOR AUDIT] Special handling for linkedinNavigatorUrl:`, {
+          field,
+          apiField,
+          value,
+          targetModel,
+          targetId,
+          recordType,
+          fieldMapping,
+          isPersonalField: personalFields.includes(field),
+          isCompanyField: companyFields.includes(field)
+        });
+      }
       
       // Special debug for legalName
       if (field === 'legalName') {
@@ -2046,6 +2074,22 @@ export function UniversalRecordTemplate({
         fieldInResponseMapped: result.data?.[apiField],
         allResponseFields: Object.keys(result.data || {})
       });
+
+      // Special logging for linkedinNavigatorUrl API response
+      if (field === 'linkedinNavigatorUrl') {
+        console.log(`🔍 [LINKEDIN NAVIGATOR API RESPONSE] API response analysis for linkedinNavigatorUrl:`, {
+          field,
+          apiField,
+          expectedValue: value,
+          responseData: result.data,
+          fieldInResponse: result.data?.[field],
+          fieldInResponseMapped: result.data?.[apiField],
+          linkedinNavigatorUrlInResponse: result.data?.linkedinNavigatorUrl,
+          allResponseFields: Object.keys(result.data || {}),
+          responseSuccess: result.success,
+          responseError: result.error
+        });
+      }
       
       // Verify the update was successful
       if (!result.success) {
@@ -2175,6 +2219,21 @@ export function UniversalRecordTemplate({
           updatedRecord: updatedRecord,
           actualValue
         });
+
+        // Special logging for linkedinNavigatorUrl onRecordUpdate
+        if (field === 'linkedinNavigatorUrl') {
+          console.log(`🔍 [LINKEDIN NAVIGATOR ONRECORDUPDATE] onRecordUpdate for linkedinNavigatorUrl:`, {
+            field,
+            apiField,
+            originalValue: value,
+            actualValue,
+            resultData: result.data,
+            mappedResponseData,
+            updatedRecordLinkedinNavigatorUrl: updatedRecord.linkedinNavigatorUrl,
+            originalRecordLinkedinNavigatorUrl: record.linkedinNavigatorUrl
+          });
+        }
+
         onRecordUpdate(updatedRecord);
         console.log(`🔄 [UNIVERSAL] Updated parent record state:`, updatedRecord);
       } else if (onRecordUpdate) {
@@ -2298,7 +2357,7 @@ export function UniversalRecordTemplate({
         // Clear unified cache system
         const cacheKeys = Object.keys(localStorage);
         cacheKeys.forEach(key => {
-          if (key.startsWith('adrata-cache-acquisition-os:') && key.includes(workspaceId)) {
+          if (key.startsWith('adrata-cache-revenue-os:') && key.includes(workspaceId)) {
             localStorage.removeItem(key);
           }
         });
@@ -2308,7 +2367,7 @@ export function UniversalRecordTemplate({
           const swrCache = (window as any).__SWR_CACHE__;
           const swrKeys = Array.from(swrCache.keys()) as string[];
           swrKeys.forEach((key: string) => {
-            if (key.includes('acquisition-os') && key.includes(workspaceId)) {
+            if (key.includes('revenue-os') && key.includes(workspaceId)) {
               swrCache.delete(key);
             }
           });
@@ -2382,7 +2441,7 @@ export function UniversalRecordTemplate({
             `adrata-companies-${workspaceId}`,
             `adrata-speedrun-${workspaceId}`,
             `adrata-fast-counts-${workspaceId}`,
-            'acquisition-os:*'
+            'revenue-os:*'
           ],
           forceRefreshFlags: [
             `force-refresh-${recordType}-${record.id}`,
@@ -2415,7 +2474,7 @@ export function UniversalRecordTemplate({
         if (value === 'LEAD') targetSection = 'leads';
         else if (value === 'PROSPECT') targetSection = 'prospects';
         else if (value === 'OPPORTUNITY') targetSection = 'opportunities';
-        else if (value === 'CLIENT' || value === 'CUSTOMER') targetSection = 'clients';
+        else if (value === 'CLIENT' || value === 'CUSTOMER' || value === 'SUPERFAN') targetSection = 'clients';
         
         window.dispatchEvent(new CustomEvent('refresh-counts', {
           detail: { 
@@ -2447,13 +2506,32 @@ export function UniversalRecordTemplate({
     console.log('Person added to company:', newPerson);
     setIsAddPersonModalOpen(false);
     
+    // Dispatch refresh events for immediate table update
+    window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+      detail: { 
+        section: 'leads',
+        type: 'record-created',
+        recordId: newPerson.id 
+      }
+    }));
+    
+    window.dispatchEvent(new CustomEvent('refresh-counts', {
+      detail: { 
+        section: 'leads',
+        type: 'record-created'
+      }
+    }));
+    
+    // Trigger router refresh for server-side data
+    router.refresh();
+    
     // Optionally refresh the record data
     if (onRecordUpdate) {
       await onRecordUpdate(record.id);
     }
     
     // Show success message
-    showMessage('Person added successfully!', 'success');
+    showMessage(`Person ${newPerson.fullName || newPerson.firstName + ' ' + newPerson.lastName} added successfully!`, 'success');
   };
 
   // Handle company added and associate with person/lead/prospect
@@ -2553,7 +2631,7 @@ export function UniversalRecordTemplate({
         // Clear acquisition OS cache (used by PipelineDetailPage)
         const cacheKeys = Object.keys(localStorage);
         cacheKeys.forEach(key => {
-          if (key.startsWith('adrata-cache-acquisition-os:') && key.includes(workspaceId)) {
+          if (key.startsWith('adrata-cache-revenue-os:') && key.includes(workspaceId)) {
             localStorage.removeItem(key);
             console.log(`🗑️ [CACHE] Cleared unified cache: ${key}`);
           }
@@ -2564,7 +2642,7 @@ export function UniversalRecordTemplate({
           const swrCache = (window as any).__SWR_CACHE__;
           const swrKeys = Array.from(swrCache.keys()) as string[];
           swrKeys.forEach((key: string) => {
-            if (key.includes('acquisition-os') && key.includes(workspaceId)) {
+            if (key.includes('revenue-os') && key.includes(workspaceId)) {
               swrCache.delete(key);
               console.log(`🗑️ [CACHE] Cleared SWR cache: ${key}`);
             }
@@ -2583,7 +2661,7 @@ export function UniversalRecordTemplate({
             `adrata-companies-${workspaceId}`,
             `adrata-speedrun-${workspaceId}`,
             `adrata-fast-counts-${workspaceId}`,
-            'acquisition-os:*'
+            'revenue-os:*'
           ]
         });
         
@@ -2610,8 +2688,27 @@ export function UniversalRecordTemplate({
         }
       }));
       
+      // Dispatch refresh events for immediate table update
+      window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+        detail: { 
+          section: 'companies',
+          type: 'record-created',
+          recordId: newCompany.id 
+        }
+      }));
+      
+      window.dispatchEvent(new CustomEvent('refresh-counts', {
+        detail: { 
+          section: 'companies',
+          type: 'record-created'
+        }
+      }));
+      
+      // Trigger router refresh for server-side data
+      router.refresh();
+      
       // Show success message
-      showMessage('Company added and associated successfully!', 'success');
+      showMessage(`Company ${newCompany.name} added and associated successfully!`, 'success');
       
     } catch (error) {
       console.error('❌ [UNIVERSAL] Error associating company:', {
@@ -3708,6 +3805,11 @@ export function UniversalRecordTemplate({
           return renderTabWithErrorBoundary(
             <UniversalPeopleTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
+        case 'co-workers':
+          console.log(`👥 [UNIVERSAL] Rendering co-workers tab for ${recordType}`);
+          return renderTabWithErrorBoundary(
+            <UniversalPeopleTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
+          );
         case 'competitors':
           console.log(`🏢 [UNIVERSAL] Rendering competitors tab for ${recordType}`);
           return renderTabWithErrorBoundary(
@@ -4088,6 +4190,35 @@ export function UniversalRecordTemplate({
               */}
             </div>
             <div>
+              {/* Stage Pill - Only show for person records */}
+              {recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'speedrun' ? (
+                <div className="mb-2">
+                  <InlineEditField
+                    value={record?.status || record?.stage || 'LEAD'}
+                    field="status"
+                    onSave={handleInlineFieldSave}
+                    recordId={record?.id || ''}
+                    recordType={recordType}
+                    onSuccess={() => {}}
+                    inputType="select"
+                    options={[
+                      { value: 'LEAD', label: 'Lead' },
+                      { value: 'PROSPECT', label: 'Prospect' },
+                      { value: 'OPPORTUNITY', label: 'Opportunity' },
+                      { value: 'CLIENT', label: 'Client' },
+                      { value: 'SUPERFAN', label: 'Superfan' }
+                    ]}
+                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                      (record?.status || record?.stage) === 'LEAD' ? 'bg-blue-100 text-blue-800' :
+                      (record?.status || record?.stage) === 'PROSPECT' ? 'bg-purple-100 text-purple-800' :
+                      (record?.status || record?.stage) === 'OPPORTUNITY' ? 'bg-yellow-100 text-yellow-800' :
+                      (record?.status || record?.stage) === 'CLIENT' ? 'bg-green-100 text-green-800' :
+                      (record?.status || record?.stage) === 'SUPERFAN' ? 'bg-pink-100 text-pink-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}
+                  />
+                </div>
+              ) : null}
               <h1 className="text-2xl font-bold text-[var(--foreground)] mb-1">{getDisplayName()}</h1>
               <p className="text-sm text-[var(--muted)]">{getSubtitle()}</p>
             </div>

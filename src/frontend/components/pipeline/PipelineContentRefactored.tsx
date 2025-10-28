@@ -10,7 +10,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { usePipeline } from "@/products/pipeline/context/PipelineContext";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { useProfilePopup } from "@/platform/ui/components/ProfilePopupContext";
@@ -43,7 +43,7 @@ export function PipelineContentRefactored({
   const router = useRouter();
   const { navigateToPipeline, navigateToPipelineItem } = useWorkspaceNavigation();
   const { user } = useUnifiedAuth();
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   
   // Pipeline context for user data
   const { 
@@ -68,7 +68,7 @@ export function PipelineContentRefactored({
   const config = getPipelineContentConfig(section);
   
   // Get data from acquisition context
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const data = mapAcquisitionDataToSection(acquisitionData?.acquireData, section);
   
   // Local state for filters and sorting

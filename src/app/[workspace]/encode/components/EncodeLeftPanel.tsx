@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useEncode } from "../layout";
 import { FileTree } from "./FileTree";
 import { useUnifiedAuth } from "@/platform/auth";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { FileSystemService } from "../services/FileSystemService";
 import { 
   FolderIcon,
@@ -42,7 +42,7 @@ export function EncodeLeftPanel() {
   } = useEncode();
 
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const fileSystemService = FileSystemService.getInstance();
 
   const [projectStats, setProjectStats] = useState<ProjectStats>({

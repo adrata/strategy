@@ -163,8 +163,8 @@ export async function GET(request: NextRequest) {
     const partnersCount = companiesCountsMap.ACTIVE || 0; // Use ACTIVE as fallback for partners
     // Note: sellers table doesn't exist yet - set to 0 for now
     const sellersCount = 0;
-    // Use speedrun count limited to 50 (since speedrun shows "top 50 people to go after")
-    const actualSpeedrunCount = Math.min(50, speedrunCount);
+    // Use actual speedrun count based on qualifying records
+    const actualSpeedrunCount = speedrunCount;
     
     const counts = {
       leads: leadsCount,

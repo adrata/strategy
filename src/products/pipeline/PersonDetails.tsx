@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { formatRelativeDate } from "@/platform/utils";
 import { PipelineSkeleton } from "@/platform/ui/components/Loader";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
 import { InlineEditField } from "@/frontend/components/pipeline/InlineEditField";
 import { SuccessMessage } from "@/platform/ui/components/SuccessMessage";
@@ -58,7 +58,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
   onEditPerson,
   onDeletePerson,
 }) => {
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   const { navigateToPipelineItem } = useWorkspaceNavigation();
   const [activeTab, setActiveTab] = useState("Overview");
   const [currentPerson, setCurrentPerson] = useState(person);

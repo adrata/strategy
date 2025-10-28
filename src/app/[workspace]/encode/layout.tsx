@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
-import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 import { EncodeLeftPanel } from "./components/EncodeLeftPanel";
@@ -302,7 +302,7 @@ export default function EncodeLayout({ children }: EncodeLayoutProps) {
         openFile,
         closeFile,
       }}>
-        <AcquisitionOSProvider>
+        <RevenueOSProvider>
           <ZoomProvider>
             <ProfilePopupProvider>
               <EncodeLayoutContent>
@@ -310,7 +310,7 @@ export default function EncodeLayout({ children }: EncodeLayoutProps) {
               </EncodeLayoutContent>
             </ProfilePopupProvider>
           </ZoomProvider>
-        </AcquisitionOSProvider>
+        </RevenueOSProvider>
       </EncodeContext.Provider>
     </QueryClientProvider>
   );
@@ -318,7 +318,7 @@ export default function EncodeLayout({ children }: EncodeLayoutProps) {
 
 // Layout content component that can use context hooks
 function EncodeLayoutContent({ children }: { children: React.ReactNode }) {
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
 
   return (
     <PanelLayout

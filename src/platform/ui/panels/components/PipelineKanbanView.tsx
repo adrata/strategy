@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useWorkspacePipelineStages } from "@/platform/services/database-only-data-layer";
 
 interface PipelineKanbanViewProps {
@@ -9,7 +9,7 @@ interface PipelineKanbanViewProps {
 }
 
 export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
-  const { ui, data, user } = useAcquisitionOS();
+  const { ui, data, user } = useRevenueOS();
   // PREVENT DEFAULT WORKSPACE POLLUTION: No fallback to 'default'
   const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
   

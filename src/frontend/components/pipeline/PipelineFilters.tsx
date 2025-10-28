@@ -10,7 +10,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 // CRITICAL FIX: Disable PipelineDataStore to eliminate duplicate data loading
 // import { usePipelineData } from '@/platform/stores/PipelineDataStore';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useTablePreferences } from '@/platform/hooks/useTablePreferences';
 import { 
@@ -46,8 +46,8 @@ export function PipelineFilters({ section, totalCount, onSearchChange, onVertica
   const { user } = useUnifiedAuth();
   const workspaceId = user?.activeWorkspaceId || 'default';
   
-  // 🚀 PERFORMANCE: Use single data source from useAcquisitionOS with aggressive caching
-  const { data: acquisitionData } = useAcquisitionOS();
+  // 🚀 PERFORMANCE: Use single data source from useRevenueOS with aggressive caching
+  const { data: acquisitionData } = useRevenueOS();
   
   // 🚀 PERFORMANCE: Map acquisition data to pipeline format for compatibility
   const getSectionData = (section: string) => {

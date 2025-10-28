@@ -102,7 +102,7 @@ function analyzeResponse(response) {
     isJSON: response.data.trim().startsWith('{') || response.data.trim().startsWith('['),
     hasLoadingState: response.data.includes('Loading workspace') || response.data.includes('Initializing authentication'),
     hasError: response.data.includes('Error') || response.data.includes('404') || response.data.includes('500'),
-    hasAuthContent: response.data.includes('AcquisitionOSProvider') || response.data.includes('useAcquisitionOS'),
+    hasAuthContent: response.data.includes('RevenueOSProvider') || response.data.includes('useRevenueOS'),
     hasWorkspaceContent: response.data.includes('Retail Product Solutions') || response.data.includes('rps'),
     hasDataContent: response.data.includes('leads') || response.data.includes('prospects') || response.data.includes('opportunities'),
     hasDefaultWorkspace: response.data.includes('unified-default-default') || response.data.includes('workspaceId=default'),
@@ -222,7 +222,7 @@ async function runComprehensiveDebug() {
   if (stuckInLoading > 0) {
     console.log(`\n🚨 ROOT CAUSE ANALYSIS:`);
     console.log(`  The main issue is that ${stuckInLoading} pages are stuck in "Loading workspace..."`);
-    console.log(`  This indicates the AcquisitionOSProvider is never completing its initialization`);
+    console.log(`  This indicates the RevenueOSProvider is never completing its initialization`);
     console.log(`  Possible causes:`);
     console.log(`    1. Authentication hook (useUnifiedAuth) is stuck`);
     console.log(`    2. Session management is failing`);

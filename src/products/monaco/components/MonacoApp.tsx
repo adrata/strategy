@@ -3,17 +3,17 @@
 import React from "react";
 import { MonacoProvider } from "@/products/monaco/context/MonacoContext";
 import { SpeedrunDataProvider } from "@/platform/services/speedrun-data-context";
-import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
 import { MonacoContainer } from "./MonacoContainer";
 
 export function MonacoApp() {
   return (
-    <AcquisitionOSProvider>
+    <RevenueOSProvider>
       <SpeedrunDataProvider>
         <MonacoProvider>
           <MonacoContainer />
         </MonacoProvider>
       </SpeedrunDataProvider>
-    </AcquisitionOSProvider>
+    </RevenueOSProvider>
   );
 }

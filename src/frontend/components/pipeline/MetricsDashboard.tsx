@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useUnifiedAuth } from '@/platform/auth';
 
 interface MetricCardProps {
@@ -82,7 +82,7 @@ interface DailyActivity {
 }
 
 export function MetricsDashboard() {
-  const { acquisitionData } = useAcquisitionOS();
+  const { acquisitionData } = useRevenueOS();
   const { user } = useUnifiedAuth();
   const [metrics, setMetrics] = useState<any>(null);
   const [loading, setLoading] = useState(true);

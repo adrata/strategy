@@ -29,7 +29,7 @@ import {
   LightBulbIcon,
   ShieldCheckIcon
 } from '@heroicons/react/24/outline';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 
 interface EnhancedDataIntegrationPopupProps {
   isOpen: boolean;
@@ -172,7 +172,7 @@ export function EnhancedDataIntegrationPopup({
   onFileSelect, 
   onAddContext 
 }: EnhancedDataIntegrationPopupProps) {
-  const { workspace, user } = useAcquisitionOS();
+  const { workspace, user } = useRevenueOS();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [activeCategory, setActiveCategory] = useState<string>('files');

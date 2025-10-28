@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 
 interface InfiniteScrollTableProps {
   section: string;
@@ -14,7 +14,7 @@ export function InfiniteScrollTable({
   columns, 
   searchPlaceholder = `Search ${section}...` 
 }: InfiniteScrollTableProps) {
-  const { data, user } = useAcquisitionOS();
+  const { data, user } = useRevenueOS();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredRecords, setFilteredRecords] = useState<any[]>([]);
 

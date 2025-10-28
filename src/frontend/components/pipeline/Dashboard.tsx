@@ -10,7 +10,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { PipelineHeader } from './PipelineHeader';
 import { DashboardSkeleton } from './DashboardSkeleton';
 
@@ -217,8 +217,8 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 export function Dashboard() {
   const { user, isLoading: authLoading } = useUnifiedAuth();
   const router = useRouter();
-  // 🆕 CRITICAL FIX: Use useAcquisitionOS for consistent data source
-  const { data: acquisitionOSData } = useAcquisitionOS();
+  // 🆕 CRITICAL FIX: Use useRevenueOS for consistent data source
+  const { data: acquisitionOSData } = useRevenueOS();
   const acquisitionData = acquisitionOSData.acquireData;
   const acquisitionLoading = acquisitionOSData.loading;
   const [activityData, setActivityData] = useState<WeeklyActivityData | null>(null);

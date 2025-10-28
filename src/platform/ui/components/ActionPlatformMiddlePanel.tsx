@@ -14,7 +14,7 @@
  */
 
 import * as React from "react";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 
 // Import the actual working components
 import { MonacoMiddlePanel } from "@/platform/ui/panels/monaco-middle-panel";
@@ -295,7 +295,7 @@ function SpeedrunMiddlePanelDB() {
 
 // Main component
 export function AcquisitionOSMiddlePanel() {
-  const context = useAcquisitionOS();
+  const context = useRevenueOS();
   const activeSubApp = context?.ui?.activeSubApp;
   
   // Enhanced pipeline URL detection

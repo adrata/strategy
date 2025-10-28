@@ -10,9 +10,33 @@ import { claudeAIService } from '@/platform/services/ClaudeAIService';
 import { openRouterService } from '@/platform/services/OpenRouterService';
 import { modelCostTracker } from '@/platform/services/ModelCostTracker';
 import { gradualRolloutService } from '@/platform/services/GradualRolloutService';
+import { getUnifiedAuthUser } from '@/platform/api-auth';
+import { promptInjectionGuard } from '@/platform/security/prompt-injection-guard';
+import { aiResponseValidator } from '@/platform/security/ai-response-validator';
+import { rateLimiter } from '@/platform/security/rate-limiter';
+import { securityMonitor } from '@/platform/security/security-monitor';
+import { shouldUseRoleFinderTool, parseRoleFindQuery, executeRoleFinderTool } from '@/platform/ai/tools/role-finder-tool';
 
 export async function POST(request: NextRequest) {
   try {
+    // 1. AUTHENTICATION CHECK - Critical security requirement
+    const authUser = await getUnifiedAuthUser(request);
+    if (!authUser) {
+      // Log authentication failure
+      securityMonitor.logAuthenticationFailure(
+        '/api/ai-chat',
+        request.headers.get('user-agent') || undefined,
+        request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+        'No valid authentication token'
+      );
+      
+      return NextResponse.json({
+        success: false,
+        error: 'Authentication required',
+        code: 'AUTH_REQUIRED'
+      }, { status: 401 });
+    }
+
     const body = await request.json();
     
     // Extract the message and other parameters
@@ -43,12 +67,138 @@ export async function POST(request: NextRequest) {
       useOpenRouter
     });
 
-    // Validate required fields
+    // 2. INPUT VALIDATION AND SANITIZATION - Critical security requirement
     if (!message || typeof message !== 'string') {
       return NextResponse.json({
         success: false,
         error: 'Message is required and must be a string'
       }, { status: 400 });
+    }
+
+    // Check for prompt injection attacks
+    const injectionDetection = promptInjectionGuard.detectInjection(message, {
+      userId: authUser.id,
+      workspaceId: authUser.workspaceId || workspaceId,
+      conversationHistory
+    });
+
+    // Block critical and high-risk injection attempts
+    if (injectionDetection.isInjection && 
+        (injectionDetection.riskLevel === 'critical' || injectionDetection.riskLevel === 'high')) {
+      // Log injection attempt
+      securityMonitor.logInjectionAttempt(
+        authUser.id,
+        authUser.workspaceId || workspaceId,
+        '/api/ai-chat',
+        injectionDetection.attackType,
+        injectionDetection.riskLevel,
+        injectionDetection.confidence,
+        injectionDetection.blockedPatterns,
+        message,
+        injectionDetection.sanitizedInput,
+        request.headers.get('user-agent') || undefined,
+        request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined,
+        `ai-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      );
+
+      console.warn('🚨 [AI CHAT] Prompt injection blocked:', {
+        userId: authUser.id,
+        workspaceId: authUser.workspaceId || workspaceId,
+        attackType: injectionDetection.attackType,
+        riskLevel: injectionDetection.riskLevel,
+        confidence: injectionDetection.confidence,
+        blockedPatterns: injectionDetection.blockedPatterns
+      });
+
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid input detected. Please rephrase your message.',
+        code: 'INJECTION_BLOCKED',
+        riskLevel: injectionDetection.riskLevel
+      }, { status: 400 });
+    }
+
+    // Use sanitized input for processing
+    const sanitizedMessage = injectionDetection.sanitizedInput;
+
+    // 2.5. CHECK FOR ROLE FINDER TOOL - Intercept "find CFO at Nike" type queries
+    if (shouldUseRoleFinderTool(sanitizedMessage)) {
+      const roleFinderInput = parseRoleFindQuery(sanitizedMessage);
+      if (roleFinderInput) {
+        console.log('🔧 [AI CHAT] Using Role Finder Tool:', roleFinderInput);
+        
+        try {
+          const toolResult = await executeRoleFinderTool(
+            roleFinderInput,
+            authUser.workspaceId || workspaceId
+          );
+
+          return NextResponse.json({
+            success: true,
+            response: toolResult.message,
+            toolUsed: 'role_finder',
+            toolResult: {
+              person: toolResult.person,
+              company: toolResult.company,
+              confidence: toolResult.confidence
+            },
+            metadata: {
+              model: 'role-finder-tool',
+              provider: 'Adrata Intelligence',
+              timestamp: new Date().toISOString()
+            }
+          });
+        } catch (error: any) {
+          console.error('❌ [AI CHAT] Role Finder Tool error:', error);
+          // Fall through to normal AI processing if tool fails
+        }
+      }
+    }
+
+    // 3. RATE LIMITING - Prevent abuse and DoS attacks
+    const rateLimitResult = rateLimiter.checkRateLimit(
+      authUser.id,
+      'ai_chat',
+      authUser.workspaceId || workspaceId
+    );
+
+    if (!rateLimitResult.allowed) {
+      // Log rate limit exceeded
+      securityMonitor.logRateLimitExceeded(
+        authUser.id,
+        authUser.workspaceId || workspaceId,
+        '/api/ai-chat',
+        rateLimitResult.limit,
+        rateLimitResult.totalHits,
+        rateLimitResult.retryAfter || 60,
+        request.headers.get('user-agent') || undefined,
+        request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || undefined
+      );
+
+      console.warn('🚨 [AI CHAT] Rate limit exceeded:', {
+        userId: authUser.id,
+        workspaceId: authUser.workspaceId || workspaceId,
+        totalHits: rateLimitResult.totalHits,
+        limit: rateLimitResult.limit,
+        retryAfter: rateLimitResult.retryAfter
+      });
+
+      return NextResponse.json({
+        success: false,
+        error: 'Rate limit exceeded. Please try again later.',
+        code: 'RATE_LIMIT_EXCEEDED',
+        retryAfter: rateLimitResult.retryAfter,
+        limit: rateLimitResult.limit,
+        remaining: rateLimitResult.remaining
+      }, { 
+        status: 429,
+        headers: {
+          'Retry-After': rateLimitResult.retryAfter?.toString() || '60',
+          'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+          'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+          'X-RateLimit-Reset': rateLimitResult.resetTime.toString()
+        }
+      });
     }
 
     let response: any;
@@ -64,16 +214,16 @@ export async function POST(request: NextRequest) {
       try {
         console.log('🌐 [AI CHAT] Using OpenRouter with intelligent routing');
         
-        // Generate OpenRouter response
+        // Generate OpenRouter response with sanitized input
         const openRouterResponse = await openRouterService.generateResponse({
-          message,
+          message: sanitizedMessage,
           conversationHistory,
           currentRecord,
           recordType,
           listViewContext,
           appType,
-          workspaceId,
-          userId,
+          workspaceId: authUser.workspaceId || workspaceId,
+          userId: authUser.id,
           context: {
             currentUrl: request.headers.get('referer'),
             userAgent: request.headers.get('user-agent'),
@@ -154,16 +304,16 @@ export async function POST(request: NextRequest) {
           error: openRouterError instanceof Error ? openRouterError.message : 'Unknown error'
         });
 
-        // Fallback to Claude
+        // Fallback to Claude with sanitized input
         const claudeResponse = await claudeAIService.generateChatResponse({
-          message,
+          message: sanitizedMessage,
           conversationHistory,
           currentRecord,
           recordType,
           listViewContext,
           appType,
-          workspaceId,
-          userId,
+          workspaceId: authUser.workspaceId || workspaceId,
+          userId: authUser.id,
           pageContext
         });
 
@@ -199,21 +349,21 @@ export async function POST(request: NextRequest) {
       console.log('🤖 [AI CHAT] Using Claude directly (OpenRouter disabled or not selected)');
       
       const claudeResponse = await claudeAIService.generateChatResponse({
-        message,
+        message: sanitizedMessage,
         conversationHistory,
         currentRecord,
         recordType,
         listViewContext,
         appType,
-        workspaceId,
-        userId,
+        workspaceId: authUser.workspaceId || workspaceId,
+        userId: authUser.id,
         pageContext
       });
 
       // Record Claude request for monitoring
       gradualRolloutService.recordRequest({
-        userId,
-        workspaceId,
+        userId: authUser.id,
+        workspaceId: authUser.workspaceId || workspaceId,
         usedOpenRouter: false,
         success: true,
         responseTime: claudeResponse.processingTime,
@@ -247,7 +397,59 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    return NextResponse.json(response);
+    // 3. RESPONSE VALIDATION - Critical security requirement
+    const responseValidation = aiResponseValidator.validateResponse(response.response, {
+      userId: authUser.id,
+      workspaceId: authUser.workspaceId || workspaceId,
+      conversationHistory
+    });
+
+    // Block critical and high-risk responses
+    if (!responseValidation.isValid && 
+        (responseValidation.riskLevel === 'critical' || responseValidation.riskLevel === 'high')) {
+      // Log response validation failure
+      securityMonitor.logResponseValidationFailure(
+        authUser.id,
+        authUser.workspaceId || workspaceId,
+        '/api/ai-chat',
+        responseValidation.riskLevel,
+        responseValidation.issues,
+        response.response,
+        responseValidation.sanitizedResponse,
+        responseValidation.metadata.validationTime
+      );
+
+      console.warn('🚨 [AI CHAT] Response validation failed:', {
+        userId: authUser.id,
+        workspaceId: authUser.workspaceId || workspaceId,
+        riskLevel: responseValidation.riskLevel,
+        issues: responseValidation.issues,
+        confidence: responseValidation.confidence
+      });
+
+      return NextResponse.json({
+        success: false,
+        error: 'Response validation failed. Please try again.',
+        code: 'RESPONSE_VALIDATION_FAILED',
+        riskLevel: responseValidation.riskLevel
+      }, { status: 400 });
+    }
+
+    // Use sanitized response
+    const finalResponse = {
+      ...response,
+      response: responseValidation.sanitizedResponse
+    };
+
+    // Record successful request for rate limiting
+    rateLimiter.recordRequest(
+      authUser.id,
+      'ai_chat',
+      authUser.workspaceId || workspaceId,
+      true
+    );
+
+    return NextResponse.json(finalResponse);
 
   } catch (error) {
     console.error('❌ [AI CHAT] Error:', error);

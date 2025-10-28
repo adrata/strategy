@@ -47,8 +47,8 @@ jest.mock('@/platform/hooks/useInlineEdit', () => ({
 }));
 
 // Mock the acquisition OS context
-jest.mock('@/platform/ui/context/AcquisitionOSProvider', () => ({
-  useAcquisitionOS: () => ({
+jest.mock('@/platform/ui/context/RevenueOSProvider', () => ({
+  useRevenueOS: () => ({
     data: {
       people: [],
       companies: [],

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useMonacoData } from "@/products/monaco/hooks/useMonacoData";
 import { useMonaco } from "@/products/monaco/context/MonacoContext";
 import { useFastCounts } from "@/platform/hooks/useFastCounts";
@@ -59,7 +59,7 @@ export function MonacoLeftPanel() {
   const router = useRouter();
   const {
     ui: { activeSection, setActiveSection },
-  } = useAcquisitionOS();
+  } = useRevenueOS();
 
   // Get Monaco data for stats
   const { companies, people } = useMonacoData();

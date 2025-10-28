@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { MonacoContent } from "./MonacoContent";
 import { MonacoLeftPanel } from "./MonacoLeftPanel";
 import { MonacoCreateListModal } from "./MonacoCreateListModal";

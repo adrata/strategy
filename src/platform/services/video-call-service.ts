@@ -27,25 +27,59 @@ export class VideoCallService {
     duration: number = 60 // minutes
   ): Promise<VideoCallRoom> {
     try {
-      // In production, you would call Daily.co API here
-      // For now, we'll create a simple room URL
-      const roomId = `oasis-${roomName}-${Date.now()}`;
-      const roomUrl = `https://${this.DAILY_DOMAIN}/${roomId}`;
+      if (!this.DAILY_API_KEY) {
+        console.warn('⚠️ [VIDEO CALL] No Daily.co API key found, using fallback');
+        // Fallback to simple room URL without API
+        const roomId = `oasis-${roomName}-${Date.now()}`;
+        const roomUrl = `https://${this.DAILY_DOMAIN}/${roomId}`;
+        
+        return {
+          id: roomId,
+          name: roomName,
+          url: roomUrl,
+          participants,
+          createdAt: new Date(),
+          expiresAt: new Date(Date.now() + duration * 60 * 1000)
+        };
+      }
+
+      // Call Daily.co API to create room
+      const response = await fetch('https://api.daily.co/v1/rooms', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.DAILY_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: `oasis-${roomName}-${Date.now()}`,
+          properties: {
+            max_participants: 10,
+            enable_recording: 'cloud',
+            enable_transcription: true,
+            exp: Math.floor(Date.now() / 1000) + (duration * 60),
+            enable_chat: true,
+            enable_screenshare: true,
+            enable_knocking: true
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Daily.co API error: ${response.status} ${response.statusText}`);
+      }
+
+      const roomData = await response.json();
       
       const room: VideoCallRoom = {
-        id: roomId,
+        id: roomData.name,
         name: roomName,
-        url: roomUrl,
+        url: roomData.url,
         participants,
-        createdAt: new Date(),
-        expiresAt: new Date(Date.now() + duration * 60 * 1000)
+        createdAt: new Date(roomData.created_at),
+        expiresAt: new Date(roomData.config?.exp ? roomData.config.exp * 1000 : Date.now() + duration * 60 * 1000)
       };
 
-      // TODO: Store room in database
-      // TODO: Send invites to participants
-      // TODO: Set up room properties (max participants, recording, etc.)
-
-      console.log(`📹 [VIDEO CALL] Created room: ${roomId}`);
+      console.log(`📹 [VIDEO CALL] Created room: ${room.id}`);
       return room;
 
     } catch (error) {
@@ -73,13 +107,38 @@ export class VideoCallService {
    */
   static async joinRoom(roomId: string, userId: string): Promise<string> {
     try {
-      // TODO: Validate user can join room
-      // TODO: Generate join token if needed
-      const roomUrl = `https://${this.DAILY_DOMAIN}/${roomId}`;
-      return roomUrl;
+      if (!this.DAILY_API_KEY) {
+        // Fallback to simple room URL
+        return `https://${this.DAILY_DOMAIN}/${roomId}`;
+      }
+
+      // Generate join token for the room
+      const response = await fetch(`https://api.daily.co/v1/meeting-tokens`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.DAILY_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          properties: {
+            room_name: roomId,
+            user_id: userId,
+            is_owner: true,
+            exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Daily.co API error: ${response.status} ${response.statusText}`);
+      }
+
+      const tokenData = await response.json();
+      return `https://${this.DAILY_DOMAIN}/${roomId}?t=${tokenData.token}`;
     } catch (error) {
       console.error('❌ [VIDEO CALL] Failed to join room:', error);
-      throw new Error('Failed to join video call room');
+      // Fallback to simple room URL
+      return `https://${this.DAILY_DOMAIN}/${roomId}`;
     }
   }
 

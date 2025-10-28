@@ -25,7 +25,7 @@ import {
   ShieldCheckIcon,
   TagIcon
 } from '@heroicons/react/24/outline';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 
 interface AddFilesPopupProps {
   isOpen: boolean;
@@ -116,7 +116,7 @@ const DATA_CATEGORIES: DataCategory[] = [
 ];
 
 export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: AddFilesPopupProps) {
-  const { auth, ui } = useAcquisitionOS();
+  const { auth, ui } = useRevenueOS();
   const workspace = ui.activeWorkspace;
   const user = auth.authUser;
   const fileInputRef = useRef<HTMLInputElement>(null);

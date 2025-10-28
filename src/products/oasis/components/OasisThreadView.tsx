@@ -52,7 +52,7 @@ export function OasisThreadView({ isVisible, onClose, threadMessages = [], conve
   const messages = threadMessages.length > 0 ? threadMessages : mockThreadMessages;
 
   return (
-    <div className="fixed top-0 right-0 w-80 h-screen z-50 flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
+    <div className="fixed top-0 right-0 w-96 h-screen z-50 flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
       {/* Thread Header */}
       <div className="flex-shrink-0 p-4 border-b border-[var(--border)] bg-[var(--background)]">
         <div className="flex items-center gap-3">

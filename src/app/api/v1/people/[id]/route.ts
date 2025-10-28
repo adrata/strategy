@@ -574,6 +574,19 @@ export async function PATCH(
       }, {} as Record<string, { old: any; new: any }>)
     });
 
+    // Special logging for linkedinNavigatorUrl updates
+    if (updateData.linkedinNavigatorUrl !== undefined) {
+      console.log(`🔍 [LINKEDIN NAVIGATOR API AUDIT] linkedinNavigatorUrl update in API:`, {
+        personId: id,
+        updateDataLinkedinNavigatorUrl: updateData.linkedinNavigatorUrl,
+        existingPersonLinkedinNavigatorUrl: existingPerson.linkedinNavigatorUrl,
+        updatedPersonLinkedinNavigatorUrl: updatedPerson.linkedinNavigatorUrl,
+        wasUpdated: existingPerson.linkedinNavigatorUrl !== updatedPerson.linkedinNavigatorUrl,
+        updateDataKeys: Object.keys(updateData),
+        allowedFields: ALLOWED_PEOPLE_FIELDS.includes('linkedinNavigatorUrl')
+      });
+    }
+
     // Log data update as an action
     try {
       const updatedFields = Object.keys(updateData).filter(key => {

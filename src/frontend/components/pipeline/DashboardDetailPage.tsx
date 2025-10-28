@@ -19,7 +19,7 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
 import { LeftPanel } from '@/products/pipeline/components/LeftPanel';
 import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
@@ -55,7 +55,7 @@ interface DealActivity {
 export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
   const router = useRouter();
   const { user } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const { zoom } = useZoom();
   const [activities, setActivities] = useState<Activity[] | DealActivity[]>([]);
   const [loading, setLoading] = useState(true);

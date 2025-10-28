@@ -19,7 +19,7 @@ import { useZoom } from '@/platform/ui/components/ZoomProvider';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
 import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/CompleteActionModal';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 import { useSprint } from './SprintContext';
 
@@ -27,7 +27,7 @@ export function SpeedrunSprintView() {
   const router = useRouter();
   const { navigateToPipeline } = useWorkspaceNavigation();
   const { user } = useUnifiedAuth();
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   const { selectedRecord, setSelectedRecord, currentSprintIndex, setCurrentSprintIndex, completedRecords, setCompletedRecords } = useSprint();
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showAddActionModal, setShowAddActionModal] = useState(false);

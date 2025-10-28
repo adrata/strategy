@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useMonacoData } from "@/products/monaco/hooks/useMonacoData";
 import { MonacoProvider } from "@/products/monaco/context/MonacoContext";
 import { MonacoQueryProvider } from "@/products/monaco/components/MonacoQueryProvider";
@@ -15,7 +15,7 @@ export function MonacoMiddlePanel() {
   const [searchQuery, setSearchQuery] = React.useState("");
 
   // Use shared AOS context instead of Monaco's standalone system
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   const { activeSection } = ui;
 
   // Get Monaco data

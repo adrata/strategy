@@ -9,7 +9,7 @@ import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { MiddlePanel } from "@/products/pipeline/components/MiddlePanel";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { useZoom, ZoomProvider } from "@/platform/ui/components/ZoomProvider";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ProfileBox } from "@/platform/ui/components/ProfileBox";
 import { usePipeline } from "@/products/pipeline/context/PipelineContext";
 import { useSpeedrunSignals } from "@/platform/hooks/useSpeedrunSignals";
@@ -32,7 +32,7 @@ interface PipelineDetailPageProps {
 
 // Component that clears selectedRecord when section changes
 function ClearRecordOnSectionChange({ section }: { section: string }) {
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   const previousSectionRef = useRef<string | null>(null);
   
   useEffect(() => {
@@ -74,13 +74,13 @@ function PipelineDetailContent({ section }: PipelineDetailPageProps) {
 function PipelinePanelLayout({ section }: { section: string }) {
   const router = useRouter();
   const { navigateToPipeline } = useWorkspaceNavigation();
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   const { zoom } = useZoom();
   const [isSpeedrunVisible, setIsSpeedrunVisible] = useState(true);
   const [isOpportunitiesVisible, setIsOpportunitiesVisible] = useState(true);
   
   // Get acquisition data for the pipeline
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   
   // Monaco Signal popup state for Speedrun section
   const [isSlideUpVisible, setIsSlideUpVisible] = useState(false);

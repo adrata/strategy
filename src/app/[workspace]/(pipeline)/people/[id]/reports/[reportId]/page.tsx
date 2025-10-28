@@ -8,7 +8,7 @@ import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { ProfileBox } from "@/platform/ui/components/ProfileBox";
 import { DeepValueReportViewer } from "@/frontend/components/pipeline/DeepValueReportViewer";
-import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 
@@ -69,7 +69,7 @@ export default function DeepValueReportPage() {
 
   if (!currentRecord) {
     return (
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <ZoomProvider>
           <PipelineProvider>
             <PanelLayout
@@ -83,12 +83,12 @@ export default function DeepValueReportPage() {
             />
           </PipelineProvider>
         </ZoomProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     );
   }
 
   return (
-    <AcquisitionOSProvider>
+    <RevenueOSProvider>
       <ZoomProvider>
         <PipelineProvider>
           <PanelLayout
@@ -107,6 +107,6 @@ export default function DeepValueReportPage() {
           />
         </PipelineProvider>
       </ZoomProvider>
-    </AcquisitionOSProvider>
+    </RevenueOSProvider>
   );
 }

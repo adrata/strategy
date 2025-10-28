@@ -53,15 +53,19 @@ export async function POST(request: NextRequest) {
       `🎯 [BUYER GROUP API] Processing single company: ${companyName} for workspace: ${workspaceId}, user: ${userId}`
     );
 
-    // 4. Import and initialize the buyer group pipeline
-    const BuyerGroupPipeline = require('@/platform/pipelines/pipelines/core/buyer-group-pipeline.js').BuyerGroupPipeline;
-    const pipeline = new BuyerGroupPipeline();
+    // 4. Import and initialize the buyer group v2 engine
+    const { ConsolidatedBuyerGroupEngine } = await import('@/platform/intelligence/buyer-group-v2/engine');
+    const engine = new ConsolidatedBuyerGroupEngine();
 
-    // 5. Process the company
+    // 5. Process the company using v2 engine
     const startTime = Date.now();
-    const result = await pipeline.processSingleCompany(companyName.trim(), { 
-      website: website?.trim() || null,
-      sellerProfile: sellerProfile || null
+    const result = await engine.discoverBuyerGroup({
+      companyName: companyName.trim(),
+      companyId: undefined,
+      companyLinkedInUrl: undefined,
+      workspaceId,
+      enrichmentLevel: 'enrich',
+      sellerProfile: sellerProfile || undefined
     });
 
     const processingTime = Date.now() - startTime;
@@ -70,7 +74,7 @@ export async function POST(request: NextRequest) {
     let savedBuyerGroup = null;
     if (saveToDatabase && result.buyerGroup) {
       try {
-        savedBuyerGroup = await pipeline.saveBuyerGroupToDatabase(result, workspaceId);
+        savedBuyerGroup = await saveBuyerGroupToDatabase(result, workspaceId);
       } catch (dbError) {
         console.error('Database save failed:', dbError);
         // Continue without throwing - API should still return results
@@ -80,27 +84,37 @@ export async function POST(request: NextRequest) {
     // 7. Prepare response
     const responseData = {
       success: true,
-      companyName: result.companyName,
-      website: result.website,
-      industry: result.industry,
-      companySize: result.size,
+      companyName: result.company.name,
+      website: result.company.website,
+      industry: result.company.industry,
+      companySize: result.company.size,
       processingTime: processingTime,
       timestamp: new Date().toISOString(),
       buyerGroup: {
-        totalMembers: result.buyerGroup?.totalMembers || 0,
-        cohesionScore: result.quality?.cohesionScore || 0,
-        overallConfidence: result.quality?.overallConfidence || 0,
-        roles: result.buyerGroup?.roles || {},
-        members: result.buyerGroup?.members || []
+        totalMembers: result.buyerGroup.length,
+        cohesionScore: result.qualityMetrics.overallScore,
+        overallConfidence: result.qualityMetrics.confidence,
+        composition: result.composition,
+        members: result.buyerGroup.map(member => ({
+          name: member.name,
+          title: member.title,
+          email: member.email,
+          phone: member.phone,
+          linkedin: member.linkedin,
+          role: member.role,
+          confidence: member.confidence,
+          influenceScore: member.influenceScore,
+          priority: member.priority
+        }))
       },
       quality: {
-        cohesionScore: result.quality?.cohesionScore || 0,
-        overallConfidence: result.quality?.overallConfidence || 0,
-        roleDistribution: result.quality?.roleDistribution || {},
-        validationStatus: result.quality?.validationStatus || 'unknown'
+        cohesionScore: result.qualityMetrics.overallScore,
+        overallConfidence: result.qualityMetrics.confidence,
+        dataQuality: result.qualityMetrics.dataQuality,
+        coverage: result.qualityMetrics.coverage
       },
       databaseId: savedBuyerGroup?.id || null,
-      cacheUtilized: result.cacheUtilized || false
+      creditsUsed: result.creditsUsed
     };
 
     // 8. Include full data if requested (for debugging or detailed analysis)
@@ -109,7 +123,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(
-      `✅ [BUYER GROUP API] Successfully processed ${companyName}: ${result.buyerGroup?.totalMembers || 0} members, ${result.quality?.overallConfidence || 0}% confidence`
+      `✅ [BUYER GROUP API] Successfully processed ${companyName}: ${result.buyerGroup.length} members, ${result.qualityMetrics.overallScore}% quality score`
     );
 
     return createSuccessResponse(responseData, 'BUYER_GROUP_DISCOVERED');
@@ -257,5 +271,86 @@ export async function GET(request: NextRequest) {
       500
     );
   }
+}
+
+/**
+ * Save buyer group to database
+ */
+async function saveBuyerGroupToDatabase(result: any, workspaceId: string): Promise<any> {
+  const { prisma } = await import('@/platform/database/prisma-client');
+
+  // Create or update company
+  let company = null;
+  if (result.company.id) {
+    company = await prisma.companies.findUnique({
+      where: { id: result.company.id }
+    });
+  }
+
+  if (!company && result.company.name) {
+    company = await prisma.companies.create({
+      data: {
+        name: result.company.name,
+        website: result.company.website,
+        industry: result.company.industry,
+        size: result.company.size,
+        workspaceId,
+        customFields: result.company.coresignalId ? {
+          coresignalId: result.company.coresignalId
+        } : {}
+      }
+    });
+  }
+
+  if (!company) {
+    throw new Error('Could not create or find company');
+  }
+
+  // Create buyer group
+  const buyerGroup = await prisma.buyerGroups.create({
+    data: {
+      companyName: result.company.name,
+      website: result.company.website,
+      industry: result.company.industry,
+      companySize: result.company.size,
+      workspaceId,
+      companyId: company.id,
+      status: 'active',
+      enrichmentLevel: 'enrich',
+      totalMembers: result.buyerGroup.length,
+      composition: result.composition,
+      qualityMetrics: result.qualityMetrics,
+      customFields: {
+        processingTime: result.processingTime,
+        creditsUsed: result.creditsUsed,
+        engineVersion: 'v2'
+      }
+    }
+  });
+
+  // Create buyer group members
+  for (const member of result.buyerGroup) {
+    await prisma.buyerGroupMembers.create({
+      data: {
+        buyerGroupId: buyerGroup.id,
+        name: member.name,
+        title: member.title,
+        email: member.email,
+        phone: member.phone,
+        linkedin: member.linkedin,
+        department: member.department,
+        role: member.role,
+        confidence: member.confidence,
+        influenceScore: member.influenceScore,
+        priority: member.priority,
+        customFields: {
+          coresignalId: member.coresignalId,
+          addedAt: new Date().toISOString()
+        }
+      }
+    });
+  }
+
+  return buyerGroup;
 }
 

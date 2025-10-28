@@ -9,7 +9,7 @@ import { PipelineProvider } from '@/products/pipeline/context/PipelineContext';
 import { SpeedrunDataProvider } from '@/platform/services/speedrun-data-context';
 import { RecordContextProvider } from '@/platform/ui/context/RecordContextProvider';
 import { ProfilePopupProvider } from '@/platform/ui/components/ProfilePopupContext';
-import { AcquisitionOSProvider } from '@/platform/ui/context/AcquisitionOSProvider';
+import { RevenueOSProvider } from '@/platform/ui/context/RevenueOSProvider';
 import { MiddlePanelSkeleton } from '@/platform/ui/components/skeletons/MiddlePanelSkeleton';
 import { useUnifiedAuth } from '@/platform/auth';
 import { generateSlug } from '@/platform/utils/url-utils';
@@ -662,7 +662,7 @@ Create opportunities for ongoing engagement and relationship development. Provid
 
   if (loading) {
     return (
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <PipelineProvider>
           <SpeedrunDataProvider>
             <RecordContextProvider>
@@ -683,13 +683,13 @@ Create opportunities for ongoing engagement and relationship development. Provid
             </RecordContextProvider>
           </SpeedrunDataProvider>
         </PipelineProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     );
   }
 
   if (error || !company) {
     return (
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <PipelineProvider>
           <SpeedrunDataProvider>
             <RecordContextProvider>
@@ -718,12 +718,12 @@ Create opportunities for ongoing engagement and relationship development. Provid
             </RecordContextProvider>
           </SpeedrunDataProvider>
         </PipelineProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     );
   }
 
   return (
-    <AcquisitionOSProvider>
+    <RevenueOSProvider>
       <PipelineProvider>
         <SpeedrunDataProvider>
           <RecordContextProvider>
@@ -995,6 +995,6 @@ Create opportunities for ongoing engagement and relationship development. Provid
           </RecordContextProvider>
         </SpeedrunDataProvider>
       </PipelineProvider>
-    </AcquisitionOSProvider>
+    </RevenueOSProvider>
   );
 }

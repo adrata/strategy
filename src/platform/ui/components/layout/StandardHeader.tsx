@@ -4,7 +4,7 @@ import React from "react";
 
 interface StandardHeaderProps {
   title: string;
-  subtitle?: string;
+  subtitle?: string | React.ReactNode;
   stats?: {
     label: string;
     value: string | number;
@@ -26,7 +26,7 @@ export function StandardHeader({
         <div>
           <h1 className="text-xl font-semibold text-[var(--foreground)]">{title}</h1>
           {subtitle && (
-            <p className="text-sm text-[var(--muted)] mt-1">{subtitle}</p>
+            <div className="text-sm text-[var(--muted)] mt-1">{subtitle}</div>
           )}
         </div>
         

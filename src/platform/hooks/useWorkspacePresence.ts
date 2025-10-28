@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { pusherClientService } from '@/platform/services/pusher-real-time-service';
 
 interface WorkspacePresence {
@@ -18,7 +18,7 @@ export function useWorkspacePresence(): WorkspacePresence {
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
   const [isConnected, setIsConnected] = useState(false);
   const { user } = useUnifiedAuth();
-  const { activeWorkspace } = useAcquisitionOS();
+  const { activeWorkspace } = useRevenueOS();
 
   const workspaceId = activeWorkspace?.id || user?.activeWorkspaceId;
   const userId = user?.id;

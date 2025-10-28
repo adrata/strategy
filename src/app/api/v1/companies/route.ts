@@ -103,8 +103,9 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || '';
     const priority = searchParams.get('priority') || '';
     const industry = searchParams.get('industry') || '';
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    // Use alphabetical sorting by default for all company queries (UX best practice)
+    const sortBy = searchParams.get('sortBy') || 'name';
+    const sortOrder = searchParams.get('sortOrder') || 'asc';
     const countsOnly = searchParams.get('counts') === 'true';
     const forceRefresh = searchParams.get('refresh') === 'true';
     
@@ -699,6 +700,7 @@ export async function POST(request: NextRequest) {
     const companyData = {
       name: body.name,
       workspaceId: context.workspaceId,
+      state: body.state || null,
       createdAt: new Date(),
       updatedAt: new Date()
     };

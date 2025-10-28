@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
-import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
 import { DocsLeftPanel } from "./components/DocsLeftPanel";
@@ -65,7 +65,7 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
       searchQuery,
       setSearchQuery
     }}>
-      <AcquisitionOSProvider>
+      <RevenueOSProvider>
         <ZoomProvider>
           <ProfilePopupProvider>
             <DocsLayoutContent>
@@ -73,13 +73,13 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
             </DocsLayoutContent>
           </ProfilePopupProvider>
         </ZoomProvider>
-      </AcquisitionOSProvider>
+      </RevenueOSProvider>
     </DocsContext.Provider>
   );
 }
 
 function DocsLayoutContent({ children }: { children: React.ReactNode }) {
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
 
   return (
     <PanelLayout

@@ -41,11 +41,24 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       const newLinkedinUrl = record?.linkedin || record?.linkedinUrl || null;
       const newLinkedinNavigatorUrl = record?.linkedinNavigatorUrl || null;
       
+      console.log(`🔍 [LINKEDIN STATE SYNC] Syncing LinkedIn fields from record:`, {
+        recordId: record?.id,
+        newLinkedinUrl,
+        currentLinkedinUrl: linkedinUrl,
+        newLinkedinNavigatorUrl,
+        currentLinkedinNavigatorUrl: linkedinNavigatorUrl,
+        recordLinkedinNavigatorUrl: record?.linkedinNavigatorUrl,
+        willUpdateLinkedin: newLinkedinUrl !== linkedinUrl,
+        willUpdateNavigator: newLinkedinNavigatorUrl !== linkedinNavigatorUrl
+      });
+      
       // Only update state if values have changed to avoid unnecessary re-renders
       if (newLinkedinUrl !== linkedinUrl) {
+        console.log(`🔄 [LINKEDIN STATE SYNC] Updating LinkedIn URL state: ${linkedinUrl} -> ${newLinkedinUrl}`);
         setLinkedinUrl(newLinkedinUrl);
       }
       if (newLinkedinNavigatorUrl !== linkedinNavigatorUrl) {
+        console.log(`🔄 [LINKEDIN STATE SYNC] Updating LinkedIn Navigator URL state: ${linkedinNavigatorUrl} -> ${newLinkedinNavigatorUrl}`);
         setLinkedinNavigatorUrl(newLinkedinNavigatorUrl);
       }
     }
@@ -59,10 +72,14 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
 
   // Enhanced success handler that updates local state for specific fields
   const handleFieldSuccess = (field: string, value: string, message: string) => {
+    console.log(`🔍 [FIELD SUCCESS] handleFieldSuccess called:`, { field, value, message });
+    
     // Update local state for LinkedIn fields
     if (field === 'linkedinUrl') {
+      console.log(`🔄 [FIELD SUCCESS] Updating linkedinUrl state: ${linkedinUrl} -> ${value}`);
       setLinkedinUrl(value);
     } else if (field === 'linkedinNavigatorUrl') {
+      console.log(`🔄 [FIELD SUCCESS] Updating linkedinNavigatorUrl state: ${linkedinNavigatorUrl} -> ${value}`);
       setLinkedinNavigatorUrl(value);
     }
     
@@ -73,13 +90,36 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   const handleLinkedinSuccess = (message: string) => {
     // The value will be updated by the parent component's onSave handler
     // We'll update our local state when the record prop changes
+    console.log(`🔍 [LINKEDIN SUCCESS] LinkedIn URL save success:`, { message, recordId: record?.id });
     handleSuccess(message);
   };
 
   const handleLinkedinNavigatorSuccess = (message: string) => {
     // The value will be updated by the parent component's onSave handler
     // We'll update our local state when the record prop changes
+    console.log(`🔍 [LINKEDIN NAVIGATOR SUCCESS] LinkedIn Navigator URL save success:`, { 
+      message, 
+      recordId: record?.id,
+      currentState: linkedinNavigatorUrl,
+      recordValue: record?.linkedinNavigatorUrl
+    });
     handleSuccess(message);
+  };
+
+  // Create a custom onSave handler that updates local state immediately
+  const handleLinkedinNavigatorSave = async (field: string, value: string, recordId?: string, recordType?: string) => {
+    console.log(`🔍 [LINKEDIN NAVIGATOR SAVE] Custom save handler called:`, { field, value, recordId, recordType });
+    
+    // Call the parent's onSave handler
+    if (onSave) {
+      await onSave(field, value, recordId, recordType);
+    }
+    
+    // Update local state immediately for better UX
+    if (field === 'linkedinNavigatorUrl') {
+      console.log(`🔄 [LINKEDIN NAVIGATOR SAVE] Updating local state immediately: ${linkedinNavigatorUrl} -> ${value}`);
+      setLinkedinNavigatorUrl(value);
+    }
   };
 
   // Fetch actions from API
@@ -237,8 +277,28 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       return emailValue;
     })(),
     phone: record?.phone || coresignalData.phone || null,
-    linkedin: linkedinUrl || record?.linkedin || record?.linkedinUrl || coresignalData.linkedin_url || null,
-    linkedinNavigatorUrl: linkedinNavigatorUrl || record?.linkedinNavigatorUrl || null,
+    linkedin: (() => {
+      const linkedinValue = linkedinUrl || record?.linkedin || record?.linkedinUrl || coresignalData.linkedin_url || null;
+      console.log(`🔍 [LINKEDIN COMPUTATION] Computing linkedin value:`, {
+        recordId: record?.id,
+        linkedinUrl,
+        recordLinkedin: record?.linkedin,
+        recordLinkedinUrl: record?.linkedinUrl,
+        coresignalLinkedinUrl: coresignalData.linkedin_url,
+        finalValue: linkedinValue
+      });
+      return linkedinValue;
+    })(),
+    linkedinNavigatorUrl: (() => {
+      const navigatorValue = linkedinNavigatorUrl || record?.linkedinNavigatorUrl || null;
+      console.log(`🔍 [LINKEDIN NAVIGATOR COMPUTATION] Computing linkedinNavigatorUrl value:`, {
+        recordId: record?.id,
+        linkedinNavigatorUrl,
+        recordLinkedinNavigatorUrl: record?.linkedinNavigatorUrl,
+        finalValue: navigatorValue
+      });
+      return navigatorValue;
+    })(),
     linkedinConnectionDate: record?.linkedinConnectionDate || null,
     bio: record?.bio || null,
     
@@ -800,7 +860,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={record.id}
                   recordType={recordType}
-                  onSuccess={handleLinkedinSuccess}
+                  onSuccess={(message) => handleFieldSuccess('linkedinUrl', recordData.linkedin || '', message)}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
@@ -809,7 +869,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.linkedinNavigatorUrl || null}
                   field="linkedinNavigatorUrl"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={handleLinkedinNavigatorSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleLinkedinNavigatorSuccess}

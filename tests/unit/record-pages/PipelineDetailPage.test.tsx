@@ -55,8 +55,8 @@ jest.mock('@/platform/ui/components/ProfilePopupContext', () => ({
 }));
 
 // Mock the acquisition OS context
-jest.mock('@/platform/ui/context/AcquisitionOSProvider', () => ({
-  useAcquisitionOS: () => ({
+jest.mock('@/platform/ui/context/RevenueOSProvider', () => ({
+  useRevenueOS: () => ({
     data: {
       people: [],
       companies: [],
@@ -293,14 +293,14 @@ describe('PipelineDetailPage', () => {
   });
 
   describe('Context Provider Integration', () => {
-    it('should integrate with AcquisitionOSProvider', async () => {
+    it('should integrate with RevenueOSProvider', async () => {
       const props = createTestRecordPageProps('people');
       
       renderWithProviders(<PipelineDetailPage {...props} />);
       
       // Check that the acquisition OS context is available
       await waitForElement('[data-testid="pipeline-detail-page"]');
-      expect(screen.getByTestId('acquisition-os-integration')).toBeInTheDocument();
+      expect(screen.getByTestId('revenue-os-integration')).toBeInTheDocument();
     });
 
     it('should integrate with PipelineProvider', async () => {

@@ -1,49 +1,116 @@
 /**
- * Oasis Read Receipts API
+ * Oasis Read Receipt API
  * 
- * Handles message read receipts
+ * Handles marking messages as read
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { OasisRealtimeService } from '@/platform/services/oasis-realtime-service';
+import { getUnifiedAuthUser } from '@/platform/api-auth';
+import { prisma } from '@/lib/prisma';
 
-// POST /api/oasis/read-receipt - Mark message as read
+// POST /api/v1/oasis/oasis/read-receipt - Mark messages as read
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const authUser = await getUnifiedAuthUser(request);
+    if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
+    const userId = authUser.id;
 
     const body = await request.json();
     const { messageIds, workspaceId, channelId, dmId } = body;
 
-    if (!messageIds || !Array.isArray(messageIds) || !workspaceId) {
+    if (!messageIds || !Array.isArray(messageIds) || messageIds.length === 0) {
       return NextResponse.json(
-        { error: 'Message IDs array and workspace ID required' },
+        { error: 'Message IDs required' },
         { status: 400 }
       );
     }
 
-    // Broadcast read receipt for each message
-    for (const messageId of messageIds) {
-      await OasisRealtimeService.broadcastMessageRead(
-        workspaceId,
-        messageId,
-        session.user.id,
-        channelId,
-        dmId
+    if (!workspaceId) {
+      return NextResponse.json(
+        { error: 'Workspace ID required' },
+        { status: 400 }
       );
     }
 
-    return NextResponse.json({ success: true });
+
+    // Verify user has access to workspace
+    const workspaceUser = await prisma.workspace_users.findFirst({
+      where: {
+        workspaceId,
+        userId: userId,
+        isActive: true
+      }
+    });
+
+    if (!workspaceUser) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+
+    // Verify access to channel or DM
+    if (channelId) {
+      const channel = await prisma.oasisChannel.findFirst({
+        where: {
+          id: channelId,
+          members: {
+            some: { userId: userId }
+          }
+        }
+      });
+
+      if (!channel) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
+    }
+
+    if (dmId) {
+      const dm = await prisma.oasisDirectMessage.findFirst({
+        where: {
+          id: dmId,
+          participants: {
+            some: { userId: userId }
+          }
+        }
+      });
+
+      if (!dm) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
+    }
+
+    // Create read receipts for each message
+    const readReceipts = await Promise.all(
+      messageIds.map(messageId =>
+        prisma.oasisReadReceipt.upsert({
+          where: {
+            userId_messageId: {
+              userId: userId,
+              messageId: messageId
+            }
+          },
+          update: {
+            readAt: new Date()
+          },
+          create: {
+            userId: userId,
+            messageId: messageId,
+            readAt: new Date()
+          }
+        })
+      )
+    );
+
+    return NextResponse.json({ 
+      success: true, 
+      readReceipts: readReceipts.length 
+    });
 
   } catch (error) {
     console.error('❌ [OASIS READ RECEIPT] POST error:', error);
     return NextResponse.json(
-      { error: 'Failed to mark message as read' },
+      { error: 'Failed to mark messages as read' },
       { status: 500 }
     );
   }

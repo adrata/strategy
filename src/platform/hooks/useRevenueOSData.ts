@@ -94,7 +94,7 @@ export function useData(
   // Simplified cache key - let useAdrataData handle workspace-specific caching
   // Add version to force cache refresh when data transformation is updated
   const cacheKey = authUser?.id && activeWorkspace?.id ? 
-    `acquisition-os:v4:${activeWorkspace.id}:${authUser.id}` : null;
+    `revenue-os:v4:${activeWorkspace.id}:${authUser.id}` : null;
 
   // Helper function to map API data to platform format
   const mapApiDataToPlatformFormat = useCallback((apiData: any) => {
@@ -178,7 +178,7 @@ export function useData(
     }
 
     // PERFORMANCE: Check for existing request to prevent duplicates
-    const requestKey = `acquisition-data:${activeWorkspace.id}:${authUser?.id || 'demo'}`;
+    const requestKey = `revenue-data:${activeWorkspace.id}:${authUser?.id || 'demo'}`;
     const existingRequest = pendingRequests.get(requestKey);
     if (existingRequest) {
       console.log('[DEDUP] Waiting for existing data request:', requestKey);
@@ -218,7 +218,7 @@ export function useData(
         throw new Error('One or more v1 API calls failed');
       }
       
-      // Map v1 API data to acquisition format
+      // Map v1 API data to revenue format
       const apiData = {
         leads: leadsResult.data || [],
         prospects: prospectsResult.data || [],
@@ -280,7 +280,7 @@ export function useData(
       throw new Error('One or more v1 API calls failed');
     }
     
-    // Map v1 API data to acquisition format
+    // Map v1 API data to revenue format
     const apiData = {
       leads: leadsResult.data || [],
       prospects: prospectsResult.data || [],

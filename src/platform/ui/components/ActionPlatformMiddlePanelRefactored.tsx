@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { getAppComponent, getAppConfig, hasApp } from '@/platform/config/app-registry';
 import { ModuleErrorBoundary } from '@/platform/ui/components/ModuleErrorBoundary';
 
@@ -12,7 +12,7 @@ import { ModuleErrorBoundary } from '@/platform/ui/components/ModuleErrorBoundar
  * This makes the component more maintainable and easier to extend.
  */
 export function ActionPlatformMiddlePanelRefactored() {
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   const { activeSubApp } = ui;
 
   // Route to appropriate specialized component using the registry

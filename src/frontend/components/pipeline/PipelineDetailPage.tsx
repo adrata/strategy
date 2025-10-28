@@ -15,7 +15,7 @@ import { PipelineView } from './PipelineView';
 import { UniversalRecordTemplate } from './UniversalRecordTemplate';
 import { ProfileBox } from '@/platform/ui/components/ProfileBox';
 import { SpeedrunEngineModal } from '@/platform/ui/components/SpeedrunEngineModal';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { usePipeline } from '@/products/pipeline/context/PipelineContext';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 import { RecordContextProvider } from '@/platform/ui/context/RecordContextProvider';
@@ -82,7 +82,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   const { user: pipelineUser, company, workspace } = usePipeline();
   
   // Load data for navigation - REQUIRED for navigation arrows to work
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   
   // 🆕 CRITICAL FIX: Use real-time workspace ID from JWT token or session
   const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);

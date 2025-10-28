@@ -60,8 +60,8 @@ jest.mock('@/platform/hooks/useWorkspaceNavigation', () => ({
 }));
 
 // Mock context providers
-jest.mock('@/platform/ui/context/AcquisitionOSProvider', () => ({
-  useAcquisitionOS: () => ({
+jest.mock('@/platform/ui/context/RevenueOSProvider', () => ({
+  useRevenueOS: () => ({
     data: {
       people: [],
       companies: [],

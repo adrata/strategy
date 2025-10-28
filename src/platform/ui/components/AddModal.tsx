@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { authFetch } from '@/platform/api-fetch';
 import { XMarkIcon, MagnifyingGlassIcon, UserGroupIcon } from "@heroicons/react/24/outline";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { Select } from "./Select";
 import { AddCompanyModal } from "./AddCompanyModal";
 import { AddLeadModal } from "./AddLeadModal";
@@ -26,7 +26,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
     forms: { formData, setFormData, handleCreateRecord },
     data: { acquireData },
     auth: { authUser },
-  } = useAcquisitionOS();
+  } = useRevenueOS();
 
   // 🔍 DEBUG: Log context values whenever they change
   useEffect(() => {

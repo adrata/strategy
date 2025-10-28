@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { generateFavicon, updateFavicon, getAppThemeFromPath } from '@/platform/utils/favicon-generator';
+import { generateFavicon, updateFavicon, getAppThemeFromPath, generateInitials } from '@/platform/utils/favicon-generator';
+import { useUnifiedAuth } from '@/platform/auth/hooks/useUnifiedAuth';
 
 interface DynamicFaviconProps {
   isWebsite?: boolean;
@@ -11,10 +12,11 @@ interface DynamicFaviconProps {
 
 /**
  * Dynamic Favicon Component
- * Updates the browser favicon based on the current application route
+ * Updates the browser favicon based on workspace initials and current application route
  */
 export function DynamicFavicon({ isWebsite = false, defaultColor = '#6366f1' }: DynamicFaviconProps) {
   const pathname = usePathname();
+  const { user: authUser } = useUnifiedAuth();
 
   useEffect(() => {
     // Skip favicon updates for auth/public pages to prevent unnecessary changes
@@ -43,17 +45,32 @@ export function DynamicFavicon({ isWebsite = false, defaultColor = '#6366f1' }: 
       // Use default color if provided and no specific theme found
       const color = appTheme.name === 'Adrata' ? defaultColor : appTheme.color;
       
-      // Generate favicon with app letter and color
-      const faviconDataUrl = generateFavicon(appTheme.letter, color);
+      // Try to get workspace name and generate client initials
+      let faviconText = appTheme.letter; // Fallback to app letter
+      
+      if (authUser?.workspaces && authUser.workspaces.length > 0) {
+        // Get the active workspace or first available workspace
+        const activeWorkspace = authUser.workspaces.find(w => w.id === authUser.activeWorkspaceId) || authUser.workspaces[0];
+        
+        if (activeWorkspace?.name) {
+          const clientInitials = generateInitials(activeWorkspace.name);
+          if (clientInitials) {
+            faviconText = clientInitials;
+          }
+        }
+      }
+      
+      // Generate favicon with client initials (or app letter as fallback) and color
+      const faviconDataUrl = generateFavicon(faviconText, color);
       
       // Update the favicon in the document
       updateFavicon(faviconDataUrl);
       
-      console.log(`🎨 [DYNAMIC FAVICON] Updated to ${appTheme.name} (${appTheme.letter}) with color ${color}`);
+      console.log(`🎨 [DYNAMIC FAVICON] Updated to ${appTheme.name} (${faviconText}) with color ${color}`);
     } catch (error) {
       console.error('Failed to update favicon:', error);
     }
-  }, [pathname, isWebsite, defaultColor]);
+  }, [pathname, isWebsite, defaultColor, authUser]);
 
   // This component doesn't render anything
   return null;

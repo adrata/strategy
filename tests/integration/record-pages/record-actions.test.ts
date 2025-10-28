@@ -33,8 +33,8 @@ jest.mock('@/platform/auth', () => ({
 }));
 
 // Mock context providers
-jest.mock('@/platform/ui/context/AcquisitionOSProvider', () => ({
-  useAcquisitionOS: () => ({
+jest.mock('@/platform/ui/context/RevenueOSProvider', () => ({
+  useRevenueOS: () => ({
     data: {
       people: [],
       companies: [],

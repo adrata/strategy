@@ -21,7 +21,7 @@ import { PipelineLeftPanelStandalone } from '@/products/pipeline/components/Left
 import { RightPanel } from '@/platform/ui/components/chat/RightPanel';
 // import { useZoom } from '@/platform/ui/components/ZoomProvider';
 
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useAdrataData } from '@/platform/hooks/useAdrataData';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 import { Pagination } from './table/Pagination';
@@ -62,7 +62,7 @@ export const PipelineView = React.memo(function PipelineView({
   const { user } = useUnifiedAuth();
   // const { zoom } = useZoom();
   const zoom = 100; // Temporary fix - use default zoom
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   const { setListViewContext, clearListViewContext } = useRecordContext();
   
   // Pipeline context for user data
@@ -91,7 +91,7 @@ export const PipelineView = React.memo(function PipelineView({
   const [isLeadsVisible, setIsLeadsVisible] = useState(!isDemoMode); // true for production, false for demo
   const [isCustomersVisible, setIsCustomersVisible] = useState(false); // Hidden for this workspace
   const [isPartnersVisible, setIsPartnersVisible] = useState(!isDemoMode); // true for production, false for demo
-  // Panel visibility is now managed by useAcquisitionOSUI context
+  // Panel visibility is now managed by useRevenueOSUI context
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
   const [timeframeFilter, setTimeframeFilter] = useState<string>('now');
   
@@ -194,8 +194,8 @@ export const PipelineView = React.memo(function PipelineView({
     }
   }, [section]);
   
-  // Use single data source from useAcquisitionOS for dashboard only
-  const { data: acquisitionData } = useAcquisitionOS();
+  // Use single data source from useRevenueOS for dashboard only
+  const { data: acquisitionData } = useRevenueOS();
   
   // 🆕 CRITICAL FIX: Use real-time workspace ID from JWT token or session
   const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);

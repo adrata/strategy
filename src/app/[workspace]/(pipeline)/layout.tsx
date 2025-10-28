@@ -7,7 +7,7 @@ import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { SpeedrunSprintLeftPanel } from "@/frontend/components/pipeline/SpeedrunSprintLeftPanel";
 import { SprintProvider, useSprint } from "@/frontend/components/pipeline/SprintContext";
-import { AcquisitionOSProvider, useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { PipelineProvider } from "@/products/pipeline/context/PipelineContext";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
@@ -23,6 +23,7 @@ import { useSettingsPopup } from "@/platform/ui/components/SettingsPopupContext"
 import { NovaBrowser } from "@/products/pipeline/components/NovaBrowser";
 import { ProfilePanel } from "@/platform/ui/components/ProfilePanel";
 import { ProfilePanelProvider, useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
+import { FeatureAccessProvider } from "@/platform/ui/context/FeatureAccessProvider";
 
 // Oasis Context
 interface OasisContextType {
@@ -30,6 +31,10 @@ interface OasisContextType {
   setActiveSection: (section: 'channels' | 'direct-messages' | 'mentions' | 'starred' | 'archived' | 'settings') => void;
   selectedChannel: any | null;
   setSelectedChannel: (channel: any | null) => void;
+  isVideoCallActive: boolean;
+  setIsVideoCallActive: (active: boolean) => void;
+  videoCallRoom: { id: string; name: string } | null;
+  setVideoCallRoom: (room: { id: string; name: string } | null) => void;
 }
 
 const OasisContext = createContext<OasisContextType | undefined>(undefined);
@@ -105,11 +110,14 @@ function PipelineLayoutInner({
   isNovaActive: boolean;
 }) {
   // Now we can use the context hooks since we're inside the providers
-  const { ui } = useAcquisitionOS();
+  const { ui } = useRevenueOS();
   const { user: authUser } = useUnifiedAuth();
   const { isSettingsOpen, setIsSettingsOpen } = useSettingsPopup();
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
   const pathname = usePathname();
+  
+  // Get Stacks context at the top level to avoid hooks order issues
+  const stacksContext = useStacks();
 
   // Get user data for profile panel
   const pipelineUser = authUser || { name: "User", email: "" };
@@ -133,9 +141,9 @@ function PipelineLayoutInner({
   // Determine which left panel to show based on the current route
   const getLeftPanel = () => {
     if (pathname.includes('/oasis')) {
-      return <OasisLeftPanel />;
+      return <OasisLeftPanel key="oasis-left-panel" />;
     } else if (pathname.includes('/stacks')) {
-      return <StacksLeftPanel activeSubSection="stacks" onSubSectionChange={() => {}} />;
+      return <StacksLeftPanel activeSubSection={stacksContext?.activeSubSection || 'stacks'} onSubSectionChange={stacksContext?.onSubSectionChange || (() => {})} />;
     } else if (pathname.includes('/speedrun/sprint')) {
       // Special left panel for sprint view - use SprintContext
       return <SprintLeftPanelWrapper />;
@@ -168,14 +176,6 @@ function PipelineLayoutInner({
     if (pathname.includes('/oasis')) {
       return <RightPanel />;
     } else if (pathname.includes('/stacks')) {
-      // Try to get Stacks context for selected item
-      let stacksContext = null;
-      try {
-        stacksContext = useStacks();
-      } catch (error) {
-        // Stacks context not available, that's fine
-      }
-      
       if (stacksContext?.selectedItem) {
         return <StacksDetailPanel item={stacksContext.selectedItem} />;
       } else {
@@ -273,12 +273,18 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
   // Oasis context state
   const [activeSection, setActiveSection] = useState<'channels' | 'direct-messages' | 'mentions' | 'starred' | 'archived' | 'settings'>('channels');
   const [selectedChannel, setSelectedChannel] = useState<any | null>(null);
+  const [isVideoCallActive, setIsVideoCallActive] = useState(false);
+  const [videoCallRoom, setVideoCallRoom] = useState<{ id: string; name: string } | null>(null);
 
   const oasisContextValue = {
     activeSection,
     setActiveSection,
     selectedChannel,
-    setSelectedChannel
+    setSelectedChannel,
+    isVideoCallActive,
+    setIsVideoCallActive,
+    videoCallRoom,
+    setVideoCallRoom
   };
 
   // Handle section changes with proper navigation
@@ -307,44 +313,46 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
   };
 
   return (
-    <AcquisitionOSProvider>
-      <ZoomProvider>
-        <PipelineProvider>
-          <StacksProvider>
-            <SpeedrunDataProvider>
-              <SprintProvider>
-                <OasisContext.Provider value={oasisContextValue}>
-                  <ProfilePopupProvider>
-                    <SettingsPopupProvider>
-                      <ProfilePanelProvider>
-                        <PipelineLayoutInner
-                          currentSection={isNovaActive ? "nova" : currentSection}
-                          onSectionChange={handleSectionChange}
-                          isSpeedrunVisible={isSpeedrunVisible}
-                          setIsSpeedrunVisible={setIsSpeedrunVisible}
-                          isOpportunitiesVisible={isOpportunitiesVisible}
-                          setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-                          isProspectsVisible={isProspectsVisible}
-                          setIsProspectsVisible={setIsProspectsVisible}
-                          isLeadsVisible={isLeadsVisible}
-                          setIsLeadsVisible={setIsLeadsVisible}
-                          isCustomersVisible={isCustomersVisible}
-                          setIsCustomersVisible={setIsCustomersVisible}
-                          isPartnersVisible={isPartnersVisible}
-                          setIsPartnersVisible={setIsPartnersVisible}
-                          isNovaActive={isNovaActive}
-                        >
-                          {children}
-                        </PipelineLayoutInner>
-                      </ProfilePanelProvider>
-                    </SettingsPopupProvider>
-                  </ProfilePopupProvider>
-                </OasisContext.Provider>
-              </SprintProvider>
-            </SpeedrunDataProvider>
-          </StacksProvider>
-        </PipelineProvider>
-      </ZoomProvider>
-    </AcquisitionOSProvider>
+    <RevenueOSProvider>
+      <FeatureAccessProvider>
+        <ZoomProvider>
+          <PipelineProvider>
+            <StacksProvider>
+              <SpeedrunDataProvider>
+                <SprintProvider>
+                  <OasisContext.Provider value={oasisContextValue}>
+                    <ProfilePopupProvider>
+                      <SettingsPopupProvider>
+                        <ProfilePanelProvider>
+                          <PipelineLayoutInner
+                            currentSection={isNovaActive ? "nova" : currentSection}
+                            onSectionChange={handleSectionChange}
+                            isSpeedrunVisible={isSpeedrunVisible}
+                            setIsSpeedrunVisible={setIsSpeedrunVisible}
+                            isOpportunitiesVisible={isOpportunitiesVisible}
+                            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+                            isProspectsVisible={isProspectsVisible}
+                            setIsProspectsVisible={setIsProspectsVisible}
+                            isLeadsVisible={isLeadsVisible}
+                            setIsLeadsVisible={setIsLeadsVisible}
+                            isCustomersVisible={isCustomersVisible}
+                            setIsCustomersVisible={setIsCustomersVisible}
+                            isPartnersVisible={isPartnersVisible}
+                            setIsPartnersVisible={setIsPartnersVisible}
+                            isNovaActive={isNovaActive}
+                          >
+                            {children}
+                          </PipelineLayoutInner>
+                        </ProfilePanelProvider>
+                      </SettingsPopupProvider>
+                    </ProfilePopupProvider>
+                  </OasisContext.Provider>
+                </SprintProvider>
+              </SpeedrunDataProvider>
+            </StacksProvider>
+          </PipelineProvider>
+        </ZoomProvider>
+      </FeatureAccessProvider>
+    </RevenueOSProvider>
   );
 }

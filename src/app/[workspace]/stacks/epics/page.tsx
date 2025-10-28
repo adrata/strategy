@@ -1,6 +1,6 @@
 import { StacksContainer } from "@/products/stacks/components/StacksContainer";
 import { StacksProvider } from "@/products/stacks/context/StacksProvider";
-import { AcquisitionOSProvider } from "@/platform/ui/context/AcquisitionOSProvider";
+import { RevenueOSProvider } from "@/platform/ui/context/RevenueOSProvider";
 import { RecordContextProvider } from "@/platform/ui/context/RecordContextProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function WorkspaceStacksEpicsPage() {
   return (
-    <AcquisitionOSProvider>
+    <RevenueOSProvider>
       <ZoomProvider>
         <RecordContextProvider>
           <ProfilePopupProvider>
@@ -24,6 +24,6 @@ export default function WorkspaceStacksEpicsPage() {
           </ProfilePopupProvider>
         </RecordContextProvider>
       </ZoomProvider>
-    </AcquisitionOSProvider>
+    </RevenueOSProvider>
   );
 }

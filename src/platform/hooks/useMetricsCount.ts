@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 
 export function useMetricsCount() {
   const { user } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const [count, setCount] = useState<number>(0);
 
   const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId;
@@ -23,9 +23,9 @@ export function useMetricsCount() {
     console.log('🔍 [useMetricsCount] isNotaryEveryday:', isNotaryEveryday, 'workspaceId:', workspaceId, 'userId:', user?.id);
     
     if (isNotaryEveryday) {
-      // Return 9 immediately for Notary Everyday (9 metric cards in 3x3 grid)
-      console.log('🔍 [useMetricsCount] Setting count to 9 for Notary Everyday');
-      setCount(9);
+      // Return 16 immediately for Notary Everyday (16 key metrics)
+      console.log('🔍 [useMetricsCount] Setting count to 16 for Notary Everyday');
+      setCount(16);
       return;
     }
 

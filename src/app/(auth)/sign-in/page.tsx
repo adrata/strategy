@@ -96,6 +96,18 @@ export default function SignInPage() {
       if (result.success) {
         // Authentication successful
 
+        // Check if this is a post-logout sign-in - if so, don't auto-redirect
+        const urlParams = new URLSearchParams(window.location.search);
+        const isLogoutRedirect = urlParams.get("logout") || urlParams.get("emergency");
+        const justSignedOut = sessionStorage.getItem("adrata_signed_out");
+        
+        if (isLogoutRedirect || justSignedOut) {
+          console.log("🚪 [SIGN-IN PAGE] Post-logout sign-in detected - staying on sign-in page");
+          console.log("🚪 [SIGN-IN PAGE] User can manually navigate to their workspace");
+          setIsLoading(false);
+          return;
+        }
+
         // Handle remember me functionality
         if (typeof window !== "undefined") {
           if (rememberMe) {
@@ -157,8 +169,8 @@ export default function SignInPage() {
         }
 
         // Handle returnTo parameter for post-login redirects
-        const urlParams = new URLSearchParams(window.location.search);
-        const returnTo = urlParams.get("returnTo");
+        const returnToParams = new URLSearchParams(window.location.search);
+        const returnTo = returnToParams.get("returnTo");
         if (returnTo) {
           redirectUrl = returnTo;
           console.log("🎯 [SIGN-IN PAGE] Using returnTo parameter:", redirectUrl);

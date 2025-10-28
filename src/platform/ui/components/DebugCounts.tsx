@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 
 /**
  * 🔍 DEBUG COUNTS COMPONENT
@@ -22,7 +22,7 @@ export function DebugCounts({ workspaceId, userId }: DebugCountsProps) {
   const [apiResponse, setApiResponse] = useState<any>(null);
   
   const { user: authUser } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
 
   useEffect(() => {
     const runDebugging = async () => {
@@ -110,7 +110,7 @@ export function DebugCounts({ workspaceId, userId }: DebugCountsProps) {
 
         if (!acquisitionData) {
           debugData.issues.push('No acquisition data found');
-          debugData.recommendations.push('Check if AcquisitionOSProvider is properly configured');
+          debugData.recommendations.push('Check if RevenueOSProvider is properly configured');
         }
 
         if (acquisitionData && !acquisitionData.acquireData) {

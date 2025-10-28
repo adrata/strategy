@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { SpeedrunProvider } from "@/products/speedrun/context/SpeedrunProvider";
 
 interface ConditionalSpeedrunProviderProps {
@@ -13,7 +13,7 @@ export function ConditionalSpeedrunProvider({
 }: ConditionalSpeedrunProviderProps) {
   const {
     ui: { activeSubApp },
-  } = useAcquisitionOS();
+  } = useRevenueOS();
 
   console.log("🔧 ConditionalSpeedrunProvider: activeSubApp =", activeSubApp);
 

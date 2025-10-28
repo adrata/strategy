@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon, FunnelIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { 
   getSectionConfig, 
   getSectionDefaultColumns, 
@@ -91,7 +91,7 @@ export function PipelineFiltersV2({
   const technologyOptions = getSectionTechnologyOptions(section);
 
   // Get data using configuration instead of switch statement
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const data = mapAcquisitionDataToSection(section, acquisitionData);
 
   // Handle filter changes

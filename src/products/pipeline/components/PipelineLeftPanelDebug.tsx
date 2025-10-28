@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { DebugCounts } from '@/platform/ui/components/DebugCounts';
 
 /**
@@ -23,7 +23,7 @@ export function PipelineLeftPanelDebug({
   onSectionChange
 }: PipelineLeftPanelDebugProps) {
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   
   const [debugInfo, setDebugInfo] = useState<any>(null);
   const [apiResponse, setApiResponse] = useState<any>(null);
@@ -127,7 +127,7 @@ export function PipelineLeftPanelDebug({
 
     if (!acquisitionData) {
       debugData.issues.push('No acquisition data found');
-      debugData.recommendations.push('Check if AcquisitionOSProvider is properly configured');
+      debugData.recommendations.push('Check if RevenueOSProvider is properly configured');
     }
 
     if (acquisitionData && !acquisitionData.acquireData) {

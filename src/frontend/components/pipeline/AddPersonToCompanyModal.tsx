@@ -5,6 +5,7 @@ import { XMarkIcon, UserPlusIcon, MagnifyingGlassIcon } from "@heroicons/react/2
 import { authFetch } from "@/platform/api-fetch";
 import { getCategoryColors } from "@/platform/config/color-palette";
 import { getCommonShortcut } from "@/platform/utils/keyboard-shortcuts";
+import { useUnifiedAuth } from "@/platform/auth";
 
 interface AddPersonToCompanyModalProps {
   isOpen: boolean;
@@ -42,6 +43,12 @@ export function AddPersonToCompanyModal({
   
   // Get section-specific colors
   const colors = getCategoryColors('people');
+  const { user } = useUnifiedAuth();
+  
+  // Check if this is Notary Everyday workspace
+  const isNotaryEveryday = user?.activeWorkspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || 
+                          user?.activeWorkspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || 
+                          user?.activeWorkspaceId === 'cmezxb1ez0001pc94yry3ntjk';
   
   // Form data for creating new person
   const [formData, setFormData] = useState({
@@ -49,7 +56,8 @@ export function AddPersonToCompanyModal({
     lastName: '',
     email: '',
     phone: '',
-    jobTitle: ''
+    jobTitle: '',
+    state: ''
   });
 
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -94,7 +102,8 @@ export function AddPersonToCompanyModal({
         lastName: '',
         email: '',
         phone: '',
-        jobTitle: ''
+        jobTitle: '',
+        state: ''
       });
     }
   }, [isOpen]);
@@ -179,6 +188,23 @@ export function AddPersonToCompanyModal({
 
       if (response.ok) {
         const newPerson = await response.json();
+        
+        // Dispatch refresh events for immediate table update
+        window.dispatchEvent(new CustomEvent('pipeline-data-refresh', {
+          detail: { 
+            section: 'leads',
+            type: 'record-created',
+            recordId: newPerson.id 
+          }
+        }));
+        
+        window.dispatchEvent(new CustomEvent('refresh-counts', {
+          detail: { 
+            section: 'leads',
+            type: 'record-created'
+          }
+        }));
+        
         onPersonAdded(newPerson);
         onClose();
       } else {
@@ -432,6 +458,23 @@ export function AddPersonToCompanyModal({
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   />
                 </div>
+
+                {/* State field - only for Notary Everyday workspace */}
+                {isNotaryEveryday && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      State
+                    </label>
+                    <input
+                      type="text"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      placeholder="e.g., California, TX"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                )}
 
                 <div className="flex items-center justify-between pt-4">
                   <button

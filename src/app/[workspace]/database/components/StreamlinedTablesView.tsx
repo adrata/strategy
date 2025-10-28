@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { getStreamlinedModels, ParsedModel } from "../utils/schemaParser";
 
 export function StreamlinedTablesView() {
   const router = useRouter();
   const { user: authUser } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const [models, setModels] = useState<ParsedModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [tableStats, setTableStats] = useState<Record<string, number>>({});

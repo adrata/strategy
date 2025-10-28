@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { getStreamlinedModels, ParsedModel } from "../utils/schemaParser";
 import { Breadcrumb } from "./Breadcrumb";
 
@@ -14,7 +14,7 @@ interface ModelDetailViewProps {
 export function ModelDetailView({ modelName }: ModelDetailViewProps) {
   const router = useRouter();
   const { user: authUser } = useUnifiedAuth();
-  const { data: acquisitionData } = useAcquisitionOS();
+  const { data: acquisitionData } = useRevenueOS();
   const [model, setModel] = useState<ParsedModel | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

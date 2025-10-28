@@ -10,7 +10,7 @@ console.log('🧹 CLEARING DANO\'S CACHE AFTER DUPLICATE CLEANUP\n');
 
 const danoKeys = [
   '01K1VBYYV7TRPY04NW4TW4XWRB-01K1VBYV8ETM2RCQA4GNN9EG72', // Dano's specific cache key
-  'acquisition-os-data-cache',
+  'revenue-os-data-cache',
   'adrata-panel-ratio'
 ];
 

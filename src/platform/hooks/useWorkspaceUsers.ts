@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
-import { useAcquisitionOS } from '@/platform/ui/context/AcquisitionOSProvider';
+import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 
 export interface WorkspaceUser {
   id: string;
@@ -21,7 +21,7 @@ export function useWorkspaceUsers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user, session } = useUnifiedAuth();
-  const { activeWorkspace } = useAcquisitionOS();
+  const { activeWorkspace } = useRevenueOS();
   
   // Check if we're in demo mode
   const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');

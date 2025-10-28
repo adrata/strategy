@@ -1,15 +1,18 @@
 import { Metadata } from "next";
-import { StacksContent } from "@/frontend/components/stacks/StacksContent";
+import { StacksContainer } from "@/products/stacks/components/StacksContainer";
+import { StacksGuard } from "@/platform/ui/components/FeatureGuard";
 
 export const metadata: Metadata = {
-  title: "Backlog • Pipeline",
-  description: "Backlog management and task prioritization",
+  title: "Backlog • Stacks • Pipeline",
+  description: "Task prioritization and planning",
 };
 
-
-
 export default function WorkspaceStacksBacklogPage() {
-  return <StacksContent section="backlog" />;
+  return (
+    <StacksGuard>
+      <div className="h-full">
+        <StacksContainer />
+      </div>
+    </StacksGuard>
+  );
 }
-
-

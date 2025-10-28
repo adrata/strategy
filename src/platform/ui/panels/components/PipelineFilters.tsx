@@ -10,14 +10,14 @@ import {
   getAccountFilterOptions, 
   getCustomerFilterOptions 
 } from "@/platform/utils/filter-helpers";
-import { useAcquisitionOS } from "@/platform/ui/context/AcquisitionOSProvider";
+import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 
 interface PipelineFiltersProps {
   activeSection: string;
 }
 
 export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
-  const { data } = useAcquisitionOS();
+  const { data } = useRevenueOS();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [filters, setFilters] = React.useState({
     status: 'all',
