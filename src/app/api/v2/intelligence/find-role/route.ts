@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { RoleFinder } from '@/platform/intelligence/buyer-group-v2/services/role-finder';
-import { getSecureApiContext } from '@/platform/auth/api-auth';
+import { getSecureApiContext } from '@/platform/api-auth';
 
 export const dynamic = 'force-dynamic';
 

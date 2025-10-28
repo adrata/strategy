@@ -34,6 +34,34 @@ function decodeJWT(token: string): any | null {
 
 import { logger } from "./logger";
 
+export async function getSecureApiContext(request: NextRequest) {
+  try {
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return { user: null, error: 'No valid authorization header' };
+    }
+
+    const token = authHeader.substring(7);
+    const decoded = decodeJWT(token);
+    
+    if (!decoded) {
+      return { user: null, error: 'Invalid token' };
+    }
+
+    return { 
+      user: {
+        id: decoded.sub || decoded.id,
+        email: decoded.email,
+        name: decoded.name,
+        workspaceId: decoded.workspaceId
+      },
+      error: null
+    };
+  } catch (error) {
+    return { user: null, error: 'Authentication failed' };
+  }
+}
+
 export async function getUnifiedAuthUser(
   req: NextRequest,
 ): Promise<AuthUser | null> {
