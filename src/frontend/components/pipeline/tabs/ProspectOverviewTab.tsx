@@ -421,6 +421,33 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
             <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Stage:</span>
+                <InlineEditField
+                  value={prospectData.status || prospectData.stage || 'LEAD'}
+                  field="status"
+                  onSave={onSave || (() => Promise.resolve())}
+                  recordId={record.id}
+                  recordType={recordType}
+                  onSuccess={handleSuccess}
+                  inputType="select"
+                  options={[
+                    { value: 'LEAD', label: 'Lead' },
+                    { value: 'PROSPECT', label: 'Prospect' },
+                    { value: 'OPPORTUNITY', label: 'Opportunity' },
+                    { value: 'CLIENT', label: 'Client' },
+                    { value: 'SUPERFAN', label: 'Superfan' }
+                  ]}
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                    (prospectData.status || prospectData.stage) === 'LEAD' ? 'bg-blue-100 text-blue-800' :
+                    (prospectData.status || prospectData.stage) === 'PROSPECT' ? 'bg-purple-100 text-purple-800' :
+                    (prospectData.status || prospectData.stage) === 'OPPORTUNITY' ? 'bg-yellow-100 text-yellow-800' :
+                    (prospectData.status || prospectData.stage) === 'CLIENT' ? 'bg-green-100 text-green-800' :
+                    (prospectData.status || prospectData.stage) === 'SUPERFAN' ? 'bg-pink-100 text-pink-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}
+                />
+              </div>
+              <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Name:</span>
                 <InlineEditField
                   value={prospectData.name}
@@ -632,8 +659,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement History</h4>
             <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Last Contact:</span>
+              <div className="flex items-center">
+                <span className="text-sm text-[var(--muted)] w-24">Last Contact:</span>
                 <span className="text-sm font-medium text-[var(--foreground)]">{formatRelativeDate(prospectData.lastContact)}</span>
               </div>
               <div className="flex items-center">
@@ -646,30 +673,6 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Stage:</span>
-                <InlineEditField
-                  value={prospectData.status}
-                  field="status"
-                  onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  inputType="select"
-                  options={[
-                    { value: 'PROSPECT', label: 'PROSPECT' },
-                    { value: 'LEAD', label: 'LEAD' },
-                    { value: 'OPPORTUNITY', label: 'OPPORTUNITY' },
-                    { value: 'ACTIVE', label: 'ACTIVE' },
-                    { value: 'INACTIVE', label: 'INACTIVE' }
-                  ]}
-                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                    prospectData.status === 'active' ? 'bg-green-100 text-green-800' :
-                    prospectData.status === 'inactive' ? 'bg-[var(--hover)] text-gray-800' :
-                    'bg-yellow-100 text-yellow-800'
-                  }`}
                 />
               </div>
             </div>

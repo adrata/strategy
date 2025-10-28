@@ -68,6 +68,35 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     }
   }, [value, isSaving]);
 
+  // Calculate relevance score for search results
+  const calculateRelevanceScore = useCallback((company: Company, query: string) => {
+    const searchTerm = query.toLowerCase().trim();
+    const name = (company.name || '').toLowerCase();
+    const legalName = (company.legalName || '').toLowerCase();
+    const tradingName = (company.tradingName || '').toLowerCase();
+    
+    let score = 0;
+    
+    // Exact matches (highest priority)
+    if (name === searchTerm) score = 100;
+    else if (legalName === searchTerm) score = 95;
+    else if (tradingName === searchTerm) score = 90;
+    
+    // Starts with matches (high priority)
+    else if (name.startsWith(searchTerm)) score = 80;
+    else if (legalName.startsWith(searchTerm)) score = 75;
+    else if (tradingName.startsWith(searchTerm)) score = 70;
+    
+    // Contains matches (lower priority, only for longer terms)
+    else if (searchTerm.length >= 3) {
+      if (name.includes(searchTerm)) score = 40;
+      else if (legalName.includes(searchTerm)) score = 35;
+      else if (tradingName.includes(searchTerm)) score = 30;
+    }
+    
+    return score;
+  }, []);
+
   // Search companies with debouncing
   const searchCompanies = useCallback(async (query: string) => {
     if (!query.trim()) {
@@ -77,20 +106,32 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
 
     setIsSearching(true);
     try {
-      const data = await authFetch(`/api/v1/companies?search=${encodeURIComponent(query.trim())}&limit=10`);
+      const data = await authFetch(`/api/v1/companies?search=${encodeURIComponent(query.trim())}&limit=20`);
       console.log('🔍 [InlineCompanySelector] Search response:', {
         success: data.success,
         resultCount: data.data?.length || 0,
         results: data.data
       });
-      setSearchResults(data.data || []);
+      
+      // Apply client-side relevance scoring and filtering
+      const companies = data.data || [];
+      const scoredCompanies = companies
+        .map(company => ({
+          ...company,
+          relevanceScore: calculateRelevanceScore(company, query)
+        }))
+        .filter(company => company.relevanceScore >= 30) // Filter out low-relevance results
+        .sort((a, b) => b.relevanceScore - a.relevanceScore) // Sort by relevance
+        .slice(0, 10); // Limit to top 10 results
+      
+      setSearchResults(scoredCompanies);
     } catch (error) {
       console.error('Error searching companies:', error);
       setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
-  }, []);
+  }, [calculateRelevanceScore]);
 
   // Debounced search function
   const debouncedSearch = useCallback((query: string) => {
@@ -132,16 +173,17 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     setSelectedIndex(-1);
   };
 
-  // Highlight matching text in search results
+  // Enhanced highlighting function with better visual hierarchy
   const highlightText = (text: string, query: string) => {
     if (!query.trim()) return text;
     
-    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const searchTerm = query.trim();
+    const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     const parts = text.split(regex);
     
     return parts.map((part, index) => 
       regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 dark:bg-yellow-800 px-0.5 rounded">
+        <mark key={index} className="bg-blue-100 text-blue-900 font-semibold px-1 rounded">
           {part}
         </mark>
       ) : part
@@ -371,27 +413,42 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
           {(searchResults.length > 0 || showAddForm || (editValue.trim() && !isSearching) || isSearching) && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[var(--border)] rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
               {isSearching ? (
-                <div className="px-3 py-2 text-sm text-gray-500">
-                  Searching...
+                <div className="px-3 py-3 text-sm text-gray-500 text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                    <span>Searching companies...</span>
+                  </div>
                 </div>
               ) : searchResults.length > 0 ? (
                 searchResults.map((company, index) => (
                   <div
                     key={company.id}
                     onClick={() => handleCompanySelect(company)}
-                    className={`px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 ${
-                      selectedIndex === index ? 'bg-gray-50' : ''
+                    className={`px-3 py-2.5 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors ${
+                      selectedIndex === index ? 'bg-blue-50' : ''
                     }`}
                   >
-                    <div className="font-medium text-sm">{highlightText(company.name, searchQuery)}</div>
+                    <div className="font-medium text-sm text-gray-900">
+                      {highlightText(company.name, searchQuery)}
+                    </div>
                     {company.website && (
-                      <div className="text-xs text-gray-500">{highlightText(company.website, searchQuery)}</div>
+                      <div className="text-xs text-gray-500 mt-0.5">
+                        {highlightText(company.website, searchQuery)}
+                      </div>
+                    )}
+                    {company.relevanceScore && (
+                      <div className="text-xs text-gray-400 mt-1">
+                        {company.relevanceScore >= 80 ? 'Exact match' : 
+                         company.relevanceScore >= 60 ? 'Close match' : 'Partial match'}
+                      </div>
                     )}
                   </div>
                 ))
               ) : editValue.trim() && !showAddForm && !isSearching ? (
-                <div className="px-3 py-2 text-sm text-gray-500">
-                  No companies found
+                <div className="px-3 py-4 text-sm text-gray-500 text-center">
+                  <div className="text-4xl mb-2">🏢</div>
+                  <p className="font-medium">No companies found matching "{editValue}"</p>
+                  <p className="text-xs mt-1 opacity-75">Try a different search term or add a new company</p>
                 </div>
               ) : null}
               

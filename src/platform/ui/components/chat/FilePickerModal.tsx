@@ -413,7 +413,9 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
                       </div>
                     ) : searchQuery && selectedDataType ? (
                       <div className="mt-4 text-center py-8 text-[var(--muted)]">
-                        <p>No {selectedDataType} found for "{searchQuery}"</p>
+                        <div className="text-4xl mb-3">🔍</div>
+                        <p className="text-sm font-medium">No {selectedDataType} found for "{searchQuery}"</p>
+                        <p className="text-xs mt-2 opacity-75">Try a different search term or select a different data type</p>
                       </div>
                     ) : null}
                   </div>

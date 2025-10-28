@@ -23,8 +23,12 @@ interface Person {
   email?: string;
   phone?: string;
   jobTitle?: string;
-  company?: string;
   companyId?: string;
+  company?: {
+    id: string;
+    name: string;
+    industry?: string;
+  };
 }
 
 export function AddPersonToCompanyModal({
@@ -111,7 +115,9 @@ export function AddPersonToCompanyModal({
   const searchPeople = async (query: string) => {
     setIsSearching(true);
     try {
-      const response = await authFetch(`/api/v1/people?search=${encodeURIComponent(query)}&limit=10`);
+      // Use excludeCompanyId to filter out people already linked to this company
+      const url = `/api/v1/people?search=${encodeURIComponent(query)}&limit=10${companyId ? `&excludeCompanyId=${companyId}` : ''}`;
+      const response = await authFetch(url);
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data.data || []);
@@ -303,10 +309,17 @@ export function AddPersonToCompanyModal({
                         onClick={() => handlePersonSelect(person)}
                       >
                         <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium text-gray-900 dark:text-white">
-                              {person.fullName}
-                            </p>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-gray-900 dark:text-white">
+                                {person.fullName}
+                              </p>
+                              {person.company && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                                  At {person.company.name}
+                                </span>
+                              )}
+                            </div>
                             {person.email && (
                               <p className="text-sm text-gray-500 dark:text-gray-400">
                                 {person.email}
@@ -315,6 +328,11 @@ export function AddPersonToCompanyModal({
                             {person.jobTitle && (
                               <p className="text-sm text-gray-500 dark:text-gray-400">
                                 {person.jobTitle}
+                              </p>
+                            )}
+                            {person.company?.industry && (
+                              <p className="text-xs text-gray-400 dark:text-gray-500">
+                                {person.company.industry}
                               </p>
                             )}
                           </div>
@@ -334,6 +352,9 @@ export function AddPersonToCompanyModal({
                 <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
                     No people found matching "{searchQuery}"
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 text-center mt-1">
+                    People already linked to {companyName} are not shown
                   </p>
                 </div>
               )}

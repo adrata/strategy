@@ -49,6 +49,35 @@ export function CompanySelector({
     return value.name || '';
   };
 
+  // Calculate relevance score for search results
+  const calculateRelevanceScore = useCallback((company: Company, query: string) => {
+    const searchTerm = query.toLowerCase().trim();
+    const name = (company.name || '').toLowerCase();
+    const legalName = (company.legalName || '').toLowerCase();
+    const tradingName = (company.tradingName || '').toLowerCase();
+    
+    let score = 0;
+    
+    // Exact matches (highest priority)
+    if (name === searchTerm) score = 100;
+    else if (legalName === searchTerm) score = 95;
+    else if (tradingName === searchTerm) score = 90;
+    
+    // Starts with matches (high priority)
+    else if (name.startsWith(searchTerm)) score = 80;
+    else if (legalName.startsWith(searchTerm)) score = 75;
+    else if (tradingName.startsWith(searchTerm)) score = 70;
+    
+    // Contains matches (lower priority, only for longer terms)
+    else if (searchTerm.length >= 3) {
+      if (name.includes(searchTerm)) score = 40;
+      else if (legalName.includes(searchTerm)) score = 35;
+      else if (tradingName.includes(searchTerm)) score = 30;
+    }
+    
+    return score;
+  }, []);
+
   // Search companies with debouncing
   const searchCompanies = useCallback(async (query: string) => {
     console.log('🔍 [CompanySelector] searchCompanies called with query:', query);
@@ -60,7 +89,7 @@ export function CompanySelector({
     }
 
     setIsSearching(true);
-    const url = `/api/v1/companies?search=${encodeURIComponent(query.trim())}&limit=10`;
+    const url = `/api/v1/companies?search=${encodeURIComponent(query.trim())}&limit=20`;
     console.log('🔍 [CompanySelector] Making API request to:', url);
     
     try {
@@ -71,15 +100,27 @@ export function CompanySelector({
         results: data.data?.map((c: any) => ({ id: c.id, name: c.name })) || [],
         fullResponse: data
       });
-      setSearchResults(data.data || []);
-      console.log('🔍 [CompanySelector] Updated searchResults state with', data.data?.length || 0, 'companies');
+      
+      // Apply client-side relevance scoring and filtering
+      const companies = data.data || [];
+      const scoredCompanies = companies
+        .map(company => ({
+          ...company,
+          relevanceScore: calculateRelevanceScore(company, query)
+        }))
+        .filter(company => company.relevanceScore >= 30) // Filter out low-relevance results
+        .sort((a, b) => b.relevanceScore - a.relevanceScore) // Sort by relevance
+        .slice(0, 10); // Limit to top 10 results
+      
+      setSearchResults(scoredCompanies);
+      console.log('🔍 [CompanySelector] Updated searchResults state with', scoredCompanies.length, 'filtered companies');
     } catch (error) {
       console.error('❌ [CompanySelector] Error searching companies:', error);
       setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
-  }, []);
+  }, [calculateRelevanceScore]);
 
   // Debounced search function
   const debouncedSearch = useCallback((query: string) => {
@@ -146,16 +187,17 @@ export function CompanySelector({
     setSelectedIndex(-1);
   };
 
-  // Highlight matching text in search results
+  // Enhanced highlighting function with better visual hierarchy
   const highlightText = (text: string, query: string) => {
     if (!query.trim()) return text;
     
-    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const searchTerm = query.trim();
+    const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     const parts = text.split(regex);
     
     return parts.map((part, index) => 
       regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 dark:bg-yellow-800 px-0.5 rounded">
+        <mark key={index} className="bg-blue-100 text-blue-900 font-semibold px-1 rounded">
           {part}
         </mark>
       ) : part
@@ -386,16 +428,22 @@ export function CompanySelector({
                   key={company.id}
                   type="button"
                   onClick={() => handleCompanySelect(company)}
-                  className={`w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] focus:bg-[var(--panel-background)] focus:outline-none ${
-                    selectedIndex === index ? 'bg-[var(--panel-background)]' : ''
+                  className={`w-full px-4 py-2.5 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors ${
+                    selectedIndex === index ? 'bg-blue-50' : ''
                   }`}
                 >
-                  <div className="font-medium text-[var(--foreground)]">
+                  <div className="font-medium text-gray-900">
                     {highlightText(company.name, searchQuery)}
                   </div>
                   {company.domain && (
-                    <div className="text-sm text-[var(--muted)]">
+                    <div className="text-sm text-gray-500 mt-0.5">
                       {highlightText(company.domain, searchQuery)}
+                    </div>
+                  )}
+                  {company.relevanceScore && (
+                    <div className="text-xs text-gray-400 mt-1">
+                      {company.relevanceScore >= 80 ? 'Exact match' : 
+                       company.relevanceScore >= 60 ? 'Close match' : 'Partial match'}
                     </div>
                   )}
                 </button>
@@ -508,8 +556,9 @@ export function CompanySelector({
 
           {/* No Results */}
           {!isSearching && searchQuery.trim() && searchResults.length === 0 && !showAddForm && (
-            <div className="px-4 py-2 text-sm text-[var(--muted)]">
-              No companies found
+            <div className="px-4 py-3 text-sm text-[var(--muted)] text-center">
+              <p>No companies found matching "{searchQuery}"</p>
+              <p className="text-xs mt-1 opacity-75">Try a different search term or add a new company</p>
             </div>
           )}
         </div>

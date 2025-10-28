@@ -83,9 +83,15 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   const { user: authUser } = useUnifiedAuth();
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
 
-
   // Get current workspace from pathname
   const workspaceSlug = pathname.split('/')[1];
+  
+  // Check if we're in Notary Everyday workspace
+  const isNotaryEveryday = workspaceSlug === 'ne' || 
+                          (typeof window !== "undefined" && window.location.pathname.startsWith('/ne/')) ||
+                          authUser?.activeWorkspaceId === '01K1VBYmf75hgmvmz06psnc9ug' ||
+                          authUser?.activeWorkspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' ||
+                          authUser?.activeWorkspaceId === 'cmezxb1ez0001pc94yry3ntjk';
 
   const handleNavigation = (section: string) => {
     onSubSectionChange(section);
@@ -113,6 +119,9 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   // Group items by category
   const sellItems = navigationItems.filter(item => item.category === 'sell');
   const buildItems = navigationItems.filter(item => item.category === 'build');
+  
+  // For Notary Everyday, show both Sell and Build sections with category headers
+  const displayItems = [...sellItems, ...buildItems];
 
   return (
     <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">

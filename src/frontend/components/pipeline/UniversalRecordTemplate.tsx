@@ -4190,35 +4190,6 @@ export function UniversalRecordTemplate({
               */}
             </div>
             <div>
-              {/* Stage Pill - Only show for person records */}
-              {recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'speedrun' ? (
-                <div className="mb-2">
-                  <InlineEditField
-                    value={record?.status || record?.stage || 'LEAD'}
-                    field="status"
-                    onSave={handleInlineFieldSave}
-                    recordId={record?.id || ''}
-                    recordType={recordType}
-                    onSuccess={() => {}}
-                    inputType="select"
-                    options={[
-                      { value: 'LEAD', label: 'Lead' },
-                      { value: 'PROSPECT', label: 'Prospect' },
-                      { value: 'OPPORTUNITY', label: 'Opportunity' },
-                      { value: 'CLIENT', label: 'Client' },
-                      { value: 'SUPERFAN', label: 'Superfan' }
-                    ]}
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                      (record?.status || record?.stage) === 'LEAD' ? 'bg-blue-100 text-blue-800' :
-                      (record?.status || record?.stage) === 'PROSPECT' ? 'bg-purple-100 text-purple-800' :
-                      (record?.status || record?.stage) === 'OPPORTUNITY' ? 'bg-yellow-100 text-yellow-800' :
-                      (record?.status || record?.stage) === 'CLIENT' ? 'bg-green-100 text-green-800' :
-                      (record?.status || record?.stage) === 'SUPERFAN' ? 'bg-pink-100 text-pink-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}
-                  />
-                </div>
-              ) : null}
               <h1 className="text-2xl font-bold text-[var(--foreground)] mb-1">{getDisplayName()}</h1>
               <p className="text-sm text-[var(--muted)]">{getSubtitle()}</p>
             </div>

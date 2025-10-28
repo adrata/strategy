@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || '';
     const priority = searchParams.get('priority') || '';
     const companyId = searchParams.get('companyId') || '';
+    const excludeCompanyId = searchParams.get('excludeCompanyId') || ''; // NEW: Filter out people already linked to this company
     const vertical = searchParams.get('vertical') || '';
     const revenue = searchParams.get('revenue') || '';
     const timezone = searchParams.get('timezone') || '';
@@ -82,7 +83,7 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit;
     
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
-    const cacheKey = `people-${context.workspaceId}-${context.userId}-${section}-${status}-${limit}-${page}`;
+    const cacheKey = `people-${context.workspaceId}-${context.userId}-${section}-${status}-${excludeCompanyId}-${limit}-${page}`;
     
     // Define the fetch function for cache
     const fetchPeopleData = async () => {
@@ -220,6 +221,13 @@ export async function GET(request: NextRequest) {
       // Company filtering
       if (companyId) {
         where.companyId = companyId;
+      }
+
+      // Exclude people already linked to a specific company (for AddPersonToCompanyModal)
+      if (excludeCompanyId) {
+        where.companyId = {
+          not: excludeCompanyId
+        };
       }
 
       // Vertical filtering
@@ -534,7 +542,7 @@ export async function GET(request: NextRequest) {
           // Add compatibility fields for useFastSectionData hook
           count: totalCount,
           totalCount: totalCount,
-          filters: { search, status, priority, companyId, sortBy, sortOrder },
+          filters: { search, status, priority, companyId, excludeCompanyId, sortBy, sortOrder },
           userId: context.userId,
           workspaceId: context.workspaceId,
         }

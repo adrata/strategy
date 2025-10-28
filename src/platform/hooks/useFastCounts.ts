@@ -17,6 +17,7 @@ interface FastCounts {
   companies: number | string;
   people: number | string;
   clients: number | string;
+  partners: number | string;
   sellers: number | string;
   speedrun: number | string;
   metrics: number | string;
@@ -43,6 +44,7 @@ export function useFastCounts(): UseFastCountsReturn {
     companies: 0,
     people: 0,
     clients: 0,
+    partners: 0,
     sellers: 0,
     speedrun: 0,
     metrics: 0,
@@ -105,6 +107,7 @@ export function useFastCounts(): UseFastCountsReturn {
         prospects: counts.prospects ?? 0,
         opportunities: counts.opportunities ?? 0,
         clients: counts.clients ?? 0,
+        partners: counts.partners ?? 0,
         
         // Core entities
         companies: counts.companies ?? 0,
@@ -158,6 +161,7 @@ export function useFastCounts(): UseFastCountsReturn {
         companies: 0,
         people: 0,
         clients: 0,
+        partners: 0,
         sellers: 0,
         speedrun: 0,
         metrics: 0,
@@ -240,6 +244,7 @@ export function useFastCounts(): UseFastCountsReturn {
           companies: 0,
           people: 0,
           clients: 0,
+          partners: 0,
           sellers: 0,
           speedrun: 0,
           metrics: 0,

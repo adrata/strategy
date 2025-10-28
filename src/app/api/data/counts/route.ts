@@ -105,7 +105,13 @@ export async function GET(request: NextRequest) {
         by: ['status'],
         where: {
           workspaceId,
-          deletedAt: null // Only count non-deleted records
+          deletedAt: null, // Only count non-deleted records
+          ...(isDemoMode ? {} : {
+            OR: [
+              { mainSellerId: userId },
+              { mainSellerId: null }
+            ]
+          })
         },
         _count: { id: true }
       }),
@@ -159,14 +165,18 @@ export async function GET(request: NextRequest) {
       return acc;
     }, {} as Record<string, number>);
 
+    // Debug logging for counts
+    console.log(`🔍 [COUNTS API] People counts by status:`, peopleCountsMap);
+    console.log(`🔍 [COUNTS API] Companies counts by status:`, companiesCountsMap);
+
     // Map counts to our expected format
     const leadsCount = peopleCountsMap.LEAD || 0;
     const prospectsCount = peopleCountsMap.PROSPECT || 0;
-    const opportunitiesCount = companiesCountsMap.OPPORTUNITY || 0;
+    const opportunitiesCount = peopleCountsMap.OPPORTUNITY || 0;
     const companiesCount = Object.values(companiesCountsMap).reduce((sum: number, count: any) => sum + count, 0);
     const peopleCount = Object.values(peopleCountsMap).reduce((sum: number, count: any) => sum + count, 0);
-    const clientsCount = companiesCountsMap.CLIENT || 0;
-    const partnersCount = companiesCountsMap.ACTIVE || 0; // Use ACTIVE as fallback for partners
+    const clientsCount = peopleCountsMap.CLIENT || 0;
+    const partnersCount = peopleCountsMap.PARTNER || 0;
     // Note: sellers table doesn't exist yet - set to 0 for now
     const sellersCount = 0;
     // Use actual speedrun count based on qualifying records
@@ -185,6 +195,9 @@ export async function GET(request: NextRequest) {
       metrics: 16, // Fixed count for tracked metrics
       chronicle: 0 // Will be updated when Chronicle reports are created
     };
+
+    // Debug logging for final counts
+    console.log(`🔍 [COUNTS API] Final counts:`, counts);
     
     // 🚀 PERFORMANCE: Cache the results
     countsCache.set(cacheKey, {

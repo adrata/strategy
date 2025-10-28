@@ -176,8 +176,18 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
           )}
 
           {isLoading && (
-            <div className="text-center py-2 text-[var(--muted)]">
-              Searching...
+            <div className="text-center py-3 text-[var(--muted)]">
+              <div className="flex items-center justify-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[var(--primary)]"></div>
+                <span>Searching contacts...</span>
+              </div>
+            </div>
+          )}
+
+          {searchQuery.length >= 2 && searchResults.length === 0 && !isLoading && (
+            <div className="text-center py-4 text-[var(--muted)]">
+              <p className="text-sm">No contacts found matching "{searchQuery}"</p>
+              <p className="text-xs mt-1 opacity-75">Try a different search term</p>
             </div>
           )}
         </div>

@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     // Temporarily allow all workspaces for debugging
     console.log('🔍 [Chronicle API] Allowing all workspaces for debugging');
 
-    // Query actual reports from database
+    // Query actual reports from database with read status
     const reports = await prisma.chronicleReport.findMany({
       where: {
         workspaceId
@@ -39,7 +39,12 @@ export async function GET(request: NextRequest) {
       },
       take: limit,
       include: {
-        ChronicleShare: true
+        ChronicleShare: true,
+        ChronicleReadStatus: {
+          where: {
+            userId: session.user.id
+          }
+        }
       }
     });
 
@@ -64,23 +69,26 @@ export async function GET(request: NextRequest) {
     }
 
     // Map database fields to frontend format
-    const mappedReports = reports.map(report => ({
-      id: report.id,
-      title: report.title,
-      reportDate: report.weekStart.toISOString(), // Use weekStart as reportDate
-      reportType: report.reportType === 'FRIDAY_RECAP' ? 'WEEKLY' : 'DAILY', // Map enum to frontend format
-      content: report.content,
-      createdAt: report.createdAt.toISOString(),
-      isRead: false, // Temporary: all reports are unread
-      lastReadAt: null,
-      shares: report.ChronicleShare.map(share => ({
-        id: share.id,
-        shareToken: share.shareToken,
-        shareUrl: share.shareUrl,
-        viewCount: share.viewCount,
-        createdAt: share.createdAt.toISOString()
-      }))
-    }));
+    const mappedReports = reports.map(report => {
+      const readStatus = report.ChronicleReadStatus[0]; // Get the first (and only) read status for this user
+      return {
+        id: report.id,
+        title: report.title,
+        reportDate: report.weekStart.toISOString(), // Use weekStart as reportDate
+        reportType: report.reportType === 'FRIDAY_RECAP' ? 'WEEKLY' : 'DAILY', // Map enum to frontend format
+        content: report.content,
+        createdAt: report.createdAt.toISOString(),
+        isRead: !!readStatus, // True if read status exists
+        lastReadAt: readStatus?.readAt?.toISOString() || null,
+        shares: report.ChronicleShare.map(share => ({
+          id: share.id,
+          shareToken: share.shareToken,
+          shareUrl: share.shareUrl,
+          viewCount: share.viewCount,
+          createdAt: share.createdAt.toISOString()
+        }))
+      };
+    });
 
     const unreadCount = mappedReports.filter(r => !r.isRead).length;
 

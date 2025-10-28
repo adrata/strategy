@@ -311,6 +311,35 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
     }));
   };
 
+  // Calculate relevance score for search results
+  const calculateRelevanceScore = (company: any, query: string) => {
+    const searchTerm = query.toLowerCase().trim();
+    const name = (company.name || '').toLowerCase();
+    const legalName = (company.legalName || '').toLowerCase();
+    const tradingName = (company.tradingName || '').toLowerCase();
+    
+    let score = 0;
+    
+    // Exact matches (highest priority)
+    if (name === searchTerm) score = 100;
+    else if (legalName === searchTerm) score = 95;
+    else if (tradingName === searchTerm) score = 90;
+    
+    // Starts with matches (high priority)
+    else if (name.startsWith(searchTerm)) score = 80;
+    else if (legalName.startsWith(searchTerm)) score = 75;
+    else if (tradingName.startsWith(searchTerm)) score = 70;
+    
+    // Contains matches (lower priority, only for longer terms)
+    else if (searchTerm.length >= 3) {
+      if (name.includes(searchTerm)) score = 40;
+      else if (legalName.includes(searchTerm)) score = 35;
+      else if (tradingName.includes(searchTerm)) score = 30;
+    }
+    
+    return score;
+  };
+
   const searchCompanies = async (query: string) => {
     setIsSearchingCompanies(true);
     try {
@@ -325,11 +354,23 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
         authUser: authUser
       });
       
-      const response = await authFetch(`/api/v1/companies?search=${encodeURIComponent(query)}&limit=10`);
+      const response = await authFetch(`/api/v1/companies?search=${encodeURIComponent(query)}&limit=20`);
       
       if (response.ok) {
         const data = await response.json();
-        setCompanySearchResults(data.data || []);
+        
+        // Apply client-side relevance scoring and filtering
+        const companies = data.data || [];
+        const scoredCompanies = companies
+          .map(company => ({
+            ...company,
+            relevanceScore: calculateRelevanceScore(company, query)
+          }))
+          .filter(company => company.relevanceScore >= 30) // Filter out low-relevance results
+          .sort((a, b) => b.relevanceScore - a.relevanceScore) // Sort by relevance
+          .slice(0, 10); // Limit to top 10 results
+        
+        setCompanySearchResults(scoredCompanies);
       }
     } catch (error) {
       console.error('Error searching companies:', error);
@@ -769,7 +810,8 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                 {companySearchQuery.length >= 2 && companySearchResults.length === 0 && !isSearchingCompanies && (
                   <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
                     <div className="px-4 py-3 text-center">
-                      <div className="text-sm text-[var(--muted)] mb-2">No companies found</div>
+                      <div className="text-sm text-[var(--muted)] mb-2">No companies found matching "{companySearchQuery}"</div>
+                      <p className="text-xs text-[var(--muted)] mb-3">Try a different search term or add a new company</p>
                       <button
                         type="button"
                         onClick={handleAddCompany}
