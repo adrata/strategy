@@ -208,10 +208,14 @@ export function TableRow({
               case 'rank':
                 // 🎯 PER-USER RANKING: Display simple sequential rank for speedrun
                 let displayRank;
+                let rankValue;
+                
                 if (section === 'speedrun') {
-                  // For speedrun, always use sequential index-based ranking (1-50)
-                  // This ensures consistent behavior between dev and production
-                  displayRank = index + 1;
+                  // For speedrun, use globalRank for editing, displayRank for display
+                  rankValue = record['globalRank'] || record['rank'] || (index + 1);
+                  
+                  // Use actual rank value for display, fallback to index + 1 if no rank
+                  displayRank = record['globalRank'] || record['rank'] || (index + 1);
                   
                   // Add defensive check to prevent showing record IDs
                   if (typeof displayRank !== 'number' || displayRank > 1000) {
@@ -230,6 +234,8 @@ export function TableRow({
                   const personRank = record['personRank'] || record['rank'] || (index + 1);
                   const globalRank = record['globalPersonRank'] || record['rank'] || (index + 1);
                   
+                  rankValue = globalRank;
+                  
                   if (companyRank > 0) {
                     // Show "Company Rank: Person Rank" format
                     displayRank = `${companyRank}:${personRank}`;
@@ -240,16 +246,15 @@ export function TableRow({
                 }
                 
                 return (
-                  <td key="rank" className={textClasses}>
-                    <div className="text-left font-medium">
-                      <div className="text-sm font-semibold">{displayRank}</div>
-                      {companyRank > 0 && (
-                        <div className="text-xs text-[var(--muted)]">
-                          Company #{companyRank}
-                        </div>
-                      )}
-                    </div>
-                  </td>
+                  <TableCell
+                    key="rank"
+                    value={rankValue?.toString() || displayRank?.toString() || ''}
+                    field="globalRank"
+                    recordId={record.id}
+                    recordType={section}
+                    onUpdate={onUpdateRecord}
+                    className={textClasses}
+                  />
                 );
               case 'company':
                 // Handle both string company names and company objects

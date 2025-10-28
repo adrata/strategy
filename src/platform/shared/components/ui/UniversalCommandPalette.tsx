@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useWorkspaceNavigation } from "@/platform/hooks/useWorkspaceNavigation";
+import { useUnifiedAuth } from "@/platform/auth";
 
 interface Command {
   id: string;
@@ -44,9 +45,18 @@ export default function UniversalCommandPalette({
 }: UniversalCommandPaletteProps) {
   const router = useRouter();
   const { navigateToAOS, navigateToMonaco } = useWorkspaceNavigation();
+  const { user: authUser } = useUnifiedAuth();
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [recentCommands, setRecentCommands] = useState<string[]>([]);
+
+  // Check if user is in Adrata workspace
+  const isAdrataWorkspace = () => {
+    const activeWorkspace = authUser?.workspaces?.find(
+      w => w['id'] === authUser?.activeWorkspaceId
+    );
+    return activeWorkspace?.name?.toLowerCase() === 'adrata';
+  };
 
   // Load recent commands from localStorage
   useEffect(() => {
@@ -221,16 +231,21 @@ export default function UniversalCommandPalette({
         priority: 5,
       },
     ],
-    [router, navigateToAOS, navigateToMonaco, onToggleAI, onToggleLeftPanel, onToggleRightPanel],
+    [router, navigateToAOS, navigateToMonaco, onToggleAI, onToggleLeftPanel, onToggleRightPanel, authUser],
   );
 
   // Filter and sort commands
   const filteredCommands = useMemo(() => {
     let filtered = allCommands;
 
+    // Filter out Oasis for non-Adrata workspace users
+    if (!isAdrataWorkspace()) {
+      filtered = filtered.filter(command => command.id !== "nav-oasis");
+    }
+
     if (query.trim()) {
       const searchTerm = query.toLowerCase();
-      filtered = allCommands.filter(
+      filtered = filtered.filter(
         (command) =>
           command.title.toLowerCase().includes(searchTerm) ||
           command.description.toLowerCase().includes(searchTerm) ||
