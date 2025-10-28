@@ -112,6 +112,7 @@ export async function GET(request: NextRequest) {
       });
 
       // 🎯 PER-USER RANKING: Get only people assigned to this user for their personal speedrun
+      // Use the per-user ranking system where each user gets ranks 1-N
       let speedrunPeople;
       try {
         speedrunPeople = await prisma.people.findMany({
@@ -119,12 +120,13 @@ export async function GET(request: NextRequest) {
             workspaceId: context.workspaceId,
             deletedAt: null,
             companyId: { not: null }, // Only people with company relationships
+            globalRank: { not: null, gte: 1, lte: 50 }, // Only people with ranks 1-50 (per-user)
             ...(isDemoMode ? {} : {
               mainSellerId: context.userId // Only show people assigned to this user
             })
           },
         orderBy: [
-          { globalRank: 'asc' }, // Use per-user ranking (1-50)
+          { globalRank: 'asc' }, // Rank 1, 2, 3... (per-user ranking)
           { createdAt: 'desc' } // Then by newest
         ],
         take: limit, // Take exactly the first 50 results

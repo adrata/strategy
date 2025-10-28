@@ -699,8 +699,8 @@ export class OAuthService {
       console.log(`🔐 [OAUTH] Created stateless session (method 2) with state length: ${state.length}`);
 
       // Build authorization URL with provider-specific redirect URI
-      // Always use production domain for OAuth redirects regardless of environment
-      let baseUrl = 'https://action.adrata.com';
+      // Use environment variable for OAuth base URL, fallback to production
+      let baseUrl = process.env.OAUTH_REDIRECT_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://action.adrata.com';
       
       // Ensure clean base URL (remove any trailing slashes, newlines, or whitespace)
       baseUrl = baseUrl.trim().replace(/\/+$/, '').replace(/[\r\n\t]/g, '');
@@ -779,8 +779,8 @@ export class OAuthService {
       }
 
       // Exchange code for token with provider-specific redirect URI (must match authorization)
-      // Always use production domain for OAuth redirects regardless of environment
-      let baseUrl = 'https://action.adrata.com';
+      // Use environment variable for OAuth base URL, fallback to production
+      let baseUrl = process.env.OAUTH_REDIRECT_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://action.adrata.com';
       
       // Ensure clean base URL (remove any trailing slashes, newlines, or whitespace)
       baseUrl = baseUrl.trim().replace(/\/+$/, '').replace(/[\r\n\t]/g, '');

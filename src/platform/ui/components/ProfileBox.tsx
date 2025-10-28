@@ -577,37 +577,41 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
 
       {/* Profile Content - Simplified Menu */}
       <div className="pl-4 pr-2 pt-2 pb-2">
-        {/* Download */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center"
-          onClick={handleDownloadDesktopApp}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === "Enter" && handleDownloadDesktopApp()}
-        >
-          <PlatformIcon className="w-4 h-4 mr-2" />
-          Download
-        </div>
+        {/* Download - Only show for Adrata workspace users */}
+        {isAdrataWorkspace() && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center"
+            onClick={handleDownloadDesktopApp}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === "Enter" && handleDownloadDesktopApp()}
+          >
+            <PlatformIcon className="w-4 h-4 mr-2" />
+            Download
+          </div>
+        )}
 
-        {/* RevenueOS */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={() => {
-            console.log("RevenueOS clicked - navigating to speedrun");
-            setIsProfileOpen(false);
-            handleNavigation("./speedrun");
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e['key'] === "Enter") {
+        {/* RevenueOS - Only show for Adrata workspace users */}
+        {isAdrataWorkspace() && (
+          <div
+            className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
+            onClick={() => {
+              console.log("RevenueOS clicked - navigating to speedrun");
               setIsProfileOpen(false);
               handleNavigation("./speedrun");
-            }
-          }}
-        >
-          RevenueOS
-        </div>
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e['key'] === "Enter") {
+                setIsProfileOpen(false);
+                handleNavigation("./speedrun");
+              }
+            }}
+          >
+            RevenueOS
+          </div>
+        )}
 
         {/* Oasis - Only show for Adrata workspace users */}
         {isAdrataWorkspace() && (
@@ -631,25 +635,6 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
 
-        {/* Settings */}
-        <div
-          className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
-          onClick={() => {
-            console.log("Settings clicked");
-            setIsProfileOpen(false);
-            setIsSettingsOpen(true);
-          }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e['key'] === "Enter") {
-              setIsProfileOpen(false);
-              setIsSettingsOpen(true);
-            }
-          }}
-        >
-          Settings
-        </div>
 
 
         {/* Workspace Apps - Admin only */}

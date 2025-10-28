@@ -841,12 +841,13 @@ export const PipelineContent = React.memo(function PipelineContent({
         setSortDirection('asc');
       }
     } else {
-      // New field, default to ascending
+      // New field - check if it's speedrun rank for special default
+      const isSpeedrunRank = section === 'speedrun' && (field === 'globalRank' || field === 'rank');
       setSortField(field);
-      setSortDirection('asc');
+      setSortDirection(isSpeedrunRank ? 'desc' : 'asc'); // Descending for speedrun rank
     }
     console.log(`🔧 [THREE-STATE SORT] Field: ${field}, Current: ${sortField}, Direction: ${sortDirection}, Next: ${sortField === field ? (sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? 'null' : 'asc') : 'asc'}`);
-  }, [sortField, sortDirection]);
+  }, [sortField, sortDirection, section]);
 
   // Handle sort from dropdown (different from column clicks)
   const handleDropdownSortChange = useCallback((field: string) => {
@@ -921,6 +922,8 @@ export const PipelineContent = React.memo(function PipelineContent({
       if (section === 'speedrun') {
         return {
           ...baseMap,
+          'Rank': 'globalRank', // Speedrun uses 'globalRank' for rank field
+          'rank': 'globalRank',
           'Last Action': 'lastActionDate',
           'lastAction': 'lastActionDate',
           'Advice': 'nextAction',

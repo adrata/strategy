@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-options';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { prisma } from '@/lib/prisma';
 
 interface NotaryEverydayMetrics {
@@ -39,18 +38,25 @@ interface NotaryEverydayMetrics {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Use platform's unified authentication system
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
     }
 
-    // Get workspace ID from URL or user's active workspace
-    const url = new URL(request.url);
-    const workspaceId = url.searchParams.get('workspaceId') || session.user.activeWorkspaceId;
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    // Get workspace ID from authenticated context
+    const workspaceId = context.workspaceId;
     
     if (!workspaceId) {
-      return NextResponse.json({ error: 'Workspace ID required' }, { status: 400 });
+      return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
     }
 
     // Check if this is Notary Everyday workspace
@@ -59,7 +65,7 @@ export async function GET(request: NextRequest) {
                             workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
 
     if (!isNotaryEveryday) {
-      return NextResponse.json({ error: 'Not Notary Everyday workspace' }, { status: 400 });
+      return createErrorResponse('Not Notary Everyday workspace', 'INVALID_WORKSPACE', 400);
     }
 
     // Get current quarter
@@ -184,14 +190,15 @@ export async function GET(request: NextRequest) {
       historical: [] // Would populate with historical data
     };
 
-    return NextResponse.json(metrics);
+    return createSuccessResponse(metrics, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      role: context.role
+    });
 
   } catch (error) {
     console.error('Error fetching Notary Everyday metrics:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch metrics' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to fetch metrics', 'METRICS_FETCH_ERROR', 500);
   }
 }
 

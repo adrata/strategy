@@ -124,18 +124,24 @@ export async function GET(request: NextRequest) {
         },
         _count: { id: true }
       }),
-      // Get speedrun count using same criteria as speedrun API (top 50 people)
+      // Get speedrun count - count people with ranks 1-50 (per-user) who haven't been actioned today
       prisma.people.count({
         where: {
           workspaceId,
           deletedAt: null, // Only count non-deleted records
-          companyId: { not: null }, // Only people with companies (matches speedrun API)
+          companyId: { not: null }, // Only people with companies
+          globalRank: { not: null, gte: 1, lte: 50 }, // Only people with ranks 1-50 (per-user)
           ...(isDemoMode ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          })
+            mainSellerId: userId // Only count people assigned to this user
+          }),
+          OR: [
+            { lastActionDate: null }, // Never actioned
+            { 
+              lastActionDate: {
+                lt: new Date(new Date().setHours(0, 0, 0, 0)) // Actioned before today
+              }
+            }
+          ]
         }
       })
       // Note: sellers table doesn't exist in current schema

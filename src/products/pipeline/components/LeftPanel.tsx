@@ -18,6 +18,8 @@ import { useChronicleCount } from "@/platform/hooks/useChronicleCount";
 import { useMetricsCount } from "@/platform/hooks/useMetricsCount";
 import { getPlatform } from "@/platform/platform-detection";
 import { useStacksAccess, useOasisAccess, useAtriumAccess, useMetricsAccess, useChronicleAccess, useDesktopDownloadAccess } from "@/platform/ui/context/FeatureAccessProvider";
+import { CheckIcon } from '@heroicons/react/24/outline';
+import { getFilteredSectionsForWorkspace } from "@/platform/utils/section-filter";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 
@@ -644,6 +646,13 @@ function PipelineSections({
     };
   }, []);
 
+  // Get workspace context for section filtering
+  const workspaceSlug = activeWorkspace?.name || workspaceName || 'default';
+  const allowedSections = getFilteredSectionsForWorkspace({
+    workspaceSlug,
+    appId: 'pipeline'
+  });
+
   const sections = [
     // DASHBOARD: Leadership dashboard
     {
@@ -662,15 +671,26 @@ function PipelineSections({
       description: "Drive revenue",
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : productionCounts.speedrun || 0,
-      visible: isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true)
+      ) : productionCounts.speedrun === 0 ? (
+        <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+          <CheckIcon className="w-3 h-3" />
+          <span className="text-xs font-semibold">Done</span>
+        </div>
+      ) : productionCounts.speedrun === 50 ? (
+        <div className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+          <span className="text-xs font-semibold">Ready</span>
+        </div>
+      ) : (
+        productionCounts.speedrun || 0
+      ),
+      visible: allowedSections.includes('speedrun') && (isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true))
     },
     {
       id: "chronicle",
       name: "Chronicle",
       description: "Business Intelligence Reports",
       count: isNotaryEveryday ? chronicleCount : 0, // Show count for Notary Everyday
-      visible: hasChronicle
+      visible: allowedSections.includes('chronicle') && hasChronicle
     },
     {
       id: "news",
@@ -688,7 +708,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.leads,
-      visible: isDemoMode ? demoModeVisibility.isLeadsVisible : (isLeadsVisible ?? true)
+      visible: allowedSections.includes('leads') && (isDemoMode ? demoModeVisibility.isLeadsVisible : (isLeadsVisible ?? true))
     },
     {
       id: "prospects",
@@ -697,7 +717,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : (productionCounts.prospects || 0),
-      visible: isDemoMode ? demoModeVisibility.isProspectsVisible : (isProspectsVisible ?? true)
+      visible: allowedSections.includes('prospects') && (isDemoMode ? demoModeVisibility.isProspectsVisible : (isProspectsVisible ?? true))
     },
     {
       id: "opportunities",
@@ -712,7 +732,7 @@ function PipelineSections({
         const formattedPeople = totalPeople > 0 ? totalPeople.toLocaleString() : '';
         return `${formattedOpportunities}${formattedPeople ? ` (${formattedPeople})` : ''}`;
       })(),
-      visible: isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (isOpportunitiesVisible ?? true)
+      visible: allowedSections.includes('opportunities') && (isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (isOpportunitiesVisible ?? true))
     },
     {
       id: "partners",
@@ -721,7 +741,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.partners,
-      visible: false // Hidden as requested
+      visible: allowedSections.includes('partners') && false // Hidden as requested
     },
     {
       id: "clients",
@@ -730,7 +750,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.clients,
-      visible: isNotaryEveryday
+      visible: allowedSections.includes('clients') && isNotaryEveryday
     },
     {
       id: "people",
@@ -739,7 +759,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.people,
-      visible: true
+      visible: allowedSections.includes('people') && true
     },
     {
       id: "companies",
@@ -748,14 +768,14 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.companies,
-      visible: true
+      visible: allowedSections.includes('companies') && true
     },
     {
       id: "metrics",
       name: "Metrics",
       description: "Performance metrics",
       count: hasMetrics ? metricsCount : 0,
-      visible: hasMetrics
+      visible: allowedSections.includes('metrics') && hasMetrics
     },
     {
       id: "nova",
@@ -1002,16 +1022,34 @@ export function PipelineLeftPanelStandalone({
     onSectionChange(section);
   };
 
-  // Handle profile click - now opens profile panel instead of popup
+  // Handle profile click - conditionally show ProfilePanel or ProfileBox based on workspace
   const handleProfileClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log('🔘 Profile button clicked! Opening profile panel');
+    console.log('🔘 Profile button clicked!');
     event.preventDefault();
     event.stopPropagation();
     
-    // Toggle profile panel visibility
-    const newState = !isProfilePanelVisible;
-    console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
-    setIsProfilePanelVisible(newState);
+    // Check if this is Adrata or Notary Everyday workspace
+    const isAdrataOrNotaryEveryday = workspace.toLowerCase() === 'adrata' || 
+                                    workspace.toLowerCase() === 'notary everyday' ||
+                                    workspace.toLowerCase() === 'notaryeveryday';
+    
+    if (isAdrataOrNotaryEveryday) {
+      // Show ProfilePanel for Adrata and Notary Everyday workspaces
+      console.log('🔘 Opening ProfilePanel for workspace:', workspace);
+      const newState = !isProfilePanelVisible;
+      console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
+      setIsProfilePanelVisible(newState);
+    } else {
+      // Toggle ProfileBox popup for other workspaces
+      if (isProfileOpen) {
+        console.log('🔘 Closing ProfileBox popup for workspace:', workspace);
+        setIsProfileOpen(false);
+      } else {
+        console.log('🔘 Opening ProfileBox popup for workspace:', workspace);
+        setProfileAnchor(event.currentTarget);
+        setIsProfileOpen(true);
+      }
+    }
   };
 
   // Load workspace branding data

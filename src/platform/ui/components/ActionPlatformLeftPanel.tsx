@@ -3,6 +3,8 @@
 import React from "react";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { REVENUE_OS_APPS, SECTION_TITLES } from "@/platform/config";
+import { useUnifiedAuth } from "@/platform/auth";
+import { getFilteredSectionsForWorkspace } from "@/platform/utils/section-filter";
 // import { ModularSpeedrunContainer } from "../speedrun/ModularSpeedrunContainer";
 import { MonacoLeftPanel } from "@/products/monaco/components/MonacoLeftPanel";
 import { MonacoProvider } from "@/products/monaco/context/MonacoContext";
@@ -29,6 +31,10 @@ export function RevenueOSLeftPanel() {
     },
     data: { acquireData },
   } = useRevenueOS();
+
+  // Get workspace context for section filtering
+  const { user: authUser } = useUnifiedAuth();
+  const workspaceSlug = authUser?.activeWorkspaceId || 'default';
 
   // Debug logging to see what activeSubApp we're getting
   console.log("🔥 RevenueOSLeftPanel: activeSubApp =", activeSubApp);
@@ -392,7 +398,10 @@ export function RevenueOSLeftPanel() {
                     Sections
                   </h3>
                 )}
-                {currentSubApp.sections.map((section) => {
+                {getFilteredSectionsForWorkspace({
+                  workspaceSlug,
+                  appId: currentSubApp.id
+                }).map((section) => {
                   const stats = getRealStatsForSection(
                     currentSubApp.id,
                     section,
