@@ -234,7 +234,8 @@ export const PipelineContent = React.memo(function PipelineContent({
   // Use single data source from useRevenueOS for dashboard only
   const { data: acquisitionData } = useRevenueOS();
   
-  const workspaceId = currentWorkspaceId;
+  // Determine workspace ID with fallback logic
+  const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId;
   
   // Map workspace to correct user ID
   const getUserIdForWorkspace = (workspaceId: string) => {
@@ -1000,13 +1001,18 @@ export const PipelineContent = React.memo(function PipelineContent({
     );
   }
 
+  // Determine if this is Notary Everyday workspace for dynamic header
+  const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || 
+                          workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || 
+                          workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
+
   // Create the middle panel content
   const middlePanel = section === 'metrics' ? (
     <div className="h-full flex flex-col">
       {showHeader && (
         <StandardHeader
-          title="Metrics"
-          subtitle="Sales performance and KPIs"
+          title={isNotaryEveryday ? "Notary Everyday Metrics" : "Metrics"}
+          subtitle={isNotaryEveryday ? "Current Period: Q4:25" : "Sales performance and KPIs"}
           actions={
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-md">

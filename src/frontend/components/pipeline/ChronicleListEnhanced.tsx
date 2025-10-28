@@ -6,7 +6,6 @@ import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useRouter } from 'next/navigation';
 import { PresentationView } from './PresentationView';
 import { PitchRegularView } from './PitchRegularView';
-import { sampleChronicleReports } from '@/lib/chronicle-sample-data';
 
 interface ChronicleReport {
   id: string;
@@ -15,6 +14,8 @@ interface ChronicleReport {
   reportType: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'PITCH';
   content: any;
   createdAt: string;
+  isRead?: boolean;
+  lastReadAt?: string | null;
   shares: Array<{
     id: string;
     shareToken: string;
@@ -55,25 +56,8 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
         });
         
         if (!response.ok) {
-          // Fall back to mock data for Notary Everyday
-          const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
-          if (isNotaryEveryday) {
-            console.log('API failed, using mock data for Notary Everyday');
-            // Convert sample data to match the expected interface
-            const convertedReports = sampleChronicleReports.map(report => ({
-              id: report.id,
-              title: report.title,
-              reportDate: report.reportDate,
-              reportType: report.reportType,
-              content: report.content,
-              createdAt: report.createdAt,
-              shares: [] // Mock reports don't have shares
-            }));
-            console.log('🔍 [ChronicleListEnhanced] Setting mock reports:', convertedReports);
-            setReports(convertedReports);
-            setLoading(false);
-            return;
-          }
+          // No fallback - use real data only
+          console.log('API failed, no fallback data available');
           // For all other users/workspaces, just set empty array instead of throwing error
           console.log('API failed for non-Ryan Serrato user, setting empty reports');
           setReports([]);
@@ -86,25 +70,9 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
       } catch (err) {
         console.error('Error fetching Chronicle reports:', err);
         
-        // Fall back to mock data for Notary Everyday (check both old and new IDs)
-        const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1';
-        if (isNotaryEveryday) {
-          console.log('Error occurred, using mock data for Notary Everyday');
-          // Convert sample data to match the expected interface
-          const convertedReports = sampleChronicleReports.map(report => ({
-            id: report.id,
-            title: report.title,
-            reportDate: report.reportDate,
-            reportType: report.reportType,
-            content: report.content,
-            createdAt: report.createdAt,
-            shares: [] // Mock reports don't have shares
-          }));
-          console.log('🔍 [ChronicleListEnhanced] Setting mock reports in catch:', convertedReports);
-          setReports(convertedReports);
-        } else {
-          setError(err instanceof Error ? err.message : 'Failed to fetch reports');
-        }
+        // No fallback - use real data only
+        console.log('Error occurred, no fallback data available');
+        setError(err instanceof Error ? err.message : 'Failed to fetch reports');
       } finally {
         setLoading(false);
       }
@@ -113,34 +81,42 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
     fetchReports();
   }, [workspaceId]);
 
-  const generateReport = async (reportType: 'DAILY' | 'WEEKLY' | 'MONTHLY') => {
-    if (!workspaceId) return;
 
+  const markReportAsRead = async (reportId: string) => {
     try {
-      const response = await fetch('/api/v1/chronicle/generate', {
+      const response = await fetch('/api/v1/chronicle/mark-read', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({
-          reportType
-        })
+        body: JSON.stringify({ reportId })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate report');
+      if (response.ok) {
+        // Update local state to mark report as read
+        setReports(prevReports => 
+          prevReports.map(report => 
+            report.id === reportId 
+              ? { ...report, isRead: true, lastReadAt: new Date().toISOString() }
+              : report
+          )
+        );
+        console.log('📖 [ChronicleListEnhanced] Report marked as read:', reportId);
+      } else {
+        console.error('Failed to mark report as read');
       }
-
-      const newReport = await response.json();
-      setReports(prev => [newReport.data, ...prev]);
-    } catch (err) {
-      console.error('Error generating report:', err);
-      setError(err instanceof Error ? err.message : 'Failed to generate report');
+    } catch (error) {
+      console.error('Error marking report as read:', error);
     }
   };
 
   const handleReportClick = (report: ChronicleReport) => {
+    // Mark report as read when clicked
+    if (!report.isRead) {
+      markReportAsRead(report.id);
+    }
+
     if (report.reportType === 'PITCH') {
       // Handle pitch report inline
       setShowPitchPresentation(true);
@@ -392,24 +368,8 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
             <p className="text-[var(--muted)] mb-4">
               {searchQuery || filterType !== 'all' 
                 ? 'Try adjusting your search or filters.' 
-                : 'Generate your first report to get started.'}
+                : 'Reports are automatically generated daily and weekly.'}
             </p>
-            {!searchQuery && filterType === 'all' && (
-              <div className="flex gap-2 justify-center">
-                <button
-                  onClick={() => generateReport('DAILY')}
-                  className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
-                >
-                  Generate Daily Report
-                </button>
-                <button
-                  onClick={() => generateReport('WEEKLY')}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  Generate Weekly Report
-                </button>
-              </div>
-            )}
           </div>
         ) : (
           <div className="space-y-3">
@@ -425,8 +385,15 @@ export function ChronicleListEnhanced({ onReportSelect }: ChronicleListEnhancedP
                     <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
                       {getTimeLabel(report.reportDate, report.reportType)}
                     </span>
-                    <div className="text-xs text-[var(--foreground)] font-medium">
-                      {formatTime(report.createdAt)}
+                    <div className="flex items-center gap-2">
+                      {!report.isRead && (
+                        <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                          New
+                        </span>
+                      )}
+                      <div className="text-xs text-[var(--foreground)] font-medium">
+                        {formatTime(report.createdAt)}
+                      </div>
                     </div>
                   </div>
                   

@@ -19,26 +19,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Workspace ID required' }, { status: 400 });
     }
 
-    // Check if this is Ryan Serrato in Notary Everyday
+    // Check if this is Notary Everyday workspace
     const isNotaryEveryday = workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
-    const isRyanSerrato = session.user.id === 'cmf0kew2z0000pcsexylorpxp';
     
-    if (!(isNotaryEveryday && isRyanSerrato)) {
+    if (!isNotaryEveryday) {
       return NextResponse.json({ success: false, error: 'Access denied' }, { status: 403 });
     }
 
     // Query actual reports from database
-    const reports = await prisma.chronicle_reports.findMany({
+    const reports = await prisma.chronicleReport.findMany({
       where: {
-        workspaceId,
-        deletedAt: null
+        workspaceId
       },
       orderBy: {
         createdAt: 'desc'
       },
       take: limit,
       include: {
-        shares: true
+        ChronicleShare: true
       }
     });
 
@@ -59,11 +57,33 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Map database fields to frontend format
+    const mappedReports = reports.map(report => ({
+      id: report.id,
+      title: report.title,
+      reportDate: report.weekStart.toISOString(), // Use weekStart as reportDate
+      reportType: report.reportType === 'FRIDAY_RECAP' ? 'WEEKLY' : 'DAILY', // Map enum to frontend format
+      content: report.content,
+      createdAt: report.createdAt.toISOString(),
+      isRead: false, // Temporary: all reports are unread
+      lastReadAt: null,
+      shares: report.ChronicleShare.map(share => ({
+        id: share.id,
+        shareToken: share.shareToken,
+        shareUrl: share.shareUrl,
+        viewCount: share.viewCount,
+        createdAt: share.createdAt.toISOString()
+      }))
+    }));
+
+    const unreadCount = mappedReports.filter(r => !r.isRead).length;
+
     return NextResponse.json({
       success: true,
       data: {
-        reports: reports,
-        total: reports.length
+        reports: mappedReports,
+        total: reports.length,
+        unreadCount
       }
     });
 

@@ -55,6 +55,32 @@ interface NotaryEverydayMetrics {
   }>;
 }
 
+function isNotaryEverydayMetrics(metrics: any): metrics is NotaryEverydayMetrics {
+  return metrics?.metrics?.clients !== undefined;
+}
+
+// Calculate trend from historical data
+function calculateTrend(current: number, historical: Array<{period: string; metrics: any}>, metricPath: string): {
+  trend: 'up' | 'down' | 'stable';
+  trendValue: string;
+} | undefined {
+  if (!historical || historical.length === 0) return undefined;
+  
+  // Get previous period (most recent historical data)
+  const previousPeriod = historical[historical.length - 1];
+  const previous = metricPath.split('.').reduce((obj, key) => obj?.[key], previousPeriod.metrics);
+  
+  if (previous === undefined || previous === null) return undefined;
+  
+  const change = current - previous;
+  const percentChange = previous !== 0 ? Math.round((change / previous) * 100) : 0;
+  
+  return {
+    trend: change > 0 ? 'up' : change < 0 ? 'down' : 'stable',
+    trendValue: `${change > 0 ? '+' : ''}${percentChange}% vs ${previousPeriod.period}`
+  };
+}
+
 interface MetricCardProps {
   title: string;
   value: string | number | null;
@@ -148,6 +174,18 @@ export function MetricsEnhanced() {
                           workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || 
                           workspaceId === 'cmezxb1ez0001pc94yry3ntjk';
 
+  // Debug logging for workspace ID detection
+  console.log('🔍 [MetricsEnhanced] DEBUG - Workspace ID Analysis:', {
+    workspaceId,
+    isNotaryEveryday,
+    expectedIds: ['01K1VBYmf75hgmvmz06psnc9ug', '01K7DNYR5VZ7JY36KGKKN76XZ1', 'cmezxb1ez0001pc94yry3ntjk'],
+    matches: {
+      id1: workspaceId === '01K1VBYmf75hgmvmz06psnc9ug',
+      id2: workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1', 
+      id3: workspaceId === 'cmezxb1ez0001pc94yry3ntjk'
+    }
+  });
+
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
@@ -155,30 +193,17 @@ export function MetricsEnhanced() {
         setError(null);
         
         if (!isNotaryEveryday) {
-          console.log('🔍 [MetricsEnhanced] Not Notary Everyday workspace, using default metrics');
-          // For non-NE workspaces, use the existing metrics API
-          const response = await fetch(`/api/v1/metrics?workspaceId=${workspaceId}&t=${Date.now()}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-          });
-
-          if (!response.ok) {
-            throw new Error(`Failed to fetch metrics: ${response.status}`);
-          }
-
-          const data = await response.json();
-          if (data.success) {
-            setMetrics(data.data);
-          } else {
-            throw new Error(data.error || 'Failed to load metrics');
-          }
+          console.log('🔍 [MetricsEnhanced] Not Notary Everyday workspace, showing fallback message');
+          console.log('🔍 [MetricsEnhanced] DEBUG - Workspace ID does not match NE IDs:', workspaceId);
+          // For non-NE workspaces, don't set metrics so fallback message shows
+          setMetrics(null);
         } else {
           // For Notary Everyday, use the new dedicated API
-          console.log('🔍 [MetricsEnhanced] Fetching Notary Everyday metrics');
-          const response = await fetch(`/api/v1/metrics/notary-everyday?workspaceId=${workspaceId}&t=${Date.now()}`, {
+          console.log('🔍 [MetricsEnhanced] Fetching Notary Everyday metrics for workspaceId:', workspaceId);
+          const apiUrl = `/api/v1/metrics/notary-everyday?workspaceId=${workspaceId}&t=${Date.now()}`;
+          console.log('🔍 [MetricsEnhanced] DEBUG - API URL:', apiUrl);
+          
+          const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -186,14 +211,27 @@ export function MetricsEnhanced() {
             credentials: 'include',
           });
 
+          console.log('🔍 [MetricsEnhanced] DEBUG - API Response status:', response.status);
+          console.log('🔍 [MetricsEnhanced] DEBUG - API Response ok:', response.ok);
+
           if (!response.ok) {
+            const errorText = await response.text();
             console.error('❌ [METRICS] NE API failed with status:', response.status);
-            throw new Error(`Failed to fetch Notary Everyday metrics: ${response.status}`);
+            console.error('❌ [METRICS] NE API error response:', errorText);
+            throw new Error(`Failed to fetch Notary Everyday metrics: ${response.status} - ${errorText}`);
           }
 
-          const data = await response.json();
-          console.log('✅ [METRICS] NE API returned data:', data);
-          setMetrics(data);
+          const responseData = await response.json();
+          console.log('✅ [METRICS] NE API returned data:', responseData);
+          console.log('🔍 [MetricsEnhanced] DEBUG - Setting metrics with data structure:', {
+            hasSuccess: !!responseData.success,
+            hasData: !!responseData.data,
+            hasMetrics: !!responseData.data?.metrics,
+            hasClients: !!responseData.data?.metrics?.clients,
+            responseKeys: Object.keys(responseData),
+            dataKeys: responseData.data ? Object.keys(responseData.data) : []
+          });
+          setMetrics(responseData.data);
         }
       } catch (err) {
         console.error('Error fetching metrics:', err);
@@ -234,12 +272,12 @@ export function MetricsEnhanced() {
     );
   }
 
-  // Don't render until metrics are loaded
+  // Show loading skeleton while metrics are loading
   if (loading || !metrics) {
     return (
       <div className="h-full overflow-y-auto invisible-scrollbar">
         <div className="p-6 bg-[var(--background)] min-h-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1400px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1600px]">
             {Array.from({ length: 16 }).map((_, i) => (
               <div key={i} className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm animate-pulse">
                 <div className="flex justify-between items-start mb-4">
@@ -259,29 +297,36 @@ export function MetricsEnhanced() {
     );
   }
 
+  // Debug logging for render decision
+  console.log('🔍 [MetricsEnhanced] DEBUG - Render decision:', {
+    isNotaryEveryday,
+    hasMetrics: !!metrics,
+    isNotaryEverydayMetrics: metrics ? isNotaryEverydayMetrics(metrics) : false,
+    metricsType: metrics ? typeof metrics : 'null',
+    metricsKeys: metrics ? Object.keys(metrics) : []
+  });
+
   // Render Notary Everyday metrics if this is NE workspace
-  if (isNotaryEveryday && metrics) {
+  if (isNotaryEveryday && metrics && isNotaryEverydayMetrics(metrics)) {
     return (
       <div className="h-full overflow-y-auto invisible-scrollbar">
         <div className="p-6 bg-[var(--background)] min-h-full">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Notary Everyday Metrics</h1>
-            <p className="text-gray-600">Current Period: {metrics.currentPeriod}</p>
+          {/* Client Metrics Section */}
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 flex items-center gap-2">
+              <UserGroupIcon className="w-5 h-5" />
+              Client Metrics
+            </h2>
           </div>
           
-          {/* 4x4 Grid Layout for 16 metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1600px]">
-            {/* Client Metrics */}
-            <div className="col-span-4 mb-4">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">Client Metrics</h2>
-            </div>
-            
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <MetricCard
               title="New Clients"
               value={metrics.metrics.clients.new}
               subtitle={`This ${metrics.currentPeriod}`}
               color={metrics.metrics.clients.new > 5 ? 'success' : metrics.metrics.clients.new > 2 ? 'default' : 'warning'}
               icon={UserPlusIcon}
+              {...calculateTrend(metrics.metrics.clients.new, metrics.historical, 'clients.new')}
             />
             
             <MetricCard
@@ -290,6 +335,7 @@ export function MetricsEnhanced() {
               subtitle="All time"
               color={metrics.metrics.clients.total > 20 ? 'success' : metrics.metrics.clients.total > 10 ? 'default' : 'warning'}
               icon={UserGroupIcon}
+              {...calculateTrend(metrics.metrics.clients.total, metrics.historical, 'clients.total')}
             />
             
             <MetricCard
@@ -298,6 +344,7 @@ export function MetricsEnhanced() {
               subtitle="From previous periods"
               color="default"
               icon={UsersIcon}
+              {...calculateTrend(metrics.metrics.clients.existing, metrics.historical, 'clients.existing')}
             />
             
             <MetricCard
@@ -306,13 +353,19 @@ export function MetricsEnhanced() {
               subtitle="Lost this period"
               color={metrics.metrics.clients.decayed > 2 ? 'danger' : 'default'}
               icon={UserMinusIcon}
+              {...calculateTrend(metrics.metrics.clients.decayed, metrics.historical, 'clients.decayed')}
             />
+          </div>
 
-            {/* Order & Revenue Metrics */}
-            <div className="col-span-4 mb-4 mt-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">Order & Revenue Metrics</h2>
-            </div>
-            
+          {/* Order & Revenue Metrics Section */}
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 flex items-center gap-2">
+              <ShoppingCartIcon className="w-5 h-5" />
+              Order & Revenue Metrics
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <MetricCard
               title="Monthly Total Orders"
               value={metrics.metrics.orders.monthlyTotal}
@@ -344,12 +397,19 @@ export function MetricsEnhanced() {
               color={metrics.metrics.orders.neCut > 50000 ? 'success' : metrics.metrics.orders.neCut > 25000 ? 'default' : 'warning'}
               icon={CurrencyDollarIcon}
             />
+          </div>
 
-            {/* Funnel Metrics */}
-            <div className="col-span-4 mb-4 mt-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">Funnel Metrics</h2>
-            </div>
-            
+          {/* Funnel Metrics Section */}
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+              </svg>
+              Sales Funnel
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <MetricCard
               title="Total Leads"
               value={metrics.metrics.funnel.leads}
@@ -381,12 +441,17 @@ export function MetricsEnhanced() {
               color={metrics.metrics.funnel.clients > 20 ? 'success' : metrics.metrics.funnel.clients > 10 ? 'default' : 'warning'}
               icon={CheckCircleIcon}
             />
+          </div>
 
-            {/* Conversion Metrics */}
-            <div className="col-span-4 mb-4 mt-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">Conversion Metrics</h2>
-            </div>
-            
+          {/* Conversion Metrics Section */}
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 flex items-center gap-2">
+              <ArrowTrendingUpIcon className="w-5 h-5" />
+              Conversion Metrics
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <MetricCard
               title="Lead → Prospect"
               value={`${metrics.metrics.conversions.leadToProspect}%`}

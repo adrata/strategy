@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/v1/chronicle/scheduler",
+      "schedule": "0 9 * * 5"
+    }
+  ],
   "functions": {
     "src/app/api/**/*.ts": {
       "maxDuration": 30
@@ -7,6 +13,9 @@
       "maxDuration": 300
     },
     "src/app/api/webhooks/nango/email/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/v1/chronicle/scheduler/route.ts": {
       "maxDuration": 60
     }
   },

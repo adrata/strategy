@@ -66,7 +66,9 @@ function PipelineSections({
   isCustomersVisible,
   isPartnersVisible,
   fastCounts,
-  fastCountsLoading
+  fastCountsLoading,
+  isMoreExpanded,
+  setIsMoreExpanded
 }: { 
   activeSection: string;
   handleSectionClick: (section: string) => void;
@@ -78,6 +80,8 @@ function PipelineSections({
   isPartnersVisible?: boolean;
   fastCounts?: any;
   fastCountsLoading?: boolean;
+  isMoreExpanded: boolean;
+  setIsMoreExpanded: (expanded: boolean) => void;
 }) {
   // Get auth context in this component
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
@@ -176,7 +180,7 @@ function PipelineSections({
                      (actualCounts && Object.keys(actualCounts).length > 0 ? actualCounts : fallbackCounts);
 
   // Get chronicle count for Notary Everyday
-  const { count: chronicleCount } = useChronicleCount();
+  const { count: chronicleCount, unreadCount: chronicleUnreadCount, loading: chronicleLoading } = useChronicleCount();
   
   // Get metrics count for Notary Everyday
   const { count: metricsCount } = useMetricsCount();
@@ -689,7 +693,15 @@ function PipelineSections({
       id: "chronicle",
       name: "Chronicle",
       description: "Business Intelligence Reports",
-      count: isNotaryEveryday ? chronicleCount : 0, // Show count for Notary Everyday
+      count: isNotaryEveryday ? (
+        chronicleUnreadCount > 0 ? (
+          <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+            New
+          </span>
+        ) : (
+          chronicleCount
+        )
+      ) : 0,
       visible: allowedSections.includes('chronicle') && hasChronicle
     },
     {
@@ -842,8 +854,6 @@ function PipelineSections({
     );
   }
 
-  // State for "More" dropdown
-  const [isMoreExpanded, setIsMoreExpanded] = useState(false);
   
   // Filter visible sections
   const visibleSections = sections.filter(section => section.visible);
@@ -1009,6 +1019,9 @@ export function PipelineLeftPanelStandalone({
     primaryColor: '#1f2937',
     secondaryColor: '#3b82f6'
   });
+
+  // State for "More" dropdown - moved to parent to prevent reset on re-renders
+  const [isMoreExpanded, setIsMoreExpanded] = useState(false);
 
   // Handle section click
   const handleSectionClick = (section: string) => {
@@ -1252,6 +1265,8 @@ export function PipelineLeftPanelStandalone({
           isPartnersVisible={isPartnersVisible}
           fastCounts={fastCounts}
           fastCountsLoading={fastCountsLoading}
+          isMoreExpanded={isMoreExpanded}
+          setIsMoreExpanded={setIsMoreExpanded}
         />
       </div>
 

@@ -47,165 +47,176 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
+            line-height: 1.8;
             color: #000000;
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
             background-color: #ffffff;
         }
-        .container {
-            background: white;
-            border: 1px solid #e5e5e5;
-            overflow: hidden;
-        }
-        .header {
-            background: #000000;
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 600;
-        }
-        .header p {
-            margin: 10px 0 0 0;
-            font-size: 16px;
-            color: #cccccc;
-        }
         .content {
-            padding: 30px;
+            padding: 0;
         }
         .greeting {
-            font-size: 18px;
-            margin-bottom: 20px;
+            font-size: 24px;
+            margin-bottom: 40px;
             color: #000000;
-            font-weight: 600;
+            font-weight: 400;
         }
-        .workspace-info {
-            background: #f9f9f9;
-            border: 1px solid #e5e5e5;
-            padding: 20px;
-            margin: 20px 0;
+        .main-text {
+            font-size: 18px;
+            margin-bottom: 50px;
+            color: #000000;
+            font-weight: 400;
         }
         .workspace-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: #000000;
-            margin-bottom: 8px;
+            font-weight: 500;
         }
-        .workspace-details {
-            color: #6b7280;
-            font-size: 14px;
+        .description {
+            font-size: 16px;
+            margin-bottom: 50px;
+            color: #000000;
+            font-weight: 400;
         }
         .cta-button {
             display: inline-block;
-            background: #3b82f6;
+            background: #007AFF;
             color: white;
             text-decoration: none;
-            padding: 14px 28px;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 16px;
-            margin: 20px 0;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 17px;
+            margin: 0 0 50px 0;
             text-align: center;
-            border: 1px solid #2563eb;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+            transition: opacity 0.2s ease;
         }
         .cta-button:hover {
-            background: #2563eb;
+            opacity: 0.9;
+        }
+        .button-container {
+            text-align: center;
+            margin: 50px 0;
         }
         .expiration-notice {
-            background: #f9f9f9;
-            border: 1px solid #e5e5e5;
-            padding: 15px;
-            margin: 20px 0;
+            margin: 50px 0;
             color: #000000;
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: 400;
         }
         .expiration-notice strong {
             color: #000000;
-        }
-        .footer {
-            background: #f9f9f9;
-            padding: 20px 30px;
-            text-align: center;
-            color: #666666;
-            font-size: 14px;
-            border-top: 1px solid #e5e5e5;
-        }
-        .footer a {
-            color: #3b82f6;
-            text-decoration: none;
+            font-weight: 500;
         }
         .security-note {
-            background: #f9f9f9;
-            border: 1px solid #e5e5e5;
-            padding: 15px;
-            margin: 20px 0;
+            margin: 50px 0;
             color: #000000;
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: 400;
         }
         .security-note strong {
             color: #000000;
+            font-weight: 500;
+        }
+        .features {
+            margin: 50px 0;
+        }
+        .features p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+        .features ul {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+        .features li {
+            margin-bottom: 12px;
+            color: #000000;
+            font-size: 16px;
+            font-weight: 400;
+            position: relative;
+            padding-left: 20px;
+        }
+        .features li:before {
+            content: "•";
+            color: #007AFF;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #8E8E93;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .footer a {
+            color: #007AFF;
+            text-decoration: none;
+        }
+        .footer p {
+            margin: 0 0 20px 0;
+        }
+        .copyright {
+            font-size: 12px;
+            color: #8E8E93;
+            margin-top: 20px;
         }
         @media (max-width: 600px) {
             body {
-                padding: 10px;
+                padding: 20px 15px;
             }
-            .header, .content, .footer {
-                padding: 20px;
+            .greeting {
+                font-size: 22px;
             }
-            .header h1 {
-                font-size: 24px;
+            .main-text {
+                font-size: 16px;
+            }
+            .description {
+                font-size: 15px;
+            }
+            .cta-button {
+                font-size: 16px;
+                padding: 14px 28px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>You're Invited!</h1>
-            <p>${workspaceName === 'Adrata' ? 'Join Adrata on Adrata' : `Join ${workspaceName} Workspace on Adrata`}</p>
+    <div class="content">
+        <div class="greeting">
+            Hi ${firstName},
         </div>
         
-        <div class="content">
-            <div class="greeting">
-                Hi ${firstName},
-            </div>
-            
-            <p>
-                You've been invited to join <strong>${workspaceName}</strong> on Adrata, our intelligent sales platform.
-            </p>
-            
-            <div class="workspace-info">
-                <div class="workspace-name">${workspaceName}</div>
-                <div class="workspace-details">
-                    You'll be able to collaborate with your team, manage prospects, and leverage AI-powered insights to accelerate your sales process.
-                </div>
-            </div>
-            
-            <p>
-                Click the button below to set up your account and get started:
-            </p>
-            
-            <div style="text-align: center;">
-                <a href="${invitationLink}" class="cta-button">
-                    Set Up My Account
-                </a>
-            </div>
-            
-            <div class="expiration-notice">
-                <strong>This invitation expires on ${expirationDate}</strong><br>
-                Please set up your account before this date to ensure access.
-            </div>
-            
-            <div class="security-note">
-                <strong>Security Note:</strong> This invitation link is unique to you and can only be used once. 
-                If you didn't expect this invitation, please contact ${inviterEmail}.
-            </div>
-            
+        <div class="main-text">
+            You've been invited to join <span class="workspace-name">${workspaceName}</span> on Adrata, our intelligent sales platform.
+        </div>
+        
+        <div class="description">
+            You'll be able to collaborate with your team, manage prospects, and leverage AI-powered insights to accelerate your sales process.
+        </div>
+        
+        <div class="button-container">
+            <a href="${invitationLink}" class="cta-button">
+                Set Up My Account
+            </a>
+        </div>
+        
+        <div class="expiration-notice">
+            <strong>This invitation expires on ${expirationDate}</strong><br>
+            Please set up your account before this date to ensure access.
+        </div>
+        
+        <div class="security-note">
+            <strong>Security Note:</strong> This invitation link is unique to you and can only be used once. 
+            If you didn't expect this invitation, please contact ${inviterEmail}.
+        </div>
+        
+        <div class="features">
             <p>
                 Once you've set up your account, you'll be able to:
             </p>
@@ -215,11 +226,11 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
                 <li>Leverage AI-powered sales insights</li>
                 <li>Manage your pipeline and prospects</li>
             </ul>
-            
-            <p>
-                If you have any questions, feel free to reach out to Adrata Client Team.
-            </p>
         </div>
+        
+        <p>
+            If you have any questions, feel free to reach out to Adrata Client Team.
+        </p>
         
         <div class="footer">
             <p>
@@ -227,7 +238,7 @@ export function generateInvitationEmailHTML(data: InvitationEmailData): string {
                 If you're having trouble with the button above, copy and paste this link into your browser:<br>
                 <a href="${invitationLink}">${invitationLink}</a>
             </p>
-            <p style="margin-top: 20px; font-size: 12px; color: #9ca3af;">
+            <p class="copyright">
                 © ${new Date().getFullYear()} Adrata. All rights reserved.
             </p>
         </div>

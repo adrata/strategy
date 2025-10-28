@@ -972,6 +972,8 @@ model ChronicleReport {
   userId         String
   createdAt      DateTime            @default(now())
   updatedAt      DateTime
+  lastReadAt     DateTime?
+  lastReadBy     String?
   ChronicleShare ChronicleShare[]
 
   @@index([userId, createdAt])
