@@ -78,24 +78,50 @@ export async function GET(request: NextRequest) {
   const startTime = Date.now();
   let context: any = null; // Declare context outside try block for error handler access
   
+  console.log(`🚀 [V1 COMPANIES API] GET request started at ${new Date().toISOString()}`);
+  console.log(`🔍 [V1 COMPANIES API] Request URL:`, request.url);
+  console.log(`🔍 [V1 COMPANIES API] Request headers:`, Object.fromEntries(request.headers.entries()));
+  
   try {
+    console.log(`🔐 [V1 COMPANIES API] Starting authentication...`);
+    
     // Authenticate and authorize user using unified auth system
     const authResult = await getSecureApiContext(request, {
       requireAuth: true,
       requireWorkspaceAccess: true
     });
     
+    console.log(`🔐 [V1 COMPANIES API] Auth result:`, {
+      hasContext: !!authResult.context,
+      hasResponse: !!authResult.response,
+      contextKeys: authResult.context ? Object.keys(authResult.context) : 'no context',
+      responseStatus: authResult.response?.status || 'no response'
+    });
+    
     const { context: authContext, response } = authResult;
     context = authContext; // Assign to outer scope variable
 
     if (response) {
+      console.log(`❌ [V1 COMPANIES API] Authentication failed, returning error response:`, {
+        status: response.status,
+        statusText: response.statusText
+      });
       return response; // Return error response if authentication failed
     }
 
     if (!context) {
+      console.log(`❌ [V1 COMPANIES API] No context after auth, returning 401`);
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
+    
+    console.log(`✅ [V1 COMPANIES API] Authentication successful:`, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      userEmail: context.user?.email || 'no email'
+    });
 
+    console.log(`📋 [V1 COMPANIES API] Parsing query parameters...`);
+    
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = Math.min(parseInt(searchParams.get('limit') || '100'), 10000); // Cap at 10000, default 100
@@ -111,6 +137,10 @@ export async function GET(request: NextRequest) {
     
     const offset = (page - 1) * limit;
     
+    console.log(`📋 [V1 COMPANIES API] Query parameters:`, {
+      page, limit, search, status, priority, industry, sortBy, sortOrder, countsOnly, forceRefresh, offset
+    });
+    
     // 🔧 CRITICAL FIX: Override workspace ID from query params if present (for multi-workspace support)
     // This allows users to access workspaces other than their default JWT workspace
     let finalWorkspaceId = context.workspaceId;
@@ -123,6 +153,14 @@ export async function GET(request: NextRequest) {
     // Check cache first (skip if force refresh)
     const cacheKey = `companies-${finalWorkspaceId}-${status}-${priority}-${industry}-${search}-${sortBy}-${sortOrder}-${limit}-${countsOnly}-${page}`;
     const cached = responseCache.get(cacheKey);
+    
+    console.log(`💾 [V1 COMPANIES API] Cache check:`, {
+      cacheKey,
+      hasCached: !!cached,
+      cacheAge: cached ? Date.now() - cached.timestamp : 'no cache',
+      forceRefresh,
+      cacheTTL: CACHE_TTL
+    });
     
     if (!forceRefresh && cached && Date.now() - cached.timestamp < CACHE_TTL) {
       console.log(`📦 [V1 COMPANIES API] Returning cached data for key: ${cacheKey}`);
@@ -141,6 +179,8 @@ export async function GET(request: NextRequest) {
                       finalWorkspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || // Notary Everyday
                       finalWorkspaceId === '01K7464TNANHQXPCZT1FYX205V'; // Adrata workspace
     
+    console.log(`🎯 [V1 COMPANIES API] Demo mode check:`, { isDemoMode, finalWorkspaceId });
+    
     const where: any = {
       workspaceId: finalWorkspaceId, // Use final workspace ID (from URL or JWT)
       deletedAt: null, // Only show non-deleted records
@@ -152,6 +192,8 @@ export async function GET(request: NextRequest) {
       })
     };
     console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);
+    
+    console.log(`🗄️ [V1 COMPANIES API] Starting database query...`);
     
     if (search) {
       const searchTerm = search.trim();
@@ -260,6 +302,8 @@ export async function GET(request: NextRequest) {
       result = { success: true, data: counts };
     } else {
       // Optimized query with Prisma ORM for reliability
+      console.log(`🗄️ [V1 COMPANIES API] Executing main database query with where clause:`, where);
+      
       const [companies, totalCount] = await Promise.all([
         prisma.companies.findMany({
           where,
@@ -378,6 +422,12 @@ export async function GET(request: NextRequest) {
         }),
         prisma.companies.count({ where }),
       ]);
+
+      console.log(`🗄️ [V1 COMPANIES API] Database query completed:`, {
+        companiesFound: companies.length,
+        totalCount,
+        queryTime: Date.now() - startTime
+      });
 
       // 🚀 COMPUTE LAST ACTION: Enrich with actual last action from actions table
       const enrichedCompanies = await Promise.all(companies.map(async (company) => {
@@ -523,6 +573,12 @@ export async function GET(request: NextRequest) {
         }
       }));
 
+      console.log(`🔧 [V1 COMPANIES API] Building response with enriched companies:`, {
+        enrichedCount: enrichedCompanies.length,
+        totalCount,
+        processingTime: Date.now() - startTime
+      });
+
       result = {
         success: true,
         data: enrichedCompanies,
@@ -547,6 +603,12 @@ export async function GET(request: NextRequest) {
     // Cache the result
     responseCache.set(cacheKey, { data: result, timestamp: Date.now() });
     
+    console.log(`✅ [V1 COMPANIES API] Returning successful response:`, {
+      success: result.success,
+      dataLength: result.data?.length || 0,
+      totalTime: Date.now() - startTime,
+      cacheKey
+    });
     
     return NextResponse.json(result);
 
@@ -555,7 +617,8 @@ export async function GET(request: NextRequest) {
     console.error('❌ [V1 COMPANIES API] Error details:', {
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : undefined
+      name: error instanceof Error ? error.name : undefined,
+      context: context ? { userId: context.userId, workspaceId: context.workspaceId } : 'no context'
     });
     return createErrorResponse(
       error instanceof Error ? error.message : 'Internal server error', 
@@ -563,6 +626,15 @@ export async function GET(request: NextRequest) {
       500
     );
   }
+  
+  // 🚨 CRITICAL: Catch-all return to prevent empty responses
+  // This should never be reached, but ensures we never return undefined
+  console.error('🚨 [V1 COMPANIES API] CRITICAL: Reached catch-all return - this should never happen!');
+  return createErrorResponse(
+    'Unexpected error - no response generated', 
+    'NO_RESPONSE_ERROR', 
+    500
+  );
 }
 
 // POST /api/v1/companies - Create a new company

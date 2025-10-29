@@ -1192,7 +1192,7 @@ export function PipelineLeftPanelStandalone({
             <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200 overflow-hidden" style={{ filter: 'none' }}>
               <span className="text-lg font-bold text-black">
                 {(() => {
-                  const companyName = (workspace || "Adrata").trim();
+                  const companyName = (workspace?.name || workspaceName || "Adrata").trim();
                   // Special handling for specific companies
                   if (companyName === "Notary Everyday") {
                     return "NE";
@@ -1354,7 +1354,7 @@ export function PipelineLeftPanelStandalone({
           </div>
           <div className="flex-1 text-left">
             <div className="text-sm font-medium text-[var(--foreground)]">{user.name}</div>
-            <div className="text-xs text-[var(--muted)]">{workspace}</div>
+            <div className="text-xs text-[var(--muted)]">{workspace?.name || workspaceName || 'Adrata'}</div>
           </div>
         </button>
       </div>

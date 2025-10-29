@@ -24,23 +24,46 @@ export async function GET(request: NextRequest) {
   const startTime = Date.now();
   let context: any = null; // Declare context outside try block for error handler access
   
+  console.log(`🚀 [V1 PEOPLE API] GET request started at ${new Date().toISOString()}`);
+  console.log(`🔍 [V1 PEOPLE API] Request URL:`, request.url);
+  
   try {
+    console.log(`🔐 [V1 PEOPLE API] Starting authentication...`);
+    
     // Authenticate and authorize user using unified auth system
     const authResult = await getSecureApiContext(request, {
       requireAuth: true,
       requireWorkspaceAccess: true
     });
     
+    console.log(`🔐 [V1 PEOPLE API] Auth result:`, {
+      hasContext: !!authResult.context,
+      hasResponse: !!authResult.response,
+      contextKeys: authResult.context ? Object.keys(authResult.context) : 'no context',
+      responseStatus: authResult.response?.status || 'no response'
+    });
+    
     const { context: authContext, response } = authResult;
     context = authContext; // Assign to outer scope variable
 
     if (response) {
+      console.log(`❌ [V1 PEOPLE API] Authentication failed, returning error response:`, {
+        status: response.status,
+        statusText: response.statusText
+      });
       return response; // Return error response if authentication failed
     }
 
     if (!context) {
+      console.log(`❌ [V1 PEOPLE API] No context after auth, returning 401`);
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
+    
+    console.log(`✅ [V1 PEOPLE API] Authentication successful:`, {
+      userId: context.userId,
+      workspaceId: context.workspaceId,
+      userEmail: context.user?.email || 'no email'
+    });
     
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
