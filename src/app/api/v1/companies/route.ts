@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Check cache first (skip if force refresh)
-    const cacheKey = `companies-${finalWorkspaceId}-${status}-${limit}-${countsOnly}-${page}`;
+    const cacheKey = `companies-${finalWorkspaceId}-${status}-${priority}-${industry}-${search}-${sortBy}-${sortOrder}-${limit}-${countsOnly}-${page}`;
     const cached = responseCache.get(cacheKey);
     
     if (!forceRefresh && cached && Date.now() - cached.timestamp < CACHE_TTL) {

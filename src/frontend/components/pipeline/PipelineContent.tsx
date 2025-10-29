@@ -171,6 +171,8 @@ export const PipelineContent = React.memo(function PipelineContent({
   // Update visible columns and sort when section changes
   useEffect(() => {
     setVisibleColumns(getDefaultVisibleColumns(section));
+    // Clear search when changing sections
+    setSearchQuery('');
     // Reset sort to default for new section
     if (section === 'prospects') {
       setSortField('lastActionDate');
@@ -380,6 +382,12 @@ export const PipelineContent = React.memo(function PipelineContent({
     };
   }, [section, fastSectionData]);
   
+  // Clear search when component unmounts
+  useEffect(() => {
+    return () => {
+      setSearchQuery('');
+    };
+  }, []);
     
   // CRITICAL FIX: Add metrics for metrics section compatibility
   const metrics = section === 'metrics' 
@@ -1140,7 +1148,7 @@ export const PipelineContent = React.memo(function PipelineContent({
         onAddRecord={handleAddRecord}
         title={title}
         subtitle={subtitle}
-        recordCount={sectionData.count}
+        recordCount={searchQuery ? filteredData.length : sectionData.count}
       />
 
       {/* Filters - Hide search/filter/sort/columns when there is no data */}
@@ -1148,7 +1156,7 @@ export const PipelineContent = React.memo(function PipelineContent({
         <div className={`flex-shrink-0 px-4 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
           <PipelineFilters 
             section={section}
-            totalCount={sectionData.count}
+            totalCount={searchQuery ? filteredData.length : sectionData.count}
             onSearchChange={setSearchQuery}
             onVerticalChange={setVerticalFilter}
             onStatusChange={setStatusFilter}
@@ -1224,7 +1232,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                 visibleColumns={visibleColumns}
                 pageSize={50} // Speedrun shows all 50 items on one page
                 isLoading={isLoading}
-                totalCount={sectionData.count} // Pass total count for correct pagination
+                totalCount={searchQuery ? filteredData.length : sectionData.count} // Pass total count for correct pagination
               />
               ) : section === 'prospects' ? (
                 // Prospects table with same design as other sections
@@ -1239,7 +1247,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={sectionData.loading}
-                  totalCount={sectionData.count}
+                  totalCount={searchQuery ? filteredData.length : sectionData.count}
                 />
               ) : section === 'leads' ? (
                 // Leads table with same design as prospects
@@ -1254,7 +1262,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={sectionData.loading}
-                  totalCount={sectionData.count}
+                  totalCount={searchQuery ? filteredData.length : sectionData.count}
                 />
               ) : section === 'people' ? (
                 // People table with same design as prospects
@@ -1269,7 +1277,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={sectionData.loading}
-                  totalCount={sectionData.count}
+                  totalCount={searchQuery ? filteredData.length : sectionData.count}
                 />
               ) : section === 'companies' ? (
                 // Companies table with same design as prospects
@@ -1285,7 +1293,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                   pageSize={100}
                   isLoading={isLoading}
                   searchQuery={searchQuery}
-                  totalCount={sectionData.count} // Pass total count for correct pagination
+                  totalCount={searchQuery ? filteredData.length : sectionData.count} // Pass total count for correct pagination
                 />
               ) : section === 'sellers' ? (
                 // Sellers table with same design as people and companies
@@ -1301,7 +1309,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                   pageSize={100}
                   isLoading={isLoading}
                   searchQuery={searchQuery}
-                  totalCount={sectionData.count} // Pass total count for correct pagination
+                  totalCount={searchQuery ? filteredData.length : sectionData.count} // Pass total count for correct pagination
                 />
           ) : (
             <PipelineTable
@@ -1315,7 +1323,7 @@ export const PipelineContent = React.memo(function PipelineContent({
               visibleColumns={visibleColumns}
               pageSize={100} // Default page size for other sections
               isLoading={isLoading}
-              totalCount={fastSectionData.count} // Pass total count for correct pagination
+              totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
             />
           )}
           </>

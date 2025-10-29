@@ -270,6 +270,8 @@ export function PipelineTable({
     currentPage,
     totalPages,
     totalItems,
+    apiTotalCount,
+    searchQuery: hookSearchQuery,
     setCurrentPage,
     setSortField,
     setSortDirection,
@@ -472,6 +474,8 @@ export function PipelineTable({
         pageSize={pageSize}
         totalItems={totalItems}
         onPageChange={handlePageChange}
+        apiTotalCount={apiTotalCount}
+        hasActiveFilters={!!hookSearchQuery}
       />
       
       {/* Modals */}

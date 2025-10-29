@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRecordContext } from '@/platform/ui/context/RecordContextProvider';
 import { CompanyDetailSkeleton } from '@/platform/ui/components/Loader';
 import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField';
+import { authFetch } from '@/platform/api-fetch';
 
 interface UniversalCompanyTabProps {
   recordType: string;
@@ -19,10 +20,133 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   
+  // Company data fetching state
+  const [fullCompanyData, setFullCompanyData] = useState<any>(null);
+  const [isLoadingCompany, setIsLoadingCompany] = useState(false);
+  const [companyError, setCompanyError] = useState<string | null>(null);
+  
+  // Local state for immediate UI updates
+  const [website, setWebsite] = useState<string | null>(null);
+  const [linkedinUrl, setLinkedinUrl] = useState<string | null>(null);
+  const [linkedinNavigatorUrl, setLinkedinNavigatorUrl] = useState<string | null>(null);
+  const [city, setCity] = useState<string | null>(null);
+  const [state, setState] = useState<string | null>(null);
+  
+  // Determine the actual company ID
+  const companyId = useMemo(() => {
+    // If recordType is companies, use record.id directly
+    if (recordType === 'companies') {
+      return record?.id;
+    }
+    // If it's a person record, get companyId
+    return record?.companyId || record?.company?.id;
+  }, [record, recordType]);
+
+  // Detect if we have partial company data that needs to be fetched
+  const hasPartialCompanyData = useMemo(() => {
+    if (!companyId || recordType === 'companies') {
+      return false; // No company ID or already a company record
+    }
+    
+    // Check if we're missing key company fields that indicate partial data
+    const hasKeyFields = record?.description || record?.website || record?.revenue || 
+                        record?.linkedinUrl || record?.hqFullAddress || record?.legalName;
+    
+    return !hasKeyFields; // If we don't have key fields, we likely have partial data
+  }, [companyId, record, recordType]);
+  
+  // Fetch full company data when we have partial data
+  useEffect(() => {
+    const fetchCompanyData = async () => {
+      if (!companyId || !hasPartialCompanyData) {
+        return;
+      }
+
+      setIsLoadingCompany(true);
+      setCompanyError(null);
+
+      try {
+        console.log(`🏢 [UniversalCompanyTab] Fetching full company data for companyId: ${companyId}`);
+        const response = await authFetch(`/api/v1/companies/${companyId}`);
+        
+        if (response && response.success && response.data) {
+          console.log(`✅ [UniversalCompanyTab] Fetched company data:`, response.data);
+          setFullCompanyData(response.data);
+        } else {
+          throw new Error(response?.error || 'Failed to fetch company data');
+        }
+      } catch (error) {
+        console.error('❌ [UniversalCompanyTab] Error fetching company data:', error);
+        setCompanyError(error instanceof Error ? error.message : 'Failed to fetch company data');
+      } finally {
+        setIsLoadingCompany(false);
+      }
+    };
+
+    fetchCompanyData();
+  }, [companyId, hasPartialCompanyData]);
+
+  // Initialize local state from record data and sync with record updates
+  useEffect(() => {
+    if (record) {
+      const newWebsite = record?.website || null;
+      const newLinkedinUrl = record?.linkedinUrl || record?.linkedin || null;
+      const newLinkedinNavigatorUrl = record?.linkedinNavigatorUrl || null;
+      const newCity = record?.city || null;
+      const newState = record?.state || null;
+      
+      console.log(`🔍 [UniversalCompanyTab] Syncing state from record:`, {
+        recordId: record?.id,
+        newWebsite,
+        newLinkedinUrl,
+        newLinkedinNavigatorUrl,
+        newCity,
+        newState
+      });
+      
+      // Only update state if values have changed to avoid unnecessary re-renders
+      if (newWebsite !== website) {
+        setWebsite(newWebsite);
+      }
+      if (newLinkedinUrl !== linkedinUrl) {
+        setLinkedinUrl(newLinkedinUrl);
+      }
+      if (newLinkedinNavigatorUrl !== linkedinNavigatorUrl) {
+        setLinkedinNavigatorUrl(newLinkedinNavigatorUrl);
+      }
+      if (newCity !== city) {
+        setCity(newCity);
+      }
+      if (newState !== state) {
+        setState(newState);
+      }
+    }
+  }, [record, website, linkedinUrl, linkedinNavigatorUrl, city, state]);
+
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
+
+  // Enhanced success handler that updates local state for specific fields
+  const handleFieldSuccess = (field: string, value: string, message: string) => {
+    console.log(`🔍 [UniversalCompanyTab] handleFieldSuccess called:`, { field, value, message });
+    
+    // Update local state for specific fields
+    if (field === 'website') {
+      setWebsite(value);
+    } else if (field === 'linkedinUrl') {
+      setLinkedinUrl(value);
+    } else if (field === 'linkedinNavigatorUrl') {
+      setLinkedinNavigatorUrl(value);
+    } else if (field === 'city') {
+      setCity(value);
+    } else if (field === 'state') {
+      setState(value);
+    }
+    
+    handleSuccess(message);
   };
 
   const formatEmptyValue = (value: any): string => {
@@ -83,19 +207,66 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     }
   };
 
+  // Merge record data with fetched company data
+  const mergedRecord = useMemo(() => {
+    if (!record) return null;
+    
+    // If we have full company data, merge it with the record
+    if (fullCompanyData) {
+      return {
+        ...record,
+        ...fullCompanyData,
+        // Ensure we use the original record's ID and type
+        id: record.id,
+        recordType: record.recordType || recordType
+      };
+    }
+    
+    return record;
+  }, [record, fullCompanyData, recordType]);
+
   // Show skeleton loader while data is loading
   if (!record) {
     return <CompanyDetailSkeleton message="Loading company details..." />;
+  }
+
+  // Show loading state while fetching company data
+  if (isLoadingCompany) {
+    return <CompanyDetailSkeleton message="Loading company details..." />;
+  }
+
+  // Show error state if company data fetch failed
+  if (companyError) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <h3 className="text-red-800 font-medium mb-2">Error Loading Company Data</h3>
+          <p className="text-red-600 text-sm mb-2">{companyError}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-3 py-1 bg-red-100 text-red-700 border border-red-300 text-xs rounded hover:bg-red-200"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
   }
 
   // Debug: Log the record structure to see what's available
   if (process.env.NODE_ENV === 'development') {
     console.log('🔍 [Company Data Debug] Record structure:', {
       record: record,
-      customFields: record?.customFields,
-      website: record?.website,
-      linkedinUrl: record?.linkedinUrl,
-      linkedin: record?.linkedin
+      mergedRecord: mergedRecord,
+      fullCompanyData: fullCompanyData,
+      companyId: companyId,
+      hasPartialCompanyData: hasPartialCompanyData,
+      customFields: mergedRecord?.customFields,
+      website: website || mergedRecord?.website,
+      linkedinUrl: linkedinUrl || mergedRecord?.linkedinUrl,
+      linkedin: mergedRecord?.linkedin,
+      city: city || mergedRecord?.city,
+      state: state || mergedRecord?.state
     });
   }
 
@@ -114,24 +285,26 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
     return <span className="text-sm text-[var(--muted)]">-</span>;
   };
   
-  // Use real company data from record - no fallback to '-'
+  // Use real company data from merged record with local state fallbacks - no fallback to '-'
   const companyData = {
-    name: getValue(record.name),
-    industry: getValue(record.industry),
-    size: getValue(record.size || record.employeeCount),
-    revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : null,
-    location: record.city && record.state ? `${record.city}, ${record.state}` : getValue(record.address),
-    website: getValue(record.website),
-    linkedin: getValue(record?.customFields?.linkedinUrl || 
-              record?.customFields?.linkedin || 
-              record?.linkedinUrl || 
-              record?.linkedin),
-    founded: getValue(record.foundedYear || record.founded),
-    ceo: getValue(record.ceo),
+    name: getValue(mergedRecord?.name),
+    industry: getValue(mergedRecord?.industry),
+    size: getValue(mergedRecord?.size || mergedRecord?.employeeCount),
+    revenue: mergedRecord?.revenue ? `$${Number(mergedRecord.revenue).toLocaleString()}` : null,
+    location: (city && state ? `${city}, ${state}` : null) || 
+              (mergedRecord?.city && mergedRecord?.state ? `${mergedRecord.city}, ${mergedRecord.state}` : null) || 
+              getValue(mergedRecord?.address),
+    website: website || getValue(mergedRecord?.website),
+    linkedin: linkedinUrl || getValue(mergedRecord?.customFields?.linkedinUrl || 
+              mergedRecord?.customFields?.linkedin || 
+              mergedRecord?.linkedinUrl || 
+              mergedRecord?.linkedin),
+    founded: getValue(mergedRecord?.foundedYear || mergedRecord?.founded),
+    ceo: getValue(mergedRecord?.ceo),
     description: (() => {
       // Prioritize the longer, more detailed description for better seller context
-      const originalDesc = record.description && record.description.trim() !== '' ? record.description.trim() : '';
-      const enrichedDesc = record.descriptionEnriched && record.descriptionEnriched.trim() !== '' ? record.descriptionEnriched.trim() : '';
+      const originalDesc = mergedRecord?.description && mergedRecord.description.trim() !== '' ? mergedRecord.description.trim() : '';
+      const enrichedDesc = mergedRecord?.descriptionEnriched && mergedRecord.descriptionEnriched.trim() !== '' ? mergedRecord.descriptionEnriched.trim() : '';
       
       // Use the longer description for better context, or enriched if original is not available
       if (originalDesc && enrichedDesc) {
@@ -145,19 +318,19 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
       // Return null instead of fallback text to let InlineEditField show its placeholder
       return null;
     })(),
-    marketCap: getValue(record.marketCap),
-    employees: getValue(record.employeeCount || record.size),
+    marketCap: getValue(mergedRecord?.marketCap),
+    employees: getValue(mergedRecord?.employeeCount || mergedRecord?.size),
     headquarters: (() => {
       // Try enriched CoreSignal data first
-      const hqLocation = record.hqLocation || '';
-      const hqCity = record.hqCity || '';
-      const hqState = record.hqState || '';
-      const hqFullAddress = record.hqFullAddress || '';
+      const hqLocation = mergedRecord?.hqLocation || '';
+      const hqCity = mergedRecord?.hqCity || '';
+      const hqState = mergedRecord?.hqState || '';
+      const hqFullAddress = mergedRecord?.hqFullAddress || '';
       
       // Fallback to basic fields
-      const address = record.address || '';
-      const city = record.city || '';
-      const state = record.state || '';
+      const address = mergedRecord?.address || '';
+      const recordCity = city || mergedRecord?.city || '';
+      const recordState = state || mergedRecord?.state || '';
       
       // Use enriched data if available
       if (hqLocation) {
@@ -166,47 +339,47 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
         return hqFullAddress;
       } else if (hqCity && hqState) {
         return `${hqCity}, ${hqState}`;
-      } else if (address && city && state) {
-        return `${address}, ${city}, ${state}`;
-      } else if (city && state) {
-        return `${city}, ${state}`;
+      } else if (address && recordCity && recordState) {
+        return `${address}, ${recordCity}, ${recordState}`;
+      } else if (recordCity && recordState) {
+        return `${recordCity}, ${recordState}`;
       } else if (address) {
         return address;
-      } else if (city) {
-        return city;
+      } else if (recordCity) {
+        return recordCity;
       }
       return null;
     })(),
-    businessModel: getValue(record.businessModel),
-    keyProducts: record.keyProducts || [],
-    competitors: record.competitors || [],
-    recentNews: record.recentNews || [],
+    businessModel: getValue(mergedRecord?.businessModel),
+    keyProducts: mergedRecord?.keyProducts || [],
+    competitors: mergedRecord?.competitors || [],
+    recentNews: mergedRecord?.recentNews || [],
     financials: {
-      revenue: record.revenue ? `$${Number(record.revenue).toLocaleString()}` : null,
-      growth: getValue(record.growth),
-      profitMargin: getValue(record.profitMargin),
-      debtToEquity: getValue(record.debtToEquity),
-      peRatio: getValue(record.peRatio)
+      revenue: mergedRecord?.revenue ? `$${Number(mergedRecord.revenue).toLocaleString()}` : null,
+      growth: getValue(mergedRecord?.growth),
+      profitMargin: getValue(mergedRecord?.profitMargin),
+      debtToEquity: getValue(mergedRecord?.debtToEquity),
+      peRatio: getValue(mergedRecord?.peRatio)
     },
     technology: {
-      cloudAdoption: getValue(record.cloudAdoption),
-      aiUsage: getValue(record.aiUsage),
-      securityRating: getValue(record.securityRating),
-      compliance: record.compliance || []
+      cloudAdoption: getValue(mergedRecord?.cloudAdoption),
+      aiUsage: getValue(mergedRecord?.aiUsage),
+      securityRating: getValue(mergedRecord?.securityRating),
+      compliance: mergedRecord?.compliance || []
     }
   };
 
   // Generate engagement data from real CoreSignal data
   const generateEngagementData = () => {
     // Use real data from CoreSignal enrichment
-    const linkedinFollowers = record?.linkedinFollowers || 0;
-    const twitterFollowers = record?.twitterFollowers || 0;
-    const owlerFollowers = record?.owlerFollowers || 0;
-    const activeJobPostings = record?.activeJobPostings || 0;
-    const companyUpdates = record?.companyUpdates || [];
-    const technologiesUsed = record?.technologiesUsed || [];
-    const competitors = record?.competitors || [];
-    const employeeCount = record?.employeeCount || 0;
+    const linkedinFollowers = mergedRecord?.linkedinFollowers || 0;
+    const twitterFollowers = mergedRecord?.twitterFollowers || 0;
+    const owlerFollowers = mergedRecord?.owlerFollowers || 0;
+    const activeJobPostings = mergedRecord?.activeJobPostings || 0;
+    const companyUpdates = mergedRecord?.companyUpdates || [];
+    const technologiesUsed = mergedRecord?.technologiesUsed || [];
+    const competitors = mergedRecord?.competitors || [];
+    const employeeCount = mergedRecord?.employeeCount || 0;
     
     // Calculate engagement based on real metrics
     const totalFollowers = linkedinFollowers + (twitterFollowers || 0) + (owlerFollowers || 0);
@@ -223,7 +396,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
                           employeeCount > 100 ? Math.min(Math.floor(employeeCount / 100), 5) : 1;
     const nextAction = activeJobPostings > 0 ? 'Review job postings' : 
                       companyUpdates?.length > 0 ? 'Follow up on recent updates' : 'Research company updates';
-    const opportunityStage = record?.isPublic ? 'Public Company' : 'Private Company';
+    const opportunityStage = mergedRecord?.isPublic ? 'Public Company' : 'Private Company';
 
     return {
       totalContacts,
@@ -240,7 +413,7 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
 
   // Generate recent activity from real CoreSignal company updates
   const generateRecentActivity = () => {
-    const companyUpdates = record?.companyUpdates || [];
+    const companyUpdates = mergedRecord?.companyUpdates || [];
     
     if (companyUpdates.length === 0) {
       return [{
@@ -258,11 +431,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
       const activityTypes = ['Company Update', 'LinkedIn Post', 'Company News', 'Industry Update'];
       
       // Use real follower count from the update or fallback to company data
-      const followerCount = update.followers || record?.linkedinFollowers || 0;
+      const followerCount = update.followers || mergedRecord?.linkedinFollowers || 0;
       
       return {
         type: activityTypes[index] || 'Company Update',
-        contact: `${record?.name || 'Company'} (${followerCount.toLocaleString()} followers)`,
+        contact: `${mergedRecord?.name || 'Company'} (${followerCount.toLocaleString()} followers)`,
         time: new Date(update.date).toLocaleDateString(),
         description: update.description?.substring(0, 100) + (update.description?.length > 100 ? '...' : ''),
         color: colors[index] || 'blue'
@@ -430,12 +603,12 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Website:</span>
                 <InlineEditField
-                  value={companyData.website}
+                  value={website || companyData.website}
                   field="website"
                   onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
+                  onSuccess={(message) => handleFieldSuccess('website', website || companyData.website, message)}
                   type="text"
                   className="text-sm font-medium"
                 />
@@ -443,24 +616,24 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
                 <InlineEditField
-                  value={companyData.linkedin || ''}
+                  value={linkedinUrl || companyData.linkedin || ''}
                   field="linkedinUrl"
                   onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
+                  onSuccess={(message) => handleFieldSuccess('linkedinUrl', linkedinUrl || companyData.linkedin || '', message)}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
                 <InlineEditField
-                  value={record?.linkedinNavigatorUrl || ''}
+                  value={linkedinNavigatorUrl || mergedRecord?.linkedinNavigatorUrl || ''}
                   field="linkedinNavigatorUrl"
                   onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
+                  onSuccess={(message) => handleFieldSuccess('linkedinNavigatorUrl', linkedinNavigatorUrl || mergedRecord?.linkedinNavigatorUrl || '', message)}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
@@ -567,11 +740,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Address:</span>
                 <InlineEditField
-                  value={record?.address || ''}
+                  value={mergedRecord?.address || ''}
                   field="address"
                   onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
@@ -579,35 +752,35 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">City:</span>
                 <InlineEditField
-                  value={record?.city || ''}
+                  value={city || mergedRecord?.city || ''}
                   field="city"
                   onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
+                  onSuccess={(message) => handleFieldSuccess('city', city || mergedRecord?.city || '', message)}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">State:</span>
                 <InlineEditField
-                  value={record?.state || ''}
+                  value={state || mergedRecord?.state || ''}
                   field="state"
                   onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
+                  onSuccess={(message) => handleFieldSuccess('state', state || mergedRecord?.state || '', message)}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Country:</span>
                 <InlineEditField
-                  value={record?.country || ''}
+                  value={mergedRecord?.country || ''}
                   field="country"
                   onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
@@ -615,11 +788,11 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Postal Code:</span>
                 <InlineEditField
-                  value={record?.postalCode || ''}
+                  value={mergedRecord?.postalCode || ''}
                   field="postalCode"
                   onSave={onSave || (() => Promise.resolve())}
-                  recordId={record.id}
-                  recordType={recordType}
+                  recordId={companyId || record.id}
+                  recordType={companyId ? 'companies' : recordType}
                   onSuccess={handleSuccess}
                   className="text-sm font-medium text-[var(--foreground)]"
                 />

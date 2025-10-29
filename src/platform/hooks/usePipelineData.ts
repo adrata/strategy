@@ -282,8 +282,9 @@ export function usePipelineData({
     return result;
   }, [sortedData, currentPage, pageSize, data.length, filteredData.length, totalCount]);
   
-  // Pagination info - use totalCount prop if available, otherwise fall back to local data length
-  const totalItems = totalCount || sortedData.length;
+  // Pagination info - ALWAYS use filtered data length for correct pagination
+  // This ensures that when search filters 1000 records to 50, we show 1 page (not 10)
+  const totalItems = sortedData.length;
   const totalPages = Math.ceil(totalItems / pageSize);
   
   // Reset pagination to page 1 when filters change
@@ -323,7 +324,8 @@ export function usePipelineData({
     // Pagination
     currentPage,
     totalPages,
-    totalItems,
+    totalItems, // Filtered count (for correct pagination)
+    apiTotalCount: totalCount, // Original total count (for "filtered from X" display)
     
     // Filters
     searchQuery,

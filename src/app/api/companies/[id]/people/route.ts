@@ -75,8 +75,17 @@ async function linkExistingPersonToCompany(companyId: string, personId: string, 
     const updatedPerson = await prisma.people.update({
       where: { id: personId },
       data: {
-        companyId: companyId,
-        company: person.company || company.name || 'Unknown Company'
+        companyId: companyId
+      },
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            website: true,
+            industry: true
+          }
+        }
       }
     });
     
@@ -114,11 +123,20 @@ async function createNewPersonForCompany(companyId: string, personData: any, con
         jobTitle: personData.jobTitle || null,
         state: personData.state || null,
         companyId: companyId,
-        company: company.name,
         status: personData.status || 'LEAD',
         source: personData.source || 'Manual Entry',
         workspaceId: context.workspaceId,
         mainSellerId: context.userId
+      },
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            website: true,
+            industry: true
+          }
+        }
       }
     });
     

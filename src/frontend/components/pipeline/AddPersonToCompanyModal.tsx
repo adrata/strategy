@@ -116,7 +116,8 @@ export function AddPersonToCompanyModal({
     setIsSearching(true);
     try {
       // Use excludeCompanyId to filter out people already linked to this company
-      const url = `/api/v1/people?search=${encodeURIComponent(query)}&limit=10${companyId ? `&excludeCompanyId=${companyId}` : ''}`;
+      // Use includeAllUsers to search across all people in the workspace regardless of seller assignment
+      const url = `/api/v1/people?search=${encodeURIComponent(query)}&limit=10&includeAllUsers=true${companyId ? `&excludeCompanyId=${companyId}` : ''}`;
       const response = await authFetch(url);
       if (response.ok) {
         const data = await response.json();

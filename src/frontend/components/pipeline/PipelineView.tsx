@@ -1613,6 +1613,11 @@ export const PipelineView = React.memo(function PipelineView({
         title={title}
         subtitle={subtitle}
         recordCount={(() => {
+          // Use filtered data when search is active, otherwise use total count
+          if (searchQuery) {
+            return filteredData.length;
+          }
+          
           const fastCount = fastSectionData.count;
           const arrayCount = Array.isArray(sectionDataArray) ? sectionDataArray.length : 0;
           const finalCount = fastCount || arrayCount;
@@ -1637,7 +1642,7 @@ export const PipelineView = React.memo(function PipelineView({
       <div className={`flex-shrink-0 px-6 pb-1 w-full ${section === 'opportunities' ? 'pt-1' : 'pt-2'}`}>
         <PipelineFilters 
           section={section}
-          totalCount={Array.isArray(sectionDataArray) ? sectionDataArray.length : 0}
+          totalCount={searchQuery ? filteredData.length : (Array.isArray(sectionDataArray) ? sectionDataArray.length : 0)}
           onSearchChange={setSearchQuery}
           onVerticalChange={setVerticalFilter}
           onStatusChange={setStatusFilter}
@@ -1727,7 +1732,7 @@ export const PipelineView = React.memo(function PipelineView({
                 visibleColumns={visibleColumns}
                 pageSize={50} // Speedrun shows all 50 items on one page
                 isLoading={isLoading}
-                totalCount={fastSectionData.count} // Pass total count for correct pagination
+                totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
               />
               ) : section === 'prospects' ? (
                 // Prospects table with same design as other sections
@@ -1742,7 +1747,7 @@ export const PipelineView = React.memo(function PipelineView({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
                 />
               ) : section === 'leads' ? (
                 // Leads table with same design as prospects
@@ -1757,7 +1762,7 @@ export const PipelineView = React.memo(function PipelineView({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
                 />
               ) : section === 'people' ? (
                 // People table with same design as prospects
@@ -1772,7 +1777,7 @@ export const PipelineView = React.memo(function PipelineView({
                   visibleColumns={visibleColumns}
                   pageSize={100}
                   isLoading={isLoading}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
                 />
               ) : section === 'companies' ? (
                 // Companies table with same design as prospects
@@ -1788,7 +1793,7 @@ export const PipelineView = React.memo(function PipelineView({
                   pageSize={100}
                   isLoading={isLoading}
                   searchQuery={searchQuery}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
                 />
               ) : section === 'sellers' ? (
                 // Sellers table with same design as people and companies
@@ -1804,7 +1809,7 @@ export const PipelineView = React.memo(function PipelineView({
                   pageSize={100}
                   isLoading={isLoading}
                   searchQuery={searchQuery}
-                  totalCount={fastSectionData.count} // Pass total count for correct pagination
+                  totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
                 />
           ) : (
             <PipelineTable
@@ -1818,7 +1823,7 @@ export const PipelineView = React.memo(function PipelineView({
               visibleColumns={visibleColumns}
               pageSize={100} // Default page size for other sections
               isLoading={isLoading}
-              totalCount={fastSectionData.count} // Pass total count for correct pagination
+              totalCount={searchQuery ? filteredData.length : fastSectionData.count} // Use filtered count when search active
             />
           )}
           </>

@@ -50,6 +50,7 @@ export async function GET(request: NextRequest) {
     const priority = searchParams.get('priority') || '';
     const companyId = searchParams.get('companyId') || '';
     const excludeCompanyId = searchParams.get('excludeCompanyId') || ''; // NEW: Filter out people already linked to this company
+    const includeAllUsers = searchParams.get('includeAllUsers') === 'true'; // NEW: Include all users regardless of seller assignment
     const vertical = searchParams.get('vertical') || '';
     const revenue = searchParams.get('revenue') || '';
     const timezone = searchParams.get('timezone') || '';
@@ -83,7 +84,7 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit;
     
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
-    const cacheKey = `people-${context.workspaceId}-${context.userId}-${section}-${status}-${excludeCompanyId}-${limit}-${page}`;
+    const cacheKey = `people-${context.workspaceId}-${context.userId}-${section}-${status}-${excludeCompanyId}-${includeAllUsers}-${limit}-${page}`;
     
     // Define the fetch function for cache
     const fetchPeopleData = async () => {
@@ -93,11 +94,11 @@ export async function GET(request: NextRequest) {
                         context.workspaceId === '01K7464TNANHQXPCZT1FYX205V'; // Adrata workspace
       
       // Enhanced where clause for pipeline management
-      console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
+      console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section, 'includeAllUsers:', includeAllUsers);
       const where: any = {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
-        ...(isDemoMode ? {} : {
+        ...(isDemoMode || includeAllUsers ? {} : {
           OR: [
             { mainSellerId: context.userId },
             { mainSellerId: null }

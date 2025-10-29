@@ -7,6 +7,9 @@ import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { authFetch } from '@/platform/api-fetch';
 import { getCategoryColors } from '@/platform/config/color-palette';
 import { CompanySelector } from '@/frontend/components/pipeline/CompanySelector';
+import { StateSelector } from '@/frontend/components/pipeline/StateSelector';
+import { usePipeline } from '@/products/pipeline/context/PipelineContext';
+import { USState } from '@/platform/constants/us-states';
 
 interface AddLeadModalProps {
   isOpen: boolean;
@@ -18,6 +21,10 @@ interface AddLeadModalProps {
 export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, onLeadAdded, section = 'leads' }: AddLeadModalProps) {
   // Get section-specific colors
   const colors = getCategoryColors(section);
+  
+  // Get workspace context to check if this is Notary Everyday
+  const { workspace } = usePipeline();
+  const isNotaryEveryday = workspace?.slug === 'ne' || workspace?.name?.includes('Notary Everyday');
   
   // 🔍 DEBUG: Log when modal receives isOpen prop changes
   useEffect(() => {
@@ -52,6 +59,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
     phone: "",
     jobTitle: "",
     selectedCompany: null as any,
+    state: null as USState | null,
     notes: ""
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -120,6 +128,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
         jobTitle: formData.jobTitle,
         notes: formData.notes,
         companyId: formData.selectedCompany?.id,
+        state: formData.state,
         fullName,
         status: "LEAD", // Lock in as LEAD
         source: "Manual Entry"
@@ -162,6 +171,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
           phone: "",
           jobTitle: "",
           selectedCompany: null,
+          state: null,
           notes: ""
         });
         
@@ -324,6 +334,26 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
             />
           </div>
 
+          {/* State Field - Only for Notary Everyday workspace */}
+          {isNotaryEveryday && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                State
+              </label>
+              <StateSelector
+                value={formData.state}
+                onChange={(state) => {
+                  console.log('🗺️ [AddLeadModal] State selected/changed:', state);
+                  setFormData(prev => ({ 
+                    ...prev, 
+                    state: state 
+                  }));
+                  console.log('🗺️ [AddLeadModal] Form data updated with state:', state);
+                }}
+                placeholder="Search or select state..."
+              />
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3 pt-4">

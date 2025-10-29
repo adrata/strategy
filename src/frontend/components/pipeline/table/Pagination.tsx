@@ -14,6 +14,8 @@ interface PaginationProps {
   totalItems: number;
   onPageChange: (page: number) => void;
   onPageSizeChange?: (size: number) => void;
+  apiTotalCount?: number; // Original total count for "filtered from X" display
+  hasActiveFilters?: boolean; // Whether filters are active
 }
 
 // -------- Constants --------
@@ -64,6 +66,8 @@ export function Pagination({
   totalItems,
   onPageChange,
   onPageSizeChange,
+  apiTotalCount,
+  hasActiveFilters = false,
 }: PaginationProps) {
   const startItem = (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, totalItems);
@@ -89,10 +93,19 @@ export function Pagination({
         </div>
       )}
       
-      {/* Page info - Always show results count */}
+      {/* Page info - Show filtered count with optional total */}
       <div className="flex items-center space-x-2">
         <span className="text-sm text-gray-700">
-          Showing {startItem.toLocaleString()} to {endItem.toLocaleString()} of {totalItems.toLocaleString()} results
+          {hasActiveFilters && apiTotalCount && apiTotalCount !== totalItems ? (
+            <>
+              Showing {startItem.toLocaleString()} to {endItem.toLocaleString()} of {totalItems.toLocaleString()} results
+              <span className="text-gray-500 ml-1">
+                (filtered from {apiTotalCount.toLocaleString()} total)
+              </span>
+            </>
+          ) : (
+            `Showing ${startItem.toLocaleString()} to ${endItem.toLocaleString()} of ${totalItems.toLocaleString()} results`
+          )}
         </span>
       </div>
       
