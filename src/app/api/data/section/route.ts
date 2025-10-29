@@ -264,7 +264,7 @@ export async function GET(request: NextRequest) {
             }
             
             // Only show real last actions if they exist and are meaningful
-            if (lastActionDate && lastAction && lastAction !== 'No action taken') {
+            if (lastActionDate && lastAction && lastAction !== 'No action taken' && lastAction !== 'Record created' && lastAction !== 'Company record created') {
               // Real last action exists
               const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
               if (daysSince === 0) lastActionTime = 'Today';
@@ -522,15 +522,28 @@ export async function GET(request: NextRequest) {
             const now = new Date();
             const actionDate = new Date(nextActionDate);
             const diffMs = actionDate.getTime() - now.getTime();
-            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
             
-            if (diffDays < 0) nextActionTiming = 'Overdue';
-            else if (diffDays === 0) nextActionTiming = 'Today';
-            else if (diffDays === 1) nextActionTiming = 'Tomorrow';
-            else if (diffDays <= 7) nextActionTiming = 'This week';
-            else if (diffDays <= 14) nextActionTiming = 'Next week';
-            else if (diffDays <= 30) nextActionTiming = 'This month';
-            else nextActionTiming = 'Future';
+            // For same-day actions, show "Today" regardless of time
+            const isSameDay = now.toDateString() === actionDate.toDateString();
+            
+            if (isSameDay) {
+              nextActionTiming = 'Today';
+            } else if (diffDays < 0) {
+              nextActionTiming = 'Overdue';
+            } else if (diffDays === 0) {
+              nextActionTiming = 'Today';
+            } else if (diffDays === 1) {
+              nextActionTiming = 'Tomorrow';
+            } else if (diffDays <= 7) {
+              nextActionTiming = 'This week';
+            } else if (diffDays <= 14) {
+              nextActionTiming = 'Next week';
+            } else if (diffDays <= 30) {
+              nextActionTiming = 'This month';
+            } else {
+              nextActionTiming = 'Future';
+            }
           }
           
           return {
@@ -754,15 +767,28 @@ export async function GET(request: NextRequest) {
             const now = new Date();
             const actionDate = new Date(nextActionDate);
             const diffMs = actionDate.getTime() - now.getTime();
-            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
             
-            if (diffDays < 0) nextActionTiming = 'Overdue';
-            else if (diffDays === 0) nextActionTiming = 'Today';
-            else if (diffDays === 1) nextActionTiming = 'Tomorrow';
-            else if (diffDays <= 7) nextActionTiming = 'This week';
-            else if (diffDays <= 14) nextActionTiming = 'Next week';
-            else if (diffDays <= 30) nextActionTiming = 'This month';
-            else nextActionTiming = 'Future';
+            // For same-day actions, show "Today" regardless of time
+            const isSameDay = now.toDateString() === actionDate.toDateString();
+            
+            if (isSameDay) {
+              nextActionTiming = 'Today';
+            } else if (diffDays < 0) {
+              nextActionTiming = 'Overdue';
+            } else if (diffDays === 0) {
+              nextActionTiming = 'Today';
+            } else if (diffDays === 1) {
+              nextActionTiming = 'Tomorrow';
+            } else if (diffDays <= 7) {
+              nextActionTiming = 'This week';
+            } else if (diffDays <= 14) {
+              nextActionTiming = 'Next week';
+            } else if (diffDays <= 30) {
+              nextActionTiming = 'This month';
+            } else {
+              nextActionTiming = 'Future';
+            }
           }
           
           return {
@@ -1023,15 +1049,28 @@ export async function GET(request: NextRequest) {
             const now = new Date();
             const actionDate = new Date(nextActionDate);
             const diffMs = actionDate.getTime() - now.getTime();
-            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
             
-            if (diffDays < 0) nextActionTiming = 'Overdue';
-            else if (diffDays === 0) nextActionTiming = 'Today';
-            else if (diffDays === 1) nextActionTiming = 'Tomorrow';
-            else if (diffDays <= 7) nextActionTiming = 'This week';
-            else if (diffDays <= 14) nextActionTiming = 'Next week';
-            else if (diffDays <= 30) nextActionTiming = 'This month';
-            else nextActionTiming = 'Future';
+            // For same-day actions, show "Today" regardless of time
+            const isSameDay = now.toDateString() === actionDate.toDateString();
+            
+            if (isSameDay) {
+              nextActionTiming = 'Today';
+            } else if (diffDays < 0) {
+              nextActionTiming = 'Overdue';
+            } else if (diffDays === 0) {
+              nextActionTiming = 'Today';
+            } else if (diffDays === 1) {
+              nextActionTiming = 'Tomorrow';
+            } else if (diffDays <= 7) {
+              nextActionTiming = 'This week';
+            } else if (diffDays <= 14) {
+              nextActionTiming = 'Next week';
+            } else if (diffDays <= 30) {
+              nextActionTiming = 'This month';
+            } else {
+              nextActionTiming = 'Future';
+            }
           }
 
           return {
@@ -1169,7 +1208,7 @@ export async function GET(request: NextRequest) {
             }
             
             // Only show real last actions if they exist and are meaningful
-            if (lastActionDate && lastAction && lastAction !== 'No action taken') {
+            if (lastActionDate && lastAction && lastAction !== 'No action taken' && lastAction !== 'Record created' && lastAction !== 'Company record created') {
               // Real last action exists
               const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
               if (daysSince === 0) lastActionTime = 'Today';
@@ -1231,7 +1270,7 @@ export async function GET(request: NextRequest) {
               const now = new Date();
               const actionDate = new Date(nextActionDate);
               const diffMs = actionDate.getTime() - now.getTime();
-              const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+              const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
               
               // For Speedrun (top 50), convert "Overdue" to "Today" to ensure records are always actionable
               if (diffDays < 0) {

@@ -28,6 +28,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
   const [actionsLoading, setActionsLoading] = useState(false);
   const [actionsError, setActionsError] = useState<string | null>(null);
 
+  // Company data fetching state
+  const [fullCompanyData, setFullCompanyData] = useState<any>(null);
+  const [isLoadingCompany, setIsLoadingCompany] = useState(false);
+  const [companyError, setCompanyError] = useState<string | null>(null);
+
   // Determine the actual company ID
   const companyId = useMemo(() => {
     // If recordType is companies, use record.id directly
@@ -37,6 +42,77 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     // If it's a person record, get companyId
     return record?.companyId || record?.company?.id;
   }, [record, recordType]);
+
+  // Detect if we have partial company data that needs to be fetched
+  const hasPartialCompanyData = useMemo(() => {
+    if (!companyId || recordType === 'companies') {
+      return false; // No company ID or already a company record
+    }
+    
+    // Check if we're missing key company fields that indicate partial data
+    const hasKeyFields = record?.description || record?.website || record?.revenue || 
+                        record?.linkedinUrl || record?.hqFullAddress || record?.legalName;
+    
+    return !hasKeyFields; // If we don't have key fields, we likely have partial data
+  }, [companyId, record, recordType]);
+
+  // Fetch full company data when we have partial data
+  const fetchFullCompanyData = useCallback(async () => {
+    if (!companyId || !hasPartialCompanyData || fullCompanyData) {
+      return; // No company ID, no partial data, or already fetched
+    }
+
+    setIsLoadingCompany(true);
+    setCompanyError(null);
+
+    try {
+      console.log(`🏢 [COMPANY OVERVIEW] Fetching full company data for companyId: ${companyId}`);
+      
+      const response = await authFetch(`/api/v1/companies/${companyId}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch company data: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        setFullCompanyData(result.data);
+        console.log(`✅ [COMPANY OVERVIEW] Successfully fetched full company data:`, result.data.name);
+      } else {
+        throw new Error(result.error || 'Failed to fetch company data');
+      }
+    } catch (error) {
+      console.error('❌ [COMPANY OVERVIEW] Error fetching company data:', error);
+      setCompanyError(error instanceof Error ? error.message : 'Failed to fetch company data');
+    } finally {
+      setIsLoadingCompany(false);
+    }
+  }, [companyId, hasPartialCompanyData, fullCompanyData]);
+
+  // Fetch full company data when component mounts or dependencies change
+  useEffect(() => {
+    fetchFullCompanyData();
+  }, [fetchFullCompanyData]);
+
+  // Create merged record data that uses full company data when available
+  const mergedRecord = useMemo(() => {
+    if (!fullCompanyData) {
+      return record; // Use original record if no full company data
+    }
+
+    // Merge the full company data with the existing record
+    // This ensures we have all the company fields available for rendering
+    return {
+      ...record,
+      ...fullCompanyData,
+      // Preserve the original company object structure if it exists
+      company: record?.company ? {
+        ...record.company,
+        ...fullCompanyData
+      } : fullCompanyData
+    };
+  }, [record, fullCompanyData]);
 
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
@@ -105,6 +181,29 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
   // Show skeleton loader while data is loading
   if (!record) {
     return <CompanyDetailSkeleton message="Loading company details..." />;
+  }
+
+  // Show loading state while fetching full company data
+  if (isLoadingCompany) {
+    return <CompanyDetailSkeleton message="Loading full company details..." />;
+  }
+
+  // Show error state if company data fetch failed
+  if (companyError) {
+    return (
+      <div className="p-8 text-center">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <h3 className="text-lg font-semibold mb-2">Error Loading Company Data</h3>
+          <p className="text-sm">{companyError}</p>
+          <button 
+            onClick={fetchFullCompanyData}
+            className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const formatEmptyValue = (value: any): string => {
@@ -176,11 +275,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
   };
 
   const generateEngagementData = () => {
-    const linkedinFollowers = record?.linkedinFollowers || 0;
-    const twitterFollowers = record?.twitterFollowers || 0;
-    const activeJobPostings = record?.activeJobPostings || 0;
-    const companyUpdates = record?.companyUpdates || [];
-    const employeeCount = record?.employeeCount || 0;
+    const linkedinFollowers = mergedRecord?.linkedinFollowers || 0;
+    const twitterFollowers = mergedRecord?.twitterFollowers || 0;
+    const activeJobPostings = mergedRecord?.activeJobPostings || 0;
+    const companyUpdates = mergedRecord?.companyUpdates || [];
+    const employeeCount = mergedRecord?.employeeCount || 0;
 
     const totalFollowers = linkedinFollowers + (twitterFollowers || 0);
     const engagementLevel = totalFollowers > 100000 ? 'High' : totalFollowers > 10000 ? 'Medium' : 'Low';
@@ -194,7 +293,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                           employeeCount > 100 ? Math.min(Math.floor(employeeCount / 100), 5) : 1;
     const nextAction = activeJobPostings > 0 ? 'Review job postings' :
                       companyUpdates?.length > 0 ? 'Follow up on recent updates' : 'Research company updates';
-    const opportunityStage = record?.isPublic ? 'Public Company' : record?.isPublic === false ? 'Private Company' : 'N/A';
+    const opportunityStage = mergedRecord?.isPublic ? 'Public Company' : mergedRecord?.isPublic === false ? 'Private Company' : 'N/A';
 
     return {
       totalContacts,
@@ -210,8 +309,8 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
   const engagementData = generateEngagementData();
 
   // Extract company name properly (handle both string and object)
-  const companyName = record?.name || 
-                     (typeof record?.company === 'string' ? record.company : record?.company?.name) || 
+  const companyName = mergedRecord?.name || 
+                     (typeof mergedRecord?.company === 'string' ? mergedRecord.company : mergedRecord?.company?.name) || 
                      'Company';
 
   return (
@@ -223,8 +322,8 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
           <InlineEditField
             value={(() => {
               // Prioritize the longer, more detailed description for better seller context
-              const originalDesc = record?.description && record.description.trim() !== '' ? record.description : '';
-              const enrichedDesc = record?.descriptionEnriched && record.descriptionEnriched.trim() !== '' ? record.descriptionEnriched : '';
+              const originalDesc = mergedRecord?.description && mergedRecord.description.trim() !== '' ? mergedRecord.description : '';
+              const enrichedDesc = mergedRecord?.descriptionEnriched && mergedRecord.descriptionEnriched.trim() !== '' ? mergedRecord.descriptionEnriched : '';
               
               // Use the longer description for better context, or enriched if original is not available
               if (originalDesc && enrichedDesc) {
@@ -257,14 +356,14 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] flex flex-col justify-between">
             <div>
               <h4 className="font-medium text-[var(--foreground)] mb-2">Revenue</h4>
-              <div className="text-2xl font-bold text-green-600">{formatRevenue(record?.revenue)}</div>
+              <div className="text-2xl font-bold text-green-600">{formatRevenue(mergedRecord?.revenue)}</div>
             </div>
             <div className="text-xs text-[var(--muted)] mt-2">Annual reported revenue</div>
           </div>
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] flex flex-col justify-between">
             <div>
               <h4 className="font-medium text-[var(--foreground)] mb-2">Employees</h4>
-              <div className="text-2xl font-bold text-blue-600">{formatEmptyValue(record?.employeeCount)}</div>
+              <div className="text-2xl font-bold text-blue-600">{formatEmptyValue(mergedRecord?.employeeCount)}</div>
             </div>
             <div className="text-xs text-[var(--muted)] mt-2">Total employee count</div>
           </div>
@@ -272,7 +371,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div>
               <h4 className="font-medium text-[var(--foreground)] mb-2">LinkedIn Followers</h4>
               <div className="text-2xl font-bold text-purple-600">
-                {record?.linkedinFollowers ? `${(record.linkedinFollowers).toLocaleString()}` : '-'}
+                {mergedRecord?.linkedinFollowers ? `${(mergedRecord.linkedinFollowers).toLocaleString()}` : '-'}
               </div>
             </div>
             <div className="text-xs text-[var(--muted)] mt-2">Social media reach</div>
@@ -280,7 +379,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] flex flex-col justify-between">
             <div>
               <h4 className="font-medium text-[var(--foreground)] mb-2">Tech Stack</h4>
-              <div className="text-2xl font-bold text-orange-600">{record?.numTechnologiesUsed || record?.technologiesUsed?.length || 0}</div>
+              <div className="text-2xl font-bold text-orange-600">{mergedRecord?.numTechnologiesUsed || mergedRecord?.technologiesUsed?.length || 0}</div>
             </div>
             <div className="text-xs text-[var(--muted)] mt-2">Technologies identified</div>
           </div>
@@ -296,7 +395,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">Legal Name:</span>
               <InlineEditField
-                value={record?.legalName || ''}
+                value={mergedRecord?.legalName || ''}
                 field="legalName"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -308,7 +407,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">Industry:</span>
               <InlineEditField
-                value={record?.industry || ''}
+                value={mergedRecord?.industry || ''}
                 field="industry"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -320,7 +419,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">Sector:</span>
               <InlineEditField
-                value={record?.sector || ''}
+                value={mergedRecord?.sector || ''}
                 field="sector"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -332,7 +431,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">Founded Year:</span>
               <InlineEditField
-                value={record?.foundedYear?.toString() || ''}
+                value={mergedRecord?.foundedYear?.toString() || ''}
                 field="foundedYear"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -345,7 +444,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">Company Type:</span>
               <InlineEditField
-                value={record?.isPublic !== undefined ? (record.isPublic ? 'Public' : 'Private') : ''}
+                value={mergedRecord?.isPublic !== undefined ? (mergedRecord.isPublic ? 'Public' : 'Private') : ''}
                 field="isPublic"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -359,11 +458,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 className="text-sm font-medium text-[var(--foreground)]"
               />
             </div>
-            {record?.stockSymbol && (
+            {mergedRecord?.stockSymbol && (
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-32">Stock Symbol:</span>
                 <InlineEditField
-                  value={record.stockSymbol || ''}
+                  value={mergedRecord.stockSymbol || ''}
                   field="stockSymbol"
                   onSave={onSave || (() => Promise.resolve())}
                   recordId={companyId}
@@ -383,20 +482,20 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">Website:</span>
               <InlineEditField
-                value={formatUrlForDisplay(record?.website || '', { maxLength: 40, preserveEnding: 10 })}
+                value={formatUrlForDisplay(mergedRecord?.website || '', { maxLength: 40, preserveEnding: 10 })}
                 field="website"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
-                type="url"
+                type="text"
                 className="text-sm font-medium text-[#2563EB] hover:underline"
               />
             </div>
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">Email:</span>
               <InlineEditField
-                value={record?.email || ''}
+                value={mergedRecord?.email || ''}
                 field="email"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -409,46 +508,46 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">Phone:</span>
               <InlineEditField
-                value={record?.phone || ''}
+                value={mergedRecord?.phone || ''}
                 field="phone"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
-                type="tel"
+                type="text"
                 className="text-sm font-medium text-[var(--foreground)]"
               />
             </div>
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">LinkedIn:</span>
               <InlineEditField
-                value={formatUrlForDisplay(record?.linkedinUrl || '', { maxLength: 40, preserveEnding: 10 })}
+                value={formatUrlForDisplay(mergedRecord?.linkedinUrl || '', { maxLength: 40, preserveEnding: 10 })}
                 field="linkedinUrl"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
-                type="url"
+                type="text"
                 className="text-sm font-medium text-[#2563EB] hover:underline"
               />
             </div>
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">LinkedIn Navigator:</span>
               <InlineEditField
-                value={formatUrlForDisplay(record?.linkedinNavigatorUrl || '', { maxLength: 40, preserveEnding: 10 })}
+                value={formatUrlForDisplay(mergedRecord?.linkedinNavigatorUrl || '', { maxLength: 40, preserveEnding: 10 })}
                 field="linkedinNavigatorUrl"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
-                type="url"
+                type="text"
                 className="text-sm font-medium text-[#2563EB] hover:underline"
               />
             </div>
             <div className="flex items-center">
               <span className="text-sm text-[var(--muted)] w-32">Headquarters:</span>
               <InlineEditField
-                value={record?.hqFullAddress || `${record?.hqCity || ''}${record?.hqCity && record?.hqState ? ', ' : ''}${record?.hqState || ''}`}
+                value={mergedRecord?.hqFullAddress || `${mergedRecord?.hqCity || ''}${mergedRecord?.hqCity && mergedRecord?.hqState ? ', ' : ''}${mergedRecord?.hqState || ''}`}
                 field="hqFullAddress"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -470,7 +569,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted)]">Market Position:</span>
               <InlineEditField
-                value={record?.marketPosition || ''}
+                value={mergedRecord?.marketPosition || ''}
                 field="marketPosition"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -482,13 +581,13 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted)]">Competitive Pressure:</span>
               <span className="text-sm font-medium text-[var(--foreground)]">
-                {(record?.competitors?.length || 0) > 15 ? 'High' : (record?.competitors?.length || 0) > 5 ? 'Medium' : 'Low'}
+                {(mergedRecord?.competitors?.length || 0) > 15 ? 'High' : (mergedRecord?.competitors?.length || 0) > 5 ? 'Medium' : 'Low'}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted)]">Hiring Activity:</span>
               <InlineEditField
-                value={record?.activeJobPostings?.toString() || ''}
+                value={mergedRecord?.activeJobPostings?.toString() || ''}
                 field="activeJobPostings"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -501,7 +600,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted)]">Last Funding:</span>
               <InlineEditField
-                value={record?.lastFundingAmount?.toLocaleString() || ''}
+                value={mergedRecord?.lastFundingAmount?.toLocaleString() || ''}
                 field="lastFundingAmount"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -514,7 +613,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted)]">Funding Date:</span>
               <InlineEditField
-                value={record?.lastFundingDate ? new Date(record.lastFundingDate).toISOString().split('T')[0] : ''}
+                value={mergedRecord?.lastFundingDate ? new Date(mergedRecord.lastFundingDate).toISOString().split('T')[0] : ''}
                 field="lastFundingDate"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -539,7 +638,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted)]">Next Action:</span>
               <InlineEditField
-                value={record?.nextAction || engagementData.nextAction}
+                value={mergedRecord?.nextAction || engagementData.nextAction}
                 field="nextAction"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -551,7 +650,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted)]">Next Action Date:</span>
               <InlineEditField
-                value={record?.nextActionDate ? new Date(record.nextActionDate).toISOString().split('T')[0] : ''}
+                value={mergedRecord?.nextActionDate ? new Date(mergedRecord.nextActionDate).toISOString().split('T')[0] : ''}
                 field="nextActionDate"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -564,7 +663,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <div className="flex justify-between items-center">
               <span className="text-sm text-[var(--muted)]">Digital Maturity:</span>
               <InlineEditField
-                value={record?.digitalMaturity?.toString() || ''}
+                value={mergedRecord?.digitalMaturity?.toString() || ''}
                 field="digitalMaturity"
                 onSave={onSave || (() => Promise.resolve())}
                 recordId={companyId}
@@ -622,7 +721,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Internal Notes</h4>
             <InlineEditField
-              value={record?.notes || ''}
+              value={mergedRecord?.notes || ''}
               field="notes"
               onSave={onSave || (() => Promise.resolve())}
               recordId={companyId}
@@ -636,7 +735,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Tags</h4>
             <InlineEditField
-              value={record?.tags?.join(', ') || ''}
+              value={mergedRecord?.tags?.join(', ') || ''}
               field="tags"
               onSave={onSave || (() => Promise.resolve())}
               recordId={companyId}
@@ -655,14 +754,14 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center space-x-3">
             <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Created:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.createdAt)}>
-              {formatRelativeDate(record?.createdAt)}
+            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(mergedRecord?.createdAt)}>
+              {formatRelativeDate(mergedRecord?.createdAt)}
             </span>
           </div>
           <div className="flex items-center space-x-3">
             <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Last Updated:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.updatedAt)}>
-              {formatRelativeDate(record?.updatedAt)}
+            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(mergedRecord?.updatedAt)}>
+              {formatRelativeDate(mergedRecord?.updatedAt)}
             </span>
           </div>
         </div>

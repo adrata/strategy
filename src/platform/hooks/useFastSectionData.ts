@@ -31,7 +31,12 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
   if (DEBUG_PIPELINE) console.log(`🚀 [FAST SECTION DATA] Hook initialized for section: ${section}, limit: ${limit}`);
   
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
-  const { workspaceId, userId, isLoading: workspaceLoading, error: workspaceError } = useWorkspaceContext();
+  
+  // 🔧 CRITICAL FIX: Use authUser directly like useFastCounts does, instead of async useWorkspaceContext
+  // This ensures workspaceId and userId are available immediately for API calls
+  const workspaceId = authUser?.activeWorkspaceId || authUser?.workspaces?.[0]?.id;
+  const userId = authUser?.id;
+  
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,12 +57,11 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       forceRefresh
     });
     
-    if (!workspaceId || !userId || authLoading || workspaceLoading) {
+    if (!workspaceId || !userId || authLoading) {
       if (DEBUG_PIPELINE) console.log(`⏳ [FAST SECTION DATA] Skipping fetch - missing requirements:`, {
         workspaceId: !!workspaceId,
         userId: !!userId,
         authLoading,
-        workspaceLoading,
         actualWorkspaceId: workspaceId,
         actualUserId: userId
       });
@@ -177,7 +181,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
           break;
         case 'companies':
           // For companies, use v1 API with increased limit (now supports up to 10000 records)
-          url = `/api/v1/companies?limit=${Math.max(limit, 10000)}${refreshParam}`;
+          // Pass workspaceId to ensure correct workspace filtering
+          const workspaceParam = workspaceId ? `&workspaceId=${encodeURIComponent(workspaceId)}` : '';
+          url = `/api/v1/companies?limit=${Math.max(limit, 10000)}${refreshParam}${workspaceParam}`;
           break;
         case 'partners':
           url = `/api/v1/partners?limit=${Math.max(limit, 10000)}${refreshParam}`;
@@ -409,19 +415,19 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
     } finally {
       setLoading(false);
     }
-  }, [section, limit, workspaceId, userId, authLoading, workspaceLoading, loadedSections]);
+  }, [section, limit, workspaceId, userId, authLoading, loadedSections]);
 
   // 🚀 PERFORMANCE: Only load section data when section changes and not already loaded
   useEffect(() => {
-    if (workspaceId && userId && !authLoading && !workspaceLoading && !loadedSections.has(section)) {
+    if (workspaceId && userId && !authLoading && !loadedSections.has(section)) {
       fetchSectionData();
     }
-  }, [section, workspaceId, userId, authLoading, workspaceLoading, loadedSections]); // Removed fetchSectionData to prevent infinite loops
+  }, [section, workspaceId, userId, authLoading, loadedSections]); // Removed fetchSectionData to prevent infinite loops
 
   // 🚀 PERFORMANCE FIX: Event-based force refresh monitoring (no interval polling)
   // This solves the issue where saved changes don't persist when navigating back to a record
   useEffect(() => {
-    if (!workspaceId || !userId || authLoading || workspaceLoading) {
+    if (!workspaceId || !userId || authLoading) {
       return;
     }
 
@@ -443,7 +449,7 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         fetchSectionData(true);
       }
     }
-  }, [section, workspaceId, userId, authLoading, workspaceLoading]);
+  }, [section, workspaceId, userId, authLoading]);
 
   // 🚀 RETRY: Retry failed network requests after a delay
   useEffect(() => {
@@ -457,6 +463,29 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       return () => clearTimeout(retryTimeout);
     }
   }, [error, section]); // Removed fetchSectionData to prevent infinite loops
+
+  // 🔧 CRITICAL FIX: Clear stale localStorage cache on mount
+  // This ensures we don't show old empty data from cache for any section
+  useEffect(() => {
+    if (workspaceId) {
+      const storageKey = `adrata-${section}-${workspaceId}`;
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          // Clear cache if it's empty or stale (older than 1 minute)
+          const cacheAge = Date.now() - (parsed?.ts || 0);
+          if (!parsed?.data || parsed.data.length === 0 || cacheAge > 60000) {
+            console.log(`🗑️ [FAST SECTION DATA] Clearing stale ${section} cache:`, { cacheAge, isEmpty: !parsed?.data || parsed.data.length === 0 });
+            localStorage.removeItem(storageKey);
+          }
+        } catch (e) {
+          console.warn(`⚠️ [FAST SECTION DATA] Failed to parse ${section} cache, clearing:`, e);
+          localStorage.removeItem(storageKey);
+        }
+      }
+    }
+  }, [section, workspaceId]);
 
   // 🚀 PERFORMANCE: Track workspace changes to reset loaded sections only when needed
   const [lastWorkspaceId, setLastWorkspaceId] = useState<string | null>(null);

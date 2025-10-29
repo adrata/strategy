@@ -377,7 +377,7 @@ export async function GET(request: NextRequest) {
           }
           
           // Only show real last actions if they exist and are meaningful
-          if (lastActionDate && lastActionText && lastActionText !== 'No action taken') {
+          if (lastActionDate && lastActionText && lastActionText !== 'No action taken' && lastActionText !== 'Record created') {
             // Real last action exists
             const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
             if (daysSince === 0) lastActionTime = 'Today';
@@ -385,15 +385,8 @@ export async function GET(request: NextRequest) {
             else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
             else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
             else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
-          } else if (client.createdAt) {
-            // No real last action, show when data was added
-            const daysSince = Math.floor((new Date().getTime() - new Date(client.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-            if (daysSince === 0) lastActionTime = 'Today';
-            else if (daysSince === 1) lastActionTime = 'Yesterday';
-            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
-            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
-            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
           }
+          // If no meaningful action exists, lastActionTime remains 'Never'
 
           // Calculate nextActionTiming with fallback
           let nextActionTiming = 'No date set';

@@ -104,6 +104,22 @@ function PipelineSections({
   const activeWorkspace = authUser?.workspaces?.find(w => w['id'] === workspaceId);
   const workspaceName = activeWorkspace?.name || "";
   
+  // Check user restrictions immediately (synchronous) to prevent showing restricted sections on initial load
+  const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
+  const userRestrictions = userId && authUser?.email ? 
+    getUserRestrictions(userId, authUser.email, workspaceName) : 
+    { hasRestrictions: false, disabledFeatures: [], allowedSections: {} };
+
+  // Override feature access hooks with user restrictions (synchronous check)
+  const shouldShowChronicle = hasChronicle && (!userRestrictions.hasRestrictions || 
+    !userRestrictions.disabledFeatures.includes('CHRONICLE'));
+  const shouldShowMetrics = hasMetrics && (!userRestrictions.hasRestrictions || 
+    !userRestrictions.disabledFeatures.includes('METRICS'));
+  const shouldShowPartners = !userRestrictions.hasRestrictions || 
+    (userRestrictions.allowedSections['pipeline']?.includes('partners') ?? false);
+  const shouldShowClients = !userRestrictions.hasRestrictions || 
+    (userRestrictions.allowedSections['pipeline']?.includes('clients') ?? false);
+  
   // Debug logging for Nova visibility (can be removed in production)
   if (authUser?.email === "ross@adrata.com") {
     console.log('🌌 Nova visibility check:', {
@@ -675,34 +691,37 @@ function PipelineSections({
       description: "Drive revenue",
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : productionCounts.speedrun === 0 ? (
-        <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-          <CheckIcon className="w-3 h-3" />
-          <span className="text-xs font-semibold">Done</span>
-        </div>
-      ) : productionCounts.speedrun === 50 ? (
-        <div className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-          <span className="text-xs font-semibold">Ready</span>
-        </div>
-      ) : (
-        productionCounts.speedrun || 0
-      ),
+      ) : (() => {
+        const totalPeople = productionCounts.people || 0;
+        const speedrunCount = productionCounts.speedrun || 0;
+        
+        // If no people in workspace, show 0
+        if (totalPeople === 0) {
+          return 0;
+        }
+        
+        // If people exist but speedrun is 0, show Done
+        if (speedrunCount === 0) {
+          return (
+            <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+              <CheckIcon className="w-3 h-3" />
+              <span className="text-xs font-semibold">Done</span>
+            </div>
+          );
+        }
+        
+        // If speedrun is 50, show Ready
+        if (speedrunCount === 50) {
+          return (
+            <div className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+              <span className="text-xs font-semibold">Ready</span>
+            </div>
+          );
+        }
+        
+        return speedrunCount;
+      })(),
       visible: allowedSections.includes('speedrun') && (isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true))
-    },
-    {
-      id: "chronicle",
-      name: "Chronicle",
-      description: "Business Intelligence Reports",
-      count: isNotaryEveryday ? (
-        chronicleUnreadCount > 0 ? (
-          <span className="bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full">
-            New
-          </span>
-        ) : (
-          chronicleCount || 0
-        )
-      ) : 0,
-      visible: allowedSections.includes('chronicle') && hasChronicle
     },
     {
       id: "news",
@@ -753,7 +772,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.partners,
-      visible: allowedSections.includes('partners') && isNotaryEveryday
+      visible: allowedSections.includes('partners') && shouldShowPartners
     },
     {
       id: "clients",
@@ -762,7 +781,7 @@ function PipelineSections({
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.clients,
-      visible: allowedSections.includes('clients') && isNotaryEveryday
+      visible: allowedSections.includes('clients') && shouldShowClients
     },
     {
       id: "people",
@@ -783,11 +802,26 @@ function PipelineSections({
       visible: allowedSections.includes('companies') && true
     },
     {
+      id: "chronicle",
+      name: "Chronicle",
+      description: "Business Intelligence Reports",
+      count: isNotaryEveryday ? (
+        chronicleUnreadCount > 0 ? (
+          <span className="bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full">
+            New
+          </span>
+        ) : (
+          chronicleCount || 0
+        )
+      ) : 0,
+      visible: allowedSections.includes('chronicle') && shouldShowChronicle
+    },
+    {
       id: "metrics",
       name: "Metrics",
       description: "Performance metrics",
       count: hasMetrics ? metricsCount : 0,
-      visible: allowedSections.includes('metrics') && hasMetrics
+      visible: allowedSections.includes('metrics') && shouldShowMetrics
     },
     {
       id: "nova",
@@ -1041,13 +1075,31 @@ export function PipelineLeftPanelStandalone({
     event.preventDefault();
     event.stopPropagation();
     
-    // Check if this is Adrata or Notary Everyday workspace
+    // Check user restrictions first - if user has restrictions, use ProfileBox popup (like TOP)
+    const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
+    const userRestrictions = authUser?.id && authUser?.email ? 
+      getUserRestrictions(authUser.id, authUser.email, workspace) : 
+      { hasRestrictions: false };
+
+    if (userRestrictions.hasRestrictions) {
+      // Use ProfileBox popup for restricted users (like TOP workspace)
+      console.log('🔘 Opening ProfileBox popup for restricted user:', workspace);
+      if (isProfileOpen) {
+        setIsProfileOpen(false);
+      } else {
+        setProfileAnchor(event.currentTarget);
+        setIsProfileOpen(true);
+      }
+      return;
+    }
+
+    // Check if this is Adrata or Notary Everyday workspace (for unrestricted users)
     const isAdrataOrNotaryEveryday = workspace.toLowerCase() === 'adrata' || 
                                     workspace.toLowerCase() === 'notary everyday' ||
                                     workspace.toLowerCase() === 'notaryeveryday';
     
     if (isAdrataOrNotaryEveryday) {
-      // Show ProfilePanel for Adrata and Notary Everyday workspaces
+      // Show ProfilePanel for Adrata and Notary Everyday workspaces (unrestricted users)
       console.log('🔘 Opening ProfilePanel for workspace:', workspace);
       const newState = !isProfilePanelVisible;
       console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);

@@ -132,6 +132,19 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
   // Get company name for dynamic tab label
   const companyName = record?.company || record?.companyName || 'Company';
   
+  // For company leads, use company tabs instead of person tabs
+  if (recordType === 'leads' && record?.isCompanyLead) {
+    return [
+      { id: 'overview', label: 'Overview' },
+      { id: 'actions', label: 'Actions' },
+      { id: 'intelligence', label: 'Intelligence' },
+      { id: 'news', label: 'News' },
+      { id: 'people', label: 'People' },
+      { id: 'buyer-groups', label: 'Buyer Group' },
+      { id: 'notes', label: 'Notes' }
+    ];
+  }
+  
   switch (recordType) {
         case 'leads':
           return [
@@ -1101,7 +1114,18 @@ export function UniversalRecordTemplate({
       // Note: The API will handle company linking automatically when it receives the 'company' field
       let result: any;
       
-      if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
+      // For company leads, use companies API instead of people API
+      if (recordType === 'leads' && localRecord?.isCompanyLead) {
+        // Company leads use v1 companies API
+        console.log('📡 [UNIVERSAL] Making PATCH request to companies API for company lead with payload:', updatePayload);
+        result = await authFetch(`/api/v1/companies/${localRecord.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatePayload),
+        });
+      } else if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
         // All people-related records use v1 people API
         console.log('📡 [UNIVERSAL] Making PATCH request to people API with payload:', updatePayload);
         result = await authFetch(`/api/v1/people/${localRecord.id}`, {
@@ -1134,7 +1158,7 @@ export function UniversalRecordTemplate({
             action: 'update',
             id: localRecord.id,
             data: updatePayload,
-            workspaceId: record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP',
+            workspaceId: record?.workspaceId || '',
             userId: '01K1VBYZG41K9QA0D9CF06KNRG'
           }),
         });
@@ -1193,7 +1217,7 @@ export function UniversalRecordTemplate({
         sessionStorage.removeItem(`current-record-${recordType}`);
         
         // Clear all relevant localStorage caches to force refresh
-        const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
+        const workspaceId = record?.workspaceId || '';
         
         // Clear all data caches that might contain this record
         // Record type mapping: people/leads/prospects/opportunities/speedrun → people cache
@@ -1369,7 +1393,16 @@ export function UniversalRecordTemplate({
       // Make API call to soft delete the record using v1 APIs
       let result: any;
       
-      if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
+      // For company leads, use companies API instead of people API
+      if (recordType === 'leads' && localRecord?.isCompanyLead) {
+        // Company leads use v1 companies API
+        result = await authFetch(`/api/v1/companies/${recordId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else if (recordType === 'speedrun' || recordType === 'people' || recordType === 'leads' || recordType === 'prospects' || recordType === 'opportunities') {
         // All people-related records use v1 people API
         result = await authFetch(`/api/v1/people/${recordId}`, {
           method: 'DELETE',
@@ -1594,7 +1627,7 @@ export function UniversalRecordTemplate({
             
             // Clear caches to ensure fresh data on refresh
             if (typeof window !== 'undefined') {
-              const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
+              const workspaceId = record?.workspaceId || '';
               
               // Clear all relevant caches
               localStorage.removeItem(`adrata-companies-${workspaceId}`);
@@ -1711,7 +1744,7 @@ export function UniversalRecordTemplate({
               
               // Clear caches to ensure fresh data on refresh
               if (typeof window !== 'undefined') {
-                const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
+                const workspaceId = record?.workspaceId || '';
                 
                 // Clear all relevant caches
                 localStorage.removeItem(`adrata-companies-${workspaceId}`);
@@ -2343,7 +2376,7 @@ export function UniversalRecordTemplate({
       
       // 🗑️ COMPREHENSIVE CACHE INVALIDATION: Clear all caches to ensure fresh data on next load
       if (typeof window !== 'undefined') {
-        const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
+        const workspaceId = record?.workspaceId || '';
         
         // Clear all relevant localStorage caches
         localStorage.removeItem(`adrata-people-${workspaceId}`);
@@ -2617,7 +2650,7 @@ export function UniversalRecordTemplate({
         sessionStorage.removeItem(`current-record-${recordType}`);
         
         // Clear all relevant localStorage caches to force refresh
-        const workspaceId = record?.workspaceId || '01K1VBYXHD0J895XAN0HGFBKJP';
+        const workspaceId = record?.workspaceId || '';
         
         // Clear all data caches that might contain this record
         localStorage.removeItem(`adrata-people-${workspaceId}`);        // people, leads, prospects, opportunities, speedrun

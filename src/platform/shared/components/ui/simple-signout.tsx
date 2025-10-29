@@ -59,7 +59,7 @@ export function SimpleSignOut() {
         window.location.reload();
       } else {
         // For web, always redirect to sign-in form
-        const homeUrl = "/sign-in?logout=true";
+        const homeUrl = "/sign-in/";
         
         console.log("🌐 Web mode: Redirecting to sign-in form");
         console.log("🔄 SimpleSignOut: Redirecting to:", homeUrl);

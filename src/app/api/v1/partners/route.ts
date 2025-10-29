@@ -83,7 +83,8 @@ export async function GET(request: NextRequest) {
     const fetchPartnersData = async () => {
       // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
       const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                        context.workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1'; // Notary Everyday
+                        context.workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || // Notary Everyday
+                        context.workspaceId === '01K7464TNANHQXPCZT1FYX205V'; // Adrata workspace
       
       // Enhanced where clause for partners (status = 'PARTNER')
       console.log('🔍 [V1 PARTNERS API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
@@ -377,7 +378,7 @@ export async function GET(request: NextRequest) {
           }
           
           // Only show real last actions if they exist and are meaningful
-          if (lastActionDate && lastActionText && lastActionText !== 'No action taken') {
+          if (lastActionDate && lastActionText && lastActionText !== 'No action taken' && lastActionText !== 'Record created') {
             // Real last action exists
             const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
             if (daysSince === 0) lastActionTime = 'Today';
@@ -385,15 +386,8 @@ export async function GET(request: NextRequest) {
             else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
             else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
             else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
-          } else if (partner.createdAt) {
-            // No real last action, show when data was added
-            const daysSince = Math.floor((new Date().getTime() - new Date(partner.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-            if (daysSince === 0) lastActionTime = 'Today';
-            else if (daysSince === 1) lastActionTime = 'Yesterday';
-            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
-            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
-            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
           }
+          // If no meaningful action exists, lastActionTime remains 'Never'
 
           // Calculate nextActionTiming with fallback
           let nextActionTiming = 'No date set';

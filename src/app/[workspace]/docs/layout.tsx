@@ -34,7 +34,7 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
   const router = useRouter();
 
   // Access control - only admins can access docs
-  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
+  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com'];
   const isAdminUser = ADMIN_EMAILS.includes(authUser?.email || '');
   
   useEffect(() => {

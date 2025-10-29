@@ -36,33 +36,34 @@ const COMPANY_SIZE_TIERS = {
 };
 
 // Role Distribution Targets by Company Size Tier
+// Unified configuration where role totals match the ideal buyer group sizes
 const ROLE_DISTRIBUTION_BY_TIER = {
-  // Small Companies (S1-S7): Lean, focused buyer groups
-  S1: { decision: { min: 1, max: 1, ideal: 1 }, champion: { min: 1, max: 2, ideal: 1 }, stakeholder: { min: 0, max: 2, ideal: 1 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 1, ideal: 0 } },
-  S2: { decision: { min: 1, max: 1, ideal: 1 }, champion: { min: 1, max: 2, ideal: 1 }, stakeholder: { min: 0, max: 2, ideal: 1 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 1, ideal: 0 } },
-  S3: { decision: { min: 1, max: 2, ideal: 1 }, champion: { min: 1, max: 2, ideal: 2 }, stakeholder: { min: 1, max: 3, ideal: 2 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 1, ideal: 1 } },
-  S4: { decision: { min: 1, max: 2, ideal: 1 }, champion: { min: 1, max: 3, ideal: 2 }, stakeholder: { min: 1, max: 3, ideal: 2 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 1, ideal: 1 } },
-  S5: { decision: { min: 1, max: 2, ideal: 2 }, champion: { min: 2, max: 3, ideal: 2 }, stakeholder: { min: 1, max: 4, ideal: 3 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  S6: { decision: { min: 1, max: 2, ideal: 2 }, champion: { min: 2, max: 4, ideal: 3 }, stakeholder: { min: 2, max: 4, ideal: 3 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  S7: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 4, ideal: 3 }, stakeholder: { min: 2, max: 5, ideal: 3 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
+  // Small Companies (S1-S7): 1-8 members
+  S1: { decision: { min: 1, max: 1, ideal: 1 }, champion: { min: 0, max: 1, ideal: 1 }, stakeholder: { min: 0, max: 1, ideal: 0 }, blocker: { min: 0, max: 0, ideal: 0 }, introducer: { min: 0, max: 0, ideal: 0 } }, // Total: 2
+  S2: { decision: { min: 1, max: 1, ideal: 1 }, champion: { min: 1, max: 1, ideal: 1 }, stakeholder: { min: 1, max: 2, ideal: 1 }, blocker: { min: 0, max: 0, ideal: 0 }, introducer: { min: 0, max: 0, ideal: 0 } }, // Total: 3
+  S3: { decision: { min: 1, max: 1, ideal: 1 }, champion: { min: 1, max: 1, ideal: 1 }, stakeholder: { min: 2, max: 3, ideal: 2 }, blocker: { min: 0, max: 0, ideal: 0 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 5
+  S4: { decision: { min: 1, max: 1, ideal: 1 }, champion: { min: 2, max: 2, ideal: 2 }, stakeholder: { min: 2, max: 3, ideal: 2 }, blocker: { min: 0, max: 0, ideal: 0 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 6
+  S5: { decision: { min: 1, max: 1, ideal: 1 }, champion: { min: 2, max: 2, ideal: 2 }, stakeholder: { min: 3, max: 4, ideal: 3 }, blocker: { min: 0, max: 0, ideal: 0 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 7
+  S6: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 2, max: 2, ideal: 2 }, stakeholder: { min: 3, max: 4, ideal: 3 }, blocker: { min: 0, max: 0, ideal: 0 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 8
+  S7: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 2, max: 2, ideal: 2 }, stakeholder: { min: 3, max: 4, ideal: 3 }, blocker: { min: 1, max: 1, ideal: 1 }, introducer: { min: 0, max: 0, ideal: 0 } }, // Total: 8
   
-  // Medium Companies (M1-M7): Balanced buyer groups
-  M1: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 4, ideal: 3 }, stakeholder: { min: 2, max: 5, ideal: 3 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  M2: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 4, ideal: 3 }, stakeholder: { min: 2, max: 5, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  M3: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 2, max: 5, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  M4: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  M5: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  M6: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  M7: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
+  // Medium Companies (M1-M7): 8-11 members
+  M1: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 3, max: 3, ideal: 3 }, stakeholder: { min: 3, max: 4, ideal: 3 }, blocker: { min: 1, max: 1, ideal: 1 }, introducer: { min: 0, max: 0, ideal: 0 } }, // Total: 9
+  M2: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 3, max: 3, ideal: 3 }, stakeholder: { min: 3, max: 4, ideal: 3 }, blocker: { min: 1, max: 1, ideal: 1 }, introducer: { min: 0, max: 0, ideal: 0 } }, // Total: 9
+  M3: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 3, max: 3, ideal: 3 }, stakeholder: { min: 3, max: 4, ideal: 3 }, blocker: { min: 1, max: 1, ideal: 1 }, introducer: { min: 0, max: 0, ideal: 0 } }, // Total: 9
+  M4: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 3, max: 3, ideal: 3 }, stakeholder: { min: 4, max: 5, ideal: 4 }, blocker: { min: 1, max: 1, ideal: 1 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 11
+  M5: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 3, max: 3, ideal: 3 }, stakeholder: { min: 4, max: 5, ideal: 4 }, blocker: { min: 1, max: 1, ideal: 1 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 11
+  M6: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 3, max: 3, ideal: 3 }, stakeholder: { min: 4, max: 5, ideal: 4 }, blocker: { min: 1, max: 1, ideal: 1 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 11
+  M7: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 3, max: 3, ideal: 3 }, stakeholder: { min: 4, max: 5, ideal: 4 }, blocker: { min: 1, max: 1, ideal: 1 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 11
   
-  // Large Companies (L1-L7): Complex buyer groups
-  L1: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  L2: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  L3: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  L4: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  L5: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  L6: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } },
-  L7: { decision: { min: 1, max: 3, ideal: 2 }, champion: { min: 2, max: 5, ideal: 3 }, stakeholder: { min: 3, max: 6, ideal: 4 }, blocker: { min: 0, max: 1, ideal: 0 }, introducer: { min: 0, max: 2, ideal: 1 } }
+  // Large Companies (L1-L7): 12-18 members
+  L1: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 4, max: 4, ideal: 4 }, stakeholder: { min: 5, max: 6, ideal: 5 }, blocker: { min: 2, max: 2, ideal: 2 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 14
+  L2: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 4, max: 4, ideal: 4 }, stakeholder: { min: 5, max: 6, ideal: 5 }, blocker: { min: 2, max: 2, ideal: 2 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 14
+  L3: { decision: { min: 2, max: 2, ideal: 2 }, champion: { min: 4, max: 4, ideal: 4 }, stakeholder: { min: 5, max: 6, ideal: 5 }, blocker: { min: 2, max: 2, ideal: 2 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 14
+  L4: { decision: { min: 3, max: 3, ideal: 3 }, champion: { min: 4, max: 4, ideal: 4 }, stakeholder: { min: 6, max: 7, ideal: 6 }, blocker: { min: 2, max: 2, ideal: 2 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 16
+  L5: { decision: { min: 3, max: 3, ideal: 3 }, champion: { min: 4, max: 4, ideal: 4 }, stakeholder: { min: 6, max: 7, ideal: 6 }, blocker: { min: 2, max: 2, ideal: 2 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 16
+  L6: { decision: { min: 3, max: 3, ideal: 3 }, champion: { min: 5, max: 5, ideal: 5 }, stakeholder: { min: 7, max: 8, ideal: 7 }, blocker: { min: 2, max: 2, ideal: 2 }, introducer: { min: 1, max: 1, ideal: 1 } }, // Total: 18
+  L7: { decision: { min: 3, max: 3, ideal: 3 }, champion: { min: 5, max: 5, ideal: 5 }, stakeholder: { min: 7, max: 8, ideal: 7 }, blocker: { min: 2, max: 2, ideal: 2 }, introducer: { min: 1, max: 1, ideal: 1 } } // Total: 18
 };
 
 /**
@@ -91,28 +92,48 @@ function determineCompanySizeTier(revenue = 0, employees = 0) {
  * Get role distribution targets for a specific company size tier
  * @param {string} tier - Company size tier
  * @param {number} totalEmployees - Total employees found
+ * @param {number} actualCompanySize - Actual company employee count
+ * @param {number} dealSize - Deal size for blocker inclusion logic
  * @returns {object} Role distribution targets
  */
-function getRoleDistributionTargets(tier, totalEmployees = 0) {
+function getRoleDistributionTargets(tier, totalEmployees = 0, actualCompanySize = 0, dealSize = 0) {
   const baseTargets = ROLE_DISTRIBUTION_BY_TIER[tier] || ROLE_DISTRIBUTION_BY_TIER['S3'];
   
-  // Calculate percentage-based targets that scale with employee count
+  // Special handling for very small companies (1-5 employees)
+  if (actualCompanySize <= 1) {
+    return { decision: 1, champion: 0, stakeholder: 0, blocker: 0, introducer: 0 };
+  }
+  if (actualCompanySize <= 3) {
+    return { 
+      decision: 1, 
+      champion: Math.min(1, totalEmployees - 1), 
+      stakeholder: 0, 
+      blocker: 0, 
+      introducer: 0 
+    };
+  }
+  if (actualCompanySize <= 5) {
+    return { 
+      decision: 1, 
+      champion: Math.min(1, Math.floor(totalEmployees * 0.5)), 
+      stakeholder: Math.min(1, totalEmployees - 2), 
+      blocker: 0, 
+      introducer: 0 
+    };
+  }
+  
+  // For larger companies, use base targets but ensure blockers are included for significant deals
+  const shouldIncludeBlockers = dealSize > 50000 || actualCompanySize > 100;
+  
+  // Use the ideal role counts from the unified configuration
+  // This ensures role totals match the buyer group size targets
   const targets = {
-    decision: Math.min(baseTargets.decision.max, 
-                      Math.max(baseTargets.decision.min, 
-                      Math.floor(totalEmployees * 0.15))), // 15%
-    champion: Math.min(baseTargets.champion.max, 
-                      Math.max(baseTargets.champion.min, 
-                      Math.floor(totalEmployees * 0.25))), // 25%
-    stakeholder: Math.min(baseTargets.stakeholder.max, 
-                         Math.max(baseTargets.stakeholder.min, 
-                         Math.floor(totalEmployees * 0.30))), // 30%
-    blocker: Math.min(baseTargets.blocker.max, 
-                     Math.max(baseTargets.blocker.min, 
-                     Math.floor(totalEmployees * 0.10))), // 10%
-    introducer: Math.min(baseTargets.introducer.max, 
-                        Math.max(baseTargets.introducer.min, 
-                        Math.floor(totalEmployees * 0.20))) // 20%
+    decision: baseTargets.decision.ideal,
+    champion: baseTargets.champion.ideal,
+    stakeholder: baseTargets.stakeholder.ideal,
+    // Blockers: Use ideal count if should include blockers, otherwise 0
+    blocker: shouldIncludeBlockers ? baseTargets.blocker.ideal : 0,
+    introducer: baseTargets.introducer.ideal
   };
   
   return targets;
@@ -159,42 +180,48 @@ function getDealSizeThresholds(tier) {
 /**
  * Get optimal buyer group size for company tier
  * @param {string} tier - Company size tier
+ * @param {number} actualEmployeeCount - Actual employee count (for very small companies)
  * @returns {object} Buyer group size constraints
  */
-function getBuyerGroupSizeForTier(tier) {
+function getBuyerGroupSizeForTier(tier, actualEmployeeCount = 0) {
+  // Special handling for very small companies (1-5 employees)
+  if (actualEmployeeCount <= 1) {
+    return { min: 1, max: 1, ideal: 1 }; // 1-person company = 1 decision maker
+  }
+  if (actualEmployeeCount <= 3) {
+    return { min: 1, max: 3, ideal: 2 }; // 2-3 person company = minimal buyer group
+  }
+  if (actualEmployeeCount <= 5) {
+    return { min: 1, max: 4, ideal: 3 }; // 4-5 person company = small buyer group
+  }
+
   const sizes = {
-    // Small companies: Lean decision-making
-    S1: { min: 3, max: 5, ideal: 4 },
-    S2: { min: 3, max: 5, ideal: 4 },
-    S3: { min: 4, max: 6, ideal: 5 },
+    // Small companies: 1-8 members (matching role distribution totals)
+    S1: { min: 1, max: 3, ideal: 2 }, // 1 decision + 1 champion
+    S2: { min: 2, max: 4, ideal: 3 }, // 1 decision + 1 champion + 1 stakeholder
+    S3: { min: 3, max: 6, ideal: 5 }, // 1 decision + 1 champion + 2 stakeholders + 1 introducer
+    S4: { min: 4, max: 7, ideal: 6 }, // 1 decision + 2 champions + 2 stakeholders + 1 introducer
+    S5: { min: 5, max: 8, ideal: 7 }, // 1 decision + 2 champions + 3 stakeholders + 1 introducer
+    S6: { min: 6, max: 9, ideal: 8 }, // 2 decisions + 2 champions + 3 stakeholders + 1 introducer
+    S7: { min: 6, max: 9, ideal: 8 }, // 2 decisions + 2 champions + 3 stakeholders + 1 blocker
     
-    // Growing small companies: Emerging hierarchy
-    S4: { min: 5, max: 7, ideal: 6 },
-    S5: { min: 5, max: 8, ideal: 6 },
-    S6: { min: 6, max: 8, ideal: 7 },
-    S7: { min: 6, max: 9, ideal: 8 },
+    // Mid-market: 8-11 members
+    M1: { min: 8, max: 10, ideal: 9 }, // 2 decisions + 3 champions + 3 stakeholders + 1 blocker
+    M2: { min: 8, max: 10, ideal: 9 }, // 2 decisions + 3 champions + 3 stakeholders + 1 blocker
+    M3: { min: 8, max: 10, ideal: 9 }, // 2 decisions + 3 champions + 3 stakeholders + 1 blocker
+    M4: { min: 9, max: 12, ideal: 11 }, // 2 decisions + 3 champions + 4 stakeholders + 1 blocker + 1 introducer
+    M5: { min: 9, max: 12, ideal: 11 }, // 2 decisions + 3 champions + 4 stakeholders + 1 blocker + 1 introducer
+    M6: { min: 9, max: 12, ideal: 11 }, // 2 decisions + 3 champions + 4 stakeholders + 1 blocker + 1 introducer
+    M7: { min: 9, max: 12, ideal: 11 }, // 2 decisions + 3 champions + 4 stakeholders + 1 blocker + 1 introducer
     
-    // Mid-market: Departmental stakeholders
-    M1: { min: 7, max: 10, ideal: 8 },
-    M2: { min: 7, max: 10, ideal: 8 },
-    M3: { min: 8, max: 11, ideal: 9 },
-    M4: { min: 8, max: 12, ideal: 10 },
-    
-    // Upper mid-market: Cross-functional
-    M5: { min: 9, max: 12, ideal: 10 },
-    M6: { min: 9, max: 13, ideal: 11 },
-    M7: { min: 10, max: 13, ideal: 11 },
-    
-    // Enterprise: Complex approval chains
-    L1: { min: 10, max: 14, ideal: 12 },
-    L2: { min: 11, max: 15, ideal: 13 },
-    L3: { min: 12, max: 16, ideal: 14 },
-    L4: { min: 13, max: 17, ideal: 15 },
-    
-    // Fortune 500+: Extensive stakeholder matrix
-    L5: { min: 14, max: 18, ideal: 16 },
-    L6: { min: 15, max: 19, ideal: 17 },
-    L7: { min: 16, max: 20, ideal: 18 }
+    // Large companies: 12-18 members
+    L1: { min: 12, max: 15, ideal: 14 }, // 2 decisions + 4 champions + 5 stakeholders + 2 blockers + 1 introducer
+    L2: { min: 12, max: 15, ideal: 14 }, // 2 decisions + 4 champions + 5 stakeholders + 2 blockers + 1 introducer
+    L3: { min: 12, max: 15, ideal: 14 }, // 2 decisions + 4 champions + 5 stakeholders + 2 blockers + 1 introducer
+    L4: { min: 14, max: 17, ideal: 16 }, // 3 decisions + 4 champions + 6 stakeholders + 2 blockers + 1 introducer
+    L5: { min: 14, max: 17, ideal: 16 }, // 3 decisions + 4 champions + 6 stakeholders + 2 blockers + 1 introducer
+    L6: { min: 16, max: 19, ideal: 18 }, // 3 decisions + 5 champions + 7 stakeholders + 2 blockers + 1 introducer
+    L7: { min: 16, max: 19, ideal: 18 } // 3 decisions + 5 champions + 7 stakeholders + 2 blockers + 1 introducer
   };
   
   return sizes[tier] || sizes['S3'];

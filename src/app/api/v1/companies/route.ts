@@ -111,8 +111,17 @@ export async function GET(request: NextRequest) {
     
     const offset = (page - 1) * limit;
     
+    // 🔧 CRITICAL FIX: Override workspace ID from query params if present (for multi-workspace support)
+    // This allows users to access workspaces other than their default JWT workspace
+    let finalWorkspaceId = context.workspaceId;
+    const queryWorkspaceId = searchParams.get('workspaceId');
+    if (queryWorkspaceId) {
+      finalWorkspaceId = queryWorkspaceId;
+      console.log(`🔧 [V1 COMPANIES API] Overriding workspace ID from query param: ${context.workspaceId} -> ${finalWorkspaceId}`);
+    }
+    
     // Check cache first (skip if force refresh)
-    const cacheKey = `companies-${context.workspaceId}-${status}-${limit}-${countsOnly}-${page}`;
+    const cacheKey = `companies-${finalWorkspaceId}-${status}-${limit}-${countsOnly}-${page}`;
     const cached = responseCache.get(cacheKey);
     
     if (!forceRefresh && cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -125,14 +134,15 @@ export async function GET(request: NextRequest) {
     }
 
     // Enhanced where clause for pipeline management
-    console.log(`🔍 [V1 COMPANIES API] Querying with workspace: ${context.workspaceId}, user: ${context.userId}`);
+    console.log(`🔍 [V1 COMPANIES API] Querying with workspace: ${finalWorkspaceId}, user: ${context.userId}`);
     
     // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
-    const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                      context.workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1'; // Notary Everyday
+    const isDemoMode = finalWorkspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
+                      finalWorkspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || // Notary Everyday
+                      finalWorkspaceId === '01K7464TNANHQXPCZT1FYX205V'; // Adrata workspace
     
     const where: any = {
-      workspaceId: context.workspaceId, // Filter by user's workspace
+      workspaceId: finalWorkspaceId, // Use final workspace ID (from URL or JWT)
       deletedAt: null, // Only show non-deleted records
       ...(isDemoMode ? {} : {
         OR: [
@@ -219,7 +229,7 @@ export async function GET(request: NextRequest) {
 
     // Pipeline status filtering (PROSPECT, CLIENT, ACTIVE, INACTIVE, OPPORTUNITY)
     if (status) {
-      where.status = status;
+      where.status = status as any; // Type casting to handle Prisma enum validation
     }
 
     // Priority filtering (LOW, MEDIUM, HIGH)
@@ -402,7 +412,7 @@ export async function GET(request: NextRequest) {
           }
           
           // Only show real last actions if they exist and are meaningful
-          if (lastActionDate && lastActionText && lastActionText !== 'No action taken') {
+          if (lastActionDate && lastActionText && lastActionText !== 'No action taken' && lastActionText !== 'Record created' && lastActionText !== 'Company record created') {
             // Real last action exists
             const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
             if (daysSince === 0) lastActionTime = 'Today';
@@ -410,15 +420,8 @@ export async function GET(request: NextRequest) {
             else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
             else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
             else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
-          } else if (company.createdAt) {
-            // No real last action, show when data was added
-            const daysSince = Math.floor((new Date().getTime() - new Date(company.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-            if (daysSince === 0) lastActionTime = 'Today';
-            else if (daysSince === 1) lastActionTime = 'Yesterday';
-            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
-            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
-            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
           }
+          // If no meaningful action exists, lastActionTime remains 'Never'
 
           // Calculate nextActionTiming with fallback
           let nextActionTiming = 'No date set';

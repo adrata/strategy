@@ -37,7 +37,6 @@ export default function SetupAccountPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   // Form state
   const [username, setUsername] = useState('');
@@ -86,7 +85,7 @@ export default function SetupAccountPage() {
 
       if (data.success) {
         setInvitationData(data.data);
-        setUsername(data.data.user.firstName || data.data.user.name);
+        setUsername((data.data.user.firstName || data.data.user.name).toLowerCase());
         setEmail(data.data.user.email);
         setError(null);
       } else {
@@ -127,20 +126,22 @@ export default function SetupAccountPage() {
     
     if (!invitationData) return;
 
+    setSubmitting(true);
+    setError(null);
+
     // Validate passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      setSubmitting(false);
       return;
     }
 
     // Validate password strength
     if (passwordStrength < 50) {
       setError('Password is too weak. Please choose a stronger password.');
+      setSubmitting(false);
       return;
     }
-
-    setSubmitting(true);
-    setError(null);
 
     try {
       const response = await fetch('/api/v1/auth/setup-account', {
@@ -160,22 +161,18 @@ export default function SetupAccountPage() {
       const data = await response.json();
 
       if (data.success) {
-        setSuccess(true);
-        
         // Store tokens for immediate login
         if (data.data.tokens) {
           localStorage.setItem('adrata-access-token', data.data.tokens.accessToken);
           localStorage.setItem('adrata-refresh-token', data.data.tokens.refreshToken);
         }
 
-        // Redirect to speedrun page after a short delay
-        setTimeout(() => {
-          if (data.data.workspace) {
-            router.push(`/${data.data.workspace.slug}/speedrun`);
-          } else {
-            router.push('/');
-          }
-        }, 2000);
+        // Redirect immediately to speedrun page
+        if (data.data.workspace) {
+          router.push(`/${data.data.workspace.slug}/speedrun`);
+        } else {
+          router.push('/');
+        }
       } else {
         setError(data.error || 'Failed to set up account. Please try again.');
       }
@@ -188,10 +185,26 @@ export default function SetupAccountPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Validating your invitation...</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+              Get Started
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Loading your invitation...
+            </p>
+          </div>
+          <div className="bg-white py-8 px-6 shadow rounded-lg">
+            <div className="animate-pulse space-y-6">
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-10 bg-gray-200 rounded"></div>
+              <div className="h-10 bg-gray-200 rounded"></div>
+              <div className="h-10 bg-gray-200 rounded"></div>
+              <div className="h-10 bg-gray-200 rounded"></div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -215,20 +228,6 @@ export default function SetupAccountPage() {
     );
   }
 
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
-          <CheckCircleIcon className="h-12 w-12 text-green-500 mx-auto mb-4" />
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">Account Set Up Successfully!</h1>
-          <p className="text-gray-600 mb-6">
-            Welcome to {invitationData?.workspace?.name}! You're being redirected to your dashboard...
-          </p>
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
 
   if (!invitationData) return null;
 
@@ -237,10 +236,10 @@ export default function SetupAccountPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Set Up Your Account
+            Get Started
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            You've been invited to join <strong>{invitationData.workspace?.name}</strong>
+            You've been invited to join <strong>{invitationData.workspace?.name}</strong> on Adrata
           </p>
           {invitationData.inviter && (
             <p className="text-sm text-gray-500">
@@ -274,7 +273,7 @@ export default function SetupAccountPage() {
                   type="text"
                   required
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => setUsername(e.target.value.toLowerCase())}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter your username"
                 />
@@ -405,31 +404,16 @@ export default function SetupAccountPage() {
             <div>
               <button
                 type="submit"
-                disabled={submitting || passwordStrength < 50 || password !== confirmPassword}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: '#3b82f6',
-                  borderColor: '#2563eb',
-                  color: '#ffffff'
-                }}
-                onMouseEnter={(e) => {
-                  if (!e.currentTarget.disabled) {
-                    e.currentTarget.style.backgroundColor = '#2563eb';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!e.currentTarget.disabled) {
-                    e.currentTarget.style.backgroundColor = '#3b82f6';
-                  }
-                }}
+                disabled={submitting}
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#5B7FFF] hover:bg-[#4A6BFF] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5B7FFF] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Getting started...
+                    Starting...
                   </>
                 ) : (
-                  'Get Started'
+                  'Start'
                 )}
               </button>
             </div>

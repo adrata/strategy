@@ -393,6 +393,19 @@ model people {
   phone                  String?             @db.VarChar(50)
   mobilePhone            String?             @db.VarChar(50)
   workPhone              String?             @db.VarChar(50)
+  // Phone enrichment fields from Lusha
+  phone1                 String?             @db.VarChar(50)
+  phone1Type             String?             @db.VarChar(50)
+  phone1Verified         Boolean?            @default(false)
+  phone1Extension        String?             @db.VarChar(20)
+  phone2                 String?             @db.VarChar(50)
+  phone2Type             String?             @db.VarChar(50)
+  phone2Verified         Boolean?            @default(false)
+  phone2Extension        String?             @db.VarChar(20)
+  directDialPhone        String?             @db.VarChar(50)
+  phoneEnrichmentSource  String?             @db.VarChar(100)
+  phoneEnrichmentDate    DateTime?           @db.Timestamp(6)
+  phoneDataQuality       Int?                @default(0)
   linkedinUrl            String?             @db.VarChar(500)
   address                String?             @db.VarChar(500)
   city                   String?             @db.VarChar(100)
@@ -1108,11 +1121,13 @@ enum ActionPriority {
 }
 
 enum CompanyStatus {
+  LEAD
+  PROSPECT
+  OPPORTUNITY
+  CLIENT
+  SUPERFAN
   ACTIVE
   INACTIVE
-  PROSPECT
-  CLIENT
-  OPPORTUNITY
 }
 
 enum CompanyPriority {

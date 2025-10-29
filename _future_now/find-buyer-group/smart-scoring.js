@@ -61,6 +61,21 @@ class SmartScoring {
   }
 
   /**
+   * Check if employee is C-level executive
+   * @param {string} title - Employee title
+   * @returns {boolean} True if C-level executive
+   */
+  isCLevelExecutive(title) {
+    const titleLower = (title || '').toLowerCase();
+    return titleLower.includes('ceo') ||
+           titleLower.includes('founder') ||
+           titleLower.includes('president') ||
+           titleLower.includes('chief executive') ||
+           titleLower.includes('managing director') ||
+           titleLower.includes('owner');
+  }
+
+  /**
    * Score seniority appropriateness for deal size
    * @param {object} employee - Employee data
    * @returns {number} Seniority score (0-10)
@@ -68,6 +83,11 @@ class SmartScoring {
   scoreSeniority(employee) {
     const title = employee.title?.toLowerCase() || '';
     const mgmtLevel = employee.managementLevel?.toLowerCase() || '';
+    
+    // C-level executives always get max score for any deal size
+    if (this.isCLevelExecutive(employee.title)) {
+      return 10;
+    }
     
     // Score based on deal size appropriateness
     if (this.dealSize < 150000) {
@@ -110,22 +130,38 @@ class SmartScoring {
     
     // Product-specific relevance (for Sales software)
     if (this.productCategory === 'sales') {
-      const salesDepts = ['sales', 'revenue', 'operations', 'business development', 'sales enablement'];
-      const salesTitles = ['sales', 'revenue', 'business development', 'account executive'];
+      // Primary relevance - direct users and decision makers
+      const primaryDepts = ['sales', 'revenue', 'operations', 'business development', 'sales enablement', 'revenue operations'];
+      const primaryTitles = ['sales', 'revenue', 'business development', 'account executive', 'cro', 'chief revenue officer'];
       
-      if (salesDepts.some(d => dept.includes(d))) return 10;
-      if (salesTitles.some(t => title.includes(t))) return 9;
+      if (primaryDepts.some(d => dept.includes(d))) return 10;
+      if (primaryTitles.some(t => title.includes(t))) return 9;
       
-      // Secondary relevance
-      const secondaryDepts = ['marketing', 'customer success', 'operations'];
-      if (secondaryDepts.some(d => dept.includes(d))) return 7;
+      // Secondary relevance - influencers and adjacent functions
+      const secondaryDepts = ['marketing', 'product']; // Only if sales enablement related
+      if (secondaryDepts.some(d => dept.includes(d))) {
+        // Check if it's sales enablement related
+        if (title.includes('sales enablement') || title.includes('revenue') || title.includes('growth')) {
+          return 8;
+        }
+        return 6; // General marketing/product
+      }
       
       // Technical relevance for sales tools
       const techDepts = ['it', 'technology', 'engineering'];
       if (techDepts.some(d => dept.includes(d))) return 6;
+      
+      // EXCLUDE Customer Success unless managing sales
+      if (dept.includes('customer success') || dept.includes('customer service')) {
+        // Special case: Customer Success managing sales
+        if (title.includes('sales') || title.includes('revenue') || title.includes('business development')) {
+          return 7; // Include if managing sales
+        }
+        return 2; // Exclude otherwise
+      }
     }
     
-    // General scoring
+    // General scoring for other products
     const highRelevanceDepts = ['operations', 'strategy', 'product'];
     const mediumRelevanceDepts = ['finance', 'hr', 'legal'];
     
@@ -142,6 +178,11 @@ class SmartScoring {
    */
   scoreInfluence(employee) {
     let score = 0;
+    
+    // C-level executives get max influence score
+    if (this.isCLevelExecutive(employee.title)) {
+      return 10;
+    }
     
     // Network size
     const connections = employee.connectionsCount || 0;
@@ -247,21 +288,58 @@ class SmartScoring {
     const dept = employee.department?.toLowerCase() || '';
     const title = employee.title?.toLowerCase() || '';
     
+    // C-level executives always get high relevance
+    if (this.isCLevelExecutive(employee.title)) {
+      return 0.9; // High relevance for any C-level executive
+    }
+    
     let relevance = 0;
     
-    // Primary relevance (direct users)
-    const primaryDepts = ['sales', 'revenue', 'operations', 'business development'];
-    const primaryTitles = ['sales', 'revenue', 'business development', 'account'];
-    
-    if (primaryDepts.some(d => dept.includes(d))) relevance += 0.4;
-    if (primaryTitles.some(t => title.includes(t))) relevance += 0.3;
-    
-    // Secondary relevance (influencers)
-    const secondaryDepts = ['marketing', 'customer success', 'product'];
-    const secondaryTitles = ['marketing', 'customer', 'product', 'strategy'];
-    
-    if (secondaryDepts.some(d => dept.includes(d))) relevance += 0.2;
-    if (secondaryTitles.some(t => title.includes(t))) relevance += 0.1;
+    // Product-specific relevance calculation
+    if (this.productCategory === 'sales') {
+      // Primary relevance (direct users and decision makers)
+      const primaryDepts = ['sales', 'revenue', 'operations', 'business development', 'sales enablement', 'revenue operations'];
+      const primaryTitles = ['sales', 'revenue', 'business development', 'account', 'cro', 'chief revenue officer'];
+      
+      if (primaryDepts.some(d => dept.includes(d))) relevance += 0.5;
+      if (primaryTitles.some(t => title.includes(t))) relevance += 0.4;
+      
+      // Secondary relevance (influencers) - more restrictive
+      const secondaryDepts = ['marketing', 'product']; // Removed customer success
+      const secondaryTitles = ['marketing', 'product', 'strategy'];
+      
+      if (secondaryDepts.some(d => dept.includes(d))) {
+        // Only if sales enablement related
+        if (title.includes('sales enablement') || title.includes('revenue') || title.includes('growth')) {
+          relevance += 0.3;
+        } else {
+          relevance += 0.1; // General marketing/product
+        }
+      }
+      if (secondaryTitles.some(t => title.includes(t))) relevance += 0.1;
+      
+      // EXCLUDE Customer Success unless managing sales
+      if (dept.includes('customer success') || dept.includes('customer service')) {
+        if (title.includes('sales') || title.includes('revenue') || title.includes('business development')) {
+          relevance += 0.3; // Include if managing sales
+        } else {
+          relevance = 0.1; // Exclude otherwise
+        }
+      }
+    } else {
+      // General relevance for other products
+      const primaryDepts = ['operations', 'strategy', 'product'];
+      const primaryTitles = ['operations', 'strategy', 'product', 'director', 'manager'];
+      
+      if (primaryDepts.some(d => dept.includes(d))) relevance += 0.4;
+      if (primaryTitles.some(t => title.includes(t))) relevance += 0.3;
+      
+      const secondaryDepts = ['marketing', 'finance', 'it'];
+      const secondaryTitles = ['marketing', 'finance', 'it', 'technology'];
+      
+      if (secondaryDepts.some(d => dept.includes(d))) relevance += 0.2;
+      if (secondaryTitles.some(t => title.includes(t))) relevance += 0.1;
+    }
     
     return Math.min(relevance, 1.0);
   }

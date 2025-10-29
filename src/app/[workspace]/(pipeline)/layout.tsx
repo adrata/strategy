@@ -135,7 +135,7 @@ function PipelineLayoutInner({
 
   // User detection for conditional left panel visibility
   const currentUserEmail = authUser?.email;
-  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
+  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com'];
   const isAdminUser = ADMIN_EMAILS.includes(currentUserEmail || '');
 
   // Determine which left panel to show based on the current route
@@ -206,6 +206,8 @@ function PipelineLayoutInner({
             onClose={() => setIsProfilePanelVisible(false)}
             username={username}
             currentApp={currentApp}
+            userId={authUser?.id}
+            userEmail={authUser?.email}
           />
         }
         isProfilePanelVisible={isProfilePanelVisible}

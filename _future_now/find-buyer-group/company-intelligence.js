@@ -27,7 +27,7 @@ class CompanyIntelligence {
     // 2. Use cached if fresh (<30 days)
     if (dbCompany && isDataFresh(dbCompany, 30)) {
       console.log('✅ Using cached company data from database');
-      return this.extractIntelligence(dbCompany.customFields?.coresignalData);
+      return this.extractIntelligence(dbCompany.customFields?.coresignalData, dbCompany);
     }
     
     // 3. Fetch from Coresignal (balanced approach)
@@ -39,7 +39,7 @@ class CompanyIntelligence {
       await this.cacheInDatabase(dbCompany.id, coresignalData);
     }
     
-    return this.extractIntelligence(coresignalData);
+    return this.extractIntelligence(coresignalData, dbCompany);
   }
 
   /**
@@ -84,31 +84,34 @@ class CompanyIntelligence {
   /**
    * Extract intelligence from Coresignal data
    * @param {object} coresignalData - Raw Coresignal company data
+   * @param {object} dbCompany - Database company record
    * @returns {object} Structured intelligence data
    */
-  extractIntelligence(coresignalData) {
-    if (!coresignalData) {
-      return {
-        employeeCount: 100,
-        revenue: 0,
-        industry: 'Unknown',
-        growthRate: 0,
-        activeHiring: 0,
-        fundingStage: 'unknown',
-        dataSource: 'default'
-      };
-    }
-
-    return {
-      employeeCount: coresignalData.employees_count || 100,
-      revenue: coresignalData.revenue_annual?.annual_revenue || 0,
-      industry: coresignalData.industry || 'Unknown',
-      growthRate: coresignalData.employees_count_change?.change_yearly_percentage || 0,
-      activeHiring: coresignalData.active_job_postings_count || 0,
-      fundingStage: coresignalData.funding_rounds?.length > 0 ? 'funded' : 'bootstrapped',
-      dataSource: 'coresignal',
+  extractIntelligence(coresignalData, dbCompany = null) {
+    const baseIntelligence = {
+      employeeCount: coresignalData?.employees_count || 100,
+      revenue: coresignalData?.revenue_annual?.annual_revenue || 0,
+      industry: coresignalData?.industry || 'Unknown',
+      growthRate: coresignalData?.employees_count_change?.change_yearly_percentage || 0,
+      activeHiring: coresignalData?.active_job_postings_count || 0,
+      fundingStage: coresignalData?.funding_rounds?.length > 0 ? 'funded' : 'bootstrapped',
+      dataSource: coresignalData ? 'coresignal' : 'default',
       lastUpdated: new Date().toISOString()
     };
+
+    // Add company identifiers from database
+    if (dbCompany) {
+      baseIntelligence.companyName = dbCompany.name;
+      baseIntelligence.linkedinUrl = dbCompany.linkedinUrl;
+      baseIntelligence.website = dbCompany.website;
+    } else if (coresignalData) {
+      // Extract from Coresignal data if no database company
+      baseIntelligence.companyName = coresignalData.name || coresignalData.company_name;
+      baseIntelligence.linkedinUrl = coresignalData.linkedin_url;
+      baseIntelligence.website = coresignalData.website;
+    }
+
+    return baseIntelligence;
   }
 
   /**
@@ -118,32 +121,55 @@ class CompanyIntelligence {
    * @returns {object} Optimal parameters for search
    */
   calculateOptimalParameters(intelligence, dealSize) {
-    // Company-size-aware search sizing
-    let searchSize;
-    if (intelligence.employeeCount <= 50) {
-      searchSize = 20;
-    } else if (intelligence.employeeCount <= 500) {
-      searchSize = 40;
-    } else if (intelligence.employeeCount <= 5000) {
-      searchSize = 60;
+    const employeeCount = intelligence.employeeCount || 100;
+    
+    // Company-size-aware search strategy
+    let searchStrategy, searchSize, maxPreviewPages, filteringLevel;
+    
+    if (employeeCount <= 100) {
+      // Small companies: Get ALL employees for comprehensive understanding
+      // Preview is cheap ($0.10), so we can afford to get everyone
+      searchStrategy = 'comprehensive';
+      searchSize = employeeCount; // Get everyone
+      maxPreviewPages = Math.max(5, Math.ceil(employeeCount / 50)); // At least 5 pages (250 people) or more
+      filteringLevel = 'none'; // No filtering - analyze everyone
+    } else if (employeeCount <= 500) {
+      // Medium companies: Get at least 100-150 people for good coverage
+      // Preview is cheap, so we can afford to search more
+      searchStrategy = 'representative';
+      searchSize = Math.max(150, Math.floor(employeeCount * 0.8)); // At least 150 people
+      maxPreviewPages = Math.max(5, Math.ceil(searchSize / 50)); // At least 5 pages
+      filteringLevel = 'light'; // Light filtering - keep more roles
+    } else if (employeeCount <= 2000) {
+      // Large companies: Get at least 200 people for representative sample
+      searchStrategy = 'sampling';
+      searchSize = Math.max(200, Math.floor(employeeCount * 0.5));
+      maxPreviewPages = Math.max(5, Math.ceil(searchSize / 50)); // At least 5 pages
+      filteringLevel = 'moderate'; // Moderate filtering
     } else {
-      searchSize = 100;
+      // Enterprise: Get at least 250 people for focused search
+      searchStrategy = 'focused';
+      searchSize = Math.max(250, Math.floor(employeeCount * 0.3));
+      maxPreviewPages = Math.max(6, Math.ceil(searchSize / 50)); // At least 6 pages
+      filteringLevel = 'strict'; // Strict filtering - only relevant roles
     }
     
     // Company tier-based buyer group sizing
     const companyTier = determineCompanySizeTier(intelligence.revenue, intelligence.employeeCount);
-    const buyerGroupSize = getBuyerGroupSizeForTier(companyTier);
+    const buyerGroupSize = getBuyerGroupSizeForTier(companyTier, employeeCount);
     
     // Add tier information to intelligence
     intelligence.tier = companyTier;
-    
-    const maxPreviewPages = Math.ceil(searchSize / 10);
+    intelligence.searchStrategy = searchStrategy;
+    intelligence.filteringLevel = filteringLevel;
     
     console.log(`📊 Optimal parameters:`, {
-      companySize: intelligence.employeeCount,
-      dealSize: dealSize,
+      companySize: employeeCount,
+      searchStrategy: searchStrategy,
       searchSize: searchSize,
       maxPreviewPages: maxPreviewPages,
+      filteringLevel: filteringLevel,
+      dealSize: dealSize,
       buyerGroupSize: buyerGroupSize
     });
     
@@ -151,8 +177,10 @@ class CompanyIntelligence {
       searchSize, 
       maxPreviewPages, 
       buyerGroupSize,
-      companySize: intelligence.employeeCount,
-      industry: intelligence.industry
+      companySize: employeeCount,
+      industry: intelligence.industry,
+      searchStrategy,
+      filteringLevel
     };
   }
 

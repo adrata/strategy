@@ -73,8 +73,8 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
       // In a real implementation, you'd get this from the user's role data
       const userRole = 'WORKSPACE_ADMIN';
 
-      // Call the simple features API
-      const response = await fetch(`/api/v1/simple-features?workspaceSlug=${workspaceSlug}&userRole=${userRole}`, {
+      // Call the simple features API with user information for restrictions
+      const response = await fetch(`/api/v1/simple-features?workspaceSlug=${workspaceSlug}&userRole=${userRole}&userId=${user.id}&userEmail=${user.email}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

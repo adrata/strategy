@@ -38,7 +38,30 @@ export function useWorkspaceContext(): UseWorkspaceContextReturn {
       setIsLoading(true);
       setError(null);
       
-      // 1. First try to get from JWT token (most reliable)
+      // 0. First try to get from URL (most immediate)
+      if (typeof window !== 'undefined') {
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        const workspaceSlug = pathSegments[0]; // First segment is workspace slug
+        
+        if (workspaceSlug) {
+          // Map workspace slug to workspace ID
+          const workspaceMapping: Record<string, string> = {
+            'adrata': '01K7464TNANHQXPCZT1FYX205V',
+            'demo': '01K74N79PCW5W8D9X6EK7KJANM',
+            'notary-everyday': '01K7DNYR5VZ7JY36KGKKN76XZ1',
+            'top-engineering-plus': '01K75ZD7DWHG1XF16HAF2YVKCK',
+            'cloudcaddie': '01K7DSWP8ZBA75K5VSWVXPEMAH'
+          };
+          
+          const workspaceId = workspaceMapping[workspaceSlug];
+          if (workspaceId) {
+            console.log(`🔍 [WORKSPACE CONTEXT] Got workspace ID from URL: ${workspaceId} (slug: ${workspaceSlug})`);
+            return { workspaceId, userId: authUser?.id };
+          }
+        }
+      }
+      
+      // 1. Try to get from JWT token (most reliable)
       const session = await import('@/platform/auth/service').then(m => m.UnifiedAuthService.getSession());
       if (session?.accessToken) {
         try {

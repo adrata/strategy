@@ -213,7 +213,7 @@ export function useSimpleAuth() {
       
       // Redirect immediately, clear cache storage in background
       if (isBrowser()) {
-        window.location.replace('/sign-in?logout=true');
+        window.location.replace('/sign-in/');
         
         // Clear additional storage in background (non-blocking)
         setTimeout(() => {
@@ -227,7 +227,7 @@ export function useSimpleAuth() {
       console.error('❌ [SIGN-OUT] Error during sign-out:', error);
       // Fallback: force redirect even if there's an error
       if (isBrowser()) {
-        window.location.href = '/sign-in?logout=true';
+        window.location.href = '/sign-in/';
       }
     }
   };

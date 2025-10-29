@@ -43,7 +43,7 @@ export default function TowerLayout({ children }: TowerLayoutProps) {
   const router = useRouter();
 
   // Access control - only admins can access Tower
-  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
+  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com'];
   const isAdminUser = ADMIN_EMAILS.includes(authUser?.email || '');
   
   useEffect(() => {

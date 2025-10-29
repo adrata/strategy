@@ -15,7 +15,7 @@ export function HierarchicalBreadcrumb({
   record, 
   recordType, 
   onBack, 
-  workspaceId = '01K1VBYXHD0J895XAN0HGFBKJP' 
+  workspaceId = '' 
 }: HierarchicalBreadcrumbProps) {
   const router = useRouter();
 

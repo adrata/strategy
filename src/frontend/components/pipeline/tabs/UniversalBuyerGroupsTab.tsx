@@ -242,7 +242,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           setLoading(false);
           return;
         }
-        const userId = record.assignedUserId || '01K1VBYXHD0J895XAN0HGFBKJP'; // Use record's assigned user or workspace ID
+        const userId = record.assignedUserId || ''; // Use record's assigned user
         
         const cacheKey = `people-${workspaceId}-${userId}`;
         const buyerGroupCacheKey = `buyer-groups-${companyId}-${workspaceId}`;

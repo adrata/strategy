@@ -47,16 +47,35 @@ class RoleAssignment {
     
     if (employees.length === 0) return [];
 
+    // Special handling for very small companies (1-3 employees)
+    if (this.companyEmployees <= 3) {
+      return this.assignRolesForSmallCompany(employees);
+    }
+
     // Sort by seniority first (C-level → VP → Director → Manager → Others)
     const sortedEmployees = [...employees].sort((a, b) => 
       this.getSeniorityScore(b.title) - this.getSeniorityScore(a.title)
     );
 
-    // Get company size-based targets
-    const targets = getRoleDistributionTargets(this.companyTier, employees.length);
+    // Get company size-based targets with actual company size and deal size
+    const targets = getRoleDistributionTargets(
+      this.companyTier, 
+      employees.length, 
+      this.companyEmployees,
+      this.dealSize
+    );
 
     const employeesWithRoles = [];
     let counts = { decision: 0, champion: 0, stakeholder: 0, blocker: 0, introducer: 0 };
+
+    // Define confidence thresholds for role qualification
+    const confidenceThresholds = {
+      decision: 70,    // High confidence required for decision makers
+      champion: 60,    // Medium-high confidence for champions
+      blocker: 50,     // Medium confidence for blockers
+      introducer: 50,  // Medium confidence for introducers
+      stakeholder: 40  // Lower confidence for stakeholders
+    };
 
     for (const emp of sortedEmployees) {
       let role = 'stakeholder'; // Default
@@ -67,45 +86,66 @@ class RoleAssignment {
 
       // Decision Makers: C-level, VPs with budget authority (based on company tier)
       if (counts.decision < targets.decision && 
-          this.isDecisionMaker(titleLower, this.dealSize)) {
-        role = 'decision';
-        confidence = Math.min((emp.scores?.seniority || 7) * 10, 100);
-        reasoning = this.generateDecisionMakerReasoning(emp, this.dealSize, this.companyTier);
-        counts.decision++;
+          this.isDecisionMaker(titleLower, this.dealSize, emp)) {
+        const roleConfidence = Math.min((emp.scores?.seniority || 7) * 10, 100);
+        if (roleConfidence >= confidenceThresholds.decision) {
+          role = 'decision';
+          confidence = roleConfidence;
+          reasoning = this.generateDecisionMakerReasoning(emp, this.dealSize, this.companyTier);
+          counts.decision++;
+        }
       }
-      // Champions: Operational leaders (Directors, VPs, Managers)
-      else if (counts.champion < targets.champion && 
-               (titleLower.includes('director') || titleLower.includes('head of') || 
-                titleLower.includes('vp') || titleLower.includes('manager'))) {
-        role = 'champion';
-        confidence = Math.min((emp.scores?.championPotential || 15) * 4, 100);
-        reasoning = this.generateChampionReasoning(emp, this.dealSize, this.companyTier);
-        counts.champion++;
+      
+      // Champions: Operational leaders (Directors, VPs, Managers) - only if qualified
+      if (role === 'stakeholder' && counts.champion < targets.champion && 
+          (titleLower.includes('director') || titleLower.includes('head of') || 
+           titleLower.includes('vp') || titleLower.includes('manager'))) {
+        const roleConfidence = Math.min((emp.scores?.championPotential || 15) * 4, 100);
+        if (roleConfidence >= confidenceThresholds.champion) {
+          role = 'champion';
+          confidence = roleConfidence;
+          reasoning = this.generateChampionReasoning(emp, this.dealSize, this.companyTier);
+          counts.champion++;
+        }
       }
-      // Blockers: Procurement, Legal, Security, Compliance
-      else if (counts.blocker < targets.blocker && 
-               this.isBlocker(deptLower, titleLower)) {
-        role = 'blocker';
-        confidence = 80;
-        reasoning = this.generateBlockerReasoning(emp, this.dealSize, this.companyTier);
-        counts.blocker++;
+      
+      // Blockers: Procurement, Legal, Security, Compliance - only if qualified
+      if (role === 'stakeholder' && counts.blocker < targets.blocker && 
+          this.isBlocker(deptLower, titleLower)) {
+        const roleConfidence = 80; // Blockers are usually high confidence
+        if (roleConfidence >= confidenceThresholds.blocker) {
+          role = 'blocker';
+          confidence = roleConfidence;
+          reasoning = this.generateBlockerReasoning(emp, this.dealSize, this.companyTier);
+          counts.blocker++;
+        }
       }
-      // Introducers: Customer-facing, Sales, Account Management
-      else if (counts.introducer < targets.introducer && 
-               (titleLower.includes('sales') || titleLower.includes('account') || 
-                titleLower.includes('customer success') || titleLower.includes('business development') ||
-                deptLower.includes('sales') || deptLower.includes('customer success'))) {
-        role = 'introducer';
-        confidence = Math.min((emp.scores?.influence || 7) * 10, 100);
-        reasoning = this.generateIntroducerReasoning(emp, this.dealSize, this.companyTier);
-        counts.introducer++;
+      
+      // Introducers: Customer-facing, Sales, Account Management - only if qualified
+      if (role === 'stakeholder' && counts.introducer < targets.introducer && 
+          (titleLower.includes('sales') || titleLower.includes('account') || 
+           titleLower.includes('customer success') || titleLower.includes('business development') ||
+           deptLower.includes('sales') || deptLower.includes('customer success'))) {
+        const roleConfidence = Math.min((emp.scores?.influence || 7) * 10, 100);
+        if (roleConfidence >= confidenceThresholds.introducer) {
+          role = 'introducer';
+          confidence = roleConfidence;
+          reasoning = this.generateIntroducerReasoning(emp, this.dealSize, this.companyTier);
+          counts.introducer++;
+        }
       }
-      // Stakeholders: Fill remaining up to target
-      else if (counts.stakeholder < targets.stakeholder) {
-        role = 'stakeholder';
-        confidence = Math.min(emp.scores?.overallScore || 60, 100);
-        reasoning = this.generateStakeholderReasoning(emp, this.dealSize, this.companyTier);
-        counts.stakeholder++;
+      
+      // Stakeholders: Everyone else - only if meets minimum confidence
+      if (role === 'stakeholder') {
+        const roleConfidence = Math.min((emp.scores?.overallScore || 50) * 1.2, 100);
+        if (roleConfidence >= confidenceThresholds.stakeholder) {
+          confidence = roleConfidence;
+          reasoning = this.generateStakeholderReasoning(emp, this.dealSize, this.companyTier);
+          counts.stakeholder++;
+        } else {
+          // Skip this person - doesn't meet minimum confidence threshold
+          continue;
+        }
       }
 
       employeesWithRoles.push({
@@ -120,6 +160,78 @@ class RoleAssignment {
 
     // Ensure required roles are present
     return this.ensureRequiredRoles(employeesWithRoles);
+  }
+
+  /**
+   * Assign roles for very small companies (1-3 employees)
+   * @param {Array} employees - Array of employees
+   * @returns {Array} Employees with assigned roles
+   */
+  assignRolesForSmallCompany(employees) {
+    console.log(`🏢 Small company (${this.companyEmployees} employees) - adaptive role assignment`);
+    
+    const employeesWithRoles = [];
+    
+    // For 1-person companies: just assign decision maker role
+    if (this.companyEmployees <= 1 && employees.length === 1) {
+      const emp = employees[0];
+      employeesWithRoles.push({
+        ...emp,
+        buyerGroupRole: 'decision',
+        roleConfidence: 90,
+        roleReasoning: 'Sole decision maker for 1-person company'
+      });
+      console.log(`✅ 1-person company: assigned ${emp.name} as decision maker`);
+      return employeesWithRoles;
+    }
+    
+    // For 2-3 person companies: prioritize CEO/Founder first, then by seniority
+    const sortedEmployees = [...employees].sort((a, b) => {
+      const aTitle = a.title?.toLowerCase() || '';
+      const bTitle = b.title?.toLowerCase() || '';
+      
+      // CEO/Founder always first
+      if (aTitle.includes('ceo') || aTitle.includes('founder')) return -1;
+      if (bTitle.includes('ceo') || bTitle.includes('founder')) return 1;
+      
+      // Then by seniority score
+      return this.getSeniorityScore(b.title) - this.getSeniorityScore(a.title);
+    });
+    
+    let hasDecisionMaker = false;
+    
+    for (const emp of sortedEmployees) {
+      const titleLower = emp.title?.toLowerCase() || '';
+      let role = 'stakeholder';
+      let confidence = 70;
+      let reasoning = 'General stakeholder';
+      
+      // Assign first qualified person as decision maker
+      if (!hasDecisionMaker && this.isDecisionMaker(titleLower, this.dealSize, emp)) {
+        role = 'decision';
+        confidence = Math.min((emp.scores?.seniority || 7) * 10, 100);
+        reasoning = 'Primary decision maker for small company';
+        hasDecisionMaker = true;
+      }
+      // Assign second person as champion if qualified
+      else if (employeesWithRoles.length === 1 && 
+               (titleLower.includes('director') || titleLower.includes('manager') || 
+                titleLower.includes('vp') || titleLower.includes('head of'))) {
+        role = 'champion';
+        confidence = Math.min((emp.scores?.championPotential || 15) * 4, 100);
+        reasoning = 'Operational champion for small company';
+      }
+      
+      employeesWithRoles.push({
+        ...emp,
+        buyerGroupRole: role,
+        roleConfidence: confidence,
+        roleReasoning: reasoning
+      });
+    }
+    
+    console.log(`✅ Small company role assignment: ${employeesWithRoles.length} members assigned`);
+    return employeesWithRoles;
   }
 
   /**
@@ -180,15 +292,49 @@ class RoleAssignment {
    * Check if employee is appropriate decision maker for deal size and company tier
    * @param {string} title - Employee title
    * @param {number} dealSize - Deal size in USD
+   * @param {object} employee - Full employee object for product-fit validation
    * @returns {boolean} True if appropriate decision maker
    */
-  isDecisionMaker(title, dealSize) {
+  isDecisionMaker(title, dealSize, employee = null) {
     const titleLower = title.toLowerCase();
     const thresholds = this.dealThresholds;
     
-    // C-level executives are always decision makers
-    if (titleLower.includes('ceo') || titleLower.includes('president') || 
-        titleLower.includes('cfo') || titleLower.includes('cto') || 
+    // CEO/Founder are ALWAYS decision makers regardless of other criteria
+    if (titleLower.includes('ceo') || titleLower.includes('founder') || 
+        titleLower.includes('president') || titleLower.includes('owner')) {
+      return true;
+    }
+    
+    // Product-fit validation for other C-level executives
+    if (employee) {
+      const dept = employee.department?.toLowerCase() || '';
+      const relevance = employee.relevance || 0;
+      const departmentFit = employee.scores?.departmentFit || 0;
+      
+      // EXCLUDE Customer Success for sales software unless managing sales
+      if (dept.includes('customer success') || dept.includes('customer service')) {
+        if (!titleLower.includes('sales') && !titleLower.includes('revenue') && !titleLower.includes('business development')) {
+          return false; // Exclude Customer Success unless managing sales
+        }
+      }
+      
+      // For other C-level executives, require minimum relevance and department fit
+      if (titleLower.includes('cfo') || titleLower.includes('cto') || 
+          titleLower.includes('coo') || titleLower.includes('chief')) {
+        if (relevance < 0.3 || departmentFit < 5) {
+          return false; // Relaxed criteria for C-level
+        }
+        return true;
+      }
+      
+      // Require minimum relevance and department fit for non-C-level decision makers
+      if (relevance < 0.4 || departmentFit < 7) {
+        return false;
+      }
+    }
+    
+    // Other C-level executives (if they pass product-fit)
+    if (titleLower.includes('cfo') || titleLower.includes('cto') || 
         titleLower.includes('coo') || titleLower.includes('chief')) {
       return true;
     }
@@ -374,6 +520,28 @@ class RoleAssignment {
   selectOptimalBuyerGroup(employees, buyerGroupSize) {
     const { min, max, ideal } = buyerGroupSize;
     
+    // Special handling for very small companies (1-3 employees)
+    if (this.companyEmployees <= 3 && employees.length > 0) {
+      // For 1-person companies, just return the best candidate
+      if (this.companyEmployees <= 1 && employees.length === 1) {
+        const best = employees[0];
+        best.buyerGroupRole = 'decision'; // Ensure they're marked as decision maker
+        return [best];
+      }
+      // For 2-3 person companies, return all with at least 1 decision maker
+      if (employees.length <= 3) {
+        const decisionMakers = employees.filter(e => e.buyerGroupRole === 'decision');
+        if (decisionMakers.length === 0 && employees.length > 0) {
+          // Promote best candidate to decision maker if none exists
+          const best = employees.sort((a, b) => 
+            (b.scores?.seniority || 0) - (a.scores?.seniority || 0)
+          )[0];
+          best.buyerGroupRole = 'decision';
+        }
+        return employees;
+      }
+    }
+    
     // Group by role
     const byRole = {
       decision: employees.filter(e => e.buyerGroupRole === 'decision'),
@@ -390,8 +558,13 @@ class RoleAssignment {
 
     const selected = [];
 
-    // Get company size-based targets
-    const targets = getRoleDistributionTargets(this.companyTier, employees.length);
+    // Get company size-based targets with actual company size and deal size
+    const targets = getRoleDistributionTargets(
+      this.companyTier, 
+      employees.length, 
+      this.companyEmployees,
+      this.dealSize
+    );
     
     // Add decision makers (based on company tier)
     selected.push(...byRole.decision.slice(0, Math.min(targets.decision, byRole.decision.length)));
@@ -470,8 +643,13 @@ class RoleAssignment {
   generateDecisionMakerReasoning(emp, dealSize, companyTier) {
     const titleLower = emp.title?.toLowerCase() || '';
     const deptLower = emp.department?.toLowerCase() || '';
+    const relevance = emp.relevance || 0;
+    const departmentFit = emp.scores?.departmentFit || 0;
     
     let reasoning = `Selected as Decision Maker for $${dealSize.toLocaleString()} deal: `;
+    
+    // Product-fit validation
+    reasoning += `High product relevance (${Math.round(relevance * 100)}%) and department fit (${departmentFit}/10) for sales software. `;
     
     // Budget authority reasoning
     if (titleLower.includes('ceo') || titleLower.includes('president')) {
@@ -486,15 +664,22 @@ class RoleAssignment {
       reasoning += `Director-level at ${companyTier} companies has budget authority for $${this.dealThresholds.director.toLocaleString()}+ deals. `;
     }
     
-    // Department relevance
-    if (deptLower.includes('marketing')) {
+    // Department relevance for sales software
+    if (deptLower.includes('sales') || deptLower.includes('revenue')) {
+      reasoning += `Sales/Revenue leadership directly uses and controls sales technology investments. `;
+    } else if (deptLower.includes('marketing')) {
       reasoning += `Marketing leaders often own CRM and sales enablement tool budgets. `;
-    } else if (deptLower.includes('sales')) {
-      reasoning += `Sales leadership controls revenue-generating technology investments. `;
     } else if (deptLower.includes('it') || deptLower.includes('technology')) {
       reasoning += `IT/Technology leaders approve all software and platform purchases. `;
     } else if (deptLower.includes('finance')) {
       reasoning += `Finance department controls budget approval and vendor management. `;
+    } else if (deptLower.includes('customer success')) {
+      // Special case: Customer Success managing sales
+      if (titleLower.includes('sales') || titleLower.includes('revenue')) {
+        reasoning += `Customer Success leader managing sales functions has relevant budget authority. `;
+      } else {
+        reasoning += `Customer Success department typically not involved in sales software purchases. `;
+      }
     }
     
     // Influence indicators

@@ -473,23 +473,35 @@ export function PipelineTable({
                           const companyName = record.name || (record as any)['companyName'] || '';
                           cellContent = (companyName && companyName !== 'Unknown Company' && companyName.trim() !== '') ? companyName : '-';
                         } else {
-                          // For other sections (leads, prospects, etc.), look for company field
-                          const company = record['company'];
-                          let companyName = '';
-                          
-                          if (typeof company === 'object' && company !== null) {
-                            companyName = company.name || company.companyName || '';
+                          // For company leads (isCompanyLead flag), show the company name
+                          if (record['isCompanyLead']) {
+                            const companyName = record['company']?.name || record['companyName'] || '';
+                            cellContent = (companyName && companyName !== 'Unknown Company' && companyName.trim() !== '') ? companyName : '-';
                           } else {
-                            companyName = company || record['companyName'] || '';
+                            // For other sections (leads, prospects, etc.), look for company field
+                            const company = record['company'];
+                            let companyName = '';
+                            
+                            if (typeof company === 'object' && company !== null) {
+                              companyName = company.name || company.companyName || '';
+                            } else {
+                              companyName = company || record['companyName'] || '';
+                            }
+                            
+                            // Show dash for "Unknown Company" or empty values
+                            cellContent = (companyName && companyName !== 'Unknown Company' && companyName.trim() !== '') ? companyName : '-';
                           }
-                          
-                          // Show dash for "Unknown Company" or empty values
-                          cellContent = (companyName && companyName !== 'Unknown Company' && companyName.trim() !== '') ? companyName : '-';
                         }
                         break;
                       case 'person':
                       case 'name':
-                        cellContent = record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || record.name || '-';
+                        // For company leads, show company name (now in fullName/name field)
+                        // For person leads, show person name
+                        if (record['isCompanyLead']) {
+                          cellContent = record.name || record.fullName || '-';
+                        } else {
+                          cellContent = record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim() || record.name || '-';
+                        }
                         break;
                       case 'state':
                         const state = record['hqState'] || record['state'] || record['location'] || '-';
@@ -511,7 +523,7 @@ export function PipelineTable({
                         // Show dash for "Unknown Title" or empty values
                         cellContent = (title && title !== 'Unknown Title' && title.trim() !== '') ? title : '-';
                         break;
-                      case 'last action':
+                      case 'lastaction':
                         // Use pre-formatted lastActionTime from speedrun API if available, or calculate real-time
                         let lastActionTime = record['lastActionTime'] || 'Never';
                         const lastActionText = record['lastAction'] || record['lastActionDescription'] || record['lastContactType'];
@@ -537,23 +549,52 @@ export function PipelineTable({
                           }
                         }
                         
-                        // If timing is "Never", show dash instead of action text
-                        if (lastActionTime === 'Never' || !lastActionText) {
-                          cellContent = `${lastActionTime} | -`;
+                        // If timing is "Never", check if record was just created
+                        // Check for empty or placeholder action values
+                        const isEmptyAction = !lastActionText || 
+                          lastActionText === 'No action' || 
+                          lastActionText === '-' || 
+                          lastActionText === 'Company record created' || 
+                          lastActionText === 'Record created' ||
+                          (typeof lastActionText === 'string' && lastActionText.trim() === '');
+                        
+                        // Debug logging for companies
+                        if (section === 'speedrun' && record['recordType'] === 'company') {
+                          console.log('🔍 [SPEEDRUN COMPANY] Last Action Debug:', {
+                            name: record['name'],
+                            lastActionTime,
+                            lastActionText,
+                            isEmptyAction,
+                            createdAt: record['createdAt'],
+                            created_at: record['created_at'],
+                            recordKeys: Object.keys(record)
+                          });
+                        }
+                        
+                        if (lastActionTime === 'Never' || isEmptyAction) {
+                          // Check if record has a createdAt date (meaning it exists but has no actions)
+                          const recordCreatedAt = record['createdAt'] || record['created_at'];
+                          if (recordCreatedAt) {
+                            cellContent = 'Record created';
+                          } else {
+                            // If no createdAt, but timing is Never, still show Record created for records that exist
+                            // (records in the table must exist, so if they have no actions, they were created)
+                            cellContent = 'Record created';
+                          }
                         } else {
-                          cellContent = `${lastActionTime} | ${lastActionText}`;
+                          cellContent = lastActionText;
                         }
                         break;
-                      case 'next action':
+                      case 'nextaction':
                         // Use pre-formatted nextActionTiming from speedrun API if available
                         const nextActionTime = record['nextActionTiming'] || 'No date set';
                         const nextActionText = record['nextAction'] || record['next_action'];
                         
                         // If timing is "No date set", show dash instead of action text
                         if (nextActionTime === 'No date set' || !nextActionText) {
-                          cellContent = `${nextActionTime} | -`;
+                          cellContent = '-';
                         } else {
-                          cellContent = `${nextActionTime} | ${nextActionText}`;
+                          cellContent = nextActionText;
                         }
                         break;
                       case 'stage':

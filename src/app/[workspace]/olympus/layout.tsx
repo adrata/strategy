@@ -72,7 +72,7 @@ export default function OlympusLayout({ children }: OlympusLayoutProps) {
   const router = useRouter();
 
   // Access control - only admins can access Olympus
-  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
+  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com'];
   const isAdminUser = ADMIN_EMAILS.includes(authUser?.email || '');
   
   useEffect(() => {

@@ -20,6 +20,7 @@ import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel'
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
 import { StandardHeader } from '@/platform/ui/components/layout/StandardHeader';
 import { useUnifiedAuth } from '@/platform/auth';
+import { useWorkspaceContext } from '@/platform/hooks/useWorkspaceContext';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
 // Removed usePipelineData import - using useFastSectionData exclusively
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
@@ -234,25 +235,26 @@ export const PipelineContent = React.memo(function PipelineContent({
   // Use single data source from useRevenueOS for dashboard only
   const { data: acquisitionData } = useRevenueOS();
   
-  // Determine workspace ID with fallback logic
-  const workspaceId = acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId;
+  // Use dynamic workspace context instead of hardcoded mappings
+  const { workspaceId: contextWorkspaceId, userId: contextUserId } = useWorkspaceContext();
   
-  // Map workspace to correct user ID
-  const getUserIdForWorkspace = (workspaceId: string) => {
-    switch (workspaceId) {
-      case '01K1VBYXHD0J895XAN0HGFBKJP': // Adrata workspace
-        return '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan Mirolli
-      case '01K1VBYV8ETM2RCQA4GNN9EG72': // RPS workspace
-        return '01K1VBYYV7TRPY04NW4TW4XWRB'; // Just Dano
-      case 'cmezxb1ez0001pc94yry3ntjk': // NE (Notary Everyday) workspace
-        return '01K1VBYYV7TRPY04NW4TW4XWRB'; // Just Dano (same user in both workspaces)
-      case '01K5D01YCQJ9TJ7CT4DZDE79T1': // TOP Engineering Plus workspace
-        return '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan Mirolli
-      default:
-        return user?.id;
-    }
-  };
-  const userId = currentUserId;
+  // Use context workspace ID with fallback to acquisition data
+  const workspaceId = contextWorkspaceId || acquisitionData?.auth?.authUser?.activeWorkspaceId || user?.activeWorkspaceId;
+  const userId = contextUserId || currentUserId;
+  
+  // Debug logging for companies section
+  if (section === 'companies') {
+    console.log('🏢 [COMPANIES DEBUG] Context data:', {
+      contextWorkspaceId,
+      contextUserId,
+      workspaceId,
+      userId,
+      userActiveWorkspaceId: user?.activeWorkspaceId,
+      acquisitionWorkspaceId: acquisitionData?.auth?.authUser?.activeWorkspaceId,
+      userWorkspaces: user?.workspaces,
+      currentUser: user
+    });
+  }
   
   // 🚀 PERFORMANCE: Use only fast section data hook
   // This eliminates all duplicate API calls and uses optimized v1 APIs
@@ -261,6 +263,17 @@ export const PipelineContent = React.memo(function PipelineContent({
   // Speedrun should only load 50 records (Top 50 concept)
   const limit = section === 'people' ? 10000 : section === 'speedrun' ? 50 : 1000;
   const fastSectionData = useFastSectionData(section, limit);
+  
+  // Debug logging for companies section
+  if (section === 'companies') {
+    console.log('🏢 [COMPANIES DEBUG] FastSectionData:', {
+      data: fastSectionData.data,
+      loading: fastSectionData.loading,
+      error: fastSectionData.error,
+      count: fastSectionData.count,
+      dataLength: fastSectionData.data?.length || 0
+    });
+  }
 
   // 🚀 PERFORMANCE: Use fast section data exclusively
   // This eliminates all duplicate API calls and uses optimized v1 APIs
@@ -288,8 +301,8 @@ export const PipelineContent = React.memo(function PipelineContent({
 
   // Speedrun signals hook for automatic Monaco Signal popup (only for speedrun section)
   const { activeSignal, acceptSignal, dismissSignal } = useSpeedrunSignals(
-    workspaceId || '01K1VBYV8ETM2RCQA4GNN9EG72', // Dano's workspace
-    userId || '01K1VBYYV7TRPY04NW4TW4XWRB', // Dano's user ID
+    workspaceId || '',
+    userId || '',
     (signal) => {
       console.log('🎯 [Pipeline Speedrun] Signal accepted:', signal);
       setIsSlideUpVisible(false);
@@ -838,7 +851,7 @@ export const PipelineContent = React.memo(function PipelineContent({
         setSortDirection('desc');
       } else if (sortDirection === 'desc') {
         // Third click: reset to unsorted (use original data order)
-        setSortField(null);
+        setSortField('');
         setSortDirection('asc');
       }
     } else {
@@ -1357,6 +1370,8 @@ export const PipelineContent = React.memo(function PipelineContent({
               workspace={workspace}
               isProfileOpen={isProfileOpen}
               setIsProfileOpen={setIsProfileOpen}
+              userId={user?.id}
+              userEmail={user?.email}
               isSellersVisible={true}
               setIsSellersVisible={() => {}}
               isRtpVisible={true}
@@ -1377,7 +1392,7 @@ export const PipelineContent = React.memo(function PipelineContent({
                 setIsSpeedrunEngineModalOpen(true);
               }}
               isDemoMode={typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')}
-              currentDemoScenario={typeof window !== "undefined" && window.location.pathname.startsWith('/demo/') ? window.location.pathname.split('/')[2] : null}
+              currentDemoScenario={typeof window !== "undefined" && window.location.pathname.startsWith('/demo/') ? window.location.pathname.split('/')[2] : undefined}
               onDemoScenarioChange={(scenarioSlug) => {
                 console.log(`🎯 PipelineContent: Demo scenario selected: ${scenarioSlug}`);
                 // The ProfileBox will handle the navigation

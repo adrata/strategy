@@ -5,6 +5,7 @@ import { authFetch } from '@/platform/api-fetch';
 import { useRouter } from 'next/navigation';
 import { useWorkspaceNavigation } from '@/platform/hooks/useWorkspaceNavigation';
 import { useUnifiedAuth } from '@/platform/auth';
+import { useWorkspaceContext } from '@/platform/hooks/useWorkspaceContext';
 import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
 import { extractIdFromSlug } from '@/platform/utils/url-utils';
 import { PanelLayout } from '@/platform/ui/components/layout/PanelLayout';
@@ -122,20 +123,12 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   }, [getCurrentWorkspaceId, currentWorkspaceId, user?.id]);
 
   const workspaceId = currentWorkspaceId;
-  // Map workspace to correct user ID
-  const getUserIdForWorkspace = (workspaceId: string) => {
-    switch (workspaceId) {
-      case '01K1VBYXHD0J895XAN0HGFBKJP': // Adrata workspace
-        return '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan Mirolli
-      case '01K1VBYV8ETM2RCQA4GNN9EG72': // RPS workspace
-        return '01K1VBYYV7TRPY04NW4TW4XWRB'; // Just Dano
-      case '01K5D01YCQJ9TJ7CT4DZDE79T1': // TOP Engineering Plus workspace
-        return '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan Mirolli
-      default:
-        return user?.id;
-    }
-  };
-  const userId = getUserIdForWorkspace(workspaceId || '');
+  // Use dynamic workspace context instead of hardcoded mappings
+  const { workspaceId: contextWorkspaceId, userId: contextUserId } = useWorkspaceContext();
+  
+  // Use context workspace ID with fallback
+  const finalWorkspaceId = contextWorkspaceId || workspaceId;
+  const userId = contextUserId || user?.id;
   
   // 🚀 PERFORMANCE FIX: Load only necessary section data for navigation
   // Only load data for the current section to prevent excessive hook calls
@@ -951,6 +944,8 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
               workspace={workspace}
               isProfileOpen={isProfileOpen}
               setIsProfileOpen={setIsProfileOpen}
+              userId={user?.id}
+              userEmail={user?.email}
               isSellersVisible={true}
               setIsSellersVisible={() => {}}
               isRtpVisible={isSpeedrunVisible}
@@ -1015,6 +1010,8 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
                 workspace={workspace}
                 isProfileOpen={isProfileOpen}
                 setIsProfileOpen={setIsProfileOpen}
+                userId={authUser?.id}
+                userEmail={authUser?.email}
                 isSellersVisible={true}
                 setIsSellersVisible={() => {}}
                 isRtpVisible={isSpeedrunVisible}

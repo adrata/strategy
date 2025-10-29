@@ -50,6 +50,7 @@ export async function GET(request: NextRequest) {
       // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
       const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
                         context.workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || // Notary Everyday
+                        context.workspaceId === '01K7464TNANHQXPCZT1FYX205V' || // Adrata workspace
                         context.userId === 'demo-user-2025'; // Demo user only
       
       console.log(`🚀 [SPEEDRUN API] Loading top ${limit} speedrun prospects for workspace: ${context.workspaceId}, user: ${context.userId}`);
@@ -111,124 +112,168 @@ export async function GET(request: NextRequest) {
         willShowData: peopleWithBoth > 0
       });
 
-      // 🎯 PER-USER RANKING: Get only people assigned to this user for their personal speedrun
-      // Use the per-user ranking system where each user gets ranks 1-N
-      let speedrunPeople;
+      // 🎯 UNIFIED SPEEDRUN RANKING: Get both companies (without people) and people for Speedrun
+      // Companies are only included if they have NO people
+      // People are included from companies that HAVE people
+      let speedrunRecords = [];
       try {
-        speedrunPeople = await prisma.people.findMany({
+        // 1. Get companies without people (these get Speedrun ranks)
+        const companiesWithoutPeople = await prisma.companies.findMany({
+          where: {
+            workspaceId: context.workspaceId,
+            deletedAt: null,
+            globalRank: { not: null, gte: 1, lte: 50 }, // Only top 50 Speedrun ranks
+            ...(isDemoMode ? {} : {
+              mainSellerId: context.userId
+            }),
+            // Only companies with 0 people
+            people: {
+              none: {
+                deletedAt: null,
+                ...(isDemoMode ? {} : {
+                  mainSellerId: context.userId
+                })
+              }
+            }
+          },
+          select: {
+            id: true,
+            name: true,
+            globalRank: true,
+            status: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true,
+            mainSellerId: true,
+            workspaceId: true,
+            createdAt: true,
+            updatedAt: true,
+            mainSeller: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                name: true,
+                email: true
+              }
+            }
+          },
+          orderBy: { globalRank: 'asc' }
+        });
+
+        // 2. Get people from companies that have people (these get Speedrun ranks)
+        const peopleFromCompaniesWithPeople = await prisma.people.findMany({
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
             companyId: { not: null }, // Only people with company relationships
-            globalRank: { not: null, gte: 1, lte: 50 }, // Only people with ranks 1-50 (per-user)
+            globalRank: { not: null, gte: 1, lte: 50 }, // Only top 50 Speedrun ranks
             ...(isDemoMode ? {} : {
-              mainSellerId: context.userId // Only show people assigned to this user
+              mainSellerId: context.userId
             })
           },
-        orderBy: [
-          { globalRank: 'asc' }, // Rank 1, 2, 3... (per-user ranking)
-          { createdAt: 'desc' } // Then by newest
-        ],
-        take: limit, // Take exactly the first 50 results
-        select: {
-          // 🚀 PERFORMANCE: Only select required fields (no customFields)
-          id: true,
-          firstName: true,
-          lastName: true,
-          fullName: true,
-          email: true,
-          jobTitle: true,
-          phone: true,
-          linkedinUrl: true,
-          status: true,
-          globalRank: true,
-          lastAction: true,
-          lastActionDate: true,
-          nextAction: true,
-          nextActionDate: true,
-          buyerGroupRole: true,
-          influenceLevel: true,
-          engagementStrategy: true,
-          buyerGroupStatus: true,
-          isBuyerGroupMember: true,
-          mainSellerId: true,
-          workspaceId: true,
-          createdAt: true,
-          updatedAt: true,
-          mainSeller: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              name: true,
-              email: true
-            }
-          },
-          coSellers: {
-            select: {
-              id: true,
-              user: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  name: true,
-                  email: true
-                }
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            fullName: true,
+            email: true,
+            jobTitle: true,
+            phone: true,
+            linkedinUrl: true,
+            status: true,
+            globalRank: true,
+            lastAction: true,
+            lastActionDate: true,
+            nextAction: true,
+            nextActionDate: true,
+            buyerGroupRole: true,
+            influenceLevel: true,
+            engagementStrategy: true,
+            buyerGroupStatus: true,
+            isBuyerGroupMember: true,
+            mainSellerId: true,
+            workspaceId: true,
+            createdAt: true,
+            updatedAt: true,
+            company: {
+              select: {
+                id: true,
+                name: true
+              }
+            },
+            mainSeller: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                name: true,
+                email: true
               }
             }
           },
-          company: {
-            select: {
-              id: true,
-              name: true,
-              industry: true,
-              size: true,
-              globalRank: true,
-              employeeCount: true,
-              hqState: true,
-              state: true
-            }
-          },
-          actions: {
-            where: {
-              deletedAt: null
-            },
-            select: {
-              id: true,
-              type: true
-            }
-          }
-        }
-      });
-      } catch (queryError) {
-        console.error('❌ [SPEEDRUN API] Main database query failed:', queryError);
-        throw new Error(`Main query failed: ${queryError instanceof Error ? queryError.message : String(queryError)}`);
+          orderBy: { globalRank: 'asc' }
+        });
+
+        // 3. Combine and sort by globalRank
+        const allRecords = [
+          ...companiesWithoutPeople.map(company => ({
+            ...company,
+            type: 'company',
+            displayName: company.name,
+            companyName: company.name,
+            jobTitle: null,
+            phone: null,
+            linkedinUrl: null,
+            buyerGroupRole: null,
+            influenceLevel: null,
+            engagementStrategy: null,
+            buyerGroupStatus: null,
+            isBuyerGroupMember: null,
+            company: null
+          })),
+          ...peopleFromCompaniesWithPeople.map(person => ({
+            ...person,
+            type: 'person',
+            displayName: person.fullName,
+            companyName: person.company?.name || 'Unknown'
+          }))
+        ];
+
+        // Sort by globalRank to maintain unified ranking
+        allRecords.sort((a, b) => a.globalRank - b.globalRank);
+        
+        speedrunRecords = allRecords.slice(0, 50); // Take top 50
+        
+      } catch (error) {
+        console.error('❌ Error fetching Speedrun records:', error);
+        speedrunRecords = [];
       }
 
-      console.log(`🔍 [SPEEDRUN API] Query returned ${speedrunPeople.length} people:`, 
-        speedrunPeople.slice(0, 10).map(p => ({
-          name: p.fullName,
+      console.log(`🔍 [SPEEDRUN API] Query returned ${speedrunRecords.length} records:`, 
+        speedrunRecords.slice(0, 10).map(p => ({
+          name: p.displayName,
           rank: p.globalRank,
-          company: p.company?.name || 'No Company',
-          hasCompany: !!p.company?.id
+          company: p.companyName,
+          type: p.type
         }))
       );
 
-      // 🚀 TRANSFORM: Pre-format data for frontend (only people with actual ranks)
-      const speedrunData = speedrunPeople.map((person, index) => {
+      // 🚀 TRANSFORM: Pre-format data for frontend (unified companies and people)
+      const speedrunPeopleData = speedrunRecords.map((record, index) => {
         // Format owner name - show "Me" for current user
-        const ownerName = person.mainSeller 
-          ? (person.mainSeller.id === context.userId
+        const ownerName = record.mainSeller 
+          ? (record.mainSeller.id === context.userId
               ? 'Me'
-              : person.mainSeller.firstName && person.mainSeller.lastName 
-                ? `${person.mainSeller.firstName} ${person.mainSeller.lastName}`.trim()
-                : person.mainSeller.name || person.mainSeller.email || '-')
+              : record.mainSeller.firstName && record.mainSeller.lastName 
+                ? `${record.mainSeller.firstName} ${record.mainSeller.lastName}`.trim()
+                : record.mainSeller.name || record.mainSeller.email || '-')
           : '-';
 
         // Format co-sellers names - exclude current user from co-sellers list
-        const coSellersNames = person.coSellers && person.coSellers.length > 0
-          ? person.coSellers
+        const coSellersNames = record.coSellers && record.coSellers.length > 0
+          ? record.coSellers
               .filter((coSeller: any) => coSeller.user.id !== context.userId) // Exclude current user
               .map((coSeller: any) => {
                 const user = coSeller.user;
@@ -240,14 +285,14 @@ export async function GET(request: NextRequest) {
 
         // Calculate lastActionTime for speedrun table display using meaningful actions
         let lastActionTime = 'Never';
-        let lastAction = person.lastAction;
-        let lastActionDate = person.lastActionDate;
+        let lastAction = record.lastAction;
+        let lastActionDate = record.lastActionDate;
         
         // lastAction is now a scalar field, so use it directly
         // If we need to get the most recent meaningful action, we'll use the actions relation
         
         // Only show real last actions if they exist and are meaningful
-        if (lastActionDate && lastAction && lastAction !== 'No action taken') {
+        if (lastActionDate && lastAction && lastAction !== 'No action taken' && lastAction !== 'Record created' && lastAction !== 'Company record created') {
           const now = new Date();
           const actionDate = new Date(lastActionDate);
           const diffMs = now.getTime() - actionDate.getTime();
@@ -262,90 +307,57 @@ export async function GET(request: NextRequest) {
           else if (diffDays <= 7) lastActionTime = `${diffDays} days ago`;
           else if (diffDays <= 30) lastActionTime = `${Math.floor(diffDays / 7)} weeks ago`;
           else lastActionTime = `${Math.floor(diffDays / 30)} months ago`;
-        } else if (person.createdAt) {
-          // Fallback to creation date if no meaningful actions
-          const now = new Date();
-          const createdDate = new Date(person.createdAt);
-          const diffMs = now.getTime() - createdDate.getTime();
-          const diffMinutes = Math.floor(diffMs / (1000 * 60));
-          const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-          const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-          
-          if (diffMinutes < 1) lastActionTime = 'Just now';
-          else if (diffMinutes < 60) lastActionTime = `${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
-          else if (diffHours < 24) lastActionTime = `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
-          else if (diffDays === 1) lastActionTime = 'Yesterday';
-          else if (diffDays <= 7) lastActionTime = `${diffDays} days ago`;
-          else if (diffDays <= 30) lastActionTime = `${Math.floor(diffDays / 7)} weeks ago`;
-          else lastActionTime = `${Math.floor(diffDays / 30)} months ago`;
         }
+        // If no meaningful action exists, lastActionTime remains 'Never'
 
         // Calculate nextActionTiming for speedrun table display
         let nextActionTiming = 'No date set';
-        const nextActionDate = person.nextActionDate;
+        const nextActionDate = record.nextActionDate;
         
         if (nextActionDate) {
           const now = new Date();
           const actionDate = new Date(nextActionDate);
           const diffMs = actionDate.getTime() - now.getTime();
           
-          // Check if overdue
-          if (diffMs < 0) {
+          // Calculate actual timing based on date difference
+          const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+          const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+          
+          // For speedrun people, if it's the same day, show "Today" regardless of time
+          const isSameDay = now.toDateString() === actionDate.toDateString();
+          
+          if (isSameDay) {
+            nextActionTiming = 'Today';
+          } else if (diffMs < 0) {
+            // Past due (different day)
             nextActionTiming = 'Overdue';
+          } else if (diffHours < 2) {
+            nextActionTiming = 'Now';
+          } else if (diffHours < 24) {
+            nextActionTiming = `in ${diffHours}h`;
+          } else if (diffDays === 1) {
+            nextActionTiming = 'Tomorrow';
+          } else if (diffDays <= 7) {
+            nextActionTiming = `in ${diffDays}d`;
           } else {
-            // Calculate actual timing based on date difference
-            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-            
-            if (diffHours < 2) {
-              nextActionTiming = 'Now';
-            } else if (diffHours < 24) {
-              nextActionTiming = `in ${diffHours}h`;
-            } else if (diffDays === 1) {
-              nextActionTiming = 'Tomorrow';
-            } else if (diffDays <= 7) {
-              nextActionTiming = `in ${diffDays}d`;
-            } else {
-              nextActionTiming = `in ${Math.ceil(diffDays / 7)}w`;
-            }
+            nextActionTiming = `in ${Math.ceil(diffDays / 7)}w`;
           }
         } else {
           // If no date set, show "No date set"
           nextActionTiming = 'No date set';
         }
 
-        // Count meaningful actions (using only type field since metadata doesn't exist)
-        const totalActions = person.actions?.length || 0;
-        const meaningfulActionCount = person.actions ? 
-          person.actions.filter(action => {
-            // Use only type field since metadata doesn't exist in actions table
-            return action.type && isMeaningfulAction(action.type);
-          }).length : 0;
+        // Count meaningful actions (simplified - no actions relation in unified query)
+        const totalActions = 0; // No actions relation in unified query
+        const meaningfulActionCount = 0; // No actions relation in unified query
         
         // Debug logging for action counts - show more details for high counts
         if (index < 5 || meaningfulActionCount > 50) { // Log first 5 records OR any with high counts
-          console.log(`🔍 [SPEEDRUN API] Person ${person.fullName} action count:`, {
+          console.log(`🔍 [SPEEDRUN API] Record ${record.displayName} action count:`, {
             totalActions,
             meaningfulActions: meaningfulActionCount,
-            personId: person.id,
-            actionTypes: person.actions?.map(a => a.type) || [],
-            meaningfulTypes: person.actions?.filter(a => {
-              return a.type && isMeaningfulAction(a.type);
-            }).map(a => a.type) || [],
-            // Show sample of actions that are being counted as meaningful
-            sampleMeaningfulActions: person.actions?.filter(a => {
-              return a.type && isMeaningfulAction(a.type);
-            }).slice(0, 5).map(a => ({
-              id: a.id,
-              type: a.type
-            })) || [],
-            // Show sample of actions that are being filtered out
-            sampleFilteredOutActions: person.actions?.filter(a => {
-              return a.type && !isMeaningfulAction(a.type);
-            }).slice(0, 5).map(a => ({
-              id: a.id,
-              type: a.type
-            })) || []
+            recordId: record.id,
+            recordType: record.type
           });
         }
         
@@ -360,59 +372,70 @@ export async function GET(request: NextRequest) {
         const contactStatus = hasRecentAction ? 'contacted' : 'pending';
 
         return {
-          id: person.id,
+          id: record.id,
           // Remove redundant 'rank' field - table will use index-based ranking for Speedrun
-          name: person.fullName || `${person.firstName || ''} ${person.lastName || ''}`.trim() || 'Unknown',
-          title: person.jobTitle || 'Unknown Title',
-          email: person.email || '',
-          phone: person.phone || '',
-          linkedin: person.linkedinUrl || '',
-          status: person.status || 'Unknown',
-          globalRank: person.globalRank, // Keep for metadata, but table won't use for display
+          name: record.displayName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'Unknown',
+          title: record.jobTitle || 'Unknown Title',
+          email: record.email || '',
+          phone: record.phone || '',
+          linkedin: record.linkedinUrl || '',
+          status: record.status || 'Unknown',
+          globalRank: record.globalRank, // Keep for metadata, but table won't use for display
           lastAction: lastAction || null,
           lastActionDate: lastActionDate || null,
           lastActionTime: lastActionTime,
-          nextAction: person.nextAction || null,
-          nextActionDate: person.nextActionDate || null,
+          nextAction: record.nextAction || null,
+          nextActionDate: record.nextActionDate || null,
           nextActionTiming: nextActionTiming,
-          mainSellerId: person.mainSellerId,
-          workspaceId: person.workspaceId,
-          createdAt: person.createdAt,
-          updatedAt: person.updatedAt,
+          mainSellerId: record.mainSellerId,
+          workspaceId: record.workspaceId,
+          createdAt: record.createdAt,
+          updatedAt: record.updatedAt,
           // Add state fields at top level for table display
-          state: person.company?.hqState || person.company?.state || '',
-          hqState: person.company?.hqState || '',
-          company: person.company ? {
-            id: person.company.id,
-            name: person.company.name,
-            industry: person.company.industry || '',
-            size: person.company.size || '',
-            globalRank: person.company.globalRank || 0,
-            hqState: person.company.hqState || '',
-            state: person.company.state || ''
+          state: record.company?.hqState || record.company?.state || '',
+          hqState: record.company?.hqState || '',
+          company: record.company ? {
+            id: record.company.id,
+            name: record.company.name,
+            industry: record.company.industry || '',
+            size: record.company.size || '',
+            globalRank: record.company.globalRank || 0,
+            hqState: record.company.hqState || '',
+            state: record.company.state || ''
           } : null,
           tags: ['speedrun'], // Add speedrun tag for consistency
           // Add main-seller and co-sellers data
           mainSeller: ownerName,
           coSellers: coSellersNames,
-          mainSellerData: person.mainSeller,
-          coSellersData: person.coSellers ? person.coSellers.filter((coSeller: any) => coSeller.user.id !== context.userId) : [],
+          mainSellerData: record.mainSeller,
+          coSellersData: record.coSellers ? record.coSellers.filter((coSeller: any) => coSeller.user.id !== context.userId) : [],
           currentUserId: context.userId,
           // Add action count for Actions column
           _count: {
             actions: actionCountToShow
           },
           // Add contact status for styling (contacted = light green, pending = normal)
-          contactStatus: contactStatus
+          contactStatus: contactStatus,
+          // Add record type for differentiation
+          recordType: record.type || 'person'
         };
       });
 
+      // 🚀 COMBINE: Merge people and companies, sort by globalRank
+      const combinedData = speedrunPeopleData.sort((a, b) => {
+        return (a.globalRank || 999) - (b.globalRank || 999);
+      }).slice(0, limit); // Take top 50 after sorting
+
+      console.log(`🎯 [SPEEDRUN API] Combined speedrun data: ${speedrunPeopleData.length} total records`);
+
       const result = {
         success: true,
-        data: speedrunData,
+        data: combinedData,
         meta: {
-          count: speedrunData.length,
-          totalCount: speedrunData.length, // For pagination compatibility
+          count: combinedData.length,
+          totalCount: combinedData.length, // For pagination compatibility
+          peopleCount: speedrunPeopleData.filter(r => r.recordType === 'person').length,
+          companiesCount: speedrunPeopleData.filter(r => r.recordType === 'company').length,
           limit,
           workspaceId: context.workspaceId,
           userId: context.userId,

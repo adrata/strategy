@@ -75,7 +75,7 @@ export class IntelligentNextActionService {
   }
 
   /**
-   * Get comprehensive action context for AI analysis
+   * Get comprehensive action context for AI analysis with AcquisitionOS data
    */
   private async getActionContext(entityId: string, entityType: 'person' | 'company'): Promise<ActionContext | null> {
     try {
@@ -99,9 +99,13 @@ export class IntelligentNextActionService {
         }
       });
 
-      // Get entity information
+      // Get entity information with AcquisitionOS context
       let entityInfo;
       let globalRank: number | null = null;
+      let companyStatus: string | null = null;
+      let peopleCount: number = 0;
+      let hasEmail: boolean = false;
+      let hasLinkedIn: boolean = false;
       
       if (entityType === 'person') {
         const person = await prisma.people.findUnique({
@@ -109,13 +113,16 @@ export class IntelligentNextActionService {
           select: {
             fullName: true,
             jobTitle: true,
+            email: true,
+            linkedinUrl: true,
             companyId: true,
             lastActionDate: true,
             globalRank: true,
             company: {
               select: {
                 name: true,
-                industry: true
+                industry: true,
+                status: true
               }
             }
           }
@@ -124,6 +131,10 @@ export class IntelligentNextActionService {
         if (!person) return null;
 
         globalRank = person.globalRank;
+        companyStatus = person.company?.status || null;
+        hasEmail = !!person.email;
+        hasLinkedIn = !!person.linkedinUrl;
+        
         entityInfo = {
           name: person.fullName,
           title: person.jobTitle || undefined,
@@ -131,12 +142,24 @@ export class IntelligentNextActionService {
           industry: person.company?.industry,
           lastContactDate: person.lastActionDate
         };
+
+        // Get people count at company
+        if (person.companyId) {
+          peopleCount = await prisma.people.count({
+            where: {
+              companyId: person.companyId,
+              workspaceId: this.config.workspaceId,
+              deletedAt: null
+            }
+          });
+        }
       } else {
         const company = await prisma.companies.findUnique({
           where: { id: entityId },
           select: {
             name: true,
             industry: true,
+            status: true,
             lastActionDate: true,
             globalRank: true
           }
@@ -145,11 +168,39 @@ export class IntelligentNextActionService {
         if (!company) return null;
 
         globalRank = company.globalRank;
+        companyStatus = company.status;
+        
         entityInfo = {
           name: company.name,
           industry: company.industry || undefined,
           lastContactDate: company.lastActionDate
         };
+
+        // Get people count at company
+        peopleCount = await prisma.people.count({
+          where: {
+            companyId: entityId,
+            workspaceId: this.config.workspaceId,
+            deletedAt: null
+          }
+        });
+
+        // Check if any people have email or LinkedIn
+        const peopleWithContactInfo = await prisma.people.findMany({
+          where: {
+            companyId: entityId,
+            workspaceId: this.config.workspaceId,
+            deletedAt: null
+          },
+          select: {
+            email: true,
+            linkedinUrl: true
+          },
+          take: 5
+        });
+
+        hasEmail = peopleWithContactInfo.some(p => !!p.email);
+        hasLinkedIn = peopleWithContactInfo.some(p => !!p.linkedinUrl);
       }
 
       return {
@@ -162,7 +213,17 @@ export class IntelligentNextActionService {
           createdAt: action.createdAt,
           status: action.status
         })),
-        entityInfo
+        entityInfo,
+        // Add AcquisitionOS context
+        companyStatus,
+        peopleCount,
+        hasEmail,
+        hasLinkedIn
+      } as ActionContext & {
+        companyStatus: string | null;
+        peopleCount: number;
+        hasEmail: boolean;
+        hasLinkedIn: boolean;
       };
 
     } catch (error) {
@@ -219,7 +280,7 @@ export class IntelligentNextActionService {
   }
 
   /**
-   * Build comprehensive prompt for Claude
+   * Build comprehensive prompt for Claude with AcquisitionOS framework
    */
   private buildClaudePrompt(context: ActionContext): string {
     const recentActionsText = context.recentActions
@@ -230,25 +291,49 @@ export class IntelligentNextActionService {
       ? Math.floor((Date.now() - context.entityInfo.lastContactDate.getTime()) / (1000 * 60 * 60 * 24))
       : 'unknown';
 
-    return `You are an expert B2B sales strategist specializing in notary and real estate services. Analyze this contact's engagement history and recommend the most strategic next action.
+    // Get company status and stage information
+    const companyStatus = (context as any).companyStatus || 'UNKNOWN';
+    const peopleCount = (context as any).peopleCount || 0;
+    const hasEmail = (context as any).hasEmail || false;
+    const hasLinkedIn = (context as any).hasLinkedIn || false;
+
+    return `You are an expert B2B sales strategist using the AcquisitionOS Acquisition Factor Model. Analyze this contact's engagement history and recommend the most strategic next action based on their acquisition stage.
 
 CONTACT INFORMATION:
 - Name: ${context.entityInfo.name}
 - Title: ${context.entityInfo.title || 'Unknown'}
 - Company: ${context.entityInfo.company || 'Unknown'}
 - Industry: ${context.entityInfo.industry || 'Unknown'}
+- Company Status: ${companyStatus}
+- People at Company: ${peopleCount}
+- Has Email: ${hasEmail}
+- Has LinkedIn: ${hasLinkedIn}
 - Days since last contact: ${daysSinceLastContact}
+- Global Rank: ${context.globalRank || 'Unknown'}
 
 RECENT ACTIONS (most recent first):
 ${recentActionsText}
 
-SALES CONTEXT & STRATEGY:
-You're selling notary services to real estate professionals. Consider:
-- Real estate closing cycles and timing
-- Title company relationships and decision-making processes
-- Industry pain points (closing delays, compliance, efficiency)
-- Relationship building in a relationship-driven industry
-- Seasonal patterns in real estate transactions
+ACQUISITIONOS FRAMEWORK - STAGE-BASED STRATEGY:
+
+GENERATE PIPELINE (LEAD Status):
+- Companies with 0 people: "Research company and identify key contacts"
+- People with LinkedIn but no email: "Send LinkedIn connection request"
+- People with email: "Send introduction email"
+- People without contact info: "Find contact information on LinkedIn"
+- Focus: Identify Champion, Map org structure, Research priorities
+
+BUILD SALE (PROSPECT Status):
+- Focus: Validate pain, Build credibility, Earn trust
+- Actions: Discovery calls, stakeholder mapping, pain validation
+- Deploy Big Idea Pitch, Use Contrast Frames, Show time-to-value
+- Qualify Champion's Role and Influence, Map Organizational Structure
+
+JUSTIFY/NEGOTIATE (OPPORTUNITY Status):
+- Focus: Business case, Stakeholder alignment, Timeline validation
+- Actions: ROI quantification, executive alignment, proposal drafting
+- Position solution as strategic fit, Collaborate on business case
+- Navigate procurement and legal approvals
 
 AVAILABLE ACTION TYPES:
 1. linkedin_connection_request - Send LinkedIn connection request
@@ -259,30 +344,31 @@ AVAILABLE ACTION TYPES:
 6. proposal_sent - Send proposal or pricing information
 7. demo_scheduled - Schedule product demonstration
 8. reference_request - Request case study or testimonial
+9. research - Research company and identify key contacts
+10. discovery_call - Schedule discovery call to validate pain
 
-ADVANCED SALES STRATEGY RULES:
-- For title companies: Focus on efficiency, compliance, and closing speed
-- For real estate agents: Emphasize convenience, reliability, and client satisfaction
-- For lenders: Highlight accuracy, speed, and regulatory compliance
-- Consider the sales cycle stage: awareness → interest → consideration → decision
-- Match communication method to prospect's role and industry norms
-- Time actions based on real estate market cycles and closing schedules
-- Use social proof and industry-specific case studies
-- Build relationships before pushing for meetings or proposals
+ACQUISITIONOS STRATEGY RULES:
+- For LEAD status: Focus on research, contact identification, and initial outreach
+- For PROSPECT status: Focus on pain validation, credibility building, and stakeholder mapping
+- For OPPORTUNITY status: Focus on business case, alignment, and closing activities
+- Speedrun companies (rank 1-50) get TODAY priority - immediate action required
+- Use Directional Intelligence to eliminate wasted effort
+- Compress time as the single greatest lever for revenue generation
+- Match action to acquisition stage and available contact information
 
 RESPONSE FORMAT:
 Respond in this exact JSON format:
 {
-  "action": "Specific, actionable description (e.g., 'Send proposal for title company notary services')",
+  "action": "Specific, actionable description based on AcquisitionOS stage",
   "type": "action_type",
-  "reasoning": "Detailed explanation of why this action will advance the relationship and close the deal",
+  "reasoning": "Detailed explanation using AcquisitionOS framework principles",
   "priority": "high|medium|low",
   "daysFromNow": 2,
   "expectedOutcome": "What you expect to achieve with this action",
   "followUpStrategy": "How to follow up if this action doesn't get a response"
 }
 
-Focus on the most strategic next move that will advance the relationship toward a closed deal. Consider the prospect's role, industry, and current engagement level.`;
+Focus on the most strategic next move that will advance the relationship through the AcquisitionOS stages toward a closed deal.`;
   }
 
   /**
@@ -367,7 +453,7 @@ Focus on the most strategic next move that will advance the relationship toward 
   }
 
   /**
-   * Fallback rule-based next action system
+   * Fallback rule-based next action system with AcquisitionOS framework
    */
   private generateFallbackNextAction(context: ActionContext): NextActionRecommendation {
     const recentActions = context.recentActions;
@@ -378,67 +464,144 @@ Focus on the most strategic next move that will advance the relationship toward 
       context.globalRank || null,
       context.entityInfo.lastContactDate || null
     );
+
+    // Get AcquisitionOS context
+    const companyStatus = (context as any).companyStatus || 'UNKNOWN';
+    const peopleCount = (context as any).peopleCount || 0;
+    const hasEmail = (context as any).hasEmail || false;
+    const hasLinkedIn = (context as any).hasLinkedIn || false;
+
+    // Generate stage-based action using AcquisitionOS framework
+    const stageAction = this.getStageBasedAction(companyStatus, peopleCount, hasEmail, hasLinkedIn, lastAction);
     
-    if (!lastAction) {
-      // No previous actions, start with LinkedIn connection
-      return {
-        action: 'Send LinkedIn connection request',
-        date: nextDate,
-        reasoning: 'First contact - LinkedIn connection request is the best starting point',
-        priority: context.globalRank && context.globalRank <= 50 ? 'high' : 'medium',
-        type: 'linkedin_connection_request',
-        context: `Initial outreach to ${context.entityInfo.name}`,
-        updatedAt: new Date()
-      };
-    }
-
-    // Smart cycling logic
-    const actionCycle = ['linkedin_connection_request', 'email_conversation', 'phone_call', 'linkedin_inmail'];
-    const lastActionIndex = actionCycle.indexOf(lastAction.type);
-    
-    let nextActionType: string;
-    let reasoning: string;
-
-    if (lastActionIndex === -1) {
-      // Unknown action type, default to email
-      nextActionType = 'email_conversation';
-      reasoning = 'Follow up with email after previous action';
-    } else {
-      // Cycle to next action
-      const nextIndex = (lastActionIndex + 1) % actionCycle.length;
-      nextActionType = actionCycle[nextIndex];
-      
-      // Smart reasoning based on action type
-      switch (nextActionType) {
-        case 'linkedin_connection_request':
-          reasoning = 'LinkedIn connection request - professional networking approach';
-          break;
-        case 'email_conversation':
-          reasoning = 'Follow-up email to continue conversation';
-          break;
-        case 'phone_call':
-          reasoning = 'Phone call for more personal engagement';
-          break;
-        case 'linkedin_inmail':
-          reasoning = 'LinkedIn InMail for high-value prospect';
-          break;
-        default:
-          reasoning = 'Standard follow-up action';
-      }
-    }
-
     // Determine priority based on rank
     const priority = context.globalRank && context.globalRank <= 50 ? 'high' : 
                     context.globalRank && context.globalRank <= 200 ? 'medium' : 'low';
 
     return {
-      action: this.getActionDescription(nextActionType),
+      action: stageAction.action,
       date: nextDate,
-      reasoning,
+      reasoning: stageAction.reasoning,
       priority,
-      type: nextActionType as any,
-      context: `Strategic follow-up for ${context.entityInfo.name}`,
+      type: stageAction.type as any,
+      context: `AcquisitionOS ${companyStatus} stage action for ${context.entityInfo.name}`,
       updatedAt: new Date()
+    };
+  }
+
+  /**
+   * Get stage-based action using AcquisitionOS framework
+   */
+  private getStageBasedAction(
+    companyStatus: string | null, 
+    peopleCount: number, 
+    hasEmail: boolean, 
+    hasLinkedIn: boolean, 
+    lastAction: any
+  ): { action: string; type: string; reasoning: string } {
+    
+    // GENERATE PIPELINE (LEAD Status)
+    if (companyStatus === 'LEAD') {
+      if (peopleCount === 0) {
+        return {
+          action: 'Research company and identify key contacts',
+          type: 'research',
+          reasoning: 'LEAD stage: Company has no people - need to research and identify key decision makers'
+        };
+      }
+      
+      if (hasLinkedIn && !hasEmail) {
+        return {
+          action: 'Send LinkedIn connection request',
+          type: 'linkedin_connection_request',
+          reasoning: 'LEAD stage: Has LinkedIn but no email - LinkedIn connection is the best first touch'
+        };
+      }
+      
+      if (hasEmail) {
+        return {
+          action: 'Send introduction email',
+          type: 'email_conversation',
+          reasoning: 'LEAD stage: Has email contact - send personalized introduction email'
+        };
+      }
+      
+      return {
+        action: 'Find contact information on LinkedIn',
+        type: 'research',
+        reasoning: 'LEAD stage: No contact info available - research LinkedIn for contact details'
+      };
+    }
+
+    // BUILD SALE (PROSPECT Status)
+    if (companyStatus === 'PROSPECT') {
+      if (!lastAction || lastAction.type === 'linkedin_connection_request') {
+        return {
+          action: 'Schedule discovery call to validate pain',
+          type: 'discovery_call',
+          reasoning: 'PROSPECT stage: Need to validate pain and build credibility through discovery'
+        };
+      }
+      
+      if (lastAction.type === 'discovery_call') {
+        return {
+          action: 'Send follow-up email with pain validation insights',
+          type: 'email_conversation',
+          reasoning: 'PROSPECT stage: Follow up discovery call with pain validation and next steps'
+        };
+      }
+      
+      return {
+        action: 'Schedule stakeholder mapping call',
+        type: 'phone_call',
+        reasoning: 'PROSPECT stage: Map organizational structure and identify key stakeholders'
+      };
+    }
+
+    // JUSTIFY/NEGOTIATE (OPPORTUNITY Status)
+    if (companyStatus === 'OPPORTUNITY') {
+      if (!lastAction || lastAction.type.includes('discovery') || lastAction.type.includes('call')) {
+        return {
+          action: 'Send business case and ROI proposal',
+          type: 'proposal_sent',
+          reasoning: 'OPPORTUNITY stage: Present business case with quantified ROI and strategic fit'
+        };
+      }
+      
+      if (lastAction.type === 'proposal_sent') {
+        return {
+          action: 'Schedule executive alignment meeting',
+          type: 'meeting_scheduled',
+          reasoning: 'OPPORTUNITY stage: Align stakeholders and secure executive buy-in'
+        };
+      }
+      
+      return {
+        action: 'Follow up on proposal and address objections',
+        type: 'email_conversation',
+        reasoning: 'OPPORTUNITY stage: Address any objections and move toward closing'
+      };
+    }
+
+    // Default fallback for unknown status
+    if (!lastAction) {
+      return {
+        action: 'Send LinkedIn connection request',
+        type: 'linkedin_connection_request',
+        reasoning: 'Initial outreach - LinkedIn connection request is the best starting point'
+      };
+    }
+
+    // Smart cycling for unknown status
+    const actionCycle = ['linkedin_connection_request', 'email_conversation', 'phone_call', 'linkedin_inmail'];
+    const lastActionIndex = actionCycle.indexOf(lastAction.type);
+    const nextIndex = lastActionIndex === -1 ? 0 : (lastActionIndex + 1) % actionCycle.length;
+    const nextActionType = actionCycle[nextIndex];
+
+    return {
+      action: this.getActionDescription(nextActionType),
+      type: nextActionType,
+      reasoning: `Follow-up action after ${lastAction.type}`
     };
   }
 
@@ -457,6 +620,16 @@ Focus on the most strategic next move that will advance the relationship toward 
         return 'Send LinkedIn InMail';
       case 'meeting_scheduled':
         return 'Schedule meeting';
+      case 'research':
+        return 'Research company and identify key contacts';
+      case 'discovery_call':
+        return 'Schedule discovery call to validate pain';
+      case 'proposal_sent':
+        return 'Send business case and ROI proposal';
+      case 'demo_scheduled':
+        return 'Schedule product demonstration';
+      case 'reference_request':
+        return 'Request case study or testimonial';
       default:
         return 'Follow up';
     }

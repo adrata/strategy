@@ -174,8 +174,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
     const coresignalData = record?.customFields?.coresignal || record?.customFields?.coresignalData || {};
     
     // Check if we're in a demo workspace
-    const isDemoWorkspace = record?.workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || 
-                           record?.workspaceId === 'demo' ||
+    const isDemoWorkspace = record?.workspaceId === 'demo' ||
                            window.location.pathname.includes('/demo/');
     
     // Use AI-generated intelligence data with proper null handling

@@ -41,15 +41,6 @@ export default function SignInPage() {
       
       // Debug logs removed for production
 
-      // Check if this was a logout redirect
-      const urlParams = new URLSearchParams(window.location.search);
-      const isLogoutRedirect =
-        urlParams.get("logout") || urlParams.get("emergency");
-
-      if (isLogoutRedirect) {
-        // Logout redirect detected - completing cleanup
-      }
-
       // Clear all logout flags to allow fresh sign-in
       sessionStorage.removeItem("adrata_signed_out");
       sessionStorage.removeItem("adrata_emergency_logout");
@@ -58,22 +49,19 @@ export default function SignInPage() {
       localStorage.removeItem("adrata_logout_active");
       localStorage.removeItem("adrata_logout_session_id");
 
-      // Check for remembered email only if this is NOT a logout redirect
-      if (!isLogoutRedirect) {
-        // Load remember me preference from cookies
-        const savedRememberMe = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("adrata_remember_me="))
-          ?.split("=")[1] === "true";
-        
-        const savedEmail = localStorage.getItem("adrata_remembered_email");
-        
-        if (savedRememberMe && savedEmail) {
-          // Just populate the email field - no auto-login for security
-          setEmail(savedEmail);
-          setRememberMe(true);
-          console.log("📧 [SIGN-IN PAGE] Populated remembered email");
-        }
+      // Load remember me preference from cookies
+      const savedRememberMe = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("adrata_remember_me="))
+        ?.split("=")[1] === "true";
+      
+      const savedEmail = localStorage.getItem("adrata_remembered_email");
+      
+      if (savedRememberMe && savedEmail) {
+        // Just populate the email field - no auto-login for security
+        setEmail(savedEmail);
+        setRememberMe(true);
+        console.log("📧 [SIGN-IN PAGE] Populated remembered email");
       }
 
       console.log(
@@ -96,17 +84,6 @@ export default function SignInPage() {
       if (result.success) {
         // Authentication successful
 
-        // Check if this is a post-logout sign-in - if so, don't auto-redirect
-        const urlParams = new URLSearchParams(window.location.search);
-        const isLogoutRedirect = urlParams.get("logout") || urlParams.get("emergency");
-        const justSignedOut = sessionStorage.getItem("adrata_signed_out");
-        
-        if (isLogoutRedirect || justSignedOut) {
-          console.log("🚪 [SIGN-IN PAGE] Post-logout sign-in detected - staying on sign-in page");
-          console.log("🚪 [SIGN-IN PAGE] User can manually navigate to their workspace");
-          setIsLoading(false);
-          return;
-        }
 
         // Handle remember me functionality
         if (typeof window !== "undefined") {
@@ -237,7 +214,7 @@ export default function SignInPage() {
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate suppressHydrationWarning>
           <div>
             <label className="block font-medium mb-1" htmlFor="username">
               Username or Email

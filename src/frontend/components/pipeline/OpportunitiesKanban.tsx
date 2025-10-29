@@ -334,7 +334,7 @@ export function OpportunitiesKanban({ data, onRecordClick }: OpportunitiesKanban
                   opportunities.map((opportunity, index) => (
                     <div
                       key={opportunity.id}
-                      className={`bg-[var(--background)] border rounded-sm p-3 hover:border-[var(--border)] transition-colors cursor-pointer relative ${
+                      className={`bg-[var(--background)] border rounded-sm p-3 hover:bg-[var(--hover)] hover:border-[var(--primary)] transition-colors cursor-pointer relative ${
                         opportunity.stage?.toLowerCase().replace(/\s+/g, '-') === 'closed-lost-to-competition' 
                           ? 'border-red-200 bg-red-50' 
                           : 'border-[var(--border)]'

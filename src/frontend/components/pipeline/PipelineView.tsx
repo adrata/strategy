@@ -13,6 +13,7 @@ import { EmptyStateDashboard } from './EmptyStateDashboard';
 import { SpeedrunMiddlePanel } from '@/platform/ui/panels/speedrun-middle-panel';
 import { DashboardSkeleton, ListSkeleton, KanbanSkeleton } from '@/platform/ui/components/skeletons';
 import { useUnifiedAuth } from '@/platform/auth';
+import { useWorkspaceContext } from '@/platform/hooks/useWorkspaceContext';
 import { getSectionColumns } from '@/platform/config/workspace-table-config';
 import { useTablePreferences } from '@/platform/hooks/useTablePreferences';
 // Removed usePipelineData import - using useFastSectionData exclusively
@@ -267,22 +268,12 @@ export const PipelineView = React.memo(function PipelineView({
     userActiveWorkspaceId: user?.activeWorkspaceId,
     currentWorkspaceId
   });
-  // Map workspace to correct user ID
-  const getUserIdForWorkspace = (workspaceId: string) => {
-    switch (workspaceId) {
-      case '01K1VBYXHD0J895XAN0HGFBKJP': // Adrata workspace
-        return '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan Mirolli
-      case '01K1VBYV8ETM2RCQA4GNN9EG72': // RPS workspace
-        return '01K1VBYYV7TRPY04NW4TW4XWRB'; // Just Dano
-      case 'cmezxb1ez0001pc94yry3ntjk': // NE (Notary Everyday) workspace
-        return '01K1VBYYV7TRPY04NW4TW4XWRB'; // Just Dano (same user in both workspaces)
-      case '01K5D01YCQJ9TJ7CT4DZDE79T1': // TOP Engineering Plus workspace
-        return '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan Mirolli
-      default:
-        return user?.id;
-    }
-  };
-  const userId = getUserIdForWorkspace(workspaceId || '');
+  // Use dynamic workspace context instead of hardcoded mappings
+  const { workspaceId: contextWorkspaceId, userId: contextUserId } = useWorkspaceContext();
+  
+  // Use context workspace ID with fallback
+  const finalWorkspaceId = contextWorkspaceId || workspaceId;
+  const userId = contextUserId || user?.id;
   
   // 🚀 PERFORMANCE: Use fast section data hook exclusively
   // Load all data at once for client-side pagination
@@ -1918,7 +1909,8 @@ export const PipelineView = React.memo(function PipelineView({
           workspace={workspace}
           isProfileOpen={isProfileOpen}
           setIsProfileOpen={setIsProfileOpen}
-
+          userId={authUser?.id}
+          userEmail={authUser?.email}
           isSellersVisible={true}
           setIsSellersVisible={() => {}}
           isRtpVisible={isSpeedrunVisible}

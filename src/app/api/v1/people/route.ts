@@ -89,7 +89,8 @@ export async function GET(request: NextRequest) {
     const fetchPeopleData = async () => {
       // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
       const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                        context.workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1'; // Notary Everyday
+                        context.workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || // Notary Everyday
+                        context.workspaceId === '01K7464TNANHQXPCZT1FYX205V'; // Adrata workspace
       
       // Enhanced where clause for pipeline management
       console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section);
@@ -249,6 +250,35 @@ export async function GET(request: NextRequest) {
 
       // 🚀 PERFORMANCE: If counts only, just return counts by status
       if (countsOnly) {
+        // Special handling for leads section to include companies with 0 people
+        if (section === 'leads') {
+          const [peopleCount, companyCount] = await Promise.all([
+            prisma.people.count({ where: { ...where, status: 'LEAD' } }),
+            prisma.companies.count({
+              where: {
+                workspaceId: context.workspaceId,
+                deletedAt: null,
+                ...(isDemoMode ? {} : {
+                  OR: [
+                    { mainSellerId: context.userId },
+                    { mainSellerId: null }
+                  ]
+                }),
+                people: { none: {} } // Companies with 0 people (any status)
+              }
+            })
+          ]);
+          
+          return {
+            success: true,
+            data: { LEAD: peopleCount + companyCount },
+            meta: {
+              type: 'counts',
+              filters: { search, status, priority, companyId }
+            }
+          };
+        }
+
         const statusCounts = await prisma.people.groupBy({
           by: ['status'],
           where,
@@ -410,7 +440,7 @@ export async function GET(request: NextRequest) {
           }
           
           // Only show real last actions if they exist and are meaningful
-          if (lastActionDate && lastActionText && lastActionText !== 'No action taken') {
+          if (lastActionDate && lastActionText && lastActionText !== 'No action taken' && lastActionText !== 'Record created') {
             // Real last action exists
             const daysSince = Math.floor((new Date().getTime() - new Date(lastActionDate).getTime()) / (1000 * 60 * 60 * 24));
             if (daysSince === 0) lastActionTime = 'Today';
@@ -418,15 +448,8 @@ export async function GET(request: NextRequest) {
             else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
             else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
             else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
-          } else if (person.createdAt) {
-            // No real last action, show when data was added
-            const daysSince = Math.floor((new Date().getTime() - new Date(person.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-            if (daysSince === 0) lastActionTime = 'Today';
-            else if (daysSince === 1) lastActionTime = 'Yesterday';
-            else if (daysSince <= 7) lastActionTime = `${daysSince} days ago`;
-            else if (daysSince <= 30) lastActionTime = `${Math.floor(daysSince / 7)} weeks ago`;
-            else lastActionTime = `${Math.floor(daysSince / 30)} months ago`;
           }
+          // If no meaningful action exists, lastActionTime remains 'Never'
 
           // Calculate nextActionTiming with fallback
           let nextActionTiming = 'No date set';
@@ -528,9 +551,102 @@ export async function GET(request: NextRequest) {
         mainSellerData: person.mainSeller
       }));
 
+      // 🚀 LEADS: Add companies with 0 people for leads section
+      let allLeads = transformedPeople;
+      if (section === 'leads') {
+        console.log(`🏢 [V1 PEOPLE API] Fetching companies with 0 people for leads section`);
+        
+        const companiesWithNoPeople = await prisma.companies.findMany({
+          where: {
+            workspaceId: context.workspaceId,
+            deletedAt: null,
+            ...(isDemoMode ? {} : {
+              OR: [
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
+              ]
+            }),
+            people: { none: {} } // Companies with 0 people (any status)
+          },
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            status: true,
+            priority: true,
+            globalRank: true,
+            lastAction: true,
+            nextAction: true,
+            lastActionDate: true,
+            nextActionDate: true,
+            mainSellerId: true,
+            hqState: true,
+            createdAt: true,
+            updatedAt: true,
+            mainSeller: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                name: true,
+                email: true
+              }
+            }
+          }
+        });
+
+        console.log(`🏢 [V1 PEOPLE API] Found ${companiesWithNoPeople.length} companies with 0 people`);
+
+        // Transform companies to look like person records
+        const companyLeads = companiesWithNoPeople.map(company => ({
+          id: company.id,
+          fullName: company.name, // Use company name in name column
+          firstName: null,
+          lastName: null,
+          email: null,
+          jobTitle: null,
+          title: null,
+          phone: null,
+          department: null,
+          status: 'LEAD',
+          priority: company.priority,
+          globalRank: company.globalRank,
+          lastAction: company.lastAction,
+          nextAction: company.nextAction,
+          lastActionDate: company.lastActionDate,
+          nextActionDate: company.nextActionDate,
+          companyId: company.id,
+          mainSellerId: company.mainSellerId,
+          company: {
+            id: company.id,
+            name: company.name, // Show company name in company column too
+            industry: company.industry,
+            size: null,
+            globalRank: company.globalRank,
+            hqState: company.hqState
+          },
+          mainSeller: company.mainSeller 
+            ? (company.mainSeller.id === context.userId
+                ? 'Me'
+                : company.mainSeller.firstName && company.mainSeller.lastName 
+                  ? `${company.mainSeller.firstName} ${company.mainSeller.lastName}`.trim()
+                  : company.mainSeller.name || company.mainSeller.email || '-')
+            : '-',
+          mainSellerData: company.mainSeller,
+          isCompanyLead: true, // Flag to identify company records
+          createdAt: company.createdAt,
+          updatedAt: company.updatedAt,
+          _count: { actions: 0 }
+        }));
+
+        // Combine people and company leads
+        allLeads = [...transformedPeople, ...companyLeads];
+        console.log(`🏢 [V1 PEOPLE API] Combined leads: ${transformedPeople.length} people + ${companyLeads.length} companies = ${allLeads.length} total`);
+      }
+
       const result = {
         success: true,
-        data: transformedPeople,
+        data: allLeads,
         meta: {
           timestamp: new Date().toISOString(),
           pagination: {

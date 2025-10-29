@@ -135,7 +135,13 @@ export function TableRow({
   }, [section, record.id]);
 
   const handleRowClick = () => {
-    onRecordClick(record);
+    // For company leads, navigate to company detail page instead of person detail page
+    if (record['isCompanyLead']) {
+      // Navigate to company detail page
+      window.location.href = `/workspace/companies/${record.id}`;
+    } else {
+      onRecordClick(record);
+    }
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -264,23 +270,28 @@ export function TableRow({
                 if (section === 'companies' as any) {
                   companyName = record.name || record['companyName'] || '-';
                 } else {
-                  // For other sections (leads, prospects, etc.), look for company field
-                  // First try to get company from various fields
-                  if (typeof record['company'] === 'string' && record['company'] && record['company'].trim()) {
-                    companyName = record['company'];
-                  } else if (record['company']?.name) {
-                    companyName = record['company'].name;
-                  } else if (record['companyName']) {
-                    companyName = record['companyName'];
+                  // For company leads (isCompanyLead flag), show the company name
+                  if (record['isCompanyLead']) {
+                    companyName = record['company']?.name || record['companyName'] || '-';
                   } else {
-                    // If no company data is available, show a dash
-                    companyName = '-';
-                  }
-                  
-                  // Make sure we're not showing the person's name as company name
-                  const personName = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim();
-                  if (companyName === personName) {
-                    companyName = '-';
+                    // For other sections (leads, prospects, etc.), look for company field
+                    // First try to get company from various fields
+                    if (typeof record['company'] === 'string' && record['company'] && record['company'].trim()) {
+                      companyName = record['company'];
+                    } else if (record['company']?.name) {
+                      companyName = record['company'].name;
+                    } else if (record['companyName']) {
+                      companyName = record['companyName'];
+                    } else {
+                      // If no company data is available, show a dash
+                      companyName = '-';
+                    }
+                    
+                    // Make sure we're not showing the person's name as company name
+                    const personName = record.name || record['fullName'] || `${record['firstName'] || ''} ${record['lastName'] || ''}`.trim();
+                    if (companyName === personName) {
+                      companyName = '-';
+                    }
                   }
                 }
                 
@@ -312,10 +323,15 @@ export function TableRow({
                 );
               case 'person':
               case 'name':
+                // For company leads, show company name (now in fullName/name field)
+                // For person leads, show displayName
+                const nameValue = record['isCompanyLead'] 
+                  ? (record.name || record.fullName || '-')
+                  : displayName;
                 return (
                   <TableCell
                     key="name"
-                    value={displayName}
+                    value={nameValue}
                     field="name"
                     recordId={record.id}
                     recordType={section}
@@ -364,27 +380,16 @@ export function TableRow({
                   <td key="nextAction" className={textClasses}>
                     <div className="flex items-center gap-2">
                       {isCompleted ? (
-                        <>
-                          <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-green-100 text-green-800 flex items-center gap-1">
-                            <CheckCircleIcon className="w-3 h-3" />
-                            Completed
-                          </span>
-                          <span className="text-sm text-green-600 font-normal truncate max-w-32">
-                            Action completed
-                          </span>
-                        </>
+                        <span className="text-sm text-green-600 font-normal truncate max-w-32">
+                          Action completed
+                        </span>
                       ) : (
                         (() => {
                           const nextAction = getLeadsNextAction(record, index);
                           return (
-                            <>
-                              <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
-                                {nextAction.timing}
-                              </span>
-                              <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                                {nextAction.action}
-                              </span>
-                            </>
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                              {nextAction.action}
+                            </span>
                           );
                         })()
                       )}
@@ -413,18 +418,30 @@ export function TableRow({
                           timing = getRealtimeActionTiming(lastActionDate);
                         }
                         
-                        // If timing is "Never" or no actionText, show dash instead of action text
-                        const displayText = (timing.text === 'Never' || !actionText || actionText === 'No action') ? '-' : actionText;
+                        // If timing is "Never" or no actionText, check if record was just created
+                        let displayText = '-';
+                        // Check for empty or placeholder action values
+                        const isEmptyAction = !actionText || 
+                          actionText === 'No action' || 
+                          actionText === '-' || 
+                          actionText === 'Company record created' || 
+                          actionText === 'Record created' ||
+                          (typeof actionText === 'string' && actionText.trim() === '');
+                        
+                        if (timing.text === 'Never' || isEmptyAction) {
+                          // Check if record has a createdAt date (meaning it exists but has no actions)
+                          const recordCreatedAt = record['createdAt'] || record['created_at'];
+                          if (recordCreatedAt) {
+                            displayText = 'Record created';
+                          }
+                        } else {
+                          displayText = actionText;
+                        }
                         
                         return (
-                          <>
-                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
-                              {timing.text}
-                            </span>
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {displayText}
-                            </span>
-                          </>
+                          <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                            {displayText}
+                          </span>
                         );
                       })()}
                     </div>
@@ -646,27 +663,16 @@ export function TableRow({
                   <td key="nextAction" className={textClasses}>
                     <div className="flex items-center gap-2">
                       {isCompleted ? (
-                        <>
-                          <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-green-100 text-green-800 flex items-center gap-1">
-                            <CheckCircleIcon className="w-3 h-3" />
-                            Completed
-                          </span>
-                          <span className="text-sm text-green-600 font-normal truncate max-w-32">
-                            Action completed
-                          </span>
-                        </>
+                        <span className="text-sm text-green-600 font-normal truncate max-w-32">
+                          Action completed
+                        </span>
                       ) : (
                         (() => {
                           const nextAction = getLeadsNextAction(record, index);
                           return (
-                            <>
-                              <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
-                                {nextAction.timing}
-                              </span>
-                              <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                                {nextAction.action}
-                              </span>
-                            </>
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                              {nextAction.action}
+                            </span>
                           );
                         })()
                       )}
@@ -695,18 +701,30 @@ export function TableRow({
                           timing = getRealtimeActionTiming(lastActionDate);
                         }
                         
-                        // If timing is "Never" or no actionText, show dash instead of action text
-                        const displayText = (timing.text === 'Never' || !actionText || actionText === 'No action') ? '-' : actionText;
+                        // If timing is "Never" or no actionText, check if record was just created
+                        let displayText = '-';
+                        // Check for empty or placeholder action values
+                        const isEmptyAction = !actionText || 
+                          actionText === 'No action' || 
+                          actionText === '-' || 
+                          actionText === 'Company record created' || 
+                          actionText === 'Record created' ||
+                          (typeof actionText === 'string' && actionText.trim() === '');
+                        
+                        if (timing.text === 'Never' || isEmptyAction) {
+                          // Check if record has a createdAt date (meaning it exists but has no actions)
+                          const recordCreatedAt = record['createdAt'] || record['created_at'];
+                          if (recordCreatedAt) {
+                            displayText = 'Record created';
+                          }
+                        } else {
+                          displayText = actionText;
+                        }
                         
                         return (
-                          <>
-                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
-                              {timing.text}
-                            </span>
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {displayText}
-                            </span>
-                          </>
+                          <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                            {displayText}
+                          </span>
                         );
                       })()}
                     </div>
@@ -838,27 +856,16 @@ export function TableRow({
                   <td key="nextAction" className={textClasses}>
                     <div className="flex items-center gap-2">
                       {isCompleted ? (
-                        <>
-                          <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-green-100 text-green-800 flex items-center gap-1">
-                            <CheckCircleIcon className="w-3 h-3" />
-                            Completed
-                          </span>
-                          <span className="text-sm text-green-600 font-normal truncate max-w-32">
-                            Action completed
-                          </span>
-                        </>
+                        <span className="text-sm text-green-600 font-normal truncate max-w-32">
+                          Action completed
+                        </span>
                       ) : (
                         (() => {
                           const nextAction = getLeadsNextAction(record, index);
                           return (
-                            <>
-                              <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
-                                {nextAction.timing}
-                              </span>
-                              <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                                {nextAction.action}
-                              </span>
-                            </>
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                              {nextAction.action}
+                            </span>
                           );
                         })()
                       )}
@@ -887,18 +894,30 @@ export function TableRow({
                           timing = getRealtimeActionTiming(lastActionDate);
                         }
                         
-                        // If timing is "Never" or no actionText, show dash instead of action text
-                        const displayText = (timing.text === 'Never' || !actionText || actionText === 'No action') ? '-' : actionText;
+                        // If timing is "Never" or no actionText, check if record was just created
+                        let displayText = '-';
+                        // Check for empty or placeholder action values
+                        const isEmptyAction = !actionText || 
+                          actionText === 'No action' || 
+                          actionText === '-' || 
+                          actionText === 'Company record created' || 
+                          actionText === 'Record created' ||
+                          (typeof actionText === 'string' && actionText.trim() === '');
+                        
+                        if (timing.text === 'Never' || isEmptyAction) {
+                          // Check if record has a createdAt date (meaning it exists but has no actions)
+                          const recordCreatedAt = record['createdAt'] || record['created_at'];
+                          if (recordCreatedAt) {
+                            displayText = 'Record created';
+                          }
+                        } else {
+                          displayText = actionText;
+                        }
                         
                         return (
-                          <>
-                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
-                              {timing.text}
-                            </span>
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {displayText}
-                            </span>
-                          </>
+                          <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                            {displayText}
+                          </span>
                         );
                       })()}
                     </div>
@@ -1011,27 +1030,16 @@ export function TableRow({
                   <td key="nextAction" className={textClasses}>
                     <div className="flex items-center gap-2">
                       {isCompleted ? (
-                        <>
-                          <span className="px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap bg-green-100 text-green-800 flex items-center gap-1">
-                            <CheckCircleIcon className="w-3 h-3" />
-                            Completed
-                          </span>
-                          <span className="text-sm text-green-600 font-normal truncate max-w-32">
-                            Action completed
-                          </span>
-                        </>
+                        <span className="text-sm text-green-600 font-normal truncate max-w-32">
+                          Action completed
+                        </span>
                       ) : (
                         (() => {
                           const nextAction = getLeadsNextAction(record, index);
                           return (
-                            <>
-                              <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${nextAction.timingColor}`}>
-                                {nextAction.timing}
-                              </span>
-                              <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                                {nextAction.action}
-                              </span>
-                            </>
+                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                              {nextAction.action}
+                            </span>
                           );
                         })()
                       )}
@@ -1060,18 +1068,30 @@ export function TableRow({
                           timing = getRealtimeActionTiming(lastActionDate);
                         }
                         
-                        // If timing is "Never" or no actionText, show dash instead of action text
-                        const displayText = (timing.text === 'Never' || !actionText || actionText === 'No action') ? '-' : actionText;
+                        // If timing is "Never" or no actionText, check if record was just created
+                        let displayText = '-';
+                        // Check for empty or placeholder action values
+                        const isEmptyAction = !actionText || 
+                          actionText === 'No action' || 
+                          actionText === '-' || 
+                          actionText === 'Company record created' || 
+                          actionText === 'Record created' ||
+                          (typeof actionText === 'string' && actionText.trim() === '');
+                        
+                        if (timing.text === 'Never' || isEmptyAction) {
+                          // Check if record has a createdAt date (meaning it exists but has no actions)
+                          const recordCreatedAt = record['createdAt'] || record['created_at'];
+                          if (recordCreatedAt) {
+                            displayText = 'Record created';
+                          }
+                        } else {
+                          displayText = actionText;
+                        }
                         
                         return (
-                          <>
-                            <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${timing.color}`}>
-                              {timing.text}
-                            </span>
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
-                              {displayText}
-                            </span>
-                          </>
+                          <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                            {displayText}
+                          </span>
                         );
                       })()}
                     </div>

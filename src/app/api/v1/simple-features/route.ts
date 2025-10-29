@@ -6,6 +6,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const workspaceSlug = searchParams.get('workspaceSlug');
     const userRole = searchParams.get('userRole') || 'VIEWER';
+    const userId = searchParams.get('userId');
+    const userEmail = searchParams.get('userEmail');
 
     if (!workspaceSlug) {
       return NextResponse.json(
@@ -14,12 +16,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const featureAccess = getSimpleFeatureAccess(workspaceSlug, userRole);
+    const featureAccess = getSimpleFeatureAccess(workspaceSlug, userRole, userId || undefined, userEmail || undefined);
 
     return NextResponse.json({
       success: true,
       workspaceSlug,
       userRole,
+      userId,
+      userEmail,
       featureAccess
     });
 
@@ -38,7 +42,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { workspaceSlug, userRole = 'VIEWER' } = body;
+    const { workspaceSlug, userRole = 'VIEWER', userId, userEmail } = body;
 
     if (!workspaceSlug) {
       return NextResponse.json(
@@ -47,12 +51,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const featureAccess = getSimpleFeatureAccess(workspaceSlug, userRole);
+    const featureAccess = getSimpleFeatureAccess(workspaceSlug, userRole, userId, userEmail);
 
     return NextResponse.json({
       success: true,
       workspaceSlug,
       userRole,
+      userId,
+      userEmail,
       featureAccess
     });
 

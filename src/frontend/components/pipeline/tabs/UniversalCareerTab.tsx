@@ -54,8 +54,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
   const coresignalTotalExperience = coresignalData?.total_experience_duration_months || coresignalData?.totalExperienceMonths || coresignalProfile?.totalExperienceMonths || 0;
   
   // Check if we're in a demo workspace
-  const isDemoWorkspace = record?.workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || 
-                         record?.workspaceId === 'demo' ||
+  const isDemoWorkspace = record?.workspaceId === 'demo' ||
                          window.location.pathname.includes('/demo/');
 
   // Use CoreSignal data with proper data extraction

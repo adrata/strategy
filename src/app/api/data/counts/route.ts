@@ -49,19 +49,19 @@ export async function GET(request: NextRequest) {
   const forceRefresh = url.searchParams.has('t');
   
   try {
-        // 1. Authenticate and authorize user
-        const { context, response } = await getSecureApiContext(request, {
-          requireAuth: true,
-          requireWorkspaceAccess: true
-        });
+    // 1. Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-        if (response) {
-          return response; // Return error response if authentication failed
-        }
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
 
-        if (!context) {
-          return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
-        }
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
 
     // Use authenticated user's workspace and ID
     const workspaceId = context.workspaceId;
@@ -98,89 +98,152 @@ export async function GET(request: NextRequest) {
                       userId === '01K7469230N74BVGK2PABPNNZ9'; // Ross's user ID
     console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode}`);
     
-    // 🚀 PERFORMANCE: Use direct Prisma queries for better reliability
-    const [peopleCounts, companiesCounts, speedrunCount] = await Promise.all([
-      // Get people counts by status
-      prisma.people.groupBy({
-        by: ['status'],
-        where: {
-          workspaceId,
-          deletedAt: null, // Only count non-deleted records
-          ...(isDemoMode ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          })
-        },
-        _count: { id: true }
-      }),
-      // Get companies counts by status
-      prisma.companies.groupBy({
-        by: ['status'],
-        where: {
-          workspaceId,
-          deletedAt: null, // Only count non-deleted records
-          ...(isDemoMode ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          })
-        },
-        _count: { id: true }
-      }),
-      // Get speedrun count - count people with ranks 1-50 (per-user) who haven't been actioned today
-      prisma.people.count({
-        where: {
-          workspaceId,
-          deletedAt: null, // Only count non-deleted records
-          companyId: { not: null }, // Only people with companies
-          globalRank: { not: null, gte: 1, lte: 50 }, // Only people with ranks 1-50 (per-user)
-          ...(isDemoMode ? {} : {
-            mainSellerId: userId // Only count people assigned to this user
-          }),
-          OR: [
-            { lastActionDate: null }, // Never actioned
-            { 
-              lastActionDate: {
-                lt: new Date(new Date().setHours(0, 0, 0, 0)) // Actioned before today
-              }
-            }
-          ]
-        }
-      })
-      // Note: sellers table doesn't exist in current schema
-      // If needed in future, add: prisma.sellers.count({ ... })
-    ]);
+    // 🚀 PERFORMANCE: Use direct Prisma queries for better reliability with error handling
+    let peopleCounts: Array<{ status: string | null; _count: { id: number } }> = [];
+    let companiesCounts: Array<{ status: string | null; _count: { id: number } }> = [];
+    let speedrunPeopleCount: number = 0;
+    let speedrunCompaniesCount: number = 0;
+    
+    try {
+      [peopleCounts, companiesCounts, speedrunPeopleCount, speedrunCompaniesCount] = await Promise.all([
+        // Get people counts by status
+        prisma.people.groupBy({
+          by: ['status'],
+          where: {
+            workspaceId,
+            deletedAt: null, // Only count non-deleted records
+            ...(isDemoMode ? {} : {
+              OR: [
+                { mainSellerId: userId },
+                { mainSellerId: null }
+              ]
+            })
+          },
+          _count: { id: true }
+        }).catch((error) => {
+          console.error('❌ [COUNTS API] Error fetching people counts:', error);
+          return [];
+        }),
+        // Get companies counts by status
+        prisma.companies.groupBy({
+          by: ['status'],
+          where: {
+            workspaceId,
+            deletedAt: null, // Only count non-deleted records
+            ...(isDemoMode ? {} : {
+              OR: [
+                { mainSellerId: userId },
+                { mainSellerId: null }
+              ]
+            })
+          },
+          _count: { id: true }
+        }).catch((error) => {
+          console.error('❌ [COUNTS API] Error fetching companies counts:', error);
+          return [];
+        }),
+        // Get speedrun people count - count people with ranks 1-50 (per-user)
+        prisma.people.count({
+          where: {
+            workspaceId,
+            deletedAt: null, // Only count non-deleted records
+            companyId: { not: null }, // Only people with companies
+            globalRank: { not: null, gte: 1, lte: 50 }, // Only people with ranks 1-50 (per-user)
+            ...(isDemoMode ? {} : {
+              mainSellerId: userId // Only count people assigned to this user
+            })
+          }
+        }).catch((error) => {
+          console.error('❌ [COUNTS API] Error fetching speedrun people count:', error);
+          return 0;
+        }),
+        // Get speedrun companies count - count companies with ranks 1-50 and 0 people
+        prisma.companies.count({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            globalRank: { not: null, gte: 1, lte: 50 }, // Only companies with ranks 1-50
+            people: { none: {} }, // CRITICAL: Only companies with 0 people (companies with people are represented by their people)
+            ...(isDemoMode ? {} : {
+              mainSellerId: userId
+            })
+          }
+        }).catch((error) => {
+          console.error('❌ [COUNTS API] Error fetching speedrun companies count:', error);
+          return 0;
+        })
+        // Note: sellers table doesn't exist in current schema
+        // If needed in future, add: prisma.sellers.count({ ... })
+      ]);
+    } catch (error) {
+      console.error('❌ [COUNTS API] Error in Promise.all:', error);
+      // Provide default values if Promise.all fails
+      peopleCounts = [];
+      companiesCounts = [];
+      speedrunPeopleCount = 0;
+      speedrunCompaniesCount = 0;
+    }
 
-    // Convert groupBy results to count objects
+    // Convert groupBy results to count objects with proper null handling
     const peopleCountsMap = peopleCounts.reduce((acc, stat) => {
-      acc[stat.status || 'ACTIVE'] = stat._count.id;
+      // Handle null status values - PersonStatus enum: LEAD, PROSPECT, OPPORTUNITY, CLIENT, SUPERFAN
+      const status = stat.status || 'LEAD'; // Default to LEAD if null (most common for new records)
+      acc[status] = (acc[status] || 0) + stat._count.id;
       return acc;
     }, {} as Record<string, number>);
 
     const companiesCountsMap = companiesCounts.reduce((acc, stat) => {
-      acc[stat.status || 'ACTIVE'] = stat._count.id;
+      // Handle null status values - CompanyStatus enum: LEAD, PROSPECT, OPPORTUNITY, CLIENT, SUPERFAN, ACTIVE, INACTIVE
+      const status = stat.status || 'ACTIVE'; // Default to ACTIVE if null
+      acc[status] = (acc[status] || 0) + stat._count.id;
       return acc;
     }, {} as Record<string, number>);
+
+    // 🚀 LEADS: Include companies with 0 people in leads count
+    let companiesWithNoPeopleCount = 0;
+    try {
+      companiesWithNoPeopleCount = await prisma.companies.count({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          ...(isDemoMode ? {} : {
+            OR: [
+              { mainSellerId: userId },
+              { mainSellerId: null }
+            ]
+          }),
+          people: { none: {} } // Companies with 0 people (any status)
+        }
+      });
+    } catch (error) {
+      console.error('❌ [COUNTS API] Error fetching companies with no people count:', error);
+      companiesWithNoPeopleCount = 0;
+    }
 
     // Debug logging for counts
     console.log(`🔍 [COUNTS API] People counts by status:`, peopleCountsMap);
     console.log(`🔍 [COUNTS API] Companies counts by status:`, companiesCountsMap);
+    console.log(`🔍 [COUNTS API] Companies with 0 people count:`, companiesWithNoPeopleCount);
+    console.log(`🔍 [COUNTS API] Speedrun counts:`, { 
+      people: speedrunPeopleCount, 
+      companies: speedrunCompaniesCount,
+      total: speedrunPeopleCount + speedrunCompaniesCount 
+    });
 
     // Map counts to our expected format
-    const leadsCount = peopleCountsMap.LEAD || 0;
-    const prospectsCount = peopleCountsMap.PROSPECT || 0;
-    const opportunitiesCount = peopleCountsMap.OPPORTUNITY || 0;
+    // Note: PersonStatus enum doesn't have PARTNER - only LEAD, PROSPECT, OPPORTUNITY, CLIENT, SUPERFAN
+    const leadsCount = (peopleCountsMap['LEAD'] || 0) + companiesWithNoPeopleCount;
+    const prospectsCount = peopleCountsMap['PROSPECT'] || 0;
+    const opportunitiesCount = peopleCountsMap['OPPORTUNITY'] || 0;
     const companiesCount = Object.values(companiesCountsMap).reduce((sum: number, count: any) => sum + count, 0);
     const peopleCount = Object.values(peopleCountsMap).reduce((sum: number, count: any) => sum + count, 0);
-    const clientsCount = peopleCountsMap.CLIENT || 0;
-    const partnersCount = peopleCountsMap.PARTNER || 0;
+    const clientsCount = peopleCountsMap['CLIENT'] || 0;
+    // PARTNER is not in PersonStatus enum - set to 0 (or get from companies if needed)
+    const partnersCount = 0;
     // Note: sellers table doesn't exist yet - set to 0 for now
     const sellersCount = 0;
-    // Use actual speedrun count based on qualifying records
-    const actualSpeedrunCount = speedrunCount;
+    // Use actual speedrun count based on qualifying records (people + companies with 0 people)
+    const actualSpeedrunCount = speedrunPeopleCount + speedrunCompaniesCount;
     
     const counts = {
       leads: leadsCount,

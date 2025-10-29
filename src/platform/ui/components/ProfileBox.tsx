@@ -46,6 +46,9 @@ interface ProfileBoxProps {
   setIsProfileOpen: (open: boolean) => void;
   onGrandCentralClick?: () => void;
   username?: string;
+  // User restriction props
+  userId?: string;
+  userEmail?: string;
   // Monaco-specific toggle props
   isSellersVisible?: boolean;
   setIsSellersVisible?: (visible: boolean) => void;
@@ -94,6 +97,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   isProfileOpen,
   setIsProfileOpen,
   onGrandCentralClick,
+  userId,
+  userEmail,
   isSellersVisible,
   setIsSellersVisible,
   isRtpVisible,
@@ -140,6 +145,20 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   const currentWorkspace = authUser?.workspaces?.find(ws => ws['id'] === currentWorkspaceId);
   const currentWorkspaceSlug = currentWorkspace ? getWorkspaceUrl(currentWorkspace, "").replace("/", "") : "";
   
+  // Use the actual workspace name from auth context for restrictions
+  const actualWorkspaceName = currentWorkspace?.name || workspace;
+  
+  // Check user restrictions
+  const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
+  const userRestrictions = userId && userEmail ? 
+    getUserRestrictions(userId, userEmail, actualWorkspaceName) : 
+    { hasRestrictions: false };
+
+  const isRestrictedUser = userRestrictions.hasRestrictions;
+  
+  // Admin features restricted to ross and todd - define before use
+  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com'];
+  
   const currentUserEmail = authUser?.email;
   const isDanoUser = currentUserEmail?.toLowerCase().includes('dano') || currentUserEmail === 'dano@retail-products.com';
   
@@ -147,9 +166,30 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
   const isAdrataUser = (currentUserEmail === 'dan@adrata.com' || currentUserEmail === 'ross@adrata.com') || isDemoMode;
   const shouldShowMonacoOptions = isAdrataUser;
   
-  // Admin features restricted to ross, todd, and dan@adrata.com
-  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
   const isAdminUser = ADMIN_EMAILS.includes(currentUserEmail || '');
+  
+  // Debug logging for Dan's restrictions
+  if (userEmail === 'dan@adrata.com') {
+    console.log('🔒 Dan ProfileBox Debug:', {
+      userId,
+      userEmail,
+      workspace,
+      actualWorkspaceName,
+      userRestrictions,
+      isRestrictedUser
+    });
+    
+    // Log which menu items will be shown
+    console.log('🔒 Dan Menu Items Debug:', {
+      settings: 'Always shown',
+      adminPanel: !isRestrictedUser ? 'Shown (not restricted)' : 'Hidden (restricted)',
+      workspaces: (authUser?.workspaces && authUser.workspaces.length > 1 && !isRestrictedUser) ? 'Shown (multiple workspaces, not restricted)' : 'Hidden',
+      actionGuide: (authUser?.email && ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'].includes(authUser.email) && !isRestrictedUser) ? 'Shown (authorized, not restricted)' : 'Hidden',
+      grandCentral: (authUser?.email && ADMIN_EMAILS.includes(authUser.email) && !isRestrictedUser) ? 'Shown (admin, not restricted)' : 'Hidden',
+      speedrunEngine: onSpeedrunEngineClick ? 'Shown (callback provided)' : 'Hidden (no callback)',
+      logOut: 'Always shown'
+    });
+  }
   
   console.log(`🏢 ProfileBox: Current workspace ID: ${currentWorkspaceId}, User email: ${currentUserEmail}, Workspace name: ${workspace}, isDanoUser: ${isDanoUser}, isAdrataUser: ${isAdrataUser}, isDemoMode: ${isDemoMode}`);
 
@@ -382,10 +422,10 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
         // 🚀 PERFORMANCE: Use optimized redirect
         if (isDesktop) {
           console.log("🖥️ ProfileBox: Desktop - using optimized redirect...");
-          window.location.replace('/sign-in?logout=true');
+          window.location.replace('/sign-in/');
         } else {
           // For web, use optimized redirect
-          const homeUrl = "/sign-in?logout=true";
+          const homeUrl = "/sign-in/";
           
           console.log("🌐 ProfileBox: Web - Redirecting to sign-in form");
           console.log("🌐 ProfileBox: Before redirect - current URL:", window.location.href);
@@ -577,8 +617,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
 
       {/* Profile Content - Simplified Menu */}
       <div className="pl-4 pr-2 pt-2 pb-2">
-        {/* Download - Only show for Adrata workspace users */}
-        {isAdrataWorkspace() && (
+        {/* Download - Only show for Adrata workspace users and not restricted users */}
+        {isAdrataWorkspace() && !isRestrictedUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center"
             onClick={handleDownloadDesktopApp}
@@ -591,8 +631,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
 
-        {/* RevenueOS - Only show for Adrata workspace users */}
-        {isAdrataWorkspace() && (
+        {/* RevenueOS - Only show for Adrata workspace users and not restricted users */}
+        {isAdrataWorkspace() && !isRestrictedUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={() => {
@@ -613,8 +653,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
 
-        {/* Oasis - Only show for Adrata workspace users */}
-        {isAdrataWorkspace() && (
+        {/* Oasis - Only show for Adrata workspace users and not restricted users */}
+        {isAdrataWorkspace() && !isRestrictedUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={() => {
@@ -764,8 +804,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </>
         )}
 
-        {/* Monaco Display Options - Show only in demo mode */}
-        {isDemoMode && setIsSellersVisible && typeof setIsSellersVisible === 'function' && (
+        {/* Monaco Display Options - Show only in demo mode and not for restricted users */}
+        {isDemoMode && !isRestrictedUser && setIsSellersVisible && typeof setIsSellersVisible === 'function' && (
           <>
             <div className="px-2 py-1">
               <div className="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide mb-2">
@@ -961,8 +1001,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           Settings
         </div>
 
-        {/* 4. Admin Panel - Show only for admin users */}
-        {isAdminUser && (
+        {/* 4. Admin Panel - Show only for admin users and not restricted users */}
+        {isAdminUser && !isRestrictedUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center"
             onClick={() => {
@@ -986,8 +1026,8 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 3. Workspaces Section - Show for users with multiple workspaces */}
-        {authUser?.workspaces && authUser.workspaces.length > 1 && (
+        {/* 3. Workspaces Section - Show for users with multiple workspaces and not restricted users */}
+        {authUser?.workspaces && authUser.workspaces.length > 1 && !isRestrictedUser && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
             onClick={() => handleNavigation("/workspaces")}
@@ -999,15 +1039,16 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 4. Action Guide - Restricted to dan, ross, and todd */}
+        {/* 4. Action Guide - Restricted to dan, ross, and todd, but not for restricted users */}
         {(() => {
           const isAuthorized = authUser?.email && ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'].includes(authUser.email);
           console.log('🔍 Action Guide access check:', { 
             userEmail: authUser?.email, 
             isAuthorized, 
+            isRestrictedUser,
             authorizedEmails: ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com']
           });
-          return isAuthorized;
+          return isAuthorized && !isRestrictedUser;
         })() && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
@@ -1020,10 +1061,10 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 5. Grand Central - Restricted to admin users */}
+        {/* 5. Grand Central - Restricted to admin users and not restricted users */}
         {(() => {
           const isAuthorized = authUser?.email && ADMIN_EMAILS.includes(authUser.email);
-          return isAuthorized;
+          return isAuthorized && !isRestrictedUser;
         })() && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors"
@@ -1045,7 +1086,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
           </div>
         )}
         
-        {/* 6. Speedrun Engine Configuration - Available for all users */}
+        {/* 6. Speedrun Engine Configuration - Available for all users including restricted users */}
         {onSpeedrunEngineClick && (
           <div
             className="adrata-popover-item px-2 py-1.5 text-sm text-[var(--foreground)] rounded-lg cursor-pointer hover:bg-[var(--hover)] transition-colors flex items-center gap-2"
@@ -1061,7 +1102,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
             tabIndex={0}
             onKeyDown={(e) => e['key'] === "Enter" && onSpeedrunEngineClick()}
           >
-            Speedrun Engine
+            Speedrun Settings
           </div>
         )}
 

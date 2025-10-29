@@ -209,7 +209,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       
       try {
         const workspaceId = record.workspaceId || '01K7DNYR5VZ7JY36KGKKN76XZ1';
-        const userId = record.assignedUserId || '01K1VBYXHD0J895XAN0HGFBKJP';
+        const userId = record.assignedUserId || '';
         
         const cacheKey = `people-${workspaceId}-${userId}`;
         const peopleCacheKey = `people-${companyId}-${workspaceId}`;

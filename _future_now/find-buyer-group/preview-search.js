@@ -15,88 +15,227 @@ class PreviewSearch {
 
   /**
    * Discover all stakeholders using the working approach
-   * @param {string} companyIdentifier - Company LinkedIn URL
+   * @param {object} companyData - Company data object with linkedinUrl, website, companyName
    * @param {number} maxPages - Maximum pages to search
+   * @param {string} filteringLevel - Filtering level: 'none', 'light', 'moderate', 'strict'
+   * @param {string} productCategory - Product category for filtering
    * @returns {Array} Array of employee previews
    */
-  async discoverAllStakeholders(companyIdentifier, maxPages = 5) {
-    console.log(`🔍 Discovering stakeholders for: ${companyIdentifier}`);
+  async discoverAllStakeholders(companyData, maxPages = 5, filteringLevel = 'moderate', productCategory = 'sales') {
+    console.log(`🔍 Discovering stakeholders for: ${companyData.companyName || companyData.website}`);
+    console.log(`📊 Filtering level: ${filteringLevel}, Product: ${productCategory}`);
     
-    // Extract company name from LinkedIn URL or use as-is if it's already a company name
-    const companyName = this.extractCompanyName(companyIdentifier);
-    console.log(`🏢 Searching for employees at: ${companyName}`);
+    // Build query based on available identifiers
+    const query = this.buildCoresignalQuery(companyData);
     
-    const allEmployees = [];
+    console.log(`📋 Getting all employees...`);
+    let allEmployeesRaw = await this.executeSearch(query, maxPages);
+    console.log(`✅ Found ${allEmployeesRaw.length} total employees`);
     
-    // Use the working Elasticsearch query structure
-    const query = {
-      query: {
-        bool: {
-          must: [
-            {
+    // Parent domain fallback for subdomains (e.g., sketchup.trimble.com -> trimble.com)
+    if (allEmployeesRaw.length === 0 && companyData.website) {
+      const domain = this.extractDomain(companyData.website);
+      if (domain.split('.').length > 2) {
+        const parentDomain = domain.split('.').slice(-2).join('.');
+        console.log(`⚠️ Zero employees found for ${domain}, trying parent domain: ${parentDomain}`);
+        
+        const parentQuery = this.buildCoresignalQuery({
+          ...companyData,
+          website: `https://${parentDomain}`
+        });
+        
+        allEmployeesRaw = await this.executeSearch(parentQuery, maxPages);
+        console.log(`✅ Parent domain search found ${allEmployeesRaw.length} total employees`);
+      }
+    }
+    
+    // Apply filtering based on company size and product category
+    let relevantEmployees;
+    
+    if (filteringLevel === 'none') {
+      // No filtering - return all employees for small companies
+      console.log(`📊 No filtering applied - analyzing all ${allEmployeesRaw.length} employees`);
+      relevantEmployees = allEmployeesRaw;
+    } else {
+      // Apply product-specific filtering
+      const filterConfig = this.getProductSpecificFiltering(productCategory, filteringLevel);
+      relevantEmployees = allEmployeesRaw.filter(emp => this.isRelevantEmployee(emp, filterConfig));
+      console.log(`📊 Filtered to ${relevantEmployees.length} relevant employees (${filteringLevel} filtering)`);
+    }
+    
+    // Deduplicate and return
+    return deduplicate(relevantEmployees);
+  }
+
+  /**
+   * Build Coresignal query based on available company identifiers
+   * @param {object} companyData - Company data with linkedinUrl, website, companyName
+   * @returns {object} Coresignal Elasticsearch query
+   */
+  buildCoresignalQuery(companyData) {
+    const { linkedinUrl, website, companyName } = companyData;
+    
+    // Priority 1: LinkedIn URL (most precise)
+    if (linkedinUrl) {
+      console.log(`🎯 Using LinkedIn URL for precise matching: ${linkedinUrl}`);
+      return {
+        query: {
+          bool: {
+            must: [{
               nested: {
                 path: "experience",
                 query: {
                   bool: {
                     must: [
                       { term: { "experience.active_experience": 1 } },
-                      {
-                        bool: {
-                          should: [
-                            { match: { "experience.company_name": companyName } },
-                            { match_phrase: { "experience.company_name": companyName } }
-                          ]
-                        }
-                      }
+                      { match: { "experience.company_linkedin_url": linkedinUrl } }
                     ]
                   }
                 }
               }
+            }]
+          }
+        }
+      };
+    }
+    
+    // Priority 2: Website domain
+    if (website) {
+      const domain = this.extractDomain(website);
+      console.log(`🌐 Using website domain for matching: ${domain}`);
+      return {
+        query: {
+          bool: {
+            must: [{
+              nested: {
+                path: "experience",
+                query: {
+                  bool: {
+                    must: [
+                      { term: { "experience.active_experience": 1 } },
+                      { match: { "experience.company_website": domain } }
+                    ]
+                  }
+                }
+              }
+            }]
+          }
+        }
+      };
+    }
+    
+    // Fallback: Company name
+    console.log(`📝 Using company name for matching: ${companyName}`);
+    return {
+      query: {
+        bool: {
+          must: [{
+            nested: {
+              path: "experience",
+              query: {
+                bool: {
+                  must: [
+                    { term: { "experience.active_experience": 1 } },
+                    {
+                      bool: {
+                        should: [
+                          { match: { "experience.company_name": companyName } },
+                          { match_phrase: { "experience.company_name": companyName } }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
             }
-          ]
+          }]
         }
       }
     };
+  }
+
+  /**
+   * Extract domain from URL
+   * @param {string} url - URL to extract domain from
+   * @returns {string} Domain name
+   */
+  extractDomain(url) {
+    if (!url) return '';
+    const match = url.match(/(?:https?:\/\/)?(?:www\.)?([^\/]+)/);
+    return match ? match[1] : url;
+  }
+
+  /**
+   * Get product-specific filtering configuration
+   * @param {string} productCategory - Product category
+   * @param {string} filteringLevel - Filtering level
+   * @returns {object} Filter configuration
+   */
+  getProductSpecificFiltering(productCategory, filteringLevel) {
+    if (productCategory === 'sales') {
+      return {
+        primary: ['sales', 'revenue', 'operations', 'business development', 'sales enablement', 'revenue operations'],
+        secondary: filteringLevel === 'light' ? ['marketing', 'product', 'it', 'technology'] : ['marketing'],
+        exclude: ['customer success', 'customer service'], // Unless managing sales
+        titles: {
+          primary: ['vp', 'vice president', 'svp', 'senior vice president', 'chief', 'cfo', 'cro', 'cto'],
+          secondary: ['director', 'senior director', 'head of', 'manager', 'senior manager'],
+          exclude: filteringLevel === 'strict' ? ['customer success', 'customer service'] : []
+        }
+      };
+    }
     
-    console.log(`📋 Getting all employees...`);
-    const allEmployeesRaw = await this.executeSearch(query);
-    console.log(`✅ Found ${allEmployeesRaw.length} total employees`);
+    // Default configuration for other products
+    return {
+      primary: ['operations', 'strategy', 'product'],
+      secondary: ['marketing', 'it', 'technology', 'finance'],
+      exclude: [],
+      titles: {
+        primary: ['vp', 'vice president', 'svp', 'senior vice president', 'chief'],
+        secondary: ['director', 'senior director', 'head of', 'manager'],
+        exclude: []
+      }
+    };
+  }
+
+  /**
+   * Check if employee is relevant based on filter configuration
+   * @param {object} employee - Employee data
+   * @param {object} filterConfig - Filter configuration
+   * @returns {boolean} True if relevant
+   */
+  isRelevantEmployee(employee, filterConfig) {
+    const dept = employee.department?.toLowerCase() || '';
+    const title = employee.title?.toLowerCase() || '';
     
-    // Filter to relevant employees in JavaScript
-    const relevantDepartments = [
-      'Sales', 'Marketing', 'Business Development', 'Revenue Operations',
-      'IT', 'Technology', 'Engineering', 'Information Technology',
-      'Security', 'Legal', 'Compliance', 'Risk Management',
-      'Finance', 'Procurement', 'Purchasing', 'Accounting',
-      'Operations', 'Product', 'Analytics', 'Data Science',
-      'Executive', 'C-Suite', 'Leadership', 'Strategy',
-      'Real Estate', 'Administrative', 'Customer Service'
-    ];
+    // Check for excluded departments
+    if (filterConfig.exclude.some(exclude => dept.includes(exclude))) {
+      // Special case: Customer Success managing sales
+      if (dept.includes('customer success') && 
+          (title.includes('sales') || title.includes('revenue') || title.includes('business development'))) {
+        return true; // Include if managing sales
+      }
+      return false;
+    }
     
-    const relevantTitles = [
-      'VP', 'Vice President', 'SVP', 'Senior Vice President',
-      'Director', 'Senior Director', 'Chief', 'Head of',
-      'Manager', 'Senior Manager', 'Lead', 'Principal'
-    ];
+    // Check for excluded titles
+    if (filterConfig.titles.exclude.some(exclude => title.includes(exclude))) {
+      return false;
+    }
     
-    const relevantEmployees = allEmployeesRaw.filter(emp => {
-      // Check department
-      const deptMatch = relevantDepartments.some(dept => 
-        emp.department && emp.department.toLowerCase().includes(dept.toLowerCase())
-      );
-      
-      // Check title
-      const titleMatch = relevantTitles.some(title => 
-        emp.title && emp.title.toLowerCase().includes(title.toLowerCase())
-      );
-      
-      return deptMatch || titleMatch;
-    });
+    // Check for primary relevance
+    const primaryDeptMatch = filterConfig.primary.some(deptName => dept.includes(deptName));
+    const primaryTitleMatch = filterConfig.titles.primary.some(titleName => title.includes(titleName));
     
-    console.log(`📊 Filtered to ${relevantEmployees.length} relevant employees`);
+    if (primaryDeptMatch || primaryTitleMatch) {
+      return true;
+    }
     
-    // Deduplicate and return
-    return deduplicate(relevantEmployees);
+    // Check for secondary relevance
+    const secondaryDeptMatch = filterConfig.secondary.some(deptName => dept.includes(deptName));
+    const secondaryTitleMatch = filterConfig.titles.secondary.some(titleName => title.includes(titleName));
+    
+    return secondaryDeptMatch || secondaryTitleMatch;
   }
 
   /**
@@ -119,118 +258,141 @@ class PreviewSearch {
   }
 
   /**
-   * Execute search query against Coresignal API with retry logic
+   * Execute search query against Coresignal API with retry logic and pagination
    * @param {object} query - Elasticsearch query
+   * @param {number} maxPages - Maximum pages to fetch
    * @param {number} maxRetries - Maximum number of retries
    * @returns {Array} Array of employee data
    */
-  async executeSearch(query, maxRetries = 3) {
+  async executeSearch(query, maxPages = 5, maxRetries = 3) {
+    let allEmployees = [];
     let lastError;
     
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        console.log(`🔍 Coresignal API attempt ${attempt}/${maxRetries}...`);
-        
-        // Add timeout to prevent hanging
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-        
-        const response = await fetch(`${this.baseUrl}/employee_multi_source/search/es_dsl/preview?page=1&items_per_page=50`, {
-          method: 'POST',
-          headers: {
-            'apikey': this.apiKey,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(query),
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          // Handle specific error codes
-          if (response.status === 524 || response.status === 504) {
-            throw new Error(`Gateway timeout (${response.status}) - attempt ${attempt}`);
-          } else if (response.status === 429) {
-            throw new Error(`Rate limited (${response.status}) - attempt ${attempt}`);
-          } else {
-            throw new Error(`Coresignal search failed: ${response.status} ${response.statusText}`);
-          }
-        }
-
-        const data = await response.json();
-        console.log(`✅ Coresignal API success on attempt ${attempt}`);
-        
-        // Handle array format (preview API returns array directly)
-        if (Array.isArray(data)) {
-          return data.map(emp => ({
-            id: emp.id,
-            name: emp.full_name || '',
-            title: emp.active_experience_title || '',
-            department: emp.active_experience_department || '',
-            company: emp.company_name || '',
-            managementLevel: emp.active_experience_management_level || '',
-            connectionsCount: emp.connections_count || 0,
-            followersCount: emp.followers_count || 0,
-            email: emp.email || '',
-            phone: emp.phone || '',
-            linkedinUrl: emp.linkedin_url || '',
-            source: 'coresignal_preview'
-          }));
-        }
-        
-        // Fallback for hits format (shouldn't happen with preview API)
-        if (!data.hits?.hits) {
-          return [];
-        }
-
-        return data.hits.hits.map(emp => {
-          const source = emp._source;
-          const experience = source.experience?.[0] || {};
+    for (let page = 1; page <= maxPages; page++) {
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          console.log(`🔍 Coresignal API page ${page}/${maxPages}, attempt ${attempt}/${maxRetries}...`);
           
-          return {
-            id: emp._id,
-            name: source.name || '',
-            title: experience.active_experience_title || '',
-            department: experience.active_experience_department || '',
-            company: experience.active_experience_company || '',
-            managementLevel: experience.active_experience_management_level || '',
-            connectionsCount: source.connections_count || 0,
-            followersCount: source.followers_count || 0,
-            email: source.email || '',
-            phone: source.phone || '',
-            linkedinUrl: source.linkedin_url || '',
-            source: 'coresignal_preview'
-          };
-        });
+          // Add timeout to prevent hanging
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+          
+          const response = await fetch(`${this.baseUrl}/employee_multi_source/search/es_dsl/preview?page=${page}&items_per_page=50`, {
+            method: 'POST',
+            headers: {
+              'apikey': this.apiKey,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify(query),
+            signal: controller.signal
+          });
 
-      } catch (error) {
-        lastError = error;
-        console.log(`❌ Coresignal API attempt ${attempt} failed: ${error.message}`);
-        
-        // Don't retry on non-retryable errors
-        if (error.name === 'AbortError') {
-          console.log(`⏰ Request timeout on attempt ${attempt}`);
-        } else if (error.message.includes('401') || error.message.includes('403')) {
-          console.log(`🔒 Authentication error - not retrying`);
-          throw error;
+          clearTimeout(timeoutId);
+
+          if (!response.ok) {
+            // Handle specific error codes
+            if (response.status === 524 || response.status === 504) {
+              throw new Error(`Gateway timeout (${response.status}) - page ${page}, attempt ${attempt}`);
+            } else if (response.status === 429) {
+              throw new Error(`Rate limited (${response.status}) - page ${page}, attempt ${attempt}`);
+            } else {
+              throw new Error(`Coresignal search failed: ${response.status} ${response.statusText}`);
+            }
+          }
+
+          const data = await response.json();
+          console.log(`✅ Coresignal API success on page ${page}, attempt ${attempt}`);
+          
+          // Handle array format (preview API returns array directly)
+          let pageEmployees = [];
+          if (Array.isArray(data)) {
+            pageEmployees = data.map(emp => ({
+              id: emp.id,
+              name: emp.full_name || '',
+              title: emp.active_experience_title || '',
+              department: emp.active_experience_department || '',
+              company: emp.company_name || '',
+              managementLevel: emp.active_experience_management_level || '',
+              connectionsCount: emp.connections_count || 0,
+              followersCount: emp.followers_count || 0,
+              email: emp.email || '',
+              phone: emp.phone || '',
+              linkedinUrl: emp.linkedin_url || '',
+              source: 'coresignal_preview'
+            }));
+          } else if (data.hits?.hits) {
+            // Fallback for hits format
+            pageEmployees = data.hits.hits.map(emp => {
+              const source = emp._source;
+              const experience = source.experience?.[0] || {};
+              
+              return {
+                id: emp._id,
+                name: source.name || '',
+                title: experience.active_experience_title || '',
+                department: experience.active_experience_department || '',
+                company: experience.active_experience_company || '',
+                managementLevel: experience.active_experience_management_level || '',
+                connectionsCount: source.connections_count || 0,
+                followersCount: source.followers_count || 0,
+                email: source.email || '',
+                phone: source.phone || '',
+                linkedinUrl: source.linkedin_url || '',
+                source: 'coresignal_preview'
+              };
+            });
+          }
+          
+          // If no employees returned, we've reached the end
+          if (pageEmployees.length === 0) {
+            console.log(`📄 No more employees on page ${page}, stopping pagination`);
+            return allEmployees;
+          }
+          
+          allEmployees = allEmployees.concat(pageEmployees);
+          console.log(`📊 Page ${page}: Found ${pageEmployees.length} employees (Total: ${allEmployees.length})`);
+          
+          // If we got fewer than 50 employees, we've likely reached the end
+          if (pageEmployees.length < 50) {
+            console.log(`📄 Less than 50 employees on page ${page}, stopping pagination`);
+            return allEmployees;
+          }
+          
+          // Success, move to next page
+          break;
+          
+        } catch (error) {
+          lastError = error;
+          console.log(`❌ Coresignal API page ${page}, attempt ${attempt} failed: ${error.message}`);
+          
+          // Don't retry on non-retryable errors
+          if (error.name === 'AbortError') {
+            console.log(`⏰ Request timeout on page ${page}, attempt ${attempt}`);
+          } else if (error.message.includes('401') || error.message.includes('403')) {
+            console.log(`🔒 Authentication error - not retrying`);
+            throw error;
+          }
+          
+          // If this is the last attempt for this page, move to next page or return what we have
+          if (attempt === maxRetries) {
+            console.log(`💥 All ${maxRetries} attempts failed for page ${page}`);
+            if (allEmployees.length > 0) {
+              console.log(`⚠️ Returning ${allEmployees.length} employees found so far`);
+              return allEmployees;
+            }
+            throw lastError;
+          }
+          
+          // Wait before retrying with exponential backoff
+          const waitTime = Math.min(1000 * Math.pow(2, attempt - 1), 10000); // Max 10 seconds
+          console.log(`⏳ Waiting ${waitTime}ms before retry...`);
+          await delay(waitTime);
         }
-        
-        // If this is the last attempt, throw the error
-        if (attempt === maxRetries) {
-          console.log(`💥 All ${maxRetries} attempts failed`);
-          throw lastError;
-        }
-        
-        // Wait before retrying with exponential backoff
-        const waitTime = Math.min(1000 * Math.pow(2, attempt - 1), 10000); // Max 10 seconds
-        console.log(`⏳ Waiting ${waitTime}ms before retry...`);
-        await delay(waitTime);
       }
     }
     
-    throw lastError;
+    return allEmployees;
   }
 
   /**

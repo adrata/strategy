@@ -466,8 +466,8 @@ function QuickAppSwitcher({
     setCurrentUserEmail(userEmail);
   }, []);
 
-  // Check if user is admin
-  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'];
+  // Check if user is admin (dan@adrata.com has restrictions, not full admin)
+  const ADMIN_EMAILS = ['ross@adrata.com', 'todd@adrata.com'];
   const isAdminUser = currentUserEmail && ADMIN_EMAILS.includes(currentUserEmail);
 
   // 5 most common apps - Include workspace apps for admin users
