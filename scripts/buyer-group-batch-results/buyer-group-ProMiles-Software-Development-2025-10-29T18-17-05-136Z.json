@@ -1,0 +1,3265 @@
+{
+  "company": {
+    "id": "01K8R6BC0H4Q0GDEQ6S2DGZFTZ",
+    "name": "ProMiles Software Development",
+    "website": "https://www.promiles.com/",
+    "industry": "Software",
+    "employeeCount": null,
+    "revenue": null
+  },
+  "pipeline": {
+    "target": "https://www.promiles.com/",
+    "dealSize": 150000,
+    "productCategory": "sales",
+    "workspaceId": "01K7464TNANHQXPCZT1FYX205V"
+  },
+  "results": {
+    "buyerGroup": [
+      {
+        "id": 509733553,
+        "name": "William Friedman",
+        "title": "Business Development Representative",
+        "department": "Sales",
+        "company": "ProMiles Software Development Corporation",
+        "managementLevel": "Specialist",
+        "connectionsCount": 290,
+        "followersCount": 290,
+        "email": "",
+        "phone": "",
+        "linkedinUrl": "https://www.linkedin.com/in/william-friedman",
+        "source": "coresignal_preview",
+        "scores": {
+          "seniority": 3,
+          "departmentFit": 10,
+          "influence": 3,
+          "championPotential": 12,
+          "crossFunctional": 4,
+          "geoAlignment": 8
+        },
+        "overallScore": 6,
+        "relevance": 0.75,
+        "isHighValue": false,
+        "aiRelevance": 0.75,
+        "aiReasoning": "William Friedman is a Business Development Representative in the Sales department, making him highly relevant as a potential champion for Sales Intelligence Software. As a BDR, he would be a direct end-user of sales intelligence tools for prospecting, lead generation, and account research - core functions of his role. BDRs typically rely heavily on such tools to identify prospects, find contact information, and gather account insights. However, his influence level is moderate (6/10) because while he would likely advocate strongly for tools that make his job easier and could influence the decision through demonstrating ROI and user need, he lacks the authority to make a $150K purchasing decision independently. At ProMiles (100 employees), this purchase would likely require approval from a VP of Sales, CRO, or C-suite executive. His role would be as a 'champion' - testing the product, providing feedback, building internal case for adoption, and influencing decision-makers. The relatively small LinkedIn network (290 connections) suggests he's earlier in his career, which aligns with the BDR title and supports the moderate influence assessment. He's an excellent entry point for discovery and building internal support, but not the final decision-maker.",
+        "aiConfidence": 0.85,
+        "buyerGroupRole": "champion",
+        "roleConfidence": 60,
+        "roleReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+        "aiRoleValidation": {
+          "suggestedRole": "champion",
+          "confidence": 0.85,
+          "reasoning": "William Friedman should be assigned as a 'champion' role for the following reasons:\n\n1. **Direct Product Relevance**: As a Business Development Representative in Sales, he is a primary end-user of Sales Intelligence Software. This tool directly impacts his daily workflow for prospecting, lead qualification, and account research.\n\n2. **Operational Impact**: BDRs are typically heavy users of sales intelligence tools and understand the pain points and value proposition intimately. He can articulate how this software will improve pipeline generation and sales efficiency.\n\n3. **Current Group Composition**: Gil Garcia is already listed as a champion. Having William as a second champion creates a powerful advocacy coalition within the sales organization, strengthening the business case from multiple angles.\n\n4. **Deal Size Context**: At $150K, this purchase likely requires executive approval. A BDR lacks budget authority at this level but can provide crucial bottom-up advocacy to influence decision-makers by demonstrating ROI and user adoption commitment.\n\n5. **Seniority Consideration**: While BDRs are typically early-career roles without decision-making authority, they are credible voices for tool requirements and can influence their sales leadership (who likely hold budget authority).\n\nThe 'champion' role is more appropriate than 'stakeholder' because of his direct sales function and ability to actively advocate for adoption, not just be passively affected by it.",
+          "alternativeRoles": [
+            "stakeholder",
+            "introducer"
+          ]
+        },
+        "aiRoleReasoning": "William Friedman should be assigned as a 'champion' role for the following reasons:\n\n1. **Direct Product Relevance**: As a Business Development Representative in Sales, he is a primary end-user of Sales Intelligence Software. This tool directly impacts his daily workflow for prospecting, lead qualification, and account research.\n\n2. **Operational Impact**: BDRs are typically heavy users of sales intelligence tools and understand the pain points and value proposition intimately. He can articulate how this software will improve pipeline generation and sales efficiency.\n\n3. **Current Group Composition**: Gil Garcia is already listed as a champion. Having William as a second champion creates a powerful advocacy coalition within the sales organization, strengthening the business case from multiple angles.\n\n4. **Deal Size Context**: At $150K, this purchase likely requires executive approval. A BDR lacks budget authority at this level but can provide crucial bottom-up advocacy to influence decision-makers by demonstrating ROI and user adoption commitment.\n\n5. **Seniority Consideration**: While BDRs are typically early-career roles without decision-making authority, they are credible voices for tool requirements and can influence their sales leadership (who likely hold budget authority).\n\nThe 'champion' role is more appropriate than 'stakeholder' because of his direct sales function and ability to actively advocate for adoption, not just be passively affected by it.",
+        "fullProfile": {
+          "id": 509733553,
+          "parent_id": 509733553,
+          "created_at": "2025-01-17T22:43:46.347092Z",
+          "updated_at": "2025-10-17T05:49:02.476254Z",
+          "checked_at": "2025-10-17T05:49:02.476254Z",
+          "changed_at": "2025-10-17T05:49:02.476254Z",
+          "experience_change_last_identified_at": null,
+          "is_deleted": 0,
+          "is_parent": 1,
+          "public_profile_id": 563681486,
+          "linkedin_url": "https://www.linkedin.com/in/william-friedman",
+          "linkedin_shorthand_names": [
+            "william-friedman"
+          ],
+          "historical_ids": [
+            509733553
+          ],
+          "full_name": "William Friedman",
+          "first_name": "William",
+          "first_name_initial": "W",
+          "middle_name": null,
+          "middle_name_initial": null,
+          "last_name": "Friedman",
+          "last_name_initial": "F",
+          "headline": "Business Development Representative @ ProMiles Software | BBA, Solution Selling",
+          "summary": "As a Business Development Representative at ProMiles Software Development Corporation, I leverage my Bachelor of Business Administration degree in Computer Information Systems (CIS) and my solution selling and interpersonal skills to generate leads, pitch products, and close deals. I have over a year of experience in full cycle sales, offering white label and custom solutions to clients in various industries. I am passionate about technology and proficient in learning and utilizing new systems and technology, such as CRM, SAP, SQL, Salesforce, Sales Intel, and Python. I am also driven by my competitive mindset, strong work ethic, and eagerness to learn and grow. My goal is to help others understand the value and benefit of implementing the latest technology and help businesses improve their ROI and decrease their operating expenses.",
+          "picture_url": "https://media.licdn.com/dms/image/v2/C4D03AQHbpZgdnKXTvA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1517528612744?e=2147483647&v=beta&t=TYfUGWKIAV7pdaSxOHHxNUMJMl4b4w0foxNOvYL_ax0",
+          "location_country": "United States",
+          "location_country_iso2": "US",
+          "location_country_iso3": "USA",
+          "location_full": "Round Rock, Texas, United States",
+          "location_regions": [
+            "Americas",
+            "Northern America",
+            "AMER"
+          ],
+          "location_city": "Round Rock",
+          "location_state": "Texas",
+          "interests": [],
+          "inferred_skills": [
+            "software",
+            "administration",
+            "selling",
+            "sales",
+            "technology",
+            "crm",
+            "sap",
+            "sql",
+            "salesforce",
+            "python",
+            "expenses",
+            "operations",
+            "efficiency",
+            "banking",
+            "research",
+            "database",
+            "cloud",
+            "computers",
+            "print",
+            "production",
+            "responsible",
+            "controlling",
+            "processing",
+            "machinery",
+            "specifications",
+            "inventory",
+            "campaigns",
+            "mentoring",
+            "kpi",
+            "metrics",
+            "business development",
+            "software development",
+            "business administration",
+            "information systems",
+            "solution selling",
+            "interpersonal skills",
+            "work ethic",
+            "information technology",
+            "print production",
+            "data processing",
+            "inside sales",
+            "peer mentoring"
+          ],
+          "historical_skills": [],
+          "connections_count": 290,
+          "followers_count": 290,
+          "services": null,
+          "primary_professional_email": "william@promiles.com",
+          "primary_professional_email_status": "matched_pattern",
+          "professional_emails_collection": [
+            {
+              "professional_email": "william@promiles.com",
+              "professional_email_status": "matched_pattern",
+              "order_of_priority": 1
+            },
+            {
+              "professional_email": "wfriedman@promiles.com",
+              "professional_email_status": "matched_pattern",
+              "order_of_priority": 2
+            },
+            {
+              "professional_email": "william.friedman@promiles.com",
+              "professional_email_status": "matched_pattern",
+              "order_of_priority": 3
+            }
+          ],
+          "is_working": 1,
+          "active_experience_company_id": 1158307,
+          "active_experience_title": "Business Development Representative",
+          "active_experience_description": null,
+          "active_experience_department": "Sales",
+          "active_experience_management_level": "Specialist",
+          "is_decision_maker": 0,
+          "total_experience_duration_months": 81,
+          "total_experience_duration_months_breakdown_department": [
+            {
+              "department": "Engineering and Technical",
+              "total_experience_duration_months": 3
+            },
+            {
+              "department": "Sales",
+              "total_experience_duration_months": 32
+            },
+            {
+              "department": "Operations",
+              "total_experience_duration_months": 6
+            },
+            {
+              "department": "Education",
+              "total_experience_duration_months": 24
+            },
+            {
+              "department": "Customer Service",
+              "total_experience_duration_months": 16
+            }
+          ],
+          "total_experience_duration_months_breakdown_management_level": [
+            {
+              "management_level": "Manager",
+              "total_experience_duration_months": 6
+            },
+            {
+              "management_level": "Specialist",
+              "total_experience_duration_months": 72
+            },
+            {
+              "management_level": "Intern",
+              "total_experience_duration_months": 3
+            }
+          ],
+          "experience": [
+            {
+              "active_experience": 1,
+              "position_title": "Business Development Representative",
+              "department": "Sales",
+              "management_level": "Specialist",
+              "location": "Bridge City, Texas, United States",
+              "description": null,
+              "date_from": "September 2023",
+              "date_from_year": 2023,
+              "date_from_month": 9,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "duration_months": 25,
+              "company_id": 1158307,
+              "company_name": "ProMiles Software Development Corporation",
+              "company_type": "Privately Held",
+              "company_founded_year": null,
+              "company_followers_count": 2291,
+              "company_website": "https://www.promiles.com",
+              "company_facebook_url": [],
+              "company_twitter_url": [
+                "https://www.twitter.com/promilescorp"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/promiles-software-development-corporation",
+              "company_size_range": "51-200 employees",
+              "company_employees_count": 122,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "transportation and logistics",
+                "business and consumer services > shipping and logistics",
+                "trucking reports",
+                "compliance software",
+                "trucking",
+                "special projects",
+                "government solutions",
+                "technology",
+                "application-software",
+                "enterprise-software",
+                "transportation",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 32277480,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 7.964601769911504,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "1900 Texas Avenue; Bridge City, TX 77611, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Bridge City",
+              "company_hq_state": "Texas",
+              "company_hq_street": "1900 Texas Avenue",
+              "company_hq_zipcode": "77611",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 1
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Member Services Representative",
+              "department": "Customer Service",
+              "management_level": "Specialist",
+              "location": "Austin, Texas, United States",
+              "description": "● Assisted members remotely, responding to 40-60 daily phone calls from members ● Verified personal information, listening diligently, researching, and critically thinking to best aid ● Assisted with all banking needs (transactions, research history, orders, products, services, inquiries) ● Proficient use of all software systems to efficiently assist members with banking needs in a timely manner",
+              "date_from": "November 2020",
+              "date_from_year": 2020,
+              "date_from_month": 11,
+              "date_to": "March 2022",
+              "date_to_year": 2022,
+              "date_to_month": 3,
+              "duration_months": 16,
+              "company_id": 614297,
+              "company_name": "Velocity Credit Union",
+              "company_type": "Nonprofit",
+              "company_founded_year": 1947,
+              "company_followers_count": 2039,
+              "company_website": "https://www.velocitycu.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/velocitycu"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/velocityaustin"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/velocity-credit-union",
+              "company_size_range": "201-500 employees",
+              "company_employees_count": 150,
+              "company_industry": "Banking",
+              "company_categories_and_keywords": [
+                "banking",
+                "finance > banking credit and lending (in united states)",
+                "credit union",
+                "loans",
+                "savings",
+                "online banking",
+                "financial services",
+                "non profit"
+              ],
+              "company_annual_revenue_source_5": 15000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 0,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "4515 Seton Center Pkwy; Austin, Texas 78759, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Austin",
+              "company_hq_state": "Texas",
+              "company_hq_street": "4515 Seton Center Pkwy",
+              "company_hq_zipcode": "78759",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 0,
+              "order_in_profile": 2
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Print Production Manager",
+              "department": "Operations",
+              "management_level": "Manager",
+              "location": null,
+              "description": "• Responsible for monitoring and controlling computers, their peripherals, and various other types of electronic data processing equipment • Responsible for setting up computer and other devices to run properly • Prepare, align, and configure machinery, ink, rollers, and paper • Inspects proof sheets to evaluate the quality of printing • Adjusts press machinery to meet quality standards and specifications • Maintain inventory of supplies needed to operate printing presses",
+              "date_from": "March 2023",
+              "date_from_year": 2023,
+              "date_from_month": 3,
+              "date_to": "September 2023",
+              "date_to_year": 2023,
+              "date_to_month": 9,
+              "duration_months": 6,
+              "company_id": 24082227,
+              "company_name": "Minuteman Press",
+              "company_type": "Privately Held",
+              "company_founded_year": 1973,
+              "company_followers_count": 16660,
+              "company_website": "https://www.minuteman.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/minutemanpressfranchise"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/minutemanintl"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/minuteman-press",
+              "company_size_range": "51-200 employees",
+              "company_employees_count": 2572,
+              "company_industry": "Printing Services",
+              "company_categories_and_keywords": [
+                "printing and marketing",
+                "business and consumer services > printing & self publishing (in united states)",
+                "printing",
+                "direct & email marketing",
+                "promotional products",
+                "creative & graphic design",
+                "large format printing",
+                "signs & banners",
+                "direct mail",
+                "branding",
+                "custom apparel",
+                "franchising",
+                "brochures & postcards",
+                "business cards",
+                "advertising",
+                "commercial printing",
+                "business development",
+                "marketing",
+                "mailing",
+                "signage"
+              ],
+              "company_annual_revenue_source_5": null,
+              "company_annual_revenue_currency_source_5": null,
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 5.108295872496935,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "61 Executive Blvd.; Farmingdale, NY 11735, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Farmingdale",
+              "company_hq_state": "New York",
+              "company_hq_street": "61 Executive Blvd.",
+              "company_hq_zipcode": "11735",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 3
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Information Technology Intern",
+              "department": "Engineering and Technical",
+              "management_level": "Intern",
+              "location": "Austin, Texas Area",
+              "description": "● Assisted migrating the database from local to cloud ● Provided onsite support as needed, operating in a classified environment ● Classified documents and folders, added tags and filters for online database after years of minimal organization ● Set up and disassembled network systems, computers and communication devices",
+              "date_from": "May 2018",
+              "date_from_year": 2018,
+              "date_from_month": 5,
+              "date_to": "August 2018",
+              "date_to_year": 2018,
+              "date_to_month": 8,
+              "duration_months": 3,
+              "company_id": 4167660,
+              "company_name": "Signature Science, LLC",
+              "company_type": "Privately Held",
+              "company_founded_year": 2001,
+              "company_followers_count": 3696,
+              "company_website": "https://www.signaturescience.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/p/signature-science-llc-100068140278442",
+                "https://www.facebook.com/signature-science-llc-159515394082133",
+                "https://www.facebook.com/share.php?u=https%3a%2f%2fwww.signaturescience.com%2f"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/sigsci",
+                "https://www.twitter.com/intent/tweet?text=home&url=https%3a%2f%2fwww.signaturescience.com%2f"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/signature-science-llc",
+              "company_size_range": "201-500 employees",
+              "company_employees_count": 188,
+              "company_industry": "Research Services",
+              "company_categories_and_keywords": [
+                "forensic science and genomics",
+                "jobs and career > jobs and career - other (in united states)",
+                "public health",
+                "environmental security",
+                "laboratory quality assurance",
+                "analytical chemistry",
+                "cbrne training",
+                "dna casework",
+                "explosive detection",
+                "statistical data evaluation",
+                "custom engineering solutions",
+                "physics",
+                "forensic science",
+                "bioinformatics",
+                "data science",
+                "cbrne detection",
+                "forensic genetic genealogy",
+                "laboratory proficiency testing",
+                "genomic technologies",
+                "threat expertise",
+                "data science-driven solutions",
+                "quality assurance solutions",
+                "business-services",
+                "biotech",
+                "chemicals",
+                "life-sciences",
+                "systems-integrator",
+                "biotechnology",
+                "health care"
+              ],
+              "company_annual_revenue_source_5": 10000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": -1.5706806282722512,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "8329 North Mopac Expressway; Austin, TX 78759, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Austin",
+              "company_hq_state": "Texas",
+              "company_hq_street": "8329 North Mopac Expressway",
+              "company_hq_zipcode": "78759",
+              "company_last_updated_at": "2025-09-08",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 4
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Inside Sales Specialist",
+              "department": "Sales",
+              "management_level": "Specialist",
+              "location": null,
+              "description": "• Full cycle sales establishing new and expanding existing programs • Introduce and present platform, capabilities, adoption, and administration • Offer white label and custom solutions • Establish client relationships and provide support and direction for both internal and external teams • Maintain and update CRM profiles with activity and changes in client profiles • Create target campaigns for both pre and post sales clients • Follow standards to maintain quality service and guarantee customers receive exceptional service through sales strategies • Conduct peer mentoring and develop best practice strategies for team meetings • Exceed quota and KPI metrics by maintaining/monitoring call logs, sales data and delivery timeframes",
+              "date_from": "September 2022",
+              "date_from_year": 2022,
+              "date_from_month": 9,
+              "date_to": "March 2023",
+              "date_to_year": 2023,
+              "date_to_month": 3,
+              "duration_months": 6,
+              "company_id": 10398603,
+              "company_name": "BSN SPORTS",
+              "company_type": "Privately Held",
+              "company_founded_year": 1972,
+              "company_followers_count": 35041,
+              "company_website": "https://www.bsnsports.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/bsnsports"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/bsnsports"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/bsn-sports",
+              "company_size_range": "1001-5000 employees",
+              "company_employees_count": 2711,
+              "company_industry": "Retail",
+              "company_categories_and_keywords": [
+                "sports apparel and equipment",
+                "sports > sports - other",
+                "manufacturing",
+                "importing",
+                "marketing",
+                "distribution",
+                "fulfillment",
+                "logistics",
+                "sports equipment",
+                "sports apparel",
+                "sports",
+                "fanwear",
+                "custom equipment",
+                "coaches",
+                "team uniforms",
+                "retail",
+                "clothing",
+                "footwear",
+                "sport",
+                "apparel",
+                "sporting goods"
+              ],
+              "company_annual_revenue_source_5": 500000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 7.921974522292993,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "14460 Varsity Brand Way; Farmers Branch , TX 75244, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Farmers Branch",
+              "company_hq_state": "Texas",
+              "company_hq_street": "14460 Varsity Brand Way",
+              "company_hq_zipcode": "75244",
+              "company_last_updated_at": "2025-09-08",
+              "company_stock_ticker": [
+                {
+                  "exchange": "XWBO",
+                  "ticker": "RBI"
+                }
+              ],
+              "company_is_b2b": 1,
+              "order_in_profile": 5
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Counselor",
+              "department": "Education",
+              "management_level": "Specialist",
+              "location": "Austin, Texas Area",
+              "description": "● Managed finances, concessions, transactions and zone operations ● Trained new staff members, implemented new methods to improve overall efficiency and time ● Built rapport between members, parents and YMCA ● Promoted YMCA programs and events to parents ● Operated over The Zone program which could contain up to 50 kids at a time, often working alone ● Established friendly, family-like environment to keep kids eager to return",
+              "date_from": "August 2013",
+              "date_from_year": 2013,
+              "date_from_month": 8,
+              "date_to": "August 2015",
+              "date_to_year": 2015,
+              "date_to_month": 8,
+              "duration_months": 24,
+              "company_id": 3117310,
+              "company_name": "YMCA of Greater Williamson County",
+              "company_type": "Nonprofit",
+              "company_founded_year": 1981,
+              "company_followers_count": 1141,
+              "company_website": "https://www.ymcactx.org",
+              "company_facebook_url": [
+                "https://www.facebook.com/ctxymca"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/ymcagwctx"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/ymca-of-greater-williamson-county",
+              "company_size_range": "51-200 employees",
+              "company_employees_count": 221,
+              "company_industry": "Wellness and Fitness Services",
+              "company_categories_and_keywords": [
+                "health and fitness",
+                "pets and animals > pet food and supplies",
+                "youth development",
+                "healthy living",
+                "social responsibility",
+                "community activities",
+                "healthier lifestyle",
+                "fitness",
+                "health",
+                "family-friendly programs"
+              ],
+              "company_annual_revenue_source_5": 10408095,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 9.405940594059405,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "1812 N Mays St; Round Rock, TX 78664, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Round Rock",
+              "company_hq_state": "Texas",
+              "company_hq_street": "1812 N Mays St",
+              "company_hq_zipcode": "78664",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 0,
+              "order_in_profile": 6
+            }
+          ],
+          "projected_base_salary_p25": null,
+          "projected_base_salary_median": null,
+          "projected_base_salary_p75": null,
+          "projected_base_salary_period": null,
+          "projected_base_salary_currency": null,
+          "projected_base_salary_updated_at": null,
+          "projected_additional_salary": [],
+          "projected_additional_salary_period": null,
+          "projected_additional_salary_currency": null,
+          "projected_additional_salary_updated_at": null,
+          "projected_total_salary_p25": null,
+          "projected_total_salary_median": null,
+          "projected_total_salary_p75": null,
+          "projected_total_salary_period": null,
+          "projected_total_salary_currency": null,
+          "projected_total_salary_updated_at": null,
+          "last_graduation_date": 2019,
+          "education_degrees": [],
+          "education": [
+            {
+              "degree": null,
+              "description": null,
+              "institution_url": "https://www.linkedin.com/school/texas-state-university",
+              "institution_name": "Texas State University",
+              "institution_full_address": "601 University Dr; San Marcos, TX 78666, US",
+              "institution_country_iso2": "US",
+              "institution_country_iso3": "USA",
+              "institution_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "institution_city": "San Marcos",
+              "institution_state": "Texas",
+              "institution_street": "601 University Dr",
+              "institution_zipcode": "78666",
+              "date_from_year": 2015,
+              "date_to_year": 2019,
+              "activities_and_societies": null,
+              "order_in_profile": 1
+            }
+          ],
+          "recommendations_count": null,
+          "recommendations": [],
+          "activity": [
+            {
+              "activity_url": "https://www.linkedin.com/posts/todd-busler_in-saas-sales-it-doesnt-matter-if-youre-activity-7174860963106410496-oJAw",
+              "title": "In SaaS sales, it doesn’t matter if you’re likable. The era of selling high ACV software over steak dinners and golf outings is (mostly) dead. The…",
+              "action": "Liked by",
+              "order_in_profile": 1
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/bbyler_remotework-flexibleworking-pto-activity-7172924228659306497-QMih",
+              "title": "A new colleague recently requested my approval for their PTO.\n\nI approved it right away.\n\nHe then slacked me to explain the reason for his time off.…",
+              "action": "Liked by",
+              "order_in_profile": 2
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/austin-copeland-749771b8_recruitment-sales-getconnected-activity-7169099419936604160-yB4U",
+              "title": "🌟 Hey Everyone! 🌟 Are you someone who loves connecting with people and making a real impact? I'm thrilled to share that we're looking for…",
+              "action": "Liked by",
+              "order_in_profile": 3
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/eric-p-a3101186_honored-to-be-recognized-as-the-top-performer-activity-6989221630073847809-GOe4",
+              "title": "Honored to be recognized as the Top performer for my sales team here at Dell. I received the Diamond award and Rookie award finishing Q2 as #1 on my…",
+              "action": "Liked by",
+              "order_in_profile": 4
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/tiffanieharrison_roughly-a-month-ago-i-filed-for-re-election-activity-6977749830060171264-9vhE",
+              "title": "Roughly a month ago I filed for re-election for the Round Rock ISD School Board Place 6. \n\nIt wasn't a decision that was made lightly.\n\nIn 2020 I…",
+              "action": "Liked by",
+              "order_in_profile": 5
+            },
+            {
+              "activity_url": "https://www.linkedin.com/feed/update/urn:li:activity:6938951689127223296",
+              "title": "It's Nice To Be Important, But It's More Important To Be Nice!",
+              "action": "Liked by",
+              "order_in_profile": 6
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/mary-landrum-524262192_hiring-software-jobforyou-activity-6853321952145342464-S_FJ",
+              "title": "ATTENTION SDR's/ AE's!!\n\nI have a HOT NEW opportunity that will go quickly. Looking for strong, committed individuals to fill Account Executive…",
+              "action": "Liked by",
+              "order_in_profile": 7
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/mary-landrum-524262192_good-morning-atx-i-have-a-new-job-opportunity-activity-6838122371946303488-6xK6",
+              "title": "Good Morning ATX! I have a new job opportunity announcement 📣 \n\nI’m in need for an Account Executive/ISR in software sales, details below:\n\n-45/50K…",
+              "action": "Liked by",
+              "order_in_profile": 8
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/allanmartinprice_iwork4dell-activity-6830601097921527809-PaeT",
+              "title": "Teamwork makes the dream work! Very thankful to have received the Team Player of the Quarter award for FY22 Q2. With these unprecedented times it is…",
+              "action": "Liked by",
+              "order_in_profile": 9
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/garrett-o’brien-33928a159_hiring-career-opportunities-activity-6836276886100869120-gENv",
+              "title": "Working for TTI has been the experience of a lifetime. My role as an Event Marketing Specialist has opened so many new experiences and opportunities…",
+              "action": "Liked by",
+              "order_in_profile": 10
+            }
+          ],
+          "awards": [],
+          "courses": [],
+          "certifications": [],
+          "languages": [],
+          "patents_count": null,
+          "patents_topics": [],
+          "patents": [],
+          "publications_count": null,
+          "publications_topics": [],
+          "publications": [],
+          "projects_count": null,
+          "projects_topics": [],
+          "projects": [],
+          "organizations": [],
+          "github_url": null,
+          "github_username": null,
+          "github_mapping_confidence": null,
+          "github_contributions_count": null,
+          "github_repos_summary": [],
+          "profile_root_field_changes_summary": [
+            {
+              "field_name": "follower_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-10-17 05:49:02.476254"
+            },
+            {
+              "field_name": "summary",
+              "change_type": "new",
+              "last_changed_at": "2025-01-17 22:43:46.347092"
+            },
+            {
+              "field_name": "headline",
+              "change_type": "updated",
+              "last_changed_at": "2025-01-17 22:43:46.347092"
+            },
+            {
+              "field_name": "profile_photo_url",
+              "change_type": "new",
+              "last_changed_at": "2025-07-06 07:29:18.239851"
+            },
+            {
+              "field_name": "deleted",
+              "change_type": "updated",
+              "last_changed_at": "2025-07-06 07:29:18.239851"
+            },
+            {
+              "field_name": "summary",
+              "change_type": "updated",
+              "last_changed_at": "2025-10-17 05:49:02.476254"
+            },
+            {
+              "field_name": "connections_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-10-17 05:49:02.476254"
+            },
+            {
+              "field_name": "headline",
+              "change_type": "new",
+              "last_changed_at": "2025-07-24 05:37:46.537877"
+            }
+          ],
+          "profile_collection_field_changes_summary": [
+            {
+              "field_name": "education",
+              "last_changed_at": "2025-10-17 05:49:02.476254"
+            },
+            {
+              "field_name": "experience",
+              "last_changed_at": "2025-10-17 05:49:02.476254"
+            }
+          ],
+          "experience_recently_started": [],
+          "experience_recently_closed": []
+        },
+        "enrichedAt": "2025-10-29T18:16:39.882Z",
+        "phoneEnrichmentSource": "lusha_v2_linkedin",
+        "phoneEnrichmentDate": "2025-10-29T18:17:02.097Z",
+        "phoneDataQuality": 30
+      },
+      {
+        "id": 393547157,
+        "name": "Gil Garcia",
+        "title": "V.P. VAR Reseller Relations",
+        "department": "Sales",
+        "company": "ProMiles Software",
+        "managementLevel": "Specialist",
+        "connectionsCount": 500,
+        "followersCount": 689,
+        "email": "",
+        "phone": "",
+        "linkedinUrl": "https://www.linkedin.com/in/gil-garcia-031a664",
+        "source": "coresignal_preview",
+        "scores": {
+          "seniority": 3,
+          "departmentFit": 10,
+          "influence": 3,
+          "championPotential": 12,
+          "crossFunctional": 4,
+          "geoAlignment": 8
+        },
+        "overallScore": 6,
+        "relevance": 0.45,
+        "isHighValue": false,
+        "aiRelevance": 0.45,
+        "aiReasoning": "Gil Garcia is a V.P. of VAR Reseller Relations at ProMiles Software, which positions him in a unique but tangential role for Sales Intelligence Software procurement. His primary responsibility appears to be managing relationships with Value-Added Reseller (VAR) partners rather than direct sales operations. While he sits within the Sales department and has VP-level seniority, his focus on channel/partner relationships rather than direct sales makes him less likely to be a primary user or decision-maker for Sales Intelligence Software. However, he could serve as a valuable introducer to the actual sales leadership (Chief Revenue Officer, VP of Direct Sales, etc.) who would be the core stakeholders. His influence score of 4 reflects that while he has organizational access and credibility as a VP, his domain expertise and budget authority likely don't extend to sales intelligence tools used by direct sales teams. At a 100-employee company with a $150K deal size, this purchase would likely require C-suite or direct sales leadership involvement. Gil might provide input if the tool has channel/partner relationship features, but he's unlikely to champion or decide on this purchase independently. Red flag: His specialization in VAR/reseller relations rather than direct sales operations reduces his relevance for traditional sales intelligence software.",
+        "aiConfidence": 0.75,
+        "buyerGroupRole": "champion",
+        "roleConfidence": 48,
+        "roleReasoning": "Promoted to champion (no better candidate found)",
+        "aiRoleValidation": {
+          "suggestedRole": "champion",
+          "confidence": 0.95,
+          "reasoning": "Gil Garcia is optimally assigned as 'champion' (already correctly identified). As V.P. of VAR Reseller Relations in Sales, he is a senior operational leader who would directly benefit from Sales Intelligence Software to enhance reseller partnerships and drive indirect sales. His VP-level title indicates significant influence but typically not final budget authority for a $150K purchase - that would likely require C-suite approval (CEO, CFO, or CRO). As a sales leader, he has the operational expertise to evaluate the product's value, build internal consensus, and champion the business case to decision-makers. His department's direct alignment with the product makes him an ideal advocate rather than final approver. The deal size of $150K typically exceeds VP-level signing authority in mid-market software companies. His presence as champion with William Friedman as stakeholder suggests a healthy buying committee where Gil drives the initiative while others are affected by or approve it.",
+          "alternativeRoles": [
+            "decision",
+            "stakeholder"
+          ]
+        },
+        "aiRoleReasoning": "Gil Garcia is optimally assigned as 'champion' (already correctly identified). As V.P. of VAR Reseller Relations in Sales, he is a senior operational leader who would directly benefit from Sales Intelligence Software to enhance reseller partnerships and drive indirect sales. His VP-level title indicates significant influence but typically not final budget authority for a $150K purchase - that would likely require C-suite approval (CEO, CFO, or CRO). As a sales leader, he has the operational expertise to evaluate the product's value, build internal consensus, and champion the business case to decision-makers. His department's direct alignment with the product makes him an ideal advocate rather than final approver. The deal size of $150K typically exceeds VP-level signing authority in mid-market software companies. His presence as champion with William Friedman as stakeholder suggests a healthy buying committee where Gil drives the initiative while others are affected by or approve it.",
+        "fullProfile": {
+          "id": 393547157,
+          "parent_id": 393547157,
+          "created_at": "2025-02-24T10:57:49.242388Z",
+          "updated_at": "2025-10-14T07:50:34.217814Z",
+          "checked_at": "2025-10-15T12:44:44.879431Z",
+          "changed_at": "2025-10-14T07:50:34.217814Z",
+          "experience_change_last_identified_at": null,
+          "is_deleted": 0,
+          "is_parent": 1,
+          "public_profile_id": 14567077,
+          "linkedin_url": "https://www.linkedin.com/in/gil-garcia-031a664",
+          "linkedin_shorthand_names": [
+            "gil-garcia-031a664",
+            "gil-garcia-ciphr7"
+          ],
+          "historical_ids": [
+            393547157
+          ],
+          "full_name": "Gil Garcia",
+          "first_name": "Gil",
+          "first_name_initial": "G",
+          "middle_name": null,
+          "middle_name_initial": null,
+          "last_name": "Garcia",
+          "last_name_initial": "G",
+          "headline": "V.P. Integrations at ProMiles Software",
+          "summary": null,
+          "picture_url": "https://media.licdn.com/dms/image/v2/C4E03AQG2BmxwAPcZjA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1517716061259?e=2147483647&v=beta&t=b96OdKAa2cwgnUNVTaTL7aGWeNXopTkkSk5I4TfWuOs",
+          "location_country": "United States",
+          "location_country_iso2": "US",
+          "location_country_iso3": "USA",
+          "location_full": "Bridge City, Texas, United States",
+          "location_regions": [
+            "Americas",
+            "Northern America",
+            "AMER"
+          ],
+          "location_city": "Bridge City",
+          "location_state": "Texas",
+          "interests": [],
+          "inferred_skills": [
+            "p",
+            "engineering",
+            "va"
+          ],
+          "historical_skills": [],
+          "connections_count": 500,
+          "followers_count": 689,
+          "services": null,
+          "primary_professional_email": null,
+          "primary_professional_email_status": null,
+          "professional_emails_collection": [],
+          "is_working": 1,
+          "active_experience_company_id": null,
+          "active_experience_title": "V.P. VAR Reseller Relations",
+          "active_experience_description": null,
+          "active_experience_department": "Sales",
+          "active_experience_management_level": "Specialist",
+          "is_decision_maker": 0,
+          "total_experience_duration_months": 361,
+          "total_experience_duration_months_breakdown_department": [
+            {
+              "department": "Sales",
+              "total_experience_duration_months": 274
+            },
+            {
+              "department": "Human Resources",
+              "total_experience_duration_months": 87
+            },
+            {
+              "department": "Other",
+              "total_experience_duration_months": 274
+            }
+          ],
+          "total_experience_duration_months_breakdown_management_level": [
+            {
+              "management_level": "Other",
+              "total_experience_duration_months": 274
+            },
+            {
+              "management_level": "Specialist",
+              "total_experience_duration_months": 361
+            }
+          ],
+          "experience": [
+            {
+              "active_experience": 1,
+              "position_title": "V.P. VAR Reseller Relations",
+              "department": "Sales",
+              "management_level": "Specialist",
+              "location": null,
+              "description": null,
+              "date_from": "January 1998",
+              "date_from_year": 1998,
+              "date_from_month": 1,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "duration_months": 274,
+              "company_id": null,
+              "company_name": "ProMiles Software",
+              "company_type": null,
+              "company_founded_year": null,
+              "company_followers_count": null,
+              "company_website": null,
+              "company_facebook_url": [],
+              "company_twitter_url": [],
+              "company_linkedin_url": null,
+              "company_size_range": null,
+              "company_employees_count": null,
+              "company_industry": null,
+              "company_categories_and_keywords": [],
+              "company_annual_revenue_source_5": null,
+              "company_annual_revenue_currency_source_5": null,
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": null,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": null,
+              "company_hq_country": null,
+              "company_hq_regions": [],
+              "company_hq_country_iso2": null,
+              "company_hq_country_iso3": null,
+              "company_hq_city": null,
+              "company_hq_state": null,
+              "company_hq_street": null,
+              "company_hq_zipcode": null,
+              "company_last_updated_at": null,
+              "company_stock_ticker": [],
+              "company_is_b2b": null,
+              "order_in_profile": 1
+            },
+            {
+              "active_experience": 1,
+              "position_title": "V.P. VAR Integrations",
+              "department": null,
+              "management_level": null,
+              "location": null,
+              "description": null,
+              "date_from": "1998",
+              "date_from_year": 1998,
+              "date_from_month": null,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "duration_months": 274,
+              "company_id": 1158307,
+              "company_name": "ProMiles Software Development Corp.",
+              "company_type": "Privately Held",
+              "company_founded_year": null,
+              "company_followers_count": 2291,
+              "company_website": "https://www.promiles.com",
+              "company_facebook_url": [],
+              "company_twitter_url": [
+                "https://www.twitter.com/promilescorp"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/promiles-software-development-corporation",
+              "company_size_range": "51-200 employees",
+              "company_employees_count": 122,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "transportation and logistics",
+                "business and consumer services > shipping and logistics",
+                "trucking reports",
+                "compliance software",
+                "trucking",
+                "special projects",
+                "government solutions",
+                "technology",
+                "application-software",
+                "enterprise-software",
+                "transportation",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 32277480,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 7.964601769911504,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "1900 Texas Avenue; Bridge City, TX 77611, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Bridge City",
+              "company_hq_state": "Texas",
+              "company_hq_street": "1900 Texas Avenue",
+              "company_hq_zipcode": "77611",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 2
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Personnel Man",
+              "department": "Human Resources",
+              "management_level": "Specialist",
+              "location": null,
+              "description": "I started my Naval Career as a Machinist Mate (MM) then converted to Personelman (PN) after 3 1/2 in Engineering Department onboard USS John F. Kennedy, Stationed in Norfolk, VA later we dry docked in Philadelphia. Veteran- Desert Shield/Desert Storm.",
+              "date_from": "June 1990",
+              "date_from_year": 1990,
+              "date_from_month": 6,
+              "date_to": "September 1997",
+              "date_to_year": 1997,
+              "date_to_month": 9,
+              "duration_months": 87,
+              "company_id": 3055223,
+              "company_name": "US Navy",
+              "company_type": "Government Agency",
+              "company_founded_year": null,
+              "company_followers_count": 703423,
+              "company_website": "https://www.navy.mil",
+              "company_facebook_url": [
+                "https://www.facebook.com/usnavy",
+                "https://www.facebook.com/usnavy/about"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/usnavy",
+                "https://www.twitter.com/usnavy?ref_src=twsrc%5egoogle%7ctwcamp%5eserp%7ctwgr%5eauthor"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/us-navy",
+              "company_size_range": "10,001+ employees",
+              "company_employees_count": 158956,
+              "company_industry": "Armed Forces",
+              "company_categories_and_keywords": [
+                "law and government > national security (in united states)",
+                "engineering",
+                "medical",
+                "diver",
+                "air rescue",
+                "special forces",
+                "information technology",
+                "cryptology",
+                "surface warfare",
+                "aviation",
+                "government-public-services",
+                "defense",
+                "marine",
+                "maritime",
+                "public-relations",
+                "aerospace",
+                "supply chain management",
+                "training"
+              ],
+              "company_annual_revenue_source_5": 38411185000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": -19.547315730069794,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "1200 Navy Pentagon; Washington, DC 20350, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Washington",
+              "company_hq_state": "District Of Columbia",
+              "company_hq_street": "1200 Navy Pentagon",
+              "company_hq_zipcode": "20350",
+              "company_last_updated_at": "2025-09-09",
+              "company_stock_ticker": [],
+              "company_is_b2b": null,
+              "order_in_profile": 3
+            }
+          ],
+          "projected_base_salary_p25": null,
+          "projected_base_salary_median": null,
+          "projected_base_salary_p75": null,
+          "projected_base_salary_period": null,
+          "projected_base_salary_currency": null,
+          "projected_base_salary_updated_at": null,
+          "projected_additional_salary": [],
+          "projected_additional_salary_period": null,
+          "projected_additional_salary_currency": null,
+          "projected_additional_salary_updated_at": null,
+          "projected_total_salary_p25": null,
+          "projected_total_salary_median": null,
+          "projected_total_salary_p75": null,
+          "projected_total_salary_period": null,
+          "projected_total_salary_currency": null,
+          "projected_total_salary_updated_at": null,
+          "last_graduation_date": 2009,
+          "education_degrees": [
+            "Business, IT Management"
+          ],
+          "education": [
+            {
+              "degree": "Business, IT Management",
+              "description": null,
+              "institution_url": null,
+              "institution_name": "Western Governor University",
+              "institution_full_address": null,
+              "institution_country_iso2": null,
+              "institution_country_iso3": null,
+              "institution_regions": [],
+              "institution_city": null,
+              "institution_state": null,
+              "institution_street": null,
+              "institution_zipcode": null,
+              "date_from_year": 2006,
+              "date_to_year": 2009,
+              "activities_and_societies": null,
+              "order_in_profile": 1
+            },
+            {
+              "degree": null,
+              "description": null,
+              "institution_url": null,
+              "institution_name": "United Christian Academy",
+              "institution_full_address": null,
+              "institution_country_iso2": null,
+              "institution_country_iso3": null,
+              "institution_regions": [],
+              "institution_city": null,
+              "institution_state": null,
+              "institution_street": null,
+              "institution_zipcode": null,
+              "date_from_year": null,
+              "date_to_year": null,
+              "activities_and_societies": null,
+              "order_in_profile": 2
+            }
+          ],
+          "recommendations_count": 1,
+          "recommendations": [
+            {
+              "recommendation": "“I have known Gil and the ProMiles crew for many years and have worked directly with Gil in my last 3 positions.  As VP of Integrations, nobody is more knowledgeable or reliable than Gil.  If need to get something done and get someone to go to bat for you at ProMiles, look no further than Gil Garcia!”",
+              "referee_full_name": "Roy Thacker",
+              "referee_url": "https://www.linkedin.com/in/roy-thacker-2695437",
+              "order_in_profile": 1
+            }
+          ],
+          "activity": [
+            {
+              "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_logisticsmanagementsoftware-supplychain-activity-7356811238544162816-8-Dk",
+              "title": "07/31/2025 ProMiles’ Average Daily Diesel Fuel Prices\n\nBased on retail pricing data from FuelSurchargeIndex.org collected, daily, from over 18,000…",
+              "action": "Liked by",
+              "order_in_profile": 1
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/ltaylor23_making-an-effort-to-share-more-with-my-linkedin-activity-7305921408126066690-6O8o",
+              "title": "Making an effort to share more with my LinkedIn community! Here are a few 2024 highlights that never made it to my feed—grateful for the experiences…",
+              "action": "Liked by",
+              "order_in_profile": 2
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_logisticsmanagementsoftware-supplychain-activity-7306013447991799809-HC1-",
+              "title": "03/13/2025 ProMiles’ Average Daily Diesel Fuel Prices\n\nBased on retail pricing data from FuelSurchargeIndex.org collected, daily, from over 18,000…",
+              "action": "Liked by",
+              "order_in_profile": 3
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/mikewebbpromiles_promiles-oversize-overweight-quote-manager-activity-7292191091980656641-SAnK",
+              "title": "REVOLUTIONIZE the way you Quote OS/OW Loads!  Contact me for a demo and to answer any questions you may have. mike@promiles.com…",
+              "action": "Liked by",
+              "order_in_profile": 4
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/mikewebbpromiles_tech-on-deck-upt-21-program-with-michael-activity-7290754119932215297-d2VW",
+              "title": "I am looking forward to seeing everyone this year at the Specialized Carriers & Rigging Association (SC&RA) Symposium, make sure you visit us at…",
+              "action": "Liked by",
+              "order_in_profile": 5
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_national-truck-driver-appreciation-week-2024-activity-7241472912233312256-CDPM",
+              "title": "National Truck Driver Appreciation Week 2024",
+              "action": "Liked by",
+              "order_in_profile": 6
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_transportation-regulatorycompliance-activity-7170918514524835840-gVIp",
+              "title": "03/05/2024 ProMiles’ Average Daily Diesel Fuel Prices\n  \n Based on retail pricing data from FuelSurchargeIndex.org collected, daily, from over 18,000…",
+              "action": "Liked by",
+              "order_in_profile": 7
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_check-out-the-newest-podcast-covering-the-activity-7019062046738526208-c9yS",
+              "title": "Check out the newest podcast covering the Trucking Industry - featuring the one of a kind Tony Stroncheck & hosted by Steven Todd. Insights…",
+              "action": "Liked by",
+              "order_in_profile": 8
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/manique-gray_fuelprices-credentials-permitting-activity-6914569386175475712-kta7",
+              "title": "ProMiles spreading the word on our new products! Fuel Finder Mobile App and eCredentials! #fuelprices #credentials #permitting",
+              "action": "Liked by",
+              "order_in_profile": 9
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_dan-wells-and-steven-todd-were-pleased-to-activity-6861016958532427777-_7ar",
+              "title": "Dan Wells and Steven Todd were pleased to represent ProMiles at the Specialized Carriers & Rigging Association (SC&RA) Annual Conference - including…",
+              "action": "Liked by",
+              "order_in_profile": 10
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/manique-gray_spreadlove-truckerlife-truckersmaketheworldgoround-activity-6869006189120786432-NWqS",
+              "title": "Season of Gratitude is among us <3 #spreadlove #Truckerlife #TruckersMakeTheWorldGoRound",
+              "action": "Liked by",
+              "order_in_profile": 11
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/gil-garcia-ciphr7_microsoft-teams-activity-6909915760517619712-yhXL",
+              "title": "https://lnkd.in/d-sssZsu \nInviting all ProMiles customers to register free for ProMiles Permitting Customer Virtual Conference, April 14, 2022 -…",
+              "action": "Shared by",
+              "order_in_profile": 12
+            }
+          ],
+          "awards": [],
+          "courses": [],
+          "certifications": [
+            {
+              "title": "JavaScript",
+              "issuer": "Solo Learning",
+              "issuer_url": "https://www.linkedin.com/company/synergistx",
+              "credential_id": null,
+              "certificate_url": "https://www.sololearn.com/Certificate/1024-4632717/pdf/?trk=public_profile_certification-title",
+              "date_from": "Dec 2017",
+              "date_from_year": 2017,
+              "date_from_month": 12,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "order_in_profile": 1
+            },
+            {
+              "title": "Design the Web: SVG Rollovers with CSS",
+              "issuer": "lynda.com",
+              "issuer_url": "https://www.linkedin.com/company/lynda-com",
+              "credential_id": null,
+              "certificate_url": "http://www.lynda.com/CSS-tutorials/Design-Web-SVG-Rollovers-CSS/176494-2.html?utm_source=cheetah&utm_medium=email&utm_campaign=linkedin-non&trk=public_profile_certification-title",
+              "date_from": "Aug 2014",
+              "date_from_year": 2014,
+              "date_from_month": 8,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "order_in_profile": 2
+            },
+            {
+              "title": "Up and Running with ASP.NET",
+              "issuer": "lynda.com",
+              "issuer_url": "https://www.linkedin.com/company/lynda-com",
+              "credential_id": null,
+              "certificate_url": "http://www.lynda.com/ASPNET-tutorials/Up-Running-ASPNET/158377-2.html?trk=public_profile_certification-title",
+              "date_from": "Aug 2014",
+              "date_from_year": 2014,
+              "date_from_month": 8,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "order_in_profile": 3
+            },
+            {
+              "title": "Creating a First Web Site with Dreamweaver CS6",
+              "issuer": "lynda.com",
+              "issuer_url": "https://www.linkedin.com/company/lynda-com",
+              "credential_id": null,
+              "certificate_url": "http://www.lynda.com/Dreamweaver-tutorials/Creating-First-Web-Site-Dreamweaver-CS6/100224-2.html?trk=public_profile_certification-title",
+              "date_from": "Jan 2014",
+              "date_from_year": 2014,
+              "date_from_month": 1,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "order_in_profile": 4
+            },
+            {
+              "title": "Social Media Marketing with Facebook and Twitter",
+              "issuer": "lynda.com",
+              "issuer_url": "https://www.linkedin.com/company/lynda-com",
+              "credential_id": null,
+              "certificate_url": "http://www.lynda.com/Facebook-tutorials/social-media-marketing-with-and-twitter/47759-2.html?trk=public_profile_certification-title",
+              "date_from": "Jan 2014",
+              "date_from_year": 2014,
+              "date_from_month": 1,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "order_in_profile": 5
+            }
+          ],
+          "languages": [],
+          "patents_count": null,
+          "patents_topics": [],
+          "patents": [],
+          "publications_count": null,
+          "publications_topics": [],
+          "publications": [],
+          "projects_count": null,
+          "projects_topics": [],
+          "projects": [],
+          "organizations": [],
+          "github_url": null,
+          "github_username": null,
+          "github_mapping_confidence": null,
+          "github_contributions_count": null,
+          "github_repos_summary": [],
+          "profile_root_field_changes_summary": [
+            {
+              "field_name": "follower_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-10-14 07:50:34.217814"
+            },
+            {
+              "field_name": "profile_photo_url",
+              "change_type": "deleted",
+              "last_changed_at": "2025-02-24 10:57:49.242388"
+            },
+            {
+              "field_name": "profile_photo_url",
+              "change_type": "new",
+              "last_changed_at": "2025-04-28 20:53:40.371082"
+            },
+            {
+              "field_name": "profile_url",
+              "change_type": "updated",
+              "last_changed_at": "2025-08-18 15:48:46.716770"
+            },
+            {
+              "field_name": "deleted",
+              "change_type": "updated",
+              "last_changed_at": "2025-06-15 05:48:54.018235"
+            },
+            {
+              "field_name": "shorthand_name",
+              "change_type": "updated",
+              "last_changed_at": "2025-08-18 15:48:46.716770"
+            },
+            {
+              "field_name": "recommendations_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-06-14 15:01:25.339003"
+            }
+          ],
+          "profile_collection_field_changes_summary": [
+            {
+              "field_name": "education",
+              "last_changed_at": "2025-07-31 01:29:57.378718"
+            },
+            {
+              "field_name": "certifications",
+              "last_changed_at": "2025-10-14 07:50:34.217814"
+            },
+            {
+              "field_name": "activity",
+              "last_changed_at": "2025-08-18 15:48:46.716770"
+            },
+            {
+              "field_name": "recommendations",
+              "last_changed_at": "2025-06-14 15:01:25.339003"
+            },
+            {
+              "field_name": "experience",
+              "last_changed_at": "2025-07-31 01:29:57.378718"
+            }
+          ],
+          "experience_recently_started": [],
+          "experience_recently_closed": []
+        },
+        "enrichedAt": "2025-10-29T18:16:40.482Z"
+      }
+    ],
+    "report": {
+      "id": "report_1761761758807_4r9hmb80s",
+      "generatedAt": "2025-10-29T18:17:01.329Z",
+      "executiveSummary": "Identified 2-person buyer group for ProMiles Software Development ($150,000 deal) with 52% cohesion score. Group includes 0 decision maker(s), 2 champion(s), and comprehensive cross-functional coverage. Research methodology validated 2 final members from 20 initial candidates.",
+      "researchMethodology": {
+        "approach": "Double-waterfall discovery with multi-dimensional scoring",
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Company Intelligence",
+            "description": "Database-first company research with Coresignal API fallback",
+            "result": "Optimal search parameters calculated"
+          },
+          {
+            "stage": 2,
+            "name": "Wide Preview Search",
+            "description": "Cross-departmental employee discovery using Coresignal Preview API",
+            "result": "20 employees discovered across all functions"
+          },
+          {
+            "stage": 3,
+            "name": "Smart Scoring",
+            "description": "Multi-dimensional scoring: seniority, influence, champion potential, cross-functional ability",
+            "result": "Top candidates identified before expensive collect API"
+          },
+          {
+            "stage": 4,
+            "name": "Role Assignment",
+            "description": "Deal-size-aware role assignment ensuring Decision Maker + Champion",
+            "result": "Appropriate roles assigned based on deal size"
+          },
+          {
+            "stage": 5,
+            "name": "Cross-Functional Validation",
+            "description": "Stakeholder completeness validation across all relevant functions",
+            "result": "Missing stakeholders added for comprehensive coverage"
+          },
+          {
+            "stage": 6,
+            "name": "Full Profile Collection",
+            "description": "Coresignal Collect API for final buyer group members only",
+            "result": "Complete profiles for final buyer group"
+          },
+          {
+            "stage": 7,
+            "name": "Cohesion Analysis",
+            "description": "Multi-factor cohesion validation",
+            "result": "52% cohesion score with detailed analysis"
+          }
+        ],
+        "searchParameters": {
+          "searchSize": 100,
+          "maxPreviewPages": 5,
+          "buyerGroupSize": {
+            "min": 6,
+            "max": 9,
+            "ideal": 8
+          },
+          "companySize": 100,
+          "industry": "Unknown",
+          "searchStrategy": "comprehensive",
+          "filteringLevel": "none"
+        },
+        "dataSources": [
+          "Coresignal API",
+          "Internal Database",
+          "AI Analysis"
+        ],
+        "confidenceLevel": 53
+      },
+      "companyIntelligence": {
+        "employeeCount": 100,
+        "revenue": 0,
+        "industry": "Unknown",
+        "growthRate": 0,
+        "activeHiring": 0,
+        "fundingStage": "bootstrapped",
+        "dataSource": "default",
+        "lastUpdated": "2025-10-29T18:15:58.995Z",
+        "insights": [
+          "Company size: Medium",
+          "Growth trajectory: Stable",
+          "Hiring activity: Limited",
+          "Funding status: bootstrapped"
+        ]
+      },
+      "buyerGroupJustification": [
+        {
+          "name": "William Friedman",
+          "title": "Business Development Representative",
+          "department": "Sales",
+          "role": "champion",
+          "confidence": "60%",
+          "detailedReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+          "keyInsights": [
+            "Seniority score: 3/10",
+            "Champion potential: 12/25",
+            "Influence score: 3/10",
+            "Network: 290 connections",
+            "Relevance: 75%"
+          ],
+          "addedForCoverage": false,
+          "justification": "**William Friedman (Business Development Representative) - CHAMPION**\n\n**Operational Leadership**: **Advocacy Potential**: Sales leaders are natural champions for revenue-generating tools.\n\n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 3/10\n- Network Size: 290 connections\n- Role Confidence: 60%\n"
+        },
+        {
+          "name": "Gil Garcia",
+          "title": "V.P. VAR Reseller Relations",
+          "department": "Sales",
+          "role": "champion",
+          "confidence": "48%",
+          "detailedReasoning": "Promoted to champion (no better candidate found)",
+          "keyInsights": [
+            "Seniority score: 3/10",
+            "Champion potential: 12/25",
+            "Influence score: 3/10",
+            "Network: 500 connections",
+            "Relevance: 45%"
+          ],
+          "addedForCoverage": false,
+          "justification": "**Gil Garcia (V.P. VAR Reseller Relations) - CHAMPION**\n\n**Operational Leadership**: **Advocacy Potential**: Sales leaders are natural champions for revenue-generating tools.\n\n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 3/10\n- Network Size: 500 connections\n- Role Confidence: 48%\n"
+        }
+      ],
+      "crossFunctionalCoverage": {
+        "summary": {
+          "primaryCovered": true,
+          "technicalCovered": false,
+          "riskCovered": false,
+          "financialCovered": false,
+          "overallScore": 25
+        },
+        "byFunction": {
+          "primary": {
+            "covered": [
+              "Sales"
+            ],
+            "missing": [
+              "Operations",
+              "Revenue"
+            ],
+            "representatives": [
+              {
+                "function": "Sales",
+                "name": "William Friedman",
+                "title": "Business Development Representative",
+                "department": "Sales"
+              }
+            ]
+          },
+          "technical": {
+            "covered": [],
+            "missing": [
+              "IT",
+              "Technology",
+              "Engineering"
+            ],
+            "representatives": []
+          },
+          "financial": {
+            "covered": [],
+            "missing": [
+              "Finance",
+              "Procurement",
+              "FP&A"
+            ],
+            "representatives": []
+          }
+        },
+        "gaps": [
+          "Technical implementation",
+          "Risk management",
+          "Financial approval"
+        ],
+        "recommendations": [
+          "Add IT stakeholder for technical implementation",
+          "Add Security/Legal stakeholder for risk management",
+          "Add Finance stakeholder for budget approval"
+        ]
+      },
+      "cohesionAnalysis": {
+        "overallScore": 52,
+        "confidence": "LOW",
+        "factors": {
+          "reportingProximity": {
+            "score": 0,
+            "explanation": "Executive reporting relationships"
+          },
+          "departmentClustering": {
+            "score": 100,
+            "explanation": "Department collaboration patterns"
+          },
+          "seniorityBalance": {
+            "score": 80,
+            "explanation": "Appropriate seniority distribution"
+          },
+          "geographicAlignment": {
+            "score": 75,
+            "explanation": "Location-based collaboration"
+          },
+          "functionalInterdependence": {
+            "score": 0,
+            "explanation": "Cross-functional work relationships"
+          }
+        },
+        "reasoning": "Limited reporting proximity; Good department collaboration; Well-balanced seniority levels; Limited functional interdependence",
+        "recommendations": [
+          "Consider adding members who report to same executives",
+          "Consider adding members from interdependent functions",
+          "Overall cohesion could be improved with better stakeholder selection"
+        ]
+      },
+      "championAnalysis": {
+        "count": 2,
+        "champions": [
+          {
+            "name": "William Friedman",
+            "title": "Business Development Representative",
+            "department": "Sales",
+            "championScore": 12,
+            "advocacyPotential": "Low",
+            "internalInfluence": "Medium",
+            "networkStrength": 290
+          },
+          {
+            "name": "Gil Garcia",
+            "title": "V.P. VAR Reseller Relations",
+            "department": "Sales",
+            "championScore": 12,
+            "advocacyPotential": "Low",
+            "internalInfluence": "Medium",
+            "networkStrength": 500
+          }
+        ],
+        "analysis": "Moderate champion potential - consider additional advocates"
+      },
+      "costEfficiency": {
+        "methodology": "Double-waterfall approach (preview then collect)",
+        "costs": {
+          "preview": 2,
+          "collect": 2,
+          "total": 4
+        },
+        "comparison": {
+          "naiveApproach": 20,
+          "smartApproach": 4,
+          "savings": 16,
+          "savingsPercentage": 80
+        },
+        "efficiency": {
+          "previewToCollectRatio": 10,
+          "costPerFinalMember": 2
+        }
+      },
+      "qualityMetrics": {
+        "averageConfidence": 54,
+        "averageInfluence": 3,
+        "averageRelevance": 60,
+        "decisionMakerCount": 0,
+        "championCount": 2,
+        "stakeholderCount": 0,
+        "blockerCount": 0,
+        "introducerCount": 0,
+        "qualityGrade": "D"
+      },
+      "recommendations": [
+        "Consider improving buyer group cohesion through better stakeholder selection",
+        "Critical: Add appropriate decision maker for deal size",
+        "Consider adding more stakeholders for comprehensive coverage"
+      ]
+    },
+    "cohesion": {
+      "score": 52,
+      "confidence": "LOW",
+      "factors": {
+        "reportingProximity": 0,
+        "departmentClustering": 100,
+        "seniorityBalance": 80,
+        "geographicAlignment": 75,
+        "functionalInterdependence": 0
+      },
+      "reasoning": "Limited reporting proximity; Good department collaboration; Well-balanced seniority levels; Limited functional interdependence",
+      "recommendations": [
+        "Consider adding members who report to same executives",
+        "Consider adding members from interdependent functions",
+        "Overall cohesion could be improved with better stakeholder selection"
+      ]
+    },
+    "coverage": {
+      "primary": true,
+      "technical": false,
+      "risk": false,
+      "financial": false,
+      "details": {
+        "primary": {
+          "covered": [
+            "Sales"
+          ],
+          "missing": [
+            "Operations",
+            "Revenue"
+          ],
+          "representatives": [
+            {
+              "function": "Sales",
+              "name": "William Friedman",
+              "title": "Business Development Representative",
+              "department": "Sales"
+            }
+          ]
+        },
+        "technical": {
+          "covered": [],
+          "missing": [
+            "IT",
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      }
+    },
+    "intelligence": {
+      "employeeCount": 100,
+      "revenue": 0,
+      "industry": "Unknown",
+      "growthRate": 0,
+      "activeHiring": 0,
+      "fundingStage": "bootstrapped",
+      "dataSource": "default",
+      "lastUpdated": "2025-10-29T18:15:58.995Z",
+      "companyName": "ProMiles Software Development",
+      "linkedinUrl": null,
+      "website": "https://www.promiles.com/",
+      "tier": "S6",
+      "searchStrategy": "comprehensive",
+      "filteringLevel": "none"
+    },
+    "costs": {
+      "preview": 2,
+      "collect": 2,
+      "total": 4
+    },
+    "processingTime": 66329,
+    "pipelineState": {
+      "startTime": 1761761758807,
+      "stage": "completed",
+      "totalEmployees": 20,
+      "processedEmployees": 0,
+      "finalBuyerGroup": [
+        {
+          "id": 509733553,
+          "name": "William Friedman",
+          "title": "Business Development Representative",
+          "department": "Sales",
+          "company": "ProMiles Software Development Corporation",
+          "managementLevel": "Specialist",
+          "connectionsCount": 290,
+          "followersCount": 290,
+          "email": "",
+          "phone": "",
+          "linkedinUrl": "https://www.linkedin.com/in/william-friedman",
+          "source": "coresignal_preview",
+          "scores": {
+            "seniority": 3,
+            "departmentFit": 10,
+            "influence": 3,
+            "championPotential": 12,
+            "crossFunctional": 4,
+            "geoAlignment": 8
+          },
+          "overallScore": 6,
+          "relevance": 0.75,
+          "isHighValue": false,
+          "aiRelevance": 0.75,
+          "aiReasoning": "William Friedman is a Business Development Representative in the Sales department, making him highly relevant as a potential champion for Sales Intelligence Software. As a BDR, he would be a direct end-user of sales intelligence tools for prospecting, lead generation, and account research - core functions of his role. BDRs typically rely heavily on such tools to identify prospects, find contact information, and gather account insights. However, his influence level is moderate (6/10) because while he would likely advocate strongly for tools that make his job easier and could influence the decision through demonstrating ROI and user need, he lacks the authority to make a $150K purchasing decision independently. At ProMiles (100 employees), this purchase would likely require approval from a VP of Sales, CRO, or C-suite executive. His role would be as a 'champion' - testing the product, providing feedback, building internal case for adoption, and influencing decision-makers. The relatively small LinkedIn network (290 connections) suggests he's earlier in his career, which aligns with the BDR title and supports the moderate influence assessment. He's an excellent entry point for discovery and building internal support, but not the final decision-maker.",
+          "aiConfidence": 0.85,
+          "buyerGroupRole": "champion",
+          "roleConfidence": 60,
+          "roleReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+          "aiRoleValidation": {
+            "suggestedRole": "champion",
+            "confidence": 0.85,
+            "reasoning": "William Friedman should be assigned as a 'champion' role for the following reasons:\n\n1. **Direct Product Relevance**: As a Business Development Representative in Sales, he is a primary end-user of Sales Intelligence Software. This tool directly impacts his daily workflow for prospecting, lead qualification, and account research.\n\n2. **Operational Impact**: BDRs are typically heavy users of sales intelligence tools and understand the pain points and value proposition intimately. He can articulate how this software will improve pipeline generation and sales efficiency.\n\n3. **Current Group Composition**: Gil Garcia is already listed as a champion. Having William as a second champion creates a powerful advocacy coalition within the sales organization, strengthening the business case from multiple angles.\n\n4. **Deal Size Context**: At $150K, this purchase likely requires executive approval. A BDR lacks budget authority at this level but can provide crucial bottom-up advocacy to influence decision-makers by demonstrating ROI and user adoption commitment.\n\n5. **Seniority Consideration**: While BDRs are typically early-career roles without decision-making authority, they are credible voices for tool requirements and can influence their sales leadership (who likely hold budget authority).\n\nThe 'champion' role is more appropriate than 'stakeholder' because of his direct sales function and ability to actively advocate for adoption, not just be passively affected by it.",
+            "alternativeRoles": [
+              "stakeholder",
+              "introducer"
+            ]
+          },
+          "aiRoleReasoning": "William Friedman should be assigned as a 'champion' role for the following reasons:\n\n1. **Direct Product Relevance**: As a Business Development Representative in Sales, he is a primary end-user of Sales Intelligence Software. This tool directly impacts his daily workflow for prospecting, lead qualification, and account research.\n\n2. **Operational Impact**: BDRs are typically heavy users of sales intelligence tools and understand the pain points and value proposition intimately. He can articulate how this software will improve pipeline generation and sales efficiency.\n\n3. **Current Group Composition**: Gil Garcia is already listed as a champion. Having William as a second champion creates a powerful advocacy coalition within the sales organization, strengthening the business case from multiple angles.\n\n4. **Deal Size Context**: At $150K, this purchase likely requires executive approval. A BDR lacks budget authority at this level but can provide crucial bottom-up advocacy to influence decision-makers by demonstrating ROI and user adoption commitment.\n\n5. **Seniority Consideration**: While BDRs are typically early-career roles without decision-making authority, they are credible voices for tool requirements and can influence their sales leadership (who likely hold budget authority).\n\nThe 'champion' role is more appropriate than 'stakeholder' because of his direct sales function and ability to actively advocate for adoption, not just be passively affected by it.",
+          "fullProfile": {
+            "id": 509733553,
+            "parent_id": 509733553,
+            "created_at": "2025-01-17T22:43:46.347092Z",
+            "updated_at": "2025-10-17T05:49:02.476254Z",
+            "checked_at": "2025-10-17T05:49:02.476254Z",
+            "changed_at": "2025-10-17T05:49:02.476254Z",
+            "experience_change_last_identified_at": null,
+            "is_deleted": 0,
+            "is_parent": 1,
+            "public_profile_id": 563681486,
+            "linkedin_url": "https://www.linkedin.com/in/william-friedman",
+            "linkedin_shorthand_names": [
+              "william-friedman"
+            ],
+            "historical_ids": [
+              509733553
+            ],
+            "full_name": "William Friedman",
+            "first_name": "William",
+            "first_name_initial": "W",
+            "middle_name": null,
+            "middle_name_initial": null,
+            "last_name": "Friedman",
+            "last_name_initial": "F",
+            "headline": "Business Development Representative @ ProMiles Software | BBA, Solution Selling",
+            "summary": "As a Business Development Representative at ProMiles Software Development Corporation, I leverage my Bachelor of Business Administration degree in Computer Information Systems (CIS) and my solution selling and interpersonal skills to generate leads, pitch products, and close deals. I have over a year of experience in full cycle sales, offering white label and custom solutions to clients in various industries. I am passionate about technology and proficient in learning and utilizing new systems and technology, such as CRM, SAP, SQL, Salesforce, Sales Intel, and Python. I am also driven by my competitive mindset, strong work ethic, and eagerness to learn and grow. My goal is to help others understand the value and benefit of implementing the latest technology and help businesses improve their ROI and decrease their operating expenses.",
+            "picture_url": "https://media.licdn.com/dms/image/v2/C4D03AQHbpZgdnKXTvA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1517528612744?e=2147483647&v=beta&t=TYfUGWKIAV7pdaSxOHHxNUMJMl4b4w0foxNOvYL_ax0",
+            "location_country": "United States",
+            "location_country_iso2": "US",
+            "location_country_iso3": "USA",
+            "location_full": "Round Rock, Texas, United States",
+            "location_regions": [
+              "Americas",
+              "Northern America",
+              "AMER"
+            ],
+            "location_city": "Round Rock",
+            "location_state": "Texas",
+            "interests": [],
+            "inferred_skills": [
+              "software",
+              "administration",
+              "selling",
+              "sales",
+              "technology",
+              "crm",
+              "sap",
+              "sql",
+              "salesforce",
+              "python",
+              "expenses",
+              "operations",
+              "efficiency",
+              "banking",
+              "research",
+              "database",
+              "cloud",
+              "computers",
+              "print",
+              "production",
+              "responsible",
+              "controlling",
+              "processing",
+              "machinery",
+              "specifications",
+              "inventory",
+              "campaigns",
+              "mentoring",
+              "kpi",
+              "metrics",
+              "business development",
+              "software development",
+              "business administration",
+              "information systems",
+              "solution selling",
+              "interpersonal skills",
+              "work ethic",
+              "information technology",
+              "print production",
+              "data processing",
+              "inside sales",
+              "peer mentoring"
+            ],
+            "historical_skills": [],
+            "connections_count": 290,
+            "followers_count": 290,
+            "services": null,
+            "primary_professional_email": "william@promiles.com",
+            "primary_professional_email_status": "matched_pattern",
+            "professional_emails_collection": [
+              {
+                "professional_email": "william@promiles.com",
+                "professional_email_status": "matched_pattern",
+                "order_of_priority": 1
+              },
+              {
+                "professional_email": "wfriedman@promiles.com",
+                "professional_email_status": "matched_pattern",
+                "order_of_priority": 2
+              },
+              {
+                "professional_email": "william.friedman@promiles.com",
+                "professional_email_status": "matched_pattern",
+                "order_of_priority": 3
+              }
+            ],
+            "is_working": 1,
+            "active_experience_company_id": 1158307,
+            "active_experience_title": "Business Development Representative",
+            "active_experience_description": null,
+            "active_experience_department": "Sales",
+            "active_experience_management_level": "Specialist",
+            "is_decision_maker": 0,
+            "total_experience_duration_months": 81,
+            "total_experience_duration_months_breakdown_department": [
+              {
+                "department": "Engineering and Technical",
+                "total_experience_duration_months": 3
+              },
+              {
+                "department": "Sales",
+                "total_experience_duration_months": 32
+              },
+              {
+                "department": "Operations",
+                "total_experience_duration_months": 6
+              },
+              {
+                "department": "Education",
+                "total_experience_duration_months": 24
+              },
+              {
+                "department": "Customer Service",
+                "total_experience_duration_months": 16
+              }
+            ],
+            "total_experience_duration_months_breakdown_management_level": [
+              {
+                "management_level": "Manager",
+                "total_experience_duration_months": 6
+              },
+              {
+                "management_level": "Specialist",
+                "total_experience_duration_months": 72
+              },
+              {
+                "management_level": "Intern",
+                "total_experience_duration_months": 3
+              }
+            ],
+            "experience": [
+              {
+                "active_experience": 1,
+                "position_title": "Business Development Representative",
+                "department": "Sales",
+                "management_level": "Specialist",
+                "location": "Bridge City, Texas, United States",
+                "description": null,
+                "date_from": "September 2023",
+                "date_from_year": 2023,
+                "date_from_month": 9,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "duration_months": 25,
+                "company_id": 1158307,
+                "company_name": "ProMiles Software Development Corporation",
+                "company_type": "Privately Held",
+                "company_founded_year": null,
+                "company_followers_count": 2291,
+                "company_website": "https://www.promiles.com",
+                "company_facebook_url": [],
+                "company_twitter_url": [
+                  "https://www.twitter.com/promilescorp"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/promiles-software-development-corporation",
+                "company_size_range": "51-200 employees",
+                "company_employees_count": 122,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "transportation and logistics",
+                  "business and consumer services > shipping and logistics",
+                  "trucking reports",
+                  "compliance software",
+                  "trucking",
+                  "special projects",
+                  "government solutions",
+                  "technology",
+                  "application-software",
+                  "enterprise-software",
+                  "transportation",
+                  "software"
+                ],
+                "company_annual_revenue_source_5": 32277480,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 7.964601769911504,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "1900 Texas Avenue; Bridge City, TX 77611, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Bridge City",
+                "company_hq_state": "Texas",
+                "company_hq_street": "1900 Texas Avenue",
+                "company_hq_zipcode": "77611",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 1
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Member Services Representative",
+                "department": "Customer Service",
+                "management_level": "Specialist",
+                "location": "Austin, Texas, United States",
+                "description": "● Assisted members remotely, responding to 40-60 daily phone calls from members ● Verified personal information, listening diligently, researching, and critically thinking to best aid ● Assisted with all banking needs (transactions, research history, orders, products, services, inquiries) ● Proficient use of all software systems to efficiently assist members with banking needs in a timely manner",
+                "date_from": "November 2020",
+                "date_from_year": 2020,
+                "date_from_month": 11,
+                "date_to": "March 2022",
+                "date_to_year": 2022,
+                "date_to_month": 3,
+                "duration_months": 16,
+                "company_id": 614297,
+                "company_name": "Velocity Credit Union",
+                "company_type": "Nonprofit",
+                "company_founded_year": 1947,
+                "company_followers_count": 2039,
+                "company_website": "https://www.velocitycu.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/velocitycu"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/velocityaustin"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/velocity-credit-union",
+                "company_size_range": "201-500 employees",
+                "company_employees_count": 150,
+                "company_industry": "Banking",
+                "company_categories_and_keywords": [
+                  "banking",
+                  "finance > banking credit and lending (in united states)",
+                  "credit union",
+                  "loans",
+                  "savings",
+                  "online banking",
+                  "financial services",
+                  "non profit"
+                ],
+                "company_annual_revenue_source_5": 15000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 0,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "4515 Seton Center Pkwy; Austin, Texas 78759, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Austin",
+                "company_hq_state": "Texas",
+                "company_hq_street": "4515 Seton Center Pkwy",
+                "company_hq_zipcode": "78759",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 0,
+                "order_in_profile": 2
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Print Production Manager",
+                "department": "Operations",
+                "management_level": "Manager",
+                "location": null,
+                "description": "• Responsible for monitoring and controlling computers, their peripherals, and various other types of electronic data processing equipment • Responsible for setting up computer and other devices to run properly • Prepare, align, and configure machinery, ink, rollers, and paper • Inspects proof sheets to evaluate the quality of printing • Adjusts press machinery to meet quality standards and specifications • Maintain inventory of supplies needed to operate printing presses",
+                "date_from": "March 2023",
+                "date_from_year": 2023,
+                "date_from_month": 3,
+                "date_to": "September 2023",
+                "date_to_year": 2023,
+                "date_to_month": 9,
+                "duration_months": 6,
+                "company_id": 24082227,
+                "company_name": "Minuteman Press",
+                "company_type": "Privately Held",
+                "company_founded_year": 1973,
+                "company_followers_count": 16660,
+                "company_website": "https://www.minuteman.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/minutemanpressfranchise"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/minutemanintl"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/minuteman-press",
+                "company_size_range": "51-200 employees",
+                "company_employees_count": 2572,
+                "company_industry": "Printing Services",
+                "company_categories_and_keywords": [
+                  "printing and marketing",
+                  "business and consumer services > printing & self publishing (in united states)",
+                  "printing",
+                  "direct & email marketing",
+                  "promotional products",
+                  "creative & graphic design",
+                  "large format printing",
+                  "signs & banners",
+                  "direct mail",
+                  "branding",
+                  "custom apparel",
+                  "franchising",
+                  "brochures & postcards",
+                  "business cards",
+                  "advertising",
+                  "commercial printing",
+                  "business development",
+                  "marketing",
+                  "mailing",
+                  "signage"
+                ],
+                "company_annual_revenue_source_5": null,
+                "company_annual_revenue_currency_source_5": null,
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 5.108295872496935,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "61 Executive Blvd.; Farmingdale, NY 11735, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Farmingdale",
+                "company_hq_state": "New York",
+                "company_hq_street": "61 Executive Blvd.",
+                "company_hq_zipcode": "11735",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 3
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Information Technology Intern",
+                "department": "Engineering and Technical",
+                "management_level": "Intern",
+                "location": "Austin, Texas Area",
+                "description": "● Assisted migrating the database from local to cloud ● Provided onsite support as needed, operating in a classified environment ● Classified documents and folders, added tags and filters for online database after years of minimal organization ● Set up and disassembled network systems, computers and communication devices",
+                "date_from": "May 2018",
+                "date_from_year": 2018,
+                "date_from_month": 5,
+                "date_to": "August 2018",
+                "date_to_year": 2018,
+                "date_to_month": 8,
+                "duration_months": 3,
+                "company_id": 4167660,
+                "company_name": "Signature Science, LLC",
+                "company_type": "Privately Held",
+                "company_founded_year": 2001,
+                "company_followers_count": 3696,
+                "company_website": "https://www.signaturescience.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/p/signature-science-llc-100068140278442",
+                  "https://www.facebook.com/signature-science-llc-159515394082133",
+                  "https://www.facebook.com/share.php?u=https%3a%2f%2fwww.signaturescience.com%2f"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/sigsci",
+                  "https://www.twitter.com/intent/tweet?text=home&url=https%3a%2f%2fwww.signaturescience.com%2f"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/signature-science-llc",
+                "company_size_range": "201-500 employees",
+                "company_employees_count": 188,
+                "company_industry": "Research Services",
+                "company_categories_and_keywords": [
+                  "forensic science and genomics",
+                  "jobs and career > jobs and career - other (in united states)",
+                  "public health",
+                  "environmental security",
+                  "laboratory quality assurance",
+                  "analytical chemistry",
+                  "cbrne training",
+                  "dna casework",
+                  "explosive detection",
+                  "statistical data evaluation",
+                  "custom engineering solutions",
+                  "physics",
+                  "forensic science",
+                  "bioinformatics",
+                  "data science",
+                  "cbrne detection",
+                  "forensic genetic genealogy",
+                  "laboratory proficiency testing",
+                  "genomic technologies",
+                  "threat expertise",
+                  "data science-driven solutions",
+                  "quality assurance solutions",
+                  "business-services",
+                  "biotech",
+                  "chemicals",
+                  "life-sciences",
+                  "systems-integrator",
+                  "biotechnology",
+                  "health care"
+                ],
+                "company_annual_revenue_source_5": 10000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": -1.5706806282722512,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "8329 North Mopac Expressway; Austin, TX 78759, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Austin",
+                "company_hq_state": "Texas",
+                "company_hq_street": "8329 North Mopac Expressway",
+                "company_hq_zipcode": "78759",
+                "company_last_updated_at": "2025-09-08",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 4
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Inside Sales Specialist",
+                "department": "Sales",
+                "management_level": "Specialist",
+                "location": null,
+                "description": "• Full cycle sales establishing new and expanding existing programs • Introduce and present platform, capabilities, adoption, and administration • Offer white label and custom solutions • Establish client relationships and provide support and direction for both internal and external teams • Maintain and update CRM profiles with activity and changes in client profiles • Create target campaigns for both pre and post sales clients • Follow standards to maintain quality service and guarantee customers receive exceptional service through sales strategies • Conduct peer mentoring and develop best practice strategies for team meetings • Exceed quota and KPI metrics by maintaining/monitoring call logs, sales data and delivery timeframes",
+                "date_from": "September 2022",
+                "date_from_year": 2022,
+                "date_from_month": 9,
+                "date_to": "March 2023",
+                "date_to_year": 2023,
+                "date_to_month": 3,
+                "duration_months": 6,
+                "company_id": 10398603,
+                "company_name": "BSN SPORTS",
+                "company_type": "Privately Held",
+                "company_founded_year": 1972,
+                "company_followers_count": 35041,
+                "company_website": "https://www.bsnsports.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/bsnsports"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/bsnsports"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/bsn-sports",
+                "company_size_range": "1001-5000 employees",
+                "company_employees_count": 2711,
+                "company_industry": "Retail",
+                "company_categories_and_keywords": [
+                  "sports apparel and equipment",
+                  "sports > sports - other",
+                  "manufacturing",
+                  "importing",
+                  "marketing",
+                  "distribution",
+                  "fulfillment",
+                  "logistics",
+                  "sports equipment",
+                  "sports apparel",
+                  "sports",
+                  "fanwear",
+                  "custom equipment",
+                  "coaches",
+                  "team uniforms",
+                  "retail",
+                  "clothing",
+                  "footwear",
+                  "sport",
+                  "apparel",
+                  "sporting goods"
+                ],
+                "company_annual_revenue_source_5": 500000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 7.921974522292993,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "14460 Varsity Brand Way; Farmers Branch , TX 75244, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Farmers Branch",
+                "company_hq_state": "Texas",
+                "company_hq_street": "14460 Varsity Brand Way",
+                "company_hq_zipcode": "75244",
+                "company_last_updated_at": "2025-09-08",
+                "company_stock_ticker": [
+                  {
+                    "exchange": "XWBO",
+                    "ticker": "RBI"
+                  }
+                ],
+                "company_is_b2b": 1,
+                "order_in_profile": 5
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Counselor",
+                "department": "Education",
+                "management_level": "Specialist",
+                "location": "Austin, Texas Area",
+                "description": "● Managed finances, concessions, transactions and zone operations ● Trained new staff members, implemented new methods to improve overall efficiency and time ● Built rapport between members, parents and YMCA ● Promoted YMCA programs and events to parents ● Operated over The Zone program which could contain up to 50 kids at a time, often working alone ● Established friendly, family-like environment to keep kids eager to return",
+                "date_from": "August 2013",
+                "date_from_year": 2013,
+                "date_from_month": 8,
+                "date_to": "August 2015",
+                "date_to_year": 2015,
+                "date_to_month": 8,
+                "duration_months": 24,
+                "company_id": 3117310,
+                "company_name": "YMCA of Greater Williamson County",
+                "company_type": "Nonprofit",
+                "company_founded_year": 1981,
+                "company_followers_count": 1141,
+                "company_website": "https://www.ymcactx.org",
+                "company_facebook_url": [
+                  "https://www.facebook.com/ctxymca"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/ymcagwctx"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/ymca-of-greater-williamson-county",
+                "company_size_range": "51-200 employees",
+                "company_employees_count": 221,
+                "company_industry": "Wellness and Fitness Services",
+                "company_categories_and_keywords": [
+                  "health and fitness",
+                  "pets and animals > pet food and supplies",
+                  "youth development",
+                  "healthy living",
+                  "social responsibility",
+                  "community activities",
+                  "healthier lifestyle",
+                  "fitness",
+                  "health",
+                  "family-friendly programs"
+                ],
+                "company_annual_revenue_source_5": 10408095,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 9.405940594059405,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "1812 N Mays St; Round Rock, TX 78664, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Round Rock",
+                "company_hq_state": "Texas",
+                "company_hq_street": "1812 N Mays St",
+                "company_hq_zipcode": "78664",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 0,
+                "order_in_profile": 6
+              }
+            ],
+            "projected_base_salary_p25": null,
+            "projected_base_salary_median": null,
+            "projected_base_salary_p75": null,
+            "projected_base_salary_period": null,
+            "projected_base_salary_currency": null,
+            "projected_base_salary_updated_at": null,
+            "projected_additional_salary": [],
+            "projected_additional_salary_period": null,
+            "projected_additional_salary_currency": null,
+            "projected_additional_salary_updated_at": null,
+            "projected_total_salary_p25": null,
+            "projected_total_salary_median": null,
+            "projected_total_salary_p75": null,
+            "projected_total_salary_period": null,
+            "projected_total_salary_currency": null,
+            "projected_total_salary_updated_at": null,
+            "last_graduation_date": 2019,
+            "education_degrees": [],
+            "education": [
+              {
+                "degree": null,
+                "description": null,
+                "institution_url": "https://www.linkedin.com/school/texas-state-university",
+                "institution_name": "Texas State University",
+                "institution_full_address": "601 University Dr; San Marcos, TX 78666, US",
+                "institution_country_iso2": "US",
+                "institution_country_iso3": "USA",
+                "institution_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "institution_city": "San Marcos",
+                "institution_state": "Texas",
+                "institution_street": "601 University Dr",
+                "institution_zipcode": "78666",
+                "date_from_year": 2015,
+                "date_to_year": 2019,
+                "activities_and_societies": null,
+                "order_in_profile": 1
+              }
+            ],
+            "recommendations_count": null,
+            "recommendations": [],
+            "activity": [
+              {
+                "activity_url": "https://www.linkedin.com/posts/todd-busler_in-saas-sales-it-doesnt-matter-if-youre-activity-7174860963106410496-oJAw",
+                "title": "In SaaS sales, it doesn’t matter if you’re likable. The era of selling high ACV software over steak dinners and golf outings is (mostly) dead. The…",
+                "action": "Liked by",
+                "order_in_profile": 1
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/bbyler_remotework-flexibleworking-pto-activity-7172924228659306497-QMih",
+                "title": "A new colleague recently requested my approval for their PTO.\n\nI approved it right away.\n\nHe then slacked me to explain the reason for his time off.…",
+                "action": "Liked by",
+                "order_in_profile": 2
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/austin-copeland-749771b8_recruitment-sales-getconnected-activity-7169099419936604160-yB4U",
+                "title": "🌟 Hey Everyone! 🌟 Are you someone who loves connecting with people and making a real impact? I'm thrilled to share that we're looking for…",
+                "action": "Liked by",
+                "order_in_profile": 3
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/eric-p-a3101186_honored-to-be-recognized-as-the-top-performer-activity-6989221630073847809-GOe4",
+                "title": "Honored to be recognized as the Top performer for my sales team here at Dell. I received the Diamond award and Rookie award finishing Q2 as #1 on my…",
+                "action": "Liked by",
+                "order_in_profile": 4
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/tiffanieharrison_roughly-a-month-ago-i-filed-for-re-election-activity-6977749830060171264-9vhE",
+                "title": "Roughly a month ago I filed for re-election for the Round Rock ISD School Board Place 6. \n\nIt wasn't a decision that was made lightly.\n\nIn 2020 I…",
+                "action": "Liked by",
+                "order_in_profile": 5
+              },
+              {
+                "activity_url": "https://www.linkedin.com/feed/update/urn:li:activity:6938951689127223296",
+                "title": "It's Nice To Be Important, But It's More Important To Be Nice!",
+                "action": "Liked by",
+                "order_in_profile": 6
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/mary-landrum-524262192_hiring-software-jobforyou-activity-6853321952145342464-S_FJ",
+                "title": "ATTENTION SDR's/ AE's!!\n\nI have a HOT NEW opportunity that will go quickly. Looking for strong, committed individuals to fill Account Executive…",
+                "action": "Liked by",
+                "order_in_profile": 7
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/mary-landrum-524262192_good-morning-atx-i-have-a-new-job-opportunity-activity-6838122371946303488-6xK6",
+                "title": "Good Morning ATX! I have a new job opportunity announcement 📣 \n\nI’m in need for an Account Executive/ISR in software sales, details below:\n\n-45/50K…",
+                "action": "Liked by",
+                "order_in_profile": 8
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/allanmartinprice_iwork4dell-activity-6830601097921527809-PaeT",
+                "title": "Teamwork makes the dream work! Very thankful to have received the Team Player of the Quarter award for FY22 Q2. With these unprecedented times it is…",
+                "action": "Liked by",
+                "order_in_profile": 9
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/garrett-o’brien-33928a159_hiring-career-opportunities-activity-6836276886100869120-gENv",
+                "title": "Working for TTI has been the experience of a lifetime. My role as an Event Marketing Specialist has opened so many new experiences and opportunities…",
+                "action": "Liked by",
+                "order_in_profile": 10
+              }
+            ],
+            "awards": [],
+            "courses": [],
+            "certifications": [],
+            "languages": [],
+            "patents_count": null,
+            "patents_topics": [],
+            "patents": [],
+            "publications_count": null,
+            "publications_topics": [],
+            "publications": [],
+            "projects_count": null,
+            "projects_topics": [],
+            "projects": [],
+            "organizations": [],
+            "github_url": null,
+            "github_username": null,
+            "github_mapping_confidence": null,
+            "github_contributions_count": null,
+            "github_repos_summary": [],
+            "profile_root_field_changes_summary": [
+              {
+                "field_name": "follower_count",
+                "change_type": "updated",
+                "last_changed_at": "2025-10-17 05:49:02.476254"
+              },
+              {
+                "field_name": "summary",
+                "change_type": "new",
+                "last_changed_at": "2025-01-17 22:43:46.347092"
+              },
+              {
+                "field_name": "headline",
+                "change_type": "updated",
+                "last_changed_at": "2025-01-17 22:43:46.347092"
+              },
+              {
+                "field_name": "profile_photo_url",
+                "change_type": "new",
+                "last_changed_at": "2025-07-06 07:29:18.239851"
+              },
+              {
+                "field_name": "deleted",
+                "change_type": "updated",
+                "last_changed_at": "2025-07-06 07:29:18.239851"
+              },
+              {
+                "field_name": "summary",
+                "change_type": "updated",
+                "last_changed_at": "2025-10-17 05:49:02.476254"
+              },
+              {
+                "field_name": "connections_count",
+                "change_type": "updated",
+                "last_changed_at": "2025-10-17 05:49:02.476254"
+              },
+              {
+                "field_name": "headline",
+                "change_type": "new",
+                "last_changed_at": "2025-07-24 05:37:46.537877"
+              }
+            ],
+            "profile_collection_field_changes_summary": [
+              {
+                "field_name": "education",
+                "last_changed_at": "2025-10-17 05:49:02.476254"
+              },
+              {
+                "field_name": "experience",
+                "last_changed_at": "2025-10-17 05:49:02.476254"
+              }
+            ],
+            "experience_recently_started": [],
+            "experience_recently_closed": []
+          },
+          "enrichedAt": "2025-10-29T18:16:39.882Z",
+          "phoneEnrichmentSource": "lusha_v2_linkedin",
+          "phoneEnrichmentDate": "2025-10-29T18:17:02.097Z",
+          "phoneDataQuality": 30
+        },
+        {
+          "id": 393547157,
+          "name": "Gil Garcia",
+          "title": "V.P. VAR Reseller Relations",
+          "department": "Sales",
+          "company": "ProMiles Software",
+          "managementLevel": "Specialist",
+          "connectionsCount": 500,
+          "followersCount": 689,
+          "email": "",
+          "phone": "",
+          "linkedinUrl": "https://www.linkedin.com/in/gil-garcia-031a664",
+          "source": "coresignal_preview",
+          "scores": {
+            "seniority": 3,
+            "departmentFit": 10,
+            "influence": 3,
+            "championPotential": 12,
+            "crossFunctional": 4,
+            "geoAlignment": 8
+          },
+          "overallScore": 6,
+          "relevance": 0.45,
+          "isHighValue": false,
+          "aiRelevance": 0.45,
+          "aiReasoning": "Gil Garcia is a V.P. of VAR Reseller Relations at ProMiles Software, which positions him in a unique but tangential role for Sales Intelligence Software procurement. His primary responsibility appears to be managing relationships with Value-Added Reseller (VAR) partners rather than direct sales operations. While he sits within the Sales department and has VP-level seniority, his focus on channel/partner relationships rather than direct sales makes him less likely to be a primary user or decision-maker for Sales Intelligence Software. However, he could serve as a valuable introducer to the actual sales leadership (Chief Revenue Officer, VP of Direct Sales, etc.) who would be the core stakeholders. His influence score of 4 reflects that while he has organizational access and credibility as a VP, his domain expertise and budget authority likely don't extend to sales intelligence tools used by direct sales teams. At a 100-employee company with a $150K deal size, this purchase would likely require C-suite or direct sales leadership involvement. Gil might provide input if the tool has channel/partner relationship features, but he's unlikely to champion or decide on this purchase independently. Red flag: His specialization in VAR/reseller relations rather than direct sales operations reduces his relevance for traditional sales intelligence software.",
+          "aiConfidence": 0.75,
+          "buyerGroupRole": "champion",
+          "roleConfidence": 48,
+          "roleReasoning": "Promoted to champion (no better candidate found)",
+          "aiRoleValidation": {
+            "suggestedRole": "champion",
+            "confidence": 0.95,
+            "reasoning": "Gil Garcia is optimally assigned as 'champion' (already correctly identified). As V.P. of VAR Reseller Relations in Sales, he is a senior operational leader who would directly benefit from Sales Intelligence Software to enhance reseller partnerships and drive indirect sales. His VP-level title indicates significant influence but typically not final budget authority for a $150K purchase - that would likely require C-suite approval (CEO, CFO, or CRO). As a sales leader, he has the operational expertise to evaluate the product's value, build internal consensus, and champion the business case to decision-makers. His department's direct alignment with the product makes him an ideal advocate rather than final approver. The deal size of $150K typically exceeds VP-level signing authority in mid-market software companies. His presence as champion with William Friedman as stakeholder suggests a healthy buying committee where Gil drives the initiative while others are affected by or approve it.",
+            "alternativeRoles": [
+              "decision",
+              "stakeholder"
+            ]
+          },
+          "aiRoleReasoning": "Gil Garcia is optimally assigned as 'champion' (already correctly identified). As V.P. of VAR Reseller Relations in Sales, he is a senior operational leader who would directly benefit from Sales Intelligence Software to enhance reseller partnerships and drive indirect sales. His VP-level title indicates significant influence but typically not final budget authority for a $150K purchase - that would likely require C-suite approval (CEO, CFO, or CRO). As a sales leader, he has the operational expertise to evaluate the product's value, build internal consensus, and champion the business case to decision-makers. His department's direct alignment with the product makes him an ideal advocate rather than final approver. The deal size of $150K typically exceeds VP-level signing authority in mid-market software companies. His presence as champion with William Friedman as stakeholder suggests a healthy buying committee where Gil drives the initiative while others are affected by or approve it.",
+          "fullProfile": {
+            "id": 393547157,
+            "parent_id": 393547157,
+            "created_at": "2025-02-24T10:57:49.242388Z",
+            "updated_at": "2025-10-14T07:50:34.217814Z",
+            "checked_at": "2025-10-15T12:44:44.879431Z",
+            "changed_at": "2025-10-14T07:50:34.217814Z",
+            "experience_change_last_identified_at": null,
+            "is_deleted": 0,
+            "is_parent": 1,
+            "public_profile_id": 14567077,
+            "linkedin_url": "https://www.linkedin.com/in/gil-garcia-031a664",
+            "linkedin_shorthand_names": [
+              "gil-garcia-031a664",
+              "gil-garcia-ciphr7"
+            ],
+            "historical_ids": [
+              393547157
+            ],
+            "full_name": "Gil Garcia",
+            "first_name": "Gil",
+            "first_name_initial": "G",
+            "middle_name": null,
+            "middle_name_initial": null,
+            "last_name": "Garcia",
+            "last_name_initial": "G",
+            "headline": "V.P. Integrations at ProMiles Software",
+            "summary": null,
+            "picture_url": "https://media.licdn.com/dms/image/v2/C4E03AQG2BmxwAPcZjA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1517716061259?e=2147483647&v=beta&t=b96OdKAa2cwgnUNVTaTL7aGWeNXopTkkSk5I4TfWuOs",
+            "location_country": "United States",
+            "location_country_iso2": "US",
+            "location_country_iso3": "USA",
+            "location_full": "Bridge City, Texas, United States",
+            "location_regions": [
+              "Americas",
+              "Northern America",
+              "AMER"
+            ],
+            "location_city": "Bridge City",
+            "location_state": "Texas",
+            "interests": [],
+            "inferred_skills": [
+              "p",
+              "engineering",
+              "va"
+            ],
+            "historical_skills": [],
+            "connections_count": 500,
+            "followers_count": 689,
+            "services": null,
+            "primary_professional_email": null,
+            "primary_professional_email_status": null,
+            "professional_emails_collection": [],
+            "is_working": 1,
+            "active_experience_company_id": null,
+            "active_experience_title": "V.P. VAR Reseller Relations",
+            "active_experience_description": null,
+            "active_experience_department": "Sales",
+            "active_experience_management_level": "Specialist",
+            "is_decision_maker": 0,
+            "total_experience_duration_months": 361,
+            "total_experience_duration_months_breakdown_department": [
+              {
+                "department": "Sales",
+                "total_experience_duration_months": 274
+              },
+              {
+                "department": "Human Resources",
+                "total_experience_duration_months": 87
+              },
+              {
+                "department": "Other",
+                "total_experience_duration_months": 274
+              }
+            ],
+            "total_experience_duration_months_breakdown_management_level": [
+              {
+                "management_level": "Other",
+                "total_experience_duration_months": 274
+              },
+              {
+                "management_level": "Specialist",
+                "total_experience_duration_months": 361
+              }
+            ],
+            "experience": [
+              {
+                "active_experience": 1,
+                "position_title": "V.P. VAR Reseller Relations",
+                "department": "Sales",
+                "management_level": "Specialist",
+                "location": null,
+                "description": null,
+                "date_from": "January 1998",
+                "date_from_year": 1998,
+                "date_from_month": 1,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "duration_months": 274,
+                "company_id": null,
+                "company_name": "ProMiles Software",
+                "company_type": null,
+                "company_founded_year": null,
+                "company_followers_count": null,
+                "company_website": null,
+                "company_facebook_url": [],
+                "company_twitter_url": [],
+                "company_linkedin_url": null,
+                "company_size_range": null,
+                "company_employees_count": null,
+                "company_industry": null,
+                "company_categories_and_keywords": [],
+                "company_annual_revenue_source_5": null,
+                "company_annual_revenue_currency_source_5": null,
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": null,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": null,
+                "company_hq_country": null,
+                "company_hq_regions": [],
+                "company_hq_country_iso2": null,
+                "company_hq_country_iso3": null,
+                "company_hq_city": null,
+                "company_hq_state": null,
+                "company_hq_street": null,
+                "company_hq_zipcode": null,
+                "company_last_updated_at": null,
+                "company_stock_ticker": [],
+                "company_is_b2b": null,
+                "order_in_profile": 1
+              },
+              {
+                "active_experience": 1,
+                "position_title": "V.P. VAR Integrations",
+                "department": null,
+                "management_level": null,
+                "location": null,
+                "description": null,
+                "date_from": "1998",
+                "date_from_year": 1998,
+                "date_from_month": null,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "duration_months": 274,
+                "company_id": 1158307,
+                "company_name": "ProMiles Software Development Corp.",
+                "company_type": "Privately Held",
+                "company_founded_year": null,
+                "company_followers_count": 2291,
+                "company_website": "https://www.promiles.com",
+                "company_facebook_url": [],
+                "company_twitter_url": [
+                  "https://www.twitter.com/promilescorp"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/promiles-software-development-corporation",
+                "company_size_range": "51-200 employees",
+                "company_employees_count": 122,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "transportation and logistics",
+                  "business and consumer services > shipping and logistics",
+                  "trucking reports",
+                  "compliance software",
+                  "trucking",
+                  "special projects",
+                  "government solutions",
+                  "technology",
+                  "application-software",
+                  "enterprise-software",
+                  "transportation",
+                  "software"
+                ],
+                "company_annual_revenue_source_5": 32277480,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 7.964601769911504,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "1900 Texas Avenue; Bridge City, TX 77611, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Bridge City",
+                "company_hq_state": "Texas",
+                "company_hq_street": "1900 Texas Avenue",
+                "company_hq_zipcode": "77611",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 2
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Personnel Man",
+                "department": "Human Resources",
+                "management_level": "Specialist",
+                "location": null,
+                "description": "I started my Naval Career as a Machinist Mate (MM) then converted to Personelman (PN) after 3 1/2 in Engineering Department onboard USS John F. Kennedy, Stationed in Norfolk, VA later we dry docked in Philadelphia. Veteran- Desert Shield/Desert Storm.",
+                "date_from": "June 1990",
+                "date_from_year": 1990,
+                "date_from_month": 6,
+                "date_to": "September 1997",
+                "date_to_year": 1997,
+                "date_to_month": 9,
+                "duration_months": 87,
+                "company_id": 3055223,
+                "company_name": "US Navy",
+                "company_type": "Government Agency",
+                "company_founded_year": null,
+                "company_followers_count": 703423,
+                "company_website": "https://www.navy.mil",
+                "company_facebook_url": [
+                  "https://www.facebook.com/usnavy",
+                  "https://www.facebook.com/usnavy/about"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/usnavy",
+                  "https://www.twitter.com/usnavy?ref_src=twsrc%5egoogle%7ctwcamp%5eserp%7ctwgr%5eauthor"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/us-navy",
+                "company_size_range": "10,001+ employees",
+                "company_employees_count": 158956,
+                "company_industry": "Armed Forces",
+                "company_categories_and_keywords": [
+                  "law and government > national security (in united states)",
+                  "engineering",
+                  "medical",
+                  "diver",
+                  "air rescue",
+                  "special forces",
+                  "information technology",
+                  "cryptology",
+                  "surface warfare",
+                  "aviation",
+                  "government-public-services",
+                  "defense",
+                  "marine",
+                  "maritime",
+                  "public-relations",
+                  "aerospace",
+                  "supply chain management",
+                  "training"
+                ],
+                "company_annual_revenue_source_5": 38411185000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": -19.547315730069794,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "1200 Navy Pentagon; Washington, DC 20350, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Washington",
+                "company_hq_state": "District Of Columbia",
+                "company_hq_street": "1200 Navy Pentagon",
+                "company_hq_zipcode": "20350",
+                "company_last_updated_at": "2025-09-09",
+                "company_stock_ticker": [],
+                "company_is_b2b": null,
+                "order_in_profile": 3
+              }
+            ],
+            "projected_base_salary_p25": null,
+            "projected_base_salary_median": null,
+            "projected_base_salary_p75": null,
+            "projected_base_salary_period": null,
+            "projected_base_salary_currency": null,
+            "projected_base_salary_updated_at": null,
+            "projected_additional_salary": [],
+            "projected_additional_salary_period": null,
+            "projected_additional_salary_currency": null,
+            "projected_additional_salary_updated_at": null,
+            "projected_total_salary_p25": null,
+            "projected_total_salary_median": null,
+            "projected_total_salary_p75": null,
+            "projected_total_salary_period": null,
+            "projected_total_salary_currency": null,
+            "projected_total_salary_updated_at": null,
+            "last_graduation_date": 2009,
+            "education_degrees": [
+              "Business, IT Management"
+            ],
+            "education": [
+              {
+                "degree": "Business, IT Management",
+                "description": null,
+                "institution_url": null,
+                "institution_name": "Western Governor University",
+                "institution_full_address": null,
+                "institution_country_iso2": null,
+                "institution_country_iso3": null,
+                "institution_regions": [],
+                "institution_city": null,
+                "institution_state": null,
+                "institution_street": null,
+                "institution_zipcode": null,
+                "date_from_year": 2006,
+                "date_to_year": 2009,
+                "activities_and_societies": null,
+                "order_in_profile": 1
+              },
+              {
+                "degree": null,
+                "description": null,
+                "institution_url": null,
+                "institution_name": "United Christian Academy",
+                "institution_full_address": null,
+                "institution_country_iso2": null,
+                "institution_country_iso3": null,
+                "institution_regions": [],
+                "institution_city": null,
+                "institution_state": null,
+                "institution_street": null,
+                "institution_zipcode": null,
+                "date_from_year": null,
+                "date_to_year": null,
+                "activities_and_societies": null,
+                "order_in_profile": 2
+              }
+            ],
+            "recommendations_count": 1,
+            "recommendations": [
+              {
+                "recommendation": "“I have known Gil and the ProMiles crew for many years and have worked directly with Gil in my last 3 positions.  As VP of Integrations, nobody is more knowledgeable or reliable than Gil.  If need to get something done and get someone to go to bat for you at ProMiles, look no further than Gil Garcia!”",
+                "referee_full_name": "Roy Thacker",
+                "referee_url": "https://www.linkedin.com/in/roy-thacker-2695437",
+                "order_in_profile": 1
+              }
+            ],
+            "activity": [
+              {
+                "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_logisticsmanagementsoftware-supplychain-activity-7356811238544162816-8-Dk",
+                "title": "07/31/2025 ProMiles’ Average Daily Diesel Fuel Prices\n\nBased on retail pricing data from FuelSurchargeIndex.org collected, daily, from over 18,000…",
+                "action": "Liked by",
+                "order_in_profile": 1
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/ltaylor23_making-an-effort-to-share-more-with-my-linkedin-activity-7305921408126066690-6O8o",
+                "title": "Making an effort to share more with my LinkedIn community! Here are a few 2024 highlights that never made it to my feed—grateful for the experiences…",
+                "action": "Liked by",
+                "order_in_profile": 2
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_logisticsmanagementsoftware-supplychain-activity-7306013447991799809-HC1-",
+                "title": "03/13/2025 ProMiles’ Average Daily Diesel Fuel Prices\n\nBased on retail pricing data from FuelSurchargeIndex.org collected, daily, from over 18,000…",
+                "action": "Liked by",
+                "order_in_profile": 3
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/mikewebbpromiles_promiles-oversize-overweight-quote-manager-activity-7292191091980656641-SAnK",
+                "title": "REVOLUTIONIZE the way you Quote OS/OW Loads!  Contact me for a demo and to answer any questions you may have. mike@promiles.com…",
+                "action": "Liked by",
+                "order_in_profile": 4
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/mikewebbpromiles_tech-on-deck-upt-21-program-with-michael-activity-7290754119932215297-d2VW",
+                "title": "I am looking forward to seeing everyone this year at the Specialized Carriers & Rigging Association (SC&RA) Symposium, make sure you visit us at…",
+                "action": "Liked by",
+                "order_in_profile": 5
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_national-truck-driver-appreciation-week-2024-activity-7241472912233312256-CDPM",
+                "title": "National Truck Driver Appreciation Week 2024",
+                "action": "Liked by",
+                "order_in_profile": 6
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_transportation-regulatorycompliance-activity-7170918514524835840-gVIp",
+                "title": "03/05/2024 ProMiles’ Average Daily Diesel Fuel Prices\n  \n Based on retail pricing data from FuelSurchargeIndex.org collected, daily, from over 18,000…",
+                "action": "Liked by",
+                "order_in_profile": 7
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_check-out-the-newest-podcast-covering-the-activity-7019062046738526208-c9yS",
+                "title": "Check out the newest podcast covering the Trucking Industry - featuring the one of a kind Tony Stroncheck & hosted by Steven Todd. Insights…",
+                "action": "Liked by",
+                "order_in_profile": 8
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/manique-gray_fuelprices-credentials-permitting-activity-6914569386175475712-kta7",
+                "title": "ProMiles spreading the word on our new products! Fuel Finder Mobile App and eCredentials! #fuelprices #credentials #permitting",
+                "action": "Liked by",
+                "order_in_profile": 9
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/promiles-software-development-corporation_dan-wells-and-steven-todd-were-pleased-to-activity-6861016958532427777-_7ar",
+                "title": "Dan Wells and Steven Todd were pleased to represent ProMiles at the Specialized Carriers & Rigging Association (SC&RA) Annual Conference - including…",
+                "action": "Liked by",
+                "order_in_profile": 10
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/manique-gray_spreadlove-truckerlife-truckersmaketheworldgoround-activity-6869006189120786432-NWqS",
+                "title": "Season of Gratitude is among us <3 #spreadlove #Truckerlife #TruckersMakeTheWorldGoRound",
+                "action": "Liked by",
+                "order_in_profile": 11
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/gil-garcia-ciphr7_microsoft-teams-activity-6909915760517619712-yhXL",
+                "title": "https://lnkd.in/d-sssZsu \nInviting all ProMiles customers to register free for ProMiles Permitting Customer Virtual Conference, April 14, 2022 -…",
+                "action": "Shared by",
+                "order_in_profile": 12
+              }
+            ],
+            "awards": [],
+            "courses": [],
+            "certifications": [
+              {
+                "title": "JavaScript",
+                "issuer": "Solo Learning",
+                "issuer_url": "https://www.linkedin.com/company/synergistx",
+                "credential_id": null,
+                "certificate_url": "https://www.sololearn.com/Certificate/1024-4632717/pdf/?trk=public_profile_certification-title",
+                "date_from": "Dec 2017",
+                "date_from_year": 2017,
+                "date_from_month": 12,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "order_in_profile": 1
+              },
+              {
+                "title": "Design the Web: SVG Rollovers with CSS",
+                "issuer": "lynda.com",
+                "issuer_url": "https://www.linkedin.com/company/lynda-com",
+                "credential_id": null,
+                "certificate_url": "http://www.lynda.com/CSS-tutorials/Design-Web-SVG-Rollovers-CSS/176494-2.html?utm_source=cheetah&utm_medium=email&utm_campaign=linkedin-non&trk=public_profile_certification-title",
+                "date_from": "Aug 2014",
+                "date_from_year": 2014,
+                "date_from_month": 8,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "order_in_profile": 2
+              },
+              {
+                "title": "Up and Running with ASP.NET",
+                "issuer": "lynda.com",
+                "issuer_url": "https://www.linkedin.com/company/lynda-com",
+                "credential_id": null,
+                "certificate_url": "http://www.lynda.com/ASPNET-tutorials/Up-Running-ASPNET/158377-2.html?trk=public_profile_certification-title",
+                "date_from": "Aug 2014",
+                "date_from_year": 2014,
+                "date_from_month": 8,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "order_in_profile": 3
+              },
+              {
+                "title": "Creating a First Web Site with Dreamweaver CS6",
+                "issuer": "lynda.com",
+                "issuer_url": "https://www.linkedin.com/company/lynda-com",
+                "credential_id": null,
+                "certificate_url": "http://www.lynda.com/Dreamweaver-tutorials/Creating-First-Web-Site-Dreamweaver-CS6/100224-2.html?trk=public_profile_certification-title",
+                "date_from": "Jan 2014",
+                "date_from_year": 2014,
+                "date_from_month": 1,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "order_in_profile": 4
+              },
+              {
+                "title": "Social Media Marketing with Facebook and Twitter",
+                "issuer": "lynda.com",
+                "issuer_url": "https://www.linkedin.com/company/lynda-com",
+                "credential_id": null,
+                "certificate_url": "http://www.lynda.com/Facebook-tutorials/social-media-marketing-with-and-twitter/47759-2.html?trk=public_profile_certification-title",
+                "date_from": "Jan 2014",
+                "date_from_year": 2014,
+                "date_from_month": 1,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "order_in_profile": 5
+              }
+            ],
+            "languages": [],
+            "patents_count": null,
+            "patents_topics": [],
+            "patents": [],
+            "publications_count": null,
+            "publications_topics": [],
+            "publications": [],
+            "projects_count": null,
+            "projects_topics": [],
+            "projects": [],
+            "organizations": [],
+            "github_url": null,
+            "github_username": null,
+            "github_mapping_confidence": null,
+            "github_contributions_count": null,
+            "github_repos_summary": [],
+            "profile_root_field_changes_summary": [
+              {
+                "field_name": "follower_count",
+                "change_type": "updated",
+                "last_changed_at": "2025-10-14 07:50:34.217814"
+              },
+              {
+                "field_name": "profile_photo_url",
+                "change_type": "deleted",
+                "last_changed_at": "2025-02-24 10:57:49.242388"
+              },
+              {
+                "field_name": "profile_photo_url",
+                "change_type": "new",
+                "last_changed_at": "2025-04-28 20:53:40.371082"
+              },
+              {
+                "field_name": "profile_url",
+                "change_type": "updated",
+                "last_changed_at": "2025-08-18 15:48:46.716770"
+              },
+              {
+                "field_name": "deleted",
+                "change_type": "updated",
+                "last_changed_at": "2025-06-15 05:48:54.018235"
+              },
+              {
+                "field_name": "shorthand_name",
+                "change_type": "updated",
+                "last_changed_at": "2025-08-18 15:48:46.716770"
+              },
+              {
+                "field_name": "recommendations_count",
+                "change_type": "updated",
+                "last_changed_at": "2025-06-14 15:01:25.339003"
+              }
+            ],
+            "profile_collection_field_changes_summary": [
+              {
+                "field_name": "education",
+                "last_changed_at": "2025-07-31 01:29:57.378718"
+              },
+              {
+                "field_name": "certifications",
+                "last_changed_at": "2025-10-14 07:50:34.217814"
+              },
+              {
+                "field_name": "activity",
+                "last_changed_at": "2025-08-18 15:48:46.716770"
+              },
+              {
+                "field_name": "recommendations",
+                "last_changed_at": "2025-06-14 15:01:25.339003"
+              },
+              {
+                "field_name": "experience",
+                "last_changed_at": "2025-07-31 01:29:57.378718"
+              }
+            ],
+            "experience_recently_started": [],
+            "experience_recently_closed": []
+          },
+          "enrichedAt": "2025-10-29T18:16:40.482Z"
+        }
+      ],
+      "costs": {
+        "preview": 2,
+        "collect": 2,
+        "total": 4
+      }
+    }
+  },
+  "timestamp": "2025-10-29T18:17:05.136Z"
+}

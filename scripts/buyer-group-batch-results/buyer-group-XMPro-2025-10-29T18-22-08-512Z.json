@@ -1,0 +1,313 @@
+{
+  "company": {
+    "id": "01K8R6BBMFJN72JEJW3J9ET5Z5",
+    "name": "XMPro",
+    "website": "https://xmpro.com/",
+    "industry": "Software",
+    "employeeCount": null,
+    "revenue": null
+  },
+  "pipeline": {
+    "target": "https://xmpro.com/",
+    "dealSize": 150000,
+    "productCategory": "sales",
+    "workspaceId": "01K7464TNANHQXPCZT1FYX205V"
+  },
+  "results": {
+    "buyerGroup": [],
+    "report": {
+      "id": "report_1761762127227_gv1bfjgjx",
+      "generatedAt": "2025-10-29T18:22:07.956Z",
+      "executiveSummary": "Identified 0-person buyer group for XMPro ($150,000 deal) with NaN% cohesion score. Group includes 0 decision maker(s), 0 champion(s), and comprehensive cross-functional coverage. Research methodology validated 0 final members from 20 initial candidates.",
+      "researchMethodology": {
+        "approach": "Double-waterfall discovery with multi-dimensional scoring",
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Company Intelligence",
+            "description": "Database-first company research with Coresignal API fallback",
+            "result": "Optimal search parameters calculated"
+          },
+          {
+            "stage": 2,
+            "name": "Wide Preview Search",
+            "description": "Cross-departmental employee discovery using Coresignal Preview API",
+            "result": "20 employees discovered across all functions"
+          },
+          {
+            "stage": 3,
+            "name": "Smart Scoring",
+            "description": "Multi-dimensional scoring: seniority, influence, champion potential, cross-functional ability",
+            "result": "Top candidates identified before expensive collect API"
+          },
+          {
+            "stage": 4,
+            "name": "Role Assignment",
+            "description": "Deal-size-aware role assignment ensuring Decision Maker + Champion",
+            "result": "Appropriate roles assigned based on deal size"
+          },
+          {
+            "stage": 5,
+            "name": "Cross-Functional Validation",
+            "description": "Stakeholder completeness validation across all relevant functions",
+            "result": "Missing stakeholders added for comprehensive coverage"
+          },
+          {
+            "stage": 6,
+            "name": "Full Profile Collection",
+            "description": "Coresignal Collect API for final buyer group members only",
+            "result": "Complete profiles for final buyer group"
+          },
+          {
+            "stage": 7,
+            "name": "Cohesion Analysis",
+            "description": "Multi-factor cohesion validation",
+            "result": "NaN% cohesion score with detailed analysis"
+          }
+        ],
+        "searchParameters": {
+          "searchSize": 100,
+          "maxPreviewPages": 5,
+          "buyerGroupSize": {
+            "min": 6,
+            "max": 9,
+            "ideal": 8
+          },
+          "companySize": 100,
+          "industry": "Unknown",
+          "searchStrategy": "comprehensive",
+          "filteringLevel": "none"
+        },
+        "dataSources": [
+          "Coresignal API",
+          "Internal Database",
+          "AI Analysis"
+        ],
+        "confidenceLevel": null
+      },
+      "companyIntelligence": {
+        "employeeCount": 100,
+        "revenue": 0,
+        "industry": "Unknown",
+        "growthRate": 0,
+        "activeHiring": 0,
+        "fundingStage": "bootstrapped",
+        "dataSource": "default",
+        "lastUpdated": "2025-10-29T18:22:07.412Z",
+        "insights": [
+          "Company size: Medium",
+          "Growth trajectory: Stable",
+          "Hiring activity: Limited",
+          "Funding status: bootstrapped"
+        ]
+      },
+      "buyerGroupJustification": [],
+      "crossFunctionalCoverage": {
+        "summary": {
+          "primaryCovered": false,
+          "technicalCovered": false,
+          "riskCovered": false,
+          "financialCovered": false,
+          "overallScore": 0
+        },
+        "byFunction": {
+          "primary": {
+            "covered": [],
+            "missing": [
+              "Sales",
+              "Operations",
+              "Revenue"
+            ],
+            "representatives": []
+          },
+          "technical": {
+            "covered": [],
+            "missing": [
+              "IT",
+              "Technology",
+              "Engineering"
+            ],
+            "representatives": []
+          },
+          "financial": {
+            "covered": [],
+            "missing": [
+              "Finance",
+              "Procurement",
+              "FP&A"
+            ],
+            "representatives": []
+          }
+        },
+        "gaps": [
+          "Primary business functions",
+          "Technical implementation",
+          "Risk management",
+          "Financial approval"
+        ],
+        "recommendations": [
+          "Add IT stakeholder for technical implementation",
+          "Add Security/Legal stakeholder for risk management",
+          "Add Finance stakeholder for budget approval"
+        ]
+      },
+      "cohesionAnalysis": {
+        "overallScore": null,
+        "confidence": "VERY_LOW",
+        "factors": {
+          "reportingProximity": {
+            "score": 0,
+            "explanation": "Executive reporting relationships"
+          },
+          "departmentClustering": {
+            "score": 50,
+            "explanation": "Department collaboration patterns"
+          },
+          "seniorityBalance": {
+            "score": null,
+            "explanation": "Appropriate seniority distribution"
+          },
+          "geographicAlignment": {
+            "score": 75,
+            "explanation": "Location-based collaboration"
+          },
+          "functionalInterdependence": {
+            "score": 0,
+            "explanation": "Cross-functional work relationships"
+          }
+        },
+        "reasoning": "Limited reporting proximity; Limited functional interdependence",
+        "recommendations": [
+          "Consider adding members who report to same executives",
+          "Consider adding members from interdependent functions"
+        ]
+      },
+      "championAnalysis": {
+        "count": 0,
+        "champions": [],
+        "analysis": "No champions identified - consider adding internal advocates"
+      },
+      "costEfficiency": {
+        "methodology": "Double-waterfall approach (preview then collect)",
+        "costs": {
+          "preview": 2,
+          "collect": 0,
+          "total": 2
+        },
+        "comparison": {
+          "naiveApproach": 20,
+          "smartApproach": 2,
+          "savings": 18,
+          "savingsPercentage": 90
+        },
+        "efficiency": {
+          "previewToCollectRatio": 0,
+          "costPerFinalMember": 0
+        }
+      },
+      "qualityMetrics": {
+        "averageConfidence": null,
+        "averageInfluence": null,
+        "averageRelevance": null,
+        "decisionMakerCount": 0,
+        "championCount": 0,
+        "stakeholderCount": 0,
+        "blockerCount": 0,
+        "introducerCount": 0,
+        "qualityGrade": "D"
+      },
+      "recommendations": [
+        "Ensure primary business functions are represented",
+        "Critical: Add appropriate decision maker for deal size",
+        "Critical: Add internal champion for advocacy",
+        "Consider adding more stakeholders for comprehensive coverage"
+      ]
+    },
+    "cohesion": {
+      "score": null,
+      "confidence": "VERY_LOW",
+      "factors": {
+        "reportingProximity": 0,
+        "departmentClustering": 50,
+        "seniorityBalance": null,
+        "geographicAlignment": 75,
+        "functionalInterdependence": 0
+      },
+      "reasoning": "Limited reporting proximity; Limited functional interdependence",
+      "recommendations": [
+        "Consider adding members who report to same executives",
+        "Consider adding members from interdependent functions"
+      ]
+    },
+    "coverage": {
+      "primary": false,
+      "technical": false,
+      "risk": false,
+      "financial": false,
+      "details": {
+        "primary": {
+          "covered": [],
+          "missing": [
+            "Sales",
+            "Operations",
+            "Revenue"
+          ],
+          "representatives": []
+        },
+        "technical": {
+          "covered": [],
+          "missing": [
+            "IT",
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      }
+    },
+    "intelligence": {
+      "employeeCount": 100,
+      "revenue": 0,
+      "industry": "Unknown",
+      "growthRate": 0,
+      "activeHiring": 0,
+      "fundingStage": "bootstrapped",
+      "dataSource": "default",
+      "lastUpdated": "2025-10-29T18:22:07.412Z",
+      "companyName": "XMPro",
+      "linkedinUrl": null,
+      "website": "https://xmpro.com/",
+      "tier": "S6",
+      "searchStrategy": "comprehensive",
+      "filteringLevel": "none"
+    },
+    "costs": {
+      "preview": 2,
+      "collect": 0,
+      "total": 2
+    },
+    "processingTime": 1285,
+    "pipelineState": {
+      "startTime": 1761762127227,
+      "stage": "completed",
+      "totalEmployees": 20,
+      "processedEmployees": 0,
+      "finalBuyerGroup": [],
+      "costs": {
+        "preview": 2,
+        "collect": 0,
+        "total": 2
+      }
+    }
+  },
+  "timestamp": "2025-10-29T18:22:08.512Z"
+}

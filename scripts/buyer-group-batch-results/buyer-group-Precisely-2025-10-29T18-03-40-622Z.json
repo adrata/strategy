@@ -1,0 +1,3569 @@
+{
+  "company": {
+    "id": "01K8R6BCRESC33Z52V1QMN3BST",
+    "name": "Precisely",
+    "website": "https://www.precisely.com/",
+    "industry": "Software",
+    "employeeCount": null,
+    "revenue": null
+  },
+  "pipeline": {
+    "target": "https://www.precisely.com/",
+    "dealSize": 150000,
+    "productCategory": "sales",
+    "workspaceId": "01K7464TNANHQXPCZT1FYX205V"
+  },
+  "results": {
+    "buyerGroup": [
+      {
+        "id": 255089603,
+        "name": "Brian Prew",
+        "title": "Sales Operations Manager",
+        "department": "Sales",
+        "company": "Precisely",
+        "managementLevel": "Manager",
+        "connectionsCount": 410,
+        "followersCount": 408,
+        "email": "",
+        "phone": "",
+        "linkedinUrl": "https://www.linkedin.com/in/brian-prew-8a657b90",
+        "source": "coresignal_preview",
+        "scores": {
+          "seniority": 3,
+          "departmentFit": 10,
+          "influence": 3,
+          "championPotential": 18,
+          "crossFunctional": 7,
+          "geoAlignment": 8
+        },
+        "overallScore": 8,
+        "relevance": 0.95,
+        "isHighValue": false,
+        "aiRelevance": 0.95,
+        "aiReasoning": "Brian Prew is highly relevant for Sales Intelligence Software procurement. As Sales Operations Manager, he sits at the intersection of sales strategy, process optimization, and technology enablement - the exact domain where sales intelligence tools are implemented. Sales Ops typically owns the evaluation, selection, and implementation of sales tools and technologies. His responsibilities likely include: optimizing sales processes, managing the sales tech stack, data quality and enrichment, territory planning, and sales analytics - all areas where sales intelligence software provides direct value. While he may not have final budget authority for a $150K deal, he would typically be the primary champion who drives the evaluation process, builds the business case, and makes the recommendation to senior leadership (VP Sales or CRO). His influence level is 8/10 because: (1) He's the functional owner of sales tools, (2) He'll be hands-on with implementation and adoption, (3) Sales leadership heavily relies on his technical and operational expertise for these decisions, and (4) He can effectively block or champion a deal based on his recommendation. The only limitation is that final budget approval for $150K likely requires VP+ sign-off. No red flags present - his title and department perfectly align with the buyer persona for sales intelligence software.",
+        "aiConfidence": 0.95,
+        "buyerGroupRole": "decision",
+        "roleConfidence": 30,
+        "roleReasoning": "Promoted to decision maker (no better candidate found)",
+        "aiRoleValidation": {
+          "suggestedRole": "decision",
+          "confidence": 0.95,
+          "reasoning": "Brian Prew's assignment as 'decision' is highly appropriate based on several factors: (1) As Sales Operations Manager, he directly oversees the operational infrastructure that Sales Intelligence Software would integrate into, making him a primary stakeholder with deep understanding of requirements. (2) Sales Intelligence Software directly impacts his department's effectiveness and workflow, placing him at the center of this purchase decision. (3) At a $150K deal size, a Sales Operations Manager typically has budget authority or significant influence over tool purchases that affect sales productivity and data management. (4) His title indicates he's responsible for optimizing sales processes and selecting technology stack components for the sales organization. (5) He's already listed as 'decision' in the existing buyer group, which validates this assessment and suggests prior qualification of his decision-making authority. The only consideration for alternative roles would be if Precisely's organizational structure reserves final approval for C-level executives (VP Sales or CFO), in which case he might be better classified as 'champion', but his current assignment and the deal size relative to his role strongly support 'decision' as the optimal classification.",
+          "alternativeRoles": [
+            "champion",
+            "stakeholder"
+          ]
+        },
+        "aiRoleReasoning": "Brian Prew's assignment as 'decision' is highly appropriate based on several factors: (1) As Sales Operations Manager, he directly oversees the operational infrastructure that Sales Intelligence Software would integrate into, making him a primary stakeholder with deep understanding of requirements. (2) Sales Intelligence Software directly impacts his department's effectiveness and workflow, placing him at the center of this purchase decision. (3) At a $150K deal size, a Sales Operations Manager typically has budget authority or significant influence over tool purchases that affect sales productivity and data management. (4) His title indicates he's responsible for optimizing sales processes and selecting technology stack components for the sales organization. (5) He's already listed as 'decision' in the existing buyer group, which validates this assessment and suggests prior qualification of his decision-making authority. The only consideration for alternative roles would be if Precisely's organizational structure reserves final approval for C-level executives (VP Sales or CFO), in which case he might be better classified as 'champion', but his current assignment and the deal size relative to his role strongly support 'decision' as the optimal classification.",
+        "fullProfile": {
+          "id": 255089603,
+          "parent_id": 255089603,
+          "created_at": "2016-08-22T10:02:58.000Z",
+          "updated_at": "2025-10-10T06:48:30.249130Z",
+          "checked_at": "2025-10-18T08:52:59.843982Z",
+          "changed_at": "2025-10-10T06:48:30.249130Z",
+          "experience_change_last_identified_at": null,
+          "is_deleted": 0,
+          "is_parent": 1,
+          "public_profile_id": 323895870,
+          "linkedin_url": "https://www.linkedin.com/in/brian-prew-8a657b90",
+          "linkedin_shorthand_names": [
+            "brian-prew-8a657b90"
+          ],
+          "historical_ids": [
+            255089603
+          ],
+          "full_name": "Brian Prew",
+          "first_name": "Brian",
+          "first_name_initial": "B",
+          "middle_name": null,
+          "middle_name_initial": null,
+          "last_name": "Prew",
+          "last_name_initial": "P",
+          "headline": "Sales Operations Manager",
+          "summary": "Experienced Revenue Operations professional with a demonstrated history of working in the technology & information services industry. Skilled with Salesforce, Microsoft Excel, Microsoft Word, Public Speaking, Microsoft Office, and Microsoft PowerPoint. Strong business development professional with a Bachelor of Business Administration (BBA) focused in Finance, from University of Massachusetts Lowell.",
+          "picture_url": "https://static.licdn.com/aero-v1/sc/h/9c8pery4andzj6ohjkjp54ma2",
+          "location_country": "United States",
+          "location_country_iso2": "US",
+          "location_country_iso3": "USA",
+          "location_full": "Beverly, Massachusetts, United States",
+          "location_regions": [
+            "Americas",
+            "Northern America",
+            "AMER"
+          ],
+          "location_city": "Beverly",
+          "location_state": "Massachusetts",
+          "interests": [],
+          "inferred_skills": [
+            "operations",
+            "technology",
+            "salesforce",
+            "microsoft",
+            "word",
+            "powerpoint",
+            "administration",
+            "finance",
+            "sales",
+            "management",
+            "microsoft excel",
+            "microsoft word",
+            "public speaking",
+            "microsoft office",
+            "microsoft powerpoint",
+            "business development",
+            "business administration",
+            "sales operations",
+            "accounts receivable",
+            "order management",
+            "business operations"
+          ],
+          "historical_skills": [],
+          "connections_count": 410,
+          "followers_count": 408,
+          "services": null,
+          "primary_professional_email": "bprew@precisely.com",
+          "primary_professional_email_status": "matched_pattern",
+          "professional_emails_collection": [
+            {
+              "professional_email": "bprew@precisely.com",
+              "professional_email_status": "matched_pattern",
+              "order_of_priority": 1
+            },
+            {
+              "professional_email": "brian.prew@precisely.com",
+              "professional_email_status": "matched_pattern",
+              "order_of_priority": 2
+            },
+            {
+              "professional_email": "brian@precisely.com",
+              "professional_email_status": "matched_pattern",
+              "order_of_priority": 3
+            }
+          ],
+          "is_working": 1,
+          "active_experience_company_id": 28124003,
+          "active_experience_title": "Sales Operations Manager",
+          "active_experience_description": null,
+          "active_experience_department": "Sales",
+          "active_experience_management_level": "Manager",
+          "is_decision_maker": 0,
+          "total_experience_duration_months": 109,
+          "total_experience_duration_months_breakdown_department": [
+            {
+              "department": "Operations",
+              "total_experience_duration_months": 33
+            },
+            {
+              "department": "Research",
+              "total_experience_duration_months": 6
+            },
+            {
+              "department": "Sales",
+              "total_experience_duration_months": 38
+            },
+            {
+              "department": "Other",
+              "total_experience_duration_months": 26
+            },
+            {
+              "department": "Finance & Accounting",
+              "total_experience_duration_months": 6
+            }
+          ],
+          "total_experience_duration_months_breakdown_management_level": [
+            {
+              "management_level": "Other",
+              "total_experience_duration_months": 26
+            },
+            {
+              "management_level": "Specialist",
+              "total_experience_duration_months": 40
+            },
+            {
+              "management_level": "Manager",
+              "total_experience_duration_months": 43
+            }
+          ],
+          "experience": [
+            {
+              "active_experience": 1,
+              "position_title": "Sales Operations Manager",
+              "department": "Sales",
+              "management_level": "Manager",
+              "location": "Burlington, Massachusetts, United States",
+              "description": null,
+              "date_from": "June 2023",
+              "date_from_year": 2023,
+              "date_from_month": 6,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "duration_months": 28,
+              "company_id": 28124003,
+              "company_name": "Precisely",
+              "company_type": "Privately Held",
+              "company_founded_year": null,
+              "company_followers_count": 214091,
+              "company_website": "https://www.precisely.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/preciselydata"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/preciselydata"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/preciselydata",
+              "company_size_range": "1001-5000 employees",
+              "company_employees_count": 2976,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "technology/data analytics",
+                "business and consumer services > business services (in united states)",
+                "trusted",
+                "fortune 100",
+                "data analytics",
+                "simplify",
+                "business decisions",
+                "technology",
+                "cloud",
+                "data-automation",
+                "data-management",
+                "enterprise-software"
+              ],
+              "company_annual_revenue_source_5": 755624999,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 525000000,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": 2.197802197802198,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "1700 District Ave; #300; Burlington, Massachusetts 01803, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Burlington",
+              "company_hq_state": "Massachusetts",
+              "company_hq_street": "1700 District Ave; #300",
+              "company_hq_zipcode": "01803",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 1
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Manager, Revenue Operations",
+              "department": "Operations",
+              "management_level": "Manager",
+              "location": "Boston, Massachusetts, United States",
+              "description": null,
+              "date_from": "August 2022",
+              "date_from_year": 2022,
+              "date_from_month": 8,
+              "date_to": "January 2023",
+              "date_to_year": 2023,
+              "date_to_month": 1,
+              "duration_months": 5,
+              "company_id": 8510913,
+              "company_name": "LinkSquares",
+              "company_type": "Privately Held",
+              "company_founded_year": 2015,
+              "company_followers_count": 18932,
+              "company_website": "https://www.linksquares.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/linksquares"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/linksquares"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/linksquares",
+              "company_size_range": "201-500 employees",
+              "company_employees_count": 264,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "legal technology",
+                "contract lifecycle management (clm) software",
+                "linksquares",
+                "contract management",
+                "contract lifecycle management (clm)",
+                "contract analytics",
+                "computers electronics and technology > programming and developer software (in united states)",
+                "legal",
+                "machine learning",
+                "ai",
+                "saas",
+                "contract review",
+                "legal operations",
+                "legalops",
+                "analytics",
+                "legal tech",
+                "artificial intelligence",
+                "cloud",
+                "startups",
+                "high growth",
+                "contract lifecycle management",
+                "legal teams",
+                "ai-powered contract management",
+                "project management software",
+                "legal cloud",
+                "technology",
+                "artificial-intelligence",
+                "compliance",
+                "data-management",
+                "platform",
+                "vendor-management",
+                "artificial intelligence (ai)",
+                "contact management",
+                "productivity tools",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 25000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 11300000,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": -12,
+              "company_last_funding_round_date": "2022-04-04",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "60 State Street; Suite 1200; Boston, Massachusetts 02109, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Boston",
+              "company_hq_state": "Massachusetts",
+              "company_hq_street": "60 State Street; Suite 1200",
+              "company_hq_zipcode": "02109",
+              "company_last_updated_at": "2025-09-08",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 2
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Sales Operations Manager",
+              "department": "Sales",
+              "management_level": "Manager",
+              "location": "Boston, Massachusetts, United States",
+              "description": null,
+              "date_from": "June 2021",
+              "date_from_year": 2021,
+              "date_from_month": 6,
+              "date_to": "April 2022",
+              "date_to_year": 2022,
+              "date_to_month": 4,
+              "duration_months": 10,
+              "company_id": 2002538,
+              "company_name": "Crayon",
+              "company_type": "Privately Held",
+              "company_founded_year": 2015,
+              "company_followers_count": 18847,
+              "company_website": "https://www.crayon.co",
+              "company_facebook_url": [
+                "https://www.facebook.com/crayondotco"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/crayon"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/crayon-co",
+              "company_size_range": "51-200 employees",
+              "company_employees_count": 83,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "competitive intelligence",
+                "business and consumer services > digital marketing",
+                "sales enablement",
+                "battlecards",
+                "market intelligence",
+                "sales team",
+                "monitor",
+                "real-time intelligence",
+                "technology",
+                "artificial-intelligence",
+                "enterprise-software",
+                "marketing-analytics",
+                "platform",
+                "analytics",
+                "artificial intelligence (ai)",
+                "business development",
+                "business intelligence",
+                "machine learning",
+                "marketing",
+                "saas",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 8425000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 0,
+              "company_last_funding_round_date": "2021-05-04",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "268 Summer St; Boston, Massachusetts, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Boston",
+              "company_hq_state": "Massachusetts",
+              "company_hq_street": "268 Summer St",
+              "company_hq_zipcode": "",
+              "company_last_updated_at": "2025-09-06",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 3
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Business Operations Salesforce Coordinator",
+              "department": null,
+              "management_level": null,
+              "location": null,
+              "description": null,
+              "date_from": "April 2019",
+              "date_from_year": 2019,
+              "date_from_month": 4,
+              "date_to": "June 2021",
+              "date_to_year": 2021,
+              "date_to_month": 6,
+              "duration_months": 26,
+              "company_id": 5166279,
+              "company_name": "MedData Group, LLC",
+              "company_type": "Public Company",
+              "company_founded_year": 2011,
+              "company_followers_count": 1055,
+              "company_website": "https://www.meddatagroup.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/meddatagroup"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/meddatagroup"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/meddata-group-llc",
+              "company_size_range": "11-50 employees",
+              "company_employees_count": 20,
+              "company_industry": "Advertising Services",
+              "company_categories_and_keywords": [
+                "health care",
+                "advertising",
+                "industry: n/a",
+                "demand generation services",
+                "database licensing and information services",
+                "marketing to physicians and healthcare professionals",
+                "behavioral analysis and big data marketing techniques",
+                "clinical behavior data",
+                "programmatic advertising",
+                "email data",
+                "social media",
+                "advanced tv advertising",
+                "programmatic",
+                "email",
+                "digital engagement solutions",
+                "technology",
+                "healthtech",
+                "social-networks"
+              ],
+              "company_annual_revenue_source_5": 16000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": -4.761904761904762,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "3210 El Camino Real; Suite 150; Irvine, California 92602, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Irvine",
+              "company_hq_state": "California",
+              "company_hq_street": "3210 El Camino Real; Suite 150",
+              "company_hq_zipcode": "92602",
+              "company_last_updated_at": "2025-09-06",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 4
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Sales Operations Analyst",
+              "department": "Research",
+              "management_level": "Specialist",
+              "location": "Woburn, Massachusetts",
+              "description": null,
+              "date_from": "July 2018",
+              "date_from_year": 2018,
+              "date_from_month": 7,
+              "date_to": "January 2019",
+              "date_to_year": 2019,
+              "date_to_month": 1,
+              "duration_months": 6,
+              "company_id": 9160126,
+              "company_name": "Access Information Management",
+              "company_type": "Privately Held",
+              "company_founded_year": 2004,
+              "company_followers_count": 44011,
+              "company_website": "https://www.accesscorp.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/accesstoday"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/accesstoday"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/access-information-management",
+              "company_size_range": "1001-5000 employees",
+              "company_employees_count": 1118,
+              "company_industry": "Information Services",
+              "company_categories_and_keywords": [
+                "music",
+                "business and consumer services > business services (in united states)",
+                "records and information management",
+                "off-site media vault",
+                "secure destruction",
+                "document scanning",
+                "enterprise content management",
+                "document shredding",
+                "digital delivery / scan-on-demand",
+                "cloud document management",
+                "business process automation",
+                "human resources automation",
+                "music artists",
+                "artist wellbeing program",
+                "career challenges",
+                "support team",
+                "professional support",
+                "technology",
+                "data-storage",
+                "documents",
+                "enterprise-software",
+                "data storage",
+                "document management",
+                "enterprise software",
+                "information services",
+                "information technology"
+              ],
+              "company_annual_revenue_source_5": 506249999,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 348100000,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": 6.679389312977099,
+              "company_last_funding_round_date": "2017-09-29",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "4 First Ave; Peabody, Massachusetts 01960, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Peabody",
+              "company_hq_state": "Massachusetts",
+              "company_hq_street": "4 First Ave",
+              "company_hq_zipcode": "01960",
+              "company_last_updated_at": "2025-09-08",
+              "company_stock_ticker": [],
+              "company_is_b2b": 0,
+              "order_in_profile": 5
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Order Management Specialist",
+              "department": "Operations",
+              "management_level": "Specialist",
+              "location": "Waltham, Massachusetts",
+              "description": null,
+              "date_from": "March 2016",
+              "date_from_year": 2016,
+              "date_from_month": 3,
+              "date_to": "July 2018",
+              "date_to_year": 2018,
+              "date_to_month": 7,
+              "duration_months": 28,
+              "company_id": 1591595,
+              "company_name": "Carbon Black, Inc.",
+              "company_type": "Public Company",
+              "company_founded_year": null,
+              "company_followers_count": 71954,
+              "company_website": "https://www.carbonblack.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/carbonblackinc",
+                "https://www.facebook.com/vmware"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/carbonb1ack",
+                "https://www.twitter.com/carbonblack_inc",
+                "https://www.twitter.com/vmware"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/carbon-black-inc",
+              "company_size_range": "1001-5000 employees",
+              "company_employees_count": 279,
+              "company_industry": "Computer and Network Security",
+              "company_categories_and_keywords": [
+                "technology/security",
+                "application whitelisting",
+                "endpoint security",
+                "server security",
+                "pci compliance",
+                "cyber security protection",
+                "cyber forensics",
+                "application control",
+                "windows xp end of life security",
+                "advanced threat protection",
+                "malware protection",
+                "incident response",
+                "next gen antivirus ngav",
+                "ransomware defense",
+                "security solutions",
+                "hybrid environments",
+                "private environments",
+                "vmware",
+                "technology",
+                "cloud-platforms",
+                "cybersecurity",
+                "enterprise-software",
+                "monitoring",
+                "cyber security",
+                "homeland security",
+                "physical security",
+                "security"
+              ],
+              "company_annual_revenue_source_5": 245000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 209724000,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": -37.58389261744966,
+              "company_last_funding_round_date": "2017-04-06",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "3401 Hillview Avenue; Palo Alto, California 94304, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Palo Alto",
+              "company_hq_state": "California",
+              "company_hq_street": "3401 Hillview Avenue",
+              "company_hq_zipcode": "94304",
+              "company_last_updated_at": "2025-09-08",
+              "company_stock_ticker": [
+                {
+                  "exchange": "NYSE",
+                  "ticker": "VMW"
+                },
+                {
+                  "exchange": "NASDAQ",
+                  "ticker": "CBLK"
+                }
+              ],
+              "company_is_b2b": 1,
+              "order_in_profile": 6
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Accounts Receivable Specialist",
+              "department": "Finance & Accounting",
+              "management_level": "Specialist",
+              "location": "Boston, Massachusetts",
+              "description": null,
+              "date_from": "September 2015",
+              "date_from_year": 2015,
+              "date_from_month": 9,
+              "date_to": "March 2016",
+              "date_to_year": 2016,
+              "date_to_month": 3,
+              "duration_months": 6,
+              "company_id": 7419797,
+              "company_name": "Rapid7",
+              "company_type": "Public Company",
+              "company_founded_year": null,
+              "company_followers_count": 202682,
+              "company_website": "https://www.rapid7.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/rapid7"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/rapid7"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/rapid7",
+              "company_size_range": "1001-5000 employees",
+              "company_employees_count": 3106,
+              "company_industry": "Computer and Network Security",
+              "company_categories_and_keywords": [
+                "education",
+                "computers electronics and technology > computer security (in united states)",
+                "attack surface management",
+                "information security",
+                "vulnerability management",
+                "penetration testing",
+                "compromised user detection",
+                "mobile risk management",
+                "enterprise control monitoring",
+                "strategic services",
+                "security programs",
+                "application testing",
+                "automation",
+                "analytics",
+                "intrusion detection",
+                "programs",
+                "students",
+                "services",
+                "school",
+                "technology",
+                "cloud",
+                "cybersecurity",
+                "enterprise-software",
+                "platform",
+                "security",
+                "systems-integrator",
+                "cyber security",
+                "enterprise software",
+                "network security",
+                "risk management"
+              ],
+              "company_annual_revenue_source_5": 855361000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 844006976,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": 1.040988939492518,
+              "company_last_funding_round_date": "2024-06-26",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "120 Causeway St; Suite 400; Boston, Massachusetts 02114, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Boston",
+              "company_hq_state": "Massachusetts",
+              "company_hq_street": "120 Causeway St; Suite 400",
+              "company_hq_zipcode": "02114",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [
+                {
+                  "exchange": "NASDAQ",
+                  "ticker": "RPD"
+                },
+                {
+                  "exchange": null,
+                  "ticker": "RPD"
+                }
+              ],
+              "company_is_b2b": 0,
+              "order_in_profile": 7
+            }
+          ],
+          "projected_base_salary_p25": null,
+          "projected_base_salary_median": null,
+          "projected_base_salary_p75": null,
+          "projected_base_salary_period": null,
+          "projected_base_salary_currency": null,
+          "projected_base_salary_updated_at": null,
+          "projected_additional_salary": [],
+          "projected_additional_salary_period": null,
+          "projected_additional_salary_currency": null,
+          "projected_additional_salary_updated_at": null,
+          "projected_total_salary_p25": null,
+          "projected_total_salary_median": null,
+          "projected_total_salary_p75": null,
+          "projected_total_salary_period": null,
+          "projected_total_salary_currency": null,
+          "projected_total_salary_updated_at": null,
+          "last_graduation_date": 2015,
+          "education_degrees": [
+            "Finance, General",
+            "Bachelor of Business Administration (BBA), Finance, General"
+          ],
+          "education": [
+            {
+              "degree": "Finance, General",
+              "description": null,
+              "institution_url": "https://www.linkedin.com/school/university-of-new-hampshire",
+              "institution_name": "University of New Hampshire",
+              "institution_full_address": "105 Main Street; Thompson Hall; Durham, New Hampshire 03824-3547, US",
+              "institution_country_iso2": "US",
+              "institution_country_iso3": "USA",
+              "institution_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "institution_city": "Durham",
+              "institution_state": "New Hampshire",
+              "institution_street": "105 Main Street; Thompson Hall",
+              "institution_zipcode": "03824-3547",
+              "date_from_year": 2010,
+              "date_to_year": 2013,
+              "activities_and_societies": null,
+              "order_in_profile": 1
+            },
+            {
+              "degree": "Bachelor of Business Administration (BBA), Finance, General",
+              "description": null,
+              "institution_url": "https://www.linkedin.com/school/university-of-massachusetts-lowell",
+              "institution_name": "University of Massachusetts Lowell",
+              "institution_full_address": "One University Ave; Lowell, MA 01854-5104, US",
+              "institution_country_iso2": "US",
+              "institution_country_iso3": "USA",
+              "institution_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "institution_city": "Lowell",
+              "institution_state": "Massachusetts",
+              "institution_street": "One University Ave",
+              "institution_zipcode": "01854-5104",
+              "date_from_year": 2014,
+              "date_to_year": 2015,
+              "activities_and_societies": null,
+              "order_in_profile": 2
+            }
+          ],
+          "recommendations_count": null,
+          "recommendations": [],
+          "activity": [
+            {
+              "activity_url": "https://www.linkedin.com/posts/baker-nadine_womensupportingwomen-activity-7305995348030685184-p5le",
+              "title": "This morning, I had the privilege of attending a Women in SAP event hosted by UK & Ireland SAP User Group and Precisely overlooking the stunning city…",
+              "action": "Liked by",
+              "order_in_profile": 1
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/preciselydata_gartnerda-dataintegrity-activity-7303799201799233536-jXlJ",
+              "title": "Thank you to everyone who joined us at the Gartner® Data & Analytics Summit this week! It was a pleasure connecting with all of you. 🤝\n\nWant to…",
+              "action": "Liked by",
+              "order_in_profile": 2
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/nick-rossi-6785736b_last-week-we-began-onboarding-two-new-universities-activity-7285660823572643841-zahH",
+              "title": "Last week, we began onboarding two new universities. One, located in New Hampshire, will help expand our territory further north. It's crazy to stop…",
+              "action": "Liked by",
+              "order_in_profile": 3
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/nick-rossi-6785736b_we-have-been-so-busy-building-the-foundation-activity-7247951682003693568-mhDq",
+              "title": "We have been so busy building the foundation of D's we haven't released a new baked good in some time. That changes today!\n\nWe are proud to release…",
+              "action": "Liked by",
+              "order_in_profile": 4
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/d-s-bakeshop_last-friday-we-had-the-incredible-opportunity-activity-7228748311158030339-_Zm4",
+              "title": "Last Friday, we had the incredible opportunity to showcase our innovative products to over 50 managers from the New England region. The feedback we…",
+              "action": "Liked by",
+              "order_in_profile": 5
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/nick-rossi-6785736b_the-food-industry-is-a-grind-early-mornings-activity-7216781961896345600-tay6",
+              "title": "The food industry is a grind. Early mornings, late nights. You have to love it. For me, its the little things that make it all worthwhile. See the…",
+              "action": "Liked by",
+              "order_in_profile": 6
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/nick-rossi-6785736b_new-product-announcement-the-team-activity-7208853125993000960-xG7O",
+              "title": "🚨 New Product Announcement 🎉  \n\nThe team is thrilled to announce, we are expanding our menu! In addition to our beloved baked goods, we are now…",
+              "action": "Liked by",
+              "order_in_profile": 7
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/cognism_instant-enrich-x-lean-data-playbook-activity-7193571395224629248-Unpj",
+              "title": "You’re using Lean Data but want to increase lead response times and maximize your chance of turning inbound leads into opportunities. See how Cognism…",
+              "action": "Liked by",
+              "order_in_profile": 8
+            }
+          ],
+          "awards": [],
+          "courses": [],
+          "certifications": [],
+          "languages": [],
+          "patents_count": null,
+          "patents_topics": [],
+          "patents": [],
+          "publications_count": null,
+          "publications_topics": [],
+          "publications": [],
+          "projects_count": null,
+          "projects_topics": [],
+          "projects": [],
+          "organizations": [],
+          "github_url": null,
+          "github_username": null,
+          "github_mapping_confidence": null,
+          "github_contributions_count": null,
+          "github_repos_summary": [],
+          "profile_root_field_changes_summary": [
+            {
+              "field_name": "summary",
+              "change_type": "new",
+              "last_changed_at": "2025-03-08 02:29:48.027205"
+            },
+            {
+              "field_name": "summary",
+              "change_type": "updated",
+              "last_changed_at": "2025-09-12 08:20:27.642783"
+            },
+            {
+              "field_name": "connections_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-09-12 08:20:27.642783"
+            },
+            {
+              "field_name": "follower_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-09-12 08:20:27.642783"
+            }
+          ],
+          "profile_collection_field_changes_summary": [
+            {
+              "field_name": "education",
+              "last_changed_at": "2025-10-10 06:48:30.249130"
+            },
+            {
+              "field_name": "activity",
+              "last_changed_at": "2025-08-15 07:16:00.558564"
+            },
+            {
+              "field_name": "experience",
+              "last_changed_at": "2025-10-10 06:48:30.249130"
+            }
+          ],
+          "experience_recently_started": [],
+          "experience_recently_closed": []
+        },
+        "enrichedAt": "2025-10-29T18:03:19.983Z"
+      },
+      {
+        "id": 412131687,
+        "name": "SHIN KAMEI",
+        "title": "Senior Account Executive",
+        "department": "Sales",
+        "company": "Precisely | Trust in Data",
+        "managementLevel": "Senior",
+        "connectionsCount": 328,
+        "followersCount": 326,
+        "email": "",
+        "phone": "",
+        "linkedinUrl": "https://www.linkedin.com/in/shin-shinichiro-kamei-a7a56686",
+        "source": "coresignal_preview",
+        "scores": {
+          "seniority": 3,
+          "departmentFit": 10,
+          "influence": 3,
+          "championPotential": 12,
+          "crossFunctional": 4,
+          "geoAlignment": 8
+        },
+        "overallScore": 6,
+        "relevance": 0.85,
+        "isHighValue": false,
+        "aiRelevance": 0.85,
+        "aiReasoning": "Shin Kamei is highly relevant for this Sales Intelligence Software opportunity. As a Senior Account Executive in the Sales department at Precisely, he is a direct end-user who would benefit from sales intelligence tools for prospecting, lead enrichment, and account research. His position makes him an ideal champion who can advocate for the product's value based on daily usage needs. While Senior AEs typically don't have final budget authority for $150K purchases, they hold significant influence in the buying process because: (1) they are primary users who can articulate pain points and ROI, (2) they can influence sales leadership's decision-making, and (3) sales tools are often evaluated by practitioners before leadership approval. At a company with 100 employees, a Senior AE likely has strong relationships with sales leadership (VP Sales/CRO) who would be the ultimate decision-maker. His influence level of 7 reflects his role as a credible internal advocate who can drive adoption and provide user perspective, though he likely needs approval from sales leadership for this deal size. No red flags identified - his title and department align perfectly with the product category.",
+        "aiConfidence": 0.9,
+        "buyerGroupRole": "champion",
+        "roleConfidence": 60,
+        "roleReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+        "aiRoleValidation": {
+          "suggestedRole": "champion",
+          "confidence": 0.85,
+          "reasoning": "SHIN KAMEI should be upgraded from 'stakeholder' to 'champion' for several key reasons:\n\n1. **Direct Product Relevance**: As a Senior Account Executive in Sales, SHIN would be a primary end-user of Sales Intelligence Software. This tool directly impacts their daily workflow, prospecting capabilities, and quota attainment.\n\n2. **Operational Impact**: Sales Intelligence Software is core to sales execution. A Senior AE has hands-on experience with what features matter, what integrations are needed, and how it will affect team adoption and performance.\n\n3. **Internal Advocacy Capability**: At the senior level, SHIN likely has credibility within the sales organization to advocate for tools that improve efficiency. They can articulate ROI in terms sales leadership understands (pipeline generation, conversion rates, time savings).\n\n4. **Deal Size Justification**: At $150K, this is a significant investment that requires user buy-in. Having a Senior AE champion ensures the sales team will adopt the tool, which is critical for justifying the expenditure.\n\n5. **Buyer Group Composition**: With Brian Prew as the decision-maker (likely VP/Director level), SHIN serves as the crucial bridge between leadership approval and frontline adoption. Champions are most effective when they're operational users who can influence both peers and management.\n\n6. **Not Decision Authority**: While senior, an Account Executive typically lacks budget authority for $150K purchases, but has significant influence power.\n\nSHIN's current 'stakeholder' designation underutilizes their potential impact on this deal's success.",
+          "alternativeRoles": [
+            "stakeholder",
+            "decision"
+          ]
+        },
+        "aiRoleReasoning": "SHIN KAMEI should be upgraded from 'stakeholder' to 'champion' for several key reasons:\n\n1. **Direct Product Relevance**: As a Senior Account Executive in Sales, SHIN would be a primary end-user of Sales Intelligence Software. This tool directly impacts their daily workflow, prospecting capabilities, and quota attainment.\n\n2. **Operational Impact**: Sales Intelligence Software is core to sales execution. A Senior AE has hands-on experience with what features matter, what integrations are needed, and how it will affect team adoption and performance.\n\n3. **Internal Advocacy Capability**: At the senior level, SHIN likely has credibility within the sales organization to advocate for tools that improve efficiency. They can articulate ROI in terms sales leadership understands (pipeline generation, conversion rates, time savings).\n\n4. **Deal Size Justification**: At $150K, this is a significant investment that requires user buy-in. Having a Senior AE champion ensures the sales team will adopt the tool, which is critical for justifying the expenditure.\n\n5. **Buyer Group Composition**: With Brian Prew as the decision-maker (likely VP/Director level), SHIN serves as the crucial bridge between leadership approval and frontline adoption. Champions are most effective when they're operational users who can influence both peers and management.\n\n6. **Not Decision Authority**: While senior, an Account Executive typically lacks budget authority for $150K purchases, but has significant influence power.\n\nSHIN's current 'stakeholder' designation underutilizes their potential impact on this deal's success.",
+        "fullProfile": {
+          "id": 412131687,
+          "parent_id": 412131687,
+          "created_at": "2019-05-29T08:53:01.000Z",
+          "updated_at": "2025-10-15T12:17:38.340692Z",
+          "checked_at": "2025-10-15T12:17:38.340692Z",
+          "changed_at": "2025-10-08T07:16:40.714774Z",
+          "experience_change_last_identified_at": null,
+          "is_deleted": 0,
+          "is_parent": 1,
+          "public_profile_id": 305950846,
+          "linkedin_url": "https://www.linkedin.com/in/shin-shinichiro-kamei-a7a56686",
+          "linkedin_shorthand_names": [
+            "shin-shinichiro-kamei-a7a56686"
+          ],
+          "historical_ids": [
+            412131687
+          ],
+          "full_name": "SHIN KAMEI",
+          "first_name": "SHIN",
+          "first_name_initial": "S",
+          "middle_name": null,
+          "middle_name_initial": null,
+          "last_name": "KAMEI",
+          "last_name_initial": "K",
+          "headline": "Experienced Semiconductor, Software, Service Sales and Sales Manager currently on leave to take care of family.",
+          "summary": "Pitney Bowes Japan ・Joined Pitney Bowes Japan Software Solutions as Sales Manager. Gartner ・ Joined Gartner Japan in Jan 2017 as Account Executive. Intel • Joined Intel K.K. after college graduation in March 1997 • 16 years of experience in iA sales for PC, Server, Tablet, Storage and Embedded applications  Covered accounts; Direct: NEC, Hitachi, Toshiba, Disti/Embedded: FujiXerox, Casio, OKI, Epson • 7 years of experience in Account manager and people management role within above for NEC and Hitachi account  Managed reports 15; mixture of Field Sales, Market development manager and Filed Application Engineer  Trainer of New to Management training class. Trained ~30 Managers and Manager equivalent Individual Contributors. • 3 years of experience in New business development, PerC Champ and Technology research and evangelist role • 6 month experience for new sales process creation with Intel’s ODM partners in Japan such as Advantech, Adlink, Kontron, Supermicro, Gigabyte, Nexcom, Congatec, IEI, Avalue, Portwell and so on. • Covered Products in Intel: Controller186 – 486, RISC 960, CISC Pentium – Xeon, Itanium, Flash memory / SSD, Modem/LAN/WLAN/Optical, Desktop/Server motherboards, RealSense 3D cameras, Edison, Quark, IOT Gateway • Highly rated strength: Communication, Negotiation, Stakeholder management, Quality, Discipline • Intel K.K. Award (2002 x2, 2003, 2004), Intel Corp Award (2004, 2009, 2011), Intel Achievement Award nomination by Senior VP Mooly Eden in 2011 NEC Supplier Excellence Award (2003, 2007, 2009, 2011)",
+          "picture_url": "https://media.licdn.com/dms/image/v2/C4E03AQFghAO31owTVQ/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1517002312725?e=2147483647&v=beta&t=gnS2kmSN6E0kSayjAtEUl1v484S9lLo3TUI9kybqF1E",
+          "location_country": "Japan",
+          "location_country_iso2": "JP",
+          "location_country_iso3": "JPN",
+          "location_full": "Greater Tokyo Area",
+          "location_regions": [
+            "Asia",
+            "Eastern Asia",
+            "APAC"
+          ],
+          "location_city": "Tokyo",
+          "location_state": null,
+          "interests": [],
+          "inferred_skills": [
+            "new business development",
+            "software",
+            "sales",
+            "server",
+            "management",
+            "reports",
+            "trainer",
+            "training",
+            "technology",
+            "research",
+            "flash",
+            "wlan",
+            "3d",
+            "iot",
+            "strength",
+            "negotiation",
+            "discipline",
+            "computing",
+            "sales manager",
+            "people management",
+            "market development",
+            "business development",
+            "sales process",
+            "stakeholder management"
+          ],
+          "historical_skills": [],
+          "connections_count": 328,
+          "followers_count": 326,
+          "services": null,
+          "primary_professional_email": "skamei@precisely.com",
+          "primary_professional_email_status": "matched_pattern",
+          "professional_emails_collection": [
+            {
+              "professional_email": "skamei@precisely.com",
+              "professional_email_status": "matched_pattern",
+              "order_of_priority": 1
+            },
+            {
+              "professional_email": "shin.kamei@precisely.com",
+              "professional_email_status": "matched_pattern",
+              "order_of_priority": 2
+            },
+            {
+              "professional_email": "shin@precisely.com",
+              "professional_email_status": "matched_pattern",
+              "order_of_priority": 3
+            }
+          ],
+          "is_working": 1,
+          "active_experience_company_id": 28124003,
+          "active_experience_title": "Senior Account Executive",
+          "active_experience_description": null,
+          "active_experience_department": "Sales",
+          "active_experience_management_level": "Senior",
+          "is_decision_maker": 0,
+          "total_experience_duration_months": 323,
+          "total_experience_duration_months_breakdown_department": [
+            {
+              "department": "Other",
+              "total_experience_duration_months": 237
+            },
+            {
+              "department": "Sales",
+              "total_experience_duration_months": 86
+            }
+          ],
+          "total_experience_duration_months_breakdown_management_level": [
+            {
+              "management_level": "Other",
+              "total_experience_duration_months": 237
+            },
+            {
+              "management_level": "Senior",
+              "total_experience_duration_months": 37
+            },
+            {
+              "management_level": "Manager",
+              "total_experience_duration_months": 32
+            },
+            {
+              "management_level": "Specialist",
+              "total_experience_duration_months": 17
+            }
+          ],
+          "experience": [
+            {
+              "active_experience": 1,
+              "position_title": "Senior Account Executive",
+              "department": "Sales",
+              "management_level": "Senior",
+              "location": "日本 東京都",
+              "description": null,
+              "date_from": "September 2022",
+              "date_from_year": 2022,
+              "date_from_month": 9,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "duration_months": 37,
+              "company_id": 28124003,
+              "company_name": "Precisely | Trust in Data",
+              "company_type": "Privately Held",
+              "company_founded_year": null,
+              "company_followers_count": 214091,
+              "company_website": "https://www.precisely.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/preciselydata"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/preciselydata"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/preciselydata",
+              "company_size_range": "1001-5000 employees",
+              "company_employees_count": 2976,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "technology/data analytics",
+                "business and consumer services > business services (in united states)",
+                "trusted",
+                "fortune 100",
+                "data analytics",
+                "simplify",
+                "business decisions",
+                "technology",
+                "cloud",
+                "data-automation",
+                "data-management",
+                "enterprise-software"
+              ],
+              "company_annual_revenue_source_5": 755624999,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 525000000,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": 2.197802197802198,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "1700 District Ave; #300; Burlington, Massachusetts 01803, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Burlington",
+              "company_hq_state": "Massachusetts",
+              "company_hq_street": "1700 District Ave; #300",
+              "company_hq_zipcode": "01803",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 1
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Sales Manager",
+              "department": "Sales",
+              "management_level": "Manager",
+              "location": null,
+              "description": null,
+              "date_from": "December 2019",
+              "date_from_year": 2019,
+              "date_from_month": 12,
+              "date_to": "March 2021",
+              "date_to_year": 2021,
+              "date_to_month": 3,
+              "duration_months": 15,
+              "company_id": 4577877,
+              "company_name": "Syncsort",
+              "company_type": "Privately Held",
+              "company_founded_year": null,
+              "company_followers_count": 13630,
+              "company_website": "https://www.precisely.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/syncsortinc",
+                "https://www.facebook.com/preciselydata"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/syncsort",
+                "https://www.twitter.com/preciselydata"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/syncsort",
+              "company_size_range": "201-500 employees",
+              "company_employees_count": 141,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "technology/data management",
+                "etl",
+                "hadoop",
+                "big data",
+                "data offload",
+                "data integration",
+                "data migration",
+                "data sort",
+                "data quality",
+                "trusted",
+                "build",
+                "data management",
+                "fortune 100",
+                "business decisions",
+                "analytics",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 300000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": -6.622516556291391,
+              "company_last_funding_round_date": "2012-03-20",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "2 Blue Hill Plaza #1563; Pearl River, New York 10965, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Pearl River",
+              "company_hq_state": "New York",
+              "company_hq_street": "2 Blue Hill Plaza #1563",
+              "company_hq_zipcode": "10965",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 2
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Sales Manager",
+              "department": "Sales",
+              "management_level": "Manager",
+              "location": "Japan Tokyo",
+              "description": null,
+              "date_from": "July 2018",
+              "date_from_year": 2018,
+              "date_from_month": 7,
+              "date_to": "December 2019",
+              "date_to_year": 2019,
+              "date_to_month": 12,
+              "duration_months": 17,
+              "company_id": 7829244,
+              "company_name": "Pitney Bowes",
+              "company_type": "Public Company",
+              "company_founded_year": 1920,
+              "company_followers_count": 131001,
+              "company_website": "https://www.pitneybowes.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/pitneybowes"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/pitneybowes"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/pitney-bowes",
+              "company_size_range": "10,001+ employees",
+              "company_employees_count": 12852,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "shipping & mailing services",
+                "amazon web services channel partners",
+                "pitney bowes",
+                "global ecommerce",
+                "ink and toner",
+                "mailing supplies",
+                "postage meters",
+                "shipping & mailing",
+                "mail room operations",
+                "presort services",
+                "shipping",
+                "mailing",
+                "financial services",
+                "apis",
+                "fulfillment",
+                "delivery",
+                "returns",
+                "cross border ecommerce",
+                "equipment financing",
+                "cross-border e-commerce",
+                "returns management",
+                "technology",
+                "cloud-services",
+                "electronics",
+                "enterprise-software",
+                "outsourcing",
+                "platform",
+                "analytics",
+                "crm",
+                "document management",
+                "e-commerce",
+                "hardware",
+                "information technology",
+                "predictive analytics",
+                "software"
+              ],
+              "company_annual_revenue_source_5": null,
+              "company_annual_revenue_currency_source_5": null,
+              "company_annual_revenue_source_1": 2026598016,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": 5.051495831289848,
+              "company_last_funding_round_date": "2025-08-05",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "3001 Summer Street; Stamford, CT 06926, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Stamford",
+              "company_hq_state": "Connecticut",
+              "company_hq_street": "3001 Summer Street",
+              "company_hq_zipcode": "06926",
+              "company_last_updated_at": "2025-09-06",
+              "company_stock_ticker": [
+                {
+                  "exchange": "NYSE",
+                  "ticker": "PBI"
+                },
+                {
+                  "exchange": null,
+                  "ticker": "PBI"
+                }
+              ],
+              "company_is_b2b": 1,
+              "order_in_profile": 3
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Account Executive",
+              "department": "Sales",
+              "management_level": "Specialist",
+              "location": "Tokyo",
+              "description": null,
+              "date_from": "January 2017",
+              "date_from_year": 2017,
+              "date_from_month": 1,
+              "date_to": "June 2018",
+              "date_to_year": 2018,
+              "date_to_month": 6,
+              "duration_months": 17,
+              "company_id": 3439442,
+              "company_name": "Gartner",
+              "company_type": "Public Company",
+              "company_founded_year": 1979,
+              "company_followers_count": 2085427,
+              "company_website": "https://www.gartner.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/gartnerinc"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/gartner_inc"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/gartner",
+              "company_size_range": "10,001+ employees",
+              "company_employees_count": 24048,
+              "company_industry": "Information Services",
+              "company_categories_and_keywords": [
+                "technology",
+                "technology research services",
+                "gartner",
+                "computers electronics and technology > computers electronics and technology - other (in united states)",
+                "research",
+                "executives",
+                "guidance",
+                "actionable insights",
+                "teams",
+                "tools",
+                "cybersecurity",
+                "it-consulting",
+                "it-services",
+                "business development",
+                "consulting",
+                "information technology"
+              ],
+              "company_annual_revenue_source_5": 6420009000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 6267410944,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": -2.0926634638873054,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "56 Top Gallant Street; Stamford, CT 06904, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Stamford",
+              "company_hq_state": "Connecticut",
+              "company_hq_street": "56 Top Gallant Street",
+              "company_hq_zipcode": "06904",
+              "company_last_updated_at": "2025-09-06",
+              "company_stock_ticker": [
+                {
+                  "exchange": "NYSE",
+                  "ticker": "IT"
+                },
+                {
+                  "exchange": null,
+                  "ticker": "IT"
+                }
+              ],
+              "company_is_b2b": 1,
+              "order_in_profile": 4
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Perceptual Computing Business Development Manager",
+              "department": null,
+              "management_level": null,
+              "location": "Tokyo",
+              "description": null,
+              "date_from": "March 1997",
+              "date_from_year": 1997,
+              "date_from_month": 3,
+              "date_to": "December 2016",
+              "date_to_year": 2016,
+              "date_to_month": 12,
+              "duration_months": 237,
+              "company_id": 11825305,
+              "company_name": "Intel Corporation",
+              "company_type": "Public Company",
+              "company_founded_year": null,
+              "company_followers_count": 3964983,
+              "company_website": "https://www.intel.de",
+              "company_facebook_url": [
+                "https://www.facebook.com/intel"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/intel"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/intel-corporation",
+              "company_size_range": "10,001+ employees",
+              "company_employees_count": 113589,
+              "company_industry": "Semiconductor Manufacturing",
+              "company_categories_and_keywords": [
+                "technology/software",
+                "semiconductor design and manufacturing",
+                "artificial intelligence",
+                "autonomous driving",
+                "non-volatile memory solutions",
+                "software solutions",
+                "ai",
+                "cloud",
+                "data center",
+                "hardware",
+                "technology",
+                "electronics",
+                "semiconductors"
+              ],
+              "company_annual_revenue_source_5": 53070000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 53100998656,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": -9.508862776339374,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "Robert Noyce Building; Santa Clara, California 95052, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Santa Clara",
+              "company_hq_state": "California",
+              "company_hq_street": "Robert Noyce Building",
+              "company_hq_zipcode": "95052",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [
+                {
+                  "exchange": "NASDAQ",
+                  "ticker": "INTC"
+                },
+                {
+                  "exchange": null,
+                  "ticker": "INTC"
+                }
+              ],
+              "company_is_b2b": 1,
+              "order_in_profile": 5
+            }
+          ],
+          "projected_base_salary_p25": null,
+          "projected_base_salary_median": null,
+          "projected_base_salary_p75": null,
+          "projected_base_salary_period": null,
+          "projected_base_salary_currency": null,
+          "projected_base_salary_updated_at": null,
+          "projected_additional_salary": [],
+          "projected_additional_salary_period": null,
+          "projected_additional_salary_currency": null,
+          "projected_additional_salary_updated_at": null,
+          "projected_total_salary_p25": null,
+          "projected_total_salary_median": null,
+          "projected_total_salary_p75": null,
+          "projected_total_salary_period": null,
+          "projected_total_salary_currency": null,
+          "projected_total_salary_updated_at": null,
+          "last_graduation_date": null,
+          "education_degrees": [],
+          "education": [],
+          "recommendations_count": null,
+          "recommendations": [],
+          "activity": [],
+          "awards": [],
+          "courses": [],
+          "certifications": [],
+          "languages": [
+            {
+              "language": "日本語",
+              "proficiency": "Native or bilingual proficiency",
+              "order_in_profile": 1
+            },
+            {
+              "language": "English",
+              "proficiency": "Full professional proficiency",
+              "order_in_profile": 2
+            }
+          ],
+          "patents_count": null,
+          "patents_topics": [],
+          "patents": [],
+          "publications_count": null,
+          "publications_topics": [],
+          "publications": [],
+          "projects_count": null,
+          "projects_topics": [],
+          "projects": [],
+          "organizations": [],
+          "github_url": null,
+          "github_username": null,
+          "github_mapping_confidence": null,
+          "github_contributions_count": null,
+          "github_repos_summary": [],
+          "profile_root_field_changes_summary": [
+            {
+              "field_name": "follower_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-09-17 12:04:03.761715"
+            },
+            {
+              "field_name": "connections_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-09-17 12:04:03.761715"
+            },
+            {
+              "field_name": "summary",
+              "change_type": "new",
+              "last_changed_at": "2025-05-28 07:59:31.163694"
+            }
+          ],
+          "profile_collection_field_changes_summary": [
+            {
+              "field_name": "education",
+              "last_changed_at": "2025-09-17 12:04:03.761715"
+            },
+            {
+              "field_name": "experience",
+              "last_changed_at": "2025-10-08 07:16:40.714774"
+            }
+          ],
+          "experience_recently_started": [],
+          "experience_recently_closed": []
+        },
+        "enrichedAt": "2025-10-29T18:03:20.502Z"
+      }
+    ],
+    "report": {
+      "id": "report_1761760958124_bbsnuka6w",
+      "generatedAt": "2025-10-29T18:03:37.363Z",
+      "executiveSummary": "Identified 2-person buyer group for Precisely ($150,000 deal) with 54% cohesion score. Group includes 1 decision maker(s), 1 champion(s), and comprehensive cross-functional coverage. Research methodology validated 2 final members from 20 initial candidates.",
+      "researchMethodology": {
+        "approach": "Double-waterfall discovery with multi-dimensional scoring",
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Company Intelligence",
+            "description": "Database-first company research with Coresignal API fallback",
+            "result": "Optimal search parameters calculated"
+          },
+          {
+            "stage": 2,
+            "name": "Wide Preview Search",
+            "description": "Cross-departmental employee discovery using Coresignal Preview API",
+            "result": "20 employees discovered across all functions"
+          },
+          {
+            "stage": 3,
+            "name": "Smart Scoring",
+            "description": "Multi-dimensional scoring: seniority, influence, champion potential, cross-functional ability",
+            "result": "Top candidates identified before expensive collect API"
+          },
+          {
+            "stage": 4,
+            "name": "Role Assignment",
+            "description": "Deal-size-aware role assignment ensuring Decision Maker + Champion",
+            "result": "Appropriate roles assigned based on deal size"
+          },
+          {
+            "stage": 5,
+            "name": "Cross-Functional Validation",
+            "description": "Stakeholder completeness validation across all relevant functions",
+            "result": "Missing stakeholders added for comprehensive coverage"
+          },
+          {
+            "stage": 6,
+            "name": "Full Profile Collection",
+            "description": "Coresignal Collect API for final buyer group members only",
+            "result": "Complete profiles for final buyer group"
+          },
+          {
+            "stage": 7,
+            "name": "Cohesion Analysis",
+            "description": "Multi-factor cohesion validation",
+            "result": "54% cohesion score with detailed analysis"
+          }
+        ],
+        "searchParameters": {
+          "searchSize": 100,
+          "maxPreviewPages": 5,
+          "buyerGroupSize": {
+            "min": 6,
+            "max": 9,
+            "ideal": 8
+          },
+          "companySize": 100,
+          "industry": "Unknown",
+          "searchStrategy": "comprehensive",
+          "filteringLevel": "none"
+        },
+        "dataSources": [
+          "Coresignal API",
+          "Internal Database",
+          "AI Analysis"
+        ],
+        "confidenceLevel": 50
+      },
+      "companyIntelligence": {
+        "employeeCount": 100,
+        "revenue": 0,
+        "industry": "Unknown",
+        "growthRate": 0,
+        "activeHiring": 0,
+        "fundingStage": "bootstrapped",
+        "dataSource": "default",
+        "lastUpdated": "2025-10-29T18:02:38.319Z",
+        "insights": [
+          "Company size: Medium",
+          "Growth trajectory: Stable",
+          "Hiring activity: Limited",
+          "Funding status: bootstrapped"
+        ]
+      },
+      "buyerGroupJustification": [
+        {
+          "name": "Brian Prew",
+          "title": "Sales Operations Manager",
+          "department": "Sales",
+          "role": "decision",
+          "confidence": "30%",
+          "detailedReasoning": "Promoted to decision maker (no better candidate found)",
+          "keyInsights": [
+            "Seniority score: 3/10",
+            "Champion potential: 18/25",
+            "Influence score: 3/10",
+            "Network: 410 connections",
+            "Relevance: 95%"
+          ],
+          "addedForCoverage": false,
+          "justification": "**Brian Prew (Sales Operations Manager) - DECISION**\n\n**Budget Authority**: **Department Relevance**: Sales leadership controls revenue-generating technology investments.\n\n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 3/10\n- Network Size: 410 connections\n- Role Confidence: 30%\n"
+        },
+        {
+          "name": "SHIN KAMEI",
+          "title": "Senior Account Executive",
+          "department": "Sales",
+          "role": "champion",
+          "confidence": "60%",
+          "detailedReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+          "keyInsights": [
+            "Seniority score: 3/10",
+            "Champion potential: 12/25",
+            "Influence score: 3/10",
+            "Network: 328 connections",
+            "Relevance: 85%"
+          ],
+          "addedForCoverage": false,
+          "justification": "**SHIN KAMEI (Senior Account Executive) - CHAMPION**\n\n**Operational Leadership**: **Advocacy Potential**: Sales leaders are natural champions for revenue-generating tools.\n\n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 3/10\n- Network Size: 328 connections\n- Role Confidence: 60%\n"
+        }
+      ],
+      "crossFunctionalCoverage": {
+        "summary": {
+          "primaryCovered": true,
+          "technicalCovered": false,
+          "riskCovered": false,
+          "financialCovered": false,
+          "overallScore": 25
+        },
+        "byFunction": {
+          "primary": {
+            "covered": [
+              "Sales"
+            ],
+            "missing": [
+              "Operations",
+              "Revenue"
+            ],
+            "representatives": [
+              {
+                "function": "Sales",
+                "name": "Brian Prew",
+                "title": "Sales Operations Manager",
+                "department": "Sales"
+              }
+            ]
+          },
+          "technical": {
+            "covered": [],
+            "missing": [
+              "IT",
+              "Technology",
+              "Engineering"
+            ],
+            "representatives": []
+          },
+          "financial": {
+            "covered": [],
+            "missing": [
+              "Finance",
+              "Procurement",
+              "FP&A"
+            ],
+            "representatives": []
+          }
+        },
+        "gaps": [
+          "Technical implementation",
+          "Risk management",
+          "Financial approval"
+        ],
+        "recommendations": [
+          "Add IT stakeholder for technical implementation",
+          "Add Security/Legal stakeholder for risk management",
+          "Add Finance stakeholder for budget approval"
+        ]
+      },
+      "cohesionAnalysis": {
+        "overallScore": 54,
+        "confidence": "LOW",
+        "factors": {
+          "reportingProximity": {
+            "score": 5,
+            "explanation": "Executive reporting relationships"
+          },
+          "departmentClustering": {
+            "score": 100,
+            "explanation": "Department collaboration patterns"
+          },
+          "seniorityBalance": {
+            "score": 82,
+            "explanation": "Appropriate seniority distribution"
+          },
+          "geographicAlignment": {
+            "score": 75,
+            "explanation": "Location-based collaboration"
+          },
+          "functionalInterdependence": {
+            "score": 0,
+            "explanation": "Cross-functional work relationships"
+          }
+        },
+        "reasoning": "Limited reporting proximity; Good department collaboration; Well-balanced seniority levels; Limited functional interdependence",
+        "recommendations": [
+          "Consider adding members who report to same executives",
+          "Consider adding members from interdependent functions",
+          "Overall cohesion could be improved with better stakeholder selection"
+        ]
+      },
+      "championAnalysis": {
+        "count": 1,
+        "champions": [
+          {
+            "name": "SHIN KAMEI",
+            "title": "Senior Account Executive",
+            "department": "Sales",
+            "championScore": 12,
+            "advocacyPotential": "Low",
+            "internalInfluence": "Medium",
+            "networkStrength": 328
+          }
+        ],
+        "analysis": "Moderate champion potential - consider additional advocates"
+      },
+      "costEfficiency": {
+        "methodology": "Double-waterfall approach (preview then collect)",
+        "costs": {
+          "preview": 2,
+          "collect": 2,
+          "total": 4
+        },
+        "comparison": {
+          "naiveApproach": 20,
+          "smartApproach": 4,
+          "savings": 16,
+          "savingsPercentage": 80
+        },
+        "efficiency": {
+          "previewToCollectRatio": 10,
+          "costPerFinalMember": 2
+        }
+      },
+      "qualityMetrics": {
+        "averageConfidence": 45,
+        "averageInfluence": 3,
+        "averageRelevance": 90,
+        "decisionMakerCount": 1,
+        "championCount": 1,
+        "stakeholderCount": 0,
+        "blockerCount": 0,
+        "introducerCount": 0,
+        "qualityGrade": "D"
+      },
+      "recommendations": [
+        "Consider improving buyer group cohesion through better stakeholder selection",
+        "Consider adding more stakeholders for comprehensive coverage"
+      ]
+    },
+    "cohesion": {
+      "score": 54,
+      "confidence": "LOW",
+      "factors": {
+        "reportingProximity": 5,
+        "departmentClustering": 100,
+        "seniorityBalance": 82,
+        "geographicAlignment": 75,
+        "functionalInterdependence": 0
+      },
+      "reasoning": "Limited reporting proximity; Good department collaboration; Well-balanced seniority levels; Limited functional interdependence",
+      "recommendations": [
+        "Consider adding members who report to same executives",
+        "Consider adding members from interdependent functions",
+        "Overall cohesion could be improved with better stakeholder selection"
+      ]
+    },
+    "coverage": {
+      "primary": true,
+      "technical": false,
+      "risk": false,
+      "financial": false,
+      "details": {
+        "primary": {
+          "covered": [
+            "Sales"
+          ],
+          "missing": [
+            "Operations",
+            "Revenue"
+          ],
+          "representatives": [
+            {
+              "function": "Sales",
+              "name": "Brian Prew",
+              "title": "Sales Operations Manager",
+              "department": "Sales"
+            }
+          ]
+        },
+        "technical": {
+          "covered": [],
+          "missing": [
+            "IT",
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      }
+    },
+    "intelligence": {
+      "employeeCount": 100,
+      "revenue": 0,
+      "industry": "Unknown",
+      "growthRate": 0,
+      "activeHiring": 0,
+      "fundingStage": "bootstrapped",
+      "dataSource": "default",
+      "lastUpdated": "2025-10-29T18:02:38.319Z",
+      "companyName": "Precisely",
+      "linkedinUrl": null,
+      "website": "https://www.precisely.com/",
+      "tier": "S6",
+      "searchStrategy": "comprehensive",
+      "filteringLevel": "none"
+    },
+    "costs": {
+      "preview": 2,
+      "collect": 2,
+      "total": 4
+    },
+    "processingTime": 62497,
+    "pipelineState": {
+      "startTime": 1761760958124,
+      "stage": "completed",
+      "totalEmployees": 20,
+      "processedEmployees": 0,
+      "finalBuyerGroup": [
+        {
+          "id": 255089603,
+          "name": "Brian Prew",
+          "title": "Sales Operations Manager",
+          "department": "Sales",
+          "company": "Precisely",
+          "managementLevel": "Manager",
+          "connectionsCount": 410,
+          "followersCount": 408,
+          "email": "",
+          "phone": "",
+          "linkedinUrl": "https://www.linkedin.com/in/brian-prew-8a657b90",
+          "source": "coresignal_preview",
+          "scores": {
+            "seniority": 3,
+            "departmentFit": 10,
+            "influence": 3,
+            "championPotential": 18,
+            "crossFunctional": 7,
+            "geoAlignment": 8
+          },
+          "overallScore": 8,
+          "relevance": 0.95,
+          "isHighValue": false,
+          "aiRelevance": 0.95,
+          "aiReasoning": "Brian Prew is highly relevant for Sales Intelligence Software procurement. As Sales Operations Manager, he sits at the intersection of sales strategy, process optimization, and technology enablement - the exact domain where sales intelligence tools are implemented. Sales Ops typically owns the evaluation, selection, and implementation of sales tools and technologies. His responsibilities likely include: optimizing sales processes, managing the sales tech stack, data quality and enrichment, territory planning, and sales analytics - all areas where sales intelligence software provides direct value. While he may not have final budget authority for a $150K deal, he would typically be the primary champion who drives the evaluation process, builds the business case, and makes the recommendation to senior leadership (VP Sales or CRO). His influence level is 8/10 because: (1) He's the functional owner of sales tools, (2) He'll be hands-on with implementation and adoption, (3) Sales leadership heavily relies on his technical and operational expertise for these decisions, and (4) He can effectively block or champion a deal based on his recommendation. The only limitation is that final budget approval for $150K likely requires VP+ sign-off. No red flags present - his title and department perfectly align with the buyer persona for sales intelligence software.",
+          "aiConfidence": 0.95,
+          "buyerGroupRole": "decision",
+          "roleConfidence": 30,
+          "roleReasoning": "Promoted to decision maker (no better candidate found)",
+          "aiRoleValidation": {
+            "suggestedRole": "decision",
+            "confidence": 0.95,
+            "reasoning": "Brian Prew's assignment as 'decision' is highly appropriate based on several factors: (1) As Sales Operations Manager, he directly oversees the operational infrastructure that Sales Intelligence Software would integrate into, making him a primary stakeholder with deep understanding of requirements. (2) Sales Intelligence Software directly impacts his department's effectiveness and workflow, placing him at the center of this purchase decision. (3) At a $150K deal size, a Sales Operations Manager typically has budget authority or significant influence over tool purchases that affect sales productivity and data management. (4) His title indicates he's responsible for optimizing sales processes and selecting technology stack components for the sales organization. (5) He's already listed as 'decision' in the existing buyer group, which validates this assessment and suggests prior qualification of his decision-making authority. The only consideration for alternative roles would be if Precisely's organizational structure reserves final approval for C-level executives (VP Sales or CFO), in which case he might be better classified as 'champion', but his current assignment and the deal size relative to his role strongly support 'decision' as the optimal classification.",
+            "alternativeRoles": [
+              "champion",
+              "stakeholder"
+            ]
+          },
+          "aiRoleReasoning": "Brian Prew's assignment as 'decision' is highly appropriate based on several factors: (1) As Sales Operations Manager, he directly oversees the operational infrastructure that Sales Intelligence Software would integrate into, making him a primary stakeholder with deep understanding of requirements. (2) Sales Intelligence Software directly impacts his department's effectiveness and workflow, placing him at the center of this purchase decision. (3) At a $150K deal size, a Sales Operations Manager typically has budget authority or significant influence over tool purchases that affect sales productivity and data management. (4) His title indicates he's responsible for optimizing sales processes and selecting technology stack components for the sales organization. (5) He's already listed as 'decision' in the existing buyer group, which validates this assessment and suggests prior qualification of his decision-making authority. The only consideration for alternative roles would be if Precisely's organizational structure reserves final approval for C-level executives (VP Sales or CFO), in which case he might be better classified as 'champion', but his current assignment and the deal size relative to his role strongly support 'decision' as the optimal classification.",
+          "fullProfile": {
+            "id": 255089603,
+            "parent_id": 255089603,
+            "created_at": "2016-08-22T10:02:58.000Z",
+            "updated_at": "2025-10-10T06:48:30.249130Z",
+            "checked_at": "2025-10-18T08:52:59.843982Z",
+            "changed_at": "2025-10-10T06:48:30.249130Z",
+            "experience_change_last_identified_at": null,
+            "is_deleted": 0,
+            "is_parent": 1,
+            "public_profile_id": 323895870,
+            "linkedin_url": "https://www.linkedin.com/in/brian-prew-8a657b90",
+            "linkedin_shorthand_names": [
+              "brian-prew-8a657b90"
+            ],
+            "historical_ids": [
+              255089603
+            ],
+            "full_name": "Brian Prew",
+            "first_name": "Brian",
+            "first_name_initial": "B",
+            "middle_name": null,
+            "middle_name_initial": null,
+            "last_name": "Prew",
+            "last_name_initial": "P",
+            "headline": "Sales Operations Manager",
+            "summary": "Experienced Revenue Operations professional with a demonstrated history of working in the technology & information services industry. Skilled with Salesforce, Microsoft Excel, Microsoft Word, Public Speaking, Microsoft Office, and Microsoft PowerPoint. Strong business development professional with a Bachelor of Business Administration (BBA) focused in Finance, from University of Massachusetts Lowell.",
+            "picture_url": "https://static.licdn.com/aero-v1/sc/h/9c8pery4andzj6ohjkjp54ma2",
+            "location_country": "United States",
+            "location_country_iso2": "US",
+            "location_country_iso3": "USA",
+            "location_full": "Beverly, Massachusetts, United States",
+            "location_regions": [
+              "Americas",
+              "Northern America",
+              "AMER"
+            ],
+            "location_city": "Beverly",
+            "location_state": "Massachusetts",
+            "interests": [],
+            "inferred_skills": [
+              "operations",
+              "technology",
+              "salesforce",
+              "microsoft",
+              "word",
+              "powerpoint",
+              "administration",
+              "finance",
+              "sales",
+              "management",
+              "microsoft excel",
+              "microsoft word",
+              "public speaking",
+              "microsoft office",
+              "microsoft powerpoint",
+              "business development",
+              "business administration",
+              "sales operations",
+              "accounts receivable",
+              "order management",
+              "business operations"
+            ],
+            "historical_skills": [],
+            "connections_count": 410,
+            "followers_count": 408,
+            "services": null,
+            "primary_professional_email": "bprew@precisely.com",
+            "primary_professional_email_status": "matched_pattern",
+            "professional_emails_collection": [
+              {
+                "professional_email": "bprew@precisely.com",
+                "professional_email_status": "matched_pattern",
+                "order_of_priority": 1
+              },
+              {
+                "professional_email": "brian.prew@precisely.com",
+                "professional_email_status": "matched_pattern",
+                "order_of_priority": 2
+              },
+              {
+                "professional_email": "brian@precisely.com",
+                "professional_email_status": "matched_pattern",
+                "order_of_priority": 3
+              }
+            ],
+            "is_working": 1,
+            "active_experience_company_id": 28124003,
+            "active_experience_title": "Sales Operations Manager",
+            "active_experience_description": null,
+            "active_experience_department": "Sales",
+            "active_experience_management_level": "Manager",
+            "is_decision_maker": 0,
+            "total_experience_duration_months": 109,
+            "total_experience_duration_months_breakdown_department": [
+              {
+                "department": "Operations",
+                "total_experience_duration_months": 33
+              },
+              {
+                "department": "Research",
+                "total_experience_duration_months": 6
+              },
+              {
+                "department": "Sales",
+                "total_experience_duration_months": 38
+              },
+              {
+                "department": "Other",
+                "total_experience_duration_months": 26
+              },
+              {
+                "department": "Finance & Accounting",
+                "total_experience_duration_months": 6
+              }
+            ],
+            "total_experience_duration_months_breakdown_management_level": [
+              {
+                "management_level": "Other",
+                "total_experience_duration_months": 26
+              },
+              {
+                "management_level": "Specialist",
+                "total_experience_duration_months": 40
+              },
+              {
+                "management_level": "Manager",
+                "total_experience_duration_months": 43
+              }
+            ],
+            "experience": [
+              {
+                "active_experience": 1,
+                "position_title": "Sales Operations Manager",
+                "department": "Sales",
+                "management_level": "Manager",
+                "location": "Burlington, Massachusetts, United States",
+                "description": null,
+                "date_from": "June 2023",
+                "date_from_year": 2023,
+                "date_from_month": 6,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "duration_months": 28,
+                "company_id": 28124003,
+                "company_name": "Precisely",
+                "company_type": "Privately Held",
+                "company_founded_year": null,
+                "company_followers_count": 214091,
+                "company_website": "https://www.precisely.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/preciselydata"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/preciselydata"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/preciselydata",
+                "company_size_range": "1001-5000 employees",
+                "company_employees_count": 2976,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "technology/data analytics",
+                  "business and consumer services > business services (in united states)",
+                  "trusted",
+                  "fortune 100",
+                  "data analytics",
+                  "simplify",
+                  "business decisions",
+                  "technology",
+                  "cloud",
+                  "data-automation",
+                  "data-management",
+                  "enterprise-software"
+                ],
+                "company_annual_revenue_source_5": 755624999,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 525000000,
+                "company_annual_revenue_currency_source_1": "USD",
+                "company_employees_count_change_yearly_percentage": 2.197802197802198,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "1700 District Ave; #300; Burlington, Massachusetts 01803, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Burlington",
+                "company_hq_state": "Massachusetts",
+                "company_hq_street": "1700 District Ave; #300",
+                "company_hq_zipcode": "01803",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 1
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Manager, Revenue Operations",
+                "department": "Operations",
+                "management_level": "Manager",
+                "location": "Boston, Massachusetts, United States",
+                "description": null,
+                "date_from": "August 2022",
+                "date_from_year": 2022,
+                "date_from_month": 8,
+                "date_to": "January 2023",
+                "date_to_year": 2023,
+                "date_to_month": 1,
+                "duration_months": 5,
+                "company_id": 8510913,
+                "company_name": "LinkSquares",
+                "company_type": "Privately Held",
+                "company_founded_year": 2015,
+                "company_followers_count": 18932,
+                "company_website": "https://www.linksquares.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/linksquares"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/linksquares"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/linksquares",
+                "company_size_range": "201-500 employees",
+                "company_employees_count": 264,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "legal technology",
+                  "contract lifecycle management (clm) software",
+                  "linksquares",
+                  "contract management",
+                  "contract lifecycle management (clm)",
+                  "contract analytics",
+                  "computers electronics and technology > programming and developer software (in united states)",
+                  "legal",
+                  "machine learning",
+                  "ai",
+                  "saas",
+                  "contract review",
+                  "legal operations",
+                  "legalops",
+                  "analytics",
+                  "legal tech",
+                  "artificial intelligence",
+                  "cloud",
+                  "startups",
+                  "high growth",
+                  "contract lifecycle management",
+                  "legal teams",
+                  "ai-powered contract management",
+                  "project management software",
+                  "legal cloud",
+                  "technology",
+                  "artificial-intelligence",
+                  "compliance",
+                  "data-management",
+                  "platform",
+                  "vendor-management",
+                  "artificial intelligence (ai)",
+                  "contact management",
+                  "productivity tools",
+                  "software"
+                ],
+                "company_annual_revenue_source_5": 25000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 11300000,
+                "company_annual_revenue_currency_source_1": "USD",
+                "company_employees_count_change_yearly_percentage": -12,
+                "company_last_funding_round_date": "2022-04-04",
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "60 State Street; Suite 1200; Boston, Massachusetts 02109, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Boston",
+                "company_hq_state": "Massachusetts",
+                "company_hq_street": "60 State Street; Suite 1200",
+                "company_hq_zipcode": "02109",
+                "company_last_updated_at": "2025-09-08",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 2
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Sales Operations Manager",
+                "department": "Sales",
+                "management_level": "Manager",
+                "location": "Boston, Massachusetts, United States",
+                "description": null,
+                "date_from": "June 2021",
+                "date_from_year": 2021,
+                "date_from_month": 6,
+                "date_to": "April 2022",
+                "date_to_year": 2022,
+                "date_to_month": 4,
+                "duration_months": 10,
+                "company_id": 2002538,
+                "company_name": "Crayon",
+                "company_type": "Privately Held",
+                "company_founded_year": 2015,
+                "company_followers_count": 18847,
+                "company_website": "https://www.crayon.co",
+                "company_facebook_url": [
+                  "https://www.facebook.com/crayondotco"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/crayon"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/crayon-co",
+                "company_size_range": "51-200 employees",
+                "company_employees_count": 83,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "competitive intelligence",
+                  "business and consumer services > digital marketing",
+                  "sales enablement",
+                  "battlecards",
+                  "market intelligence",
+                  "sales team",
+                  "monitor",
+                  "real-time intelligence",
+                  "technology",
+                  "artificial-intelligence",
+                  "enterprise-software",
+                  "marketing-analytics",
+                  "platform",
+                  "analytics",
+                  "artificial intelligence (ai)",
+                  "business development",
+                  "business intelligence",
+                  "machine learning",
+                  "marketing",
+                  "saas",
+                  "software"
+                ],
+                "company_annual_revenue_source_5": 8425000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 0,
+                "company_last_funding_round_date": "2021-05-04",
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "268 Summer St; Boston, Massachusetts, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Boston",
+                "company_hq_state": "Massachusetts",
+                "company_hq_street": "268 Summer St",
+                "company_hq_zipcode": "",
+                "company_last_updated_at": "2025-09-06",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 3
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Business Operations Salesforce Coordinator",
+                "department": null,
+                "management_level": null,
+                "location": null,
+                "description": null,
+                "date_from": "April 2019",
+                "date_from_year": 2019,
+                "date_from_month": 4,
+                "date_to": "June 2021",
+                "date_to_year": 2021,
+                "date_to_month": 6,
+                "duration_months": 26,
+                "company_id": 5166279,
+                "company_name": "MedData Group, LLC",
+                "company_type": "Public Company",
+                "company_founded_year": 2011,
+                "company_followers_count": 1055,
+                "company_website": "https://www.meddatagroup.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/meddatagroup"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/meddatagroup"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/meddata-group-llc",
+                "company_size_range": "11-50 employees",
+                "company_employees_count": 20,
+                "company_industry": "Advertising Services",
+                "company_categories_and_keywords": [
+                  "health care",
+                  "advertising",
+                  "industry: n/a",
+                  "demand generation services",
+                  "database licensing and information services",
+                  "marketing to physicians and healthcare professionals",
+                  "behavioral analysis and big data marketing techniques",
+                  "clinical behavior data",
+                  "programmatic advertising",
+                  "email data",
+                  "social media",
+                  "advanced tv advertising",
+                  "programmatic",
+                  "email",
+                  "digital engagement solutions",
+                  "technology",
+                  "healthtech",
+                  "social-networks"
+                ],
+                "company_annual_revenue_source_5": 16000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": -4.761904761904762,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "3210 El Camino Real; Suite 150; Irvine, California 92602, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Irvine",
+                "company_hq_state": "California",
+                "company_hq_street": "3210 El Camino Real; Suite 150",
+                "company_hq_zipcode": "92602",
+                "company_last_updated_at": "2025-09-06",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 4
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Sales Operations Analyst",
+                "department": "Research",
+                "management_level": "Specialist",
+                "location": "Woburn, Massachusetts",
+                "description": null,
+                "date_from": "July 2018",
+                "date_from_year": 2018,
+                "date_from_month": 7,
+                "date_to": "January 2019",
+                "date_to_year": 2019,
+                "date_to_month": 1,
+                "duration_months": 6,
+                "company_id": 9160126,
+                "company_name": "Access Information Management",
+                "company_type": "Privately Held",
+                "company_founded_year": 2004,
+                "company_followers_count": 44011,
+                "company_website": "https://www.accesscorp.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/accesstoday"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/accesstoday"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/access-information-management",
+                "company_size_range": "1001-5000 employees",
+                "company_employees_count": 1118,
+                "company_industry": "Information Services",
+                "company_categories_and_keywords": [
+                  "music",
+                  "business and consumer services > business services (in united states)",
+                  "records and information management",
+                  "off-site media vault",
+                  "secure destruction",
+                  "document scanning",
+                  "enterprise content management",
+                  "document shredding",
+                  "digital delivery / scan-on-demand",
+                  "cloud document management",
+                  "business process automation",
+                  "human resources automation",
+                  "music artists",
+                  "artist wellbeing program",
+                  "career challenges",
+                  "support team",
+                  "professional support",
+                  "technology",
+                  "data-storage",
+                  "documents",
+                  "enterprise-software",
+                  "data storage",
+                  "document management",
+                  "enterprise software",
+                  "information services",
+                  "information technology"
+                ],
+                "company_annual_revenue_source_5": 506249999,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 348100000,
+                "company_annual_revenue_currency_source_1": "USD",
+                "company_employees_count_change_yearly_percentage": 6.679389312977099,
+                "company_last_funding_round_date": "2017-09-29",
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "4 First Ave; Peabody, Massachusetts 01960, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Peabody",
+                "company_hq_state": "Massachusetts",
+                "company_hq_street": "4 First Ave",
+                "company_hq_zipcode": "01960",
+                "company_last_updated_at": "2025-09-08",
+                "company_stock_ticker": [],
+                "company_is_b2b": 0,
+                "order_in_profile": 5
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Order Management Specialist",
+                "department": "Operations",
+                "management_level": "Specialist",
+                "location": "Waltham, Massachusetts",
+                "description": null,
+                "date_from": "March 2016",
+                "date_from_year": 2016,
+                "date_from_month": 3,
+                "date_to": "July 2018",
+                "date_to_year": 2018,
+                "date_to_month": 7,
+                "duration_months": 28,
+                "company_id": 1591595,
+                "company_name": "Carbon Black, Inc.",
+                "company_type": "Public Company",
+                "company_founded_year": null,
+                "company_followers_count": 71954,
+                "company_website": "https://www.carbonblack.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/carbonblackinc",
+                  "https://www.facebook.com/vmware"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/carbonb1ack",
+                  "https://www.twitter.com/carbonblack_inc",
+                  "https://www.twitter.com/vmware"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/carbon-black-inc",
+                "company_size_range": "1001-5000 employees",
+                "company_employees_count": 279,
+                "company_industry": "Computer and Network Security",
+                "company_categories_and_keywords": [
+                  "technology/security",
+                  "application whitelisting",
+                  "endpoint security",
+                  "server security",
+                  "pci compliance",
+                  "cyber security protection",
+                  "cyber forensics",
+                  "application control",
+                  "windows xp end of life security",
+                  "advanced threat protection",
+                  "malware protection",
+                  "incident response",
+                  "next gen antivirus ngav",
+                  "ransomware defense",
+                  "security solutions",
+                  "hybrid environments",
+                  "private environments",
+                  "vmware",
+                  "technology",
+                  "cloud-platforms",
+                  "cybersecurity",
+                  "enterprise-software",
+                  "monitoring",
+                  "cyber security",
+                  "homeland security",
+                  "physical security",
+                  "security"
+                ],
+                "company_annual_revenue_source_5": 245000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 209724000,
+                "company_annual_revenue_currency_source_1": "USD",
+                "company_employees_count_change_yearly_percentage": -37.58389261744966,
+                "company_last_funding_round_date": "2017-04-06",
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "3401 Hillview Avenue; Palo Alto, California 94304, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Palo Alto",
+                "company_hq_state": "California",
+                "company_hq_street": "3401 Hillview Avenue",
+                "company_hq_zipcode": "94304",
+                "company_last_updated_at": "2025-09-08",
+                "company_stock_ticker": [
+                  {
+                    "exchange": "NYSE",
+                    "ticker": "VMW"
+                  },
+                  {
+                    "exchange": "NASDAQ",
+                    "ticker": "CBLK"
+                  }
+                ],
+                "company_is_b2b": 1,
+                "order_in_profile": 6
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Accounts Receivable Specialist",
+                "department": "Finance & Accounting",
+                "management_level": "Specialist",
+                "location": "Boston, Massachusetts",
+                "description": null,
+                "date_from": "September 2015",
+                "date_from_year": 2015,
+                "date_from_month": 9,
+                "date_to": "March 2016",
+                "date_to_year": 2016,
+                "date_to_month": 3,
+                "duration_months": 6,
+                "company_id": 7419797,
+                "company_name": "Rapid7",
+                "company_type": "Public Company",
+                "company_founded_year": null,
+                "company_followers_count": 202682,
+                "company_website": "https://www.rapid7.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/rapid7"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/rapid7"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/rapid7",
+                "company_size_range": "1001-5000 employees",
+                "company_employees_count": 3106,
+                "company_industry": "Computer and Network Security",
+                "company_categories_and_keywords": [
+                  "education",
+                  "computers electronics and technology > computer security (in united states)",
+                  "attack surface management",
+                  "information security",
+                  "vulnerability management",
+                  "penetration testing",
+                  "compromised user detection",
+                  "mobile risk management",
+                  "enterprise control monitoring",
+                  "strategic services",
+                  "security programs",
+                  "application testing",
+                  "automation",
+                  "analytics",
+                  "intrusion detection",
+                  "programs",
+                  "students",
+                  "services",
+                  "school",
+                  "technology",
+                  "cloud",
+                  "cybersecurity",
+                  "enterprise-software",
+                  "platform",
+                  "security",
+                  "systems-integrator",
+                  "cyber security",
+                  "enterprise software",
+                  "network security",
+                  "risk management"
+                ],
+                "company_annual_revenue_source_5": 855361000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 844006976,
+                "company_annual_revenue_currency_source_1": "USD",
+                "company_employees_count_change_yearly_percentage": 1.040988939492518,
+                "company_last_funding_round_date": "2024-06-26",
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "120 Causeway St; Suite 400; Boston, Massachusetts 02114, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Boston",
+                "company_hq_state": "Massachusetts",
+                "company_hq_street": "120 Causeway St; Suite 400",
+                "company_hq_zipcode": "02114",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [
+                  {
+                    "exchange": "NASDAQ",
+                    "ticker": "RPD"
+                  },
+                  {
+                    "exchange": null,
+                    "ticker": "RPD"
+                  }
+                ],
+                "company_is_b2b": 0,
+                "order_in_profile": 7
+              }
+            ],
+            "projected_base_salary_p25": null,
+            "projected_base_salary_median": null,
+            "projected_base_salary_p75": null,
+            "projected_base_salary_period": null,
+            "projected_base_salary_currency": null,
+            "projected_base_salary_updated_at": null,
+            "projected_additional_salary": [],
+            "projected_additional_salary_period": null,
+            "projected_additional_salary_currency": null,
+            "projected_additional_salary_updated_at": null,
+            "projected_total_salary_p25": null,
+            "projected_total_salary_median": null,
+            "projected_total_salary_p75": null,
+            "projected_total_salary_period": null,
+            "projected_total_salary_currency": null,
+            "projected_total_salary_updated_at": null,
+            "last_graduation_date": 2015,
+            "education_degrees": [
+              "Finance, General",
+              "Bachelor of Business Administration (BBA), Finance, General"
+            ],
+            "education": [
+              {
+                "degree": "Finance, General",
+                "description": null,
+                "institution_url": "https://www.linkedin.com/school/university-of-new-hampshire",
+                "institution_name": "University of New Hampshire",
+                "institution_full_address": "105 Main Street; Thompson Hall; Durham, New Hampshire 03824-3547, US",
+                "institution_country_iso2": "US",
+                "institution_country_iso3": "USA",
+                "institution_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "institution_city": "Durham",
+                "institution_state": "New Hampshire",
+                "institution_street": "105 Main Street; Thompson Hall",
+                "institution_zipcode": "03824-3547",
+                "date_from_year": 2010,
+                "date_to_year": 2013,
+                "activities_and_societies": null,
+                "order_in_profile": 1
+              },
+              {
+                "degree": "Bachelor of Business Administration (BBA), Finance, General",
+                "description": null,
+                "institution_url": "https://www.linkedin.com/school/university-of-massachusetts-lowell",
+                "institution_name": "University of Massachusetts Lowell",
+                "institution_full_address": "One University Ave; Lowell, MA 01854-5104, US",
+                "institution_country_iso2": "US",
+                "institution_country_iso3": "USA",
+                "institution_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "institution_city": "Lowell",
+                "institution_state": "Massachusetts",
+                "institution_street": "One University Ave",
+                "institution_zipcode": "01854-5104",
+                "date_from_year": 2014,
+                "date_to_year": 2015,
+                "activities_and_societies": null,
+                "order_in_profile": 2
+              }
+            ],
+            "recommendations_count": null,
+            "recommendations": [],
+            "activity": [
+              {
+                "activity_url": "https://www.linkedin.com/posts/baker-nadine_womensupportingwomen-activity-7305995348030685184-p5le",
+                "title": "This morning, I had the privilege of attending a Women in SAP event hosted by UK & Ireland SAP User Group and Precisely overlooking the stunning city…",
+                "action": "Liked by",
+                "order_in_profile": 1
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/preciselydata_gartnerda-dataintegrity-activity-7303799201799233536-jXlJ",
+                "title": "Thank you to everyone who joined us at the Gartner® Data & Analytics Summit this week! It was a pleasure connecting with all of you. 🤝\n\nWant to…",
+                "action": "Liked by",
+                "order_in_profile": 2
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/nick-rossi-6785736b_last-week-we-began-onboarding-two-new-universities-activity-7285660823572643841-zahH",
+                "title": "Last week, we began onboarding two new universities. One, located in New Hampshire, will help expand our territory further north. It's crazy to stop…",
+                "action": "Liked by",
+                "order_in_profile": 3
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/nick-rossi-6785736b_we-have-been-so-busy-building-the-foundation-activity-7247951682003693568-mhDq",
+                "title": "We have been so busy building the foundation of D's we haven't released a new baked good in some time. That changes today!\n\nWe are proud to release…",
+                "action": "Liked by",
+                "order_in_profile": 4
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/d-s-bakeshop_last-friday-we-had-the-incredible-opportunity-activity-7228748311158030339-_Zm4",
+                "title": "Last Friday, we had the incredible opportunity to showcase our innovative products to over 50 managers from the New England region. The feedback we…",
+                "action": "Liked by",
+                "order_in_profile": 5
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/nick-rossi-6785736b_the-food-industry-is-a-grind-early-mornings-activity-7216781961896345600-tay6",
+                "title": "The food industry is a grind. Early mornings, late nights. You have to love it. For me, its the little things that make it all worthwhile. See the…",
+                "action": "Liked by",
+                "order_in_profile": 6
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/nick-rossi-6785736b_new-product-announcement-the-team-activity-7208853125993000960-xG7O",
+                "title": "🚨 New Product Announcement 🎉  \n\nThe team is thrilled to announce, we are expanding our menu! In addition to our beloved baked goods, we are now…",
+                "action": "Liked by",
+                "order_in_profile": 7
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/cognism_instant-enrich-x-lean-data-playbook-activity-7193571395224629248-Unpj",
+                "title": "You’re using Lean Data but want to increase lead response times and maximize your chance of turning inbound leads into opportunities. See how Cognism…",
+                "action": "Liked by",
+                "order_in_profile": 8
+              }
+            ],
+            "awards": [],
+            "courses": [],
+            "certifications": [],
+            "languages": [],
+            "patents_count": null,
+            "patents_topics": [],
+            "patents": [],
+            "publications_count": null,
+            "publications_topics": [],
+            "publications": [],
+            "projects_count": null,
+            "projects_topics": [],
+            "projects": [],
+            "organizations": [],
+            "github_url": null,
+            "github_username": null,
+            "github_mapping_confidence": null,
+            "github_contributions_count": null,
+            "github_repos_summary": [],
+            "profile_root_field_changes_summary": [
+              {
+                "field_name": "summary",
+                "change_type": "new",
+                "last_changed_at": "2025-03-08 02:29:48.027205"
+              },
+              {
+                "field_name": "summary",
+                "change_type": "updated",
+                "last_changed_at": "2025-09-12 08:20:27.642783"
+              },
+              {
+                "field_name": "connections_count",
+                "change_type": "updated",
+                "last_changed_at": "2025-09-12 08:20:27.642783"
+              },
+              {
+                "field_name": "follower_count",
+                "change_type": "updated",
+                "last_changed_at": "2025-09-12 08:20:27.642783"
+              }
+            ],
+            "profile_collection_field_changes_summary": [
+              {
+                "field_name": "education",
+                "last_changed_at": "2025-10-10 06:48:30.249130"
+              },
+              {
+                "field_name": "activity",
+                "last_changed_at": "2025-08-15 07:16:00.558564"
+              },
+              {
+                "field_name": "experience",
+                "last_changed_at": "2025-10-10 06:48:30.249130"
+              }
+            ],
+            "experience_recently_started": [],
+            "experience_recently_closed": []
+          },
+          "enrichedAt": "2025-10-29T18:03:19.983Z"
+        },
+        {
+          "id": 412131687,
+          "name": "SHIN KAMEI",
+          "title": "Senior Account Executive",
+          "department": "Sales",
+          "company": "Precisely | Trust in Data",
+          "managementLevel": "Senior",
+          "connectionsCount": 328,
+          "followersCount": 326,
+          "email": "",
+          "phone": "",
+          "linkedinUrl": "https://www.linkedin.com/in/shin-shinichiro-kamei-a7a56686",
+          "source": "coresignal_preview",
+          "scores": {
+            "seniority": 3,
+            "departmentFit": 10,
+            "influence": 3,
+            "championPotential": 12,
+            "crossFunctional": 4,
+            "geoAlignment": 8
+          },
+          "overallScore": 6,
+          "relevance": 0.85,
+          "isHighValue": false,
+          "aiRelevance": 0.85,
+          "aiReasoning": "Shin Kamei is highly relevant for this Sales Intelligence Software opportunity. As a Senior Account Executive in the Sales department at Precisely, he is a direct end-user who would benefit from sales intelligence tools for prospecting, lead enrichment, and account research. His position makes him an ideal champion who can advocate for the product's value based on daily usage needs. While Senior AEs typically don't have final budget authority for $150K purchases, they hold significant influence in the buying process because: (1) they are primary users who can articulate pain points and ROI, (2) they can influence sales leadership's decision-making, and (3) sales tools are often evaluated by practitioners before leadership approval. At a company with 100 employees, a Senior AE likely has strong relationships with sales leadership (VP Sales/CRO) who would be the ultimate decision-maker. His influence level of 7 reflects his role as a credible internal advocate who can drive adoption and provide user perspective, though he likely needs approval from sales leadership for this deal size. No red flags identified - his title and department align perfectly with the product category.",
+          "aiConfidence": 0.9,
+          "buyerGroupRole": "champion",
+          "roleConfidence": 60,
+          "roleReasoning": "Selected as Stakeholder for project influence: Will be affected by implementation and can provide valuable input.",
+          "aiRoleValidation": {
+            "suggestedRole": "champion",
+            "confidence": 0.85,
+            "reasoning": "SHIN KAMEI should be upgraded from 'stakeholder' to 'champion' for several key reasons:\n\n1. **Direct Product Relevance**: As a Senior Account Executive in Sales, SHIN would be a primary end-user of Sales Intelligence Software. This tool directly impacts their daily workflow, prospecting capabilities, and quota attainment.\n\n2. **Operational Impact**: Sales Intelligence Software is core to sales execution. A Senior AE has hands-on experience with what features matter, what integrations are needed, and how it will affect team adoption and performance.\n\n3. **Internal Advocacy Capability**: At the senior level, SHIN likely has credibility within the sales organization to advocate for tools that improve efficiency. They can articulate ROI in terms sales leadership understands (pipeline generation, conversion rates, time savings).\n\n4. **Deal Size Justification**: At $150K, this is a significant investment that requires user buy-in. Having a Senior AE champion ensures the sales team will adopt the tool, which is critical for justifying the expenditure.\n\n5. **Buyer Group Composition**: With Brian Prew as the decision-maker (likely VP/Director level), SHIN serves as the crucial bridge between leadership approval and frontline adoption. Champions are most effective when they're operational users who can influence both peers and management.\n\n6. **Not Decision Authority**: While senior, an Account Executive typically lacks budget authority for $150K purchases, but has significant influence power.\n\nSHIN's current 'stakeholder' designation underutilizes their potential impact on this deal's success.",
+            "alternativeRoles": [
+              "stakeholder",
+              "decision"
+            ]
+          },
+          "aiRoleReasoning": "SHIN KAMEI should be upgraded from 'stakeholder' to 'champion' for several key reasons:\n\n1. **Direct Product Relevance**: As a Senior Account Executive in Sales, SHIN would be a primary end-user of Sales Intelligence Software. This tool directly impacts their daily workflow, prospecting capabilities, and quota attainment.\n\n2. **Operational Impact**: Sales Intelligence Software is core to sales execution. A Senior AE has hands-on experience with what features matter, what integrations are needed, and how it will affect team adoption and performance.\n\n3. **Internal Advocacy Capability**: At the senior level, SHIN likely has credibility within the sales organization to advocate for tools that improve efficiency. They can articulate ROI in terms sales leadership understands (pipeline generation, conversion rates, time savings).\n\n4. **Deal Size Justification**: At $150K, this is a significant investment that requires user buy-in. Having a Senior AE champion ensures the sales team will adopt the tool, which is critical for justifying the expenditure.\n\n5. **Buyer Group Composition**: With Brian Prew as the decision-maker (likely VP/Director level), SHIN serves as the crucial bridge between leadership approval and frontline adoption. Champions are most effective when they're operational users who can influence both peers and management.\n\n6. **Not Decision Authority**: While senior, an Account Executive typically lacks budget authority for $150K purchases, but has significant influence power.\n\nSHIN's current 'stakeholder' designation underutilizes their potential impact on this deal's success.",
+          "fullProfile": {
+            "id": 412131687,
+            "parent_id": 412131687,
+            "created_at": "2019-05-29T08:53:01.000Z",
+            "updated_at": "2025-10-15T12:17:38.340692Z",
+            "checked_at": "2025-10-15T12:17:38.340692Z",
+            "changed_at": "2025-10-08T07:16:40.714774Z",
+            "experience_change_last_identified_at": null,
+            "is_deleted": 0,
+            "is_parent": 1,
+            "public_profile_id": 305950846,
+            "linkedin_url": "https://www.linkedin.com/in/shin-shinichiro-kamei-a7a56686",
+            "linkedin_shorthand_names": [
+              "shin-shinichiro-kamei-a7a56686"
+            ],
+            "historical_ids": [
+              412131687
+            ],
+            "full_name": "SHIN KAMEI",
+            "first_name": "SHIN",
+            "first_name_initial": "S",
+            "middle_name": null,
+            "middle_name_initial": null,
+            "last_name": "KAMEI",
+            "last_name_initial": "K",
+            "headline": "Experienced Semiconductor, Software, Service Sales and Sales Manager currently on leave to take care of family.",
+            "summary": "Pitney Bowes Japan ・Joined Pitney Bowes Japan Software Solutions as Sales Manager. Gartner ・ Joined Gartner Japan in Jan 2017 as Account Executive. Intel • Joined Intel K.K. after college graduation in March 1997 • 16 years of experience in iA sales for PC, Server, Tablet, Storage and Embedded applications  Covered accounts; Direct: NEC, Hitachi, Toshiba, Disti/Embedded: FujiXerox, Casio, OKI, Epson • 7 years of experience in Account manager and people management role within above for NEC and Hitachi account  Managed reports 15; mixture of Field Sales, Market development manager and Filed Application Engineer  Trainer of New to Management training class. Trained ~30 Managers and Manager equivalent Individual Contributors. • 3 years of experience in New business development, PerC Champ and Technology research and evangelist role • 6 month experience for new sales process creation with Intel’s ODM partners in Japan such as Advantech, Adlink, Kontron, Supermicro, Gigabyte, Nexcom, Congatec, IEI, Avalue, Portwell and so on. • Covered Products in Intel: Controller186 – 486, RISC 960, CISC Pentium – Xeon, Itanium, Flash memory / SSD, Modem/LAN/WLAN/Optical, Desktop/Server motherboards, RealSense 3D cameras, Edison, Quark, IOT Gateway • Highly rated strength: Communication, Negotiation, Stakeholder management, Quality, Discipline • Intel K.K. Award (2002 x2, 2003, 2004), Intel Corp Award (2004, 2009, 2011), Intel Achievement Award nomination by Senior VP Mooly Eden in 2011 NEC Supplier Excellence Award (2003, 2007, 2009, 2011)",
+            "picture_url": "https://media.licdn.com/dms/image/v2/C4E03AQFghAO31owTVQ/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1517002312725?e=2147483647&v=beta&t=gnS2kmSN6E0kSayjAtEUl1v484S9lLo3TUI9kybqF1E",
+            "location_country": "Japan",
+            "location_country_iso2": "JP",
+            "location_country_iso3": "JPN",
+            "location_full": "Greater Tokyo Area",
+            "location_regions": [
+              "Asia",
+              "Eastern Asia",
+              "APAC"
+            ],
+            "location_city": "Tokyo",
+            "location_state": null,
+            "interests": [],
+            "inferred_skills": [
+              "new business development",
+              "software",
+              "sales",
+              "server",
+              "management",
+              "reports",
+              "trainer",
+              "training",
+              "technology",
+              "research",
+              "flash",
+              "wlan",
+              "3d",
+              "iot",
+              "strength",
+              "negotiation",
+              "discipline",
+              "computing",
+              "sales manager",
+              "people management",
+              "market development",
+              "business development",
+              "sales process",
+              "stakeholder management"
+            ],
+            "historical_skills": [],
+            "connections_count": 328,
+            "followers_count": 326,
+            "services": null,
+            "primary_professional_email": "skamei@precisely.com",
+            "primary_professional_email_status": "matched_pattern",
+            "professional_emails_collection": [
+              {
+                "professional_email": "skamei@precisely.com",
+                "professional_email_status": "matched_pattern",
+                "order_of_priority": 1
+              },
+              {
+                "professional_email": "shin.kamei@precisely.com",
+                "professional_email_status": "matched_pattern",
+                "order_of_priority": 2
+              },
+              {
+                "professional_email": "shin@precisely.com",
+                "professional_email_status": "matched_pattern",
+                "order_of_priority": 3
+              }
+            ],
+            "is_working": 1,
+            "active_experience_company_id": 28124003,
+            "active_experience_title": "Senior Account Executive",
+            "active_experience_description": null,
+            "active_experience_department": "Sales",
+            "active_experience_management_level": "Senior",
+            "is_decision_maker": 0,
+            "total_experience_duration_months": 323,
+            "total_experience_duration_months_breakdown_department": [
+              {
+                "department": "Other",
+                "total_experience_duration_months": 237
+              },
+              {
+                "department": "Sales",
+                "total_experience_duration_months": 86
+              }
+            ],
+            "total_experience_duration_months_breakdown_management_level": [
+              {
+                "management_level": "Other",
+                "total_experience_duration_months": 237
+              },
+              {
+                "management_level": "Senior",
+                "total_experience_duration_months": 37
+              },
+              {
+                "management_level": "Manager",
+                "total_experience_duration_months": 32
+              },
+              {
+                "management_level": "Specialist",
+                "total_experience_duration_months": 17
+              }
+            ],
+            "experience": [
+              {
+                "active_experience": 1,
+                "position_title": "Senior Account Executive",
+                "department": "Sales",
+                "management_level": "Senior",
+                "location": "日本 東京都",
+                "description": null,
+                "date_from": "September 2022",
+                "date_from_year": 2022,
+                "date_from_month": 9,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "duration_months": 37,
+                "company_id": 28124003,
+                "company_name": "Precisely | Trust in Data",
+                "company_type": "Privately Held",
+                "company_founded_year": null,
+                "company_followers_count": 214091,
+                "company_website": "https://www.precisely.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/preciselydata"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/preciselydata"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/preciselydata",
+                "company_size_range": "1001-5000 employees",
+                "company_employees_count": 2976,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "technology/data analytics",
+                  "business and consumer services > business services (in united states)",
+                  "trusted",
+                  "fortune 100",
+                  "data analytics",
+                  "simplify",
+                  "business decisions",
+                  "technology",
+                  "cloud",
+                  "data-automation",
+                  "data-management",
+                  "enterprise-software"
+                ],
+                "company_annual_revenue_source_5": 755624999,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 525000000,
+                "company_annual_revenue_currency_source_1": "USD",
+                "company_employees_count_change_yearly_percentage": 2.197802197802198,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "1700 District Ave; #300; Burlington, Massachusetts 01803, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Burlington",
+                "company_hq_state": "Massachusetts",
+                "company_hq_street": "1700 District Ave; #300",
+                "company_hq_zipcode": "01803",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 1
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Sales Manager",
+                "department": "Sales",
+                "management_level": "Manager",
+                "location": null,
+                "description": null,
+                "date_from": "December 2019",
+                "date_from_year": 2019,
+                "date_from_month": 12,
+                "date_to": "March 2021",
+                "date_to_year": 2021,
+                "date_to_month": 3,
+                "duration_months": 15,
+                "company_id": 4577877,
+                "company_name": "Syncsort",
+                "company_type": "Privately Held",
+                "company_founded_year": null,
+                "company_followers_count": 13630,
+                "company_website": "https://www.precisely.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/syncsortinc",
+                  "https://www.facebook.com/preciselydata"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/syncsort",
+                  "https://www.twitter.com/preciselydata"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/syncsort",
+                "company_size_range": "201-500 employees",
+                "company_employees_count": 141,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "technology/data management",
+                  "etl",
+                  "hadoop",
+                  "big data",
+                  "data offload",
+                  "data integration",
+                  "data migration",
+                  "data sort",
+                  "data quality",
+                  "trusted",
+                  "build",
+                  "data management",
+                  "fortune 100",
+                  "business decisions",
+                  "analytics",
+                  "software"
+                ],
+                "company_annual_revenue_source_5": 300000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": -6.622516556291391,
+                "company_last_funding_round_date": "2012-03-20",
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "2 Blue Hill Plaza #1563; Pearl River, New York 10965, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Pearl River",
+                "company_hq_state": "New York",
+                "company_hq_street": "2 Blue Hill Plaza #1563",
+                "company_hq_zipcode": "10965",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 2
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Sales Manager",
+                "department": "Sales",
+                "management_level": "Manager",
+                "location": "Japan Tokyo",
+                "description": null,
+                "date_from": "July 2018",
+                "date_from_year": 2018,
+                "date_from_month": 7,
+                "date_to": "December 2019",
+                "date_to_year": 2019,
+                "date_to_month": 12,
+                "duration_months": 17,
+                "company_id": 7829244,
+                "company_name": "Pitney Bowes",
+                "company_type": "Public Company",
+                "company_founded_year": 1920,
+                "company_followers_count": 131001,
+                "company_website": "https://www.pitneybowes.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/pitneybowes"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/pitneybowes"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/pitney-bowes",
+                "company_size_range": "10,001+ employees",
+                "company_employees_count": 12852,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "shipping & mailing services",
+                  "amazon web services channel partners",
+                  "pitney bowes",
+                  "global ecommerce",
+                  "ink and toner",
+                  "mailing supplies",
+                  "postage meters",
+                  "shipping & mailing",
+                  "mail room operations",
+                  "presort services",
+                  "shipping",
+                  "mailing",
+                  "financial services",
+                  "apis",
+                  "fulfillment",
+                  "delivery",
+                  "returns",
+                  "cross border ecommerce",
+                  "equipment financing",
+                  "cross-border e-commerce",
+                  "returns management",
+                  "technology",
+                  "cloud-services",
+                  "electronics",
+                  "enterprise-software",
+                  "outsourcing",
+                  "platform",
+                  "analytics",
+                  "crm",
+                  "document management",
+                  "e-commerce",
+                  "hardware",
+                  "information technology",
+                  "predictive analytics",
+                  "software"
+                ],
+                "company_annual_revenue_source_5": null,
+                "company_annual_revenue_currency_source_5": null,
+                "company_annual_revenue_source_1": 2026598016,
+                "company_annual_revenue_currency_source_1": "USD",
+                "company_employees_count_change_yearly_percentage": 5.051495831289848,
+                "company_last_funding_round_date": "2025-08-05",
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "3001 Summer Street; Stamford, CT 06926, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Stamford",
+                "company_hq_state": "Connecticut",
+                "company_hq_street": "3001 Summer Street",
+                "company_hq_zipcode": "06926",
+                "company_last_updated_at": "2025-09-06",
+                "company_stock_ticker": [
+                  {
+                    "exchange": "NYSE",
+                    "ticker": "PBI"
+                  },
+                  {
+                    "exchange": null,
+                    "ticker": "PBI"
+                  }
+                ],
+                "company_is_b2b": 1,
+                "order_in_profile": 3
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Account Executive",
+                "department": "Sales",
+                "management_level": "Specialist",
+                "location": "Tokyo",
+                "description": null,
+                "date_from": "January 2017",
+                "date_from_year": 2017,
+                "date_from_month": 1,
+                "date_to": "June 2018",
+                "date_to_year": 2018,
+                "date_to_month": 6,
+                "duration_months": 17,
+                "company_id": 3439442,
+                "company_name": "Gartner",
+                "company_type": "Public Company",
+                "company_founded_year": 1979,
+                "company_followers_count": 2085427,
+                "company_website": "https://www.gartner.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/gartnerinc"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/gartner_inc"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/gartner",
+                "company_size_range": "10,001+ employees",
+                "company_employees_count": 24048,
+                "company_industry": "Information Services",
+                "company_categories_and_keywords": [
+                  "technology",
+                  "technology research services",
+                  "gartner",
+                  "computers electronics and technology > computers electronics and technology - other (in united states)",
+                  "research",
+                  "executives",
+                  "guidance",
+                  "actionable insights",
+                  "teams",
+                  "tools",
+                  "cybersecurity",
+                  "it-consulting",
+                  "it-services",
+                  "business development",
+                  "consulting",
+                  "information technology"
+                ],
+                "company_annual_revenue_source_5": 6420009000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 6267410944,
+                "company_annual_revenue_currency_source_1": "USD",
+                "company_employees_count_change_yearly_percentage": -2.0926634638873054,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "56 Top Gallant Street; Stamford, CT 06904, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Stamford",
+                "company_hq_state": "Connecticut",
+                "company_hq_street": "56 Top Gallant Street",
+                "company_hq_zipcode": "06904",
+                "company_last_updated_at": "2025-09-06",
+                "company_stock_ticker": [
+                  {
+                    "exchange": "NYSE",
+                    "ticker": "IT"
+                  },
+                  {
+                    "exchange": null,
+                    "ticker": "IT"
+                  }
+                ],
+                "company_is_b2b": 1,
+                "order_in_profile": 4
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Perceptual Computing Business Development Manager",
+                "department": null,
+                "management_level": null,
+                "location": "Tokyo",
+                "description": null,
+                "date_from": "March 1997",
+                "date_from_year": 1997,
+                "date_from_month": 3,
+                "date_to": "December 2016",
+                "date_to_year": 2016,
+                "date_to_month": 12,
+                "duration_months": 237,
+                "company_id": 11825305,
+                "company_name": "Intel Corporation",
+                "company_type": "Public Company",
+                "company_founded_year": null,
+                "company_followers_count": 3964983,
+                "company_website": "https://www.intel.de",
+                "company_facebook_url": [
+                  "https://www.facebook.com/intel"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/intel"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/intel-corporation",
+                "company_size_range": "10,001+ employees",
+                "company_employees_count": 113589,
+                "company_industry": "Semiconductor Manufacturing",
+                "company_categories_and_keywords": [
+                  "technology/software",
+                  "semiconductor design and manufacturing",
+                  "artificial intelligence",
+                  "autonomous driving",
+                  "non-volatile memory solutions",
+                  "software solutions",
+                  "ai",
+                  "cloud",
+                  "data center",
+                  "hardware",
+                  "technology",
+                  "electronics",
+                  "semiconductors"
+                ],
+                "company_annual_revenue_source_5": 53070000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 53100998656,
+                "company_annual_revenue_currency_source_1": "USD",
+                "company_employees_count_change_yearly_percentage": -9.508862776339374,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "Robert Noyce Building; Santa Clara, California 95052, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Santa Clara",
+                "company_hq_state": "California",
+                "company_hq_street": "Robert Noyce Building",
+                "company_hq_zipcode": "95052",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [
+                  {
+                    "exchange": "NASDAQ",
+                    "ticker": "INTC"
+                  },
+                  {
+                    "exchange": null,
+                    "ticker": "INTC"
+                  }
+                ],
+                "company_is_b2b": 1,
+                "order_in_profile": 5
+              }
+            ],
+            "projected_base_salary_p25": null,
+            "projected_base_salary_median": null,
+            "projected_base_salary_p75": null,
+            "projected_base_salary_period": null,
+            "projected_base_salary_currency": null,
+            "projected_base_salary_updated_at": null,
+            "projected_additional_salary": [],
+            "projected_additional_salary_period": null,
+            "projected_additional_salary_currency": null,
+            "projected_additional_salary_updated_at": null,
+            "projected_total_salary_p25": null,
+            "projected_total_salary_median": null,
+            "projected_total_salary_p75": null,
+            "projected_total_salary_period": null,
+            "projected_total_salary_currency": null,
+            "projected_total_salary_updated_at": null,
+            "last_graduation_date": null,
+            "education_degrees": [],
+            "education": [],
+            "recommendations_count": null,
+            "recommendations": [],
+            "activity": [],
+            "awards": [],
+            "courses": [],
+            "certifications": [],
+            "languages": [
+              {
+                "language": "日本語",
+                "proficiency": "Native or bilingual proficiency",
+                "order_in_profile": 1
+              },
+              {
+                "language": "English",
+                "proficiency": "Full professional proficiency",
+                "order_in_profile": 2
+              }
+            ],
+            "patents_count": null,
+            "patents_topics": [],
+            "patents": [],
+            "publications_count": null,
+            "publications_topics": [],
+            "publications": [],
+            "projects_count": null,
+            "projects_topics": [],
+            "projects": [],
+            "organizations": [],
+            "github_url": null,
+            "github_username": null,
+            "github_mapping_confidence": null,
+            "github_contributions_count": null,
+            "github_repos_summary": [],
+            "profile_root_field_changes_summary": [
+              {
+                "field_name": "follower_count",
+                "change_type": "updated",
+                "last_changed_at": "2025-09-17 12:04:03.761715"
+              },
+              {
+                "field_name": "connections_count",
+                "change_type": "updated",
+                "last_changed_at": "2025-09-17 12:04:03.761715"
+              },
+              {
+                "field_name": "summary",
+                "change_type": "new",
+                "last_changed_at": "2025-05-28 07:59:31.163694"
+              }
+            ],
+            "profile_collection_field_changes_summary": [
+              {
+                "field_name": "education",
+                "last_changed_at": "2025-09-17 12:04:03.761715"
+              },
+              {
+                "field_name": "experience",
+                "last_changed_at": "2025-10-08 07:16:40.714774"
+              }
+            ],
+            "experience_recently_started": [],
+            "experience_recently_closed": []
+          },
+          "enrichedAt": "2025-10-29T18:03:20.502Z"
+        }
+      ],
+      "costs": {
+        "preview": 2,
+        "collect": 2,
+        "total": 4
+      }
+    }
+  },
+  "timestamp": "2025-10-29T18:03:40.622Z"
+}

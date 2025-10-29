@@ -1,0 +1,230 @@
+[
+  {
+    "companyId": "01K8R6BCRESC33Z52V1QMN3BST",
+    "companyName": "Precisely",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:03:40.624Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 62497,
+      "buyerGroupSize": 2,
+      "totalCost": 4
+    }
+  },
+  {
+    "companyId": "01K8R6BCNDGRXY73RYK3Y65FFA",
+    "companyName": "FPX from Revalize",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:07:07.833Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 204199,
+      "buyerGroupSize": 6,
+      "totalCost": 8
+    }
+  },
+  {
+    "companyId": "01K8R6BCJE6TH2FGS5P6H63XA9",
+    "companyName": "Ocient",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:09:31.982Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 141088,
+      "buyerGroupSize": 5,
+      "totalCost": 7
+    }
+  },
+  {
+    "companyId": "01K8R6BCFDFZM06BX4NQ54E69X",
+    "companyName": "Optitex",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:11:38.181Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 123232,
+      "buyerGroupSize": 2,
+      "totalCost": 4
+    }
+  },
+  {
+    "companyId": "01K8R6BCCFJXJN2AW79ZG6C761",
+    "companyName": "SketchUp",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:11:42.349Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 1230,
+      "buyerGroupSize": 0,
+      "totalCost": 0
+    }
+  },
+  {
+    "companyId": "01K8R6BC9EWDKH3ACYRX397CER",
+    "companyName": "Librestream",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:12:50.685Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 65428,
+      "buyerGroupSize": 2,
+      "totalCost": 4
+    }
+  },
+  {
+    "companyId": "01K8R6BC6GJF7YRRFR5KVJ6WSB",
+    "companyName": "Metafile Information Systems",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:13:55.462Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 61749,
+      "buyerGroupSize": 2,
+      "totalCost": 4
+    }
+  },
+  {
+    "companyId": "01K8R6BC3GN1CW0BBSHGB4P1JR",
+    "companyName": "Concord Technologies",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:15:55.857Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 117373,
+      "buyerGroupSize": 4,
+      "totalCost": 6
+    }
+  },
+  {
+    "companyId": "01K8R6BC0H4Q0GDEQ6S2DGZFTZ",
+    "companyName": "ProMiles Software Development",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:17:05.138Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 66329,
+      "buyerGroupSize": 2,
+      "totalCost": 4
+    }
+  },
+  {
+    "companyId": "01K8R6BBTHG5DD600YNQX7V70R",
+    "companyName": "Rev.io",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:19:51.648Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 163548,
+      "buyerGroupSize": 6,
+      "totalCost": 8
+    }
+  },
+  {
+    "companyId": "01K8R6BBQGTYWVAZET9K9VFSDM",
+    "companyName": "Wynne Systems",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:22:04.157Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 129416,
+      "buyerGroupSize": 5,
+      "totalCost": 7
+    }
+  },
+  {
+    "companyId": "01K8R6BBMFJN72JEJW3J9ET5Z5",
+    "companyName": "XMPro",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:22:08.513Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 1285,
+      "buyerGroupSize": 0,
+      "totalCost": 2
+    }
+  },
+  {
+    "companyId": "01K8R6BBHCY5528WY4G6HKBTHB",
+    "companyName": "Plixer",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:24:29.845Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 138386,
+      "buyerGroupSize": 5,
+      "totalCost": 7
+    }
+  },
+  {
+    "companyId": "01K8R6BBEDSKXBX77EPAS7P7EY",
+    "companyName": "Applied Software, GRAITEC Group",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:26:31.333Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 118555,
+      "buyerGroupSize": 4,
+      "totalCost": 6
+    }
+  },
+  {
+    "companyId": "01K8R6BBBESVHZJ1WZMFSGCF9V",
+    "companyName": "Booksy",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:26:35.453Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 1171,
+      "buyerGroupSize": 0,
+      "totalCost": 1.1
+    }
+  },
+  {
+    "companyId": "01K8R6BB8FWESH1SM00NJVAWN5",
+    "companyName": "Coro Cybersecurity",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:28:34.117Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 115720,
+      "buyerGroupSize": 4,
+      "totalCost": 6
+    }
+  },
+  {
+    "companyId": "01K8R6BB5HT2HPX61TZHFZY2QK",
+    "companyName": "Arcoro",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:30:45.512Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 128347,
+      "buyerGroupSize": 5,
+      "totalCost": 7
+    }
+  },
+  {
+    "companyId": "01K8R6BB2HGKST7DTJ6KBM5QE6",
+    "companyName": "Openprise",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:32:15.697Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 87163,
+      "buyerGroupSize": 3,
+      "totalCost": 5
+    }
+  },
+  {
+    "companyId": "01K8R6BATCRMGNBR9SV3Q22TAQ",
+    "companyName": "Everee",
+    "status": "completed",
+    "timestamp": "2025-10-29T18:34:01.013Z",
+    "errorMessage": null,
+    "metadata": {
+      "processingTime": 102356,
+      "buyerGroupSize": 3,
+      "totalCost": 5
+    }
+  }
+]

@@ -1,0 +1,3943 @@
+{
+  "company": {
+    "id": "01K8R6BCFDFZM06BX4NQ54E69X",
+    "name": "Optitex",
+    "website": "https://optitex.com/",
+    "industry": "Software",
+    "employeeCount": null,
+    "revenue": null
+  },
+  "pipeline": {
+    "target": "https://optitex.com/",
+    "dealSize": 150000,
+    "productCategory": "sales",
+    "workspaceId": "01K7464TNANHQXPCZT1FYX205V"
+  },
+  "results": {
+    "buyerGroup": [
+      {
+        "id": 385476132,
+        "name": "Albert Vilar Mateu",
+        "title": "Vice President Operations",
+        "department": "Operations",
+        "company": "NedGraphics Software",
+        "managementLevel": "President/Vice President",
+        "connectionsCount": 500,
+        "followersCount": 1357,
+        "email": "",
+        "phone": "",
+        "linkedinUrl": "https://www.linkedin.com/in/albert-vilar-mateu",
+        "source": "coresignal_preview",
+        "scores": {
+          "seniority": 9,
+          "departmentFit": 10,
+          "influence": 4,
+          "championPotential": 14,
+          "crossFunctional": 4,
+          "geoAlignment": 8
+        },
+        "overallScore": 8,
+        "relevance": 0.3,
+        "isHighValue": false,
+        "aiRelevance": 0.3,
+        "aiReasoning": "Albert Vilar Mateu is a VP of Operations at a 100-employee software company. While he holds a VP-level position indicating senior decision-making authority, his department (Operations) is not the primary user or owner of Sales Intelligence Software. Operations VPs typically focus on operational efficiency, supply chain, production, or service delivery rather than sales processes. However, there are several considerations that prevent complete exclusion: (1) At a 100-person company, VPs often have cross-functional influence and may participate in strategic purchasing decisions, especially for significant investments like $150K; (2) Operations may have tangential interest in sales intelligence if it impacts forecasting, resource planning, or operational capacity; (3) He could be involved in vendor evaluation processes or budget approval committees. The primary buyers would typically be the VP/Head of Sales, CRO, or Revenue Operations leaders. Albert's role would more likely be as a peripheral stakeholder who might provide input on operational integration or be consulted on company-wide strategic purchases, rather than being a champion or primary decision-maker. His influence is moderate (4/10) due to his VP-level seniority but limited by the lack of direct ownership of the sales function.",
+        "aiConfidence": 0.75,
+        "buyerGroupRole": "decision",
+        "roleConfidence": 90,
+        "roleReasoning": "Promoted to decision maker (no better candidate found)",
+        "aiRoleValidation": {
+          "suggestedRole": "decision",
+          "confidence": 0.95,
+          "reasoning": "Albert Vilar Mateu should retain the 'decision' role based on several strong factors: (1) As VP of Operations at a software company, he holds clear budget authority for a $150K investment, which falls within typical VP-level approval thresholds. (2) Sales Intelligence Software directly impacts operational efficiency, pipeline management, and revenue operations - all within his operational purview. (3) His seniority as VP indicates he has P&L responsibility and final sign-off authority. (4) The existing buyer group composition shows Le Linh as champion (likely an operational leader advocating for the solution), which creates a logical dynamic where the champion drives internal advocacy while the VP provides ultimate approval. (5) At NedGraphics Software, a VP Operations would typically own sales enablement tools and customer-facing operational systems. (6) The $150K deal size requires executive-level approval but isn't large enough to necessarily escalate to C-suite, making VP the appropriate decision-maker. The role is already correctly assigned.",
+          "alternativeRoles": [
+            "champion",
+            "stakeholder"
+          ]
+        },
+        "aiRoleReasoning": "Albert Vilar Mateu should retain the 'decision' role based on several strong factors: (1) As VP of Operations at a software company, he holds clear budget authority for a $150K investment, which falls within typical VP-level approval thresholds. (2) Sales Intelligence Software directly impacts operational efficiency, pipeline management, and revenue operations - all within his operational purview. (3) His seniority as VP indicates he has P&L responsibility and final sign-off authority. (4) The existing buyer group composition shows Le Linh as champion (likely an operational leader advocating for the solution), which creates a logical dynamic where the champion drives internal advocacy while the VP provides ultimate approval. (5) At NedGraphics Software, a VP Operations would typically own sales enablement tools and customer-facing operational systems. (6) The $150K deal size requires executive-level approval but isn't large enough to necessarily escalate to C-suite, making VP the appropriate decision-maker. The role is already correctly assigned.",
+        "fullProfile": {
+          "id": 385476132,
+          "parent_id": 385476132,
+          "created_at": "2017-07-19T00:52:27.000Z",
+          "updated_at": "2025-10-12T06:02:42.255415Z",
+          "checked_at": "2025-10-19T16:46:57.100132Z",
+          "changed_at": "2025-10-12T06:02:42.255415Z",
+          "experience_change_last_identified_at": "2024-12-13T22:05:10.634397Z",
+          "is_deleted": 0,
+          "is_parent": 1,
+          "public_profile_id": 141963385,
+          "linkedin_url": "https://www.linkedin.com/in/albert-vilar-mateu",
+          "linkedin_shorthand_names": [
+            "albert-vilar-mateu"
+          ],
+          "historical_ids": [
+            385476132
+          ],
+          "full_name": "Albert Vilar Mateu",
+          "first_name": "Albert",
+          "first_name_initial": "A",
+          "middle_name": "Vilar",
+          "middle_name_initial": "V",
+          "last_name": "Mateu",
+          "last_name_initial": "M",
+          "headline": "Vice President of Operations at Nedgraphics and Optitex",
+          "summary": "As an accomplished Business Director with over 20 years of experience leading high-performing teams and enterprise-wide complex business units, I am proud of my demonstrated ability to lead Global Operations and cross-functional Project Management Offices. These projects advance businesses and the customers they serve. In addition, I bring a deep expertise in process management, people management, operations, and project management. Over the years, leaders, clients, and peers have recognized my ability to limit risk, create lean teams, and optimize operations between financial returns and exceptional employee and customer experiences.",
+          "picture_url": "https://media.licdn.com/dms/image/v2/C4E03AQF0fG-NvNvttw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1556888386979?e=2147483647&v=beta&t=2La_Sjk24NrU9BCqaZBouMo0-d34InVw0lURk0NZeCM",
+          "location_country": "Spain",
+          "location_country_iso2": "ES",
+          "location_country_iso3": "ESP",
+          "location_full": "El Masnou, Catalonia, Spain",
+          "location_regions": [
+            "Europe",
+            "Southern Europe",
+            "EMEA",
+            "EU"
+          ],
+          "location_city": "El Masnou",
+          "location_state": "Catalonia",
+          "interests": [],
+          "inferred_skills": [
+            "director",
+            "performing",
+            "operations",
+            "management",
+            "projects",
+            "risk",
+            "lean",
+            "innovation",
+            "r",
+            "mentoring",
+            "planning",
+            "supervision",
+            "sales",
+            "assurance",
+            "civil",
+            "engineering",
+            "infrastructure",
+            "energy",
+            "consultancy",
+            "railway",
+            "production",
+            "pmo",
+            "strategy",
+            "invoicing",
+            "responsible",
+            "software",
+            "less",
+            "global operations",
+            "project management",
+            "process management",
+            "people management",
+            "innovation management",
+            "strategic planning",
+            "continuous improvement",
+            "business planning",
+            "project managers",
+            "sales manager",
+            "quality control",
+            "project manager",
+            "civil engineering",
+            "global management",
+            "business strategy",
+            "delivering results",
+            "best practices",
+            "portfolio management",
+            "ms project",
+            "lean management",
+            "project portfolio management"
+          ],
+          "historical_skills": [],
+          "connections_count": 500,
+          "followers_count": 1357,
+          "services": null,
+          "primary_professional_email": null,
+          "primary_professional_email_status": null,
+          "professional_emails_collection": [],
+          "is_working": 1,
+          "active_experience_company_id": 33737340,
+          "active_experience_title": "Vice President Operations",
+          "active_experience_description": null,
+          "active_experience_department": "Operations",
+          "active_experience_management_level": "President/Vice President",
+          "is_decision_maker": 1,
+          "total_experience_duration_months": 231,
+          "total_experience_duration_months_breakdown_department": [
+            {
+              "department": "Engineering and Technical",
+              "total_experience_duration_months": 74
+            },
+            {
+              "department": "Other",
+              "total_experience_duration_months": 40
+            },
+            {
+              "department": "Project Management",
+              "total_experience_duration_months": 27
+            },
+            {
+              "department": "Operations",
+              "total_experience_duration_months": 96
+            }
+          ],
+          "total_experience_duration_months_breakdown_management_level": [
+            {
+              "management_level": "Manager",
+              "total_experience_duration_months": 95
+            },
+            {
+              "management_level": "Other",
+              "total_experience_duration_months": 40
+            },
+            {
+              "management_level": "President/Vice President",
+              "total_experience_duration_months": 96
+            }
+          ],
+          "experience": [
+            {
+              "active_experience": 1,
+              "position_title": "Vice President Operations",
+              "department": "Operations",
+              "management_level": "President/Vice President",
+              "location": null,
+              "description": null,
+              "date_from": "November 2024",
+              "date_from_year": 2024,
+              "date_from_month": 11,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "duration_months": 11,
+              "company_id": 33737340,
+              "company_name": "NedGraphics Software",
+              "company_type": "Public Company",
+              "company_founded_year": 1978,
+              "company_followers_count": 4221,
+              "company_website": "https://www.nedgraphics.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/nedgraphics"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/ng_support"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/nedgraphics-software-for-textile%26fashion",
+              "company_size_range": "51-200 employees",
+              "company_employees_count": 112,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "textile design",
+                "business and consumer services > textiles (in united states)",
+                "design & creation & color management",
+                "production interfacing & virtual sampling",
+                "marketing",
+                "presentation & sales",
+                "workflow optimization & integration",
+                "carpets",
+                "creative workflow",
+                "tufts",
+                "textile design software",
+                "fabrics",
+                "technology",
+                "enterprise-software",
+                "fabrication-tools",
+                "printing",
+                "information technology",
+                "software"
+              ],
+              "company_annual_revenue_source_5": null,
+              "company_annual_revenue_currency_source_5": null,
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 107.40740740740742,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "NedGraphics, Inc. 135 W 41st St; 5th Floor; New York, NY 10036, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "New York",
+              "company_hq_state": "New York",
+              "company_hq_street": "NedGraphics, Inc. 135 W 41st St; 5th Floor",
+              "company_hq_zipcode": "10036",
+              "company_last_updated_at": "2025-09-08",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 1
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Vice President, Service Operations",
+              "department": "Operations",
+              "management_level": "President/Vice President",
+              "location": "Greater New York City Area",
+              "description": "Director of IT support, Project Management and R+D areas in the company. People Manager, managing and mentoring staff. Strategic planning and daily operations. Continuous improvement & integrated business planning.",
+              "date_from": "November 2017",
+              "date_from_year": 2017,
+              "date_from_month": 11,
+              "date_to": "November 2024",
+              "date_to_year": 2024,
+              "date_to_month": 11,
+              "duration_months": 84,
+              "company_id": 10900735,
+              "company_name": "Tabush Group",
+              "company_type": "Privately Held",
+              "company_founded_year": 2000,
+              "company_followers_count": 1590,
+              "company_website": "https://www.tabush.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/tabushgroup"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/tabushgroup"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/tabushgroup",
+              "company_size_range": "11-50 employees",
+              "company_employees_count": 56,
+              "company_industry": "IT Services and IT Consulting",
+              "company_categories_and_keywords": [
+                "it services",
+                "computers electronics and technology > computers electronics and technology - other (in united states)",
+                "managed it services",
+                "vdi",
+                "new york city it services",
+                "daas",
+                "it services for smbs",
+                "private cloud",
+                "it for professional services firms",
+                "it support & services in manhattan",
+                "it services for law",
+                "real estate",
+                "construction",
+                "cpa",
+                "financial services firms",
+                "cloud computing",
+                "cloud solutions",
+                "law firms",
+                "centralized management",
+                "cybersecurity",
+                "technology",
+                "cloud",
+                "it-services",
+                "information services"
+              ],
+              "company_annual_revenue_source_5": 4074002,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 9.803921568627452,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "148 West 37th Street; 6th Floor; New York, NY 10018, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "New York",
+              "company_hq_state": "New York",
+              "company_hq_street": "148 West 37th Street; 6th Floor",
+              "company_hq_zipcode": "10018",
+              "company_last_updated_at": "2025-09-09",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 2
+            },
+            {
+              "active_experience": 1,
+              "position_title": "Vice President Operations",
+              "department": "Operations",
+              "management_level": "President/Vice President",
+              "location": null,
+              "description": null,
+              "date_from": "November 2024",
+              "date_from_year": 2024,
+              "date_from_month": 11,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "duration_months": 2,
+              "company_id": 5981351,
+              "company_name": "Optitex",
+              "company_type": "Privately Held",
+              "company_founded_year": 1988,
+              "company_followers_count": 13337,
+              "company_website": "https://www.optitex.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/optitexhq"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/optitex",
+                "https://www.twitter.com/products/2d-and-3d-cad-software",
+                "https://www.twitter.com/solutions",
+                "https://www.twitter.com/products/print-and-cut",
+                "https://www.twitter.com/support",
+                "https://www.twitter.com/about-us",
+                "https://www.twitter.com/products/fabric-management",
+                "https://www.twitter.com/products/o-cloud",
+                "https://www.twitter.com/es",
+                "https://www.twitter.com/services",
+                "https://www.twitter.com/solutions/furniture-and-upholstery",
+                "https://www.twitter.com/products/cutplan",
+                "https://www.twitter.com/solutions/brands-and-retailers",
+                "https://www.twitter.com/products",
+                "https://www.twitter.com/solutions/enterprise",
+                "https://www.twitter.com/solutions/education",
+                "https://www.twitter.com/latest-release",
+                "https://www.twitter.com/solutions/automotive",
+                "https://www.twitter.com/solutions/bags-and-accessories",
+                "https://www.twitter.com/contact-us",
+                "https://www.twitter.com/legal",
+                "https://www.twitter.com/products/3d-design-for-illustrator",
+                "https://www.twitter.com/solutions/smb",
+                "https://www.twitter.com/leadership",
+                "https://www.twitter.com/it",
+                "https://www.twitter.com/solutions/manufactures",
+                "https://www.twitter.com/index",
+                "https://www.twitter.com/products/marker"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/optitex",
+              "company_size_range": "51-200 employees",
+              "company_employees_count": 124,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "fashion design software",
+                "business and consumer services > textiles (in indonesia)",
+                "2d cad",
+                "pattern making software",
+                "3d virtual prototyping",
+                "pattern design software",
+                "optimize fabric usage",
+                "3d cad",
+                "2d cam",
+                "automatic nesting",
+                "apparel",
+                "automotive fabric",
+                "aeronautics fabric",
+                "upholstery",
+                "industrial fabrics",
+                "3d prototyping",
+                "fashion",
+                "2d cad/cam pattern design",
+                "technology",
+                "application-software",
+                "printing",
+                "3d technology",
+                "cad",
+                "computer",
+                "made to order",
+                "software",
+                "virtual reality"
+              ],
+              "company_annual_revenue_source_5": 30000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 9.734513274336283,
+              "company_last_funding_round_date": "2012-06-01",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "333 West 39th Street; Suite 1107; New York, NY 10018, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "New York",
+              "company_hq_state": "New York",
+              "company_hq_street": "333 West 39th Street; Suite 1107",
+              "company_hq_zipcode": "10018",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 3
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Production Director - PMO Manager",
+              "department": null,
+              "management_level": null,
+              "location": "Madrid",
+              "description": "Global management & business strategy. Member of the Management Committee. Production director of a global consultancy area in Spain. +40 people under supervision & invoicing volume greater than 3M€/year. Responsible of business due diligences for inorganic growth. Partnership with Key Business Stakeholders & proven track record of delivering results. Manager of Cross-Functional Strategic Projects: Definition of Project management standards and best practices, implementation of Project Portfolio Management software (MS Project & Portfolio Management), Lean Management standards & methodologies. Show less",
+              "date_from": "September 2014",
+              "date_from_year": 2014,
+              "date_from_month": 9,
+              "date_to": "October 2017",
+              "date_to_year": 2017,
+              "date_to_month": 10,
+              "duration_months": 37,
+              "company_id": 4076336,
+              "company_name": "SUEZ",
+              "company_type": "Privately Held",
+              "company_founded_year": null,
+              "company_followers_count": 856940,
+              "company_website": "https://www.suez.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/suez.india",
+                "https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.suez.com%2fen"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/suez",
+                "https://www.twitter.com/intent/tweet?original_referer=https%3a%2f%2fwww.suez.com%2fen&text=suez+group+%7c+circular+solutions+in+water+and+waste%0ahttps%3a%2f%2fwww.suez.com%2fen%0avia+%40suez",
+                "https://www.twitter.com/suez?lang=en"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/suez",
+              "company_size_range": "10,001+ employees",
+              "company_employees_count": 25680,
+              "company_industry": "Environmental Services",
+              "company_categories_and_keywords": [
+                "water and waste management",
+                "science and education > environmental science (in france)",
+                "drinking water production",
+                "water distribution",
+                "sewerage and stormwater network management",
+                "water cycle management",
+                "water resource preservation",
+                "energy-utilities",
+                "recycling",
+                "waste-management",
+                "water",
+                "environmental consulting",
+                "waste management"
+              ],
+              "company_annual_revenue_source_5": 8006175000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 9189000192,
+              "company_annual_revenue_currency_source_1": "EUR",
+              "company_employees_count_change_yearly_percentage": 3.904511430305482,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "La Défense; Paris, Ile de France 92040, FR",
+              "company_hq_country": "France",
+              "company_hq_regions": [
+                "Europe",
+                "Western Europe",
+                "EMEA",
+                "EU"
+              ],
+              "company_hq_country_iso2": "FR",
+              "company_hq_country_iso3": "FRA",
+              "company_hq_city": null,
+              "company_hq_state": null,
+              "company_hq_street": null,
+              "company_hq_zipcode": null,
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [
+                {
+                  "exchange": "FRA",
+                  "ticker": "SEV"
+                }
+              ],
+              "company_is_b2b": 1,
+              "order_in_profile": 4
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Lecturer In Master Of Innovation Management",
+              "department": null,
+              "management_level": null,
+              "location": "Barcelona Area, Spain",
+              "description": "Lecturer in Master of Innovation Management. Execution and Monitory of Innovation Project I+D+I Author of subject contents",
+              "date_from": "June 2014",
+              "date_from_year": 2014,
+              "date_from_month": 6,
+              "date_to": "August 2016",
+              "date_to_year": 2016,
+              "date_to_month": 8,
+              "duration_months": 26,
+              "company_id": 26418098,
+              "company_name": "Universitat Oberta de Catalunya (UOC)",
+              "company_type": "Educational",
+              "company_founded_year": 1994,
+              "company_followers_count": 284705,
+              "company_website": "https://www.uoc.edu",
+              "company_facebook_url": [
+                "https://www.facebook.com/uoc.universitat"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/uocuniversitat"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/school/uoc",
+              "company_size_range": "501-1000 employees",
+              "company_employees_count": 6407,
+              "company_industry": "E-Learning Providers",
+              "company_categories_and_keywords": [
+                "education",
+                "science and education > education (in spain)",
+                "universidad virtual",
+                "universitat en línea",
+                "universitat virtual",
+                "universidad online",
+                "online university",
+                "educación superior",
+                "higher education",
+                "sociedad del conocimiento",
+                "societat del coneixement",
+                "postgraduate",
+                "university",
+                "languages",
+                "online",
+                "degrees"
+              ],
+              "company_annual_revenue_source_5": null,
+              "company_annual_revenue_currency_source_5": null,
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 2.2339237274613053,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "Rambla del Poblenou, 156, Barcelona, 08018, ES; Barcelona, Barcelona 08018, ES",
+              "company_hq_country": "Spain",
+              "company_hq_regions": [
+                "Europe",
+                "Southern Europe",
+                "EMEA",
+                "EU"
+              ],
+              "company_hq_country_iso2": "ES",
+              "company_hq_country_iso3": "ESP",
+              "company_hq_city": null,
+              "company_hq_state": null,
+              "company_hq_street": null,
+              "company_hq_zipcode": null,
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 0,
+              "order_in_profile": 5
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Business Unit Manager - Technical Director",
+              "department": "Engineering and Technical",
+              "management_level": "Manager",
+              "location": "Catalonia, Spain",
+              "description": "- Project Center Manager in Technical Operational Business Unit - Manager of a team +30 project managers in multiple location. - +60 people under supervision, Sales Manager and portfolio control. - Quality control & assurance. Internal auditor. - Implementation of Portfolio and Project Management Methodologies",
+              "date_from": "January 2006",
+              "date_from_year": 2006,
+              "date_from_month": 1,
+              "date_to": "March 2012",
+              "date_to_year": 2012,
+              "date_to_month": 3,
+              "duration_months": 74,
+              "company_id": 468008,
+              "company_name": "ECA S.A Grupo Bureau Veritas",
+              "company_type": "Privately Held",
+              "company_founded_year": 1828,
+              "company_followers_count": 1434288,
+              "company_website": "https://www.bureauveritas.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/bureauveritasgroup",
+                "https://www.facebook.com/bureau.veritas.group"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/bureauveritas"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/bureau-veritas-group",
+              "company_size_range": "10,001+ employees",
+              "company_employees_count": 53336,
+              "company_industry": "Environmental Services",
+              "company_categories_and_keywords": [
+                "sustainability",
+                "business and consumer services > business services (in france)",
+                "services",
+                "testing",
+                "inspection",
+                "certification",
+                "classification",
+                "asset management",
+                "construction",
+                "commodities",
+                "oil & gas",
+                "industry",
+                "marine & offshore",
+                "consumer products",
+                "markets and services",
+                "risk reduction",
+                "quality",
+                "performance improvement",
+                "business-services",
+                "technology",
+                "compliance",
+                "construction-management"
+              ],
+              "company_annual_revenue_source_5": 6634378713,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 6240900096,
+              "company_annual_revenue_currency_source_1": "EUR",
+              "company_employees_count_change_yearly_percentage": 6.5079777143199475,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "4 Place des Saisons; Paris, Courbevoie 92400, FR",
+              "company_hq_country": "France",
+              "company_hq_regions": [
+                "Europe",
+                "Western Europe",
+                "EMEA",
+                "EU"
+              ],
+              "company_hq_country_iso2": "FR",
+              "company_hq_country_iso3": "FRA",
+              "company_hq_city": null,
+              "company_hq_state": null,
+              "company_hq_street": null,
+              "company_hq_zipcode": null,
+              "company_last_updated_at": "2025-09-06",
+              "company_stock_ticker": [
+                {
+                  "exchange": null,
+                  "ticker": "BVI.PA"
+                },
+                {
+                  "exchange": "PA",
+                  "ticker": "BVI"
+                }
+              ],
+              "company_is_b2b": 1,
+              "order_in_profile": 6
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Project Manager",
+              "department": "Project Management",
+              "management_level": "Manager",
+              "location": "Barcelona Area, Spain",
+              "description": "Implementation of Civil Engineering Projects Infrastructure network study (energy sector). Project Management & Technical consultancy. Successful implementation of 4 strategic projects in Barcelona’s railway network.",
+              "date_from": "April 2004",
+              "date_from_year": 2004,
+              "date_from_month": 4,
+              "date_to": "July 2006",
+              "date_to_year": 2006,
+              "date_to_month": 7,
+              "duration_months": 27,
+              "company_id": null,
+              "company_name": "INCA_A&O",
+              "company_type": null,
+              "company_founded_year": null,
+              "company_followers_count": null,
+              "company_website": null,
+              "company_facebook_url": [],
+              "company_twitter_url": [],
+              "company_linkedin_url": null,
+              "company_size_range": null,
+              "company_employees_count": null,
+              "company_industry": null,
+              "company_categories_and_keywords": [],
+              "company_annual_revenue_source_5": null,
+              "company_annual_revenue_currency_source_5": null,
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": null,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": null,
+              "company_hq_country": null,
+              "company_hq_regions": [],
+              "company_hq_country_iso2": null,
+              "company_hq_country_iso3": null,
+              "company_hq_city": null,
+              "company_hq_state": null,
+              "company_hq_street": null,
+              "company_hq_zipcode": null,
+              "company_last_updated_at": null,
+              "company_stock_ticker": [],
+              "company_is_b2b": null,
+              "order_in_profile": 7
+            }
+          ],
+          "projected_base_salary_p25": null,
+          "projected_base_salary_median": null,
+          "projected_base_salary_p75": null,
+          "projected_base_salary_period": null,
+          "projected_base_salary_currency": null,
+          "projected_base_salary_updated_at": null,
+          "projected_additional_salary": [],
+          "projected_additional_salary_period": null,
+          "projected_additional_salary_currency": null,
+          "projected_additional_salary_updated_at": null,
+          "projected_total_salary_p25": null,
+          "projected_total_salary_median": null,
+          "projected_total_salary_p75": null,
+          "projected_total_salary_period": null,
+          "projected_total_salary_currency": null,
+          "projected_total_salary_updated_at": null,
+          "last_graduation_date": 2017,
+          "education_degrees": [
+            "Master in Project Management",
+            "Master Of Business Administration (Executive MBA)",
+            "Environmental Management in the European Union. Postgraduate course.",
+            "Lean Six sigma, Lean Management, Efiiciency and Continuos Improvement",
+            "Degree in Geology"
+          ],
+          "education": [
+            {
+              "degree": "Lean Six sigma, Lean Management, Efiiciency and Continuos Improvement",
+              "description": null,
+              "institution_url": null,
+              "institution_name": "Renault Consulting",
+              "institution_full_address": null,
+              "institution_country_iso2": null,
+              "institution_country_iso3": null,
+              "institution_regions": [],
+              "institution_city": null,
+              "institution_state": null,
+              "institution_street": null,
+              "institution_zipcode": null,
+              "date_from_year": 2014,
+              "date_to_year": 2015,
+              "activities_and_societies": null,
+              "order_in_profile": 1
+            },
+            {
+              "degree": "Environmental Management in the European Union. Postgraduate course.",
+              "description": null,
+              "institution_url": "https://www.linkedin.com/school/university-of-copenhagen",
+              "institution_name": "University of Copenhagen",
+              "institution_full_address": "Nørregade 10; København K, 1165, DK",
+              "institution_country_iso2": "DK",
+              "institution_country_iso3": "DNK",
+              "institution_regions": [
+                "Europe",
+                "Northern Europe",
+                "EMEA",
+                "EU"
+              ],
+              "institution_city": null,
+              "institution_state": null,
+              "institution_street": null,
+              "institution_zipcode": null,
+              "date_from_year": 2013,
+              "date_to_year": 2014,
+              "activities_and_societies": null,
+              "order_in_profile": 2
+            },
+            {
+              "degree": "Degree in Geology",
+              "description": null,
+              "institution_url": "https://www.linkedin.com/school/university-of-barcelona",
+              "institution_name": "Universitat de Barcelona",
+              "institution_full_address": "Gran Via de les Corts Catalanes, 585; Barcelona, CT, Spain",
+              "institution_country_iso2": "ES",
+              "institution_country_iso3": "ESP",
+              "institution_regions": [
+                "Europe",
+                "Southern Europe",
+                "EMEA",
+                "EU"
+              ],
+              "institution_city": "Barcelona",
+              "institution_state": "CT",
+              "institution_street": "Gran Via de les Corts Catalanes, 585",
+              "institution_zipcode": null,
+              "date_from_year": 1997,
+              "date_to_year": 2003,
+              "activities_and_societies": null,
+              "order_in_profile": 3
+            },
+            {
+              "degree": "Master in Project Management",
+              "description": null,
+              "institution_url": "https://www.linkedin.com/school/universitat-ramon-llull",
+              "institution_name": "Universitat Ramon Llull",
+              "institution_full_address": "Claravall 1-3, Barcelona",
+              "institution_country_iso2": null,
+              "institution_country_iso3": null,
+              "institution_regions": [],
+              "institution_city": null,
+              "institution_state": null,
+              "institution_street": null,
+              "institution_zipcode": null,
+              "date_from_year": 2012,
+              "date_to_year": 2013,
+              "activities_and_societies": null,
+              "order_in_profile": 4
+            },
+            {
+              "degree": "Master Of Business Administration (Executive MBA)",
+              "description": null,
+              "institution_url": "https://www.linkedin.com/school/eoi",
+              "institution_name": "EOI Business School",
+              "institution_full_address": "Avda. Gregorio del Amo, 6; Madrid, España 28040, ES",
+              "institution_country_iso2": "ES",
+              "institution_country_iso3": "ESP",
+              "institution_regions": [
+                "Europe",
+                "Southern Europe",
+                "EMEA",
+                "EU"
+              ],
+              "institution_city": null,
+              "institution_state": null,
+              "institution_street": null,
+              "institution_zipcode": null,
+              "date_from_year": 2016,
+              "date_to_year": 2017,
+              "activities_and_societies": null,
+              "order_in_profile": 5
+            }
+          ],
+          "recommendations_count": 2,
+          "recommendations": [
+            {
+              "recommendation": "“Albert was my classmate at the Executive MBA we have just finished recently. I can definitely say that he is one of the most outstanding people I've met during the master. He has a lot of valuable skills, which make him a great and very responsible professional with whom I would love to work at any time. He does not only have a lot of knowledge generally about business, economics, finance and project/program/portfolio management, but he is a great leader and I would say a very creative person as well. He is always proactive, extremely sociable and always keen on help anybody and share his knowledge with others. Without any doubt I would recommend him for any management position, I do believe he has all the skills to lead and even to create a great team from scratch. It was a pleasure to work with Albert during the master in lot of different projects and I personally learned a lot from him.”",
+              "referee_full_name": "Dora Verbovszki",
+              "referee_url": "https://www.linkedin.com/in/doraverbovszki",
+              "order_in_profile": 1
+            },
+            {
+              "recommendation": "“Albert demostró en su etapa en Inca Ingeniería ser una persona extremadamente responsable y profesional, proporcionando al departamento el valor añadido y el impulso que necesitaba. Capaz de asumir los retos que se proponga, mi experiencia de tenerle como colaborador durante más de dos años fue plenamente satisfactoria y acorde con el nivel que demuestra su perfil.”",
+              "referee_full_name": "LinkedIn User",
+              "referee_url": null,
+              "order_in_profile": 2
+            }
+          ],
+          "activity": [
+            {
+              "activity_url": "https://www.linkedin.com/posts/nuriapocino_newjob-customerexperience-vueling-activity-7343727793123295232-XwRH",
+              "title": "I’m thrilled to share that I’ve joined Vueling Airlines  as the Head of Customer Experience! ✈️ \n\nAfter nearly 8 incredible years as Marketing…",
+              "action": "Liked by",
+              "order_in_profile": 1
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/raul-castro-productmanager_newbeginnings-teamwork-purposedriven-activity-7337934327097233410-Nkz1",
+              "title": "Exciting News Alert! 🌟\n\nRecently, I embarked on a new journey as the Lead Product Manager at The Knot Worldwide, focusing on enhancing experiences…",
+              "action": "Liked by",
+              "order_in_profile": 2
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/astort_support-the-sant-jordi-nyc-festival-of-books-activity-7320427260316925953-I8ai",
+              "title": "Support the Sant Jordi NYC Festival of Books & Roses.\nThis April, the beloved Catalan festival of Sant Jordi comes to a new home in New York City's…",
+              "action": "Liked by",
+              "order_in_profile": 3
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/jan-chan-0344167_after-visiting-saigontex-in-hcmc-vietnam-activity-7318227531298418690-W1V1",
+              "title": "After visiting SaigonTex in HCMC, Vietnam, last week, I'm excited to be attending IndoTex in Jakarta, Indonesia, alongside our local partner, PT…",
+              "action": "Liked by",
+              "order_in_profile": 4
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/matthewfutter_personalupdate-resilience-spring2025-activity-7315758464197148672-F1ju",
+              "title": "🌟 Personal Update 🌟\nI don't often share personal updates here, but I wanted to take a moment to reflect on the past few months. It's been a…",
+              "action": "Liked by",
+              "order_in_profile": 5
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/nedgraphicssoftware_adobeillustrator-colorist-designefficiency-activity-7287393674462666752-I2zD",
+              "title": "Colorist for Adobe Illustrator now supports bulk export of colorways with LZW compression, enabling you to save multiple colorways at once. Say…",
+              "action": "Liked by",
+              "order_in_profile": 6
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/marco-barbieri-optitex_team-activity-7303729491518865409-oeKD",
+              "title": "Team!",
+              "action": "Liked by",
+              "order_in_profile": 7
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/jan-chan-0344167_optitex-dtg2025-textileindustry-activity-7298584425808764929-bF5D",
+              "title": "🌟 Exciting News from Dhaka! 🌟\n\nI'm currently attending the Dhaka International Textile & Garment Machinery Show (DTG). If you're in the area, I…",
+              "action": "Liked by",
+              "order_in_profile": 8
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/nedgraphics-unveils-the-future-of-textile-activity-7282039890580537344-OMz1",
+              "title": "This year, NedGraphics is proud to debut its latest innovations, including NEDhub and Jacquard Connect, alongside exciting features in the highly…",
+              "action": "Liked by",
+              "order_in_profile": 9
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/optitex_happy-holidays-from-all-of-us-at-nedgraphics-activity-7275449861645176833-j57h",
+              "title": "Happy Holidays from all of us at NedGraphics and Optitex! ❄️🎉This season, we’re celebrating innovation, collaboration, and the partnerships that…",
+              "action": "Liked by",
+              "order_in_profile": 10
+            },
+            {
+              "activity_url": "https://www.linkedin.com/posts/tabushgroup_what-does-morris-tabush-attribute-our-success-activity-7267216964677210113-msnE",
+              "title": "What does Morris Tabush attribute our success to?\n\nIt's simple—doing the right thing and giving our clients a reason to love us. At Tabush Group…",
+              "action": "Liked by",
+              "order_in_profile": 11
+            }
+          ],
+          "awards": [],
+          "courses": [],
+          "certifications": [
+            {
+              "title": "Certified SAFe® Agilist",
+              "issuer": "Scaled Agile, Inc.",
+              "issuer_url": "https://www.linkedin.com/company/scaled-agile-inc-",
+              "credential_id": null,
+              "certificate_url": null,
+              "date_from": "Dec 2023",
+              "date_from_year": 2023,
+              "date_from_month": 12,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "order_in_profile": 1
+            },
+            {
+              "title": "Project Management Professional (PMP)®",
+              "issuer": "Project Management Institute",
+              "issuer_url": "https://www.linkedin.com/company/projectmanagementinstitute",
+              "credential_id": null,
+              "certificate_url": "https://www.youracclaim.com/badges/730e04b7-7111-480f-8850-135e2e8aade3/linked_in_profile?trk=public_profile_certification-title",
+              "date_from": "Dec 2013",
+              "date_from_year": 2013,
+              "date_from_month": 12,
+              "date_to": "Jan 2019",
+              "date_to_year": 2019,
+              "date_to_month": 1,
+              "order_in_profile": 2
+            }
+          ],
+          "languages": [
+            {
+              "language": "English",
+              "proficiency": "Full professional proficiency",
+              "order_in_profile": 1
+            },
+            {
+              "language": "Spanish",
+              "proficiency": "Native or bilingual proficiency",
+              "order_in_profile": 2
+            },
+            {
+              "language": "Catalan",
+              "proficiency": "Native or bilingual proficiency",
+              "order_in_profile": 3
+            },
+            {
+              "language": "French",
+              "proficiency": "Professional working proficiency",
+              "order_in_profile": 4
+            }
+          ],
+          "patents_count": null,
+          "patents_topics": [],
+          "patents": [],
+          "publications_count": null,
+          "publications_topics": [],
+          "publications": [],
+          "projects_count": null,
+          "projects_topics": [],
+          "projects": [],
+          "organizations": [],
+          "github_url": null,
+          "github_username": null,
+          "github_mapping_confidence": null,
+          "github_contributions_count": null,
+          "github_repos_summary": [],
+          "profile_root_field_changes_summary": [
+            {
+              "field_name": "summary",
+              "change_type": "new",
+              "last_changed_at": "2025-04-19 18:03:24.206428"
+            },
+            {
+              "field_name": "follower_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-10-12 06:02:42.255415"
+            },
+            {
+              "field_name": "profile_photo_url",
+              "change_type": "new",
+              "last_changed_at": "2025-04-19 18:03:24.206428"
+            }
+          ],
+          "profile_collection_field_changes_summary": [
+            {
+              "field_name": "activity",
+              "last_changed_at": "2025-07-11 12:43:50.026786"
+            },
+            {
+              "field_name": "experience",
+              "last_changed_at": "2025-10-12 06:02:42.255415"
+            },
+            {
+              "field_name": "education",
+              "last_changed_at": "2025-10-12 06:02:42.255415"
+            },
+            {
+              "field_name": "certifications",
+              "last_changed_at": "2025-10-12 06:02:42.255415"
+            }
+          ],
+          "experience_recently_started": [],
+          "experience_recently_closed": []
+        },
+        "enrichedAt": "2025-10-29T18:10:13.000Z"
+      },
+      {
+        "id": 104854195,
+        "name": "Le Linh",
+        "title": "Sales Manager",
+        "department": "Sales",
+        "company": "Optitex | 3D Virtual Prototyping, 2D CAD/CAM Software Solutions",
+        "managementLevel": "Manager",
+        "connectionsCount": 500,
+        "followersCount": 540,
+        "email": "",
+        "phone": "",
+        "linkedinUrl": "https://www.linkedin.com/in/llinh",
+        "source": "coresignal_preview",
+        "scores": {
+          "seniority": 3,
+          "departmentFit": 10,
+          "influence": 3,
+          "championPotential": 18,
+          "crossFunctional": 7,
+          "geoAlignment": 8
+        },
+        "overallScore": 8,
+        "relevance": 0.85,
+        "isHighValue": false,
+        "aiRelevance": 0.85,
+        "aiReasoning": "Le Linh is highly relevant for Sales Intelligence Software procurement. As Sales Manager at Optitex, they are directly in the sales department and would be a primary user and beneficiary of sales intelligence tools. Their role typically involves lead generation, account research, prospect targeting, and sales execution - all core use cases for sales intelligence software. With a $150K deal size and 100-employee company, this purchase would likely require C-level (VP Sales/CRO) final approval, but Le Linh would be a strong champion and influencer in the buying process. They would evaluate the tool's practical value, potentially run pilots, and advocate for adoption based on impact to their team's performance. Their 500+ LinkedIn connections suggest active networking and sales engagement, indicating they understand the value of intelligence tools. The influence score of 7 reflects meaningful input and evaluation authority, though likely not final budget approval at this deal size. No red flags present - title and department perfectly align with the product category.",
+        "aiConfidence": 0.9,
+        "buyerGroupRole": "champion",
+        "roleConfidence": 72,
+        "roleReasoning": "Selected as Champion for advocacy and implementation: Manager-level leaders implement solutions and influence team adoption. Sales leaders are natural champions for revenue-generating tools. High champion potential based on role and department alignment.",
+        "aiRoleValidation": {
+          "suggestedRole": "champion",
+          "confidence": 0.95,
+          "reasoning": "Le Linh is already correctly assigned as champion. As Sales Manager at Optitex, she is the ideal champion for Sales Intelligence Software because: (1) Her department (Sales) is the primary end-user of this product and will directly benefit from sales intelligence capabilities, (2) Sales Managers typically drive the evaluation and selection of sales tools but rarely have budget authority for $150K purchases - that would sit with VP/Director level or above, (3) She has strong operational motivation to advocate for tools that will improve her team's performance and productivity, (4) At the Manager level in a software company, she likely lacks purchasing authority for six-figure deals but has significant influence over tool selection, (5) The buyer group already has Albert Vilar Mateu as the decision maker, which is appropriate hierarchy - Le Linh would champion the solution and Albert would approve the budget. Her role as champion is optimal because she combines direct product relevance, operational leadership, and internal advocacy capability without having final budget authority.",
+          "alternativeRoles": [
+            "stakeholder"
+          ]
+        },
+        "aiRoleReasoning": "Le Linh is already correctly assigned as champion. As Sales Manager at Optitex, she is the ideal champion for Sales Intelligence Software because: (1) Her department (Sales) is the primary end-user of this product and will directly benefit from sales intelligence capabilities, (2) Sales Managers typically drive the evaluation and selection of sales tools but rarely have budget authority for $150K purchases - that would sit with VP/Director level or above, (3) She has strong operational motivation to advocate for tools that will improve her team's performance and productivity, (4) At the Manager level in a software company, she likely lacks purchasing authority for six-figure deals but has significant influence over tool selection, (5) The buyer group already has Albert Vilar Mateu as the decision maker, which is appropriate hierarchy - Le Linh would champion the solution and Albert would approve the budget. Her role as champion is optimal because she combines direct product relevance, operational leadership, and internal advocacy capability without having final budget authority.",
+        "fullProfile": {
+          "id": 104854195,
+          "parent_id": 104854195,
+          "created_at": "2016-08-06T09:33:37.000Z",
+          "updated_at": "2025-10-01T05:03:42.361355Z",
+          "checked_at": "2025-10-14T06:13:56.738352Z",
+          "changed_at": "2025-10-01T05:03:42.361355Z",
+          "experience_change_last_identified_at": null,
+          "is_deleted": 0,
+          "is_parent": 1,
+          "public_profile_id": 213326935,
+          "linkedin_url": "https://www.linkedin.com/in/llinh",
+          "linkedin_shorthand_names": [
+            "llinh"
+          ],
+          "historical_ids": [
+            104854195
+          ],
+          "full_name": "Le Linh",
+          "first_name": "Le",
+          "first_name_initial": "L",
+          "middle_name": null,
+          "middle_name_initial": null,
+          "last_name": "Linh",
+          "last_name_initial": "L",
+          "headline": "Sales Manager at Efi Optitex Software Solutions",
+          "summary": null,
+          "picture_url": "https://media.licdn.com/dms/image/v2/C5103AQFbqTsZT_mSIw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1517447351920?e=2147483647&v=beta&t=HCHtBTtGz8X9DMO1HHdMpm4jsCTMG6zuZ6qiSCF0CPs",
+          "location_country": "Vietnam",
+          "location_country_iso2": "VN",
+          "location_country_iso3": "VNM",
+          "location_full": "Vietnam",
+          "location_regions": [
+            "Asia",
+            "South-eastern Asia",
+            "APAC"
+          ],
+          "location_city": null,
+          "location_state": null,
+          "interests": [],
+          "inferred_skills": [
+            "sales manager",
+            "customer service",
+            "sales",
+            "software"
+          ],
+          "historical_skills": [],
+          "connections_count": 500,
+          "followers_count": 540,
+          "services": null,
+          "primary_professional_email": "le.linh@optitex.com",
+          "primary_professional_email_status": "matched_email",
+          "professional_emails_collection": [
+            {
+              "professional_email": "le.linh@optitex.com",
+              "professional_email_status": "matched_email",
+              "order_of_priority": 1
+            }
+          ],
+          "is_working": 1,
+          "active_experience_company_id": 5981351,
+          "active_experience_title": "Sales Manager",
+          "active_experience_description": null,
+          "active_experience_department": "Sales",
+          "active_experience_management_level": "Manager",
+          "is_decision_maker": 0,
+          "total_experience_duration_months": 196,
+          "total_experience_duration_months_breakdown_department": [
+            {
+              "department": "Consulting",
+              "total_experience_duration_months": 35
+            },
+            {
+              "department": "Customer Service",
+              "total_experience_duration_months": 11
+            },
+            {
+              "department": "Other",
+              "total_experience_duration_months": 28
+            },
+            {
+              "department": "Sales",
+              "total_experience_duration_months": 122
+            }
+          ],
+          "total_experience_duration_months_breakdown_management_level": [
+            {
+              "management_level": "Specialist",
+              "total_experience_duration_months": 74
+            },
+            {
+              "management_level": "Manager",
+              "total_experience_duration_months": 122
+            }
+          ],
+          "experience": [
+            {
+              "active_experience": 1,
+              "position_title": "Sales Manager",
+              "department": "Sales",
+              "management_level": "Manager",
+              "location": "Ho Chi Minh",
+              "description": null,
+              "date_from": "January 2016",
+              "date_from_year": 2016,
+              "date_from_month": 1,
+              "date_to": null,
+              "date_to_year": null,
+              "date_to_month": null,
+              "duration_months": 98,
+              "company_id": 5981351,
+              "company_name": "Optitex | 3D Virtual Prototyping, 2D CAD/CAM Software Solutions",
+              "company_type": "Privately Held",
+              "company_founded_year": 1988,
+              "company_followers_count": 13337,
+              "company_website": "https://www.optitex.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/optitexhq"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/optitex",
+                "https://www.twitter.com/products/2d-and-3d-cad-software",
+                "https://www.twitter.com/solutions",
+                "https://www.twitter.com/products/print-and-cut",
+                "https://www.twitter.com/support",
+                "https://www.twitter.com/about-us",
+                "https://www.twitter.com/products/fabric-management",
+                "https://www.twitter.com/products/o-cloud",
+                "https://www.twitter.com/es",
+                "https://www.twitter.com/services",
+                "https://www.twitter.com/solutions/furniture-and-upholstery",
+                "https://www.twitter.com/products/cutplan",
+                "https://www.twitter.com/solutions/brands-and-retailers",
+                "https://www.twitter.com/products",
+                "https://www.twitter.com/solutions/enterprise",
+                "https://www.twitter.com/solutions/education",
+                "https://www.twitter.com/latest-release",
+                "https://www.twitter.com/solutions/automotive",
+                "https://www.twitter.com/solutions/bags-and-accessories",
+                "https://www.twitter.com/contact-us",
+                "https://www.twitter.com/legal",
+                "https://www.twitter.com/products/3d-design-for-illustrator",
+                "https://www.twitter.com/solutions/smb",
+                "https://www.twitter.com/leadership",
+                "https://www.twitter.com/it",
+                "https://www.twitter.com/solutions/manufactures",
+                "https://www.twitter.com/index",
+                "https://www.twitter.com/products/marker"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/optitex",
+              "company_size_range": "51-200 employees",
+              "company_employees_count": 124,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "fashion design software",
+                "business and consumer services > textiles (in indonesia)",
+                "2d cad",
+                "pattern making software",
+                "3d virtual prototyping",
+                "pattern design software",
+                "optimize fabric usage",
+                "3d cad",
+                "2d cam",
+                "automatic nesting",
+                "apparel",
+                "automotive fabric",
+                "aeronautics fabric",
+                "upholstery",
+                "industrial fabrics",
+                "3d prototyping",
+                "fashion",
+                "2d cad/cam pattern design",
+                "technology",
+                "application-software",
+                "printing",
+                "3d technology",
+                "cad",
+                "computer",
+                "made to order",
+                "software",
+                "virtual reality"
+              ],
+              "company_annual_revenue_source_5": 30000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": 9.734513274336283,
+              "company_last_funding_round_date": "2012-06-01",
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "333 West 39th Street; Suite 1107; New York, NY 10018, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "New York",
+              "company_hq_state": "New York",
+              "company_hq_street": "333 West 39th Street; Suite 1107",
+              "company_hq_zipcode": "10018",
+              "company_last_updated_at": "2025-09-07",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 1
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Account Manager",
+              "department": "Sales",
+              "management_level": "Manager",
+              "location": "HCM City",
+              "description": null,
+              "date_from": "February 2014",
+              "date_from_year": 2014,
+              "date_from_month": 2,
+              "date_to": "January 2016",
+              "date_to_year": 2016,
+              "date_to_month": 1,
+              "duration_months": 23,
+              "company_id": 6643778,
+              "company_name": "KDDI Corporation",
+              "company_type": "Public Company",
+              "company_founded_year": 1984,
+              "company_followers_count": 22455,
+              "company_website": "https://www.kddi.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/kddi.for.global.business",
+                "https://www.facebook.com/kddi.for.global.business/photos",
+                "https://www.facebook.com/kddibusiness"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/kddipr",
+                "https://www.twitter.com/kddiir"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/kddi-corporation",
+              "company_size_range": "10,001+ employees",
+              "company_employees_count": 2377,
+              "company_industry": "Telecommunications",
+              "company_categories_and_keywords": [
+                "business services",
+                "amazon web services channel partners",
+                "kddi corporation",
+                "aws consulting services",
+                "robotic process automation (rpa) consultancy services",
+                "computers electronics and technology > telecommunications (in japan)",
+                "telecommunications services",
+                "global locations",
+                "usecases",
+                "solutions",
+                "corporate customers",
+                "communications",
+                "infrastructure-as-a-service",
+                "cloud-services",
+                "connectivity"
+              ],
+              "company_annual_revenue_source_5": 39493814423,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 5917953228800,
+              "company_annual_revenue_currency_source_1": "JPY",
+              "company_employees_count_change_yearly_percentage": 7.800453514739229,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "10-10 Iidabashi 3-chome, Chiyoda-ku; Tokyo, 102-8460, JP",
+              "company_hq_country": "Japan",
+              "company_hq_regions": [
+                "Asia",
+                "Eastern Asia",
+                "APAC"
+              ],
+              "company_hq_country_iso2": "JP",
+              "company_hq_country_iso3": "JPN",
+              "company_hq_city": null,
+              "company_hq_state": null,
+              "company_hq_street": null,
+              "company_hq_zipcode": null,
+              "company_last_updated_at": "2025-09-05",
+              "company_stock_ticker": [
+                {
+                  "exchange": null,
+                  "ticker": "9433.T"
+                },
+                {
+                  "exchange": "Tokyo Stock Exchange",
+                  "ticker": "9433"
+                }
+              ],
+              "company_is_b2b": 1,
+              "order_in_profile": 2
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Sales Excellent",
+              "department": "Other",
+              "management_level": "Specialist",
+              "location": "VietNam",
+              "description": null,
+              "date_from": "August 2011",
+              "date_from_year": 2011,
+              "date_from_month": 8,
+              "date_to": "December 2013",
+              "date_to_year": 2013,
+              "date_to_month": 12,
+              "duration_months": 28,
+              "company_id": 5181133,
+              "company_name": "Microsoft",
+              "company_type": "Public Company",
+              "company_founded_year": null,
+              "company_followers_count": 26277735,
+              "company_website": "https://www.microsoft.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/microsoftuk"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/microsoftuk"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/microsoft",
+              "company_size_range": "10,001+ employees",
+              "company_employees_count": 228928,
+              "company_industry": "Software Development",
+              "company_categories_and_keywords": [
+                "technology",
+                "computers electronics and technology > programming and developer software (in united states)",
+                "business software",
+                "developer tools",
+                "home & educational software",
+                "tablets",
+                "search",
+                "advertising",
+                "servers",
+                "windows operating system",
+                "windows applications & platforms",
+                "smartphones",
+                "cloud computing",
+                "quantum computing",
+                "future of work",
+                "productivity",
+                "ai",
+                "artificial intelligence",
+                "machine learning",
+                "laptops",
+                "mixed reality",
+                "virtual reality",
+                "gaming",
+                "developers",
+                "it professional",
+                "microsoft",
+                "cloud",
+                "computing"
+              ],
+              "company_annual_revenue_source_5": null,
+              "company_annual_revenue_currency_source_5": null,
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": -6.534058432544542,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "1 Microsoft Way; Redmond, Washington 98052, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Redmond",
+              "company_hq_state": "Washington",
+              "company_hq_street": "1 Microsoft Way",
+              "company_hq_zipcode": "98052",
+              "company_last_updated_at": "2025-09-06",
+              "company_stock_ticker": [
+                {
+                  "exchange": "NASDAQ",
+                  "ticker": "MSFT"
+                }
+              ],
+              "company_is_b2b": 0,
+              "order_in_profile": 3
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Customer Service Agent",
+              "department": "Customer Service",
+              "management_level": "Specialist",
+              "location": "Malaysia",
+              "description": null,
+              "date_from": "August 2010",
+              "date_from_year": 2010,
+              "date_from_month": 8,
+              "date_to": "July 2011",
+              "date_to_year": 2011,
+              "date_to_month": 7,
+              "duration_months": 11,
+              "company_id": 10506156,
+              "company_name": "Dell",
+              "company_type": "Privately Held",
+              "company_founded_year": null,
+              "company_followers_count": 5273243,
+              "company_website": "https://www.delltechnologies.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/delltechnologies"
+              ],
+              "company_twitter_url": [
+                "https://www.twitter.com/delltech",
+                "https://www.twitter.com/delltech?lang=en"
+              ],
+              "company_linkedin_url": "https://www.linkedin.com/company/dell",
+              "company_size_range": "10,001+ employees",
+              "company_employees_count": 128698,
+              "company_industry": "Computer Hardware Manufacturing",
+              "company_categories_and_keywords": [
+                "technology",
+                "computers electronics and technology > computer hardware (in united states)",
+                "digital transformation",
+                "security transformation",
+                "it transformation",
+                "workforce transformation",
+                "ai",
+                "generative ai",
+                "services",
+                "desktops",
+                "support",
+                "laptops",
+                "technology solutions",
+                "artificial-intelligence",
+                "cloud",
+                "consumer-electronics",
+                "data-storage",
+                "electronics",
+                "it-services",
+                "data management",
+                "information and communications technology (ict)",
+                "information services",
+                "information technology"
+              ],
+              "company_annual_revenue_source_5": 96701000000,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": 95567003648,
+              "company_annual_revenue_currency_source_1": "USD",
+              "company_employees_count_change_yearly_percentage": -7.026909878995847,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "One Dell Way; Round Rock, Texas 78682, US",
+              "company_hq_country": "United States",
+              "company_hq_regions": [
+                "Americas",
+                "Northern America",
+                "AMER"
+              ],
+              "company_hq_country_iso2": "US",
+              "company_hq_country_iso3": "USA",
+              "company_hq_city": "Round Rock",
+              "company_hq_state": "Texas",
+              "company_hq_street": "One Dell Way",
+              "company_hq_zipcode": "78682",
+              "company_last_updated_at": "2025-09-08",
+              "company_stock_ticker": [
+                {
+                  "exchange": "NYSE",
+                  "ticker": "DELL"
+                },
+                {
+                  "exchange": null,
+                  "ticker": "DELL"
+                }
+              ],
+              "company_is_b2b": 1,
+              "order_in_profile": 4
+            },
+            {
+              "active_experience": 0,
+              "position_title": "Software Consultant",
+              "department": "Consulting",
+              "management_level": "Specialist",
+              "location": "Ho Chi Minh",
+              "description": null,
+              "date_from": "September 2007",
+              "date_from_year": 2007,
+              "date_from_month": 9,
+              "date_to": "August 2010",
+              "date_to_year": 2010,
+              "date_to_month": 8,
+              "duration_months": 35,
+              "company_id": 9445514,
+              "company_name": "Freewill Solutions",
+              "company_type": "Privately Held",
+              "company_founded_year": 1991,
+              "company_followers_count": 0,
+              "company_website": "https://www.freewillsolutions.com",
+              "company_facebook_url": [
+                "https://www.facebook.com/fwgrecruit"
+              ],
+              "company_twitter_url": [],
+              "company_linkedin_url": "https://www.linkedin.com/company/freewill-solutions",
+              "company_size_range": "201-500 employees",
+              "company_employees_count": 188,
+              "company_industry": "IT Services and IT Consulting",
+              "company_categories_and_keywords": [
+                "technology/software development",
+                "computers electronics and technology > computers electronics and technology - other",
+                "securities solutions",
+                "crm",
+                "insurance solutions",
+                "sale force automation",
+                "business consulting",
+                "strategic sourcing",
+                "mobile solutions",
+                "warehouse management",
+                "business innovation",
+                "sap",
+                "sunfish",
+                "fleet management",
+                "mobile network testing & analysis functionality",
+                "business and technology consulting",
+                "professional services",
+                "software development",
+                "securities",
+                "technology",
+                "it-services",
+                "information technology",
+                "software"
+              ],
+              "company_annual_revenue_source_5": 36926723,
+              "company_annual_revenue_currency_source_5": "USD",
+              "company_annual_revenue_source_1": null,
+              "company_annual_revenue_currency_source_1": null,
+              "company_employees_count_change_yearly_percentage": -4.568527918781726,
+              "company_last_funding_round_date": null,
+              "company_last_funding_round_amount_raised": null,
+              "company_hq_full_address": "29Fl. Lumpini Tower,Sathon,Rama 4 road.; Bangkok, 10250, TH",
+              "company_hq_country": "Thailand",
+              "company_hq_regions": [
+                "Asia",
+                "South-eastern Asia",
+                "APAC"
+              ],
+              "company_hq_country_iso2": "TH",
+              "company_hq_country_iso3": "THA",
+              "company_hq_city": null,
+              "company_hq_state": null,
+              "company_hq_street": null,
+              "company_hq_zipcode": null,
+              "company_last_updated_at": "2025-09-08",
+              "company_stock_ticker": [],
+              "company_is_b2b": 1,
+              "order_in_profile": 5
+            }
+          ],
+          "projected_base_salary_p25": null,
+          "projected_base_salary_median": null,
+          "projected_base_salary_p75": null,
+          "projected_base_salary_period": null,
+          "projected_base_salary_currency": null,
+          "projected_base_salary_updated_at": null,
+          "projected_additional_salary": [],
+          "projected_additional_salary_period": null,
+          "projected_additional_salary_currency": null,
+          "projected_additional_salary_updated_at": null,
+          "projected_total_salary_p25": null,
+          "projected_total_salary_median": null,
+          "projected_total_salary_p75": null,
+          "projected_total_salary_period": null,
+          "projected_total_salary_currency": null,
+          "projected_total_salary_updated_at": null,
+          "last_graduation_date": 2007,
+          "education_degrees": [
+            "Bachelor of Management Information System (MIS), Management Information Systems, General"
+          ],
+          "education": [
+            {
+              "degree": "Bachelor of Management Information System (MIS), Management Information Systems, General",
+              "description": null,
+              "institution_url": null,
+              "institution_name": "Economics university of Ho Chi Minh city",
+              "institution_full_address": null,
+              "institution_country_iso2": null,
+              "institution_country_iso3": null,
+              "institution_regions": [],
+              "institution_city": null,
+              "institution_state": null,
+              "institution_street": null,
+              "institution_zipcode": null,
+              "date_from_year": 2003,
+              "date_to_year": 2007,
+              "activities_and_societies": null,
+              "order_in_profile": 1
+            }
+          ],
+          "recommendations_count": null,
+          "recommendations": [],
+          "activity": [],
+          "awards": [],
+          "courses": [],
+          "certifications": [],
+          "languages": [],
+          "patents_count": null,
+          "patents_topics": [],
+          "patents": [],
+          "publications_count": null,
+          "publications_topics": [],
+          "publications": [],
+          "projects_count": null,
+          "projects_topics": [],
+          "projects": [],
+          "organizations": [],
+          "github_url": "https://github.com/llinh",
+          "github_username": "llinh",
+          "github_mapping_confidence": 50,
+          "github_contributions_count": 76,
+          "github_repos_summary": [
+            {
+              "name": "Aufgabe1",
+              "summary": null,
+              "stars": 0,
+              "contributions_count": 1
+            },
+            {
+              "name": "Mediatransformation",
+              "summary": null,
+              "stars": 0,
+              "contributions_count": 6
+            },
+            {
+              "name": "Semesterarbeit-Aufgabeteil2",
+              "summary": null,
+              "stars": 0,
+              "contributions_count": 41
+            },
+            {
+              "name": "hello-word",
+              "summary": null,
+              "stars": 0,
+              "contributions_count": 0
+            },
+            {
+              "name": "Semesterarbeit-Aufgabenteil-1",
+              "summary": null,
+              "stars": 0,
+              "contributions_count": 27
+            },
+            {
+              "name": "SeminararbeitSoSe18Aufgabe1",
+              "summary": null,
+              "stars": 0,
+              "contributions_count": 1
+            }
+          ],
+          "profile_root_field_changes_summary": [
+            {
+              "field_name": "follower_count",
+              "change_type": "updated",
+              "last_changed_at": "2025-10-01 05:03:42.361355"
+            },
+            {
+              "field_name": "profile_photo_url",
+              "change_type": "new",
+              "last_changed_at": "2025-04-25 02:54:37.942072"
+            }
+          ],
+          "profile_collection_field_changes_summary": [
+            {
+              "field_name": "experience",
+              "last_changed_at": "2024-11-27 08:38:19.710366"
+            }
+          ],
+          "experience_recently_started": [],
+          "experience_recently_closed": []
+        },
+        "enrichedAt": "2025-10-29T18:10:13.455Z",
+        "phone1": "+84 935 013 222",
+        "phone1Type": "mobile",
+        "phone1Verified": true,
+        "mobilePhone": "+84 935 013 222",
+        "phoneEnrichmentSource": "lusha_v2_linkedin",
+        "phoneEnrichmentDate": "2025-10-29T18:11:36.028Z",
+        "phoneDataQuality": 70
+      }
+    ],
+    "report": {
+      "id": "report_1761761374947_57rt3ztwh",
+      "generatedAt": "2025-10-29T18:11:34.493Z",
+      "executiveSummary": "Identified 2-person buyer group for Optitex ($150,000 deal) with 66% cohesion score. Group includes 1 decision maker(s), 1 champion(s), and comprehensive cross-functional coverage. Research methodology validated 2 final members from 20 initial candidates.",
+      "researchMethodology": {
+        "approach": "Double-waterfall discovery with multi-dimensional scoring",
+        "stages": [
+          {
+            "stage": 1,
+            "name": "Company Intelligence",
+            "description": "Database-first company research with Coresignal API fallback",
+            "result": "Optimal search parameters calculated"
+          },
+          {
+            "stage": 2,
+            "name": "Wide Preview Search",
+            "description": "Cross-departmental employee discovery using Coresignal Preview API",
+            "result": "20 employees discovered across all functions"
+          },
+          {
+            "stage": 3,
+            "name": "Smart Scoring",
+            "description": "Multi-dimensional scoring: seniority, influence, champion potential, cross-functional ability",
+            "result": "Top candidates identified before expensive collect API"
+          },
+          {
+            "stage": 4,
+            "name": "Role Assignment",
+            "description": "Deal-size-aware role assignment ensuring Decision Maker + Champion",
+            "result": "Appropriate roles assigned based on deal size"
+          },
+          {
+            "stage": 5,
+            "name": "Cross-Functional Validation",
+            "description": "Stakeholder completeness validation across all relevant functions",
+            "result": "Missing stakeholders added for comprehensive coverage"
+          },
+          {
+            "stage": 6,
+            "name": "Full Profile Collection",
+            "description": "Coresignal Collect API for final buyer group members only",
+            "result": "Complete profiles for final buyer group"
+          },
+          {
+            "stage": 7,
+            "name": "Cohesion Analysis",
+            "description": "Multi-factor cohesion validation",
+            "result": "66% cohesion score with detailed analysis"
+          }
+        ],
+        "searchParameters": {
+          "searchSize": 100,
+          "maxPreviewPages": 5,
+          "buyerGroupSize": {
+            "min": 6,
+            "max": 9,
+            "ideal": 8
+          },
+          "companySize": 100,
+          "industry": "Unknown",
+          "searchStrategy": "comprehensive",
+          "filteringLevel": "none"
+        },
+        "dataSources": [
+          "Coresignal API",
+          "Internal Database",
+          "AI Analysis"
+        ],
+        "confidenceLevel": 74
+      },
+      "companyIntelligence": {
+        "employeeCount": 100,
+        "revenue": 0,
+        "industry": "Unknown",
+        "growthRate": 0,
+        "activeHiring": 0,
+        "fundingStage": "bootstrapped",
+        "dataSource": "default",
+        "lastUpdated": "2025-10-29T18:09:35.134Z",
+        "insights": [
+          "Company size: Medium",
+          "Growth trajectory: Stable",
+          "Hiring activity: Limited",
+          "Funding status: bootstrapped"
+        ]
+      },
+      "buyerGroupJustification": [
+        {
+          "name": "Albert Vilar Mateu",
+          "title": "Vice President Operations",
+          "department": "Operations",
+          "role": "decision",
+          "confidence": "90%",
+          "detailedReasoning": "Promoted to decision maker (no better candidate found)",
+          "keyInsights": [
+            "Seniority score: 9/10",
+            "Champion potential: 14/25",
+            "Influence score: 4/10",
+            "Network: 500 connections",
+            "Relevance: 30%"
+          ],
+          "addedForCoverage": false,
+          "justification": "**Albert Vilar Mateu (Vice President Operations) - DECISION**\n\n**Budget Authority**: Ultimate decision maker with complete budget control.\n**Department Relevance**: \n**Selection Criteria**:\n- Seniority Score: 9/10\n- Influence Score: 4/10\n- Network Size: 500 connections\n- Role Confidence: 90%\n"
+        },
+        {
+          "name": "Le Linh",
+          "title": "Sales Manager",
+          "department": "Sales",
+          "role": "champion",
+          "confidence": "72%",
+          "detailedReasoning": "Selected as Champion for advocacy and implementation: Manager-level leaders implement solutions and influence team adoption. Sales leaders are natural champions for revenue-generating tools. High champion potential based on role and department alignment.",
+          "keyInsights": [
+            "Seniority score: 3/10",
+            "Champion potential: 18/25",
+            "Influence score: 3/10",
+            "Network: 500 connections",
+            "Relevance: 85%"
+          ],
+          "addedForCoverage": false,
+          "justification": "**Le Linh (Sales Manager) - CHAMPION**\n\n**Operational Leadership**: Manager-level leaders implement solutions and influence team adoption.\n**Advocacy Potential**: Sales leaders are natural champions for revenue-generating tools.\n\n**Selection Criteria**:\n- Seniority Score: 3/10\n- Influence Score: 3/10\n- Network Size: 500 connections\n- Role Confidence: 72%\n"
+        }
+      ],
+      "crossFunctionalCoverage": {
+        "summary": {
+          "primaryCovered": true,
+          "technicalCovered": false,
+          "riskCovered": false,
+          "financialCovered": false,
+          "overallScore": 25
+        },
+        "byFunction": {
+          "primary": {
+            "covered": [
+              "Sales",
+              "Operations"
+            ],
+            "missing": [
+              "Revenue"
+            ],
+            "representatives": [
+              {
+                "function": "Sales",
+                "name": "Le Linh",
+                "title": "Sales Manager",
+                "department": "Sales"
+              },
+              {
+                "function": "Operations",
+                "name": "Albert Vilar Mateu",
+                "title": "Vice President Operations",
+                "department": "Operations"
+              }
+            ]
+          },
+          "technical": {
+            "covered": [],
+            "missing": [
+              "IT",
+              "Technology",
+              "Engineering"
+            ],
+            "representatives": []
+          },
+          "financial": {
+            "covered": [],
+            "missing": [
+              "Finance",
+              "Procurement",
+              "FP&A"
+            ],
+            "representatives": []
+          }
+        },
+        "gaps": [
+          "Technical implementation",
+          "Risk management",
+          "Financial approval"
+        ],
+        "recommendations": [
+          "Add IT stakeholder for technical implementation",
+          "Add Security/Legal stakeholder for risk management",
+          "Add Finance stakeholder for budget approval"
+        ]
+      },
+      "cohesionAnalysis": {
+        "overallScore": 66,
+        "confidence": "MEDIUM",
+        "factors": {
+          "reportingProximity": {
+            "score": 45,
+            "explanation": "Executive reporting relationships"
+          },
+          "departmentClustering": {
+            "score": 100,
+            "explanation": "Department collaboration patterns"
+          },
+          "seniorityBalance": {
+            "score": 74,
+            "explanation": "Appropriate seniority distribution"
+          },
+          "geographicAlignment": {
+            "score": 75,
+            "explanation": "Location-based collaboration"
+          },
+          "functionalInterdependence": {
+            "score": 14,
+            "explanation": "Cross-functional work relationships"
+          }
+        },
+        "reasoning": "Good department collaboration; Well-balanced seniority levels; Limited functional interdependence",
+        "recommendations": [
+          "Consider adding members who report to same executives",
+          "Consider adding members from interdependent functions"
+        ]
+      },
+      "championAnalysis": {
+        "count": 1,
+        "champions": [
+          {
+            "name": "Le Linh",
+            "title": "Sales Manager",
+            "department": "Sales",
+            "championScore": 18,
+            "advocacyPotential": "Medium",
+            "internalInfluence": "Medium",
+            "networkStrength": 500
+          }
+        ],
+        "analysis": "Good champion potential with solid advocacy capabilities"
+      },
+      "costEfficiency": {
+        "methodology": "Double-waterfall approach (preview then collect)",
+        "costs": {
+          "preview": 2,
+          "collect": 2,
+          "total": 4
+        },
+        "comparison": {
+          "naiveApproach": 20,
+          "smartApproach": 4,
+          "savings": 16,
+          "savingsPercentage": 80
+        },
+        "efficiency": {
+          "previewToCollectRatio": 10,
+          "costPerFinalMember": 2
+        }
+      },
+      "qualityMetrics": {
+        "averageConfidence": 81,
+        "averageInfluence": 3.5,
+        "averageRelevance": 57,
+        "decisionMakerCount": 1,
+        "championCount": 1,
+        "stakeholderCount": 0,
+        "blockerCount": 0,
+        "introducerCount": 0,
+        "qualityGrade": "D"
+      },
+      "recommendations": [
+        "Consider improving buyer group cohesion through better stakeholder selection",
+        "Consider adding more stakeholders for comprehensive coverage"
+      ]
+    },
+    "cohesion": {
+      "score": 66,
+      "confidence": "MEDIUM",
+      "factors": {
+        "reportingProximity": 45,
+        "departmentClustering": 100,
+        "seniorityBalance": 74,
+        "geographicAlignment": 75,
+        "functionalInterdependence": 14
+      },
+      "reasoning": "Good department collaboration; Well-balanced seniority levels; Limited functional interdependence",
+      "recommendations": [
+        "Consider adding members who report to same executives",
+        "Consider adding members from interdependent functions"
+      ]
+    },
+    "coverage": {
+      "primary": true,
+      "technical": false,
+      "risk": false,
+      "financial": false,
+      "details": {
+        "primary": {
+          "covered": [
+            "Sales",
+            "Operations"
+          ],
+          "missing": [
+            "Revenue"
+          ],
+          "representatives": [
+            {
+              "function": "Sales",
+              "name": "Le Linh",
+              "title": "Sales Manager",
+              "department": "Sales"
+            },
+            {
+              "function": "Operations",
+              "name": "Albert Vilar Mateu",
+              "title": "Vice President Operations",
+              "department": "Operations"
+            }
+          ]
+        },
+        "technical": {
+          "covered": [],
+          "missing": [
+            "IT",
+            "Technology",
+            "Engineering"
+          ],
+          "representatives": []
+        },
+        "financial": {
+          "covered": [],
+          "missing": [
+            "Finance",
+            "Procurement",
+            "FP&A"
+          ],
+          "representatives": []
+        }
+      }
+    },
+    "intelligence": {
+      "employeeCount": 100,
+      "revenue": 0,
+      "industry": "Unknown",
+      "growthRate": 0,
+      "activeHiring": 0,
+      "fundingStage": "bootstrapped",
+      "dataSource": "default",
+      "lastUpdated": "2025-10-29T18:09:35.134Z",
+      "companyName": "Optitex",
+      "linkedinUrl": null,
+      "website": "https://optitex.com/",
+      "tier": "S6",
+      "searchStrategy": "comprehensive",
+      "filteringLevel": "none"
+    },
+    "costs": {
+      "preview": 2,
+      "collect": 2,
+      "total": 4
+    },
+    "processingTime": 123232,
+    "pipelineState": {
+      "startTime": 1761761374947,
+      "stage": "completed",
+      "totalEmployees": 20,
+      "processedEmployees": 0,
+      "finalBuyerGroup": [
+        {
+          "id": 385476132,
+          "name": "Albert Vilar Mateu",
+          "title": "Vice President Operations",
+          "department": "Operations",
+          "company": "NedGraphics Software",
+          "managementLevel": "President/Vice President",
+          "connectionsCount": 500,
+          "followersCount": 1357,
+          "email": "",
+          "phone": "",
+          "linkedinUrl": "https://www.linkedin.com/in/albert-vilar-mateu",
+          "source": "coresignal_preview",
+          "scores": {
+            "seniority": 9,
+            "departmentFit": 10,
+            "influence": 4,
+            "championPotential": 14,
+            "crossFunctional": 4,
+            "geoAlignment": 8
+          },
+          "overallScore": 8,
+          "relevance": 0.3,
+          "isHighValue": false,
+          "aiRelevance": 0.3,
+          "aiReasoning": "Albert Vilar Mateu is a VP of Operations at a 100-employee software company. While he holds a VP-level position indicating senior decision-making authority, his department (Operations) is not the primary user or owner of Sales Intelligence Software. Operations VPs typically focus on operational efficiency, supply chain, production, or service delivery rather than sales processes. However, there are several considerations that prevent complete exclusion: (1) At a 100-person company, VPs often have cross-functional influence and may participate in strategic purchasing decisions, especially for significant investments like $150K; (2) Operations may have tangential interest in sales intelligence if it impacts forecasting, resource planning, or operational capacity; (3) He could be involved in vendor evaluation processes or budget approval committees. The primary buyers would typically be the VP/Head of Sales, CRO, or Revenue Operations leaders. Albert's role would more likely be as a peripheral stakeholder who might provide input on operational integration or be consulted on company-wide strategic purchases, rather than being a champion or primary decision-maker. His influence is moderate (4/10) due to his VP-level seniority but limited by the lack of direct ownership of the sales function.",
+          "aiConfidence": 0.75,
+          "buyerGroupRole": "decision",
+          "roleConfidence": 90,
+          "roleReasoning": "Promoted to decision maker (no better candidate found)",
+          "aiRoleValidation": {
+            "suggestedRole": "decision",
+            "confidence": 0.95,
+            "reasoning": "Albert Vilar Mateu should retain the 'decision' role based on several strong factors: (1) As VP of Operations at a software company, he holds clear budget authority for a $150K investment, which falls within typical VP-level approval thresholds. (2) Sales Intelligence Software directly impacts operational efficiency, pipeline management, and revenue operations - all within his operational purview. (3) His seniority as VP indicates he has P&L responsibility and final sign-off authority. (4) The existing buyer group composition shows Le Linh as champion (likely an operational leader advocating for the solution), which creates a logical dynamic where the champion drives internal advocacy while the VP provides ultimate approval. (5) At NedGraphics Software, a VP Operations would typically own sales enablement tools and customer-facing operational systems. (6) The $150K deal size requires executive-level approval but isn't large enough to necessarily escalate to C-suite, making VP the appropriate decision-maker. The role is already correctly assigned.",
+            "alternativeRoles": [
+              "champion",
+              "stakeholder"
+            ]
+          },
+          "aiRoleReasoning": "Albert Vilar Mateu should retain the 'decision' role based on several strong factors: (1) As VP of Operations at a software company, he holds clear budget authority for a $150K investment, which falls within typical VP-level approval thresholds. (2) Sales Intelligence Software directly impacts operational efficiency, pipeline management, and revenue operations - all within his operational purview. (3) His seniority as VP indicates he has P&L responsibility and final sign-off authority. (4) The existing buyer group composition shows Le Linh as champion (likely an operational leader advocating for the solution), which creates a logical dynamic where the champion drives internal advocacy while the VP provides ultimate approval. (5) At NedGraphics Software, a VP Operations would typically own sales enablement tools and customer-facing operational systems. (6) The $150K deal size requires executive-level approval but isn't large enough to necessarily escalate to C-suite, making VP the appropriate decision-maker. The role is already correctly assigned.",
+          "fullProfile": {
+            "id": 385476132,
+            "parent_id": 385476132,
+            "created_at": "2017-07-19T00:52:27.000Z",
+            "updated_at": "2025-10-12T06:02:42.255415Z",
+            "checked_at": "2025-10-19T16:46:57.100132Z",
+            "changed_at": "2025-10-12T06:02:42.255415Z",
+            "experience_change_last_identified_at": "2024-12-13T22:05:10.634397Z",
+            "is_deleted": 0,
+            "is_parent": 1,
+            "public_profile_id": 141963385,
+            "linkedin_url": "https://www.linkedin.com/in/albert-vilar-mateu",
+            "linkedin_shorthand_names": [
+              "albert-vilar-mateu"
+            ],
+            "historical_ids": [
+              385476132
+            ],
+            "full_name": "Albert Vilar Mateu",
+            "first_name": "Albert",
+            "first_name_initial": "A",
+            "middle_name": "Vilar",
+            "middle_name_initial": "V",
+            "last_name": "Mateu",
+            "last_name_initial": "M",
+            "headline": "Vice President of Operations at Nedgraphics and Optitex",
+            "summary": "As an accomplished Business Director with over 20 years of experience leading high-performing teams and enterprise-wide complex business units, I am proud of my demonstrated ability to lead Global Operations and cross-functional Project Management Offices. These projects advance businesses and the customers they serve. In addition, I bring a deep expertise in process management, people management, operations, and project management. Over the years, leaders, clients, and peers have recognized my ability to limit risk, create lean teams, and optimize operations between financial returns and exceptional employee and customer experiences.",
+            "picture_url": "https://media.licdn.com/dms/image/v2/C4E03AQF0fG-NvNvttw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1556888386979?e=2147483647&v=beta&t=2La_Sjk24NrU9BCqaZBouMo0-d34InVw0lURk0NZeCM",
+            "location_country": "Spain",
+            "location_country_iso2": "ES",
+            "location_country_iso3": "ESP",
+            "location_full": "El Masnou, Catalonia, Spain",
+            "location_regions": [
+              "Europe",
+              "Southern Europe",
+              "EMEA",
+              "EU"
+            ],
+            "location_city": "El Masnou",
+            "location_state": "Catalonia",
+            "interests": [],
+            "inferred_skills": [
+              "director",
+              "performing",
+              "operations",
+              "management",
+              "projects",
+              "risk",
+              "lean",
+              "innovation",
+              "r",
+              "mentoring",
+              "planning",
+              "supervision",
+              "sales",
+              "assurance",
+              "civil",
+              "engineering",
+              "infrastructure",
+              "energy",
+              "consultancy",
+              "railway",
+              "production",
+              "pmo",
+              "strategy",
+              "invoicing",
+              "responsible",
+              "software",
+              "less",
+              "global operations",
+              "project management",
+              "process management",
+              "people management",
+              "innovation management",
+              "strategic planning",
+              "continuous improvement",
+              "business planning",
+              "project managers",
+              "sales manager",
+              "quality control",
+              "project manager",
+              "civil engineering",
+              "global management",
+              "business strategy",
+              "delivering results",
+              "best practices",
+              "portfolio management",
+              "ms project",
+              "lean management",
+              "project portfolio management"
+            ],
+            "historical_skills": [],
+            "connections_count": 500,
+            "followers_count": 1357,
+            "services": null,
+            "primary_professional_email": null,
+            "primary_professional_email_status": null,
+            "professional_emails_collection": [],
+            "is_working": 1,
+            "active_experience_company_id": 33737340,
+            "active_experience_title": "Vice President Operations",
+            "active_experience_description": null,
+            "active_experience_department": "Operations",
+            "active_experience_management_level": "President/Vice President",
+            "is_decision_maker": 1,
+            "total_experience_duration_months": 231,
+            "total_experience_duration_months_breakdown_department": [
+              {
+                "department": "Engineering and Technical",
+                "total_experience_duration_months": 74
+              },
+              {
+                "department": "Other",
+                "total_experience_duration_months": 40
+              },
+              {
+                "department": "Project Management",
+                "total_experience_duration_months": 27
+              },
+              {
+                "department": "Operations",
+                "total_experience_duration_months": 96
+              }
+            ],
+            "total_experience_duration_months_breakdown_management_level": [
+              {
+                "management_level": "Manager",
+                "total_experience_duration_months": 95
+              },
+              {
+                "management_level": "Other",
+                "total_experience_duration_months": 40
+              },
+              {
+                "management_level": "President/Vice President",
+                "total_experience_duration_months": 96
+              }
+            ],
+            "experience": [
+              {
+                "active_experience": 1,
+                "position_title": "Vice President Operations",
+                "department": "Operations",
+                "management_level": "President/Vice President",
+                "location": null,
+                "description": null,
+                "date_from": "November 2024",
+                "date_from_year": 2024,
+                "date_from_month": 11,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "duration_months": 11,
+                "company_id": 33737340,
+                "company_name": "NedGraphics Software",
+                "company_type": "Public Company",
+                "company_founded_year": 1978,
+                "company_followers_count": 4221,
+                "company_website": "https://www.nedgraphics.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/nedgraphics"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/ng_support"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/nedgraphics-software-for-textile%26fashion",
+                "company_size_range": "51-200 employees",
+                "company_employees_count": 112,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "textile design",
+                  "business and consumer services > textiles (in united states)",
+                  "design & creation & color management",
+                  "production interfacing & virtual sampling",
+                  "marketing",
+                  "presentation & sales",
+                  "workflow optimization & integration",
+                  "carpets",
+                  "creative workflow",
+                  "tufts",
+                  "textile design software",
+                  "fabrics",
+                  "technology",
+                  "enterprise-software",
+                  "fabrication-tools",
+                  "printing",
+                  "information technology",
+                  "software"
+                ],
+                "company_annual_revenue_source_5": null,
+                "company_annual_revenue_currency_source_5": null,
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 107.40740740740742,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "NedGraphics, Inc. 135 W 41st St; 5th Floor; New York, NY 10036, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "New York",
+                "company_hq_state": "New York",
+                "company_hq_street": "NedGraphics, Inc. 135 W 41st St; 5th Floor",
+                "company_hq_zipcode": "10036",
+                "company_last_updated_at": "2025-09-08",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 1
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Vice President, Service Operations",
+                "department": "Operations",
+                "management_level": "President/Vice President",
+                "location": "Greater New York City Area",
+                "description": "Director of IT support, Project Management and R+D areas in the company. People Manager, managing and mentoring staff. Strategic planning and daily operations. Continuous improvement & integrated business planning.",
+                "date_from": "November 2017",
+                "date_from_year": 2017,
+                "date_from_month": 11,
+                "date_to": "November 2024",
+                "date_to_year": 2024,
+                "date_to_month": 11,
+                "duration_months": 84,
+                "company_id": 10900735,
+                "company_name": "Tabush Group",
+                "company_type": "Privately Held",
+                "company_founded_year": 2000,
+                "company_followers_count": 1590,
+                "company_website": "https://www.tabush.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/tabushgroup"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/tabushgroup"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/tabushgroup",
+                "company_size_range": "11-50 employees",
+                "company_employees_count": 56,
+                "company_industry": "IT Services and IT Consulting",
+                "company_categories_and_keywords": [
+                  "it services",
+                  "computers electronics and technology > computers electronics and technology - other (in united states)",
+                  "managed it services",
+                  "vdi",
+                  "new york city it services",
+                  "daas",
+                  "it services for smbs",
+                  "private cloud",
+                  "it for professional services firms",
+                  "it support & services in manhattan",
+                  "it services for law",
+                  "real estate",
+                  "construction",
+                  "cpa",
+                  "financial services firms",
+                  "cloud computing",
+                  "cloud solutions",
+                  "law firms",
+                  "centralized management",
+                  "cybersecurity",
+                  "technology",
+                  "cloud",
+                  "it-services",
+                  "information services"
+                ],
+                "company_annual_revenue_source_5": 4074002,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 9.803921568627452,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "148 West 37th Street; 6th Floor; New York, NY 10018, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "New York",
+                "company_hq_state": "New York",
+                "company_hq_street": "148 West 37th Street; 6th Floor",
+                "company_hq_zipcode": "10018",
+                "company_last_updated_at": "2025-09-09",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 2
+              },
+              {
+                "active_experience": 1,
+                "position_title": "Vice President Operations",
+                "department": "Operations",
+                "management_level": "President/Vice President",
+                "location": null,
+                "description": null,
+                "date_from": "November 2024",
+                "date_from_year": 2024,
+                "date_from_month": 11,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "duration_months": 2,
+                "company_id": 5981351,
+                "company_name": "Optitex",
+                "company_type": "Privately Held",
+                "company_founded_year": 1988,
+                "company_followers_count": 13337,
+                "company_website": "https://www.optitex.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/optitexhq"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/optitex",
+                  "https://www.twitter.com/products/2d-and-3d-cad-software",
+                  "https://www.twitter.com/solutions",
+                  "https://www.twitter.com/products/print-and-cut",
+                  "https://www.twitter.com/support",
+                  "https://www.twitter.com/about-us",
+                  "https://www.twitter.com/products/fabric-management",
+                  "https://www.twitter.com/products/o-cloud",
+                  "https://www.twitter.com/es",
+                  "https://www.twitter.com/services",
+                  "https://www.twitter.com/solutions/furniture-and-upholstery",
+                  "https://www.twitter.com/products/cutplan",
+                  "https://www.twitter.com/solutions/brands-and-retailers",
+                  "https://www.twitter.com/products",
+                  "https://www.twitter.com/solutions/enterprise",
+                  "https://www.twitter.com/solutions/education",
+                  "https://www.twitter.com/latest-release",
+                  "https://www.twitter.com/solutions/automotive",
+                  "https://www.twitter.com/solutions/bags-and-accessories",
+                  "https://www.twitter.com/contact-us",
+                  "https://www.twitter.com/legal",
+                  "https://www.twitter.com/products/3d-design-for-illustrator",
+                  "https://www.twitter.com/solutions/smb",
+                  "https://www.twitter.com/leadership",
+                  "https://www.twitter.com/it",
+                  "https://www.twitter.com/solutions/manufactures",
+                  "https://www.twitter.com/index",
+                  "https://www.twitter.com/products/marker"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/optitex",
+                "company_size_range": "51-200 employees",
+                "company_employees_count": 124,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "fashion design software",
+                  "business and consumer services > textiles (in indonesia)",
+                  "2d cad",
+                  "pattern making software",
+                  "3d virtual prototyping",
+                  "pattern design software",
+                  "optimize fabric usage",
+                  "3d cad",
+                  "2d cam",
+                  "automatic nesting",
+                  "apparel",
+                  "automotive fabric",
+                  "aeronautics fabric",
+                  "upholstery",
+                  "industrial fabrics",
+                  "3d prototyping",
+                  "fashion",
+                  "2d cad/cam pattern design",
+                  "technology",
+                  "application-software",
+                  "printing",
+                  "3d technology",
+                  "cad",
+                  "computer",
+                  "made to order",
+                  "software",
+                  "virtual reality"
+                ],
+                "company_annual_revenue_source_5": 30000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 9.734513274336283,
+                "company_last_funding_round_date": "2012-06-01",
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "333 West 39th Street; Suite 1107; New York, NY 10018, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "New York",
+                "company_hq_state": "New York",
+                "company_hq_street": "333 West 39th Street; Suite 1107",
+                "company_hq_zipcode": "10018",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 3
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Production Director - PMO Manager",
+                "department": null,
+                "management_level": null,
+                "location": "Madrid",
+                "description": "Global management & business strategy. Member of the Management Committee. Production director of a global consultancy area in Spain. +40 people under supervision & invoicing volume greater than 3M€/year. Responsible of business due diligences for inorganic growth. Partnership with Key Business Stakeholders & proven track record of delivering results. Manager of Cross-Functional Strategic Projects: Definition of Project management standards and best practices, implementation of Project Portfolio Management software (MS Project & Portfolio Management), Lean Management standards & methodologies. Show less",
+                "date_from": "September 2014",
+                "date_from_year": 2014,
+                "date_from_month": 9,
+                "date_to": "October 2017",
+                "date_to_year": 2017,
+                "date_to_month": 10,
+                "duration_months": 37,
+                "company_id": 4076336,
+                "company_name": "SUEZ",
+                "company_type": "Privately Held",
+                "company_founded_year": null,
+                "company_followers_count": 856940,
+                "company_website": "https://www.suez.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/suez.india",
+                  "https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.suez.com%2fen"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/suez",
+                  "https://www.twitter.com/intent/tweet?original_referer=https%3a%2f%2fwww.suez.com%2fen&text=suez+group+%7c+circular+solutions+in+water+and+waste%0ahttps%3a%2f%2fwww.suez.com%2fen%0avia+%40suez",
+                  "https://www.twitter.com/suez?lang=en"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/suez",
+                "company_size_range": "10,001+ employees",
+                "company_employees_count": 25680,
+                "company_industry": "Environmental Services",
+                "company_categories_and_keywords": [
+                  "water and waste management",
+                  "science and education > environmental science (in france)",
+                  "drinking water production",
+                  "water distribution",
+                  "sewerage and stormwater network management",
+                  "water cycle management",
+                  "water resource preservation",
+                  "energy-utilities",
+                  "recycling",
+                  "waste-management",
+                  "water",
+                  "environmental consulting",
+                  "waste management"
+                ],
+                "company_annual_revenue_source_5": 8006175000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 9189000192,
+                "company_annual_revenue_currency_source_1": "EUR",
+                "company_employees_count_change_yearly_percentage": 3.904511430305482,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "La Défense; Paris, Ile de France 92040, FR",
+                "company_hq_country": "France",
+                "company_hq_regions": [
+                  "Europe",
+                  "Western Europe",
+                  "EMEA",
+                  "EU"
+                ],
+                "company_hq_country_iso2": "FR",
+                "company_hq_country_iso3": "FRA",
+                "company_hq_city": null,
+                "company_hq_state": null,
+                "company_hq_street": null,
+                "company_hq_zipcode": null,
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [
+                  {
+                    "exchange": "FRA",
+                    "ticker": "SEV"
+                  }
+                ],
+                "company_is_b2b": 1,
+                "order_in_profile": 4
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Lecturer In Master Of Innovation Management",
+                "department": null,
+                "management_level": null,
+                "location": "Barcelona Area, Spain",
+                "description": "Lecturer in Master of Innovation Management. Execution and Monitory of Innovation Project I+D+I Author of subject contents",
+                "date_from": "June 2014",
+                "date_from_year": 2014,
+                "date_from_month": 6,
+                "date_to": "August 2016",
+                "date_to_year": 2016,
+                "date_to_month": 8,
+                "duration_months": 26,
+                "company_id": 26418098,
+                "company_name": "Universitat Oberta de Catalunya (UOC)",
+                "company_type": "Educational",
+                "company_founded_year": 1994,
+                "company_followers_count": 284705,
+                "company_website": "https://www.uoc.edu",
+                "company_facebook_url": [
+                  "https://www.facebook.com/uoc.universitat"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/uocuniversitat"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/school/uoc",
+                "company_size_range": "501-1000 employees",
+                "company_employees_count": 6407,
+                "company_industry": "E-Learning Providers",
+                "company_categories_and_keywords": [
+                  "education",
+                  "science and education > education (in spain)",
+                  "universidad virtual",
+                  "universitat en línea",
+                  "universitat virtual",
+                  "universidad online",
+                  "online university",
+                  "educación superior",
+                  "higher education",
+                  "sociedad del conocimiento",
+                  "societat del coneixement",
+                  "postgraduate",
+                  "university",
+                  "languages",
+                  "online",
+                  "degrees"
+                ],
+                "company_annual_revenue_source_5": null,
+                "company_annual_revenue_currency_source_5": null,
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 2.2339237274613053,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "Rambla del Poblenou, 156, Barcelona, 08018, ES; Barcelona, Barcelona 08018, ES",
+                "company_hq_country": "Spain",
+                "company_hq_regions": [
+                  "Europe",
+                  "Southern Europe",
+                  "EMEA",
+                  "EU"
+                ],
+                "company_hq_country_iso2": "ES",
+                "company_hq_country_iso3": "ESP",
+                "company_hq_city": null,
+                "company_hq_state": null,
+                "company_hq_street": null,
+                "company_hq_zipcode": null,
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 0,
+                "order_in_profile": 5
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Business Unit Manager - Technical Director",
+                "department": "Engineering and Technical",
+                "management_level": "Manager",
+                "location": "Catalonia, Spain",
+                "description": "- Project Center Manager in Technical Operational Business Unit - Manager of a team +30 project managers in multiple location. - +60 people under supervision, Sales Manager and portfolio control. - Quality control & assurance. Internal auditor. - Implementation of Portfolio and Project Management Methodologies",
+                "date_from": "January 2006",
+                "date_from_year": 2006,
+                "date_from_month": 1,
+                "date_to": "March 2012",
+                "date_to_year": 2012,
+                "date_to_month": 3,
+                "duration_months": 74,
+                "company_id": 468008,
+                "company_name": "ECA S.A Grupo Bureau Veritas",
+                "company_type": "Privately Held",
+                "company_founded_year": 1828,
+                "company_followers_count": 1434288,
+                "company_website": "https://www.bureauveritas.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/bureauveritasgroup",
+                  "https://www.facebook.com/bureau.veritas.group"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/bureauveritas"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/bureau-veritas-group",
+                "company_size_range": "10,001+ employees",
+                "company_employees_count": 53336,
+                "company_industry": "Environmental Services",
+                "company_categories_and_keywords": [
+                  "sustainability",
+                  "business and consumer services > business services (in france)",
+                  "services",
+                  "testing",
+                  "inspection",
+                  "certification",
+                  "classification",
+                  "asset management",
+                  "construction",
+                  "commodities",
+                  "oil & gas",
+                  "industry",
+                  "marine & offshore",
+                  "consumer products",
+                  "markets and services",
+                  "risk reduction",
+                  "quality",
+                  "performance improvement",
+                  "business-services",
+                  "technology",
+                  "compliance",
+                  "construction-management"
+                ],
+                "company_annual_revenue_source_5": 6634378713,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 6240900096,
+                "company_annual_revenue_currency_source_1": "EUR",
+                "company_employees_count_change_yearly_percentage": 6.5079777143199475,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "4 Place des Saisons; Paris, Courbevoie 92400, FR",
+                "company_hq_country": "France",
+                "company_hq_regions": [
+                  "Europe",
+                  "Western Europe",
+                  "EMEA",
+                  "EU"
+                ],
+                "company_hq_country_iso2": "FR",
+                "company_hq_country_iso3": "FRA",
+                "company_hq_city": null,
+                "company_hq_state": null,
+                "company_hq_street": null,
+                "company_hq_zipcode": null,
+                "company_last_updated_at": "2025-09-06",
+                "company_stock_ticker": [
+                  {
+                    "exchange": null,
+                    "ticker": "BVI.PA"
+                  },
+                  {
+                    "exchange": "PA",
+                    "ticker": "BVI"
+                  }
+                ],
+                "company_is_b2b": 1,
+                "order_in_profile": 6
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Project Manager",
+                "department": "Project Management",
+                "management_level": "Manager",
+                "location": "Barcelona Area, Spain",
+                "description": "Implementation of Civil Engineering Projects Infrastructure network study (energy sector). Project Management & Technical consultancy. Successful implementation of 4 strategic projects in Barcelona’s railway network.",
+                "date_from": "April 2004",
+                "date_from_year": 2004,
+                "date_from_month": 4,
+                "date_to": "July 2006",
+                "date_to_year": 2006,
+                "date_to_month": 7,
+                "duration_months": 27,
+                "company_id": null,
+                "company_name": "INCA_A&O",
+                "company_type": null,
+                "company_founded_year": null,
+                "company_followers_count": null,
+                "company_website": null,
+                "company_facebook_url": [],
+                "company_twitter_url": [],
+                "company_linkedin_url": null,
+                "company_size_range": null,
+                "company_employees_count": null,
+                "company_industry": null,
+                "company_categories_and_keywords": [],
+                "company_annual_revenue_source_5": null,
+                "company_annual_revenue_currency_source_5": null,
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": null,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": null,
+                "company_hq_country": null,
+                "company_hq_regions": [],
+                "company_hq_country_iso2": null,
+                "company_hq_country_iso3": null,
+                "company_hq_city": null,
+                "company_hq_state": null,
+                "company_hq_street": null,
+                "company_hq_zipcode": null,
+                "company_last_updated_at": null,
+                "company_stock_ticker": [],
+                "company_is_b2b": null,
+                "order_in_profile": 7
+              }
+            ],
+            "projected_base_salary_p25": null,
+            "projected_base_salary_median": null,
+            "projected_base_salary_p75": null,
+            "projected_base_salary_period": null,
+            "projected_base_salary_currency": null,
+            "projected_base_salary_updated_at": null,
+            "projected_additional_salary": [],
+            "projected_additional_salary_period": null,
+            "projected_additional_salary_currency": null,
+            "projected_additional_salary_updated_at": null,
+            "projected_total_salary_p25": null,
+            "projected_total_salary_median": null,
+            "projected_total_salary_p75": null,
+            "projected_total_salary_period": null,
+            "projected_total_salary_currency": null,
+            "projected_total_salary_updated_at": null,
+            "last_graduation_date": 2017,
+            "education_degrees": [
+              "Master in Project Management",
+              "Master Of Business Administration (Executive MBA)",
+              "Environmental Management in the European Union. Postgraduate course.",
+              "Lean Six sigma, Lean Management, Efiiciency and Continuos Improvement",
+              "Degree in Geology"
+            ],
+            "education": [
+              {
+                "degree": "Lean Six sigma, Lean Management, Efiiciency and Continuos Improvement",
+                "description": null,
+                "institution_url": null,
+                "institution_name": "Renault Consulting",
+                "institution_full_address": null,
+                "institution_country_iso2": null,
+                "institution_country_iso3": null,
+                "institution_regions": [],
+                "institution_city": null,
+                "institution_state": null,
+                "institution_street": null,
+                "institution_zipcode": null,
+                "date_from_year": 2014,
+                "date_to_year": 2015,
+                "activities_and_societies": null,
+                "order_in_profile": 1
+              },
+              {
+                "degree": "Environmental Management in the European Union. Postgraduate course.",
+                "description": null,
+                "institution_url": "https://www.linkedin.com/school/university-of-copenhagen",
+                "institution_name": "University of Copenhagen",
+                "institution_full_address": "Nørregade 10; København K, 1165, DK",
+                "institution_country_iso2": "DK",
+                "institution_country_iso3": "DNK",
+                "institution_regions": [
+                  "Europe",
+                  "Northern Europe",
+                  "EMEA",
+                  "EU"
+                ],
+                "institution_city": null,
+                "institution_state": null,
+                "institution_street": null,
+                "institution_zipcode": null,
+                "date_from_year": 2013,
+                "date_to_year": 2014,
+                "activities_and_societies": null,
+                "order_in_profile": 2
+              },
+              {
+                "degree": "Degree in Geology",
+                "description": null,
+                "institution_url": "https://www.linkedin.com/school/university-of-barcelona",
+                "institution_name": "Universitat de Barcelona",
+                "institution_full_address": "Gran Via de les Corts Catalanes, 585; Barcelona, CT, Spain",
+                "institution_country_iso2": "ES",
+                "institution_country_iso3": "ESP",
+                "institution_regions": [
+                  "Europe",
+                  "Southern Europe",
+                  "EMEA",
+                  "EU"
+                ],
+                "institution_city": "Barcelona",
+                "institution_state": "CT",
+                "institution_street": "Gran Via de les Corts Catalanes, 585",
+                "institution_zipcode": null,
+                "date_from_year": 1997,
+                "date_to_year": 2003,
+                "activities_and_societies": null,
+                "order_in_profile": 3
+              },
+              {
+                "degree": "Master in Project Management",
+                "description": null,
+                "institution_url": "https://www.linkedin.com/school/universitat-ramon-llull",
+                "institution_name": "Universitat Ramon Llull",
+                "institution_full_address": "Claravall 1-3, Barcelona",
+                "institution_country_iso2": null,
+                "institution_country_iso3": null,
+                "institution_regions": [],
+                "institution_city": null,
+                "institution_state": null,
+                "institution_street": null,
+                "institution_zipcode": null,
+                "date_from_year": 2012,
+                "date_to_year": 2013,
+                "activities_and_societies": null,
+                "order_in_profile": 4
+              },
+              {
+                "degree": "Master Of Business Administration (Executive MBA)",
+                "description": null,
+                "institution_url": "https://www.linkedin.com/school/eoi",
+                "institution_name": "EOI Business School",
+                "institution_full_address": "Avda. Gregorio del Amo, 6; Madrid, España 28040, ES",
+                "institution_country_iso2": "ES",
+                "institution_country_iso3": "ESP",
+                "institution_regions": [
+                  "Europe",
+                  "Southern Europe",
+                  "EMEA",
+                  "EU"
+                ],
+                "institution_city": null,
+                "institution_state": null,
+                "institution_street": null,
+                "institution_zipcode": null,
+                "date_from_year": 2016,
+                "date_to_year": 2017,
+                "activities_and_societies": null,
+                "order_in_profile": 5
+              }
+            ],
+            "recommendations_count": 2,
+            "recommendations": [
+              {
+                "recommendation": "“Albert was my classmate at the Executive MBA we have just finished recently. I can definitely say that he is one of the most outstanding people I've met during the master. He has a lot of valuable skills, which make him a great and very responsible professional with whom I would love to work at any time. He does not only have a lot of knowledge generally about business, economics, finance and project/program/portfolio management, but he is a great leader and I would say a very creative person as well. He is always proactive, extremely sociable and always keen on help anybody and share his knowledge with others. Without any doubt I would recommend him for any management position, I do believe he has all the skills to lead and even to create a great team from scratch. It was a pleasure to work with Albert during the master in lot of different projects and I personally learned a lot from him.”",
+                "referee_full_name": "Dora Verbovszki",
+                "referee_url": "https://www.linkedin.com/in/doraverbovszki",
+                "order_in_profile": 1
+              },
+              {
+                "recommendation": "“Albert demostró en su etapa en Inca Ingeniería ser una persona extremadamente responsable y profesional, proporcionando al departamento el valor añadido y el impulso que necesitaba. Capaz de asumir los retos que se proponga, mi experiencia de tenerle como colaborador durante más de dos años fue plenamente satisfactoria y acorde con el nivel que demuestra su perfil.”",
+                "referee_full_name": "LinkedIn User",
+                "referee_url": null,
+                "order_in_profile": 2
+              }
+            ],
+            "activity": [
+              {
+                "activity_url": "https://www.linkedin.com/posts/nuriapocino_newjob-customerexperience-vueling-activity-7343727793123295232-XwRH",
+                "title": "I’m thrilled to share that I’ve joined Vueling Airlines  as the Head of Customer Experience! ✈️ \n\nAfter nearly 8 incredible years as Marketing…",
+                "action": "Liked by",
+                "order_in_profile": 1
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/raul-castro-productmanager_newbeginnings-teamwork-purposedriven-activity-7337934327097233410-Nkz1",
+                "title": "Exciting News Alert! 🌟\n\nRecently, I embarked on a new journey as the Lead Product Manager at The Knot Worldwide, focusing on enhancing experiences…",
+                "action": "Liked by",
+                "order_in_profile": 2
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/astort_support-the-sant-jordi-nyc-festival-of-books-activity-7320427260316925953-I8ai",
+                "title": "Support the Sant Jordi NYC Festival of Books & Roses.\nThis April, the beloved Catalan festival of Sant Jordi comes to a new home in New York City's…",
+                "action": "Liked by",
+                "order_in_profile": 3
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/jan-chan-0344167_after-visiting-saigontex-in-hcmc-vietnam-activity-7318227531298418690-W1V1",
+                "title": "After visiting SaigonTex in HCMC, Vietnam, last week, I'm excited to be attending IndoTex in Jakarta, Indonesia, alongside our local partner, PT…",
+                "action": "Liked by",
+                "order_in_profile": 4
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/matthewfutter_personalupdate-resilience-spring2025-activity-7315758464197148672-F1ju",
+                "title": "🌟 Personal Update 🌟\nI don't often share personal updates here, but I wanted to take a moment to reflect on the past few months. It's been a…",
+                "action": "Liked by",
+                "order_in_profile": 5
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/nedgraphicssoftware_adobeillustrator-colorist-designefficiency-activity-7287393674462666752-I2zD",
+                "title": "Colorist for Adobe Illustrator now supports bulk export of colorways with LZW compression, enabling you to save multiple colorways at once. Say…",
+                "action": "Liked by",
+                "order_in_profile": 6
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/marco-barbieri-optitex_team-activity-7303729491518865409-oeKD",
+                "title": "Team!",
+                "action": "Liked by",
+                "order_in_profile": 7
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/jan-chan-0344167_optitex-dtg2025-textileindustry-activity-7298584425808764929-bF5D",
+                "title": "🌟 Exciting News from Dhaka! 🌟\n\nI'm currently attending the Dhaka International Textile & Garment Machinery Show (DTG). If you're in the area, I…",
+                "action": "Liked by",
+                "order_in_profile": 8
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/nedgraphics-unveils-the-future-of-textile-activity-7282039890580537344-OMz1",
+                "title": "This year, NedGraphics is proud to debut its latest innovations, including NEDhub and Jacquard Connect, alongside exciting features in the highly…",
+                "action": "Liked by",
+                "order_in_profile": 9
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/optitex_happy-holidays-from-all-of-us-at-nedgraphics-activity-7275449861645176833-j57h",
+                "title": "Happy Holidays from all of us at NedGraphics and Optitex! ❄️🎉This season, we’re celebrating innovation, collaboration, and the partnerships that…",
+                "action": "Liked by",
+                "order_in_profile": 10
+              },
+              {
+                "activity_url": "https://www.linkedin.com/posts/tabushgroup_what-does-morris-tabush-attribute-our-success-activity-7267216964677210113-msnE",
+                "title": "What does Morris Tabush attribute our success to?\n\nIt's simple—doing the right thing and giving our clients a reason to love us. At Tabush Group…",
+                "action": "Liked by",
+                "order_in_profile": 11
+              }
+            ],
+            "awards": [],
+            "courses": [],
+            "certifications": [
+              {
+                "title": "Certified SAFe® Agilist",
+                "issuer": "Scaled Agile, Inc.",
+                "issuer_url": "https://www.linkedin.com/company/scaled-agile-inc-",
+                "credential_id": null,
+                "certificate_url": null,
+                "date_from": "Dec 2023",
+                "date_from_year": 2023,
+                "date_from_month": 12,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "order_in_profile": 1
+              },
+              {
+                "title": "Project Management Professional (PMP)®",
+                "issuer": "Project Management Institute",
+                "issuer_url": "https://www.linkedin.com/company/projectmanagementinstitute",
+                "credential_id": null,
+                "certificate_url": "https://www.youracclaim.com/badges/730e04b7-7111-480f-8850-135e2e8aade3/linked_in_profile?trk=public_profile_certification-title",
+                "date_from": "Dec 2013",
+                "date_from_year": 2013,
+                "date_from_month": 12,
+                "date_to": "Jan 2019",
+                "date_to_year": 2019,
+                "date_to_month": 1,
+                "order_in_profile": 2
+              }
+            ],
+            "languages": [
+              {
+                "language": "English",
+                "proficiency": "Full professional proficiency",
+                "order_in_profile": 1
+              },
+              {
+                "language": "Spanish",
+                "proficiency": "Native or bilingual proficiency",
+                "order_in_profile": 2
+              },
+              {
+                "language": "Catalan",
+                "proficiency": "Native or bilingual proficiency",
+                "order_in_profile": 3
+              },
+              {
+                "language": "French",
+                "proficiency": "Professional working proficiency",
+                "order_in_profile": 4
+              }
+            ],
+            "patents_count": null,
+            "patents_topics": [],
+            "patents": [],
+            "publications_count": null,
+            "publications_topics": [],
+            "publications": [],
+            "projects_count": null,
+            "projects_topics": [],
+            "projects": [],
+            "organizations": [],
+            "github_url": null,
+            "github_username": null,
+            "github_mapping_confidence": null,
+            "github_contributions_count": null,
+            "github_repos_summary": [],
+            "profile_root_field_changes_summary": [
+              {
+                "field_name": "summary",
+                "change_type": "new",
+                "last_changed_at": "2025-04-19 18:03:24.206428"
+              },
+              {
+                "field_name": "follower_count",
+                "change_type": "updated",
+                "last_changed_at": "2025-10-12 06:02:42.255415"
+              },
+              {
+                "field_name": "profile_photo_url",
+                "change_type": "new",
+                "last_changed_at": "2025-04-19 18:03:24.206428"
+              }
+            ],
+            "profile_collection_field_changes_summary": [
+              {
+                "field_name": "activity",
+                "last_changed_at": "2025-07-11 12:43:50.026786"
+              },
+              {
+                "field_name": "experience",
+                "last_changed_at": "2025-10-12 06:02:42.255415"
+              },
+              {
+                "field_name": "education",
+                "last_changed_at": "2025-10-12 06:02:42.255415"
+              },
+              {
+                "field_name": "certifications",
+                "last_changed_at": "2025-10-12 06:02:42.255415"
+              }
+            ],
+            "experience_recently_started": [],
+            "experience_recently_closed": []
+          },
+          "enrichedAt": "2025-10-29T18:10:13.000Z"
+        },
+        {
+          "id": 104854195,
+          "name": "Le Linh",
+          "title": "Sales Manager",
+          "department": "Sales",
+          "company": "Optitex | 3D Virtual Prototyping, 2D CAD/CAM Software Solutions",
+          "managementLevel": "Manager",
+          "connectionsCount": 500,
+          "followersCount": 540,
+          "email": "",
+          "phone": "",
+          "linkedinUrl": "https://www.linkedin.com/in/llinh",
+          "source": "coresignal_preview",
+          "scores": {
+            "seniority": 3,
+            "departmentFit": 10,
+            "influence": 3,
+            "championPotential": 18,
+            "crossFunctional": 7,
+            "geoAlignment": 8
+          },
+          "overallScore": 8,
+          "relevance": 0.85,
+          "isHighValue": false,
+          "aiRelevance": 0.85,
+          "aiReasoning": "Le Linh is highly relevant for Sales Intelligence Software procurement. As Sales Manager at Optitex, they are directly in the sales department and would be a primary user and beneficiary of sales intelligence tools. Their role typically involves lead generation, account research, prospect targeting, and sales execution - all core use cases for sales intelligence software. With a $150K deal size and 100-employee company, this purchase would likely require C-level (VP Sales/CRO) final approval, but Le Linh would be a strong champion and influencer in the buying process. They would evaluate the tool's practical value, potentially run pilots, and advocate for adoption based on impact to their team's performance. Their 500+ LinkedIn connections suggest active networking and sales engagement, indicating they understand the value of intelligence tools. The influence score of 7 reflects meaningful input and evaluation authority, though likely not final budget approval at this deal size. No red flags present - title and department perfectly align with the product category.",
+          "aiConfidence": 0.9,
+          "buyerGroupRole": "champion",
+          "roleConfidence": 72,
+          "roleReasoning": "Selected as Champion for advocacy and implementation: Manager-level leaders implement solutions and influence team adoption. Sales leaders are natural champions for revenue-generating tools. High champion potential based on role and department alignment.",
+          "aiRoleValidation": {
+            "suggestedRole": "champion",
+            "confidence": 0.95,
+            "reasoning": "Le Linh is already correctly assigned as champion. As Sales Manager at Optitex, she is the ideal champion for Sales Intelligence Software because: (1) Her department (Sales) is the primary end-user of this product and will directly benefit from sales intelligence capabilities, (2) Sales Managers typically drive the evaluation and selection of sales tools but rarely have budget authority for $150K purchases - that would sit with VP/Director level or above, (3) She has strong operational motivation to advocate for tools that will improve her team's performance and productivity, (4) At the Manager level in a software company, she likely lacks purchasing authority for six-figure deals but has significant influence over tool selection, (5) The buyer group already has Albert Vilar Mateu as the decision maker, which is appropriate hierarchy - Le Linh would champion the solution and Albert would approve the budget. Her role as champion is optimal because she combines direct product relevance, operational leadership, and internal advocacy capability without having final budget authority.",
+            "alternativeRoles": [
+              "stakeholder"
+            ]
+          },
+          "aiRoleReasoning": "Le Linh is already correctly assigned as champion. As Sales Manager at Optitex, she is the ideal champion for Sales Intelligence Software because: (1) Her department (Sales) is the primary end-user of this product and will directly benefit from sales intelligence capabilities, (2) Sales Managers typically drive the evaluation and selection of sales tools but rarely have budget authority for $150K purchases - that would sit with VP/Director level or above, (3) She has strong operational motivation to advocate for tools that will improve her team's performance and productivity, (4) At the Manager level in a software company, she likely lacks purchasing authority for six-figure deals but has significant influence over tool selection, (5) The buyer group already has Albert Vilar Mateu as the decision maker, which is appropriate hierarchy - Le Linh would champion the solution and Albert would approve the budget. Her role as champion is optimal because she combines direct product relevance, operational leadership, and internal advocacy capability without having final budget authority.",
+          "fullProfile": {
+            "id": 104854195,
+            "parent_id": 104854195,
+            "created_at": "2016-08-06T09:33:37.000Z",
+            "updated_at": "2025-10-01T05:03:42.361355Z",
+            "checked_at": "2025-10-14T06:13:56.738352Z",
+            "changed_at": "2025-10-01T05:03:42.361355Z",
+            "experience_change_last_identified_at": null,
+            "is_deleted": 0,
+            "is_parent": 1,
+            "public_profile_id": 213326935,
+            "linkedin_url": "https://www.linkedin.com/in/llinh",
+            "linkedin_shorthand_names": [
+              "llinh"
+            ],
+            "historical_ids": [
+              104854195
+            ],
+            "full_name": "Le Linh",
+            "first_name": "Le",
+            "first_name_initial": "L",
+            "middle_name": null,
+            "middle_name_initial": null,
+            "last_name": "Linh",
+            "last_name_initial": "L",
+            "headline": "Sales Manager at Efi Optitex Software Solutions",
+            "summary": null,
+            "picture_url": "https://media.licdn.com/dms/image/v2/C5103AQFbqTsZT_mSIw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1517447351920?e=2147483647&v=beta&t=HCHtBTtGz8X9DMO1HHdMpm4jsCTMG6zuZ6qiSCF0CPs",
+            "location_country": "Vietnam",
+            "location_country_iso2": "VN",
+            "location_country_iso3": "VNM",
+            "location_full": "Vietnam",
+            "location_regions": [
+              "Asia",
+              "South-eastern Asia",
+              "APAC"
+            ],
+            "location_city": null,
+            "location_state": null,
+            "interests": [],
+            "inferred_skills": [
+              "sales manager",
+              "customer service",
+              "sales",
+              "software"
+            ],
+            "historical_skills": [],
+            "connections_count": 500,
+            "followers_count": 540,
+            "services": null,
+            "primary_professional_email": "le.linh@optitex.com",
+            "primary_professional_email_status": "matched_email",
+            "professional_emails_collection": [
+              {
+                "professional_email": "le.linh@optitex.com",
+                "professional_email_status": "matched_email",
+                "order_of_priority": 1
+              }
+            ],
+            "is_working": 1,
+            "active_experience_company_id": 5981351,
+            "active_experience_title": "Sales Manager",
+            "active_experience_description": null,
+            "active_experience_department": "Sales",
+            "active_experience_management_level": "Manager",
+            "is_decision_maker": 0,
+            "total_experience_duration_months": 196,
+            "total_experience_duration_months_breakdown_department": [
+              {
+                "department": "Consulting",
+                "total_experience_duration_months": 35
+              },
+              {
+                "department": "Customer Service",
+                "total_experience_duration_months": 11
+              },
+              {
+                "department": "Other",
+                "total_experience_duration_months": 28
+              },
+              {
+                "department": "Sales",
+                "total_experience_duration_months": 122
+              }
+            ],
+            "total_experience_duration_months_breakdown_management_level": [
+              {
+                "management_level": "Specialist",
+                "total_experience_duration_months": 74
+              },
+              {
+                "management_level": "Manager",
+                "total_experience_duration_months": 122
+              }
+            ],
+            "experience": [
+              {
+                "active_experience": 1,
+                "position_title": "Sales Manager",
+                "department": "Sales",
+                "management_level": "Manager",
+                "location": "Ho Chi Minh",
+                "description": null,
+                "date_from": "January 2016",
+                "date_from_year": 2016,
+                "date_from_month": 1,
+                "date_to": null,
+                "date_to_year": null,
+                "date_to_month": null,
+                "duration_months": 98,
+                "company_id": 5981351,
+                "company_name": "Optitex | 3D Virtual Prototyping, 2D CAD/CAM Software Solutions",
+                "company_type": "Privately Held",
+                "company_founded_year": 1988,
+                "company_followers_count": 13337,
+                "company_website": "https://www.optitex.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/optitexhq"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/optitex",
+                  "https://www.twitter.com/products/2d-and-3d-cad-software",
+                  "https://www.twitter.com/solutions",
+                  "https://www.twitter.com/products/print-and-cut",
+                  "https://www.twitter.com/support",
+                  "https://www.twitter.com/about-us",
+                  "https://www.twitter.com/products/fabric-management",
+                  "https://www.twitter.com/products/o-cloud",
+                  "https://www.twitter.com/es",
+                  "https://www.twitter.com/services",
+                  "https://www.twitter.com/solutions/furniture-and-upholstery",
+                  "https://www.twitter.com/products/cutplan",
+                  "https://www.twitter.com/solutions/brands-and-retailers",
+                  "https://www.twitter.com/products",
+                  "https://www.twitter.com/solutions/enterprise",
+                  "https://www.twitter.com/solutions/education",
+                  "https://www.twitter.com/latest-release",
+                  "https://www.twitter.com/solutions/automotive",
+                  "https://www.twitter.com/solutions/bags-and-accessories",
+                  "https://www.twitter.com/contact-us",
+                  "https://www.twitter.com/legal",
+                  "https://www.twitter.com/products/3d-design-for-illustrator",
+                  "https://www.twitter.com/solutions/smb",
+                  "https://www.twitter.com/leadership",
+                  "https://www.twitter.com/it",
+                  "https://www.twitter.com/solutions/manufactures",
+                  "https://www.twitter.com/index",
+                  "https://www.twitter.com/products/marker"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/optitex",
+                "company_size_range": "51-200 employees",
+                "company_employees_count": 124,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "fashion design software",
+                  "business and consumer services > textiles (in indonesia)",
+                  "2d cad",
+                  "pattern making software",
+                  "3d virtual prototyping",
+                  "pattern design software",
+                  "optimize fabric usage",
+                  "3d cad",
+                  "2d cam",
+                  "automatic nesting",
+                  "apparel",
+                  "automotive fabric",
+                  "aeronautics fabric",
+                  "upholstery",
+                  "industrial fabrics",
+                  "3d prototyping",
+                  "fashion",
+                  "2d cad/cam pattern design",
+                  "technology",
+                  "application-software",
+                  "printing",
+                  "3d technology",
+                  "cad",
+                  "computer",
+                  "made to order",
+                  "software",
+                  "virtual reality"
+                ],
+                "company_annual_revenue_source_5": 30000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": 9.734513274336283,
+                "company_last_funding_round_date": "2012-06-01",
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "333 West 39th Street; Suite 1107; New York, NY 10018, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "New York",
+                "company_hq_state": "New York",
+                "company_hq_street": "333 West 39th Street; Suite 1107",
+                "company_hq_zipcode": "10018",
+                "company_last_updated_at": "2025-09-07",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 1
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Account Manager",
+                "department": "Sales",
+                "management_level": "Manager",
+                "location": "HCM City",
+                "description": null,
+                "date_from": "February 2014",
+                "date_from_year": 2014,
+                "date_from_month": 2,
+                "date_to": "January 2016",
+                "date_to_year": 2016,
+                "date_to_month": 1,
+                "duration_months": 23,
+                "company_id": 6643778,
+                "company_name": "KDDI Corporation",
+                "company_type": "Public Company",
+                "company_founded_year": 1984,
+                "company_followers_count": 22455,
+                "company_website": "https://www.kddi.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/kddi.for.global.business",
+                  "https://www.facebook.com/kddi.for.global.business/photos",
+                  "https://www.facebook.com/kddibusiness"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/kddipr",
+                  "https://www.twitter.com/kddiir"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/kddi-corporation",
+                "company_size_range": "10,001+ employees",
+                "company_employees_count": 2377,
+                "company_industry": "Telecommunications",
+                "company_categories_and_keywords": [
+                  "business services",
+                  "amazon web services channel partners",
+                  "kddi corporation",
+                  "aws consulting services",
+                  "robotic process automation (rpa) consultancy services",
+                  "computers electronics and technology > telecommunications (in japan)",
+                  "telecommunications services",
+                  "global locations",
+                  "usecases",
+                  "solutions",
+                  "corporate customers",
+                  "communications",
+                  "infrastructure-as-a-service",
+                  "cloud-services",
+                  "connectivity"
+                ],
+                "company_annual_revenue_source_5": 39493814423,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 5917953228800,
+                "company_annual_revenue_currency_source_1": "JPY",
+                "company_employees_count_change_yearly_percentage": 7.800453514739229,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "10-10 Iidabashi 3-chome, Chiyoda-ku; Tokyo, 102-8460, JP",
+                "company_hq_country": "Japan",
+                "company_hq_regions": [
+                  "Asia",
+                  "Eastern Asia",
+                  "APAC"
+                ],
+                "company_hq_country_iso2": "JP",
+                "company_hq_country_iso3": "JPN",
+                "company_hq_city": null,
+                "company_hq_state": null,
+                "company_hq_street": null,
+                "company_hq_zipcode": null,
+                "company_last_updated_at": "2025-09-05",
+                "company_stock_ticker": [
+                  {
+                    "exchange": null,
+                    "ticker": "9433.T"
+                  },
+                  {
+                    "exchange": "Tokyo Stock Exchange",
+                    "ticker": "9433"
+                  }
+                ],
+                "company_is_b2b": 1,
+                "order_in_profile": 2
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Sales Excellent",
+                "department": "Other",
+                "management_level": "Specialist",
+                "location": "VietNam",
+                "description": null,
+                "date_from": "August 2011",
+                "date_from_year": 2011,
+                "date_from_month": 8,
+                "date_to": "December 2013",
+                "date_to_year": 2013,
+                "date_to_month": 12,
+                "duration_months": 28,
+                "company_id": 5181133,
+                "company_name": "Microsoft",
+                "company_type": "Public Company",
+                "company_founded_year": null,
+                "company_followers_count": 26277735,
+                "company_website": "https://www.microsoft.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/microsoftuk"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/microsoftuk"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/microsoft",
+                "company_size_range": "10,001+ employees",
+                "company_employees_count": 228928,
+                "company_industry": "Software Development",
+                "company_categories_and_keywords": [
+                  "technology",
+                  "computers electronics and technology > programming and developer software (in united states)",
+                  "business software",
+                  "developer tools",
+                  "home & educational software",
+                  "tablets",
+                  "search",
+                  "advertising",
+                  "servers",
+                  "windows operating system",
+                  "windows applications & platforms",
+                  "smartphones",
+                  "cloud computing",
+                  "quantum computing",
+                  "future of work",
+                  "productivity",
+                  "ai",
+                  "artificial intelligence",
+                  "machine learning",
+                  "laptops",
+                  "mixed reality",
+                  "virtual reality",
+                  "gaming",
+                  "developers",
+                  "it professional",
+                  "microsoft",
+                  "cloud",
+                  "computing"
+                ],
+                "company_annual_revenue_source_5": null,
+                "company_annual_revenue_currency_source_5": null,
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": -6.534058432544542,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "1 Microsoft Way; Redmond, Washington 98052, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Redmond",
+                "company_hq_state": "Washington",
+                "company_hq_street": "1 Microsoft Way",
+                "company_hq_zipcode": "98052",
+                "company_last_updated_at": "2025-09-06",
+                "company_stock_ticker": [
+                  {
+                    "exchange": "NASDAQ",
+                    "ticker": "MSFT"
+                  }
+                ],
+                "company_is_b2b": 0,
+                "order_in_profile": 3
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Customer Service Agent",
+                "department": "Customer Service",
+                "management_level": "Specialist",
+                "location": "Malaysia",
+                "description": null,
+                "date_from": "August 2010",
+                "date_from_year": 2010,
+                "date_from_month": 8,
+                "date_to": "July 2011",
+                "date_to_year": 2011,
+                "date_to_month": 7,
+                "duration_months": 11,
+                "company_id": 10506156,
+                "company_name": "Dell",
+                "company_type": "Privately Held",
+                "company_founded_year": null,
+                "company_followers_count": 5273243,
+                "company_website": "https://www.delltechnologies.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/delltechnologies"
+                ],
+                "company_twitter_url": [
+                  "https://www.twitter.com/delltech",
+                  "https://www.twitter.com/delltech?lang=en"
+                ],
+                "company_linkedin_url": "https://www.linkedin.com/company/dell",
+                "company_size_range": "10,001+ employees",
+                "company_employees_count": 128698,
+                "company_industry": "Computer Hardware Manufacturing",
+                "company_categories_and_keywords": [
+                  "technology",
+                  "computers electronics and technology > computer hardware (in united states)",
+                  "digital transformation",
+                  "security transformation",
+                  "it transformation",
+                  "workforce transformation",
+                  "ai",
+                  "generative ai",
+                  "services",
+                  "desktops",
+                  "support",
+                  "laptops",
+                  "technology solutions",
+                  "artificial-intelligence",
+                  "cloud",
+                  "consumer-electronics",
+                  "data-storage",
+                  "electronics",
+                  "it-services",
+                  "data management",
+                  "information and communications technology (ict)",
+                  "information services",
+                  "information technology"
+                ],
+                "company_annual_revenue_source_5": 96701000000,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": 95567003648,
+                "company_annual_revenue_currency_source_1": "USD",
+                "company_employees_count_change_yearly_percentage": -7.026909878995847,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "One Dell Way; Round Rock, Texas 78682, US",
+                "company_hq_country": "United States",
+                "company_hq_regions": [
+                  "Americas",
+                  "Northern America",
+                  "AMER"
+                ],
+                "company_hq_country_iso2": "US",
+                "company_hq_country_iso3": "USA",
+                "company_hq_city": "Round Rock",
+                "company_hq_state": "Texas",
+                "company_hq_street": "One Dell Way",
+                "company_hq_zipcode": "78682",
+                "company_last_updated_at": "2025-09-08",
+                "company_stock_ticker": [
+                  {
+                    "exchange": "NYSE",
+                    "ticker": "DELL"
+                  },
+                  {
+                    "exchange": null,
+                    "ticker": "DELL"
+                  }
+                ],
+                "company_is_b2b": 1,
+                "order_in_profile": 4
+              },
+              {
+                "active_experience": 0,
+                "position_title": "Software Consultant",
+                "department": "Consulting",
+                "management_level": "Specialist",
+                "location": "Ho Chi Minh",
+                "description": null,
+                "date_from": "September 2007",
+                "date_from_year": 2007,
+                "date_from_month": 9,
+                "date_to": "August 2010",
+                "date_to_year": 2010,
+                "date_to_month": 8,
+                "duration_months": 35,
+                "company_id": 9445514,
+                "company_name": "Freewill Solutions",
+                "company_type": "Privately Held",
+                "company_founded_year": 1991,
+                "company_followers_count": 0,
+                "company_website": "https://www.freewillsolutions.com",
+                "company_facebook_url": [
+                  "https://www.facebook.com/fwgrecruit"
+                ],
+                "company_twitter_url": [],
+                "company_linkedin_url": "https://www.linkedin.com/company/freewill-solutions",
+                "company_size_range": "201-500 employees",
+                "company_employees_count": 188,
+                "company_industry": "IT Services and IT Consulting",
+                "company_categories_and_keywords": [
+                  "technology/software development",
+                  "computers electronics and technology > computers electronics and technology - other",
+                  "securities solutions",
+                  "crm",
+                  "insurance solutions",
+                  "sale force automation",
+                  "business consulting",
+                  "strategic sourcing",
+                  "mobile solutions",
+                  "warehouse management",
+                  "business innovation",
+                  "sap",
+                  "sunfish",
+                  "fleet management",
+                  "mobile network testing & analysis functionality",
+                  "business and technology consulting",
+                  "professional services",
+                  "software development",
+                  "securities",
+                  "technology",
+                  "it-services",
+                  "information technology",
+                  "software"
+                ],
+                "company_annual_revenue_source_5": 36926723,
+                "company_annual_revenue_currency_source_5": "USD",
+                "company_annual_revenue_source_1": null,
+                "company_annual_revenue_currency_source_1": null,
+                "company_employees_count_change_yearly_percentage": -4.568527918781726,
+                "company_last_funding_round_date": null,
+                "company_last_funding_round_amount_raised": null,
+                "company_hq_full_address": "29Fl. Lumpini Tower,Sathon,Rama 4 road.; Bangkok, 10250, TH",
+                "company_hq_country": "Thailand",
+                "company_hq_regions": [
+                  "Asia",
+                  "South-eastern Asia",
+                  "APAC"
+                ],
+                "company_hq_country_iso2": "TH",
+                "company_hq_country_iso3": "THA",
+                "company_hq_city": null,
+                "company_hq_state": null,
+                "company_hq_street": null,
+                "company_hq_zipcode": null,
+                "company_last_updated_at": "2025-09-08",
+                "company_stock_ticker": [],
+                "company_is_b2b": 1,
+                "order_in_profile": 5
+              }
+            ],
+            "projected_base_salary_p25": null,
+            "projected_base_salary_median": null,
+            "projected_base_salary_p75": null,
+            "projected_base_salary_period": null,
+            "projected_base_salary_currency": null,
+            "projected_base_salary_updated_at": null,
+            "projected_additional_salary": [],
+            "projected_additional_salary_period": null,
+            "projected_additional_salary_currency": null,
+            "projected_additional_salary_updated_at": null,
+            "projected_total_salary_p25": null,
+            "projected_total_salary_median": null,
+            "projected_total_salary_p75": null,
+            "projected_total_salary_period": null,
+            "projected_total_salary_currency": null,
+            "projected_total_salary_updated_at": null,
+            "last_graduation_date": 2007,
+            "education_degrees": [
+              "Bachelor of Management Information System (MIS), Management Information Systems, General"
+            ],
+            "education": [
+              {
+                "degree": "Bachelor of Management Information System (MIS), Management Information Systems, General",
+                "description": null,
+                "institution_url": null,
+                "institution_name": "Economics university of Ho Chi Minh city",
+                "institution_full_address": null,
+                "institution_country_iso2": null,
+                "institution_country_iso3": null,
+                "institution_regions": [],
+                "institution_city": null,
+                "institution_state": null,
+                "institution_street": null,
+                "institution_zipcode": null,
+                "date_from_year": 2003,
+                "date_to_year": 2007,
+                "activities_and_societies": null,
+                "order_in_profile": 1
+              }
+            ],
+            "recommendations_count": null,
+            "recommendations": [],
+            "activity": [],
+            "awards": [],
+            "courses": [],
+            "certifications": [],
+            "languages": [],
+            "patents_count": null,
+            "patents_topics": [],
+            "patents": [],
+            "publications_count": null,
+            "publications_topics": [],
+            "publications": [],
+            "projects_count": null,
+            "projects_topics": [],
+            "projects": [],
+            "organizations": [],
+            "github_url": "https://github.com/llinh",
+            "github_username": "llinh",
+            "github_mapping_confidence": 50,
+            "github_contributions_count": 76,
+            "github_repos_summary": [
+              {
+                "name": "Aufgabe1",
+                "summary": null,
+                "stars": 0,
+                "contributions_count": 1
+              },
+              {
+                "name": "Mediatransformation",
+                "summary": null,
+                "stars": 0,
+                "contributions_count": 6
+              },
+              {
+                "name": "Semesterarbeit-Aufgabeteil2",
+                "summary": null,
+                "stars": 0,
+                "contributions_count": 41
+              },
+              {
+                "name": "hello-word",
+                "summary": null,
+                "stars": 0,
+                "contributions_count": 0
+              },
+              {
+                "name": "Semesterarbeit-Aufgabenteil-1",
+                "summary": null,
+                "stars": 0,
+                "contributions_count": 27
+              },
+              {
+                "name": "SeminararbeitSoSe18Aufgabe1",
+                "summary": null,
+                "stars": 0,
+                "contributions_count": 1
+              }
+            ],
+            "profile_root_field_changes_summary": [
+              {
+                "field_name": "follower_count",
+                "change_type": "updated",
+                "last_changed_at": "2025-10-01 05:03:42.361355"
+              },
+              {
+                "field_name": "profile_photo_url",
+                "change_type": "new",
+                "last_changed_at": "2025-04-25 02:54:37.942072"
+              }
+            ],
+            "profile_collection_field_changes_summary": [
+              {
+                "field_name": "experience",
+                "last_changed_at": "2024-11-27 08:38:19.710366"
+              }
+            ],
+            "experience_recently_started": [],
+            "experience_recently_closed": []
+          },
+          "enrichedAt": "2025-10-29T18:10:13.455Z",
+          "phone1": "+84 935 013 222",
+          "phone1Type": "mobile",
+          "phone1Verified": true,
+          "mobilePhone": "+84 935 013 222",
+          "phoneEnrichmentSource": "lusha_v2_linkedin",
+          "phoneEnrichmentDate": "2025-10-29T18:11:36.028Z",
+          "phoneDataQuality": 70
+        }
+      ],
+      "costs": {
+        "preview": 2,
+        "collect": 2,
+        "total": 4
+      }
+    }
+  },
+  "timestamp": "2025-10-29T18:11:38.179Z"
+}

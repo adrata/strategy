@@ -1,0 +1,4075 @@
+{
+  "timestamp": "2025-10-29T14:09:03.936Z",
+  "workspace": {
+    "id": "01K7464TNANHQXPCZT1FYX205V",
+    "name": "Adrata",
+    "slug": "adrata",
+    "createdAt": "2025-10-09T09:51:57.096Z"
+  },
+  "companiesDeleted": [
+    {
+      "id": "01K7DTAMBBER6P24GP99BK8AW7",
+      "name": "3M",
+      "website": "https://www.3m.com",
+      "domain": null,
+      "industry": "Industrial Machinery Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAJHSRG2XAE1KGEE3YKKG",
+      "name": "AMD",
+      "website": "https://www.amd.com",
+      "domain": null,
+      "industry": "Semiconductor Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEF878KSYMTDJ7RPTNFK8",
+      "name": "Abnormal Security Corporation",
+      "website": "https://abnormalsecurity.com",
+      "domain": null,
+      "industry": "Cybersecurity",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+      "name": "Accenture",
+      "website": "https://www.accenture.com",
+      "domain": null,
+      "industry": "Business Consulting and Services",
+      "peopleCount": 5,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAKECQ0R7XQEPT61YYDK1",
+      "name": "Acquia",
+      "website": "https://www.acquia.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEG1VM1DRQNQ4ZAFKKFNE",
+      "name": "Adept",
+      "website": "https://www.adept.ai",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAK05YX2FBFKPN0WK711R",
+      "name": "Adobe",
+      "website": "https://www.adobe.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4VJ4RHE22SA0V4CY7BBJP82",
+      "name": "Adrata",
+      "website": "https://www.adrata.com",
+      "domain": null,
+      "industry": "Technology, Information and Internet",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5AWGFJBET1SAWMYB97KE",
+      "name": "Advancement Test Corp",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 1,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAJ3FEA5VXVZW38ECB9QR",
+      "name": "Aetion, a Datavant Company",
+      "website": "https://www.aetion.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAHN26BX4JWTXJAR90XK9",
+      "name": "Agiloft",
+      "website": "https://www.agiloft.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEGR36G57P1NHAMXBEXZ4",
+      "name": "Airbyte",
+      "website": "https://www.airbyte.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAH6GD5TK2ER8PATQ1T87",
+      "name": "Airmeet",
+      "website": "https://www.airmeet.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAGQXV9E1BHCSH2RT6S3Q",
+      "name": "Airtable",
+      "website": "https://www.airtable.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAG9KBHPE6JWS6GBBV6C7",
+      "name": "Akamai Technologies",
+      "website": "https://www.akamai.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEHGNWKWJ3PJJBBE2V4YK",
+      "name": "Alation",
+      "website": "https://www.alation.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAFV0PS5BCAKKQ2Q67W9C",
+      "name": "Algolia",
+      "website": "https://www.algolia.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAEVDPMHC8ZDZPNS399KZ",
+      "name": "Alteryx",
+      "website": "https://www.alteryx.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAED0RJ8GK0DRBT0FPKK8",
+      "name": "Amazon Web Services (AWS)",
+      "website": "https://www.amazon.com",
+      "domain": null,
+      "industry": "IT Services and IT Consulting",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTADYR6H4WQ2ESBEN2H4M8",
+      "name": "Amplitude",
+      "website": "https://www.amplitude.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTADGFCR5W0MWP0YY1BECP",
+      "name": "Anaplan",
+      "website": "https://www.anaplan.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTACZ77KEZY9CKC84WRP4A",
+      "name": "Ansys",
+      "website": "https://www.ansys.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAC2GEA9Y2ARGQ154429Z",
+      "name": "Anthropic",
+      "website": "https://www.anthropic.com",
+      "domain": null,
+      "industry": "Research Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTACGRD0EG2QRXGFD37Y3V",
+      "name": "Anthropic",
+      "website": "https://www.anthropic.com",
+      "domain": null,
+      "industry": "Research Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEJ501VC6MS2BCASGXG8P",
+      "name": "Anyscale",
+      "website": "https://www.anyscale.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTABM76KVM0QFK7N6PGYEC",
+      "name": "Appian Corporation",
+      "website": "https://www.appian.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAB5Z7JF4KPKMJRDWHKB9",
+      "name": "Arctic Wolf",
+      "website": "https://www.arcticwolf.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAAQFC47114GVK3QVFJT6",
+      "name": "Arista Networks",
+      "website": "https://www.arista.com",
+      "domain": null,
+      "industry": "Computer Networking Products",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAA98QBMK8CVJ5C0989ZQ",
+      "name": "Armis",
+      "website": "https://www.armis.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA9T4D8RS8001D3AGRRCH",
+      "name": "Artera",
+      "website": "https://www.artera.io",
+      "domain": null,
+      "industry": "Hospitals and Health Care",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA9C2KJJXJ6BQQH0D38Q4",
+      "name": "Asana",
+      "website": "https://www.asana.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEJSHBRVY0EENX727R9ED",
+      "name": "Astronomer",
+      "website": "https://www.astronomer.io",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA8XS3Y7G2MC099VN8SN6",
+      "name": "Atlassian",
+      "website": "https://www.atlassian.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA8FGXWBHNB3BC8XTAW9H",
+      "name": "Auth0",
+      "website": "https://www.auth0.com",
+      "domain": null,
+      "industry": "IT Services and IT Consulting",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA819DXDJM5FV62YETT88",
+      "name": "Autodesk",
+      "website": "https://www.autodesk.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA7JV4SRY8E52DSADQVNH",
+      "name": "Automation Anywhere",
+      "website": "https://www.automationanywhere.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA74PEAD8JPD9K9NWSD8A",
+      "name": "Awake Security",
+      "website": "https://awakesecurity.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA32ZYBMPXKPPCG6GJW13",
+      "name": "BMC Software",
+      "website": "https://www.bmc.com",
+      "domain": null,
+      "industry": "IT Services and IT Consulting",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA6PD25YXR4HTED6250V5",
+      "name": "Bain & Company",
+      "website": "https://www.bain.com",
+      "domain": null,
+      "industry": "Business Consulting and Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA68212Z0R48C3KQ7CDMJ",
+      "name": "Barracuda",
+      "website": "https://www.barracuda.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA5SJ6E09YVN6CC0R0CN7",
+      "name": "Bentley Systems",
+      "website": "https://www.bentley.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA5BBHPY91MWR4PVPFNRM",
+      "name": "BetterUp",
+      "website": "https://www.betterup.com",
+      "domain": null,
+      "industry": "Professional Training and Coaching",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA4X36GAV3SA62CB1MG2D",
+      "name": "BigID",
+      "website": "https://www.bigid.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA4EG75GHZ3RW9QJTFDK3",
+      "name": "Binary Defense",
+      "website": "https://www.binarydefense.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9YHHVSSQW21SRBBA3TAC",
+      "name": "Bit9",
+      "website": "https://www.carbonblack.com",
+      "domain": null,
+      "industry": "Telecommunications",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA3HQQEA2KRBN6TNN1965",
+      "name": "BlackLine",
+      "website": "https://www.blackline.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA4005JPRPQAKV9NSV9Y5",
+      "name": "Blackbaud",
+      "website": "https://www.blackbaud.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA2MGZ04Q58M15J663A1B",
+      "name": "Boom Supersonic",
+      "website": "https://www.boomsupersonic.com",
+      "domain": null,
+      "industry": "Aviation and Aerospace Component Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA26835RG8A5AJYTWGGN2",
+      "name": "Boomi",
+      "website": "https://www.boomi.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA1R1EXQNTAC9BBT3WG7M",
+      "name": "Bosch USA",
+      "website": "https://www.bosch.us",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA18R447E5GEDGTPVDWXT",
+      "name": "Box",
+      "website": "https://www.box.com",
+      "domain": null,
+      "industry": "Technology, Information and Internet",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA0T9JR4EX4A1WH60BNEF",
+      "name": "Braze",
+      "website": "https://www.braze.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTA0BK6SJNDEAF9JJJP93A",
+      "name": "Broadcom",
+      "website": "https://www.broadcom.com",
+      "domain": null,
+      "industry": "Semiconductor Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9ZX69R1PYN0DN7GV9ZV3",
+      "name": "C3 AI",
+      "website": "https://www.c3.ai",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9ZEYMVTP0AXF2AVMNKDJ",
+      "name": "Cadence",
+      "website": "https://www.cadence.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7QDEJWYAYY610RN65VGE",
+      "name": "Caja Ica",
+      "website": "https://www.malwarebytes.com",
+      "domain": null,
+      "industry": "Banking",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9Z0BHKJ9HXW4RQ3D53C9",
+      "name": "Capterra",
+      "website": "https://www.capterra.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9Y0112AZ9KAHKW13JFEZ",
+      "name": "Carrum Health",
+      "website": "https://www.carrumhealth.com",
+      "domain": null,
+      "industry": "Hospitals and Health Care",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9XHV8DH4M87PGPRZTNRV",
+      "name": "Carta",
+      "website": "https://www.carta.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9X3J9FE975H2322KW0CN",
+      "name": "Catalant",
+      "website": "https://www.catalant.com",
+      "domain": null,
+      "industry": "Business Consulting and Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9WN3JA64K3E8RV88EVNR",
+      "name": "Caterpillar Inc.",
+      "website": "https://www.caterpillar.com",
+      "domain": null,
+      "industry": "Machinery Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEKH2P3G130PMQBVY8TA4",
+      "name": "Celestial AI",
+      "website": "https://www.celestial.ai",
+      "domain": null,
+      "industry": "Semiconductor Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9W6R027WG7CWTFN6Z7TR",
+      "name": "Censys",
+      "website": "https://www.censys.io/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9VRF4KDTW5600DT9D7K8",
+      "name": "Cerebras Systems",
+      "website": "https://www.cerebras.ai",
+      "domain": null,
+      "industry": "Computer Hardware",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9VA1A5RC3E0Z2MKZ3T09",
+      "name": "Ceridian HCM Holding",
+      "website": "https://www.ceridian.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9TVV0SPMTADJBWF6X58T",
+      "name": "Cerner Corporation",
+      "website": "https://www.cerner.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9TDG4988XBPCX6F4EPCX",
+      "name": "Chainalysis",
+      "website": "https://www.chainalysis.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9SYRK1R412E8KNZJFPB4",
+      "name": "Chartio",
+      "website": "https://www.chartio.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9SGGKE7RF97FD2VKSYYX",
+      "name": "Check Point Software",
+      "website": "https://www.checkpoint.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9S2DMNY8782RXQ2XSC7G",
+      "name": "Checkmarx",
+      "website": "https://www.checkmarx.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9RKZA5DKG43XPQFCGK6E",
+      "name": "Chili Piper",
+      "website": "https://www.chilipiper.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9R5VNF1KH0HS04ZW5T2D",
+      "name": "CircleCI",
+      "website": "https://www.circleci.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9QQNBWCJNQBSMEST1XCW",
+      "name": "Cisco",
+      "website": "https://www.cisco.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9Q9AXFVDZMJ5K4PYGS2M",
+      "name": "Cisco",
+      "website": "https://www.cisco.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9PV7AZQJPQCAFKFZJDEF",
+      "name": "Citrix Systems",
+      "website": "https://www.citrix.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9PD432J0QCZPK0K91VH5",
+      "name": "Clarifai",
+      "website": "https://www.clarifai.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9NYXHZX9XK5DZN8QMQ75",
+      "name": "Claroty",
+      "website": "https://www.claroty.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K1V9C6M4ESAQ78P2PJY7YM7X",
+      "name": "CloudCaddie",
+      "website": "https://cloudcaddie.com",
+      "domain": null,
+      "industry": "Golf Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9N2CG0MSNXN0MQERMB2K",
+      "name": "Cloudera",
+      "website": "https://www.cloudera.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4VJ4SJV089HQ936CQPQFK4B",
+      "name": "Cloudfirst",
+      "website": "https://cloudfirst.com",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9MM0TNQSYCC4QRBT5DWN",
+      "name": "Clumio",
+      "website": "https://www.clumio.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9M5FBM74H7AYDV49QP37",
+      "name": "CobbleStone Software",
+      "website": "https://www.cobblestonesoftware.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEM58CRTKG1CBY5W1BCJQ",
+      "name": "Cockroach Labs",
+      "website": "https://www.cockroachlabs.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9KQCJNAPRYTHGMR0DP6W",
+      "name": "Coda",
+      "website": "https://www.coda.io",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9JV0ND14ZGXMK61HKBN8",
+      "name": "Cohesity",
+      "website": "https://www.cohesity.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9JCJPRET3WQJ0WQT9PPH",
+      "name": "Coinbase",
+      "website": "https://www.coinbase.com",
+      "domain": null,
+      "industry": "Financial Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9HY8XNZV0QREQP7J5FA9",
+      "name": "Commvault",
+      "website": "https://www.commvault.com",
+      "domain": null,
+      "industry": "Data Security Software Products",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9HG5TJ70H2JHEYSVTA38",
+      "name": "Comscore, Inc.",
+      "website": "https://www.comscore.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9H1Z98F3KD0P3GHJ6ARR",
+      "name": "Concord",
+      "website": "https://www.concord.app",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9GKNKAK1ZTH646A24NMA",
+      "name": "Confluent",
+      "website": "https://www.confluent.io",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9G5CEJPQYZ7ANETSJDGR",
+      "name": "Contentful",
+      "website": "https://www.contentful.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9F57CAH1NWWR96Q8Z20V",
+      "name": "Contract Works Inc",
+      "website": "https://www.contractworks.com",
+      "domain": null,
+      "industry": "Construction",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9FPVYE7RHCGYPJSN8X5S",
+      "name": "Contractbook",
+      "website": "https://www.contractbook.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9EQ23PE2ZW8WG4197F0V",
+      "name": "Corelight",
+      "website": "https://www.corelight.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9E8XZJC1G6NTFX3BKCRJ",
+      "name": "Cornerstone OnDemand",
+      "website": "https://www.cornerstoneondemand.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9DTK3JE868Q3XVBQRXM7",
+      "name": "Couchbase",
+      "website": "https://www.couchbase.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9DCCWFNYN1TJYNYCY0ST",
+      "name": "Coupa",
+      "website": "https://www.coupa.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9CY4JX08HSVGWYCNZ70Q",
+      "name": "CrowdStrike",
+      "website": "https://www.crowdstrike.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9CFVJP17KKYTWT0Y43G5",
+      "name": "Customer.io",
+      "website": "https://www.customer.io",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9C1PX6SEDBT12CA3ETXP",
+      "name": "CyberArk",
+      "website": "https://www.cyberark.com",
+      "domain": null,
+      "industry": "IT System Custom Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9BKG1BHE77X5K7VBXK07",
+      "name": "Cybereason",
+      "website": "https://www.cybereason.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9B5AXWEGFRNGWJJQP9Y9",
+      "name": "Cylance Inc.",
+      "website": "https://www.cylance.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K732P05DPKJE55T47JYPBDKA",
+      "name": "DATA",
+      "website": "https://www.test.com",
+      "domain": null,
+      "industry": "Marketing Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K732QBK28KHG2VYFJV20VKPS",
+      "name": "DATA",
+      "website": "https://www.test.com",
+      "domain": null,
+      "industry": "Marketing Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9APTHRTEE4XFTBAWZ5T8",
+      "name": "Darktrace",
+      "website": "https://www.darktrace.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9A8GMKEWAREYSC1BP263",
+      "name": "Dassault Systèmes",
+      "website": "https://www.3ds.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT98XRW81X27FJVJEYVJX1",
+      "name": "DataRobot",
+      "website": "https://www.datarobot.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT99TDSVGWJHFGGE9C9P9A",
+      "name": "Datadog",
+      "website": "https://www.datadoghq.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4VJ4S8WKVSN5NDKDVEP38QT",
+      "name": "Dataflow",
+      "website": "https://dataflow.com",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT99C9X18NNWZYXB14Q8EG",
+      "name": "Dataiku",
+      "website": "https://www.dataiku.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT980NSXBZ0MB14XK9S1QX",
+      "name": "Dell Technologies",
+      "website": "https://www.dell.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT97JEPV111YT72JEPM301",
+      "name": "Deloitte",
+      "website": "https://www.deloitte.com",
+      "domain": null,
+      "industry": "Business Consulting and Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9743F8BNR1717NCBX9ZH",
+      "name": "Demandbase",
+      "website": "https://www.demandbase.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT96NZF3J9FYWDTAYEQ8C4",
+      "name": "Descript",
+      "website": "https://www.descript.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT967S48XW0Y652A4CWAQC",
+      "name": "Digital.ai",
+      "website": "https://www.digital.ai",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K54X6PA126HGKGQNT7EWMEBS",
+      "name": "Display Fixtures & More",
+      "website": "https://www.displayfixturesandmore.com",
+      "domain": null,
+      "industry": "Retail Fixtures and Display Equipment",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT95SEFXRVQ79KM2NY7QVH",
+      "name": "Docusign",
+      "website": "https://www.docusign.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT95B72Y02E2X9FN55VBVP",
+      "name": "Domo",
+      "website": "https://www.domo.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT94X2VEYAPRHC8BF0YCDG",
+      "name": "DoubleVerify",
+      "website": "https://www.doubleverify.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT94EZXZNCR8D844PH2KHE",
+      "name": "Dragos, Inc.",
+      "website": "https://www.dragos.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT93Z0YJB4D9Y2GPHD39HV",
+      "name": "Drata",
+      "website": "https://www.drata.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT93GVQ6Y8CYEVQPG5KJTT",
+      "name": "DriveWealth",
+      "website": "https://www.drivewealth.com",
+      "domain": null,
+      "industry": "Financial Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8DCNT7SAKD3FAFZ1JT5C",
+      "name": "Dropbox Resellers",
+      "website": "https://www.hellosign.com",
+      "domain": null,
+      "industry": "Information Technology & Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT932E718EG3NX54EHQBZN",
+      "name": "Druva",
+      "website": "https://www.druva.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT925T363N0C1TSHB1J7D4",
+      "name": "Duck Creek Technologies",
+      "website": "https://www.duckcreek.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT91QN9QSM2XGCTTPZY19J",
+      "name": "Dun & Bradstreet",
+      "website": "https://www.dnb.com",
+      "domain": null,
+      "industry": "Information Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9196EV9P514XCS6VP41Y",
+      "name": "Dynatrace",
+      "website": "https://www.dynatrace.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT90TREGM34NVGC1WPC7RX",
+      "name": "Eightfold",
+      "website": "https://www.eightfold.ai",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT90938R11PSPYG3Y1R523",
+      "name": "Elastic",
+      "website": "https://www.elastic.co",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8ZTJ8DP7RXF18JVZGW18",
+      "name": "Elastic",
+      "website": "https://www.elastic.co",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8ZBYZ5NT0W4HR7JDFAVG",
+      "name": "Endgame Inc.",
+      "website": "https://www.endgame.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT59X5QHGBTETFTDF9ANJ4",
+      "name": "Enterprise Software Deal",
+      "website": null,
+      "domain": null,
+      "industry": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8YXR9QH12Z9QM39G6M1S",
+      "name": "Entrust",
+      "website": "https://www.entrust.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8YFKKWNEHBVES89A5MKB",
+      "name": "Epic",
+      "website": "https://www.epic.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8Y1BPJSH9RZDZX3SCVJR",
+      "name": "Equifax",
+      "website": "https://www.equifax.com",
+      "domain": null,
+      "industry": "Financial Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8XJHJMVEQZGGJX1SRH83",
+      "name": "Esri",
+      "website": "https://www.esri.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8WNYFQV71M11RQKVWDVF",
+      "name": "Evisort",
+      "website": "https://www.evisort.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8W7MEW7CH5S5RNKCD3V2",
+      "name": "ExtraHop",
+      "website": "https://www.extrahop.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8VB1XZ2H0SD0A7SG6MCQ",
+      "name": "F5",
+      "website": "https://www.f5.com",
+      "domain": null,
+      "industry": "IT Services and IT Consulting",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8VSJ7FMXN8KVQCH8GXT6",
+      "name": "F5",
+      "website": "https://www.f5.com",
+      "domain": null,
+      "industry": "IT Services and IT Consulting",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8TEFT1AVZ27R0Y0TCR6G",
+      "name": "FIS",
+      "website": "https://www.fisglobal.com",
+      "domain": null,
+      "industry": "IT Services and IT Consulting",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8TWJBT8H3ZSH339V8F8G",
+      "name": "FactSet",
+      "website": "https://www.factset.com",
+      "domain": null,
+      "industry": "Financial Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8T0AWFT8KWRZNDCDE324",
+      "name": "Figma",
+      "website": "https://www.figma.com",
+      "domain": null,
+      "industry": "Design Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4VJ4T6MWNZ3YW1F4GNEHAZ9",
+      "name": "Fintech innov",
+      "website": "https://fintech-innov.com",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4VJ4TG7N769AVH8K1PCR4RQ",
+      "name": "Fintech innovations",
+      "website": "https://fintech-innovations.com",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8S41XVJ7FFS7SNNX43PS",
+      "name": "Firefly Health",
+      "website": "https://www.fireflyhealth.com",
+      "domain": null,
+      "industry": "Hospitals and Health Care",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8RNRPANCJ843QGNGWJ65",
+      "name": "Fivetran",
+      "website": "https://www.fivetran.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8R7M06Y7CT5Q09NMEEYQ",
+      "name": "Flock Safety",
+      "website": "https://www.flocksafety.com",
+      "domain": null,
+      "industry": "Public Safety",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9K92A8CWM8V2NQC7CRWM",
+      "name": "Fond Za OBNOVU",
+      "website": "https://www.code42.com",
+      "domain": null,
+      "industry": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8QS5VKANPSDZTYG14VM0",
+      "name": "ForgeRock",
+      "website": "https://www.forgerock.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8QARN308XM8DCHYJGB95",
+      "name": "Formlabs",
+      "website": "https://www.formlabs.com",
+      "domain": null,
+      "industry": "Computers and Electronics Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8PW4Z6ZWJNKRZNJ0BR3Y",
+      "name": "Forrester",
+      "website": "https://www.forrester.com",
+      "domain": null,
+      "industry": "Research Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8PDZT7F51CF3FJPBKCN2",
+      "name": "Fortinet",
+      "website": "https://www.fortinet.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8NZT4ZMVM34RV844YHTC",
+      "name": "Framer",
+      "website": "https://www.framer.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8NHJYN6ACJHCQP99D89K",
+      "name": "Freshworks",
+      "website": "https://www.freshworks.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8N3DF7MFYX20WANJRMVB",
+      "name": "G2",
+      "website": "https://www.g2.com",
+      "domain": null,
+      "industry": "Technology, Information and Internet",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8M6RDTFWEMZXH81VM441",
+      "name": "GE",
+      "website": "https://www.ge.com",
+      "domain": null,
+      "industry": "Industrial Machinery Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8MN2XYYBVQJRERR26Z9Y",
+      "name": "Gainsight",
+      "website": "https://www.gainsight.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8KRMNMP7N1PHAWVPPH19",
+      "name": "GetApp",
+      "website": "https://www.getapp.com",
+      "domain": null,
+      "industry": "Technology, Information and Internet",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8KACBDMFA0GXYM31F75Y",
+      "name": "Ghost",
+      "website": "https://www.ghost.org",
+      "domain": null,
+      "industry": "Internet Publishing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8JW6P4D7PDHV9SHHYJE1",
+      "name": "Gigamon",
+      "website": "https://www.gigamon.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8JDJKFBJHGDPYNT4HSH1",
+      "name": "GitHub",
+      "website": "https://www.github.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8HZCE7WHE74TJ9Y5BTS5",
+      "name": "GitLab",
+      "website": "https://www.gitlab.com",
+      "domain": null,
+      "industry": "IT Services and IT Consulting",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7RTRRS8NJK9VHAR34FD2",
+      "name": "Google",
+      "website": "https://www.google.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8HDYG7M9FHSM9SBVD0XT",
+      "name": "Google",
+      "website": "https://www.google.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8GYPBW27FV2QAP61FBS9",
+      "name": "Grafana Labs",
+      "website": "https://www.grafana.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8GG91QA936KEH8Y49B22",
+      "name": "Groupon",
+      "website": "https://www.greenhouse.io",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8G1VMBW7CVMEY99H3XMR",
+      "name": "Guidewire Software",
+      "website": "https://www.guidewire.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8FKT23N9ET0H0DN3G04H",
+      "name": "Guru",
+      "website": "https://www.getguru.com",
+      "domain": null,
+      "industry": "Technology, Information and Internet",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8F5DVK7BDZPF5N15GBDX",
+      "name": "Gusto",
+      "website": "https://www.gusto.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8EQAGJQS3VA2WMS9WTYN",
+      "name": "H2O.ai",
+      "website": "https://www.h2o.ai",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8BZDNE1A84EM1KYKKTNG",
+      "name": "HG Insights",
+      "website": "https://www.hginsights.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8E973BFATBXCMM5CCE84",
+      "name": "HashiCorp",
+      "website": "https://www.hashicorp.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8DTW2M8X1GC5H56GDZR2",
+      "name": "Height",
+      "website": "https://www.height.app",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8CVSQD4A8RMYKQ57A9B4",
+      "name": "Hewlett Packard Enterprise",
+      "website": "https://www.hpe.com",
+      "domain": null,
+      "industry": "IT Services and IT Consulting",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEMY8FBH77R41WZGFVWFQ",
+      "name": "Hex",
+      "website": "https://www.hex.tech",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8CDNCDGZFTS6AHPQ2VMX",
+      "name": "Hexagon Asset Lifecycle Intelligence",
+      "website": "https://www.hexagon.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8B2927HWNTPZ8YA9C3AC",
+      "name": "Honeywell",
+      "website": "https://www.honeywell.com",
+      "domain": null,
+      "industry": "Appliances, Electrical, and Electronics Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VENJT1HFHTVJCBXAQQMRB",
+      "name": "Hugging Face",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8A5XEP8NQCWYEGAPCWX4",
+      "name": "IBM",
+      "website": "https://www.ibm.com",
+      "domain": null,
+      "industry": "IT Services and IT Consulting",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT89QM03SADKP5T62201RP",
+      "name": "Icertis",
+      "website": "https://www.icertis.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT88TQHBV1DPK314GTT4A1",
+      "name": "Illumina",
+      "website": "https://www.illumina.com",
+      "domain": null,
+      "industry": "Biotechnology Research",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT88CE52Y6EP9D1AVG3TM0",
+      "name": "Illumio",
+      "website": "https://www.illumio.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEP7286EXMGWPZ8B6RTP5",
+      "name": "Immuta",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT87Y2HTV1M4TG9D8DW5H4",
+      "name": "Imperva",
+      "website": "https://www.imperva.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT87FZ1DR4B03T4MTWB24V",
+      "name": "Imprivata",
+      "website": "https://www.imprivata.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT858R35VR1QM9A1WWXMA5",
+      "name": "InVision",
+      "website": "https://www.invisionapp.com",
+      "domain": null,
+      "industry": "Technology, Information and Internet",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT871V369H177EYK6BMGAF",
+      "name": "Infor",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT86KNG0H8Q4PBKGWHNQJV",
+      "name": "Informatica",
+      "website": "https://www.informatica.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT865HCR229YJ11M930AAJ",
+      "name": "Integral Ad Science",
+      "website": "https://www.integralads.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT85Q1AWWTN8QF5HCK5SPN",
+      "name": "Intuitive",
+      "website": "https://www.intuitive.com",
+      "domain": null,
+      "industry": "Medical Equipment Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT84PAY18CRMX2057M4AYE",
+      "name": "Ironclad",
+      "website": "https://www.ironcladapp.com",
+      "domain": null,
+      "industry": "Technology, Information and Internet",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT847NN49NM2PM8BK37T7Y",
+      "name": "Iterable",
+      "website": "https://www.iterable.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT83SM9VH2RK9J20N8T637",
+      "name": "Ivanti",
+      "website": "https://www.ivanti.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT83B8FJS81DQ1P6XET8X2",
+      "name": "Ixia",
+      "website": "https://www.ixiacom.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT81119YRHMQFRB7N7093V",
+      "name": "JFrog",
+      "website": "https://www.jfrog.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT82WRXBXBCGWHA2P96WBV",
+      "name": "Jack Henry",
+      "website": "https://www.jackhenry.com",
+      "domain": null,
+      "industry": "Financial Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT82BAVWSWJF248ZTCNE46",
+      "name": "Jaeger Tracing",
+      "website": "https://www.jaegertracing.io/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT81XAMMJRKFDQDCABXAPK",
+      "name": "Jamf",
+      "website": "https://www.jamf.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT81F5YCP7WBXR5J2H9600",
+      "name": "JetBrains",
+      "website": "https://www.jetbrains.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT80JKCPGRRDB8E32Y8RVH",
+      "name": "Juniper Networks",
+      "website": "https://www.juniper.net",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7Z68H7JEHRDCS6HF3VW1",
+      "name": "KLA",
+      "website": "https://www.kla.com",
+      "domain": null,
+      "industry": "Semiconductor Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT802WC8A3RKX3307RF0Y7",
+      "name": "Kantata",
+      "website": "https://www.kantata.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7ZMN4YWCJG9CVPH8AEF0",
+      "name": "Keysight Technologies",
+      "website": "https://www.keysight.com",
+      "domain": null,
+      "industry": "Appliances, Electrical, and Electronics Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7YR1SNQ4PW602XGQ4VFB",
+      "name": "KnowBe4",
+      "website": "https://www.knowbe4.com",
+      "domain": null,
+      "industry": "Computer and Network Security",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7Y9VMAEZBDMG4KAG0PH4",
+      "name": "Kong Inc.",
+      "website": "https://www.konghq.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7XVQZXPF7XWQV8Q0V0FQ",
+      "name": "Krisp",
+      "website": "https://www.krisp.ai",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7XDE2S7S2AJPQC525HYW",
+      "name": "Lacework",
+      "website": "https://www.lacework.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7WZ4JVKEF4Y4GN581B8M",
+      "name": "Lam Research",
+      "website": "https://www.lamresearch.com",
+      "domain": null,
+      "industry": "Semiconductor Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEPWJK5PPMA7EHSAHJKXR",
+      "name": "Lambda",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DTAFCNMH6RZPSMJ83AV4KD",
+      "name": "Landin Ofshore",
+      "website": "https://www.allscripts.com",
+      "domain": null,
+      "industry": "Investment Banking",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7WGYVM56W5BV567X7KQ5",
+      "name": "Lattice",
+      "website": "https://www.lattice.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7W215FZM4ZBEGNRV5GSE",
+      "name": "LaunchDarkly",
+      "website": "https://www.launchdarkly.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7VKB319QTDB0JQ09Y9D3",
+      "name": "LeadIQ",
+      "website": "https://www.leadiq.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7V54RNK0H2S3P7Q8WDFV",
+      "name": "Lightstep",
+      "website": "https://www.lightstep.com/",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7TMKYDVWSSTZVQBGDSVC",
+      "name": "Linear",
+      "website": "https://www.linear.app",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7T6F4AK272SSVNQR6C8E",
+      "name": "LinkSquares",
+      "website": "https://www.linksquares.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7SQ8MZ6ZNBRB1N1SRA7X",
+      "name": "LoanPro",
+      "website": "https://www.loanpro.io",
+      "domain": null,
+      "industry": "Financial Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7S9293S6DCMDDP9TBXTS",
+      "name": "Looker",
+      "website": "https://www.looker.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K54X6M38GZG3Y3HFJGQC7Q7D",
+      "name": "Lozier Corporation",
+      "website": "https://www.lozier.com",
+      "domain": null,
+      "industry": "Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7RAA2Q4751KX34EDR9HS",
+      "name": "Lucid Software",
+      "website": "https://www.lucid.co",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7QW2C0HQJBZTG4KYKEZR",
+      "name": "Luma AI",
+      "website": "https://www.lumalabs.ai",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K54X6KCDWPSGQSJ84KVMB6FY",
+      "name": "Madix",
+      "website": "https://www.madix.com",
+      "domain": null,
+      "industry": "Retail Fixtures and Display Equipment",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7PZ93684TQ3G0AZ5TQT8",
+      "name": "MariaDB",
+      "website": "https://www.mariadb.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7PGWNEVMYFWRSKYPMVVW",
+      "name": "MarkLogic University",
+      "website": "https://www.marklogic.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7P2H2MANDQ2RZ1J9SJ1N",
+      "name": "Marvell Technology",
+      "website": "https://www.marvell.com",
+      "domain": null,
+      "industry": "Semiconductor Manufacturing",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7NMBGQKJJAGXSX1T2MC2",
+      "name": "Mastercard",
+      "website": "https://www.mastercard.com",
+      "domain": null,
+      "industry": "IT Services and IT Consulting",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEQJ1W9FCR96CE1KBF31T",
+      "name": "Materialize",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7N68FGXYHSSBFRV8PNMG",
+      "name": "MathWorks",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7MQX015W98BREBXQ1370",
+      "name": "Matterport",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7M9EDQ3QCMTD11JA58N9",
+      "name": "McAfee Enterprise",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7KV8GBP2G6XFCFARXNSH",
+      "name": "Medallion",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8AM4TJ9YR652JYKP8W0N",
+      "name": "Meliá Hotels International",
+      "website": "https://www.hootsuite.com",
+      "domain": null,
+      "industry": "Hospitality",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7K9WWMDWB82F9T9WHP3R",
+      "name": "Mentor Graphics",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7JVND9NTKBDS8A937J5F",
+      "name": "Metabase",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K54X6JRGKQ4KPTBZ1F7YW2A6",
+      "name": "Metro Supermarket Fixtures",
+      "website": "https://www.metrosupermarketfixtures.com",
+      "domain": null,
+      "industry": "Retail Fixtures and Display Equipment",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7HYT5DYKMZ8E3AP54BSX",
+      "name": "MicroStrategy Incorporated",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K66HEZZM9DBHZ68ZBBYZ79CG",
+      "name": "Microsoft",
+      "website": "https://www.microsoft.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7JD44RY8964V3DA43FBX",
+      "name": "Microsoft",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7HGNA2ZZMTH2GYFR9GKM",
+      "name": "Mimecast",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VER64Y1Z22Z5YA9QJM69R",
+      "name": "MinIO",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7H2JDGW3QJGBFVDDWW75",
+      "name": "Miro",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7GM7CVBPF2J5FAYJACSX",
+      "name": "Mixpanel",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7G5NYQN1B097QA9HP8S6",
+      "name": "Modern Treasury",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7FQGEZYXDWR78NNE5DCQ",
+      "name": "Monday.com",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7F964A7KJC6CF13HJ5TS",
+      "name": "MongoDB",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7EV0KY2TSDYTKR50PX3H",
+      "name": "Monte Carlo",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7ECCFW4DPZ14N8J3FY19",
+      "name": "Moveworks",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7DY9FMH4MYAR4PRZM1M8",
+      "name": "Mural",
+      "website": "https://www.mural.co",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7DG2HKQX5WR5ESTRBHMJ",
+      "name": "Mux",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT78Z0YBP56ET5RKREM996",
+      "name": "NVIDIA Corporation",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7D1VN0PRQWWN5RYG1KKR",
+      "name": "Navan",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7CKMS006QX5BPHBK51H2",
+      "name": "Neo4j",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7C5D3A0DHWCQ00EV074Y",
+      "name": "NetApp",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7BQAV8FZ3TQR1W685ZKH",
+      "name": "NetScout Systems",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VES03W4K359BBNQQV76VJ",
+      "name": "Netlify",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7B98M00E71HQH614W15B",
+      "name": "Netskope",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7AV2P4763RMRX4PEANEG",
+      "name": "New Relic",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7ACPJ7XCRMPEE13DH7V9",
+      "name": "Nozomi Networks",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT79Y5A2WBQRE5GQFP0MRZ",
+      "name": "Nuance Communications",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT79DD21RV4NCQBBE5ZJPM",
+      "name": "Nutanix",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT77ESSJXNSVY4N9YSZM8J",
+      "name": "ON24",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT78GQZQPHGX6MRNY5PZ55",
+      "name": "Ocrolus",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT77ZQSXPGNNBKTJ0S86EH",
+      "name": "Okta",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VESR6CF2CDEH0T69AE1C5",
+      "name": "OneTrust",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT770GNJA4QDY0BA9SX2ZE",
+      "name": "OpenTelemetry",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT76FWY3M3BXX7RD449JPJ",
+      "name": "Oracle Corporation",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT75Z8PVG6RPH3S39DEK98",
+      "name": "Orca Security",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT75H4VYFBWFJ449BK2JC0",
+      "name": "OutSystems",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6Y5TWFH21NTVKAMRQCWD",
+      "name": "PTC",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT752N4Q3H8GKXF6WDNE01",
+      "name": "PagerDuty",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT74EWYTM1ZRY94VXVC4VM",
+      "name": "Palo Alto Networks",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT73Z7T77XGP2F9KGVEAYV",
+      "name": "PandaDoc",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT73GKXQX69TEYT7NV0DTB",
+      "name": "Pegasystems",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT732EYJGP2VZKG82X4J3R",
+      "name": "Pendo.io",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT72MAF5G7NCGVTYGQ45VV",
+      "name": "Phenom People",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VETGAMFM5BWD65W7SGKBP",
+      "name": "Pinecone",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT7265NAJJ4SPQTPV6R36F",
+      "name": "Ping Identity",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT71QZD7GCTG6DSP2NT4RE",
+      "name": "PlanetScale",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT719RW27BA14V12W0SFTH",
+      "name": "Planful",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT70VHPFKH8BNBQKXGMNWR",
+      "name": "PlayVS",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT70DF8JTF9R6S9DV2NAXH",
+      "name": "Postman",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEV70PRNWYRQ531S42NMV",
+      "name": "Prefect",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6ZZCQ6B5K11PZDTRGGKN",
+      "name": "PricewaterhouseCoopers",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6ZH0YA9NXY9VSPFF5SWC",
+      "name": "Procore Technologies",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6Z2M0SG9WF7AGR04E5DA",
+      "name": "Proofpoint",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5AECECDKHVS4CMJMNFVB",
+      "name": "Prospect Test Inc",
+      "website": null,
+      "domain": null,
+      "industry": "Software",
+      "peopleCount": 1,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6YM0F9NB9S6JQ2VA30F1",
+      "name": "ProtectWise",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6XQ9G17KDK1Z323V46H9",
+      "name": "Pure Storage",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT9NGQ97FT2YZ5P7CCA9A2",
+      "name": "Qatalog (Acquired by ClickUp)",
+      "website": "https://www.clickup.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6X8ZD144DNJ8MP53HBTR",
+      "name": "Qlik Technologies",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6WTNSPXBDVF0Q6AN681Q",
+      "name": "Qualys",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6PGX6PCEP74EVD3KFG5N",
+      "name": "RSA Security",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6WCF8W7Z6DP3WT886RPK",
+      "name": "Ramp Business",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6VY3QSEPY4T6GJ4FBYZH",
+      "name": "Rapid7",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6VFWVWQVHFN3N84SDSJE",
+      "name": "Red Hat",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6V0SPJXZPT36T7DMP3HV",
+      "name": "Redis",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6TJ07QTF5286Z21XG0CZ",
+      "name": "Redpanda Data",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6T3SQ74JCR1BNNY0RJ2N",
+      "name": "Relativity",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6SNHR3DR4EVH3PEJQ2V1",
+      "name": "Relativity Space",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K54X6NKBB9F8NH93R1KY4F78",
+      "name": "Retail Fixtures Inc",
+      "website": "https://www.retailfixturesinc.com",
+      "domain": null,
+      "industry": "Retail Fixtures and Display Equipment",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K542JZETY5J45B6KV1GC17CR",
+      "name": "Retail Product Solutions, LLC",
+      "website": "https://www.retail-products.com",
+      "domain": null,
+      "industry": "Retail",
+      "peopleCount": 2,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6S738QEH9WPEAMDCRMBJ",
+      "name": "Retool",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6RRSJCECF41R9YJAPKCE",
+      "name": "Ribbon Health",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6RAGKBQ7HBJGD1CBDS87",
+      "name": "RightSignature",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6QWFQ0580Q1JJMA7R72A",
+      "name": "RingCentral",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6QE55FWAC920GH3YW07R",
+      "name": "Rippling",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6PZT2JMKQM04H9TMZYEM",
+      "name": "Riverside.fm",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K733AC5VANCR2B8S0TKNBN00",
+      "name": "Ross",
+      "website": "",
+      "domain": null,
+      "industry": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K732S9MJXTGH6YE70M902ASR",
+      "name": "Ross Inc.",
+      "website": "",
+      "domain": null,
+      "industry": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K732TRT366XP7WN5P8SEY1V9",
+      "name": "Ross Inc. Test",
+      "website": "",
+      "domain": null,
+      "industry": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K733CJD3SENF11063BX0CEXN",
+      "name": "Ross Test Final",
+      "website": "",
+      "domain": null,
+      "industry": null,
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6P2HKWXN865J2KXWWSMM",
+      "name": "Rubrik",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEVXXG86R4KPAZAZCZME3",
+      "name": "Runway",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6KRKND9X6X1ET77RDHZY",
+      "name": "SAP",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6KAJHBEVQGTAWPM4VXCN",
+      "name": "SAS Institute",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6NHJX04CDWYWXGTP110B",
+      "name": "SailPoint Technologies",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6N38YRX9BZ6XH3S4YG72",
+      "name": "SambaNova Systems",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6MN3KF6WRPAS9G737020",
+      "name": "Samsara",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6M6XX1ABKKHBTWBSE5B6",
+      "name": "Sanity.io",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6JW0X9KYACD5BYQEHR5D",
+      "name": "Scale AI",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6JDWC88E79WP72ADC1H7",
+      "name": "Scene Health",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6HZHTQ6C6QAKY381M74Y",
+      "name": "Schneider Electric USA",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4VJ4SWMWX2JEQ4VTANGTBTF",
+      "name": "Securenet",
+      "website": "https://securenet.com",
+      "domain": null,
+      "industry": "Professional Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6HHC442JAW5N6VHYTHFT",
+      "name": "Segment",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6H3A0FVDWDCEV6W8M24B",
+      "name": "SentinelOne",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6GN0K1H8S86GTWVRZBFA",
+      "name": "Sentry",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6G6RX06VN9F7KJ5F8XXE",
+      "name": "ServiceNow",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6FQGFDBMEGECCAX17NJG",
+      "name": "ServiceTitan",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6F8YAGH08F3G10TYSGHB",
+      "name": "Shortcut Software Inc.",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6ETPV9VX7AZMN67Y8FRT",
+      "name": "Siemens AG",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6ECMFPM5HCRE7K6WYBTX",
+      "name": "Sigma Computing",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6DYJ37WCF5TE9DHQXT6Y",
+      "name": "SignEasy",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6DGCZ2GDZ4TRCJ16V6S8",
+      "name": "SignNow",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6D244AH590R46VH78HW0",
+      "name": "SingleStore",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6CKY6VZQ8EZ4AKC8DYRF",
+      "name": "Sisense",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6C5SJHW9FCA09068XCAZ",
+      "name": "Skedulo",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6BQQP4X7RQH6C5C1E9MT",
+      "name": "Sketch B.V",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6B9CDHS597C5SGNG5P04",
+      "name": "SmartBear Software",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6ATPMZ28GP56CF7SMKHS",
+      "name": "SmartRecruiters",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6ACA5T288S6P5SK44MP9",
+      "name": "Smartsheet",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEWXHKJVFSJ617DJHQ83Q",
+      "name": "Snorkel AI",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT69Y8237H69KW9PR0G3WC",
+      "name": "Snowflake",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT69G5JZ5H9KB3W00AFZWH",
+      "name": "Snyk",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT691X2TBP8F5NS97JSRYC",
+      "name": "Software Advice",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT68KS732SYDV4QE7JHQZJ",
+      "name": "SolarWinds Corporation",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT685E304YMTKY389C7Y60",
+      "name": "Sophos Group",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT67Q6KEGXRSGC3M4DY1JQ",
+      "name": "SparkCognition",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT678Z8R7308CW7ME5VKX7",
+      "name": "Spirent Communications",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT66QYY0R5YBZGRPJPWBZJ",
+      "name": "Splunk",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT669W6S2VJHY7EG8AQ9AK",
+      "name": "Sprinklr",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT65VQPKK241DBR0GVBMAJ",
+      "name": "Sprout Social",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT65DEBW0RFEN3J8T63B3P",
+      "name": "Stability AI",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT64ZC90XNYW0ZJFQJES2D",
+      "name": "Stack Overflow",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEXJ32M223WKKTBTZHTEK",
+      "name": "Starburst",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K54X6MQ5C4GPR1RQ0Y6VMS46",
+      "name": "Store Fixtures & Displays",
+      "website": "https://www.storefixtures.com",
+      "domain": null,
+      "industry": "Retail Fixtures and Display Equipment",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT64H6AS7Y4M25SFH78SS2",
+      "name": "Strapi SAS",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6435SX0CWPN6AFVHEW91",
+      "name": "Stripe",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT63N0ASC6SY943DGRC20G",
+      "name": "Symantec",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEY89KDTJF7HYF2KFJ3MW",
+      "name": "Synack",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT636RVFKSH0JH9042Q99T",
+      "name": "Synapse Financial Technologies",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT62RME786YTE79H0ZMQD5",
+      "name": "Synopsys",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT62AGDDT85TYMNR7T3BFQ",
+      "name": "Synthesia",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT61W1C4MCAEZPHWY35448",
+      "name": "Tableau Software",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT61CWZGAMX3E18EQ0DYTE",
+      "name": "Talkdesk",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT60YG331FEE5XWBFAVBNQ",
+      "name": "Tanium",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT60GB116NKW0DN4K8AAHV",
+      "name": "Tealium",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4VJ4RYC82JK314VS8E3B7DB",
+      "name": "Tech Corporation",
+      "website": "https://techcorp.com",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEYZV30J6ETGR1AQQ0539",
+      "name": "Tecton",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT6026NQD35BD6FHTCCHGT",
+      "name": "Temporal Technologies",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5ZM0Q2JYFPB9BHXEJ0M6",
+      "name": "Tenable",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5BANDTNK1K0XHTYCS1GQ",
+      "name": "Test Company Inc",
+      "website": "https://testcompany.com",
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5BS5HQPQ2TTCA2GQ6RBV",
+      "name": "Test Corp",
+      "website": null,
+      "domain": null,
+      "industry": "Tech",
+      "peopleCount": 1,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5Z584DDF9VZBEHM682YX",
+      "name": "ThoughtSpot",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5YPPYH9T39S6PRKWNV11",
+      "name": "TigerGraph",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VEZVABC7W854PE7HPC7C9",
+      "name": "Together AI",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5XSM8ETKD9JZ1G7G2YTC",
+      "name": "TransUnion",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5Y8DN4NN0BDCW2D58KBM",
+      "name": "Transmit Security",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5XBCZNQR0DT9SKWPWWE7",
+      "name": "Trend Micro",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5WWZ4TFJKQNTE7FWY40Y",
+      "name": "Trimble",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5WETGKN7E3BB6CYSSXZ6",
+      "name": "TrustRadius",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5W0RT3SYZBABNRJ5NPCV",
+      "name": "Twilio",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5VJF4CWH8MDH6CT69C5R",
+      "name": "Tyler Technologies",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5V488VRJ4G12TG08DQ53",
+      "name": "UIPath",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5TP4WVNM1J2VQ6EPPFC9",
+      "name": "UKG",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5T7PAAEG7PV69H1MVCSF",
+      "name": "Unity Technologies",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5SSDFRWE3H09K2BRSP1T",
+      "name": "Uptake",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5N7EDY55PDH34YN2Q8TG",
+      "name": "VIAVI Solutions",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5KWFCT2EDP03PXRAMMHF",
+      "name": "VMware",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5SB8KBBDNZF3ER23QXQE",
+      "name": "Varonis Systems",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5RX2F5ZH9N8SPZ9F29PB",
+      "name": "Vectra AI",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5RERS8QZNYHGKTDG5NA9",
+      "name": "Veeva Systems",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5QXBHEKESV3FYXEB6BD8",
+      "name": "Venafi",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5QF6HHFFVW2DJP69TTPS",
+      "name": "Veracode",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5Q0X04A6ZF2F8NCTM9WM",
+      "name": "Vercel",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5PJQ8H80Y9M55M6KCPWV",
+      "name": "Verint Systems",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5P42BNGHDHZ01GD6AGK0",
+      "name": "Verisk Analytics",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5NNJ2HR9HZXZ2QG37YAY",
+      "name": "Vertiv Holdings",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5MRXAN85HVK045BQ62JW",
+      "name": "Virtru",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5MAQKJYM36EFDE00CC04",
+      "name": "Visa",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5KDVMC4KXBQZZH1P7DN2",
+      "name": "Wasabi Technologies",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5JZQNC852AN1QMMNTVC4",
+      "name": "Webflow",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48VF0Y9RXWB5VFS6W2ZBR7D",
+      "name": "Weights & Biases",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K542JZ599N6QYQTVYCPH1BH3",
+      "name": "Winning Variant",
+      "website": "https://www.winningvariant.com",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 2,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5JHFPFKNHVJ8XS90Y5Z5",
+      "name": "Wix",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5J3C276SK0J798QK6PGY",
+      "name": "WordPress VIP",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5HN45JY2BRM5Y6DBW1R9",
+      "name": "Workato",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5H71PCW6EH93PZTFQ4HX",
+      "name": "Workday",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5GRFHY9WQ1RQ57XHV52D",
+      "name": "Workhuman",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5G9GGJ5611Y252TW0MPM",
+      "name": "Workiva",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5FV730F6GC5B6CXHST49",
+      "name": "Yello",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5FCB67GKM1T07FF7ANDS",
+      "name": "Yext",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5EXE8JYSMWHVZFR2EGZT",
+      "name": "Zapier",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5EENDY5G0PYPEFWS11J6",
+      "name": "Zendesk",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5E0JNVB4S9F61XCKVEEC",
+      "name": "Zenoti",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5DHVTEMBCC73MA6BZJB8",
+      "name": "Zipkin",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5D3TCY8KMRQVV5WMB4BY",
+      "name": "Zoom",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5CNNHVBSFRXH9A40AKZ1",
+      "name": "Zscaler",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT5C7E65NADNX1ZWM2S3VA",
+      "name": "Zuora",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT98FDVVRKS47NHMH1SCXC",
+      "name": "dbt Labs",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT92M4BNH2QH8GPM7Z2YMQ",
+      "name": "dscout",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8X43ZTKTPBTQCK86XBCW",
+      "name": "eversign",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8SJ05PM4VFX85XHSW02X",
+      "name": "finally",
+      "website": "https://www.finally.com",
+      "domain": null,
+      "industry": "Financial Services",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT8BGQFS77B2E3HZ9R467D",
+      "name": "honeycomb.io",
+      "website": "https://www.honeycomb.io",
+      "domain": null,
+      "industry": "Software Development",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DT899CP0EJYCBCTVANP7RA",
+      "name": "iCIMS",
+      "website": null,
+      "domain": null,
+      "industry": "Technology",
+      "peopleCount": 0,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    }
+  ],
+  "peopleDeleted": [
+    {
+      "id": "01K4D91PPETX7VQ7DBWMMDHFMX",
+      "fullName": "Adam Lohmann",
+      "email": "adam@thetresgroup.com",
+      "jobTitle": "CEO",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4D905J36R011YT3BWRFDEJA",
+      "fullName": "Alison Nazarowski",
+      "email": "alison@brightlinetitle.com",
+      "jobTitle": "Owner",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4D9097RSHEDZ6XFQTHS2EZY",
+      "fullName": "Armando Romero",
+      "email": "armando@brokernation.net",
+      "jobTitle": "President CEO",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4D91AKJ849JSAWSXEHHR2BX",
+      "fullName": "Barry Miller",
+      "email": "barry@theclosingagent.com",
+      "jobTitle": "President",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DV7PDHBW33BNGY9K2X9RFJ",
+      "fullName": "Bob Johnson",
+      "email": "bob.johnson@prospect-test.com",
+      "jobTitle": "Professional",
+      "companyId": "01K7DT5AECECDKHVS4CMJMNFVB",
+      "companyName": "Prospect Test Inc",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4SG3NCCTPKXS3YXYXNW25Z3",
+      "fullName": "David Beitler",
+      "email": "d.beitler@winningvariant.com",
+      "jobTitle": "Co-Founder",
+      "companyId": "01K542JZ599N6QYQTVYCPH1BH3",
+      "companyName": "Winning Variant",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4D916X9VAKRP8K41HWBBN3J",
+      "fullName": "Dennis Egan",
+      "email": "dennis@closewithsun.com",
+      "jobTitle": "President",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4SGR1ANP5QSB39CGFY56T2D",
+      "fullName": "Derek Cummings",
+      "email": "derek@retailproductsolutions.com",
+      "jobTitle": "President",
+      "companyId": "01K542JZETY5J45B6KV1GC17CR",
+      "companyName": "Retail Product Solutions, LLC",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4D91F927CM8C98YZAFXV5G8",
+      "fullName": "Edina McGuire",
+      "email": "edina@somerstitle.com",
+      "jobTitle": "Title Processor",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DV7Q7A8C7PYAJ2DHV3HS6Q",
+      "fullName": "Jane Smith",
+      "email": "jane.smith@advancement-test.com",
+      "jobTitle": "Professional",
+      "companyId": "01K7DT5AWGFJBET1SAWMYB97KE",
+      "companyName": "Advancement Test Corp",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DV7K6JJ0TG2A5AJR2JNVTF",
+      "fullName": "Jane Smith",
+      "email": "jane.smith@testcompany.com",
+      "jobTitle": "Senior CTO",
+      "companyId": null,
+      "deletedAt": "2025-09-15T04:02:11.738Z"
+    },
+    {
+      "id": "01K7EHBFWEVZ0B5AMH97YPWFC4",
+      "fullName": "John  Smith",
+      "email": "",
+      "jobTitle": "",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K544HGF53J2Z5NJJC5G3S6EF",
+      "fullName": "John Dano",
+      "email": null,
+      "jobTitle": "VP of Sales",
+      "companyId": "01K542JZETY5J45B6KV1GC17CR",
+      "companyName": "Retail Product Solutions, LLC",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7DV7R24NNGCJ5WPFCD1BZAY",
+      "fullName": "John Doe",
+      "email": "john@test.com",
+      "jobTitle": "Professional",
+      "companyId": "01K7DT5BS5HQPQ2TTCA2GQ6RBV",
+      "companyName": "Test Corp",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7EHANV6E3P9V04FS1ZDFPZ2",
+      "fullName": "John Smith",
+      "email": "",
+      "jobTitle": "",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48QDKFSY3ZRX819FX3ZNC70",
+      "fullName": "Julie Sweet",
+      "email": "julie.sweet@accenture.com",
+      "jobTitle": "CEO",
+      "companyId": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+      "companyName": "Accenture",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48QDMH4VYFHHPDFPR0C200K",
+      "fullName": "KC McClure",
+      "email": "kc.mcclure@accenture.com",
+      "jobTitle": "CFO",
+      "companyId": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+      "companyName": "Accenture",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48QDQJVD25SQK3M99KAM1F1",
+      "fullName": "Kathleen OReilly",
+      "email": "kathleen.oreilly@accenture.com",
+      "jobTitle": "General Counsel",
+      "companyId": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+      "companyName": "Accenture",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4SB2SGDHZY5B96P95XFDXE8",
+      "fullName": "Kirk Morales",
+      "email": "kirk@winningvariant.com",
+      "jobTitle": "Professional",
+      "companyId": "01K542JZ599N6QYQTVYCPH1BH3",
+      "companyName": "Winning Variant",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48QDPH7DSA6D26KHZ28R64W",
+      "fullName": "Manish Sharma",
+      "email": "manish.sharma@accenture.com",
+      "jobTitle": "Operations Lead",
+      "companyId": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+      "companyName": "Accenture",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4D91KC0QHAFVC4R0PJWMN2Z",
+      "fullName": "Nicole Montgomery",
+      "email": "nicole@closingteamfl.com",
+      "jobTitle": "Senior Title Processor",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K48QDNK6WSSXQ4KPB82FAHH7",
+      "fullName": "Penelope Prett",
+      "email": "penelope.prett@accenture.com",
+      "jobTitle": "CTO",
+      "companyId": "01K7DTAKX02BM1WEV7QQTJFQZ0",
+      "companyName": "Accenture",
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4D912J1BY0VHEWZRY60XAGW",
+      "fullName": "Randy Cruz",
+      "email": "rcruz@gorequire.com",
+      "jobTitle": "Business Service Manager",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7EHDXZMYSEHR0NZZ2SNF08Z",
+      "fullName": "Ross Sylvester",
+      "email": "",
+      "jobTitle": "",
+      "companyId": null,
+      "deletedAt": "2025-10-13T10:24:03.163Z"
+    },
+    {
+      "id": "01K4D8Z8B94EYP2ZQ9D1RW23DX",
+      "fullName": "Shari Roll",
+      "email": "shariroll@ftgagency.com",
+      "jobTitle": "Director of Operations",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K4D90YW6HF7PW2B7KWYY1RVA",
+      "fullName": "Tami Sturdevant",
+      "email": "tsturdevant@professionaltitle.com",
+      "jobTitle": "Director of Operations",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    },
+    {
+      "id": "01K7EHB1NJGY3G3FY7T5Y27XVZ",
+      "fullName": "john Smith",
+      "email": "",
+      "jobTitle": "",
+      "companyId": null,
+      "deletedAt": "2025-10-29T14:09:07.528Z"
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "totalCompaniesDeleted": 425,
+    "totalPeopleDeleted": 25,
+    "companiesWithPeople": 6,
+    "companiesWithoutPeople": 419
+  },
+  "generatedAt": "2025-10-29T14:09:09.706Z",
+  "operation": "soft_delete_all_workspace_data"
+}
