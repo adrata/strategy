@@ -367,8 +367,8 @@ export default function SetupAccountPage() {
   if (!invitationData) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-6 sm:space-y-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col sm:items-center sm:justify-center py-4 px-4 sm:py-12 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-4 sm:space-y-8 flex-1 sm:flex-none">
         <div className="text-center">
           <h2 className="mt-4 sm:mt-6 text-2xl sm:text-3xl font-extrabold text-gray-900">
             Get Started
@@ -383,7 +383,7 @@ export default function SetupAccountPage() {
           )}
         </div>
 
-        <div className="bg-white py-6 px-4 sm:py-8 sm:px-6 shadow rounded-lg">
+        <div className="bg-white py-4 px-4 sm:py-8 sm:px-6 shadow rounded-lg pb-8 sm:pb-8">
 
           <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
             {error && (
@@ -536,15 +536,15 @@ export default function SetupAccountPage() {
               )}
             </div>
 
-            <div>
+            <div className="mt-6 mb-4 sm:mb-0">
               <button
                 type="submit"
                 disabled={submitting}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm sm:text-base font-medium rounded-md text-white bg-[#5B7FFF] hover:bg-[#4A6BFF] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5B7FFF] disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-base font-medium rounded-md text-white bg-[#5B7FFF] hover:bg-[#4A6BFF] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5B7FFF] disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] shadow-lg transform hover:scale-105 transition-all duration-200"
               >
                 {submitting ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                     Starting...
                   </>
                 ) : (

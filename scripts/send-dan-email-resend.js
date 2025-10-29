@@ -192,20 +192,83 @@ function generateEmailHTML(data) {
         @media (max-width: 600px) {
             body {
                 margin: 0;
-                padding: 10px;
+                padding: 0;
+            }
+            .container {
+                margin: 0;
+                border-radius: 0;
+                border: none;
             }
             .header, .content, .footer {
-                padding: 24px 20px;
+                padding: 20px 16px;
             }
             .header h1 {
-                font-size: 24px;
+                font-size: 22px;
+                line-height: 1.3;
+            }
+            .header p {
+                font-size: 14px;
+                margin-top: 6px;
             }
             .greeting {
                 font-size: 18px;
+                margin-bottom: 20px;
+            }
+            .main-text {
+                font-size: 15px;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+            .description {
+                font-size: 14px;
+                margin-bottom: 28px;
             }
             .cta-button {
+                font-size: 16px;
+                padding: 16px 24px;
+                min-height: 48px;
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+                text-align: center;
+            }
+            .button-container {
+                margin: 28px 0;
+            }
+            .info-section {
+                padding: 16px;
+                margin: 20px 0;
+            }
+            .info-section h3 {
                 font-size: 15px;
-                padding: 14px 28px;
+                margin-bottom: 8px;
+            }
+            .info-section p {
+                font-size: 13px;
+            }
+            .features {
+                margin: 28px 0;
+            }
+            .features h3 {
+                font-size: 15px;
+                margin-bottom: 12px;
+            }
+            .features li {
+                font-size: 13px;
+                margin-bottom: 6px;
+                padding-left: 18px;
+            }
+            .footer p {
+                font-size: 12px;
+                line-height: 1.4;
+            }
+            .footer a {
+                word-break: break-all;
+                font-size: 11px;
+            }
+            .copyright {
+                font-size: 11px;
+                margin-top: 12px;
             }
         }
     </style>
