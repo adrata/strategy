@@ -101,8 +101,14 @@ function generatePersonNextAction(fullName: string, recentActions: any[], global
 function generateCompanyNextAction(companyName: string, topPerson: any, companyRecentActions: any[]) {
   if (topPerson) {
     // Company action should align with engaging top person
-    const personAction = generatePersonNextAction(topPerson.fullName, [], topPerson.globalRank);
-    return `Engage ${topPerson.fullName} - ${personAction}`;
+    if (topPerson.nextAction) {
+      // Use the person's existing next action
+      return `Engage ${topPerson.fullName} - ${topPerson.nextAction}`;
+    } else {
+      // Person exists but no next action - generate one for them
+      const personAction = generatePersonNextAction(topPerson.fullName, [], topPerson.globalRank);
+      return `Engage ${topPerson.fullName} - ${personAction}`;
+    }
   } else {
     // No people at company, use company's own action history
     return `Research and identify key contacts at ${companyName}`;
@@ -277,7 +283,8 @@ export async function POST(request: NextRequest) {
               id: true,
               fullName: true,
               globalRank: true,
-              lastActionDate: true
+              lastActionDate: true,
+              nextAction: true
             },
             orderBy: { globalRank: 'asc' }
           });

@@ -447,20 +447,45 @@ export async function GET(request: NextRequest) {
           
           // Auto-populate nextAction text if missing
           if (!nextAction) {
-            if (lastActionText && lastActionText !== 'No action taken') {
-              if (lastActionText.toLowerCase().includes('email')) {
-                nextAction = 'Schedule a call to discuss next steps';
-              } else if (lastActionText.toLowerCase().includes('call')) {
-                nextAction = 'Send follow-up email with meeting notes';
-              } else if (lastActionText.toLowerCase().includes('linkedin')) {
-                nextAction = 'Send personalized connection message';
-              } else if (lastActionText.toLowerCase().includes('created')) {
-                nextAction = 'Send initial outreach email';
-              } else {
-                nextAction = 'Follow up on previous contact';
-              }
+            // First check if company has people attached
+            const topPerson = await prisma.people.findFirst({
+              where: {
+                companyId: company.id,
+                workspaceId: workspaceId,
+                deletedAt: null
+              },
+              select: {
+                id: true,
+                fullName: true,
+                nextAction: true,
+                globalRank: true
+              },
+              orderBy: { globalRank: 'asc' }
+            });
+
+            if (topPerson?.nextAction) {
+              // Use the person's next action
+              nextAction = `Engage ${topPerson.fullName} - ${topPerson.nextAction}`;
+            } else if (topPerson) {
+              // Person exists but no next action - generate a basic one
+              nextAction = `Engage ${topPerson.fullName} - Send introduction email`;
             } else {
-              nextAction = 'Send initial outreach email';
+              // No people at company - use company-level logic
+              if (lastActionText && lastActionText !== 'No action taken') {
+                if (lastActionText.toLowerCase().includes('email')) {
+                  nextAction = 'Schedule a call to discuss next steps';
+                } else if (lastActionText.toLowerCase().includes('call')) {
+                  nextAction = 'Send follow-up email with meeting notes';
+                } else if (lastActionText.toLowerCase().includes('linkedin')) {
+                  nextAction = 'Send personalized connection message';
+                } else if (lastActionText.toLowerCase().includes('created')) {
+                  nextAction = 'Send initial outreach email';
+                } else {
+                  nextAction = 'Follow up on previous contact';
+                }
+              } else {
+                nextAction = 'Research company and identify key contacts';
+              }
             }
           }
           

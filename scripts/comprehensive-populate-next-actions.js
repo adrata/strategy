@@ -120,16 +120,27 @@ function generatePersonNextAction(fullName, recentActions, globalRank) {
 function generateCompanyNextAction(companyName, topPerson, companyRecentActions) {
   if (topPerson) {
     // Company action should align with engaging top person
-    const personAction = generatePersonNextAction(topPerson.fullName, [], topPerson.globalRank);
-    return {
-      action: `Engage ${topPerson.fullName} - ${personAction.action}`,
-      type: personAction.type,
-      priority: personAction.priority,
-      reasoning: `Focus on highest-ranked person (${topPerson.globalRank}) at ${companyName}`
-    };
+    if (topPerson.nextAction) {
+      // Use the person's existing next action
+      return {
+        action: `Engage ${topPerson.fullName} - ${topPerson.nextAction}`,
+        type: 'person_engagement',
+        priority: topPerson.globalRank && topPerson.globalRank <= 50 ? 'high' : 
+                 topPerson.globalRank && topPerson.globalRank <= 200 ? 'medium' : 'low',
+        reasoning: `Focus on highest-ranked person (${topPerson.globalRank}) at ${companyName}`
+      };
+    } else {
+      // Person exists but no next action - generate one for them
+      const personAction = generatePersonNextAction(topPerson.fullName, [], topPerson.globalRank);
+      return {
+        action: `Engage ${topPerson.fullName} - ${personAction.action}`,
+        type: personAction.type,
+        priority: personAction.priority,
+        reasoning: `Focus on highest-ranked person (${topPerson.globalRank}) at ${companyName}`
+      };
+    }
   } else {
     // No people at company, use company's own action history
-    const companyAction = generatePersonNextAction(companyName, companyRecentActions, null);
     return {
       action: `Research and identify key contacts at ${companyName}`,
       type: 'research',
@@ -303,7 +314,8 @@ async function processCompanies(workspace) {
             id: true,
             fullName: true,
             globalRank: true,
-            lastActionDate: true
+            lastActionDate: true,
+            nextAction: true
           },
           orderBy: { globalRank: 'asc' }
         });

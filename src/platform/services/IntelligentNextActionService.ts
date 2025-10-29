@@ -13,6 +13,8 @@ export interface NextActionRecommendation {
 }
 
 export interface ActionContext {
+  entityType: 'person' | 'company';
+  entityId: string;
   personId?: string;
   companyId?: string;
   leadId?: string;
@@ -66,7 +68,7 @@ export class IntelligentNextActionService {
       }
 
       // Fallback to rule-based system
-      return this.generateFallbackNextAction(context);
+      return await this.generateFallbackNextAction(context);
       
     } catch (error) {
       console.error('❌ Error generating next action:', error);
@@ -204,6 +206,8 @@ export class IntelligentNextActionService {
       }
 
       return {
+        entityType,
+        entityId,
         personId: entityType === 'person' ? entityId : undefined,
         companyId: entityType === 'company' ? entityId : undefined,
         globalRank,
@@ -455,7 +459,7 @@ Focus on the most strategic next move that will advance the relationship through
   /**
    * Fallback rule-based next action system with AcquisitionOS framework
    */
-  private generateFallbackNextAction(context: ActionContext): NextActionRecommendation {
+  private async generateFallbackNextAction(context: ActionContext): Promise<NextActionRecommendation> {
     const recentActions = context.recentActions;
     const lastAction = recentActions[0];
     
@@ -471,7 +475,70 @@ Focus on the most strategic next move that will advance the relationship through
     const hasEmail = (context as any).hasEmail || false;
     const hasLinkedIn = (context as any).hasLinkedIn || false;
 
-    // Generate stage-based action using AcquisitionOS framework
+    // For companies, check if there are people attached and use their next action
+    if (context.entityType === 'company' && peopleCount > 0) {
+      try {
+        // Find the highest-ranked person at this company
+        const topPerson = await prisma.people.findFirst({
+          where: {
+            companyId: context.entityId,
+            workspaceId: this.config.workspaceId,
+            deletedAt: null
+          },
+          select: {
+            id: true,
+            fullName: true,
+            nextAction: true,
+            globalRank: true
+          },
+          orderBy: { globalRank: 'asc' }
+        });
+
+        if (topPerson) {
+          if (topPerson.nextAction) {
+            // Person has a next action - use it
+            return {
+              action: `Engage ${topPerson.fullName} - ${topPerson.nextAction}`,
+              date: nextDate,
+              reasoning: `Focus on highest-ranked person (${topPerson.globalRank}) at ${context.entityInfo.name}`,
+              priority: topPerson.globalRank && topPerson.globalRank <= 50 ? 'high' : 
+                       topPerson.globalRank && topPerson.globalRank <= 200 ? 'medium' : 'low',
+              type: 'person_engagement' as any,
+              context: `Person-focused action for ${context.entityInfo.name}`,
+              updatedAt: new Date()
+            };
+          } else {
+            // Person exists but no next action - generate one for them
+            const personContext = await this.getActionContext(topPerson.id, 'person');
+            if (personContext) {
+              const personAction = this.getStageBasedAction(
+                (personContext as any).companyStatus || 'UNKNOWN',
+                peopleCount,
+                (personContext as any).hasEmail || false,
+                (personContext as any).hasLinkedIn || false,
+                personContext.recentActions[0]
+              );
+              
+              return {
+                action: `Engage ${topPerson.fullName} - ${personAction.action}`,
+                date: nextDate,
+                reasoning: `Focus on highest-ranked person (${topPerson.globalRank}) at ${context.entityInfo.name}`,
+                priority: topPerson.globalRank && topPerson.globalRank <= 50 ? 'high' : 
+                         topPerson.globalRank && topPerson.globalRank <= 200 ? 'medium' : 'low',
+                type: personAction.type as any,
+                context: `Person-focused action for ${context.entityInfo.name}`,
+                updatedAt: new Date()
+              };
+            }
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error fetching top person for company:', error);
+        // Fall through to company-level action
+      }
+    }
+
+    // Generate stage-based action using AcquisitionOS framework (for people or companies with no people)
     const stageAction = this.getStageBasedAction(companyStatus, peopleCount, hasEmail, hasLinkedIn, lastAction);
     
     // Determine priority based on rank

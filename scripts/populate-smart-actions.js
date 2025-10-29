@@ -298,19 +298,54 @@ async function updatePersonNextAction(person) {
  */
 async function updateCompanyNextAction(company) {
   try {
-    // Get recent actions for context
-    const recentActions = await prisma.actions.findMany({
-      where: { 
-        companyId: company.id, 
+    // First check if company has people attached
+    const topPerson = await prisma.people.findFirst({
+      where: {
+        companyId: company.id,
         deletedAt: null
       },
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-      select: { type: true, subject: true, createdAt: true }
+      select: {
+        id: true,
+        fullName: true,
+        nextAction: true,
+        globalRank: true
+      },
+      orderBy: { globalRank: 'asc' }
     });
+
+    let nextActionData;
     
-    // Generate smart next action
-    const nextActionData = generateSmartCompanyNextAction(company, recentActions);
+    if (topPerson?.nextAction) {
+      // Use the person's existing next action
+      nextActionData = {
+        action: `Engage ${topPerson.fullName} - ${topPerson.nextAction}`,
+        type: 'person_engagement',
+        priority: topPerson.globalRank && topPerson.globalRank <= 50 ? 'high' : 
+                 topPerson.globalRank && topPerson.globalRank <= 200 ? 'medium' : 'low'
+      };
+    } else if (topPerson) {
+      // Person exists but no next action - generate one for them
+      const personAction = generateSmartNextAction(topPerson, []);
+      nextActionData = {
+        action: `Engage ${topPerson.fullName} - ${personAction.action}`,
+        type: personAction.type,
+        priority: personAction.priority
+      };
+    } else {
+      // No people at company - use company-level logic
+      const recentActions = await prisma.actions.findMany({
+        where: { 
+          companyId: company.id, 
+          deletedAt: null
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        select: { type: true, subject: true, createdAt: true }
+      });
+      
+      nextActionData = generateSmartCompanyNextAction(company, recentActions);
+    }
+    
     const nextActionDate = calculateRankBasedDate(company.globalRank, company.lastActionDate);
     
     await prisma.companies.update({
