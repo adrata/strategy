@@ -12,31 +12,6 @@ import { useUnifiedAuth } from '@/platform/auth';
 import { useWorkspaceContext } from '@/platform/hooks/useWorkspaceContext';
 import { authFetch } from '@/platform/api-fetch';
 
-// 🛠️ DEVELOPMENT: Mock data generator for when API is unavailable
-function generateMockData(section: string, limit: number): any[] {
-  const mockData = [];
-  const baseNames = {
-    companies: ['Acme Corp', 'TechStart Inc', 'Global Solutions', 'Innovation Labs', 'Future Systems'],
-    people: ['John Smith', 'Jane Doe', 'Mike Johnson', 'Sarah Wilson', 'David Brown'],
-    leads: ['Sarah Connor', 'John Wick', 'Jane Foster', 'Mike Tyson', 'David Lee'],
-    prospects: ['Alice Johnson', 'Bob Smith', 'Carol Davis', 'Dan Wilson', 'Eve Brown']
-  };
-  
-  const names = baseNames[section as keyof typeof baseNames] || baseNames.people;
-  
-  for (let i = 0; i < Math.min(limit, 20); i++) {
-    mockData.push({
-      id: `mock-${section}-${i + 1}`,
-      name: names[i % names.length],
-      company: section === 'companies' ? names[i % names.length] : 'Sample Company',
-      email: `user${i + 1}@example.com`,
-      rank: i + 1,
-      createdAt: new Date().toISOString()
-    });
-  }
-  
-  return mockData;
-}
 
 interface UseFastSectionDataReturn {
   data: any[];
@@ -203,6 +178,9 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
         case 'companies':
           // For companies, use v1 API with increased limit (now supports up to 10000 records)
           url = `/api/v1/companies?limit=${Math.max(limit, 10000)}${refreshParam}`;
+          break;
+        case 'partners':
+          url = `/api/v1/partners?limit=${Math.max(limit, 10000)}${refreshParam}`;
           break;
         default:
           // Fallback to old section API for unsupported sections
@@ -424,16 +402,6 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       // Don't set error for network failures - just log and continue
       if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError') || errorMessage.includes('HTTP')) {
         console.warn(`⚠️ [FAST SECTION DATA] Network/HTTP error for ${section} - will retry later`);
-        
-        // In development mode, provide mock data to prevent UI issues
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`🛠️ [FAST SECTION DATA] Development mode - providing mock data for ${section}`);
-          const mockData = generateMockData(section, limit);
-          setData(mockData);
-          setCount(mockData.length);
-          setLoadedSections(prev => new Set(prev).add(section));
-        }
-        
         setError(null); // Clear any previous errors
       } else {
         setError(errorMessage);

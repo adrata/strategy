@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSecureApiContext, createErrorResponse } from '@/platform/services/secure-api-helper';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/platform/database/prisma-client';
 
 export async function GET(request: NextRequest) {
   try {

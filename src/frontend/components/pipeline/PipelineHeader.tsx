@@ -174,6 +174,9 @@ export function PipelineHeader({
       case 'people':
         setShowAddPersonModal(true);
         break;
+      case 'partners':
+        setShowAddPersonModal(true);
+        break;
       case 'speedrun':
         console.log('Opening Add Action modal for speedrun...');
         setShowAddActionModal(true);
@@ -1269,7 +1272,7 @@ export function PipelineHeader({
               ) : (
                 <div className="flex items-center gap-2">
                   {/* For prospects, leads, opportunities, companies, people, clients, and speedrun, show custom buttons; for others, show unified button */}
-                  {section === 'prospects' || section === 'leads' || section === 'opportunities' || section === 'companies' || section === 'people' || section === 'clients' || section === 'sellers' || section === 'speedrun' ? (
+                  {section === 'prospects' || section === 'leads' || section === 'opportunities' || section === 'companies' || section === 'people' || section === 'clients' || section === 'partners' || section === 'sellers' || section === 'speedrun' ? (
                     <>
                       {sectionInfo['actionButton'] && (
                         <button 

@@ -1,129 +1,131 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authFetch } from '@/platform/api-fetch';
+import { prisma } from '@/platform/database/prisma-client';
+import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAndCreateErrorResponse, SecureApiContext } from '@/platform/services/secure-api-helper';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  let context: SecureApiContext | null = null;
+  
   try {
+    // Authenticate and authorize user
+    const authResult = await getSecureApiContext(request);
+    if (!authResult.success) {
+      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401);
+    }
+    context = authResult.data;
+
     const companyId = params.id;
     const body = await request.json();
+    
+    // Verify the company exists and user has access
+    const company = await prisma.companies.findFirst({
+      where: {
+        id: companyId,
+        workspaceId: context.workspaceId,
+        deletedAt: null
+      }
+    });
+
+    if (!company) {
+      return createErrorResponse('Company not found', 'COMPANY_NOT_FOUND', 404);
+    }
     
     // Check if we're linking an existing person or creating a new one
     if (body.personId) {
       // Link existing person to company
-      return await linkExistingPersonToCompany(companyId, body.personId);
+      return await linkExistingPersonToCompany(companyId, body.personId, context);
     } else {
       // Create new person and link to company
-      return await createNewPersonForCompany(companyId, body);
+      return await createNewPersonForCompany(companyId, body, context);
     }
   } catch (error) {
-    console.error('Error in POST /api/companies/[id]/people:', error);
-    return NextResponse.json(
-      { error: 'Failed to process request' },
-      { status: 500 }
+    return logAndCreateErrorResponse(
+      error,
+      {
+        endpoint: 'COMPANIES_PEOPLE_API',
+        userId: context?.userId,
+        workspaceId: context?.workspaceId,
+        requestId: request.headers.get('x-request-id') || undefined
+      },
+      'Failed to process request',
+      'COMPANIES_PEOPLE_ERROR',
+      500
     );
   }
 }
 
-async function linkExistingPersonToCompany(companyId: string, personId: string) {
+async function linkExistingPersonToCompany(companyId: string, personId: string, context: SecureApiContext) {
   try {
-    // First, get the person to verify they exist
-    const personResponse = await authFetch(`/api/v1/people/${personId}`);
-    if (!personResponse.success) {
-      return NextResponse.json(
-        { error: 'Person not found' },
-        { status: 404 }
-      );
+    // First, get the person to verify they exist and user has access
+    const person = await prisma.people.findFirst({
+      where: {
+        id: personId,
+        workspaceId: context.workspaceId,
+        deletedAt: null
+      }
+    });
+
+    if (!person) {
+      return createErrorResponse('Person not found', 'PERSON_NOT_FOUND', 404);
     }
-    
-    const person = personResponse.data;
     
     // Update the person with the company information
-    const updateResponse = await authFetch(`/api/v1/people/${personId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...person,
+    const updatedPerson = await prisma.people.update({
+      where: { id: personId },
+      data: {
         companyId: companyId,
-        company: person.company || 'Unknown Company' // Keep existing company name or set default
-      })
+        company: person.company || company.name || 'Unknown Company'
+      }
     });
     
-    if (!updateResponse.success) {
-      return NextResponse.json(
-        { error: updateResponse.error || 'Failed to link person to company' },
-        { status: 500 }
-      );
-    }
-    
-    const updatedPerson = updateResponse.data;
-    
-    return NextResponse.json({
-      success: true,
-      data: updatedPerson,
-      message: 'Person successfully linked to company'
-    });
+    return createSuccessResponse(updatedPerson, 'Person successfully linked to company');
     
   } catch (error) {
     console.error('Error linking person to company:', error);
-    return NextResponse.json(
-      { error: 'Failed to link person to company' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to link person to company', 'LINK_PERSON_ERROR', 500);
   }
 }
 
-async function createNewPersonForCompany(companyId: string, personData: any) {
+async function createNewPersonForCompany(companyId: string, personData: any, context: SecureApiContext) {
   try {
-    // Get company information to include in person data
-    const companyResponse = await authFetch(`/api/v1/companies/${companyId}`);
-    let companyName = 'Unknown Company';
-    
-    if (companyResponse.success) {
-      const company = companyResponse.data;
-      companyName = company.name || companyName;
+    // Get company information
+    const company = await prisma.companies.findFirst({
+      where: {
+        id: companyId,
+        workspaceId: context.workspaceId,
+        deletedAt: null
+      }
+    });
+
+    if (!company) {
+      return createErrorResponse('Company not found', 'COMPANY_NOT_FOUND', 404);
     }
     
     // Create the person with company association
-    const createPersonData = {
-      ...personData,
-      companyId: companyId,
-      company: companyName,
-      status: personData.status || 'LEAD',
-      source: personData.source || 'Manual Entry'
-    };
-    
-    const createResponse = await authFetch('/api/v1/people', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(createPersonData)
+    const newPerson = await prisma.people.create({
+      data: {
+        firstName: personData.firstName || '',
+        lastName: personData.lastName || '',
+        fullName: `${personData.firstName || ''} ${personData.lastName || ''}`.trim(),
+        email: personData.email || null,
+        phone: personData.phone || null,
+        jobTitle: personData.jobTitle || null,
+        state: personData.state || null,
+        companyId: companyId,
+        company: company.name,
+        status: personData.status || 'LEAD',
+        source: personData.source || 'Manual Entry',
+        workspaceId: context.workspaceId,
+        mainSellerId: context.userId
+      }
     });
     
-    if (!createResponse.success) {
-      return NextResponse.json(
-        { error: createResponse.error || 'Failed to create person' },
-        { status: 500 }
-      );
-    }
-    
-    const newPerson = createResponse.data;
-    
-    return NextResponse.json({
-      success: true,
-      data: newPerson,
-      message: 'Person successfully created and linked to company'
-    });
+    return createSuccessResponse(newPerson, 'Person successfully created and linked to company');
     
   } catch (error) {
     console.error('Error creating person for company:', error);
-    return NextResponse.json(
-      { error: 'Failed to create person' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to create person', 'CREATE_PERSON_ERROR', 500);
   }
 }
