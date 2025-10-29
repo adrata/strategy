@@ -1321,11 +1321,13 @@ enum ActionPriority {
 }
 
 enum CompanyStatus {
+  LEAD
+  PROSPECT
+  OPPORTUNITY
+  CLIENT
+  SUPERFAN
   ACTIVE
   INACTIVE
-  PROSPECT
-  CLIENT
-  OPPORTUNITY
 }
 
 enum CompanyPriority {
