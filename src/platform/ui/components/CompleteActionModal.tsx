@@ -342,6 +342,31 @@ export function CompleteActionModal({
     }
   };
 
+  const handleClose = () => {
+    if (!isLoading) {
+      setFormData({
+        person: personName || '',
+        personId: '',
+        company: companyName || '',
+        companyId: '',
+        type: 'LinkedIn Connection',
+        time: 'Now',
+        action: '',
+        actionPerformedBy: currentUser?.id || ''
+      });
+      setPersonSearchQuery('');
+      setPersonSearchResults([]);
+      setShowCreatePersonForm(false);
+      setNewPersonData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        jobTitle: ''
+      });
+      onClose();
+    }
+  };
+
   // Document-level keyboard shortcut handler for better reliability
   useEffect(() => {
     if (!isOpen) return;
@@ -422,31 +447,6 @@ export function CompleteActionModal({
 
   // Handle ESC key to close modal
   useEscapeKey(isOpen, handleClose);
-
-  const handleClose = () => {
-    if (!isLoading) {
-      setFormData({
-        person: personName || '',
-        personId: '',
-        company: companyName || '',
-        companyId: '',
-        type: 'LinkedIn Connection',
-        time: 'Now',
-        action: '',
-        actionPerformedBy: currentUser?.id || ''
-      });
-      setPersonSearchQuery('');
-      setPersonSearchResults([]);
-      setShowCreatePersonForm(false);
-      setNewPersonData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        jobTitle: ''
-      });
-      onClose();
-    }
-  };
 
   if (!isOpen) return null;
 
