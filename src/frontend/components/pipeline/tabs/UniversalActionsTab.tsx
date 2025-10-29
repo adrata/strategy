@@ -748,7 +748,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                     <InlineEditField
                       value={event.description}
                       field="description"
-                      onSave={handleOptimisticSave || (() => Promise.resolve())}
+                      onSave={handleOptimisticSave}
                       recordId={event.id}
                       recordType="action"
                       onSuccess={handleSuccess}

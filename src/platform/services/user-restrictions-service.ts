@@ -15,6 +15,7 @@ export interface UserRestriction {
         [appId: string]: string[];
       };
       disabledFeatures: string[];
+      sectionOrder?: string[]; // Optional custom section ordering
     };
   };
 }
@@ -24,6 +25,7 @@ export interface UserRestrictionCheck {
   allowedApps: string[];
   allowedSections: { [appId: string]: string[] };
   disabledFeatures: string[];
+  sectionOrder?: string[]; // Custom section ordering
 }
 
 // Dan's user restrictions for adrata workspace (matching TOP workspace restrictions)
@@ -49,6 +51,30 @@ const USER_RESTRICTIONS: UserRestriction[] = [
           'Speedrun': ['inbox', 'prospects', 'leads', 'pipeline', 'analytics', 'settings']
         },
         disabledFeatures: ['OASIS', 'STACKS', 'ATRIUM', 'METRICS', 'CHRONICLE']
+      }
+    }
+  },
+  {
+    userId: 'dano-user-id', // Dano's user ID (placeholder - will be updated with actual ID)
+    email: 'dano@notaryeveryday.com',
+    workspaceRestrictions: {
+      'notary everyday': {
+        allowedApps: ['pipeline', 'monaco'],
+        allowedSections: {
+          'pipeline': ['speedrun', 'leads', 'prospects', 'opportunities', 'clients', 'people', 'companies', 'partners'],
+          'monaco': ['companies', 'people', 'sellers', 'sequences', 'analytics']
+        },
+        disabledFeatures: ['OASIS', 'STACKS', 'ATRIUM', 'METRICS', 'CHRONICLE'],
+        sectionOrder: ['clients', 'people', 'companies', 'partners'] // Custom section ordering
+      },
+      'Notary Everyday': {
+        allowedApps: ['pipeline', 'monaco'],
+        allowedSections: {
+          'pipeline': ['speedrun', 'leads', 'prospects', 'opportunities', 'clients', 'people', 'companies', 'partners'],
+          'monaco': ['companies', 'people', 'sellers', 'sequences', 'analytics']
+        },
+        disabledFeatures: ['OASIS', 'STACKS', 'ATRIUM', 'METRICS', 'CHRONICLE'],
+        sectionOrder: ['clients', 'people', 'companies', 'partners'] // Custom section ordering
       }
     }
   }
@@ -112,7 +138,8 @@ export function getUserRestrictions(
     hasRestrictions: true,
     allowedApps: workspaceRestriction?.allowedApps || [],
     allowedSections: workspaceRestriction?.allowedSections || {},
-    disabledFeatures: workspaceRestriction?.disabledFeatures || []
+    disabledFeatures: workspaceRestriction?.disabledFeatures || [],
+    sectionOrder: workspaceRestriction?.sectionOrder
   };
 }
 
@@ -188,6 +215,23 @@ export function getFilteredSectionsForUser(
   }
   
   return restrictions.allowedSections[appId] || [];
+}
+
+/**
+ * Get custom section order for a user in a workspace
+ */
+export function getCustomSectionOrder(
+  userId: string,
+  userEmail: string,
+  workspaceSlug: string
+): string[] | null {
+  const restrictions = getUserRestrictions(userId, userEmail, workspaceSlug);
+  
+  if (!restrictions.hasRestrictions || !restrictions.sectionOrder) {
+    return null; // No custom ordering
+  }
+  
+  return restrictions.sectionOrder;
 }
 
 /**

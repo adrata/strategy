@@ -1,9 +1,10 @@
 interface UniversalPainValueTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalPainValueTab({ record, recordType }: UniversalPainValueTabProps) {
+export function UniversalPainValueTab({ record, recordType, onSave }: UniversalPainValueTabProps) {
   const getValueColor = (value: number | null) => {
     if (!value) return 'text-[var(--muted)]';
     if (value >= 100000) return 'text-green-600';

@@ -5,6 +5,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useMe
 // import { demoScenarioService } from "@/platform/services/DemoScenarioService";
 import { getSpeedrunDataService } from "@/platform/services/speedrun-data-service";
 import { useUnifiedAuth } from "@/platform/auth";
+import { getWorkspaceSlugInfo } from "@/platform/auth/workspace-slugs";
 
 interface PipelineContextType {
   // UI State
@@ -42,7 +43,11 @@ interface PipelineContextType {
   // User Data
   user: { name: string; initial: string };
   company: string;
-  workspace: string;
+  workspace: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
 }
 
 const PipelineContext = createContext<PipelineContextType | undefined>(undefined);
@@ -82,12 +87,20 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
       .slice(0, 3) : ""
   };
   
-  // Get workspace name from auth context ONLY (no generic fallbacks)
+  // Get workspace from auth context ONLY (no generic fallbacks)
   const activeWorkspace = authUser?.workspaces?.find(w => w['id'] === authUser.activeWorkspaceId);
   const company = "Adrata"; // Always display Adrata as the company name
   
-  // Use the actual workspace name from the user's account
-  let workspace = activeWorkspace?.name || "";
+  // Create workspace object with slug information
+  let workspace = null;
+  if (activeWorkspace) {
+    const workspaceSlugInfo = getWorkspaceSlugInfo(activeWorkspace);
+    workspace = {
+      id: activeWorkspace.id,
+      name: activeWorkspace.name,
+      slug: workspaceSlugInfo.slug
+    };
+  }
   
   // Update workspace when activeWorkspaceId changes
   useEffect(() => {
@@ -97,7 +110,7 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
     }
   }, [authUser?.activeWorkspaceId, authUser?.workspaces]);
   
-  console.log(`🏢 Pipeline Context: User: ${user.name}, Company: ${company}, Workspace: ${workspace}`);
+  console.log(`🏢 Pipeline Context: User: ${user.name}, Company: ${company}, Workspace: ${workspace?.name || 'None'}`);
 
 
   // 🚨 CRITICAL FIX: Memoize context value to prevent unnecessary re-renders

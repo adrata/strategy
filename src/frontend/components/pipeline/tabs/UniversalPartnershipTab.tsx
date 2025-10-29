@@ -1,9 +1,10 @@
 interface UniversalPartnershipTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalPartnershipTab({ record, recordType }: UniversalPartnershipTabProps) {
+export function UniversalPartnershipTab({ record, recordType, onSave }: UniversalPartnershipTabProps) {
   return (
     <div className="p-6 space-y-8">
       {/* Partnership Overview */}

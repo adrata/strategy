@@ -29,7 +29,7 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
             <InlineEditField
               value={record?.activeOpportunities}
               field="activeOpportunities"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
@@ -44,7 +44,7 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
             <InlineEditField
               value={record?.jointRevenue ? `$${record.jointRevenue.toLocaleString()}` : ''}
               field="jointRevenue"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
@@ -59,7 +59,7 @@ export function UniversalCollaborationTab({ record, recordType, onSave }: Univer
             <InlineEditField
               value={record?.activeProjects}
               field="activeProjects"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}

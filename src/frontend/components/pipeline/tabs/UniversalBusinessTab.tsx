@@ -29,7 +29,7 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
             <InlineEditField
               value={record?.accountValue ? `$${record.accountValue.toLocaleString()}` : record?.revenue ? `$${record.revenue.toLocaleString()}` : ''}
               field="accountValue"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
@@ -44,7 +44,7 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
             <InlineEditField
               value={record?.growthRate ? `${Math.round(record.growthRate)}%` : ''}
               field="growthRate"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
@@ -59,7 +59,7 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
             <InlineEditField
               value={record?.expansionPotential}
               field="expansionPotential"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}

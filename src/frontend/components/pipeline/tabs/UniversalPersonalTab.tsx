@@ -40,7 +40,7 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
                 <InlineEditField
                   value={formatEmptyValue(record?.city && record?.state ? `${record.city}, ${record.state}` : record?.city || record?.state)}
                   field="city"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -52,7 +52,7 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
                 <InlineEditField
                   value={formatEmptyValue(record?.timezone)}
                   field="timezone"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -64,7 +64,7 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
                 <InlineEditField
                   value={record?.preferredLanguage || 'English'}
                   field="preferredLanguage"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -83,7 +83,7 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
                 <InlineEditField
                   value={record?.yearsExperience}
                   field="yearsExperience"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -96,7 +96,7 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
                 <InlineEditField
                   value={record?.education}
                   field="education"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -109,7 +109,7 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
                 <InlineEditField
                   value={record?.certifications}
                   field="certifications"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -122,7 +122,7 @@ export function UniversalPersonalTab({ record, recordType, onSave, onSuccess }: 
                 <InlineEditField
                   value={record?.previousCompanies}
                   field="previousCompanies"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}

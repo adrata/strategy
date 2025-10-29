@@ -307,6 +307,9 @@ export async function GET(request: NextRequest) {
           else if (diffDays <= 7) lastActionTime = `${diffDays} days ago`;
           else if (diffDays <= 30) lastActionTime = `${Math.floor(diffDays / 7)} weeks ago`;
           else lastActionTime = `${Math.floor(diffDays / 30)} months ago`;
+        } else {
+          // No meaningful action - set standard text
+          lastAction = 'Record added';
         }
         // If no meaningful action exists, lastActionTime remains 'Never'
 

@@ -70,7 +70,7 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
                   <InlineEditField
                     value={stakeholder.name || `${stakeholder.firstName || ''} ${stakeholder.lastName || ''}`.trim()}
                     field="name"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={stakeholder.id}
                     recordType="stakeholder"
                     onSuccess={handleSuccess}
@@ -80,7 +80,7 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
                   <InlineEditField
                     value={stakeholder.title || stakeholder.role}
                     field="title"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={stakeholder.id}
                     recordType="stakeholder"
                     onSuccess={handleSuccess}
@@ -90,7 +90,7 @@ export function UniversalStakeholdersTab({ record, recordType, onSave }: Univers
                   <InlineEditField
                     value={stakeholder.email}
                     field="email"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={stakeholder.id}
                     recordType="stakeholder"
                     onSuccess={handleSuccess}

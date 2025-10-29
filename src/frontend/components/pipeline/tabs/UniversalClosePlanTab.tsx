@@ -1,9 +1,10 @@
 interface UniversalClosePlanTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalClosePlanTab({ record, recordType }: UniversalClosePlanTabProps) {
+export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalClosePlanTabProps) {
   return (
     <div className="p-6 space-y-8">
       {/* Close Strategy */}

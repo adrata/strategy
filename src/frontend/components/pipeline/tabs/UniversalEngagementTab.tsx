@@ -1,9 +1,10 @@
 interface UniversalEngagementTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalEngagementTab({ record, recordType }: UniversalEngagementTabProps) {
+export function UniversalEngagementTab({ record, recordType, onSave }: UniversalEngagementTabProps) {
   return (
     <div className="p-6 space-y-8">
       {/* Engagement Overview */}

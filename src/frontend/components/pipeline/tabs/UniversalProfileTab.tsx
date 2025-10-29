@@ -94,7 +94,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   <InlineEditField
                     value={profileData.personalInfo.email}
                     field="email"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
@@ -115,7 +115,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   <InlineEditField
                     value={profileData.personalInfo.phone}
                     field="phone"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
@@ -136,7 +136,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   <InlineEditField
                     value={profileData.personalInfo.linkedin}
                     field="linkedinUrl"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
@@ -157,7 +157,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   <InlineEditField
                     value={profileData.personalInfo.linkedinNavigatorUrl}
                     field="linkedinNavigatorUrl"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
@@ -178,7 +178,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   <InlineEditField
                     value={profileData.personalInfo.bio}
                     field="bio"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
@@ -205,7 +205,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   <InlineEditField
                     value={profileData.personalInfo.location}
                     field="location"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
@@ -255,7 +255,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={profileData.personalInfo.title}
                   field="title"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -269,7 +269,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={profileData.professionalInfo.department}
                   field="department"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -283,7 +283,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={profileData.professionalInfo.seniority}
                   field="seniority"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -298,7 +298,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   value={profileData.personalInfo.company}
                   field="company"
                   variant="company"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -317,7 +317,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={profileData.communication.style}
                   field="communicationStyle"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -331,7 +331,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={profileData.communication.decisionMaking}
                   field="decisionMakingStyle"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}

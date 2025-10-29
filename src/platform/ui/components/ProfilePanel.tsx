@@ -136,7 +136,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     try {
       await signOut();
       // Redirect to sign-in page
-      router.push('/sign-in');
+      router.push('/sign-in/');
     } catch (error) {
       console.error("❌ ProfilePanel: Sign out error:", error);
     }

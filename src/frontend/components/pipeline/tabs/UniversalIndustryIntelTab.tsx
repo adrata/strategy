@@ -1,9 +1,10 @@
 interface UniversalIndustryIntelTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalIndustryIntelTab({ record, recordType }: UniversalIndustryIntelTabProps) {
+export function UniversalIndustryIntelTab({ record, recordType, onSave }: UniversalIndustryIntelTabProps) {
   return (
     <div className="space-y-6">
       {/* Industry Overview */}

@@ -1,9 +1,10 @@
 interface UniversalOutreachTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalOutreachTab({ record, recordType }: UniversalOutreachTabProps) {
+export function UniversalOutreachTab({ record, recordType, onSave }: UniversalOutreachTabProps) {
   return (
     <div className="p-6 space-y-8">
       {/* Contact Strategy */}

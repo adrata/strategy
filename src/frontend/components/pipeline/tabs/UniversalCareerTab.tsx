@@ -194,7 +194,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
               <InlineEditField
                 value={record?.jobTitle || record?.title}
                 field="title"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={onSave}
                 recordId={record.id}
                 recordType={recordType}
                 onSuccess={handleSuccess}
@@ -208,7 +208,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
                 value={careerData.companyName}
                 field="company"
                 variant="company"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={onSave}
                 recordId={record.id}
                 recordType={recordType}
                 onSuccess={handleSuccess}
@@ -221,7 +221,7 @@ export function UniversalCareerTab({ recordType, record: recordProp, onSave }: U
               <InlineEditField
                 value={careerData.department}
                 field="department"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={onSave}
                 recordId={record.id}
                 recordType={recordType}
                 onSuccess={handleSuccess}

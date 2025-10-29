@@ -364,7 +364,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={influenceLevel}
                   field="influenceLevel"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -404,7 +404,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={seniority}
                   field="seniority"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -417,7 +417,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={department}
                   field="department"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}

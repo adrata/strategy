@@ -20,6 +20,7 @@ import { getPlatform } from "@/platform/platform-detection";
 import { useStacksAccess, useOasisAccess, useAtriumAccess, useMetricsAccess, useChronicleAccess, useDesktopDownloadAccess } from "@/platform/ui/context/FeatureAccessProvider";
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { getFilteredSectionsForWorkspace } from "@/platform/utils/section-filter";
+import { getCustomSectionOrder } from "@/platform/services/user-restrictions-service";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 
@@ -843,6 +844,25 @@ function PipelineSections({
     // DESKTOP DOWNLOAD: Show only for specific workspaces
   ];
 
+  // Apply custom section ordering for specific users
+  const customSectionOrder = getCustomSectionOrder(userId || '', authUser?.email || '', workspaceSlug);
+  let orderedSections = sections;
+  
+  if (customSectionOrder && customSectionOrder.length > 0) {
+    // Create a map of section id to section object for quick lookup
+    const sectionMap = new Map(sections.map(section => [section.id, section]));
+    
+    // Reorder sections based on custom order, keeping sections not in the custom order at the end
+    const customOrderedSections = customSectionOrder
+      .map(sectionId => sectionMap.get(sectionId))
+      .filter(Boolean); // Remove undefined entries
+    
+    // Add remaining sections that weren't in the custom order
+    const remainingSections = sections.filter(section => !customSectionOrder.includes(section.id));
+    
+    orderedSections = [...customOrderedSections, ...remainingSections];
+  }
+
   // 🛡️ VALIDATION: Ensure we have valid workspace and user IDs before proceeding
   // This must come AFTER all hooks are declared to prevent React hooks errors
   if (!safeWorkspaceId || !safeUserId) {
@@ -890,7 +910,7 @@ function PipelineSections({
 
   
   // Filter visible sections
-  const visibleSections = sections.filter(section => section.visible);
+  const visibleSections = orderedSections.filter(section => section.visible);
   
   // Split sections: first 7 visible, rest in "More"
   const mainSections = visibleSections.slice(0, 7);
@@ -1094,13 +1114,13 @@ export function PipelineLeftPanelStandalone({
     }
 
     // Check if this is Adrata or Notary Everyday workspace (for unrestricted users)
-    const isAdrataOrNotaryEveryday = workspace.toLowerCase() === 'adrata' || 
-                                    workspace.toLowerCase() === 'notary everyday' ||
-                                    workspace.toLowerCase() === 'notaryeveryday';
+    const isAdrataOrNotaryEveryday = workspace?.name?.toLowerCase() === 'adrata' || 
+                                    workspace?.name?.toLowerCase() === 'notary everyday' ||
+                                    workspace?.name?.toLowerCase() === 'notaryeveryday';
     
     if (isAdrataOrNotaryEveryday) {
       // Show ProfilePanel for Adrata and Notary Everyday workspaces (unrestricted users)
-      console.log('🔘 Opening ProfilePanel for workspace:', workspace);
+      console.log('🔘 Opening ProfilePanel for workspace:', workspace?.name);
       const newState = !isProfilePanelVisible;
       console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
       setIsProfilePanelVisible(newState);

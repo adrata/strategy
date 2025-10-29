@@ -425,7 +425,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.status || prospectData.stage || 'LEAD'}
                   field="status"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -452,7 +452,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.name}
                   field="name"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -464,7 +464,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.title}
                   field="title"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -477,7 +477,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   value={prospectData.company}
                   field="company"
                   variant="company"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -489,7 +489,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.department}
                   field="department"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -501,7 +501,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={formatEmptyValue(prospectData.bio)}
                   field="bio"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -520,7 +520,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.buyerGroupRole}
                   field="buyerGroupRole"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -546,7 +546,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.influenceLevel}
                   field="influenceLevel"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -564,7 +564,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.engagementPriority}
                   field="engagementPriority"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -594,7 +594,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.email}
                   field="email"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -607,7 +607,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.phone}
                   field="phone"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -620,7 +620,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={formatEmptyValue(prospectData.linkedin)}
                   field="linkedinUrl"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -632,7 +632,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.linkedinNavigatorUrl || null}
                   field="linkedinNavigatorUrl"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -645,7 +645,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   value={prospectData.linkedinConnectionDate}
                   field="linkedinConnectionDate"
                   variant="date"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -668,7 +668,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 <InlineEditField
                   value={prospectData.nextAction}
                   field="nextAction"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}

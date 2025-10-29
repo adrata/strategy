@@ -62,7 +62,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
         setLinkedinNavigatorUrl(newLinkedinNavigatorUrl);
       }
     }
-  }, [record, linkedinUrl, linkedinNavigatorUrl]);
+  }, [record]);
 
   const handleSuccess = (message: string) => {
     setSuccessMessage(message);
@@ -676,7 +676,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.status || recordData.stage || 'LEAD'}
                   field="status"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -703,7 +703,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.name}
                   field="name"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -715,7 +715,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.title}
                   field="title"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -728,7 +728,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   value={recordData.company}
                   field="company"
                   variant="company"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -740,7 +740,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.department}
                   field="department"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -752,7 +752,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.hqState || recordData.state}
                   field="state"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -764,7 +764,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.bio || null}
                   field="bio"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -788,7 +788,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                     { value: 'Yes', label: 'Yes' },
                     { value: 'No', label: 'No' }
                   ]}
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -800,7 +800,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={record.buyerGroupRole || 'Stakeholder'}
                   field="buyerGroupRole"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -812,7 +812,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.influenceLevel || null}
                   field="influenceLevel"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -824,7 +824,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={record.customFields?.decisionPower || '70'}
                   field="decisionPower"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -836,7 +836,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={record.customFields?.engagementLevel || 'Medium'}
                   field="engagementLevel"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -860,7 +860,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.email || null}
                   field="email"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -872,7 +872,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.phone || null}
                   field="phone"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -884,7 +884,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                 <InlineEditField
                   value={recordData.linkedin || null}
                   field="linkedinUrl"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={(message) => handleFieldSuccess('linkedinUrl', recordData.linkedin || '', message)}
@@ -909,7 +909,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   value={recordData.linkedinConnectionDate}
                   field="linkedinConnectionDate"
                   variant="date"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -932,7 +932,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   <InlineEditField
                     value={recordData.lastAction || '-'}
                     field="lastAction"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
@@ -949,7 +949,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   <InlineEditField
                     value={recordData.nextAction || null}
                     field="nextAction"
-                    onSave={onSave || (() => Promise.resolve())}
+                    onSave={onSave}
                     recordId={record.id}
                     recordType={recordType}
                     onSuccess={handleSuccess}
@@ -1005,7 +1005,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
               value={record.notes && record.notes !== 'No notes available' && record.notes.trim() !== '' ? record.notes : ''}
               field="notes"
               type="textarea"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}

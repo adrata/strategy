@@ -360,7 +360,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={personData.name}
                   field="name"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -372,7 +372,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={personData.title}
                   field="title"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -385,7 +385,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   value={personData.company}
                   field="company"
                   variant="company"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   companyId={record.companyId || (typeof record.company === 'object' && record.company?.id) || null}
@@ -398,7 +398,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={personData.department}
                   field="department"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -410,7 +410,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={formatEmptyValue(personData.bio)}
                   field="bio"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -429,7 +429,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={personData.influenceLevel}
                   field="influenceLevel"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -447,7 +447,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={personData.engagementStrategy}
                   field="engagementStrategy"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -491,7 +491,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={personData.email}
                   field="email"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -504,7 +504,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={personData.phone}
                   field="phone"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -517,7 +517,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={formatEmptyValue(personData.linkedin)}
                   field="linkedinUrl"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -529,7 +529,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                 <InlineEditField
                   value={personData.linkedinNavigatorUrl || null}
                   field="linkedinNavigatorUrl"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
@@ -542,7 +542,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   value={personData.linkedinConnectionDate}
                   field="linkedinConnectionDate"
                   variant="date"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={onSave}
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}

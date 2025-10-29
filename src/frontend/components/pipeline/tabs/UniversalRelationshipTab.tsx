@@ -1,9 +1,10 @@
 interface UniversalRelationshipTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalRelationshipTab({ record, recordType }: UniversalRelationshipTabProps) {
+export function UniversalRelationshipTab({ record, recordType, onSave }: UniversalRelationshipTabProps) {
   return (
     <div className="p-6 space-y-8">
       {/* Relationship Overview */}

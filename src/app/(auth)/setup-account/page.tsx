@@ -320,24 +320,24 @@ export default function SetupAccountPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-6 sm:space-y-8">
           <div className="text-center">
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-4 sm:mt-6 text-2xl sm:text-3xl font-extrabold text-gray-900">
               Get Started
             </h2>
             <p className="mt-2 text-sm text-gray-600">
               Loading your invitation...
             </p>
           </div>
-          <div className="bg-white py-8 px-6 shadow rounded-lg">
-            <div className="animate-pulse space-y-6">
+          <div className="bg-white py-6 px-4 sm:py-8 sm:px-6 shadow rounded-lg">
+            <div className="animate-pulse space-y-4 sm:space-y-6">
               <div className="h-4 bg-gray-200 rounded w-3/4"></div>
               <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
+              <div className="h-10 sm:h-12 bg-gray-200 rounded"></div>
+              <div className="h-10 sm:h-12 bg-gray-200 rounded"></div>
+              <div className="h-10 sm:h-12 bg-gray-200 rounded"></div>
+              <div className="h-10 sm:h-12 bg-gray-200 rounded"></div>
             </div>
           </div>
         </div>
@@ -347,14 +347,14 @@ export default function SetupAccountPage() {
 
   if (error && !invitationData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
-          <ExclamationTriangleIcon className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">Invalid Invitation</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8 px-4">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 sm:p-8 text-center">
+          <ExclamationTriangleIcon className="h-10 w-10 sm:h-12 sm:w-12 text-red-500 mx-auto mb-4" />
+          <h1 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Invalid Invitation</h1>
+          <p className="text-sm sm:text-base text-gray-600 mb-6">{error}</p>
           <button
             onClick={() => router.push('/sign-in')}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+            className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm sm:text-base min-h-[44px]"
           >
             Go to Sign In
           </button>
@@ -367,31 +367,31 @@ export default function SetupAccountPage() {
   if (!invitationData) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-4 sm:mt-6 text-2xl sm:text-3xl font-extrabold text-gray-900">
             Get Started
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm sm:text-base text-gray-600">
             You've been invited to join <strong>{invitationData.workspace?.name}</strong> on Adrata
           </p>
           {invitationData.inviter && (
-            <p className="text-sm text-gray-500">
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
               Invited by {invitationData.inviter.name}
             </p>
           )}
         </div>
 
-        <div className="bg-white py-8 px-6 shadow rounded-lg">
+        <div className="bg-white py-6 px-4 sm:py-8 sm:px-6 shadow rounded-lg">
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-4">
+              <div className="bg-red-50 border border-red-200 rounded-md p-3 sm:p-4">
                 <div className="flex">
-                  <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
-                  <div className="ml-3">
-                    <p className="text-sm text-red-800">{error}</p>
+                  <ExclamationTriangleIcon className="h-4 w-4 sm:h-5 sm:w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <div className="ml-2 sm:ml-3">
+                    <p className="text-xs sm:text-sm text-red-800">{error}</p>
                   </div>
                 </div>
               </div>
@@ -409,7 +409,7 @@ export default function SetupAccountPage() {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value.toLowerCase())}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none block w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base min-h-[44px]"
                   placeholder="Enter your username"
                 />
               </div>
@@ -427,7 +427,7 @@ export default function SetupAccountPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none block w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base min-h-[44px]"
                   placeholder="Enter your email"
                 />
               </div>
@@ -445,12 +445,12 @@ export default function SetupAccountPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
+                  className="appearance-none block w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-12 sm:pr-10 text-sm sm:text-base min-h-[44px]"
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center min-h-[44px] min-w-[44px] justify-center"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -464,7 +464,7 @@ export default function SetupAccountPage() {
               {/* Password Strength Indicator */}
               {password && (
                 <div className="mt-2">
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-xs sm:text-sm">
                     <span className="text-gray-600">Password strength:</span>
                     <span className={`font-medium ${
                       passwordStrength < 25 ? 'text-red-600' :
@@ -482,22 +482,22 @@ export default function SetupAccountPage() {
                   </div>
                   
                   {/* Password Requirements */}
-                  <div className="mt-2 text-xs text-gray-600">
+                  <div className="mt-2 text-xs text-gray-600 space-y-1">
                     <div className={`flex items-center ${passwordRequirements.length ? 'text-green-600' : 'text-gray-500'}`}>
-                      <CheckCircleIcon className="h-3 w-3 mr-1" />
-                      At least 8 characters
+                      <CheckCircleIcon className="h-3 w-3 mr-1 flex-shrink-0" />
+                      <span className="text-xs">At least 8 characters</span>
                     </div>
                     <div className={`flex items-center ${passwordRequirements.uppercase ? 'text-green-600' : 'text-gray-500'}`}>
-                      <CheckCircleIcon className="h-3 w-3 mr-1" />
-                      One uppercase letter
+                      <CheckCircleIcon className="h-3 w-3 mr-1 flex-shrink-0" />
+                      <span className="text-xs">One uppercase letter</span>
                     </div>
                     <div className={`flex items-center ${passwordRequirements.lowercase ? 'text-green-600' : 'text-gray-500'}`}>
-                      <CheckCircleIcon className="h-3 w-3 mr-1" />
-                      One lowercase letter
+                      <CheckCircleIcon className="h-3 w-3 mr-1 flex-shrink-0" />
+                      <span className="text-xs">One lowercase letter</span>
                     </div>
                     <div className={`flex items-center ${passwordRequirements.number ? 'text-green-600' : 'text-gray-500'}`}>
-                      <CheckCircleIcon className="h-3 w-3 mr-1" />
-                      One number
+                      <CheckCircleIcon className="h-3 w-3 mr-1 flex-shrink-0" />
+                      <span className="text-xs">One number</span>
                     </div>
                   </div>
                 </div>
@@ -516,12 +516,12 @@ export default function SetupAccountPage() {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
+                  className="appearance-none block w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-12 sm:pr-10 text-sm sm:text-base min-h-[44px]"
                   placeholder="Confirm your password"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center min-h-[44px] min-w-[44px] justify-center"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
@@ -532,7 +532,7 @@ export default function SetupAccountPage() {
                 </button>
               </div>
               {confirmPassword && password !== confirmPassword && (
-                <p className="mt-1 text-sm text-red-600">Passwords do not match</p>
+                <p className="mt-1 text-xs sm:text-sm text-red-600">Passwords do not match</p>
               )}
             </div>
 
@@ -540,7 +540,7 @@ export default function SetupAccountPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#5B7FFF] hover:bg-[#4A6BFF] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5B7FFF] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm sm:text-base font-medium rounded-md text-white bg-[#5B7FFF] hover:bg-[#4A6BFF] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5B7FFF] disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
               >
                 {submitting ? (
                   <>
@@ -554,17 +554,19 @@ export default function SetupAccountPage() {
             </div>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
+          <div className="mt-4 sm:mt-6 text-center">
+            <p className="text-xs text-gray-500 leading-relaxed">
               This invitation expires on{' '}
-              {new Date(invitationData.expiresAt).toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
+              <span className="font-medium">
+                {new Date(invitationData.expiresAt).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </span>
             </p>
           </div>
         </div>

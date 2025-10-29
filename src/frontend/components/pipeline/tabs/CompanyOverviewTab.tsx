@@ -118,6 +118,29 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     setSuccessMessage(message);
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 3000);
+    
+    // Trigger a data refresh after successful save
+    if (hasPartialCompanyData && companyId) {
+      fetchFullCompanyData();
+    }
+  };
+
+  // Enhanced save handler that ensures data refresh
+  const handleSave = async (field: string, value: string, recordId?: string, recordType?: string) => {
+    try {
+      // Call the parent's onSave function if provided
+      if (onSave) {
+        await onSave(field, value, recordId, recordType);
+      }
+      
+      // Trigger a data refresh to ensure UI updates
+      if (hasPartialCompanyData && companyId) {
+        await fetchFullCompanyData();
+      }
+    } catch (error) {
+      console.error('Error saving field:', error);
+      throw error; // Re-throw to let InlineEditField handle the error
+    }
   };
 
   // Fetch actions from API
@@ -338,7 +361,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               return 'No description available';
             })()}
             field="description"
-            onSave={onSave || (() => Promise.resolve())}
+            onSave={handleSave}
             recordId={companyId}
             recordType="companies"
             onSuccess={handleSuccess}
@@ -397,7 +420,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.legalName || ''}
                 field="legalName"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -409,7 +432,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.industry || ''}
                 field="industry"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -421,7 +444,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.sector || ''}
                 field="sector"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -433,7 +456,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.foundedYear?.toString() || ''}
                 field="foundedYear"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -446,7 +469,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.isPublic !== undefined ? (mergedRecord.isPublic ? 'Public' : 'Private') : ''}
                 field="isPublic"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -464,7 +487,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 <InlineEditField
                   value={mergedRecord.stockSymbol || ''}
                   field="stockSymbol"
-                  onSave={onSave || (() => Promise.resolve())}
+                  onSave={handleSave}
                   recordId={companyId}
                   recordType="companies"
                   onSuccess={handleSuccess}
@@ -484,7 +507,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={formatUrlForDisplay(mergedRecord?.website || '', { maxLength: 40, preserveEnding: 10 })}
                 field="website"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -497,7 +520,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.email || ''}
                 field="email"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -510,7 +533,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.phone || ''}
                 field="phone"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -523,7 +546,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={formatUrlForDisplay(mergedRecord?.linkedinUrl || '', { maxLength: 40, preserveEnding: 10 })}
                 field="linkedinUrl"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -536,7 +559,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={formatUrlForDisplay(mergedRecord?.linkedinNavigatorUrl || '', { maxLength: 40, preserveEnding: 10 })}
                 field="linkedinNavigatorUrl"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -549,7 +572,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.hqFullAddress || `${mergedRecord?.hqCity || ''}${mergedRecord?.hqCity && mergedRecord?.hqState ? ', ' : ''}${mergedRecord?.hqState || ''}`}
                 field="hqFullAddress"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -571,7 +594,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.marketPosition || ''}
                 field="marketPosition"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -589,7 +612,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.activeJobPostings?.toString() || ''}
                 field="activeJobPostings"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -602,7 +625,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.lastFundingAmount?.toLocaleString() || ''}
                 field="lastFundingAmount"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -615,7 +638,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.lastFundingDate ? new Date(mergedRecord.lastFundingDate).toISOString().split('T')[0] : ''}
                 field="lastFundingDate"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -640,7 +663,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.nextAction || engagementData.nextAction}
                 field="nextAction"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -652,7 +675,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.nextActionDate ? new Date(mergedRecord.nextActionDate).toISOString().split('T')[0] : ''}
                 field="nextActionDate"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -665,7 +688,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               <InlineEditField
                 value={mergedRecord?.digitalMaturity?.toString() || ''}
                 field="digitalMaturity"
-                onSave={onSave || (() => Promise.resolve())}
+                onSave={handleSave}
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
@@ -723,7 +746,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <InlineEditField
               value={mergedRecord?.notes || ''}
               field="notes"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={handleSave}
               recordId={companyId}
               recordType="companies"
               onSuccess={handleSuccess}
@@ -737,7 +760,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             <InlineEditField
               value={mergedRecord?.tags?.join(', ') || ''}
               field="tags"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={handleSave}
               recordId={companyId}
               recordType="companies"
               onSuccess={handleSuccess}

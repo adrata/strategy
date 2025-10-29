@@ -2367,12 +2367,10 @@ export function UniversalRecordTemplate({
       // Instead, we'll let the next page load fetch fresh data from the API
       console.log('🚫 [CACHE] Skipping sessionStorage cache update - will use version-based staleness detection instead');
       
-      // 🚀 SERVER REVALIDATION: Trigger background refresh to ensure data consistency
-      // Use a longer delay to allow the optimistic update and parent state update to settle
-      setTimeout(() => {
-        console.log(`🔄 [UNIVERSAL] Triggering server revalidation for ${field} update`);
-        router.refresh();
-      }, 500);
+      // 🚀 SERVER REVALIDATION: Removed router.refresh() to prevent premature component unmounting
+      // The optimistic update and onRecordUpdate callback already ensure UI consistency
+      // Cache invalidation below ensures fresh data on next navigation
+      console.log(`🔄 [UNIVERSAL] Skipping router.refresh() to preserve success message state`);
       
       // 🗑️ COMPREHENSIVE CACHE INVALIDATION: Clear all caches to ensure fresh data on next load
       if (typeof window !== 'undefined') {
@@ -3809,22 +3807,23 @@ export function UniversalRecordTemplate({
         case 'career':
           console.log(`💼 [UNIVERSAL] Rendering career tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} />
+            <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'intelligence':
           console.log(`🧠 [UNIVERSAL] Rendering intelligence tab for ${recordType}`);
           return renderTabWithErrorBoundary(
             recordType === 'companies' ? 
-              <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} /> :
+              <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               recordType === 'speedrun' ?
                 <SpeedrunInsightsTab 
                   key={activeTab} 
                   person={record} 
                   insightsData={extractProductionInsights(record)} 
+                  onSave={handleInlineFieldSave}
                 /> :
               recordType === 'people' ?
-                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} /> :
-                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
+                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
+                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'buyer-groups':
           console.log(`👥 [UNIVERSAL] Rendering buyer groups tab for ${recordType}`);
@@ -3846,28 +3845,29 @@ export function UniversalRecordTemplate({
         case 'competitors':
           console.log(`🏢 [UNIVERSAL] Rendering competitors tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            <UniversalCompetitorsTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalCompetitorsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'insights':
           return renderTabWithErrorBoundary(
             recordType === 'people' ? 
-              <ComprehensiveInsightsTab key={activeTab} record={record} recordType={recordType} /> :
-              <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
+              <ComprehensiveInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
+              <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'intelligence':
           console.log(`🧠 [UNIVERSAL] Rendering intelligence tab for ${recordType}`);
           return renderTabWithErrorBoundary(
             recordType === 'companies' ? 
-              <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} /> :
+              <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               recordType === 'speedrun' ?
                 <SpeedrunInsightsTab 
                   key={activeTab} 
                   person={record} 
                   insightsData={extractProductionInsights(record)} 
+                  onSave={handleInlineFieldSave}
                 /> :
               recordType === 'people' ?
-                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} /> :
-                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} />
+                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
+                <UniversalInsightsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'value':
           console.log(`📊 [UNIVERSAL] Rendering value tab for ${recordType}`);
@@ -3886,68 +3886,68 @@ export function UniversalRecordTemplate({
         case 'profile':
           return renderTabWithErrorBoundary(
             recordType === 'people' ? 
-              <ComprehensiveProfileTab key={activeTab} record={record} recordType={recordType} /> :
-              <UniversalProfileTab key={activeTab} record={record} recordType={recordType} />
+              <ComprehensiveProfileTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
+              <UniversalProfileTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'pain-value':
           return renderTabWithErrorBoundary(
-            <UniversalPainValueTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalPainValueTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'industry-intel':
           return renderTabWithErrorBoundary(
-            <UniversalIndustryIntelTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalIndustryIntelTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'outreach':
           return renderTabWithErrorBoundary(
-            <UniversalOutreachTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalOutreachTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'engagement':
           return renderTabWithErrorBoundary(
-            <UniversalEngagementTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalEngagementTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'deal-intel':
           return renderTabWithErrorBoundary(
-            <UniversalDealIntelTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalDealIntelTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'company-intel':
           return renderTabWithErrorBoundary(
-            <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'close-plan':
           return renderTabWithErrorBoundary(
-            <UniversalClosePlanTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalClosePlanTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'competitive':
           return renderTabWithErrorBoundary(
-            <UniversalCompetitorsTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalCompetitorsTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'relationship':
           return renderTabWithErrorBoundary(
-            <UniversalRelationshipTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalRelationshipTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'personal':
           return renderTabWithErrorBoundary(
-            <UniversalPersonalTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalPersonalTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'business':
           return renderTabWithErrorBoundary(
-            <UniversalBusinessTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalBusinessTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'success':
           return renderTabWithErrorBoundary(
-            <UniversalSuccessTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalSuccessTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'partnership':
           return renderTabWithErrorBoundary(
-            <UniversalPartnershipTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalPartnershipTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'collaboration':
           return renderTabWithErrorBoundary(
-            <UniversalCollaborationTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalCollaborationTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'performance':
           return renderTabWithErrorBoundary(
-            <UniversalPerformanceTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalPerformanceTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'industry':
           return renderTabWithErrorBoundary(
@@ -3955,13 +3955,13 @@ export function UniversalRecordTemplate({
           );
         case 'persona':
           return renderTabWithErrorBoundary(
-            <UniversalProfileTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalProfileTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'career':
           return renderTabWithErrorBoundary(
             recordType === 'people' ? 
-              <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} /> :
-              <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} />
+              <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
+              <ComprehensiveCareerTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'workplace':
           return renderTabWithErrorBoundary(
@@ -3974,7 +3974,7 @@ export function UniversalRecordTemplate({
         case 'stakeholders':
           console.log(`👥 [UNIVERSAL] Rendering stakeholders tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            <UniversalStakeholdersTab key={activeTab} record={record} recordType={recordType} />
+            <UniversalStakeholdersTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} />
           );
         case 'documents':
           return renderTabWithErrorBoundary(

@@ -1,9 +1,10 @@
 interface UniversalDealIntelTabProps {
   record: any;
   recordType: string;
+  onSave?: (field: string, value: string, recordId?: string, recordType?: string) => Promise<void>;
 }
 
-export function UniversalDealIntelTab({ record, recordType }: UniversalDealIntelTabProps) {
+export function UniversalDealIntelTab({ record, recordType, onSave }: UniversalDealIntelTabProps) {
   const getStageColor = (stage: string) => {
     const stageLower = stage?.toLowerCase() || '';
     if (stageLower.includes('closed') && stageLower.includes('won')) return 'text-green-600';

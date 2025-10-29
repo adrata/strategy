@@ -10,11 +10,11 @@ export async function POST(
   
   try {
     // Authenticate and authorize user
-    const authResult = await getSecureApiContext(request);
-    if (!authResult.success) {
-      return createErrorResponse('Unauthorized', 'UNAUTHORIZED', 401);
+    const { context: authContext, response } = await getSecureApiContext(request);
+    if (response) {
+      return response;
     }
-    context = authResult.data;
+    context = authContext;
 
     const companyId = params.id;
     const body = await request.json();

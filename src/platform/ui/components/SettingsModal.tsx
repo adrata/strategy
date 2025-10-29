@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   XMarkIcon,
   Bars3Icon,
@@ -18,6 +19,7 @@ import {
 import { ACTION_PLATFORM_APPS } from "@/platform/config";
 import type { ActionPlatformApp } from "../types";
 import { ThemePicker } from "./ThemePicker";
+import { useUnifiedAuth } from "@/platform/auth";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -31,6 +33,8 @@ interface AppPreference {
 }
 
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
+  const router = useRouter();
+  const { signOut } = useUnifiedAuth();
   const [appPreferences, setAppPreferences] = useState<AppPreference[]>([]);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
@@ -233,6 +237,20 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       }),
     );
     console.log("🔄 [SETTINGS] Reset to default layout");
+  };
+
+  // Handle sign out
+  const handleSignOut = async () => {
+    try {
+      console.log("🚪 SettingsModal: Starting sign out process...");
+      await signOut();
+      console.log("✅ SettingsModal: Sign out completed, redirecting to sign-in");
+      router.push('/sign-in/');
+    } catch (error) {
+      console.error("❌ SettingsModal: Sign out error:", error);
+      // Even if sign out fails, redirect to sign-in page
+      router.push('/sign-in/');
+    }
   };
 
   // Get sorted apps for display
@@ -602,7 +620,10 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                       </div>
                       
                       <div className="pt-4 border-t border-[var(--border)] dark:border-[var(--border)]">
-                        <button className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium">
+                        <button 
+                          onClick={handleSignOut}
+                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
+                        >
                           Sign Out
                         </button>
                       </div>

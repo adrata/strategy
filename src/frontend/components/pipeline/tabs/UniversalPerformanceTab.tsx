@@ -29,7 +29,7 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
             <InlineEditField
               value={record?.performanceScore ? `${Math.round(record.performanceScore)}/100` : ''}
               field="performanceScore"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
@@ -44,7 +44,7 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
             <InlineEditField
               value={record?.partnerRevenue ? `$${record.partnerRevenue.toLocaleString()}` : ''}
               field="partnerRevenue"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
@@ -59,7 +59,7 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
             <InlineEditField
               value={record?.revenueGrowth ? `${Math.round(record.revenueGrowth)}%` : ''}
               field="revenueGrowth"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
@@ -74,7 +74,7 @@ export function UniversalPerformanceTab({ record, recordType, onSave }: Universa
             <InlineEditField
               value={record?.dealsClosed}
               field="dealsClosed"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}

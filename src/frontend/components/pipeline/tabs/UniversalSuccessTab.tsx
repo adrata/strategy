@@ -29,7 +29,7 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
             <InlineEditField
               value={record?.healthScore ? `${Math.round(record.healthScore)}/100` : ''}
               field="healthScore"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
@@ -44,7 +44,7 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
             <InlineEditField
               value={record?.roiAchieved ? `${Math.round(record.roiAchieved)}%` : ''}
               field="roiAchieved"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
@@ -59,7 +59,7 @@ export function UniversalSuccessTab({ record, recordType, onSave }: UniversalSuc
             <InlineEditField
               value={record?.timeToValue ? `${record.timeToValue} days` : ''}
               field="timeToValue"
-              onSave={onSave || (() => Promise.resolve())}
+              onSave={onSave}
               recordId={record.id}
               recordType={recordType}
               onSuccess={handleSuccess}
