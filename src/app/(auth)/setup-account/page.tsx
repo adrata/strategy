@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { EyeIcon, EyeSlashIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { createSession, storeSession } from '@/platform/auth/session';
+import { getPlatform, getDeviceId } from '@/platform/auth/platform';
 
 interface InvitationData {
   token: string;
@@ -161,12 +163,112 @@ export default function SetupAccountPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Store tokens for immediate login
+        console.log('✅ Account setup completed successfully');
+        
+        // Fetch user's workspaces to populate the session
+        let workspaces = [];
+        try {
+          const workspacesResponse = await fetch('/api/v1/workspaces', {
+            headers: {
+              'Authorization': `Bearer ${data.data.tokens.accessToken}`,
+            },
+          });
+          
+          if (workspacesResponse.ok) {
+            const workspacesData = await workspacesResponse.json();
+            if (workspacesData.success) {
+              workspaces = workspacesData.data.workspaces.map((ws: any) => ({
+                id: ws.id,
+                name: ws.name,
+                role: ws.role || 'VIEWER',
+              }));
+              console.log('✅ Fetched user workspaces:', workspaces);
+            }
+          } else {
+            console.warn('⚠️ Failed to fetch workspaces, continuing with empty array');
+          }
+        } catch (workspaceError) {
+          console.warn('⚠️ Error fetching workspaces:', workspaceError);
+          // If workspace fetch fails but we have a workspace from the invitation, use it
+          if (data.data.workspace) {
+            workspaces = [{
+              id: data.data.workspace.id,
+              name: data.data.workspace.name,
+              role: data.data.role || 'VIEWER',
+            }];
+          }
+        }
+
+        // Create proper UnifiedSession object
+        const platform = getPlatform();
+        const deviceId = getDeviceId();
+        const activeWorkspaceId = data.data.workspace?.id || null;
+
+        const userData = {
+          id: data.data.user.id,
+          name: data.data.user.name,
+          email: data.data.user.email,
+          workspaces: workspaces,
+          activeWorkspaceId: activeWorkspaceId,
+          deviceId: deviceId,
+        };
+
+        const session = createSession(
+          userData,
+          platform,
+          deviceId,
+          data.data.tokens.accessToken,
+          data.data.tokens.refreshToken,
+          false // rememberMe
+        );
+
+        // Store the session in localStorage
+        console.log('💾 [SETUP] Storing session...', {
+          userId: userData.id,
+          email: userData.email,
+          workspaceCount: workspaces.length,
+          activeWorkspaceId: activeWorkspaceId,
+          platform: platform,
+          deviceId: deviceId,
+        });
+        
+        await storeSession(session);
+        console.log('✅ [SETUP] Session stored successfully');
+
+        // Verify the session was stored correctly
+        const storedSessionRaw = localStorage.getItem('adrata_unified_session_v3');
+        if (!storedSessionRaw) {
+          console.error('❌ [SETUP] Session verification failed - not found in localStorage');
+          setError('Failed to store session. Please try again.');
+          return;
+        }
+
+        const storedSession = JSON.parse(storedSessionRaw);
+        console.log('✅ [SETUP] Session verified in localStorage:', {
+          hasUser: !!storedSession.user,
+          userId: storedSession.user?.id,
+          email: storedSession.user?.email,
+          workspaceCount: storedSession.user?.workspaces?.length || 0,
+          activeWorkspaceId: storedSession.user?.activeWorkspaceId,
+          hasAccessToken: !!storedSession.accessToken,
+          expires: storedSession.expires,
+        });
+
+        // Verify workspaces are in the session
+        if (!storedSession.user?.workspaces || storedSession.user.workspaces.length === 0) {
+          console.warn('⚠️ [SETUP] No workspaces in stored session, adding from invitation data');
+          // If workspaces are missing, add them manually
+          storedSession.user.workspaces = workspaces;
+          localStorage.setItem('adrata_unified_session_v3', JSON.stringify(storedSession));
+          console.log('✅ [SETUP] Workspaces added to session');
+        }
+
+        // Also set cookies for server-side authentication compatibility
         if (data.data.tokens) {
           localStorage.setItem('adrata-access-token', data.data.tokens.accessToken);
           localStorage.setItem('adrata-refresh-token', data.data.tokens.refreshToken);
           
-          // Also set the auth-token cookie that the system expects
+          // Set the auth-token cookie that the system expects
           document.cookie = `auth-token=${data.data.tokens.accessToken}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
           
           // Set the unified session cookie as well
@@ -175,23 +277,35 @@ export default function SetupAccountPage() {
             refreshToken: data.data.tokens.refreshToken,
             user: data.data.user,
             workspace: data.data.workspace,
-            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+            expires: session.expires
           };
           document.cookie = `adrata_unified_session=${JSON.stringify(sessionData)}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
         }
 
-        console.log('✅ Account setup completed successfully');
-        console.log('🔑 Tokens stored in localStorage and cookies');
-        console.log('🏢 Workspace:', data.data.workspace);
+        console.log('🔑 [SETUP] Tokens stored in localStorage and cookies');
+        console.log('🏢 [SETUP] Workspace:', data.data.workspace);
+        console.log('👤 [SETUP] Session created for user:', data.data.user.email);
 
-        // Force a page reload to ensure the auth system picks up the new tokens
-        // This ensures the user is properly authenticated before redirecting
+        // Wait for localStorage to persist (critical for reliability)
+        console.log('⏳ [SETUP] Waiting for storage to persist...');
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        // Final verification before redirect
+        const finalCheck = localStorage.getItem('adrata_unified_session_v3');
+        if (!finalCheck) {
+          console.error('❌ [SETUP] Final verification failed - session lost');
+          setError('Session storage failed. Please try again.');
+          return;
+        }
+        console.log('✅ [SETUP] Final verification passed - session persisted');
+
+        // Redirect to the workspace
         if (data.data.workspace) {
-          console.log(`🔄 Redirecting to workspace: /${data.data.workspace.slug}/people`);
-          // Use window.location.href to force a full page reload
+          console.log(`🔄 [SETUP] Redirecting to workspace: /${data.data.workspace.slug}/people`);
+          // Use window.location.href to force a full page reload so auth system picks up the new session
           window.location.href = `/${data.data.workspace.slug}/people`;
         } else {
-          console.log('🔄 Redirecting to workspaces page');
+          console.log('🔄 [SETUP] Redirecting to workspaces page');
           window.location.href = '/workspaces';
         }
       } else {

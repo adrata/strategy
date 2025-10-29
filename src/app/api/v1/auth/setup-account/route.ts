@@ -85,8 +85,36 @@ export async function POST(request: NextRequest) {
 
     const metadata = tokenRecord.metadata as any;
     const workspaceId = metadata?.workspaceId;
+    const role = metadata?.role || 'VIEWER';
 
     console.log('✅ [SETUP ACCOUNT] Valid token found for user:', tokenRecord.user.email);
+
+    // Ensure workspace membership exists
+    if (workspaceId) {
+      const existingMembership = await prisma.workspace_users.findFirst({
+        where: {
+          workspaceId: workspaceId,
+          userId: tokenRecord.user.id,
+          isActive: true,
+        }
+      });
+
+      if (!existingMembership) {
+        console.log('🔗 [SETUP ACCOUNT] Creating workspace membership for user');
+        await prisma.workspace_users.create({
+          data: {
+            workspaceId: workspaceId,
+            userId: tokenRecord.user.id,
+            role: role as any,
+            isActive: true,
+            joinedAt: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }
+        });
+        console.log('✅ [SETUP ACCOUNT] Workspace membership created');
+      }
+    }
 
     // Hash the new password
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -152,7 +180,7 @@ export async function POST(request: NextRequest) {
         lastName: tokenRecord.user.lastName,
       },
       workspace: workspace,
-      role: metadata?.role || 'VIEWER',
+      role: role,
       tokens: {
         accessToken: jwtToken,
         refreshToken: refreshToken,
