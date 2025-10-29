@@ -42,6 +42,11 @@ export interface DailySpeedrunState {
   currentBatch: number; // Which batch of 20 they're on
   dailyTargetMet: boolean;
   weeklyTargetMet: boolean;
+  // Bonus round state
+  bonusRoundActive: boolean;
+  bonusRoundCompleted: number;
+  bonusRoundTotal: number; // Always 10
+  bonusRoundDeclined: boolean; // Track if user declined bonus today
 }
 
 // Enhanced contact data with ranking signals

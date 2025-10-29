@@ -40,10 +40,11 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100); // Cap at 100, default 50
+    const offset = Math.max(parseInt(searchParams.get('offset') || '0'), 0); // Default 0, minimum 0
     const forceRefresh = searchParams.get('refresh') === 'true' || searchParams.get('t'); // Force refresh if timestamp provided
     
     // 🚀 CACHE: Check Redis cache first (unless force refresh)
-    const cacheKey = `speedrun-${context.workspaceId}-${context.userId}-${limit}`;
+    const cacheKey = `speedrun-${context.workspaceId}-${context.userId}-${limit}-${offset}`;
     
     // Define the fetch function for cache
     const fetchSpeedrunData = async () => {
@@ -427,9 +428,9 @@ export async function GET(request: NextRequest) {
       // 🚀 COMBINE: Merge people and companies, sort by globalRank
       const combinedData = speedrunPeopleData.sort((a, b) => {
         return (a.globalRank || 999) - (b.globalRank || 999);
-      }).slice(0, limit); // Take top 50 after sorting
+      }).slice(offset, offset + limit); // Apply offset and limit after sorting
 
-      console.log(`🎯 [SPEEDRUN API] Combined speedrun data: ${speedrunPeopleData.length} total records`);
+      console.log(`🎯 [SPEEDRUN API] Combined speedrun data: ${speedrunPeopleData.length} total records, returning ${combinedData.length} records (offset: ${offset}, limit: ${limit})`);
 
       const result = {
         success: true,

@@ -34,6 +34,9 @@ function SpeedrunContainerContent({ panel }: SpeedrunContainerProps) {
     handlePersonSkip,
     handleAddMore,
     handleStartSpeedrun,
+    // Bonus round functions
+    loadBonusPeople,
+    handleDeclineBonus,
   } = useSpeedrunPersonManager(); // Handles person management
 
   // Get context data
@@ -48,6 +51,11 @@ function SpeedrunContainerContent({ panel }: SpeedrunContainerProps) {
     dailyProgress,
     weeklyProgress,
     updateUserSettings,
+    // Bonus round state
+    bonusRoundActive,
+    bonusRoundCompleted,
+    bonusRoundTotal,
+    bonusRoundDeclined,
   } = useSpeedrunContext();
 
   // Render based on panel type
@@ -67,6 +75,13 @@ function SpeedrunContainerContent({ panel }: SpeedrunContainerProps) {
           onAddMore={handleAddMore}
           dailyProgress={dailyProgress}
           weeklyProgress={weeklyProgress}
+          // Bonus round props
+          bonusRoundActive={bonusRoundActive}
+          bonusRoundCompleted={bonusRoundCompleted}
+          bonusRoundTotal={bonusRoundTotal}
+          bonusRoundDeclined={bonusRoundDeclined}
+          onLoadBonusPeople={loadBonusPeople}
+          onDeclineBonus={handleDeclineBonus}
         />
       </div>
     );
@@ -87,6 +102,13 @@ function SpeedrunContainerContent({ panel }: SpeedrunContainerProps) {
         onAddMore={handleAddMore}
         dailyProgress={dailyProgress}
         weeklyProgress={weeklyProgress}
+        // Bonus round props
+        bonusRoundActive={bonusRoundActive}
+        bonusRoundCompleted={bonusRoundCompleted}
+        bonusRoundTotal={bonusRoundTotal}
+        bonusRoundDeclined={bonusRoundDeclined}
+        onLoadBonusPeople={loadBonusPeople}
+        onDeclineBonus={handleDeclineBonus}
       />
       <AddLeadsModal isOpen={false} onClose={() => {}} onConfirm={() => {}} />
       <PowerDialerModal

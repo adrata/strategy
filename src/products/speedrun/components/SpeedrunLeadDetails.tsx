@@ -327,11 +327,16 @@ export function SpeedrunLeadDetails({
     setState((prev) => ({ ...prev, showPowerDialer: false }));
   };
 
-  // Utility functions
-  const canNavigatePrevious = () =>
-    LeadDetailsUtilities.canNavigatePrevious(personIndex);
-  const canNavigateNext = () =>
-    LeadDetailsUtilities.canNavigateNext(personIndex, totalPersons);
+  // Utility functions with enhanced validation
+  const canNavigatePrevious = () => {
+    if (!person || personIndex < 0) return false;
+    return LeadDetailsUtilities.canNavigatePrevious(personIndex);
+  };
+  
+  const canNavigateNext = () => {
+    if (!person || personIndex < 0) return false;
+    return LeadDetailsUtilities.canNavigateNext(personIndex, totalPersons);
+  };
 
   // Show company detail view if requested
   if (state.showCompanyDetail) {

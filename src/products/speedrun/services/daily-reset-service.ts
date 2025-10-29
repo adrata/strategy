@@ -138,6 +138,11 @@ export class DailyResetService {
       currentBatch: 1,
       dailyTargetMet: false,
       weeklyTargetMet: false,
+      // Reset bonus round state
+      bonusRoundActive: false,
+      bonusRoundCompleted: 0,
+      bonusRoundTotal: 10,
+      bonusRoundDeclined: false,
     };
 
     localStorage.setItem(`speedrun-state-${today}`, JSON.stringify(freshState));

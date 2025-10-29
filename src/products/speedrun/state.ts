@@ -38,19 +38,23 @@ export function getDailySpeedrunState(): DailySpeedrunState {
   
   // Check if we're on the client-side
   if (typeof window === 'undefined') {
-    // Return default state for server-side rendering
-    return {
-      date: today,
-      viewedLeads: [],
-      completedLeads: [],
-      skippedLeads: [],
-      snoozedLeads: [],
-      removedLeads: [],
-      totalLeadsGenerated: 0,
-      currentBatch: 1,
-      dailyTargetMet: false,
-      weeklyTargetMet: false,
-    };
+  // Return default state for server-side rendering
+  return {
+    date: today,
+    viewedLeads: [],
+    completedLeads: [],
+    skippedLeads: [],
+    snoozedLeads: [],
+    removedLeads: [],
+    totalLeadsGenerated: 0,
+    currentBatch: 1,
+    dailyTargetMet: false,
+    weeklyTargetMet: false,
+    bonusRoundActive: false,
+    bonusRoundCompleted: 0,
+    bonusRoundTotal: 10,
+    bonusRoundDeclined: false,
+  };
   }
   
   const stored = localStorage.getItem(`speedrun-state-${today}`);
@@ -75,6 +79,10 @@ export function getDailySpeedrunState(): DailySpeedrunState {
     currentBatch: 1,
     dailyTargetMet: false,
     weeklyTargetMet: false,
+    bonusRoundActive: false,
+    bonusRoundCompleted: 0,
+    bonusRoundTotal: 10,
+    bonusRoundDeclined: false,
   };
 
   saveDailySpeedrunState(newState);

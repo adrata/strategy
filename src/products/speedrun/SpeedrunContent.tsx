@@ -19,6 +19,7 @@ import { CompleteActionModal, ActionLogData } from "@/platform/ui/components/Com
 import { TodayActivityTracker } from "./TodayActivityTracker";
 import { getCommonShortcut, COMMON_SHORTCUTS } from '@/platform/utils/keyboard-shortcuts';
 import { CongratulationsModal } from "./components/CongratulationsModal";
+import { CompletionBonusModal } from "./components/CompletionBonusModal";
 import { useRecordContext } from "@/platform/ui/context/RecordContextProvider";
 import { StateRankingManager } from "./components/StateRankingManager";
 
@@ -87,6 +88,13 @@ interface SpeedrunContentProps {
     weekly: number;
     userId?: string;
   };
+  // Bonus round props
+  bonusRoundActive?: boolean;
+  bonusRoundCompleted?: number;
+  bonusRoundTotal?: number;
+  bonusRoundDeclined?: boolean;
+  onLoadBonusPeople?: () => Promise<void>;
+  onDeclineBonus?: () => void;
 }
 
 const getInitials = (name: string | null | undefined) => {
@@ -171,6 +179,13 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
   onAddMoreLeads,
   currentStats,
   targets,
+  // Bonus round props
+  bonusRoundActive = false,
+  bonusRoundCompleted = 0,
+  bonusRoundTotal = 10,
+  bonusRoundDeclined = false,
+  onLoadBonusPeople,
+  onDeclineBonus,
 }: SpeedrunContentProps) {
   console.log("🎬 SpeedrunContent: Component starting with props:", {
     isSpeedrunStarted,
@@ -190,6 +205,7 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [showCongratulationsModal, setShowCongratulationsModal] = useState(false);
   const [showStateRankingManager, setShowStateRankingManager] = useState(false);
+  const [showCompletionBonusModal, setShowCompletionBonusModal] = useState(false);
   const [batchInfo, setBatchInfo] = useState<{
     batchNumber: number;
     completedCount: number;
@@ -198,6 +214,31 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
 
   // Track completed IDs for potential future use
   const [completedIds, setCompletedIds] = useState<Set<number>>(new Set());
+
+  // Detect when 50 people are completed and show bonus modal
+  useEffect(() => {
+    if (doneCount === 50 && !bonusRoundActive && !bonusRoundDeclined) {
+      console.log("🎯 50 people completed! Showing bonus round modal...");
+      setShowCompletionBonusModal(true);
+    }
+  }, [doneCount, bonusRoundActive, bonusRoundDeclined]);
+
+  // Handle bonus modal actions
+  const handleAcceptBonus = async () => {
+    console.log("🎯 User accepted bonus round!");
+    if (onLoadBonusPeople) {
+      await onLoadBonusPeople();
+    }
+    setShowCompletionBonusModal(false);
+  };
+
+  const handleDeclineBonus = () => {
+    console.log("🚫 User declined bonus round!");
+    if (onDeclineBonus) {
+      onDeclineBonus();
+    }
+    setShowCompletionBonusModal(false);
+  };
 
   // Undo system state
   const [lastCompletedAction, setLastCompletedAction] = useState<{
@@ -810,6 +851,14 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           message={batchInfo?.message}
         />
 
+        <CompletionBonusModal
+          isOpen={showCompletionBonusModal}
+          onClose={() => setShowCompletionBonusModal(false)}
+          onAcceptBonus={handleAcceptBonus}
+          onDeclineBonus={handleDeclineBonus}
+          completedCount={doneCount}
+        />
+
         <StateRankingManager
           isOpen={showStateRankingManager}
           onClose={() => setShowStateRankingManager(false)}
@@ -856,7 +905,7 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           <SpeedrunRecordTemplate
         key={selectedPerson.id}
         person={selectedPerson}
-        personIndex={SpeedrunPeople.findIndex((p) => p['id'] === selectedPerson.id)}
+        personIndex={selectedPerson.rank || selectedPerson.globalRank || SpeedrunPeople.findIndex((p) => p['id'] === selectedPerson.id) + 1}
         totalPersons={SpeedrunPeople.length}
         allPeople={SpeedrunPeople}
         onBack={() => {
@@ -864,23 +913,43 @@ export const SpeedrunContent = React.memo(function SpeedrunContent({
           setSelectedPerson(null);
         }}
         onNavigatePrevious={() => {
+          if (!selectedPerson) return;
+          
           const currentIndex = SpeedrunPeople.findIndex(
             (p) => p['id'] === selectedPerson.id,
           );
+          
+          // Use ID-based navigation with boundary checks
           if (currentIndex > 0) {
             const previousPerson = SpeedrunPeople[currentIndex - 1];
-            console.log(`⬅️ Navigating to previous: ${previousPerson?.name}`);
-            setSelectedPerson(previousPerson || null);
+            if (previousPerson) {
+              console.log(`⬅️ Navigating to previous: ${previousPerson.name}`);
+              setSelectedPerson(previousPerson);
+            } else {
+              console.warn('⚠️ Previous person not found in array');
+            }
+          } else {
+            console.log('⬅️ Already at first person');
           }
         }}
         onNavigateNext={() => {
+          if (!selectedPerson) return;
+          
           const currentIndex = SpeedrunPeople.findIndex(
             (p) => p['id'] === selectedPerson.id,
           );
-          if (currentIndex < SpeedrunPeople.length - 1) {
+          
+          // Use ID-based navigation with boundary checks
+          if (currentIndex >= 0 && currentIndex < SpeedrunPeople.length - 1) {
             const nextPerson = SpeedrunPeople[currentIndex + 1];
-            console.log(`➡️ Navigating to next: ${nextPerson?.name}`);
-            setSelectedPerson(nextPerson || null);
+            if (nextPerson) {
+              console.log(`➡️ Navigating to next: ${nextPerson.name}`);
+              setSelectedPerson(nextPerson);
+            } else {
+              console.warn('⚠️ Next person not found in array');
+            }
+          } else {
+            console.log('➡️ Already at last person');
           }
         }}
         onSnooze={(personId: number) => {

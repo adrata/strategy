@@ -116,10 +116,10 @@ export function SpeedrunSprintLeftPanel({
     const sprintEndIndex = (currentSprintIndex + 1) * SPRINT_SIZE;
     
     // Get active records for this sprint based on their strategic rank
-    // Sort active records by their rank to ensure proper order
+    // Sort active records by their globalRank to ensure proper order
     const sortedActiveRecords = activeRecords.sort((a, b) => {
-      const rankA = a.rank || 999999;
-      const rankB = b.rank || 999999;
+      const rankA = a.globalRank || a.rank || 999999;
+      const rankB = b.globalRank || b.rank || 999999;
       return rankA - rankB;
     });
     
@@ -198,8 +198,9 @@ export function SpeedrunSprintLeftPanel({
                              'Unknown';
           
           // Calculate the correct display number based on strategic rank
-          const actualRank = record.rank || 999999;
-          const displayNumber = isCompleted ? '✓' : actualRank;
+          // Use globalRank first, then rank, then calculate sequential position
+          const actualRank = record.globalRank || record.rank;
+          const displayNumber = isCompleted ? '✓' : (actualRank || (sprintStartIndex + index + 1));
           
           return (
             <div

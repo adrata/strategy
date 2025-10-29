@@ -83,6 +83,11 @@ interface SpeedrunContextType {
   };
   isDataLoaded: boolean;
   selectedFolder: string;
+  // Bonus round state
+  bonusRoundActive: boolean;
+  bonusRoundCompleted: number;
+  bonusRoundTotal: number;
+  bonusRoundDeclined: boolean;
   setSelectedPerson: (person: SpeedrunPerson | null) => void;
   setPowerHourMode: (mode: boolean) => void;
   setSelectedFolder: (folder: string) => void;
@@ -90,6 +95,10 @@ interface SpeedrunContextType {
   setCompletedPeople: React.Dispatch<React.SetStateAction<SpeedrunPerson[]>>;
   setSkippedPeople: React.Dispatch<React.SetStateAction<SpeedrunPerson[]>>;
   setIsDataLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+  // Bonus round actions
+  setBonusRoundActive: (active: boolean) => void;
+  setBonusRoundCompleted: (completed: number) => void;
+  setBonusRoundDeclined: (declined: boolean) => void;
   setDailyProgress: React.Dispatch<
     React.SetStateAction<{
       completed: number;
@@ -383,6 +392,18 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
     }
   }, [readyPeople, isSpeedrunStarted]); // Remove selectedPerson from dependencies to prevent infinite loop
 
+  // Persist bonus round state changes
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const today = new Date().toDateString();
+      const dailyState = getDailySpeedrunState();
+      dailyState.bonusRoundActive = bonusRoundActive;
+      dailyState.bonusRoundCompleted = bonusRoundCompleted;
+      dailyState.bonusRoundDeclined = bonusRoundDeclined;
+      localStorage.setItem(`speedrun-state-${today}`, JSON.stringify(dailyState));
+    }
+  }, [bonusRoundActive, bonusRoundCompleted, bonusRoundDeclined]);
+
   // Restore completed people from storage
   const [completedPeople, setCompletedPeople] = useState<SpeedrunPerson[]>(() => {
     console.log(
@@ -422,6 +443,21 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
   });
 
   const [skippedPeople, setSkippedPeople] = useState<SpeedrunPerson[]>([]);
+
+  // Bonus round state - restore from daily state
+  const [bonusRoundActive, setBonusRoundActive] = useState(() => {
+    const dailyState = getDailySpeedrunState();
+    return dailyState.bonusRoundActive;
+  });
+  const [bonusRoundCompleted, setBonusRoundCompleted] = useState(() => {
+    const dailyState = getDailySpeedrunState();
+    return dailyState.bonusRoundCompleted;
+  });
+  const [bonusRoundDeclined, setBonusRoundDeclined] = useState(() => {
+    const dailyState = getDailySpeedrunState();
+    return dailyState.bonusRoundDeclined;
+  });
+  const bonusRoundTotal = 10; // Always 10
 
   // Progress tracking - restore from persistent storage
   const [dailyProgress, setDailyProgress] = useState(() => {
@@ -530,6 +566,11 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
     weeklyProgress,
     isDataLoaded,
     selectedFolder,
+    // Bonus round state
+    bonusRoundActive,
+    bonusRoundCompleted,
+    bonusRoundTotal,
+    bonusRoundDeclined,
     setSelectedPerson,
     setPowerHourMode,
     setSelectedFolder,
@@ -537,6 +578,10 @@ export function SpeedrunProvider({ children }: SpeedrunProviderProps) {
     setCompletedPeople,
     setSkippedPeople,
     setIsDataLoaded,
+    // Bonus round actions
+    setBonusRoundActive,
+    setBonusRoundCompleted,
+    setBonusRoundDeclined,
     setDailyProgress,
     setWeeklyProgress,
     updateUserSettings,

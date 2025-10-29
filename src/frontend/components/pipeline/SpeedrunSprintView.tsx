@@ -22,6 +22,9 @@ import { CompleteActionModal, ActionLogData } from '@/platform/ui/components/Com
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useFastSectionData } from '@/platform/hooks/useFastSectionData';
 import { useSprint } from './SprintContext';
+import { ProfileBox } from '@/platform/ui/components/ProfileBox';
+import { useProfilePopup } from '@/platform/ui/components/ProfilePopupContext';
+import { usePipeline } from '@/products/pipeline/context/PipelineContext';
 
 export function SpeedrunSprintView() {
   const router = useRouter();
@@ -29,6 +32,22 @@ export function SpeedrunSprintView() {
   const { user } = useUnifiedAuth();
   const { ui } = useRevenueOS();
   const { selectedRecord, setSelectedRecord, currentSprintIndex, setCurrentSprintIndex, completedRecords, setCompletedRecords } = useSprint();
+  
+  // Pipeline context for user data
+  const { 
+    user: pipelineUser, 
+    company, 
+    workspace
+  } = usePipeline();
+  
+  // ProfilePopupContext for profile popup functionality
+  const { 
+    isProfileOpen,
+    setIsProfileOpen,
+    profileAnchor,
+    setProfileAnchor,
+    profilePopupRef
+  } = useProfilePopup();
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showAddActionModal, setShowAddActionModal] = useState(false);
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
@@ -165,10 +184,10 @@ export function SpeedrunSprintView() {
     const sprintEndIndex = (currentSprintIndex + 1) * SPRINT_SIZE;
     
     // Get active records for this sprint based on their strategic rank
-    // Sort active records by their rank to ensure proper order
+    // Sort active records by their globalRank to ensure proper order
     const sortedActiveRecords = activeRecords.sort((a, b) => {
-      const rankA = a.rank || 999999;
-      const rankB = b.rank || 999999;
+      const rankA = a.globalRank || a.rank || 999999;
+      const rankB = b.globalRank || b.rank || 999999;
       return rankA - rankB;
     });
     
@@ -698,6 +717,69 @@ export function SpeedrunSprintView() {
         isLoading={isSubmittingAction}
         section="speedrun"
       />
+
+      {/* Profile Popup - SpeedrunSprintView Implementation */}
+      {(() => {
+        const shouldRender = isProfileOpen && profileAnchor;
+        console.log('🔍 SpeedrunSprintView Profile popup render check:', { 
+          isProfileOpen, 
+          profileAnchor: !!profileAnchor,
+          profileAnchorElement: profileAnchor,
+          user: !!pipelineUser,
+          company,
+          workspace,
+          shouldRender
+        });
+        if (shouldRender) {
+          console.log('✅ SpeedrunSprintView ProfileBox SHOULD render - all conditions met');
+        } else {
+          console.log('❌ SpeedrunSprintView ProfileBox will NOT render:', {
+            missingProfileOpen: !isProfileOpen,
+            missingProfileAnchor: !profileAnchor
+          });
+        }
+        return shouldRender;
+      })() && profileAnchor && (
+        <div
+          ref={profilePopupRef}
+          style={{
+            position: "fixed",
+            left: profileAnchor.getBoundingClientRect().left,
+            bottom: window.innerHeight - profileAnchor.getBoundingClientRect().top + 5,
+            zIndex: 9999,
+          }}
+        >
+          <ProfileBox
+            user={pipelineUser}
+            company={company}
+            workspace={workspace}
+            isProfileOpen={isProfileOpen}
+            setIsProfileOpen={setIsProfileOpen}
+            userId={user?.id}
+            userEmail={user?.email}
+            isSellersVisible={true}
+            setIsSellersVisible={() => {}}
+            isRtpVisible={true}
+            setIsRtpVisible={() => {}}
+            isProspectsVisible={true}
+            setIsProspectsVisible={() => {}}
+            isLeadsVisible={true}
+            setIsLeadsVisible={() => {}}
+            isOpportunitiesVisible={true}
+            setIsOpportunitiesVisible={() => {}}
+            isCustomersVisible={false}
+            setIsCustomersVisible={() => {}}
+            isPartnersVisible={true}
+            setIsPartnersVisible={() => {}}
+            onThemesClick={() => {
+              console.log('🎨 Themes clicked in SpeedrunSprintView');
+            }}
+            onSignOut={() => {
+              console.log('🚪 Sign out clicked in SpeedrunSprintView');
+            }}
+          />
+        </div>
+      )}
     </>
   );
 }

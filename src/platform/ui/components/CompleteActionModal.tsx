@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useWorkspaceUsers } from '@/platform/hooks/useWorkspaceUsers';
+import { useEscapeKey } from '@/platform/hooks/useEscapeKey';
 import { getCommonShortcut } from '@/platform/utils/keyboard-shortcuts';
 import { getCategoryColors } from '@/platform/config/color-palette';
 import { authFetch } from '@/platform/api-fetch';
@@ -418,6 +419,9 @@ export function CompleteActionModal({
       document.removeEventListener('keydown', handleDocumentKeyDown, true);
     };
   }, [isOpen, isLoading, formData.action, formData.person, formData.type]);
+
+  // Handle ESC key to close modal
+  useEscapeKey(isOpen, handleClose);
 
   const handleClose = () => {
     if (!isLoading) {

@@ -26,6 +26,8 @@ import { NotesEditor } from '@/platform/ui/components/NotesEditor';
 import { ValueTab } from './tabs/ValueTab';
 import { DeepValueReportView } from '@/platform/ui/components/reports/DeepValueReportView';
 import { DeepValueReport } from '@/platform/services/deep-value-report-service';
+import { ProfileBox } from '@/platform/ui/components/ProfileBox';
+import { usePipeline } from '@/products/pipeline/context/PipelineContext';
 
 // Import universal tab components
 import {
@@ -288,6 +290,13 @@ export function UniversalRecordTemplate({
   const [activeReport, setActiveReport] = useState<DeepValueReport | null>(null);
   const [localRecord, setLocalRecord] = useState(record);
   const [isPending, startTransition] = useTransition();
+  
+  // Pipeline context for user data
+  const { 
+    user: pipelineUser, 
+    company, 
+    workspace
+  } = usePipeline();
   const [pendingSaves, setPendingSaves] = useState<Set<string>>(new Set());
   const [recentlyUpdatedFields, setRecentlyUpdatedFields] = useState<Set<string>>(new Set());
   
@@ -6257,6 +6266,73 @@ function HistoryTab({ record, recordType }: { record: any; recordType: string })
           </div>
         )}
       </div>
+
+      {/* Profile Popup - UniversalRecordTemplate Implementation */}
+      {(() => {
+        if (!profilePopupContext) {
+          console.log('🔍 UniversalRecordTemplate Profile popup not available - no profilePopupContext');
+          return false;
+        }
+        
+        const shouldRender = profilePopupContext.isProfileOpen && profilePopupContext.profileAnchor;
+        console.log('🔍 UniversalRecordTemplate Profile popup render check:', { 
+          isProfileOpen: profilePopupContext.isProfileOpen, 
+          profileAnchor: !!profilePopupContext.profileAnchor,
+          profileAnchorElement: profilePopupContext.profileAnchor,
+          user: !!pipelineUser,
+          company,
+          workspace,
+          shouldRender
+        });
+        if (shouldRender) {
+          console.log('✅ UniversalRecordTemplate ProfileBox SHOULD render - all conditions met');
+        } else {
+          console.log('❌ UniversalRecordTemplate ProfileBox will NOT render:', {
+            missingProfileOpen: !profilePopupContext.isProfileOpen,
+            missingProfileAnchor: !profilePopupContext.profileAnchor
+          });
+        }
+        return shouldRender;
+      })() && profilePopupContext && profilePopupContext.profileAnchor && (
+        <div
+          style={{
+            position: "fixed",
+            left: profilePopupContext.profileAnchor.getBoundingClientRect().left,
+            bottom: window.innerHeight - profilePopupContext.profileAnchor.getBoundingClientRect().top + 5,
+            zIndex: 9999,
+          }}
+        >
+          <ProfileBox
+            user={pipelineUser}
+            company={company}
+            workspace={workspace}
+            isProfileOpen={profilePopupContext.isProfileOpen}
+            setIsProfileOpen={profilePopupContext.setIsProfileOpen}
+            userId={pipelineUser?.id}
+            userEmail={pipelineUser?.email}
+            isSellersVisible={true}
+            setIsSellersVisible={() => {}}
+            isRtpVisible={true}
+            setIsRtpVisible={() => {}}
+            isProspectsVisible={true}
+            setIsProspectsVisible={() => {}}
+            isLeadsVisible={true}
+            setIsLeadsVisible={() => {}}
+            isOpportunitiesVisible={true}
+            setIsOpportunitiesVisible={() => {}}
+            isCustomersVisible={false}
+            setIsCustomersVisible={() => {}}
+            isPartnersVisible={true}
+            setIsPartnersVisible={() => {}}
+            onThemesClick={() => {
+              console.log('🎨 Themes clicked in UniversalRecordTemplate');
+            }}
+            onSignOut={() => {
+              console.log('🚪 Sign out clicked in UniversalRecordTemplate');
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }

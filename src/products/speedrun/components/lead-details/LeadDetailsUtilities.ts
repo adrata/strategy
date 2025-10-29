@@ -46,11 +46,15 @@ export class LeadDetailsUtilities {
   }
 
   static canNavigatePrevious(personIndex: number): boolean {
-    return personIndex > 0;
+    return personIndex > 0 && personIndex !== -1;
   }
 
   static canNavigateNext(personIndex: number, totalPersons: number): boolean {
-    return personIndex < totalPersons - 1;
+    return personIndex >= 0 && personIndex < totalPersons - 1 && totalPersons > 0;
+  }
+
+  static validatePersonIndex(personIndex: number, totalPersons: number): boolean {
+    return personIndex >= 0 && personIndex < totalPersons && totalPersons > 0;
   }
 
   static getCallableContacts(allPeople: SpeedrunPerson[]): SpeedrunPerson[] {

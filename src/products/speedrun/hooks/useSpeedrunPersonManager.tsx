@@ -9,6 +9,7 @@ import {
   getDailyProgress,
   getWeeklyProgress,
   hasDailyTargetBeenMet,
+  getDailySpeedrunState,
 } from "../state";
 import { useSpeedrunContext } from "@/products/speedrun/context/SpeedrunProvider";
 import { useUnifiedAuth } from "@/platform/auth";
@@ -42,6 +43,14 @@ export function useSpeedrunPersonManager() {
     setSelectedPerson,
     setDailyProgress,
     setWeeklyProgress,
+    // Bonus round state
+    bonusRoundActive,
+    bonusRoundCompleted,
+    bonusRoundTotal,
+    bonusRoundDeclined,
+    setBonusRoundActive,
+    setBonusRoundCompleted,
+    setBonusRoundDeclined,
   } = useSpeedrunContext();
 
   // Update progress function
@@ -121,17 +130,28 @@ export function useSpeedrunPersonManager() {
         markLeadAsCompleted(personId.toString());
 
         // Update local state - move from ready to completed
-        setReadyPeople((prev) => prev.filter((p) => p.id !== personId));
+        setReadyPeople((prev) => {
+          const filtered = prev.filter((p) => p.id !== personId);
+          
+          // Auto-select next person using the filtered array
+          const nextPerson = filtered.length > 0 ? filtered[0] : null;
+          setSelectedPerson(nextPerson);
+          
+          return filtered;
+        });
         setCompletedPeople((prev) => [...prev, person]);
 
-        // Auto-select next person
-        const remainingPeople = readyPeople.filter((p) => p.id !== personId);
-        const nextPerson =
-          remainingPeople.length > 0 ? remainingPeople[0] : null;
-        setSelectedPerson(nextPerson || null);
+        // Track bonus round completion if active
+        if (bonusRoundActive) {
+          setBonusRoundCompleted(prev => {
+            const newCount = prev + 1;
+            console.log(`🎯 Bonus round progress: ${newCount}/${bonusRoundTotal}`);
+            return newCount;
+          });
+        }
 
         console.log(`✅ Person ${person.name} marked as completed`);
-        console.log(`📋 Remaining ready people: ${remainingPeople.length}`);
+        console.log(`📋 Remaining ready people: ${readyPeople.length - 1}`);
 
         // Update progress
         await updateProgress();
@@ -144,8 +164,15 @@ export function useSpeedrunPersonManager() {
           JSON.stringify(currentCompleted),
         );
 
-        // Check if we've completed 50 records and trigger auto-fetch
+        // Check if we've completed 50 records and show bonus popup
         const newCompletedCount = completedPeople.length + 1;
+        if (newCompletedCount === 50 && !bonusRoundActive && !bonusRoundDeclined) {
+          console.log(`🎯 Completed 50 records! Showing bonus round popup...`);
+          // This will be handled by the parent component that uses this hook
+          // The popup will be triggered by checking completedPeople.length === 50
+        }
+        
+        // Check if we've completed 50 records and trigger auto-fetch (legacy logic)
         if (newCompletedCount >= 50) {
           console.log(`🎯 Completed 50 records! Triggering auto-fetch of next batch...`);
           
@@ -199,13 +226,13 @@ export function useSpeedrunPersonManager() {
         // Fallback: still update local state even if ranking system fails
         const person = readyPeople.find((p) => p['id'] === personId);
         if (person) {
-          setReadyPeople((prev) => prev.filter((p) => p.id !== personId));
+          setReadyPeople((prev) => {
+            const filtered = prev.filter((p) => p.id !== personId);
+            const nextPerson = filtered.length > 0 ? filtered[0] : null;
+            setSelectedPerson(nextPerson);
+            return filtered;
+          });
           setCompletedPeople((prev) => [...prev, person]);
-
-          const remainingPeople = readyPeople.filter((p) => p.id !== personId);
-          setSelectedPerson(
-            remainingPeople.length > 0 ? remainingPeople[0] || null : null,
-          );
         }
       }
     },
@@ -243,17 +270,19 @@ export function useSpeedrunPersonManager() {
         }
 
         // Update local state immediately - move from ready to skipped
-        setReadyPeople((prev) => prev.filter((p) => p.id !== personId));
+        setReadyPeople((prev) => {
+          const filtered = prev.filter((p) => p.id !== personId);
+          
+          // Auto-select next person using the filtered array
+          const nextPerson = filtered.length > 0 ? filtered[0] : null;
+          setSelectedPerson(nextPerson);
+          
+          return filtered;
+        });
         setSkippedPeople((prev) => [...prev, person]);
 
-        // Auto-select next person
-        const remainingPeople = readyPeople.filter((p) => p.id !== personId);
-        const nextPerson =
-          remainingPeople.length > 0 ? remainingPeople[0] : null;
-        setSelectedPerson(nextPerson || null);
-
         console.log(`⏭️ Person ${person.name} skipped`);
-        console.log(`📋 Remaining ready people: ${remainingPeople.length}`);
+        console.log(`📋 Remaining ready people: ${readyPeople.length - 1}`);
 
         // Persist skip to localStorage for session recovery
         const today = new Date().toDateString();
@@ -298,6 +327,103 @@ export function useSpeedrunPersonManager() {
     }
   }, [readyPeople.length, completedPeople.length]);
 
+  // Load bonus people (ranks 51-60)
+  const loadBonusPeople = useCallback(async () => {
+    try {
+      console.log("🎯 Loading bonus people (ranks 51-60)...");
+      
+      const { user } = useUnifiedAuth();
+      const workspaceId = user?.activeWorkspaceId || user?.workspaces?.[0]?.id;
+      const userId = user?.id;
+
+      if (!workspaceId || !userId) {
+        console.error("❌ Missing workspace or user context for bonus people");
+        return;
+      }
+
+      // Fetch bonus people from speedrun API with offset
+      const response = await fetch(`/api/v1/speedrun?offset=50&limit=10`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-workspace-id': workspaceId,
+          'x-user-id': userId,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch bonus people: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.success && data.data) {
+        const bonusPeople = data.data.map((person: any) => ({
+          ...person,
+          id: person.id,
+          name: person.name,
+          title: person.title,
+          company: person.company,
+          email: person.email,
+          phone: person.phone,
+          mobilePhone: person.mobilePhone,
+          linkedin: person.linkedin,
+          photo: person.photo,
+          priority: person.priority,
+          status: person.status,
+          lastContact: person.lastAction || 'Never',
+          nextAction: person.nextAction || 'No action set',
+          relationship: person.relationship || 'Unknown',
+          bio: person.bio || '',
+          interests: person.interests || [],
+          recentActivity: person.recentActivity || '',
+          commission: person.commission || '',
+          globalRank: person.globalRank,
+          notes: person.notes || '',
+          customFields: person.customFields || {},
+        }));
+
+        // Add bonus people to ready list
+        setReadyPeople(prev => [...prev, ...bonusPeople]);
+        setBonusRoundActive(true);
+        setBonusRoundCompleted(0);
+        
+        console.log(`✅ Loaded ${bonusPeople.length} bonus people`);
+      }
+    } catch (error) {
+      console.error("❌ Failed to load bonus people:", error);
+    }
+  }, [setReadyPeople, setBonusRoundActive, setBonusRoundCompleted]);
+
+  // Handle bonus round completion
+  const handleBonusRoundComplete = useCallback((personId: number) => {
+    console.log(`🎯 Bonus round completion: ${personId}`);
+    
+    // Update bonus round completed count
+    setBonusRoundCompleted(prev => {
+      const newCount = prev + 1;
+      
+      // Check if bonus round is complete
+      if (newCount >= bonusRoundTotal) {
+        console.log(`🎉 Bonus round complete! ${newCount}/${bonusRoundTotal}`);
+        // Could show another celebration or just mark as complete
+      }
+      
+      return newCount;
+    });
+  }, [bonusRoundTotal, setBonusRoundCompleted]);
+
+  // Handle declining bonus round
+  const handleDeclineBonus = useCallback(() => {
+    console.log("🚫 User declined bonus round");
+    setBonusRoundDeclined(true);
+    
+    // Persist to daily state
+    const today = new Date().toDateString();
+    const dailyState = getDailySpeedrunState();
+    dailyState.bonusRoundDeclined = true;
+    localStorage.setItem(`speedrun-state-${today}`, JSON.stringify(dailyState));
+  }, [setBonusRoundDeclined]);
+
   // Handle starting speedrun (if needed)
   const handleStartSpeedrun = useCallback(() => {
     console.log("🚀 Starting speedrun...");
@@ -310,5 +436,9 @@ export function useSpeedrunPersonManager() {
     handleAddMore,
     handleStartSpeedrun,
     updateProgress,
+    // Bonus round functions
+    loadBonusPeople,
+    handleBonusRoundComplete,
+    handleDeclineBonus,
   };
 }
