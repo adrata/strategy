@@ -167,11 +167,19 @@ export default function SetupAccountPage() {
           localStorage.setItem('adrata-refresh-token', data.data.tokens.refreshToken);
         }
 
-        // Redirect immediately to speedrun page
+        console.log('✅ Account setup completed successfully');
+        console.log('🔑 Tokens stored in localStorage');
+        console.log('🏢 Workspace:', data.data.workspace);
+
+        // Force a page reload to ensure the auth system picks up the new tokens
+        // This ensures the user is properly authenticated before redirecting
         if (data.data.workspace) {
-          router.push(`/${data.data.workspace.slug}/speedrun`);
+          console.log(`🔄 Redirecting to workspace: /${data.data.workspace.slug}/people`);
+          // Use window.location.href to force a full page reload
+          window.location.href = `/${data.data.workspace.slug}/people`;
         } else {
-          router.push('/');
+          console.log('🔄 Redirecting to workspaces page');
+          window.location.href = '/workspaces';
         }
       } else {
         setError(data.error || 'Failed to set up account. Please try again.');
