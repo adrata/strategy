@@ -165,10 +165,23 @@ export default function SetupAccountPage() {
         if (data.data.tokens) {
           localStorage.setItem('adrata-access-token', data.data.tokens.accessToken);
           localStorage.setItem('adrata-refresh-token', data.data.tokens.refreshToken);
+          
+          // Also set the auth-token cookie that the system expects
+          document.cookie = `auth-token=${data.data.tokens.accessToken}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
+          
+          // Set the unified session cookie as well
+          const sessionData = {
+            accessToken: data.data.tokens.accessToken,
+            refreshToken: data.data.tokens.refreshToken,
+            user: data.data.user,
+            workspace: data.data.workspace,
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+          };
+          document.cookie = `adrata_unified_session=${JSON.stringify(sessionData)}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
         }
 
         console.log('✅ Account setup completed successfully');
-        console.log('🔑 Tokens stored in localStorage');
+        console.log('🔑 Tokens stored in localStorage and cookies');
         console.log('🏢 Workspace:', data.data.workspace);
 
         // Force a page reload to ensure the auth system picks up the new tokens
