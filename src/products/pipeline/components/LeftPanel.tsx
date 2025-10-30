@@ -767,15 +767,6 @@ function PipelineSections({
       visible: allowedSections.includes('opportunities') && (isDemoMode ? demoModeVisibility.isOpportunitiesVisible : (isOpportunitiesVisible ?? true))
     },
     {
-      id: "partners",
-      name: "Partners",
-      description: "Strategic Alliances",
-      count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-      ) : productionCounts.partners,
-      visible: allowedSections.includes('partners') && shouldShowPartners
-    },
-    {
       id: "clients",
       name: "Clients",
       description: "Earned Relationships",
@@ -801,6 +792,15 @@ function PipelineSections({
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : productionCounts.companies,
       visible: allowedSections.includes('companies') && true
+    },
+    {
+      id: "partners",
+      name: "Partners",
+      description: "Strategic Alliances",
+      count: loading ? (
+        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+      ) : productionCounts.partners,
+      visible: allowedSections.includes('partners') && shouldShowPartners
     },
     {
       id: "chronicle",

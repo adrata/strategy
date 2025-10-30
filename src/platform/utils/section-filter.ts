@@ -34,7 +34,7 @@ export function getFilteredSectionsForWorkspace(config: SectionFilterConfig): st
   const sectionConfigs: Record<string, { all: string[], core: string[] }> = {
     'pipeline': {
       all: ['speedrun', 'chronicle', 'opportunities', 'leads', 'prospects', 'clients', 'partners', 'companies', 'people', 'metrics'],
-      core: ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people']
+      core: ['speedrun', 'leads', 'prospects', 'opportunities', 'companies', 'people', 'partners']
     },
     'monaco': {
       all: ['companies', 'people', 'sellers', 'sequences', 'analytics'],

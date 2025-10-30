@@ -69,7 +69,8 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
     jobTitle: "",
     selectedCompany: null as any,
     state: null as USState | null,
-    notes: ""
+    notes: "",
+    status: "LEAD" as "LEAD" | "PROSPECT" | "OPPORTUNITY" | "CLIENT" | "PARTNER" | "SUPERFAN"
   });
 
   // Company form data
@@ -156,7 +157,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
           companyId: personFormData.selectedCompany?.id,
           state: personFormData.state,
           fullName,
-          status: "LEAD", // Lock in as LEAD
+          status: personFormData.status, // Use selected status
           source: "Manual Entry"
         };
 
@@ -186,7 +187,8 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
             jobTitle: "",
             selectedCompany: null,
             state: null,
-            notes: ""
+            notes: "",
+            status: "LEAD"
           });
           
           // Call callback
@@ -281,8 +283,10 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                 </svg>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-[var(--foreground)]">Add New Lead</h2>
-                <p className="text-sm text-[var(--muted)]">Create a new lead contact or company</p>
+                <h2 className="text-xl font-bold text-[var(--foreground)]">
+                  {activeTab === 'person' ? `Add New ${personFormData.status}` : 'Add New Company'}
+                </h2>
+                <p className="text-sm text-[var(--muted)]">Create a new contact or company</p>
               </div>
             </div>
             <button
@@ -301,7 +305,9 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Start Header */}
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-[var(--foreground)]">Start</h3>
+            <h3 className="text-sm font-semibold text-[var(--foreground)]">
+              {activeTab === 'person' ? 'Person Details' : 'Company Details'}
+            </h3>
           </div>
 
           {/* Tab Navigation */}
@@ -353,7 +359,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
               className="text-sm font-medium"
               style={{ color: colors.primary }}
             >
-              Status: Lead
+              Status: {activeTab === 'person' ? personFormData.status : 'Company'}
             </span>
           </div>
 
@@ -407,6 +413,25 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                   placeholder="Enter job title"
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 />
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status
+                </label>
+                <select
+                  value={personFormData.status}
+                  onChange={(e) => setPersonFormData(prev => ({ ...prev, status: e.target.value as any }))}
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+                >
+                  <option value="LEAD">Lead</option>
+                  <option value="PROSPECT">Prospect</option>
+                  <option value="OPPORTUNITY">Opportunity</option>
+                  <option value="CLIENT">Client</option>
+                  <option value="PARTNER">Partner</option>
+                  <option value="SUPERFAN">Superfan</option>
+                </select>
               </div>
 
               {/* Company */}
