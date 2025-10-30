@@ -837,12 +837,31 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString()
     });
 
+    // Auto-assign sequential globalRank if not provided
+    let globalRank = body.globalRank;
+    if (!globalRank) {
+      // Find the highest existing globalRank for this user in this workspace
+      const maxRankCompany = await prisma.companies.findFirst({
+        where: {
+          workspaceId: context.workspaceId,
+          mainSellerId: context.userId,
+          deletedAt: null
+        },
+        select: { globalRank: true },
+        orderBy: { globalRank: 'desc' }
+      });
+      
+      globalRank = (maxRankCompany?.globalRank || 0) + 1;
+      console.log(`🎯 [V1 COMPANIES API] Auto-assigned globalRank: ${globalRank}`);
+    }
+
     // Create company data object outside transaction scope for error handler access
     const companyData = {
       name: body.name,
       workspaceId: context.workspaceId,
       state: body.state || null,
       status: body.status || 'ACTIVE', // Use provided status or default to ACTIVE
+      globalRank: globalRank,
       createdAt: new Date(),
       updatedAt: new Date()
     };

@@ -957,6 +957,24 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Auto-assign sequential globalRank if not provided
+    let globalRank = body.globalRank;
+    if (!globalRank) {
+      // Find the highest existing globalRank for this user in this workspace
+      const maxRankPerson = await prisma.people.findFirst({
+        where: {
+          workspaceId: context.workspaceId,
+          mainSellerId: context.userId,
+          deletedAt: null
+        },
+        select: { globalRank: true },
+        orderBy: { globalRank: 'desc' }
+      });
+      
+      globalRank = (maxRankPerson?.globalRank || 0) + 1;
+      console.log(`🎯 [V1 PEOPLE API] Auto-assigned globalRank: ${globalRank}`);
+    }
+
     // Create person and action in a transaction
     const result = await prisma.$transaction(async (tx) => {
       // Create person
@@ -1004,7 +1022,7 @@ export async function POST(request: NextRequest) {
           nextActionDate: body.nextActionDate ? new Date(body.nextActionDate) : null,
           actionStatus: body.actionStatus,
           engagementScore: body.engagementScore || 0,
-          globalRank: body.globalRank || 0,
+          globalRank: globalRank,
           companyRank: body.companyRank || 0,
           workspaceId: context.workspaceId,
           companyId: body.companyId,
