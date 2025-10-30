@@ -88,14 +88,11 @@ export async function GET(request: NextRequest) {
     
     console.log(`🚀 [COUNTS API] Loading counts for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🎯 DEMO MODE: Detect if we're in demo mode for Dan's workspace
+    // 🎯 DEMO MODE: Detect if we're in demo mode for Dan's workspace only
     const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
                       workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
-                      workspaceId === '01K7464TNANHQXPCZT1FYX205V' || // Ross's workspace
-                      workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || // Notary Everyday
                       userId === 'demo-user-2025' || 
-                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM' || // Dan's user ID
-                      userId === '01K7469230N74BVGK2PABPNNZ9'; // Ross's user ID
+                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID only
     console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode}`);
     
     // 🚀 PERFORMANCE: Use direct Prisma queries for better reliability with error handling

@@ -130,7 +130,7 @@ export function GrandCentralLeftPanel() {
           </div>
           <div className="flex-1 text-left">
             <div className="text-sm font-medium text-[var(--foreground)]">{authUser?.name || 'User'}</div>
-            <div className="text-xs text-[var(--muted)]">{workspace}</div>
+            <div className="text-xs text-[var(--muted)]">{typeof workspace === 'string' ? workspace : workspace?.name || authUser?.workspaces?.find(w => w.id === authUser.activeWorkspaceId)?.name || 'Workspace'}</div>
           </div>
         </button>
       </div>

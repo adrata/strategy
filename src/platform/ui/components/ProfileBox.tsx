@@ -605,7 +605,7 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
                 id="profile-dialog-description"
                 className="text-sm text-[var(--muted)] mt-0.5"
               >
-                {workspace}
+                {typeof workspace === 'string' ? workspace : workspace?.name || 'Workspace'}
               </p>
             )}
             {username && (

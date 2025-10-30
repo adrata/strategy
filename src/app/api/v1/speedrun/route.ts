@@ -50,8 +50,6 @@ export async function GET(request: NextRequest) {
     const fetchSpeedrunData = async () => {
       // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
       const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
-                        context.workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || // Notary Everyday
-                        context.workspaceId === '01K7464TNANHQXPCZT1FYX205V' || // Adrata workspace
                         context.userId === 'demo-user-2025'; // Demo user only
       
       console.log(`🚀 [SPEEDRUN API] Loading top ${limit} speedrun prospects for workspace: ${context.workspaceId}, user: ${context.userId}`);

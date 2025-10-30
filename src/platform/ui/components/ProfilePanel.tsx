@@ -303,11 +303,11 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-[var(--accent)] rounded-full flex items-center justify-center text-white font-semibold text-sm">
-            {workspace.charAt(0).toUpperCase()}
+            {(typeof workspace === 'string' ? workspace : workspace?.name || 'W').charAt(0).toUpperCase()}
           </div>
           <div>
             <h3 className="text-sm font-semibold text-[var(--foreground)]">
-              {workspace}
+              {typeof workspace === 'string' ? workspace : workspace?.name || 'Workspace'}
             </h3>
             <p className="text-xs text-[var(--muted-foreground)]">
               RevenueOS Sales Acceleration

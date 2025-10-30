@@ -1098,12 +1098,12 @@ export function PipelineLeftPanelStandalone({
     // Check user restrictions first - if user has restrictions, use ProfileBox popup (like TOP)
     const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
     const userRestrictions = authUser?.id && authUser?.email ? 
-      getUserRestrictions(authUser.id, authUser.email, workspace) : 
+      getUserRestrictions(authUser.id, authUser.email, workspace?.name || '') : 
       { hasRestrictions: false };
 
     if (userRestrictions.hasRestrictions) {
       // Use ProfileBox popup for restricted users (like TOP workspace)
-      console.log('🔘 Opening ProfileBox popup for restricted user:', workspace);
+      console.log('🔘 Opening ProfileBox popup for restricted user:', workspace?.name);
       if (isProfileOpen) {
         setIsProfileOpen(false);
       } else {
@@ -1127,10 +1127,10 @@ export function PipelineLeftPanelStandalone({
     } else {
       // Toggle ProfileBox popup for other workspaces
       if (isProfileOpen) {
-        console.log('🔘 Closing ProfileBox popup for workspace:', workspace);
+        console.log('🔘 Closing ProfileBox popup for workspace:', workspace?.name);
         setIsProfileOpen(false);
       } else {
-        console.log('🔘 Opening ProfileBox popup for workspace:', workspace);
+        console.log('🔘 Opening ProfileBox popup for workspace:', workspace?.name);
         setProfileAnchor(event.currentTarget);
         setIsProfileOpen(true);
       }
