@@ -29,9 +29,8 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
-    phone: "",
     jobTitle: "",
+    linkedin: "",
     company: "",
     companyId: "",
     status: "LEAD", // Default to LEAD, but allow selection
@@ -134,9 +133,8 @@ export function AddPersonModal({ isOpen, onClose, onPersonAdded, section = 'peop
         setFormData({
           firstName: "",
           lastName: "",
-          email: "",
-          phone: "",
           jobTitle: "",
+          linkedin: "",
           company: "",
           companyId: "",
           status: "LEAD",

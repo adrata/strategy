@@ -64,9 +64,8 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
   const [personFormData, setPersonFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
-    phone: "",
     jobTitle: "",
+    linkedin: "",
     selectedCompany: null as any,
     state: null as USState | null,
     notes: "",
@@ -151,9 +150,8 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
         const leadData = {
           firstName: personFormData.firstName,
           lastName: personFormData.lastName,
-          email: personFormData.email,
-          phone: personFormData.phone,
           jobTitle: personFormData.jobTitle,
+          linkedin: personFormData.linkedin,
           notes: personFormData.notes,
           companyId: personFormData.selectedCompany?.id,
           state: personFormData.state,
@@ -412,6 +410,20 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
                   value={personFormData.jobTitle}
                   onChange={(e) => setPersonFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
                   placeholder="Enter job title"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+                />
+              </div>
+
+              {/* LinkedIn */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  LinkedIn
+                </label>
+                <input
+                  type="text"
+                  value={personFormData.linkedin}
+                  onChange={(e) => setPersonFormData(prev => ({ ...prev, linkedin: e.target.value }))}
+                  placeholder="linkedin.com/in/example"
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 />
               </div>
