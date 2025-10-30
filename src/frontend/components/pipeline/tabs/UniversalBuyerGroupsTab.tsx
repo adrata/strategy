@@ -641,36 +641,6 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
 
   return (
     <div className="space-y-8">
-      {/* Overview Stats */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Overview</h3>
-        <div className="grid grid-cols-6 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{totalMembers}</div>
-            <div className="text-sm text-[var(--muted)]">Total</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{decisionMakers}</div>
-            <div className="text-sm text-[var(--muted)]">Decision Makers</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{champions}</div>
-            <div className="text-sm text-[var(--muted)]">Champions</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{stakeholders}</div>
-            <div className="text-sm text-[var(--muted)]">Stakeholders</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{blockers}</div>
-            <div className="text-sm text-[var(--muted)]">Blockers</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{introducers}</div>
-            <div className="text-sm text-[var(--muted)]">Introducers</div>
-          </div>
-        </div>
-      </div>
 
       {/* Loading State */}
       {loading && (
@@ -690,6 +660,19 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && buyerGroups.length === 0 && (
+        <div className="text-center py-12">
+          <BuildingOfficeIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+            No Buyer Group Members Found
+          </h3>
+          <p className="text-[var(--muted)]">
+            This person doesn't have any co-workers at their company yet.
+          </p>
         </div>
       )}
 

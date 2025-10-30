@@ -836,47 +836,6 @@ Create opportunities for ongoing engagement and relationship development. Provid
                       </div>
                     </div>
 
-                    {/* Role Summary Cards */}
-                    <div className="p-6 border-b border-[var(--border)] bg-[var(--background)]">
-                      <div className="flex gap-4">
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
-                            {buyerGroupMembers.length}
-                          </div>
-                          <div className="text-sm text-[var(--muted)]">Total</div>
-                        </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
-                            {buyerGroupMembers.filter(m => m.buyerRole === 'Decision Maker').length}
-                          </div>
-                          <div className="text-sm text-[var(--muted)]">Decision Makers</div>
-                        </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
-                            {buyerGroupMembers.filter(m => m.buyerRole === 'Champion').length}
-                          </div>
-                          <div className="text-sm text-[var(--muted)]">Champions</div>
-                        </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
-                            {buyerGroupMembers.filter(m => m.buyerRole === 'Stakeholder').length}
-                          </div>
-                          <div className="text-sm text-[var(--muted)]">Stakeholders</div>
-                        </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
-                            {buyerGroupMembers.filter(m => m.buyerRole === 'Blocker').length}
-                          </div>
-                          <div className="text-sm text-[var(--muted)]">Blockers</div>
-                        </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
-                            {buyerGroupMembers.filter(m => m.buyerRole === 'Opener').length}
-                          </div>
-                          <div className="text-sm text-[var(--muted)]">Introducers</div>
-                        </div>
-                      </div>
-                    </div>
 
                     {/* Buyer Group Cards - Full Width Design */}
                     <div className="flex-1 overflow-y-auto p-6">
@@ -978,8 +937,8 @@ Create opportunities for ongoing engagement and relationship development. Provid
                       ) : (
                         <div className="text-center py-12">
                           <div className="text-[var(--muted)] text-6xl mb-4">👥</div>
-                          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Buyer Group Found</h3>
-                          <p className="text-[var(--muted)]">This company doesn't have any buyer group members mapped yet.</p>
+                          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Buyer Group Members Found</h3>
+                          <p className="text-[var(--muted)]">This person doesn't have any co-workers at their company yet.</p>
                         </div>
                       )}
                     </div>

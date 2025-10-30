@@ -478,7 +478,9 @@ export function CompleteActionModal({
                 <p className="text-sm text-[var(--muted)]">
                   {initialData 
                     ? `Resubmit your interaction with ${personName || 'selected person'} (undo mode - will resave to database)`
-                    : `Log your interaction with ${personName || 'selected person'}`
+                    : companyName && !personName 
+                      ? `Log your interaction with ${companyName}`
+                      : `Log your interaction with ${personName || 'selected person'}`
                   }
                 </p>
               </div>
@@ -495,7 +497,8 @@ export function CompleteActionModal({
           </div>
 
           <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-4">
-            {/* Person - Auto-filled or Search */}
+            {/* Person - Auto-filled or Search (hidden for company records) */}
+            {personName && (
             <div>
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Person * {!formData.person && <span className="text-xs font-normal text-[var(--muted)]">(Search and select a person to continue)</span>}
@@ -580,9 +583,10 @@ export function CompleteActionModal({
                 </div>
               )}
             </div>
+            )}
 
             {/* Create Person Form */}
-            {showCreatePersonForm && (
+            {personName && showCreatePersonForm && (
               <div className="border border-[var(--border)] rounded-lg p-4 bg-[var(--panel-background)]">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-medium text-[var(--foreground)]">Create New Person</h3>

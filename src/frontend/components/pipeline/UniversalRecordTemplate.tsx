@@ -140,9 +140,10 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
       { id: 'overview', label: 'Overview' },
       { id: 'actions', label: 'Actions' },
       { id: 'intelligence', label: 'Intelligence' },
-      { id: 'news', label: 'News' },
       { id: 'people', label: 'People' },
+      { id: 'value', label: 'Value' },
       { id: 'buyer-groups', label: 'Buyer Group' },
+      { id: 'opportunities', label: 'Opportunities' },
       { id: 'notes', label: 'Notes' }
     ];
   }
@@ -746,8 +747,15 @@ export function UniversalRecordTemplate({
       case 'leads':
       case 'prospects':
       case 'speedrun':
+        // Check if this is a company record
+        if (record?.isCompanyLead || record?.recordType === 'company') {
+          const coresignalData = record?.customFields?.coresignalData;
+          const industry = coresignalData?.industry || record?.industry || 'Unknown Industry';
+          const employeeCount = coresignalData?.employees_count || record?.size || record?.employeeCount;
+          return employeeCount ? `${employeeCount} employees • ${industry}` : industry;
+        }
+        // For person records, show title
         const title = record?.title || record?.jobTitle;
-        // 🎯 FIX: Show only title, not company
         return title || 'Unknown Title';
       case 'opportunities':
       case 'deals':
@@ -3613,8 +3621,8 @@ export function UniversalRecordTemplate({
       </button>
     );
 
-    // Add Person button - only for company records
-    if (recordType === 'companies') {
+    // Add Person button - for company records and company leads/prospects
+    if (recordType === 'companies' || (record?.isCompanyLead && (recordType === 'leads' || recordType === 'prospects'))) {
       buttons.push(
         <button
           key="add-person"
@@ -3834,7 +3842,7 @@ export function UniversalRecordTemplate({
         case 'intelligence':
           console.log(`🧠 [UNIVERSAL] Rendering intelligence tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            recordType === 'companies' ? 
+            (recordType === 'companies' || record?.isCompanyLead || record?.recordType === 'company') ? 
               <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               recordType === 'speedrun' ?
                 <SpeedrunInsightsTab 
@@ -3878,7 +3886,7 @@ export function UniversalRecordTemplate({
         case 'intelligence':
           console.log(`🧠 [UNIVERSAL] Rendering intelligence tab for ${recordType}`);
           return renderTabWithErrorBoundary(
-            recordType === 'companies' ? 
+            (recordType === 'companies' || record?.isCompanyLead || record?.recordType === 'company') ? 
               <UniversalCompanyIntelTab key={activeTab} record={record} recordType={recordType} onSave={handleInlineFieldSave} /> :
               recordType === 'speedrun' ?
                 <SpeedrunInsightsTab 
