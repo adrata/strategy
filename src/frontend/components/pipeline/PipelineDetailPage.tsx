@@ -254,29 +254,42 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
   // 🚀 SPEEDRUN RECORD FIX: For speedrun records, find the current record in the speedrun data array
   // instead of loading it separately to ensure navigation works correctly
   useEffect(() => {
-    if (section === 'speedrun' && speedrunData && speedrunData.length > 0 && !selectedRecord && slug) {
-      console.log('🔍 [SPEEDRUN RECORD] Finding current record in speedrun data array:', {
-        slug,
-        speedrunDataLength: speedrunData.length,
-        lookingForId: slug
-      });
+    if (section === 'speedrun' && speedrunData && speedrunData.length > 0 && slug) {
+      // Extract the record ID from the slug
+      const recordId = extractIdFromSlug(slug);
       
-      const currentRecord = speedrunData.find((record: any) => record.id === slug);
-      if (currentRecord) {
-        console.log('✅ [SPEEDRUN RECORD] Found current record in speedrun data:', {
-          id: currentRecord.id,
-          name: currentRecord.name || currentRecord.fullName
+      // Only update if the selected record doesn't match the current slug
+      if (selectedRecord?.id !== recordId) {
+        console.log('🔍 [SPEEDRUN RECORD] Finding current record in speedrun data array:', {
+          slug,
+          recordId,
+          selectedRecordId: selectedRecord?.id,
+          speedrunDataLength: speedrunData.length,
+          lookingForId: recordId
         });
-        setSelectedRecord(currentRecord);
-      } else {
-        console.log('❌ [SPEEDRUN RECORD] Current record not found in speedrun data, falling back to direct load');
-        // Fallback to direct loading if not found in speedrun data
-        if (slug && !directRecordLoading) {
-          loadDirectRecord(slug);
+        
+        const currentRecord = speedrunData.find((record: any) => record.id === recordId);
+        if (currentRecord) {
+          console.log('✅ [SPEEDRUN RECORD] Found current record in speedrun data:', {
+            id: currentRecord.id,
+            name: currentRecord.name || currentRecord.fullName
+          });
+          setSelectedRecord(currentRecord);
+        } else {
+          console.log('❌ [SPEEDRUN RECORD] Current record not found in speedrun data, falling back to direct load');
+          // Fallback to direct loading if not found in speedrun data
+          if (recordId && !directRecordLoading) {
+            loadDirectRecord(recordId);
+          }
         }
+      } else {
+        console.log('🔄 [SPEEDRUN RECORD] Record already matches current selection, skipping update:', {
+          recordId,
+          selectedRecordId: selectedRecord?.id
+        });
       }
     }
-  }, [section, speedrunData, selectedRecord, slug]); // Removed directRecordLoading to prevent infinite loops
+  }, [section, speedrunData, selectedRecord, slug, directRecordLoading, loadDirectRecord]); // Added loadDirectRecord to dependencies
   
   // Debug speedrun data loading
   if (section === 'speedrun') {

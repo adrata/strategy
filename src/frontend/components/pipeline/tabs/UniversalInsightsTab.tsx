@@ -185,7 +185,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
       // AI-generated intelligence fields
       influenceLevel: record.customFields?.influenceLevel || null,
       engagementStrategy: record.customFields?.engagementStrategy || null,
-      isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
+      isBuyerGroupMember: record.isBuyerGroupMember || !!record.buyerGroupRole || record.customFields?.isBuyerGroupMember || false,
       seniority: record.customFields?.seniority || null,
       influenceScore: record.customFields?.influenceScore || 0,
       decisionPower: record.customFields?.decisionPower || 0,
