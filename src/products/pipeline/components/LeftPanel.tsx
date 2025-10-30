@@ -695,14 +695,24 @@ function PipelineSections({
       ) : (() => {
         const totalPeople = productionCounts.people || 0;
         const speedrunCount = productionCounts.speedrun || 0;
+        const speedrunReadyCount = productionCounts.speedrunReady || 0;
         
-        // If no people in workspace, show 0
-        if (totalPeople === 0) {
-          return 0;
+        // If there are speedrun records with no meaningful actions, show Ready
+        if (speedrunReadyCount > 0) {
+          return (
+            <div className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+              <span className="text-xs font-semibold">Ready</span>
+            </div>
+          );
+        }
+        
+        // If speedrun count > 0 but all have actions, show the count number
+        if (speedrunCount > 0) {
+          return speedrunCount;
         }
         
         // If people exist but speedrun is 0, show Done
-        if (speedrunCount === 0) {
+        if (totalPeople > 0 && speedrunCount === 0) {
           return (
             <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
               <CheckIcon className="w-3 h-3" />
@@ -711,16 +721,8 @@ function PipelineSections({
           );
         }
         
-        // If speedrun is 50, show Ready
-        if (speedrunCount === 50) {
-          return (
-            <div className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-              <span className="text-xs font-semibold">Ready</span>
-            </div>
-          );
-        }
-        
-        return speedrunCount;
+        // Otherwise (no speedrun, no people) → show 0
+        return 0;
       })(),
       visible: allowedSections.includes('speedrun') && (isDemoMode ? demoModeVisibility.isSpeedrunVisible : (isSpeedrunVisible ?? true))
     },
@@ -1353,7 +1355,13 @@ export function PipelineLeftPanelStandalone({
             <span className="text-sm font-medium text-gray-700">{user.initial}</span>
           </div>
           <div className="flex-1 text-left">
-            <div className="text-sm font-medium text-[var(--foreground)]">{user.name}</div>
+            <div className="text-sm font-medium text-[var(--foreground)]">
+              {user.firstName && user.lastName && user.firstName.trim() && user.lastName.trim()
+                ? `${user.firstName} ${user.lastName}` 
+                : user.firstName && user.firstName.trim()
+                ? user.firstName
+                : user.name}
+            </div>
             <div className="text-xs text-[var(--muted)]">{workspace?.name || workspaceName || 'Adrata'}</div>
           </div>
         </button>

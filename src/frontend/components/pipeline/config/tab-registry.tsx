@@ -182,9 +182,7 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
     { id: 'overview', label: 'Overview', component: UniversalCompanyTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'intelligence', label: 'Intelligence', component: UniversalCompanyIntelTab },
-    // { id: 'news', label: 'News', component: UniversalNewsTab }, // Temporarily hidden until news relevance is improved
     { id: 'people', label: 'People', component: UniversalPeopleTab },
-    { id: 'value', label: 'Value', component: ValueTab },
     { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
     { id: 'opportunities', label: 'Opportunities', component: UniversalOpportunitiesTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
@@ -203,8 +201,9 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
-    { id: 'company', label: 'Company', component: CompanyOverviewTab },
-    { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
+    { id: 'news', label: 'News', component: UniversalNewsTab },
+    { id: 'people', label: 'People', component: UniversalPeopleTab },
+    { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
@@ -237,13 +236,44 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
 };
 
 // Helper functions to get tab configurations
-export function getTabsForRecordType(recordType: string): TabConfig[] {
-  return TAB_CONFIGURATIONS[recordType] || TAB_CONFIGURATIONS.leads;
+export function getTabsForRecordType(recordType: string, record?: any): TabConfig[] {
+  const baseTabs = TAB_CONFIGURATIONS[recordType] || TAB_CONFIGURATIONS.leads;
+  
+  // Check if this is a company-only record
+  const isCompanyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+                         (recordType === 'leads' && record?.isCompanyLead === true) ||
+                         (recordType === 'prospects' && record?.isCompanyLead === true);
+  
+  // For company records, filter out person-specific tabs and use company tab set
+  const filteredTabs = isCompanyRecord 
+    ? baseTabs.filter(tab => 
+        tab.id !== 'news' &&      // Already filtered
+        tab.id !== 'career' &&    // Person-specific
+        tab.id !== 'company'      // Redundant for company records
+      )
+    : baseTabs;
+  
+  // Dynamically resolve components based on record type
+  return filteredTabs.map(tab => {
+    if (tab.id === 'overview') {
+      return {
+        ...tab,
+        component: getOverviewComponent(recordType, record)
+      };
+    }
+    if (tab.id === 'intelligence') {
+      return {
+        ...tab,
+        component: getIntelligenceComponent(recordType, record)
+      };
+    }
+    return tab;
+  });
 }
 
-export function getTabComponent(tabId: string, recordType: string): React.ComponentType<any> | null {
+export function getTabComponent(tabId: string, recordType: string, record?: any): React.ComponentType<any> | null {
   // First try to get from tab configurations
-  const tabs = getTabsForRecordType(recordType);
+  const tabs = getTabsForRecordType(recordType, record);
   const tabConfig = tabs.find(tab => tab.id === tabId);
   if (tabConfig?.component) {
     return tabConfig.component;
@@ -253,13 +283,22 @@ export function getTabComponent(tabId: string, recordType: string): React.Compon
   return TAB_COMPONENTS[tabId] || null;
 }
 
-export function getTabConfig(tabId: string, recordType: string): TabConfig | null {
-  const tabs = getTabsForRecordType(recordType);
+export function getTabConfig(tabId: string, recordType: string, record?: any): TabConfig | null {
+  const tabs = getTabsForRecordType(recordType, record);
   return tabs.find(tab => tab.id === tabId) || null;
 }
 
 // Special handling for record type specific components
-export function getOverviewComponent(recordType: string): React.ComponentType<any> {
+export function getOverviewComponent(recordType: string, record?: any): React.ComponentType<any> {
+  // Check if this is a company-only record
+  const isCompanyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+                         (recordType === 'leads' && record?.isCompanyLead === true) ||
+                         (recordType === 'prospects' && record?.isCompanyLead === true);
+  
+  if (isCompanyRecord) {
+    return CompanyOverviewTab;
+  }
+  
   switch (recordType) {
     case 'companies':
       return UniversalCompanyTab;
@@ -273,15 +312,32 @@ export function getOverviewComponent(recordType: string): React.ComponentType<an
   }
 }
 
-export function getIntelligenceComponent(recordType: string): React.ComponentType<any> {
-  switch (recordType) {
-    case 'companies':
-      return UniversalCompanyIntelTab;
-    case 'people':
-      return ComprehensiveInsightsTab;
-    default:
-      return UniversalInsightsTab;
+export function getIntelligenceComponent(recordType: string, record?: any): React.ComponentType<any> {
+  console.log('🔍 [TAB REGISTRY] Getting intelligence component for:', {
+    recordType,
+    recordTypeFromRecord: record?.recordType,
+    isCompanyLead: record?.isCompanyLead
+  });
+  
+  // Check if this is a company-only record
+  const isCompanyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+                         (recordType === 'leads' && record?.isCompanyLead === true) ||
+                         (recordType === 'prospects' && record?.isCompanyLead === true) ||
+                         (recordType === 'companies');
+  
+  console.log('🔍 [TAB REGISTRY] Is company record:', isCompanyRecord);
+  
+  if (isCompanyRecord) {
+    return UniversalCompanyIntelTab;
   }
+  
+  // Person records
+  if (recordType === 'people') {
+    return ComprehensiveInsightsTab;
+  }
+  
+  // Default for person-based records (speedrun, leads, prospects with people)
+  return UniversalInsightsTab;
 }
 
 export function getProfileComponent(recordType: string): React.ComponentType<any> {

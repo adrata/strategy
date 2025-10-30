@@ -1102,8 +1102,14 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
   };
 
   const renderHomeTab = () => {
+    // Check if this is a company-only record
+    const isCompanyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+                           (recordType === 'leads' && record?.isCompanyLead === true) ||
+                           (recordType === 'prospects' && record?.isCompanyLead === true) ||
+                           (recordType === 'companies');
+    
     // For companies, render company-specific fields
-    if (recordType === 'companies') {
+    if (isCompanyRecord) {
       return (
         <div className="p-6 space-y-6">
           {/* Section 1: Company Information */}
@@ -2051,14 +2057,25 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
                   disabled={loading}
                   className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {loading ? 'Updating...' : `Update ${recordType === 'leads' ? 'Lead' : 
-                                                        recordType === 'prospects' ? 'Prospect' :
-                                                        recordType === 'opportunities' ? 'Opportunity' :
-                                                        recordType === 'companies' ? 'Company' :
-                                                        recordType === 'people' ? 'Person' :
-                                                        recordType === 'clients' ? 'Client' :
-                                                        recordType === 'partners' ? 'Partner' :
-                                                        'Record'} (${getCommonShortcut('SUBMIT')})`}
+                  {loading ? 'Updating...' : (() => {
+                    // Check if this is a company-only record
+                    const isCompanyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+                                           (recordType === 'leads' && record?.isCompanyLead === true) ||
+                                           (recordType === 'prospects' && record?.isCompanyLead === true);
+                    
+                    if (isCompanyRecord) {
+                      return `Update Company (${getCommonShortcut('SUBMIT')})`;
+                    }
+                    
+                    return `Update ${recordType === 'leads' ? 'Lead' : 
+                                           recordType === 'prospects' ? 'Prospect' :
+                                           recordType === 'opportunities' ? 'Opportunity' :
+                                           recordType === 'companies' ? 'Company' :
+                                           recordType === 'people' ? 'Person' :
+                                           recordType === 'clients' ? 'Client' :
+                                           recordType === 'partners' ? 'Partner' :
+                                           'Record'} (${getCommonShortcut('SUBMIT')})`;
+                  })()}
                 </button>
               </div>
             </div>

@@ -5,7 +5,9 @@ import { DocumentIcon, PowerIcon } from "@heroicons/react/24/outline";
 import { AIModelSelector, type AIModel } from './AIModelSelector';
 import { ContextFiles } from './ContextFiles';
 import { AddFilesPopup } from './AddFilesPopup';
-// Voice controls disabled for now
+import { VoiceModeModal } from './VoiceModeModal';
+import { RiVoiceAiFill } from "react-icons/ri";
+import { useUnifiedAuth } from "@/platform/auth";
 
 interface ContextFile {
   id: string;
@@ -40,6 +42,10 @@ interface ChatInputProps {
   processMessageWithQueue: (message: string) => void;
   scrollToBottom: () => void;
   chatHistory?: string[]; // Add chat history for terminal-like navigation
+  onLogVoiceConversation?: (messages: { role: 'user' | 'assistant', content: string }[]) => void;
+  onVoiceModeClick?: () => void; // Add voice mode click handler
+  isVoiceModeActive?: boolean; // Add voice mode active state
+  isModalListening?: boolean; // Add modal listening state
 }
 
 export function ChatInput({
@@ -66,14 +72,40 @@ export function ChatInput({
   isEnterHandledRef,
   processMessageWithQueue,
   scrollToBottom,
-  chatHistory = []
+  chatHistory = [],
+  onLogVoiceConversation,
+  onVoiceModeClick,
+  isVoiceModeActive = false,
+  isModalListening = false
 }: ChatInputProps) {
+  
+  // Get current user from auth system
+  const { user } = useUnifiedAuth();
+  
+  // Debug logging
+  console.log('🔍 [VOICE MODE DEBUG] User object:', user);
+  console.log('🔍 [VOICE MODE DEBUG] Workspace ID:', workspaceId);
+  console.log('🔍 [VOICE MODE DEBUG] User name:', user?.name);
+  console.log('🔍 [VOICE MODE DEBUG] User email:', user?.email);
+  
+  // Get the active workspace name for proper Adrata workspace detection
+  const activeWorkspace = user?.workspaces?.find(w => w.id === user?.activeWorkspaceId);
+  const workspaceName = activeWorkspace?.name?.toLowerCase();
+  console.log('🔍 [VOICE MODE DEBUG] Active workspace name:', workspaceName);
+  
+  // Access control: Only show voice mode for Adrata workspace and user Ross
+  // Check both email and name for compatibility
+  const isVoiceModeAllowed = workspaceName === 'adrata' && (
+    user?.email === 'ross@adrata.com' || 
+    user?.name?.toLowerCase() === 'ross'
+  );
+  
+  console.log('🔍 [VOICE MODE DEBUG] Is voice mode allowed:', isVoiceModeAllowed);
   
   // Terminal-like command history navigation
   const [historyIndex, setHistoryIndex] = React.useState(-1);
   const [currentInput, setCurrentInput] = React.useState('');
   
-  // Voice controls disabled for now
   
 
   
@@ -157,6 +189,23 @@ export function ChatInput({
               </div>
             </div>
           </div>
+
+          {/* Voice Mode Button - Only for Adrata workspace and Ross */}
+          {isVoiceModeAllowed && (
+            <div className="absolute right-2 top-2 z-10">
+              <button
+                onClick={onVoiceModeClick}
+              className={`relative flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm border transition-all duration-200 cursor-pointer ${
+                isVoiceModeActive || isModalListening
+                  ? 'bg-blue-100 text-blue-700 border-blue-300 shadow-sm'
+                  : 'bg-white text-gray-600 border-gray-300 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600'
+              }`}
+              >
+                <RiVoiceAiFill className="w-4 h-4" />
+                <span className="font-medium text-xs">Voice Mode</span>
+              </button>
+            </div>
+          )}
 
 
           
@@ -290,7 +339,6 @@ export function ChatInput({
             
 
 
-            {/* Voice button disabled for now */}
 
             {/* Send Button */}
             <button

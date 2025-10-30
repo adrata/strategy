@@ -710,18 +710,20 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Title:</span>
-                <InlineEditField
-                  value={recordData.title}
-                  field="title"
-                  onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
+              {recordType !== 'companies' && (
+                <div className="flex items-center">
+                  <span className="text-sm text-[var(--muted)] w-24">Title:</span>
+                  <InlineEditField
+                    value={recordData.title}
+                    field="title"
+                    onSave={onSave}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    className="text-sm font-medium text-[var(--foreground)]"
+                  />
+                </div>
+              )}
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Company:</span>
                 <InlineEditField
@@ -735,18 +737,20 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Department:</span>
-                <InlineEditField
-                  value={recordData.department}
-                  field="department"
-                  onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
+              {recordType !== 'companies' && (
+                <div className="flex items-center">
+                  <span className="text-sm text-[var(--muted)] w-24">Department:</span>
+                  <InlineEditField
+                    value={recordData.department}
+                    field="department"
+                    onSave={onSave}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    className="text-sm font-medium text-[var(--foreground)]"
+                  />
+                </div>
+              )}
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">State:</span>
                 <InlineEditField
@@ -759,18 +763,20 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
-                <InlineEditField
-                  value={recordData.bio || null}
-                  field="bio"
-                  onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
+              {recordType !== 'companies' && (
+                <div className="flex items-center">
+                  <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
+                  <InlineEditField
+                    value={recordData.bio || null}
+                    field="bio"
+                    onSave={onSave}
+                    recordId={record.id}
+                    recordType={recordType}
+                    onSuccess={handleSuccess}
+                    className="text-sm font-medium text-[var(--foreground)]"
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -795,30 +801,34 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
                   className="text-sm font-medium text-[var(--foreground)]"
                 />
               </div>
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Role:</span>
-                <InlineEditField
-                  value={record.buyerGroupRole || 'Stakeholder'}
-                  field="buyerGroupRole"
-                  onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
-              <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Influence Level:</span>
-                <InlineEditField
-                  value={recordData.influenceLevel || null}
-                  field="influenceLevel"
-                  onSave={onSave}
-                  recordId={record.id}
-                  recordType={recordType}
-                  onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
-                />
-              </div>
+              {recordType !== 'companies' && (
+                <>
+                  <div className="flex items-center">
+                    <span className="text-sm text-[var(--muted)] w-24">Role:</span>
+                    <InlineEditField
+                      value={record.buyerGroupRole || 'Stakeholder'}
+                      field="buyerGroupRole"
+                      onSave={onSave}
+                      recordId={record.id}
+                      recordType={recordType}
+                      onSuccess={handleSuccess}
+                      className="text-sm font-medium text-[var(--foreground)]"
+                    />
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-sm text-[var(--muted)] w-24">Influence Level:</span>
+                    <InlineEditField
+                      value={recordData.influenceLevel || null}
+                      field="influenceLevel"
+                      onSave={onSave}
+                      recordId={record.id}
+                      recordType={recordType}
+                      onSuccess={handleSuccess}
+                      className="text-sm font-medium text-[var(--foreground)]"
+                    />
+                  </div>
+                </>
+              )}
               <div className="flex items-center">
                 <span className="text-sm text-[var(--muted)] w-24">Decision Power:</span>
                 <InlineEditField

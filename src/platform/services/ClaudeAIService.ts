@@ -49,6 +49,15 @@ export interface ClaudeChatRequest {
     breadcrumb: string;
     fullPath: string;
   };
+  workspaceContext?: {
+    userContext: string;
+    applicationContext: string;
+    dataContext: string;
+    recordContext: string;
+    listViewContext: string;
+    documentContext: string;
+    systemContext: string;
+  };
 }
 
 export interface ClaudeChatResponse {
@@ -598,6 +607,7 @@ export class ClaudeAIService {
     const listViewContext = request.listViewContext;
     const appType = request.appType;
     const pageContext = request.pageContext;
+    const workspaceContext = request.workspaceContext;
 
     // Validate context and add warnings to prompt
     const validation = this.validateContext(request, dataContext);
@@ -643,10 +653,10 @@ CURRENT RECORD CONTEXT:
     }
 
     // Add workspace data context
-    let workspaceContext = '';
+    let workspaceDataContext = '';
     if (dataContext.workspaceMetrics) {
       const metrics = dataContext.workspaceMetrics;
-      workspaceContext = `
+      workspaceDataContext = `
 WORKSPACE DATA CONTEXT:
 - Total People: ${metrics.people}
 - Total Companies: ${metrics.companies}
@@ -654,6 +664,40 @@ WORKSPACE DATA CONTEXT:
 - Active Leads: ${metrics.leads}
 - Active Opportunities: ${metrics.opportunities}
 `;
+    }
+
+    // Add comprehensive workspace context if available
+    let comprehensiveWorkspaceContext = '';
+    if (workspaceContext) {
+      comprehensiveWorkspaceContext = `\n\nCOMPREHENSIVE WORKSPACE CONTEXT:`;
+      
+      if (workspaceContext.userContext) {
+        comprehensiveWorkspaceContext += `\n\nUSER CONTEXT:\n${workspaceContext.userContext}`;
+      }
+      
+      if (workspaceContext.applicationContext) {
+        comprehensiveWorkspaceContext += `\n\nAPPLICATION CONTEXT:\n${workspaceContext.applicationContext}`;
+      }
+      
+      if (workspaceContext.dataContext) {
+        comprehensiveWorkspaceContext += `\n\nDATA CONTEXT:\n${workspaceContext.dataContext}`;
+      }
+      
+      if (workspaceContext.recordContext) {
+        comprehensiveWorkspaceContext += `\n\nRECORD CONTEXT:\n${workspaceContext.recordContext}`;
+      }
+      
+      if (workspaceContext.listViewContext) {
+        comprehensiveWorkspaceContext += `\n\nLIST VIEW CONTEXT:\n${workspaceContext.listViewContext}`;
+      }
+      
+      if (workspaceContext.documentContext) {
+        comprehensiveWorkspaceContext += `\n\nDOCUMENT CONTEXT:\n${workspaceContext.documentContext}`;
+      }
+      
+      if (workspaceContext.systemContext) {
+        comprehensiveWorkspaceContext += `\n\nSYSTEM CONTEXT:\n${workspaceContext.systemContext}`;
+      }
     }
 
     // Add rich workspace context if available
@@ -821,7 +865,8 @@ You're like a trusted sales consultant who's always available to help. You under
 ${contextWarnings}
 ${pageContextString}
 ${contextInfo}
-${workspaceContext}
+${workspaceDataContext}
+${comprehensiveWorkspaceContext}
 ${workspaceBusinessContext}
 ${activitiesContext}
 ${personSearchContext}

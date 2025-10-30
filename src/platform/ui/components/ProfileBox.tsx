@@ -39,7 +39,7 @@ const THEME_KEYS_TO_PRESERVE = [
 
 // -------- Types & interfaces --------
 interface ProfileBoxProps {
-  user: { name: string; lastName?: string };
+  user: { name: string; firstName?: string; lastName?: string };
   company: string;
   workspace: string;
   isProfileOpen: boolean;
@@ -598,7 +598,11 @@ export const ProfileBox: React.FC<ProfileBoxProps> = ({
               id="profile-dialog-title"
               className="text-base font-semibold text-[var(--foreground)]"
             >
-              {user.name}
+              {user.firstName && user.lastName && user.firstName.trim() && user.lastName.trim()
+                ? `${user.firstName} ${user.lastName}` 
+                : user.firstName && user.firstName.trim()
+                ? user.firstName
+                : user.name}
             </h3>
             {workspace && (
               <p

@@ -11,6 +11,7 @@ import { openRouterService } from '@/platform/services/OpenRouterService';
 import { modelCostTracker } from '@/platform/services/ModelCostTracker';
 import { gradualRolloutService } from '@/platform/services/GradualRolloutService';
 import { getUnifiedAuthUser } from '@/platform/api-auth';
+import { AIContextService } from '@/platform/ai/services/AIContextService';
 import { promptInjectionGuard } from '@/platform/security/prompt-injection-guard';
 import { aiResponseValidator } from '@/platform/security/ai-response-validator';
 import { rateLimiter } from '@/platform/security/rate-limiter';
@@ -204,6 +205,27 @@ export async function POST(request: NextRequest) {
     let response: any;
     let costRecordId: string | null = null;
 
+    // Build comprehensive workspace context
+    console.log('🧠 [AI CHAT] Building comprehensive workspace context...');
+    const workspaceContext = await AIContextService.buildContext({
+      userId: authUser.id,
+      workspaceId: authUser.workspaceId || workspaceId,
+      appType,
+      currentRecord,
+      recordType,
+      listViewContext,
+      conversationHistory: conversationHistory || [],
+      documentContext: null // Could be enhanced later
+    });
+
+    console.log('🧠 [AI CHAT] Workspace context built:', {
+      hasUserContext: !!workspaceContext.userContext,
+      hasApplicationContext: !!workspaceContext.applicationContext,
+      hasDataContext: !!workspaceContext.dataContext,
+      hasRecordContext: !!workspaceContext.recordContext,
+      hasSystemContext: !!workspaceContext.systemContext
+    });
+
     // Determine if we should use OpenRouter based on gradual rollout
     const shouldUseOpenRouter = useOpenRouter && 
                                process.env.OPENROUTER_API_KEY && 
@@ -214,7 +236,7 @@ export async function POST(request: NextRequest) {
       try {
         console.log('🌐 [AI CHAT] Using OpenRouter with intelligent routing');
         
-        // Generate OpenRouter response with sanitized input
+        // Generate OpenRouter response with sanitized input and workspace context
         const openRouterResponse = await openRouterService.generateResponse({
           message: sanitizedMessage,
           conversationHistory,
@@ -229,7 +251,8 @@ export async function POST(request: NextRequest) {
             userAgent: request.headers.get('user-agent'),
             timestamp: new Date().toISOString()
           },
-          pageContext
+          pageContext,
+          workspaceContext // Pass the comprehensive workspace context
         });
 
         // Record cost
@@ -304,7 +327,7 @@ export async function POST(request: NextRequest) {
           error: openRouterError instanceof Error ? openRouterError.message : 'Unknown error'
         });
 
-        // Fallback to Claude with sanitized input
+        // Fallback to Claude with sanitized input and workspace context
         const claudeResponse = await claudeAIService.generateChatResponse({
           message: sanitizedMessage,
           conversationHistory,
@@ -314,7 +337,8 @@ export async function POST(request: NextRequest) {
           appType,
           workspaceId: authUser.workspaceId || workspaceId,
           userId: authUser.id,
-          pageContext
+          pageContext,
+          workspaceContext // Pass the comprehensive workspace context
         });
 
         response = {

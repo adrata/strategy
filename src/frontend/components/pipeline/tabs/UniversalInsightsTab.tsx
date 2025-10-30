@@ -301,7 +301,8 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
   // AI intelligence is now always assumed to be available
 
   return (
-    <div className="space-y-6">
+    <div className="p-6">
+      <div className="space-y-6">
       {/* Strategy Summary Header */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -770,6 +771,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
       </div>
       */}
 
+      </div>
     </div>
   );
 }

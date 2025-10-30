@@ -20,6 +20,7 @@ interface FastCounts {
   partners: number | string;
   sellers: number | string;
   speedrun: number | string;
+  speedrunReady: number | string;
   metrics: number | string;
   chronicle: number | string;
 }
@@ -47,6 +48,7 @@ export function useFastCounts(): UseFastCountsReturn {
     partners: 0,
     sellers: 0,
     speedrun: 0,
+    speedrunReady: 0,
     metrics: 0,
     chronicle: 0
   });
@@ -115,6 +117,7 @@ export function useFastCounts(): UseFastCountsReturn {
         
         // Speedrun: Use the speedrun count directly from counts API
         speedrun: counts.speedrun ?? 0,
+        speedrunReady: counts.speedrunReady ?? 0,
         
         // Sellers: Use the sellers count from counts API
         sellers: counts.sellers ?? 0,

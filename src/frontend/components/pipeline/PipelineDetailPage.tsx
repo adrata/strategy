@@ -501,9 +501,18 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           credentials: 'include'
         });
       } else if (section === 'people' || section === 'leads' || section === 'prospects' || section === 'opportunities' || section === 'speedrun') {
+        // First try the people API
         response = await fetch(`/api/v1/people/${recordId}`, {
           credentials: 'include'
         });
+        
+        // If 404, this might be a company-only record, try companies API
+        if (!response.ok && response.status === 404) {
+          console.log(`🔍 [DIRECT LOAD] People API returned 404, trying companies API for record: ${recordId}`);
+          response = await fetch(`/api/v1/companies/${recordId}`, {
+            credentials: 'include'
+          });
+        }
       } else {
         // For other record types, throw error since unified API is no longer available
         throw new Error(`Record type '${section}' is not yet supported in v1 APIs. Please use companies or people records.`);

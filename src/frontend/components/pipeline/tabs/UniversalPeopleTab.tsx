@@ -464,7 +464,8 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
   };
 
   return (
-    <div className="space-y-8">
+    <div className="p-6">
+      <div className="space-y-8">
       {/* Loading State */}
       {loading && (
         <div className="space-y-4">
@@ -491,12 +492,12 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
         <div className="text-center py-12">
           <BuildingOfficeIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
           <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
-            {['people', 'leads', 'prospects'].includes(recordType) ? 'No Co-Workers Found' : 'No People Found'}
+            {['people', 'leads', 'prospects'].includes(recordType) ? 'No Co-Workers Found' : 'No People (Employees) Found'}
           </h3>
           <p className="text-[var(--muted)]">
             {['people', 'leads', 'prospects'].includes(recordType) 
               ? 'This person doesn\'t have any co-workers at their company yet.'
-              : 'This company doesn\'t have any people associated with it yet.'
+              : 'This company does not have any associated employees yet.'
             }
           </p>
         </div>
@@ -554,6 +555,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

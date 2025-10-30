@@ -308,7 +308,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           try {
             console.log('🔍 [BUYER GROUPS] Making API call to:', `/api/v1/intelligence/buyer-group?companyId=${companyId}`);
             console.log('🔍 [BUYER GROUPS] authFetch function:', typeof authFetch);
-            const fastResult = await authFetch(`/api/v1/intelligence/buyer-group?companyId=${companyId}`);
+            const fastResult = await authFetch(`/api/v1/intelligence/buyer-group?companyId=${companyId}&companyName=${encodeURIComponent(companyName)}`);
             console.log('🔍 [BUYER GROUPS] API response:', fastResult);
             console.log('🔍 [BUYER GROUPS] API response success:', fastResult?.success);
             console.log('🔍 [BUYER GROUPS] API response data length:', fastResult?.data?.length);
@@ -640,7 +640,8 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
   
 
   return (
-    <div className="space-y-8">
+    <div className="p-6">
+      <div className="space-y-8">
 
       {/* Loading State */}
       {loading && (
@@ -765,6 +766,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

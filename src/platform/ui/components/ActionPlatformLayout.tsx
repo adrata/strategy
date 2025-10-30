@@ -113,6 +113,8 @@ function AcquisitionOSLayoutInner({
     workspaceName: string;
     companyName: string;
     userDisplayName: string;
+    userFirstName?: string;
+    userLastName?: string;
   } | null>(null);
   
   // Optimized workspace context loading - NO FALLBACK DATA
@@ -132,11 +134,41 @@ function AcquisitionOSLayoutInner({
       try {
         const context = await WorkspaceDataRouter.getWorkspaceContext();
         
+        // Fetch user profile data for firstName and lastName
+        let userProfile = null;
+        if (authUser?.id) {
+          try {
+            const response = await fetch('/api/settings/user', {
+              credentials: 'include'
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              console.log('🔍 ActionPlatformLayout: User profile data fetched:', {
+                success: data.success,
+                firstName: data.settings?.firstName,
+                lastName: data.settings?.lastName,
+                name: authUser?.name
+              });
+              if (data.success && data.settings) {
+                userProfile = {
+                  firstName: data.settings.firstName,
+                  lastName: data.settings.lastName
+                };
+              }
+            }
+          } catch (error) {
+            console.error('Failed to fetch user profile:', error);
+          }
+        }
+        
         if (context.isDemo) {
           setWorkspaceContext({
             workspaceName: "ZeroPoint",
             companyName: "ZeroPoint", 
-            userDisplayName: "James Gold"
+            userDisplayName: "James Gold",
+            userFirstName: userProfile?.firstName,
+            userLastName: userProfile?.lastName
           });
         } else {
           // Determine workspace name based on user's active workspace
@@ -147,13 +179,17 @@ function AcquisitionOSLayoutInner({
           setWorkspaceContext({
             workspaceName: activeWorkspace.name,
             companyName: activeWorkspace.name,
-            userDisplayName: currentUser?.name || authUser?.name || ""
+            userDisplayName: currentUser?.name || authUser?.name || "",
+            userFirstName: userProfile?.firstName,
+            userLastName: userProfile?.lastName
           });
           } else {
             setWorkspaceContext({
               workspaceName: "",
               companyName: "",
-              userDisplayName: currentUser?.name || authUser?.name || ""
+              userDisplayName: currentUser?.name || authUser?.name || "",
+              userFirstName: userProfile?.firstName,
+              userLastName: userProfile?.lastName
             });
           }
         }
@@ -475,7 +511,9 @@ function AcquisitionOSLayoutInner({
                   >
                     <ProfileBox
                       user={{
-                        name: workspaceContext?.userDisplayName || currentUser?.name || "Dan Mirolli"
+                        name: workspaceContext?.userDisplayName || currentUser?.name || "Dan Mirolli",
+                        firstName: workspaceContext?.userFirstName,
+                        lastName: workspaceContext?.userLastName
                       }}
                       company={company}
                       workspace={workspace}

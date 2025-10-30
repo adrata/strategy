@@ -41,7 +41,7 @@ interface PipelineContextType {
   setChatInput: React.Dispatch<React.SetStateAction<string>>;
 
   // User Data
-  user: { name: string; initial: string };
+  user: { name: string; initial: string; firstName?: string; lastName?: string };
   company: string;
   workspace: {
     id: string;
@@ -77,6 +77,54 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
   const [chatInput, setChatInput] = useState("");
 
   // User Data - use actual auth context
+  const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
+  
+  // Fetch user profile data with firstName and lastName
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!authUser?.id) return;
+      
+      try {
+        const response = await fetch('/api/settings/user', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('🔍 PipelineContext: User profile data fetched:', {
+            success: data.success,
+            firstName: data.settings?.firstName,
+            lastName: data.settings?.lastName,
+            name: authUser?.name
+          });
+          if (data.success && data.settings) {
+            setUserProfile({
+              firstName: data.settings.firstName,
+              lastName: data.settings.lastName
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [authUser?.id]);
+  
+  // Helper function to parse name into firstName and lastName if not available
+  const parseName = (fullName: string) => {
+    if (!fullName) return { firstName: '', lastName: '' };
+    const parts = fullName.trim().split(' ');
+    if (parts.length === 1) {
+      return { firstName: parts[0], lastName: '' };
+    }
+    return {
+      firstName: parts[0],
+      lastName: parts.slice(1).join(' ')
+    };
+  };
+
   const user = { 
     name: authUser?.name || "", 
     initial: authUser?.name ? authUser.name
@@ -84,7 +132,9 @@ export function PipelineProvider({ children }: PipelineProviderProps) {
       .map((part) => part[0])
       .join("")
       .toUpperCase()
-      .slice(0, 3) : ""
+      .slice(0, 3) : "",
+    firstName: userProfile?.firstName || (authUser?.name ? parseName(authUser.name).firstName : ''),
+    lastName: userProfile?.lastName || (authUser?.name ? parseName(authUser.name).lastName : '')
   };
   
   // Get workspace from auth context ONLY (no generic fallbacks)

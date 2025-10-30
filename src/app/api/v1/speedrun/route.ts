@@ -208,7 +208,11 @@ export async function GET(request: NextRequest) {
             type: 'company',
             isCompanyLead: true, // Add flag for consistency with leads/prospects
             displayName: company.name,
-            companyName: company.name,
+            fullName: company.name, // For NAME column
+            name: company.name, // Fallback for NAME column
+            companyName: company.name, // For COMPANY column
+            company: company.name, // For COMPANY column as string
+            status: 'PROSPECT', // Set stage to PROSPECT
             jobTitle: null,
             phone: null,
             linkedinUrl: null,
@@ -216,8 +220,7 @@ export async function GET(request: NextRequest) {
             influenceLevel: null,
             engagementStrategy: null,
             buyerGroupStatus: null,
-            isBuyerGroupMember: null,
-            company: null
+            isBuyerGroupMember: null
           })),
           ...peopleFromCompaniesWithPeople.map(person => ({
             ...person,
@@ -336,6 +339,81 @@ export async function GET(request: NextRequest) {
           nextActionTiming = 'No date set';
         }
 
+        // Auto-populate nextAction if missing (for both people and companies)
+        let nextAction = record.nextAction;
+        let calculatedNextActionDate = record.nextActionDate;
+
+        if (!nextAction) {
+          if (record.type === 'company') {
+            // Company-level next action generation
+            if (lastAction && lastAction !== 'Record added' && lastAction !== 'Company record created') {
+              if (lastAction.toLowerCase().includes('email')) {
+                nextAction = 'Schedule discovery call to validate pain';
+              } else if (lastAction.toLowerCase().includes('call') || lastAction.toLowerCase().includes('discovery')) {
+                nextAction = 'Send follow-up email with pain validation insights';
+              } else if (lastAction.toLowerCase().includes('linkedin')) {
+                nextAction = 'Schedule discovery call to validate pain';
+              } else {
+                nextAction = 'Schedule stakeholder mapping call';
+              }
+            } else {
+              // No meaningful action - PROSPECT stage default
+              nextAction = 'Research company and identify key contacts';
+            }
+          } else {
+            // Person-level next action generation
+            if (lastAction && lastAction !== 'Record added') {
+              if (lastAction.toLowerCase().includes('email')) {
+                nextAction = 'Schedule a call to discuss next steps';
+              } else if (lastAction.toLowerCase().includes('call')) {
+                nextAction = 'Send follow-up email with meeting notes';
+              } else if (lastAction.toLowerCase().includes('linkedin')) {
+                nextAction = 'Send personalized connection message';
+              } else {
+                nextAction = 'Follow up on previous contact';
+              }
+            } else {
+              nextAction = 'Send initial outreach email';
+            }
+          }
+          
+          // Calculate nextActionDate based on globalRank if missing
+          if (!calculatedNextActionDate) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            if (!record.globalRank || record.globalRank <= 50) {
+              calculatedNextActionDate = today; // Top 50: TODAY
+            } else if (record.globalRank <= 200) {
+              calculatedNextActionDate = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000); // 2 days
+            } else {
+              calculatedNextActionDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000); // 1 week
+            }
+            
+            // Recalculate nextActionTiming with new date
+            const diffMs = calculatedNextActionDate.getTime() - now.getTime();
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const isSameDay = now.toDateString() === calculatedNextActionDate.toDateString();
+            
+            if (isSameDay) {
+              nextActionTiming = 'Today';
+            } else if (diffMs < 0) {
+              nextActionTiming = 'Overdue';
+            } else if (diffHours < 2) {
+              nextActionTiming = 'Now';
+            } else if (diffHours < 24) {
+              nextActionTiming = `in ${diffHours}h`;
+            } else if (diffDays === 1) {
+              nextActionTiming = 'Tomorrow';
+            } else if (diffDays <= 7) {
+              nextActionTiming = `in ${diffDays}d`;
+            } else {
+              nextActionTiming = `in ${Math.ceil(diffDays / 7)}w`;
+            }
+          }
+        }
+
         // Count meaningful actions (simplified - no actions relation in unified query)
         const totalActions = 0; // No actions relation in unified query
         const meaningfulActionCount = 0; // No actions relation in unified query
@@ -373,8 +451,8 @@ export async function GET(request: NextRequest) {
           lastAction: lastAction || null,
           lastActionDate: lastActionDate || null,
           lastActionTime: lastActionTime,
-          nextAction: record.nextAction || null,
-          nextActionDate: record.nextActionDate || null,
+          nextAction: nextAction || null,
+          nextActionDate: calculatedNextActionDate || null,
           nextActionTiming: nextActionTiming,
           mainSellerId: record.mainSellerId,
           workspaceId: record.workspaceId,
@@ -383,15 +461,27 @@ export async function GET(request: NextRequest) {
           // Add state fields at top level for table display
           state: record.company?.hqState || record.company?.state || '',
           hqState: record.company?.hqState || '',
-          company: record.company ? {
-            id: record.company.id,
-            name: record.company.name,
-            industry: record.company.industry || '',
-            size: record.company.size || '',
-            globalRank: record.company.globalRank || 0,
-            hqState: record.company.hqState || '',
-            state: record.company.state || ''
-          } : null,
+          company: record.company ? (
+            typeof record.company === 'string' 
+              ? {
+                  id: record.id, // Use record.id for company-only records
+                  name: record.company, // Use the string value as name
+                  industry: '',
+                  size: '',
+                  globalRank: record.globalRank || 0,
+                  hqState: '',
+                  state: ''
+                }
+              : {
+                  id: record.company.id,
+                  name: record.company.name,
+                  industry: record.company.industry || '',
+                  size: record.company.size || '',
+                  globalRank: record.company.globalRank || 0,
+                  hqState: record.company.hqState || '',
+                  state: record.company.state || ''
+                }
+          ) : null,
           tags: ['speedrun'], // Add speedrun tag for consistency
           // Add main-seller and co-sellers data
           mainSeller: ownerName,
@@ -406,7 +496,9 @@ export async function GET(request: NextRequest) {
           // Add contact status for styling (contacted = light green, pending = normal)
           contactStatus: contactStatus,
           // Add record type for differentiation
-          recordType: record.type || 'person'
+          recordType: record.type || 'person',
+          // Add isCompanyLead flag for frontend to detect company-only records
+          isCompanyLead: record.isCompanyLead || false
         };
       });
 

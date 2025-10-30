@@ -205,149 +205,145 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
           </div>
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
-            <div className="text-center py-8">
-              <div className="mb-4">
-                <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center animate-pulse">
-                  <span className="text-3xl">🧠</span>
-                </div>
-              </div>
-              <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
-                Generating AI-Powered Intelligence
-              </h4>
-              <p className="text-sm text-[var(--muted)] mb-4">
-                Our AI is analyzing company data, buyer signals, and market positioning...
-              </p>
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-                <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{width: '60%'}}></div>
-              </div>
-              <p className="text-xs text-[var(--muted)]">This may take 10-30 seconds</p>
-              {retryCount > 0 && (
-                <p className="text-xs text-orange-600 mt-2">
-                  Retry attempt {retryCount}/{maxRetries}
-                </p>
-              )}
-            </div>
-          </div>
+          <StrategySkeleton />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Intelligence Summary Header */}
-      <div className="space-y-4">
+    <div className="p-6">
+      <div className="space-y-6">
+        {/* Intelligence Summary Header */}
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
+          <h3 className="text-xl font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
         </div>
         
         {/* Intelligence Summary Content */}
         {isGeneratingStrategy ? (
           <StrategySkeleton />
         ) : strategyData ? (
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] shadow-sm">
-            <div className="text-sm text-[var(--foreground)] leading-relaxed mb-4">
-              {strategyData.strategySummary}
+          <div className="space-y-6">
+            {/* Summary Card */}
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">🧠</span>
+                </div>
+                <div className="flex-1">
+                  <div className="text-base text-[var(--foreground)] leading-relaxed mb-4">
+                    {strategyData.strategySummary}
+                  </div>
+                  
+                  {/* Archetype Badge */}
+                  {strategyData.archetypeName && (
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                        {strategyData.archetypeName}
+                      </span>
+                      <span className="text-sm text-[var(--muted)]">
+                        {strategyData.archetypeRole}
+                      </span>
+                      {strategyData.targetIndustry && (
+                        <span className="text-sm text-[var(--muted)]">
+                          • Serving {strategyData.targetIndustry}
+                        </span>
+                      )}
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        strategyData.strategyGeneratedBy === 'claude-3-sonnet' 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-orange-100 text-orange-800'
+                      }`}>
+                        {strategyData.strategyGeneratedBy === 'claude-3-sonnet' ? '🤖 AI-Powered' : '📊 Data-Driven'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             
-            {/* Archetype Badge */}
-            {strategyData.archetypeName && (
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                  {strategyData.archetypeName}
-                </span>
-                <span className="text-sm text-[var(--muted)]">
-                  {strategyData.archetypeRole}
-                </span>
-                {strategyData.targetIndustry && (
-                  <span className="text-sm text-[var(--muted)]">
-                    • Serving {strategyData.targetIndustry}
-                  </span>
-                )}
-                <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  strategyData.strategyGeneratedBy === 'claude-3-sonnet' 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-orange-100 text-orange-800'
-                }`}>
-                  {strategyData.strategyGeneratedBy === 'claude-3-sonnet' ? '🤖 AI-Powered' : '📊 Data-Driven'}
-                </span>
-              </div>
-            )}
-            
             {/* Three Column Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Situation */}
-              <div className="space-y-2">
-                <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  Situation
-                </h4>
+              <div className="bg-white border border-[var(--border)] rounded-lg p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Situation</h4>
+                </div>
                 <div className="text-sm text-[var(--muted)] leading-relaxed">
                   {strategyData.situation}
                 </div>
               </div>
               
               {/* Complication */}
-              <div className="space-y-2">
-                <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  Complication
-                </h4>
+              <div className="bg-white border border-[var(--border)] rounded-lg p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Complication</h4>
+                </div>
                 <div className="text-sm text-[var(--muted)] leading-relaxed">
                   {strategyData.complication}
                 </div>
               </div>
               
               {/* Future State */}
-              <div className="space-y-2">
-                <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  Future State
-                </h4>
+              <div className="bg-white border border-[var(--border)] rounded-lg p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Future State</h4>
+                </div>
                 <div className="text-sm text-[var(--muted)] leading-relaxed">
                   {strategyData.futureState}
                 </div>
               </div>
             </div>
-
+            
             {/* Strategic Recommendations */}
             {strategyData.strategicRecommendations && strategyData.strategicRecommendations.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                <h4 className="text-sm font-semibold text-[var(--foreground)] mb-3">Strategic Recommendations</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {strategyData.strategicRecommendations.map((recommendation, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <span className="text-blue-500 text-xs mt-1">•</span>
-                      <span className="text-sm text-[var(--muted)]">{recommendation}</span>
-                    </div>
-                  ))}
+              <div className="bg-white border border-[var(--border)] rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Strategic Recommendations</h4>
                 </div>
+                <ul className="space-y-3">
+                  {strategyData.strategicRecommendations.map((recommendation, index) => (
+                    <li key={index} className="text-sm text-[var(--muted)] leading-relaxed flex items-start gap-3">
+                      <span className="text-purple-500 mt-1.5 font-bold">•</span>
+                      <span>{recommendation}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
-
+            
             {/* Competitive Positioning */}
             {strategyData.competitivePositioning && (
-              <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                <h4 className="text-sm font-semibold text-[var(--foreground)] mb-3">Competitive Positioning</h4>
+              <div className="bg-white border border-[var(--border)] rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
+                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Competitive Positioning</h4>
+                </div>
                 <div className="text-sm text-[var(--muted)] leading-relaxed">
                   {strategyData.competitivePositioning}
                 </div>
               </div>
             )}
-
+            
             {/* Success Metrics */}
             {strategyData.successMetrics && strategyData.successMetrics.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                <h4 className="text-sm font-semibold text-[var(--foreground)] mb-3">Success Metrics</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {strategyData.successMetrics.map((metric, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <span className="text-green-500 text-xs mt-1">•</span>
-                      <span className="text-sm text-[var(--muted)]">{metric}</span>
-                    </div>
-                  ))}
+              <div className="bg-white border border-[var(--border)] rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Success Metrics</h4>
                 </div>
+                <ul className="space-y-3">
+                  {strategyData.successMetrics.map((metric, index) => (
+                    <li key={index} className="text-sm text-[var(--muted)] leading-relaxed flex items-start gap-3">
+                      <span className="text-emerald-500 mt-1.5 font-bold">•</span>
+                      <span>{metric}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
@@ -408,24 +404,22 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             </div>
           </div>
         ) : (
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
-            <div className="text-center py-8">
-              <div className="mb-4">
-                <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-3xl">🧠</span>
-                </div>
+          <div className="bg-white border border-[var(--border)] rounded-lg p-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🧠</span>
               </div>
               <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
-                Analyzing Company Intelligence
+                No Intelligence Data
               </h4>
-              <p className="text-sm text-[var(--muted)] mb-6 max-w-md mx-auto">
-                Our AI is analyzing company data, buyer signals, and market positioning to generate strategic intelligence and actionable insights.
+              <p className="text-sm text-[var(--muted)] mb-6">
+                Intelligence data will be generated automatically when available.
               </p>
               <button 
                 onClick={handleGenerateStrategy}
                 className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
-                Generate Intelligence Now
+                Generate Intelligence
               </button>
             </div>
           </div>

@@ -7,7 +7,7 @@
  * Follows 2025 best practices with proper accessibility and performance.
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import {
   QueueListIcon,
@@ -82,6 +82,36 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   const pathname = usePathname();
   const { user: authUser } = useUnifiedAuth();
   const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
+  
+  // State for user profile data
+  const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
+  
+  // Fetch user profile data with firstName and lastName
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!authUser?.id) return;
+      
+      try {
+        const response = await fetch('/api/settings/user', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.settings) {
+            setUserProfile({
+              firstName: data.settings.firstName,
+              lastName: data.settings.lastName
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [authUser?.id]);
 
   // Get current workspace from pathname
   const workspaceSlug = pathname.split('/')[1];
@@ -259,7 +289,9 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           </div>
           <div className="flex-1 text-left">
                   <div className="text-sm font-medium text-[var(--foreground)]">
-                    {authUser?.name || 'User'}
+                    {userProfile?.firstName && userProfile?.lastName && userProfile.firstName.trim() && userProfile.lastName.trim()
+                      ? `${userProfile.firstName} ${userProfile.lastName}` 
+                      : authUser?.name || 'User'}
                   </div>
                   <div className="text-xs text-[var(--muted)]">
                     Workspace

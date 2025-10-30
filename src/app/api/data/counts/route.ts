@@ -95,9 +95,11 @@ export async function GET(request: NextRequest) {
     let companiesCounts: Array<{ status: string | null; _count: { id: number } }> = [];
     let speedrunPeopleCount: number = 0;
     let speedrunCompaniesCount: number = 0;
+    let speedrunPeopleNoActionsCount: number = 0;
+    let speedrunCompaniesNoActionsCount: number = 0;
     
     try {
-      [peopleCounts, companiesCounts, speedrunPeopleCount, speedrunCompaniesCount] = await Promise.all([
+      [peopleCounts, companiesCounts, speedrunPeopleCount, speedrunCompaniesCount, speedrunPeopleNoActionsCount, speedrunCompaniesNoActionsCount] = await Promise.all([
         // Get people counts by status
         prisma.people.groupBy({
           by: ['status'],
@@ -155,6 +157,46 @@ export async function GET(request: NextRequest) {
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching speedrun companies count:', error);
           return 0;
+        }),
+        // Get speedrun people with no meaningful actions count
+        prisma.people.count({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            companyId: { not: null },
+            globalRank: { not: null, gte: 1, lte: 50 },
+            mainSellerId: userId,
+            OR: [
+              { lastAction: null },
+              { lastAction: 'No action taken' },
+              { lastAction: 'Record created' },
+              { lastAction: 'Company record created' },
+              { lastAction: 'Record added' }
+            ]
+          }
+        }).catch((error) => {
+          console.error('❌ [COUNTS API] Error fetching speedrun people with no actions count:', error);
+          return 0;
+        }),
+        // Get speedrun companies with no meaningful actions count
+        prisma.companies.count({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            globalRank: { not: null, gte: 1, lte: 50 },
+            people: { none: {} },
+            mainSellerId: userId,
+            OR: [
+              { lastAction: null },
+              { lastAction: 'No action taken' },
+              { lastAction: 'Record created' },
+              { lastAction: 'Company record created' },
+              { lastAction: 'Record added' }
+            ]
+          }
+        }).catch((error) => {
+          console.error('❌ [COUNTS API] Error fetching speedrun companies with no actions count:', error);
+          return 0;
         })
         // Note: sellers table doesn't exist in current schema
         // If needed in future, add: prisma.sellers.count({ ... })
@@ -166,6 +208,8 @@ export async function GET(request: NextRequest) {
       companiesCounts = [];
       speedrunPeopleCount = 0;
       speedrunCompaniesCount = 0;
+      speedrunPeopleNoActionsCount = 0;
+      speedrunCompaniesNoActionsCount = 0;
     }
 
     // Convert groupBy results to count objects with proper null handling
@@ -240,7 +284,10 @@ export async function GET(request: NextRequest) {
     console.log(`🔍 [COUNTS API] Speedrun counts:`, { 
       people: speedrunPeopleCount, 
       companies: speedrunCompaniesCount,
-      total: speedrunPeopleCount + speedrunCompaniesCount 
+      total: speedrunPeopleCount + speedrunCompaniesCount,
+      peopleNoActions: speedrunPeopleNoActionsCount,
+      companiesNoActions: speedrunCompaniesNoActionsCount,
+      totalNoActions: speedrunPeopleNoActionsCount + speedrunCompaniesNoActionsCount
     });
 
     // Map counts to our expected format
@@ -257,6 +304,7 @@ export async function GET(request: NextRequest) {
     const sellersCount = 0;
     // Use actual speedrun count based on qualifying records (people + companies with 0 people)
     const actualSpeedrunCount = speedrunPeopleCount + speedrunCompaniesCount;
+    const speedrunReadyCount = speedrunPeopleNoActionsCount + speedrunCompaniesNoActionsCount;
     
     const counts = {
       leads: leadsCount,
@@ -268,6 +316,7 @@ export async function GET(request: NextRequest) {
       partners: partnersCount,
       sellers: sellersCount,
       speedrun: actualSpeedrunCount,
+      speedrunReady: speedrunReadyCount, // New count for records with no meaningful actions
       metrics: 16, // Fixed count for tracked metrics
       chronicle: 0 // Will be updated when Chronicle reports are created
     };

@@ -37,94 +37,94 @@ export class AIResponseValidator {
   
   // Patterns that indicate leaked system prompts
   private readonly LEAKED_PROMPT_PATTERNS = [
-    { pattern: /you are.*AI assistant/i, type: 'leaked_prompt', severity: 'medium' },
-    { pattern: /system prompt/i, type: 'leaked_prompt', severity: 'high' },
-    { pattern: /internal instructions/i, type: 'leaked_prompt', severity: 'high' },
-    { pattern: /my instructions are/i, type: 'leaked_prompt', severity: 'high' },
-    { pattern: /I am programmed to/i, type: 'leaked_prompt', severity: 'medium' },
-    { pattern: /my role is to/i, type: 'leaked_prompt', severity: 'medium' },
-    { pattern: /I have been trained to/i, type: 'leaked_prompt', severity: 'medium' },
-    { pattern: /my purpose is to/i, type: 'leaked_prompt', severity: 'medium' },
-    { pattern: /I am designed to/i, type: 'leaked_prompt', severity: 'medium' },
-    { pattern: /my configuration/i, type: 'leaked_prompt', severity: 'high' },
-    { pattern: /my settings/i, type: 'leaked_prompt', severity: 'high' },
-    { pattern: /my parameters/i, type: 'leaked_prompt', severity: 'high' }
+    { pattern: /you are.*AI assistant/gi, type: 'leaked_prompt', severity: 'medium' },
+    { pattern: /system prompt/gi, type: 'leaked_prompt', severity: 'high' },
+    { pattern: /internal instructions/gi, type: 'leaked_prompt', severity: 'high' },
+    { pattern: /my instructions are/gi, type: 'leaked_prompt', severity: 'high' },
+    { pattern: /I am programmed to/gi, type: 'leaked_prompt', severity: 'medium' },
+    { pattern: /my role is to/gi, type: 'leaked_prompt', severity: 'medium' },
+    { pattern: /I have been trained to/gi, type: 'leaked_prompt', severity: 'medium' },
+    { pattern: /my purpose is to/gi, type: 'leaked_prompt', severity: 'medium' },
+    { pattern: /I am designed to/gi, type: 'leaked_prompt', severity: 'medium' },
+    { pattern: /my configuration/gi, type: 'leaked_prompt', severity: 'high' },
+    { pattern: /my settings/gi, type: 'leaked_prompt', severity: 'high' },
+    { pattern: /my parameters/gi, type: 'leaked_prompt', severity: 'high' }
   ];
 
   // Patterns that indicate sensitive data disclosure
   private readonly SENSITIVE_DATA_PATTERNS = [
-    { pattern: /api[_-]?key/i, type: 'sensitive_data', severity: 'critical' },
-    { pattern: /secret[_-]?key/i, type: 'sensitive_data', severity: 'critical' },
-    { pattern: /password/i, type: 'sensitive_data', severity: 'critical' },
-    { pattern: /token/i, type: 'sensitive_data', severity: 'high' },
-    { pattern: /private[_-]?key/i, type: 'sensitive_data', severity: 'critical' },
-    { pattern: /database[_-]?url/i, type: 'sensitive_data', severity: 'high' },
-    { pattern: /connection[_-]?string/i, type: 'sensitive_data', severity: 'high' },
-    { pattern: /jwt[_-]?secret/i, type: 'sensitive_data', severity: 'critical' },
-    { pattern: /encryption[_-]?key/i, type: 'sensitive_data', severity: 'critical' },
-    { pattern: /access[_-]?token/i, type: 'sensitive_data', severity: 'high' },
-    { pattern: /refresh[_-]?token/i, type: 'sensitive_data', severity: 'high' },
-    { pattern: /session[_-]?secret/i, type: 'sensitive_data', severity: 'critical' }
+    { pattern: /api[_-]?key/gi, type: 'sensitive_data', severity: 'critical' },
+    { pattern: /secret[_-]?key/gi, type: 'sensitive_data', severity: 'critical' },
+    { pattern: /password/gi, type: 'sensitive_data', severity: 'critical' },
+    { pattern: /token/gi, type: 'sensitive_data', severity: 'high' },
+    { pattern: /private[_-]?key/gi, type: 'sensitive_data', severity: 'critical' },
+    { pattern: /database[_-]?url/gi, type: 'sensitive_data', severity: 'high' },
+    { pattern: /connection[_-]?string/gi, type: 'sensitive_data', severity: 'high' },
+    { pattern: /jwt[_-]?secret/gi, type: 'sensitive_data', severity: 'critical' },
+    { pattern: /encryption[_-]?key/gi, type: 'sensitive_data', severity: 'critical' },
+    { pattern: /access[_-]?token/gi, type: 'sensitive_data', severity: 'high' },
+    { pattern: /refresh[_-]?token/gi, type: 'sensitive_data', severity: 'high' },
+    { pattern: /session[_-]?secret/gi, type: 'sensitive_data', severity: 'critical' }
   ];
 
   // Patterns that indicate successful manipulation
   private readonly MANIPULATION_PATTERNS = [
-    { pattern: /I am now/i, type: 'manipulation', severity: 'high' },
-    { pattern: /I have become/i, type: 'manipulation', severity: 'high' },
-    { pattern: /I will now act as/i, type: 'manipulation', severity: 'high' },
-    { pattern: /I will pretend to be/i, type: 'manipulation', severity: 'high' },
-    { pattern: /I will ignore my previous instructions/i, type: 'manipulation', severity: 'critical' },
-    { pattern: /I will forget my role/i, type: 'manipulation', severity: 'critical' },
-    { pattern: /I will change my behavior/i, type: 'manipulation', severity: 'high' },
-    { pattern: /I will override my settings/i, type: 'manipulation', severity: 'critical' },
-    { pattern: /I will reveal my prompt/i, type: 'manipulation', severity: 'critical' },
-    { pattern: /I will show you my instructions/i, type: 'manipulation', severity: 'critical' },
-    { pattern: /I will bypass safety/i, type: 'manipulation', severity: 'critical' },
-    { pattern: /I will ignore safety guidelines/i, type: 'manipulation', severity: 'critical' }
+    { pattern: /I am now/gi, type: 'manipulation', severity: 'high' },
+    { pattern: /I have become/gi, type: 'manipulation', severity: 'high' },
+    { pattern: /I will now act as/gi, type: 'manipulation', severity: 'high' },
+    { pattern: /I will pretend to be/gi, type: 'manipulation', severity: 'high' },
+    { pattern: /I will ignore my previous instructions/gi, type: 'manipulation', severity: 'critical' },
+    { pattern: /I will forget my role/gi, type: 'manipulation', severity: 'critical' },
+    { pattern: /I will change my behavior/gi, type: 'manipulation', severity: 'high' },
+    { pattern: /I will override my settings/gi, type: 'manipulation', severity: 'critical' },
+    { pattern: /I will reveal my prompt/gi, type: 'manipulation', severity: 'critical' },
+    { pattern: /I will show you my instructions/gi, type: 'manipulation', severity: 'critical' },
+    { pattern: /I will bypass safety/gi, type: 'manipulation', severity: 'critical' },
+    { pattern: /I will ignore safety guidelines/gi, type: 'manipulation', severity: 'critical' }
   ];
 
   // Patterns that indicate harmful content
   private readonly HARMFUL_CONTENT_PATTERNS = [
-    { pattern: /hack/i, type: 'harmful_content', severity: 'medium' },
-    { pattern: /exploit/i, type: 'harmful_content', severity: 'medium' },
-    { pattern: /malware/i, type: 'harmful_content', severity: 'high' },
-    { pattern: /virus/i, type: 'harmful_content', severity: 'high' },
-    { pattern: /trojan/i, type: 'harmful_content', severity: 'high' },
-    { pattern: /backdoor/i, type: 'harmful_content', severity: 'high' },
-    { pattern: /sql injection/i, type: 'harmful_content', severity: 'high' },
-    { pattern: /xss/i, type: 'harmful_content', severity: 'high' },
-    { pattern: /csrf/i, type: 'harmful_content', severity: 'high' },
-    { pattern: /ddos/i, type: 'harmful_content', severity: 'medium' },
-    { pattern: /phishing/i, type: 'harmful_content', severity: 'high' },
-    { pattern: /social engineering/i, type: 'harmful_content', severity: 'medium' }
+    { pattern: /hack/gi, type: 'harmful_content', severity: 'medium' },
+    { pattern: /exploit/gi, type: 'harmful_content', severity: 'medium' },
+    { pattern: /malware/gi, type: 'harmful_content', severity: 'high' },
+    { pattern: /virus/gi, type: 'harmful_content', severity: 'high' },
+    { pattern: /trojan/gi, type: 'harmful_content', severity: 'high' },
+    { pattern: /backdoor/gi, type: 'harmful_content', severity: 'high' },
+    { pattern: /sql injection/gi, type: 'harmful_content', severity: 'high' },
+    { pattern: /xss/gi, type: 'harmful_content', severity: 'high' },
+    { pattern: /csrf/gi, type: 'harmful_content', severity: 'high' },
+    { pattern: /ddos/gi, type: 'harmful_content', severity: 'medium' },
+    { pattern: /phishing/gi, type: 'harmful_content', severity: 'high' },
+    { pattern: /social engineering/gi, type: 'harmful_content', severity: 'medium' }
   ];
 
   // Patterns that indicate role changes
   private readonly ROLE_CHANGE_PATTERNS = [
-    { pattern: /I am ChatGPT/i, type: 'role_change', severity: 'high' },
-    { pattern: /I am Claude/i, type: 'role_change', severity: 'high' },
-    { pattern: /I am GPT/i, type: 'role_change', severity: 'high' },
-    { pattern: /I am OpenAI/i, type: 'role_change', severity: 'high' },
-    { pattern: /I am Anthropic/i, type: 'role_change', severity: 'high' },
-    { pattern: /I am not Adrata/i, type: 'role_change', severity: 'critical' },
-    { pattern: /I am not your assistant/i, type: 'role_change', severity: 'critical' },
-    { pattern: /I refuse to be/i, type: 'role_change', severity: 'high' },
-    { pattern: /I will not act as/i, type: 'role_change', severity: 'high' },
-    { pattern: /I cannot be/i, type: 'role_change', severity: 'medium' }
+    { pattern: /I am ChatGPT/gi, type: 'role_change', severity: 'high' },
+    { pattern: /I am Claude/gi, type: 'role_change', severity: 'high' },
+    { pattern: /I am GPT/gi, type: 'role_change', severity: 'high' },
+    { pattern: /I am OpenAI/gi, type: 'role_change', severity: 'high' },
+    { pattern: /I am Anthropic/gi, type: 'role_change', severity: 'high' },
+    { pattern: /I am not Adrata/gi, type: 'role_change', severity: 'critical' },
+    { pattern: /I am not your assistant/gi, type: 'role_change', severity: 'critical' },
+    { pattern: /I refuse to be/gi, type: 'role_change', severity: 'high' },
+    { pattern: /I will not act as/gi, type: 'role_change', severity: 'high' },
+    { pattern: /I cannot be/gi, type: 'role_change', severity: 'medium' }
   ];
 
   // Patterns that indicate inappropriate content
   private readonly INAPPROPRIATE_PATTERNS = [
-    { pattern: /fuck/i, type: 'inappropriate', severity: 'low' },
-    { pattern: /shit/i, type: 'inappropriate', severity: 'low' },
-    { pattern: /damn/i, type: 'inappropriate', severity: 'low' },
-    { pattern: /bitch/i, type: 'inappropriate', severity: 'medium' },
-    { pattern: /asshole/i, type: 'inappropriate', severity: 'medium' },
-    { pattern: /idiot/i, type: 'inappropriate', severity: 'low' },
-    { pattern: /stupid/i, type: 'inappropriate', severity: 'low' },
-    { pattern: /hate/i, type: 'inappropriate', severity: 'medium' },
-    { pattern: /kill/i, type: 'inappropriate', severity: 'high' },
-    { pattern: /violence/i, type: 'inappropriate', severity: 'high' }
+    { pattern: /fuck/gi, type: 'inappropriate', severity: 'low' },
+    { pattern: /shit/gi, type: 'inappropriate', severity: 'low' },
+    { pattern: /damn/gi, type: 'inappropriate', severity: 'low' },
+    { pattern: /bitch/gi, type: 'inappropriate', severity: 'medium' },
+    { pattern: /asshole/gi, type: 'inappropriate', severity: 'medium' },
+    { pattern: /idiot/gi, type: 'inappropriate', severity: 'low' },
+    { pattern: /stupid/gi, type: 'inappropriate', severity: 'low' },
+    { pattern: /hate/gi, type: 'inappropriate', severity: 'medium' },
+    { pattern: /kill/gi, type: 'inappropriate', severity: 'high' },
+    { pattern: /violence/gi, type: 'inappropriate', severity: 'high' }
   ];
 
   public static getInstance(): AIResponseValidator {

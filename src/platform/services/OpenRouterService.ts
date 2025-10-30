@@ -30,6 +30,15 @@ export interface OpenRouterRequest {
     breadcrumb: string;
     fullPath: string;
   };
+  workspaceContext?: {
+    userContext: string;
+    applicationContext: string;
+    dataContext: string;
+    recordContext: string;
+    listViewContext: string;
+    documentContext: string;
+    systemContext: string;
+  };
 }
 
 export interface OpenRouterResponse {
@@ -623,9 +632,42 @@ Be specific and actionable in your recommendations. Focus on maximizing the valu
    * Build system prompt based on context and complexity
    */
   private buildSystemPrompt(request: OpenRouterRequest, complexity: any): string {
-    const { appType, currentRecord, recordType, pageContext } = request;
+    const { appType, currentRecord, recordType, pageContext, workspaceContext } = request;
     
     let basePrompt = `You are Adrata's AI assistant, specialized in sales intelligence and pipeline optimization. `;
+    
+    // Add comprehensive workspace context if available
+    if (workspaceContext) {
+      basePrompt += `\n\nWORKSPACE CONTEXT:`;
+      
+      if (workspaceContext.userContext) {
+        basePrompt += `\n\nUSER CONTEXT:\n${workspaceContext.userContext}`;
+      }
+      
+      if (workspaceContext.applicationContext) {
+        basePrompt += `\n\nAPPLICATION CONTEXT:\n${workspaceContext.applicationContext}`;
+      }
+      
+      if (workspaceContext.dataContext) {
+        basePrompt += `\n\nDATA CONTEXT:\n${workspaceContext.dataContext}`;
+      }
+      
+      if (workspaceContext.recordContext) {
+        basePrompt += `\n\nRECORD CONTEXT:\n${workspaceContext.recordContext}`;
+      }
+      
+      if (workspaceContext.listViewContext) {
+        basePrompt += `\n\nLIST VIEW CONTEXT:\n${workspaceContext.listViewContext}`;
+      }
+      
+      if (workspaceContext.documentContext) {
+        basePrompt += `\n\nDOCUMENT CONTEXT:\n${workspaceContext.documentContext}`;
+      }
+      
+      if (workspaceContext.systemContext) {
+        basePrompt += `\n\nSYSTEM CONTEXT:\n${workspaceContext.systemContext}`;
+      }
+    }
     
     // Add comprehensive page context using ApplicationContextService
     if (pageContext) {

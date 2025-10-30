@@ -129,138 +129,13 @@ export interface ContextualAction {
   condition?: (record: any) => boolean;
 }
 
+// Import the tab registry functions
+import { getTabsForRecordType as getRegistryTabs } from './config/tab-registry';
+
 // Record type-specific tab configurations
 const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => {
-  // Get company name for dynamic tab label
-  const companyName = record?.company || record?.companyName || 'Company';
-  
-  // For company records in leads/prospects, use company tabs instead of person tabs
-  if ((recordType === 'leads' || recordType === 'prospects') && record?.isCompanyLead) {
-    return [
-      { id: 'overview', label: 'Overview' },
-      { id: 'actions', label: 'Actions' },
-      { id: 'intelligence', label: 'Intelligence' },
-      { id: 'people', label: 'People' },
-      { id: 'value', label: 'Value' },
-      { id: 'buyer-groups', label: 'Buyer Group' },
-      { id: 'opportunities', label: 'Opportunities' },
-      { id: 'notes', label: 'Notes' }
-    ];
-  }
-
-  // For company records in speedrun, use company tabs
-  if (recordType === 'speedrun' && record?.recordType === 'company') {
-    return [
-      { id: 'overview', label: 'Overview' },
-      { id: 'actions', label: 'Actions' },
-      { id: 'intelligence', label: 'Intelligence' },
-      { id: 'news', label: 'News' },
-      { id: 'people', label: 'People' },
-      { id: 'buyer-groups', label: 'Buyer Group' },
-      { id: 'notes', label: 'Notes' }
-    ];
-  }
-  
-  switch (recordType) {
-        case 'leads':
-          return [
-            { id: 'overview', label: 'Overview' },
-            { id: 'actions', label: 'Actions' },
-            { id: 'intelligence', label: 'Intelligence' },
-            { id: 'company', label: 'Company' },
-            { id: 'co-workers', label: 'Co-Workers' },
-            { id: 'career', label: 'Career' },
-            { id: 'notes', label: 'Notes' }
-          ];
-    case 'prospects':
-      return [
-        { id: 'overview', label: 'Overview' },
-        { id: 'actions', label: 'Actions' },
-        { id: 'intelligence', label: 'Intelligence' },
-        { id: 'company', label: 'Company' },
-        { id: 'co-workers', label: 'Co-Workers' },
-        { id: 'career', label: 'Career' },
-        { id: 'notes', label: 'Notes' }
-      ];
-    case 'opportunities':
-      return [
-        { id: 'overview', label: 'Overview' },
-        { id: 'actions', label: 'Actions' },
-        { id: 'deal-intel', label: 'Deal Intel' },
-        { id: 'stakeholders', label: 'Stakeholders' },
-        { id: 'buyer-groups', label: 'Buyer Group' },
-        { id: 'close-plan', label: 'Close Plan' },
-        { id: 'notes', label: 'Notes' }
-      ];
-    case 'companies':
-      return [
-        { id: 'overview', label: 'Overview' },
-        { id: 'actions', label: 'Actions' },
-        { id: 'intelligence', label: 'Intelligence' },
-        { id: 'news', label: 'News' },
-        { id: 'people', label: 'People' },
-        { id: 'buyer-groups', label: 'Buyer Group' },
-        { id: 'notes', label: 'Notes' }
-      ];
-    case 'people':
-      return [
-        { id: 'overview', label: 'Overview' },
-        { id: 'actions', label: 'Actions' },
-        { id: 'intelligence', label: 'Intelligence' },
-        { id: 'company', label: 'Company' },
-        { id: 'co-workers', label: 'Co-Workers' },
-        { id: 'career', label: 'Career' },
-        { id: 'notes', label: 'Notes' }
-      ];
-    case 'speedrun':
-      return [
-        { id: 'overview', label: 'Overview' },
-        { id: 'company', label: 'Company' },
-        { id: 'actions', label: 'Actions' },
-        { id: 'strategy', label: 'Intelligence' },
-        { id: 'career', label: 'Career' },
-        { id: 'notes', label: 'Notes' }
-      ];
-    case 'clients':
-      return [
-        { id: 'overview', label: 'Overview' },
-        { id: 'actions', label: 'Actions' },
-        { id: 'relationship', label: 'Relationship' },
-        { id: 'business', label: 'Business' },
-        { id: 'personal', label: 'Personal' },
-        { id: 'success', label: 'Success' },
-        { id: 'notes', label: 'Notes' }
-      ];
-    case 'partners':
-      return [
-        { id: 'overview', label: 'Overview' },
-        { id: 'actions', label: 'Actions' },
-        { id: 'partnership', label: 'Partnership' },
-        { id: 'collaboration', label: 'Collaboration' },
-        { id: 'performance', label: 'Performance' },
-        { id: 'opportunities', label: 'Opportunities' },
-        { id: 'notes', label: 'Notes' }
-      ];
-    case 'sellers':
-      return [
-        { id: 'overview', label: 'Overview' },
-        { id: 'actions', label: 'Actions' },
-        { id: 'companies', label: 'Companies' },
-        { id: 'performance', label: 'Performance' },
-        { id: 'profile', label: 'Profile' },
-        { id: 'notes', label: 'Notes' }
-      ];
-    default:
-      return [
-        { id: 'overview', label: 'Home' },
-        { id: 'actions', label: 'Actions' },
-        { id: 'company', label: companyName },
-        { id: 'industry', label: 'Industry' },
-        { id: 'career', label: 'Career' },
-        { id: 'landmines', label: 'Landmines' },
-        { id: 'notes', label: 'Notes' }
-      ];
-  }
+  // Use the tab registry which now handles dynamic component resolution
+  return getRegistryTabs(recordType, record);
 };
 
 const DEFAULT_TABS: TabConfig[] = [
@@ -3622,12 +3497,17 @@ export function UniversalRecordTemplate({
     );
 
     // Add Person button - for company records and company leads/prospects
-    if (recordType === 'companies' || (record?.isCompanyLead && (recordType === 'leads' || recordType === 'prospects'))) {
+    const isCompanyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+                           (recordType === 'leads' && record?.isCompanyLead === true) ||
+                           (recordType === 'prospects' && record?.isCompanyLead === true) ||
+                           (recordType === 'companies');
+    
+    if (isCompanyRecord) {
       buttons.push(
         <button
           key="add-person"
           onClick={() => setIsAddPersonModalOpen(true)}
-          className="px-3 py-1.5 text-sm bg-gray-100 text-gray-600 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
+          className="px-3 py-1.5 text-sm bg-[var(--background)] text-gray-700 border border-[var(--border)] rounded-md hover:bg-[var(--panel-background)] transition-colors"
         >
           Add Person
         </button>
@@ -3676,29 +3556,36 @@ export function UniversalRecordTemplate({
       }
     } else {
       // Context-aware advance button (moved before Add Action)
-      if (recordType === 'leads') {
-        // Advance to Lead button - LIGHT GRAY BUTTON (for leads)
-        buttons.push(
-          <button
-            key="advance-to-prospect"
-            onClick={handleAdvanceToProspect}
-            className="px-3 py-1.5 text-sm bg-[var(--panel-background)] text-[var(--foreground)] border border-[var(--border)] rounded-md hover:bg-[var(--hover)] transition-colors"
-          >
-            Advance to Prospect
-          </button>
-        );
-      } else if (recordType === 'prospects') {
-        // Advance to Opportunity button - LIGHT BLUE BUTTON (matching list page style)
-        buttons.push(
-          <button
-            key="advance-to-opportunity"
-            onClick={handleAdvanceToOpportunity}
-            className="px-3 py-1.5 text-sm bg-[var(--info-bg)] text-[var(--info-text)] border border-[var(--info-border)] rounded-md hover:bg-[var(--info)] hover:text-[var(--button-text)] transition-colors"
-          >
-            Advance to Opportunity
-          </button>
-        );
-      } else if (recordType === 'people') {
+      // Check if this is a company record - don't show advance buttons for companies
+      const isCompanyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+                             (recordType === 'leads' && record?.isCompanyLead === true) ||
+                             (recordType === 'prospects' && record?.isCompanyLead === true) ||
+                             (recordType === 'companies');
+      
+      if (!isCompanyRecord) {
+        if (recordType === 'leads') {
+          // Advance to Lead button - LIGHT GRAY BUTTON (for leads)
+          buttons.push(
+            <button
+              key="advance-to-prospect"
+              onClick={handleAdvanceToProspect}
+              className="px-3 py-1.5 text-sm bg-[var(--panel-background)] text-[var(--foreground)] border border-[var(--border)] rounded-md hover:bg-[var(--hover)] transition-colors"
+            >
+              Advance to Prospect
+            </button>
+          );
+        } else if (recordType === 'prospects') {
+          // Advance to Opportunity button - LIGHT BLUE BUTTON (matching list page style)
+          buttons.push(
+            <button
+              key="advance-to-opportunity"
+              onClick={handleAdvanceToOpportunity}
+              className="px-3 py-1.5 text-sm bg-[var(--info-bg)] text-[var(--info-text)] border border-[var(--info-border)] rounded-md hover:bg-[var(--info)] hover:text-[var(--button-text)] transition-colors"
+            >
+              Advance to Opportunity
+            </button>
+          );
+        } else if (recordType === 'people') {
         // Dynamic advance button for people based on their status
         const currentStatus = record?.status;
         if (currentStatus === 'LEAD') {
@@ -3722,6 +3609,7 @@ export function UniversalRecordTemplate({
             </button>
           );
         }
+      }
       }
 
       // Add Action button - CATEGORY COLORED BUTTON (matching section colors)
@@ -4455,14 +4343,25 @@ export function UniversalRecordTemplate({
           <div className="bg-[var(--background)] rounded-xl border border-gray-100 shadow-sm p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto" data-edit-modal>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
-                {recordType === 'leads' ? 'Update Lead' : 
-                 recordType === 'prospects' ? 'Update Prospect' :
-                 recordType === 'opportunities' ? 'Update Opportunity' :
-                 recordType === 'companies' ? 'Update Company' :
-                 recordType === 'people' ? 'Update Person' :
-                 recordType === 'clients' ? 'Update Client' :
-                 recordType === 'partners' ? 'Update Partner' :
-                 'Update Record'}
+                {(() => {
+                  // Check if this is a company-only record
+                  const isCompanyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+                                         (recordType === 'leads' && record?.isCompanyLead === true) ||
+                                         (recordType === 'prospects' && record?.isCompanyLead === true);
+                  
+                  if (isCompanyRecord) {
+                    return 'Update Company';
+                  }
+                  
+                  return recordType === 'leads' ? 'Update Lead' : 
+                         recordType === 'prospects' ? 'Update Prospect' :
+                         recordType === 'opportunities' ? 'Update Opportunity' :
+                         recordType === 'companies' ? 'Update Company' :
+                         recordType === 'people' ? 'Update Person' :
+                         recordType === 'clients' ? 'Update Client' :
+                         recordType === 'partners' ? 'Update Partner' :
+                         'Update Record';
+                })()}
               </h3>
               <button
                 onClick={() => setIsEditRecordModalOpen(false)}

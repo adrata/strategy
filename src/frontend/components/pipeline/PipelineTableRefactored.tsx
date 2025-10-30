@@ -477,7 +477,10 @@ export function PipelineTable({
                         } else {
                           // For company leads (isCompanyLead flag), show the company name
                           if (record['isCompanyLead']) {
-                            const companyName = record['company']?.name || record['companyName'] || '';
+                            // For company leads, company is now a string, not an object
+                            const companyName = typeof record['company'] === 'string' 
+                              ? record['company'] 
+                              : record['company']?.name || record['companyName'] || '';
                             cellContent = (companyName && companyName !== 'Unknown Company' && companyName.trim() !== '') ? companyName : '-';
                           } else {
                             // For other sections (leads, prospects, etc.), look for company field

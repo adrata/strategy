@@ -39,17 +39,45 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     if (recordType === 'companies') {
       return record?.id;
     }
+    
+    // Check if this is a company-only record in speedrun/leads/prospects
+    const isCompanyOnlyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+                               (recordType === 'leads' && record?.isCompanyLead === true) ||
+                               (recordType === 'prospects' && record?.isCompanyLead === true);
+    
+    if (isCompanyOnlyRecord) {
+      return record?.id; // The record itself is the company
+    }
+    
     // If it's a person record, get companyId
     return record?.companyId || record?.company?.id;
   }, [record, recordType]);
 
   // Detect if we have partial company data that needs to be fetched
   const hasPartialCompanyData = useMemo(() => {
-    if (!companyId || recordType === 'companies') {
-      return false; // No company ID or already a company record
+    if (!companyId) {
+      return false; // No company ID
     }
     
-    // Check if we're missing key company fields that indicate partial data
+    // Check if this is a company-only record in speedrun/leads/prospects
+    const isCompanyOnlyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
+                               (recordType === 'leads' && record?.isCompanyLead === true) ||
+                               (recordType === 'prospects' && record?.isCompanyLead === true);
+    
+    // For company-only records, check if the record itself has the key company fields
+    if (isCompanyOnlyRecord) {
+      // If record has key company fields, don't fetch
+      const hasKeyFields = record?.name || record?.description || record?.website || 
+                          record?.revenue || record?.employeeCount;
+      return !hasKeyFields; // Only fetch if we don't have key fields
+    }
+    
+    // For regular company records, don't fetch
+    if (recordType === 'companies') {
+      return false;
+    }
+    
+    // For person records, check if we're missing key company fields that indicate partial data
     const hasKeyFields = record?.description || record?.website || record?.revenue || 
                         record?.linkedinUrl || record?.hqFullAddress || record?.legalName;
     
@@ -71,7 +99,8 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       const response = await authFetch(`/api/v1/companies/${companyId}`);
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch company data: ${response.status}`);
+        const status = response?.status || 'unknown';
+        throw new Error(`Failed to fetch company data: ${status}`);
       }
 
       const result = await response.json();
@@ -337,7 +366,13 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                      'Company';
 
   return (
-    <div className="space-y-8">
+    <div className="p-6">
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h2 className="text-xl font-semibold text-[var(--foreground)]">Overview</h2>
+        </div>
+
       {/* Company Summary */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-[var(--foreground)]">{companyName} Summary</h3>
@@ -790,6 +825,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         </div>
       </div>
 
+      </div>
     </div>
   );
 }

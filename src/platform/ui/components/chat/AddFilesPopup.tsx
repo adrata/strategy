@@ -145,11 +145,13 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
         case 'leads':
           endpoint = '/api/v1/people';
           params.set('status', 'LEAD');
+          params.set('section', 'leads');
           if (searchQuery) params.set('search', searchQuery);
           params.set('limit', '20');
           break;
         case 'people':
           endpoint = '/api/v1/people';
+          params.set('section', 'prospects');
           if (searchQuery) params.set('search', searchQuery);
           params.set('limit', '20');
           break;
@@ -483,7 +485,7 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={`Search ${DATA_CATEGORIES.find(cat => cat['id'] === activeDataCategory)?.label.toLowerCase() || 'data'}...`}
-                className="w-full pl-8 pr-3 py-1.5 text-xs border border-[var(--border)] dark:border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] dark:text-[var(--foreground)] placeholder-gray-500 dark:placeholder-gray-400 focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                className="w-full pl-8 pr-3 py-1.5 text-xs border border-[var(--border)] dark:border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] dark:text-[var(--foreground)] placeholder-gray-500 dark:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
@@ -614,7 +616,7 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
               </div>
               <button
                 onClick={handleAddContext}
-                className="w-full bg-red-600 hover:bg-red-700 text-white text-xs font-medium py-2 px-3 rounded transition-colors"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-2 px-3 rounded transition-colors"
               >
                 Add to Chat
               </button>
