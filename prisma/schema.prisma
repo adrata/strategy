@@ -138,6 +138,15 @@ model users {
   activeWorkspaceId         String?                     @db.VarChar(30)
   username                  String?                     @unique @db.VarChar(50)
   speedrunRankingMode       String?                     @db.VarChar(50)
+  title                     String?                     @db.VarChar(200)
+  department                String?                     @db.VarChar(100)
+  phoneNumber               String?                     @db.VarChar(50)
+  linkedinUrl               String?                     @db.VarChar(500)
+  communicationStyle        String?                     @db.VarChar(50)
+  preferredDetailLevel      String?                     @db.VarChar(50)
+  quota                     String?
+  territory                 String?                     @db.VarChar(200)
+  dashboardConfig           Json?
   oasis_channel_members     OasisChannelMember[]
   oasis_dm_participants     OasisDMParticipant[]
   oasis_messages            OasisMessage[]

@@ -201,7 +201,6 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
-    { id: 'news', label: 'News', component: UniversalNewsTab },
     { id: 'people', label: 'People', component: UniversalPeopleTab },
     { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }

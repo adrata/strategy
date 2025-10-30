@@ -177,7 +177,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     console.log(`🔍 [DATA PIPELINE] Section ${section} data:`, {
       dataLength: data.length,
       firstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
-      sampleIds: data.slice(0, 3).map(r => r.id),
+      sampleIds: data.slice(0, 3).map((r: any) => r.id),
       section: section,
       hasAcquisitionData: !!acquisitionData,
       acquisitionDataKeys: acquisitionData ? Object.keys(acquisitionData) : 'no acquisition data',
@@ -221,7 +221,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     console.log(`🔍 [NAVIGATION DATA] Navigation data for ${section}:`, {
       dataLength: data.length,
       firstRecord: data[0] ? { id: data[0].id, name: data[0].name } : 'no records',
-      sampleIds: data.slice(0, 3).map(r => r.id)
+      sampleIds: data.slice(0, 3).map((r: any) => r.id)
     });
     
     return data;
@@ -251,72 +251,6 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
     speedrunLoading
   });
   
-  // 🚀 SPEEDRUN RECORD FIX: For speedrun records, find the current record in the speedrun data array
-  // instead of loading it separately to ensure navigation works correctly
-  useEffect(() => {
-    if (section === 'speedrun' && speedrunData && speedrunData.length > 0 && slug) {
-      // Extract the record ID from the slug
-      const recordId = extractIdFromSlug(slug);
-      
-      // Only update if the selected record doesn't match the current slug
-      if (selectedRecord?.id !== recordId) {
-        console.log('🔍 [SPEEDRUN RECORD] Finding current record in speedrun data array:', {
-          slug,
-          recordId,
-          selectedRecordId: selectedRecord?.id,
-          speedrunDataLength: speedrunData.length,
-          lookingForId: recordId
-        });
-        
-        const currentRecord = speedrunData.find((record: any) => record.id === recordId);
-        if (currentRecord) {
-          console.log('✅ [SPEEDRUN RECORD] Found current record in speedrun data:', {
-            id: currentRecord.id,
-            name: currentRecord.name || currentRecord.fullName
-          });
-          setSelectedRecord(currentRecord);
-        } else {
-          console.log('❌ [SPEEDRUN RECORD] Current record not found in speedrun data, falling back to direct load');
-          // Fallback to direct loading if not found in speedrun data
-          if (recordId && !directRecordLoading) {
-            loadDirectRecord(recordId);
-          }
-        }
-      } else {
-        console.log('🔄 [SPEEDRUN RECORD] Record already matches current selection, skipping update:', {
-          recordId,
-          selectedRecordId: selectedRecord?.id
-        });
-      }
-    }
-  }, [section, speedrunData, selectedRecord, slug, directRecordLoading, loadDirectRecord]); // Added loadDirectRecord to dependencies
-  
-  // Debug speedrun data loading
-  if (section === 'speedrun') {
-    console.log('🔍 [SPEEDRUN NAVIGATION] Speedrun data for navigation:', {
-      speedrunDataLength: speedrunData?.length || 0,
-      speedrunLoading,
-      section,
-      workspaceId,
-      userId,
-      firstRecord: speedrunData?.[0] ? { id: speedrunData[0].id, name: speedrunData[0].name } : 'no records'
-    });
-  }
-  
-  // 🚀 MODERN 2025: Unified loading state - use acquisition data loading OR direct record loading OR transitions
-  // For speedrun records, don't show loading if we have the record from speedrun data
-  const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning || (section === 'speedrun' && speedrunLoading && !selectedRecord);
-  const error = acquisitionData.error || directRecordError;
-  
-  console.log(`🔍 [LOADING STATE] Loading states:`, {
-    acquisitionDataLoading: acquisitionData.isLoading,
-    directRecordLoading,
-    isTransitioning,
-    totalLoading: loading,
-    hasError: !!error,
-    errorMessage: error
-  });
-
   // Direct record loading function for when accessed via URL
   const loadDirectRecord = useCallback(async (recordId: string) => {
     if (!recordId || directRecordLoading) return;
@@ -606,6 +540,72 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
       setDirectRecordLoading(false);
     }
   }, [section]); // 🚫 FIXED: Removed directRecordLoading, directRecordError to prevent infinite loops
+  
+  // 🚀 SPEEDRUN RECORD FIX: For speedrun records, find the current record in the speedrun data array
+  // instead of loading it separately to ensure navigation works correctly
+  useEffect(() => {
+    if (section === 'speedrun' && speedrunData && speedrunData.length > 0 && slug) {
+      // Extract the record ID from the slug
+      const recordId = extractIdFromSlug(slug);
+      
+      // Only update if the selected record doesn't match the current slug
+      if (selectedRecord?.id !== recordId) {
+        console.log('🔍 [SPEEDRUN RECORD] Finding current record in speedrun data array:', {
+          slug,
+          recordId,
+          selectedRecordId: selectedRecord?.id,
+          speedrunDataLength: speedrunData.length,
+          lookingForId: recordId
+        });
+        
+        const currentRecord = speedrunData.find((record: any) => record.id === recordId);
+        if (currentRecord) {
+          console.log('✅ [SPEEDRUN RECORD] Found current record in speedrun data:', {
+            id: currentRecord.id,
+            name: currentRecord.name || currentRecord.fullName
+          });
+          setSelectedRecord(currentRecord);
+        } else {
+          console.log('❌ [SPEEDRUN RECORD] Current record not found in speedrun data, falling back to direct load');
+          // Fallback to direct loading if not found in speedrun data
+          if (recordId && !directRecordLoading) {
+            loadDirectRecord(recordId);
+          }
+        }
+      } else {
+        console.log('🔄 [SPEEDRUN RECORD] Record already matches current selection, skipping update:', {
+          recordId,
+          selectedRecordId: selectedRecord?.id
+        });
+      }
+    }
+  }, [section, speedrunData, selectedRecord, slug, directRecordLoading, loadDirectRecord]); // Added loadDirectRecord to dependencies
+  
+  // Debug speedrun data loading
+  if (section === 'speedrun') {
+    console.log('🔍 [SPEEDRUN NAVIGATION] Speedrun data for navigation:', {
+      speedrunDataLength: speedrunData?.length || 0,
+      speedrunLoading,
+      section,
+      workspaceId,
+      userId,
+      firstRecord: speedrunData?.[0] ? { id: speedrunData[0].id, name: speedrunData[0].name } : 'no records'
+    });
+  }
+  
+  // 🚀 MODERN 2025: Unified loading state - use acquisition data loading OR direct record loading OR transitions
+  // For speedrun records, don't show loading if we have the record from speedrun data
+  const loading = acquisitionData.isLoading || directRecordLoading || isTransitioning || (section === 'speedrun' && speedrunLoading && !selectedRecord);
+  const error = acquisitionData.error || directRecordError;
+  
+  console.log(`🔍 [LOADING STATE] Loading states:`, {
+    acquisitionDataLoading: acquisitionData.isLoading,
+    directRecordLoading,
+    isTransitioning,
+    totalLoading: loading,
+    hasError: !!error,
+    errorMessage: error
+  });
 
   useEffect(() => {
     if (!slug) return;
@@ -833,7 +833,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
               calculatedRecordIndex: recordIndex,
               recordGlobalRank: recordToShow?.globalRank,
               recordRank: recordToShow?.rank,
-              dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name, rank: r.rank }))
+              dataSample: data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name, rank: r.rank }))
             });
             return recordIndex;
           } else {
@@ -846,7 +846,7 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
               dataLength: data.length,
               foundIndex: index,
               calculatedRecordIndex: recordIndex,
-              dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name }))
+              dataSample: data.slice(0, 3).map((r: any) => ({ id: r.id, name: r.name }))
             });
             return recordIndex;
           }
@@ -957,15 +957,15 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
             ref={profilePopupRef}
             style={{
               position: "fixed",
-              left: profileAnchor.getBoundingClientRect().left,
-              bottom: window.innerHeight - profileAnchor.getBoundingClientRect().top + 5,
+              left: profileAnchor?.getBoundingClientRect().left || 0,
+              bottom: window.innerHeight - (profileAnchor?.getBoundingClientRect().top || 0) + 5,
               zIndex: 9999,
             }}
           >
             <ProfileBox
               user={pipelineUser}
               company={company}
-              workspace={workspace}
+              workspace={workspace?.name || ''}
               isProfileOpen={isProfileOpen}
               setIsProfileOpen={setIsProfileOpen}
               userId={user?.id}
@@ -1023,19 +1023,19 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
               ref={profilePopupRef}
               style={{
                 position: "fixed",
-                left: profileAnchor.getBoundingClientRect().left,
-                bottom: window.innerHeight - profileAnchor.getBoundingClientRect().top + 5,
+                left: profileAnchor?.getBoundingClientRect().left || 0,
+                bottom: window.innerHeight - (profileAnchor?.getBoundingClientRect().top || 0) + 5,
                 zIndex: 9999,
               }}
             >
               <ProfileBox
                 user={pipelineUser}
                 company={company}
-                workspace={workspace}
+                workspace={workspace?.name || ''}
                 isProfileOpen={isProfileOpen}
                 setIsProfileOpen={setIsProfileOpen}
-                userId={authUser?.id}
-                userEmail={authUser?.email}
+                userId={user?.id}
+                userEmail={user?.email}
                 isSellersVisible={true}
                 setIsSellersVisible={() => {}}
                 isRtpVisible={isSpeedrunVisible}

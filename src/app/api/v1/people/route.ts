@@ -798,20 +798,35 @@ export async function GET(request: NextRequest) {
         console.log(`🏢 [V1 PEOPLE API] Combined prospects: ${transformedPeople.length} people + ${companyProspects.length} companies = ${allLeads.length} total`);
       }
 
+      // 🚀 DEDUPLICATION SAFETY: Remove any duplicate IDs before returning
+      const seenIds = new Set();
+      const deduplicatedLeads = allLeads.filter(lead => {
+        if (seenIds.has(lead.id)) {
+          console.warn(`⚠️ [V1 PEOPLE API] Duplicate ID detected and removed: ${lead.id} (${lead.fullName || lead.name})`);
+          return false;
+        }
+        seenIds.add(lead.id);
+        return true;
+      });
+
+      if (deduplicatedLeads.length !== allLeads.length) {
+        console.warn(`⚠️ [V1 PEOPLE API] Removed ${allLeads.length - deduplicatedLeads.length} duplicate records from ${section} response`);
+      }
+
       const result = {
         success: true,
-        data: allLeads,
+        data: deduplicatedLeads,
         meta: {
           timestamp: new Date().toISOString(),
           pagination: {
             page,
             limit,
-            totalCount,
-            totalPages: Math.ceil(totalCount / limit),
+            totalCount: deduplicatedLeads.length, // Use actual deduplicated count
+            totalPages: Math.ceil(deduplicatedLeads.length / limit),
           },
           // Add compatibility fields for useFastSectionData hook
-          count: totalCount,
-          totalCount: totalCount,
+          count: deduplicatedLeads.length,
+          totalCount: deduplicatedLeads.length,
           filters: { search, status, priority, companyId, excludeCompanyId, sortBy, sortOrder },
           userId: context.userId,
           workspaceId: context.workspaceId,
