@@ -276,8 +276,18 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
 
   const formatRevenue = (revenue: any): string => {
     if (!revenue) return '-';
+    
+    // Parse string to number if needed
+    const numericRevenue = typeof revenue === 'string' ? parseFloat(revenue.replace(/[^0-9.-]/g, '')) : revenue;
+    
+    // Check if we have a valid number
+    if (typeof numericRevenue === 'number' && !isNaN(numericRevenue)) {
+      return `$${numericRevenue.toLocaleString()}`;
+    }
+    
+    // If it's a string that couldn't be parsed, return as-is (might be a range like "$1M-$5M")
     if (typeof revenue === 'string') return revenue;
-    if (typeof revenue === 'number') return `$${revenue.toLocaleString()}`;
+    
     return '-';
   };
 
