@@ -304,6 +304,41 @@ export async function GET(request: NextRequest) {
           };
         }
 
+        // Special handling for prospects section to include companies with 0 people
+        if (section === 'prospects') {
+          const [peopleCount, companyCount] = await Promise.all([
+            prisma.people.count({ where: { ...where, status: 'PROSPECT' } }),
+            prisma.companies.count({
+              where: {
+                workspaceId: context.workspaceId,
+                deletedAt: null,
+                OR: [
+                  { mainSellerId: context.userId },
+                  { mainSellerId: null }
+                ],
+                AND: [
+                  { people: { none: {} } },
+                  {
+                    OR: [
+                      { status: 'PROSPECT' },
+                      { status: 'prospect' }
+                    ]
+                  }
+                ]
+              }
+            })
+          ]);
+          
+          return {
+            success: true,
+            data: { PROSPECT: peopleCount + companyCount },
+            meta: {
+              type: 'counts',
+              filters: { search, status, priority, companyId }
+            }
+          };
+        }
+
         const statusCounts = await prisma.people.groupBy({
           by: ['status'],
           where,
@@ -673,6 +708,104 @@ export async function GET(request: NextRequest) {
         // Combine people and company leads
         allLeads = [...transformedPeople, ...companyLeads];
         console.log(`🏢 [V1 PEOPLE API] Combined leads: ${transformedPeople.length} people + ${companyLeads.length} companies = ${allLeads.length} total`);
+      }
+
+      // 🚀 PROSPECTS: Add companies with 0 people for prospects section
+      if (section === 'prospects') {
+        console.log(`🏢 [V1 PEOPLE API] Fetching companies with 0 people for prospects section`);
+        
+        const companiesWithNoPeople = await prisma.companies.findMany({
+          where: {
+            workspaceId: context.workspaceId,
+            deletedAt: null,
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ],
+            AND: [
+              { people: { none: {} } }, // Companies with 0 people
+              {
+                OR: [
+                  { status: 'PROSPECT' },
+                  { status: 'prospect' } // Handle case variations
+                ]
+              }
+            ]
+          },
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            status: true,
+            priority: true,
+            globalRank: true,
+            lastAction: true,
+            nextAction: true,
+            lastActionDate: true,
+            nextActionDate: true,
+            mainSellerId: true,
+            hqState: true,
+            createdAt: true,
+            updatedAt: true,
+            mainSeller: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                name: true,
+                email: true
+              }
+            }
+          }
+        });
+
+        console.log(`🏢 [V1 PEOPLE API] Found ${companiesWithNoPeople.length} prospect companies with 0 people`);
+
+        // Transform companies to look like person records
+        const companyProspects = companiesWithNoPeople.map(company => ({
+          id: company.id,
+          fullName: company.name,
+          firstName: null,
+          lastName: null,
+          email: null,
+          jobTitle: null,
+          title: null,
+          phone: null,
+          department: null,
+          status: company.status || 'PROSPECT',
+          priority: company.priority,
+          globalRank: company.globalRank,
+          lastAction: company.lastAction,
+          nextAction: company.nextAction,
+          lastActionDate: company.lastActionDate,
+          nextActionDate: company.nextActionDate,
+          companyId: company.id,
+          mainSellerId: company.mainSellerId,
+          company: {
+            id: company.id,
+            name: company.name,
+            industry: company.industry,
+            size: null,
+            globalRank: company.globalRank,
+            hqState: company.hqState
+          },
+          mainSeller: company.mainSeller 
+            ? (company.mainSeller.id === context.userId
+                ? 'Me'
+                : company.mainSeller.firstName && company.mainSeller.lastName 
+                  ? `${company.mainSeller.firstName} ${company.mainSeller.lastName}`.trim()
+                  : company.mainSeller.name || company.mainSeller.email || '-')
+            : '-',
+          mainSellerData: company.mainSeller,
+          isCompanyLead: true,
+          createdAt: company.createdAt,
+          updatedAt: company.updatedAt,
+          _count: { actions: 0 }
+        }));
+
+        // Combine people and company prospects
+        allLeads = [...transformedPeople, ...companyProspects];
+        console.log(`🏢 [V1 PEOPLE API] Combined prospects: ${transformedPeople.length} people + ${companyProspects.length} companies = ${allLeads.length} total`);
       }
 
       const result = {
