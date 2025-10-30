@@ -111,17 +111,12 @@ export async function GET(request: NextRequest) {
     
     // Define the fetch function for cache
     const fetchPeopleData = async () => {
-      // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
-      const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                        context.workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || // Notary Everyday
-                        context.workspaceId === '01K7464TNANHQXPCZT1FYX205V'; // Adrata workspace
-      
       // Enhanced where clause for pipeline management
       console.log('🔍 [V1 PEOPLE API] Querying with workspace:', context.workspaceId, 'for user:', context.userId, 'section:', section, 'includeAllUsers:', includeAllUsers);
       const where: any = {
         workspaceId: context.workspaceId, // Filter by user's workspace
         deletedAt: null, // Only show non-deleted records
-        ...(isDemoMode || includeAllUsers ? {} : {
+        ...(includeAllUsers ? {} : {
           OR: [
             { mainSellerId: context.userId },
             { mainSellerId: null }
@@ -282,12 +277,10 @@ export async function GET(request: NextRequest) {
               where: {
                 workspaceId: context.workspaceId,
                 deletedAt: null,
-                ...(isDemoMode ? {} : {
-                  OR: [
-                    { mainSellerId: context.userId },
-                    { mainSellerId: null }
-                  ]
-                }),
+                OR: [
+                  { mainSellerId: context.userId },
+                  { mainSellerId: null }
+                ],
                 people: { none: {} } // Companies with 0 people (any status)
               }
             })
@@ -584,12 +577,10 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId: context.workspaceId,
             deletedAt: null,
-            ...(isDemoMode ? {} : {
-              OR: [
-                { mainSellerId: context.userId },
-                { mainSellerId: null }
-              ]
-            }),
+            OR: [
+              { mainSellerId: context.userId },
+              { mainSellerId: null }
+            ],
             people: { none: {} } // Companies with 0 people (any status)
           },
           select: {

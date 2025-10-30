@@ -113,11 +113,7 @@ export async function GET(request: NextRequest) {
     
     let sectionData: any[] = [];
     
-    // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
-    // Only apply demo mode to the actual demo workspace, not production workspaces
-    const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
-                      userId === 'demo-user-2025'; // Demo user only
-    console.log(`🎯 [SECTION API] Demo mode detected: ${isDemoMode} for workspace: ${workspaceId}, user: ${userId}`);
+    // User assignment filters are now applied universally for proper data isolation
     
     // 🚀 PERFORMANCE: Load only the specific section data needed
     switch (section) {
@@ -130,12 +126,10 @@ export async function GET(request: NextRequest) {
             workspaceId,
             deletedAt: null,
             companyId: { not: null }, // Only people with company relationships
-            ...(isDemoMode ? {} : {
-              OR: [
-                { mainSellerId: userId },
-                { mainSellerId: null }
-              ]
-            })
+            OR: [
+              { mainSellerId: userId },
+              { mainSellerId: null }
+            ]
           },
           orderBy: [
             { globalRank: 'asc' }, // Sort by rank (best prospects first)
@@ -328,14 +322,10 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId,
             deletedAt: null,
-            ...(isDemoMode ? {} : {
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { mainSellerId: userId },
-                  { mainSellerId: null }
-                ]
-              })
-            }),
+            OR: [
+              { mainSellerId: userId },
+              { mainSellerId: null }
+            ],
             // Filter for people who are leads - use specific lead filters
             AND: [
               {
@@ -573,14 +563,10 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId,
             deletedAt: null,
-            ...(isDemoMode ? {} : {
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { mainSellerId: userId },
-                  { mainSellerId: null }
-                ]
-              })
-            }),
+            OR: [
+              { mainSellerId: userId },
+              { mainSellerId: null }
+            ],
             // Filter for people who are prospects - use specific prospect filters
             AND: [
               {
@@ -818,12 +804,10 @@ export async function GET(request: NextRequest) {
             workspaceId,
             deletedAt: null,
             status: 'OPPORTUNITY', // Filter for OPPORTUNITY status
-            ...(isDemoMode ? {} : {
-              OR: [
-                { mainSellerId: userId },
-                { mainSellerId: null }
-              ]
-            })
+            OR: [
+              { mainSellerId: userId },
+              { mainSellerId: null }
+            ]
           },
           orderBy: { updatedAt: 'desc' },
           take: limit,
@@ -884,12 +868,10 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId,
             deletedAt: null,
-            ...(isDemoMode ? {} : {
-              OR: [
-                { mainSellerId: userId },
-                { mainSellerId: null }
-              ]
-            })
+            OR: [
+              { mainSellerId: userId },
+              { mainSellerId: null }
+            ]
           },
           orderBy: [
             { globalRank: 'asc' }, // Use actual company ranks first
@@ -1102,12 +1084,10 @@ export async function GET(request: NextRequest) {
               workspaceId,
               deletedAt: null,
               companyId: { not: null }, // Only people with company relationships like speedrun
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { mainSellerId: userId },
-                  { mainSellerId: null }
-                ]
-              })
+              OR: [
+                { mainSellerId: userId },
+                { mainSellerId: null }
+              ]
             },
             orderBy: [
               { company: { globalRank: 'asc' } }, // Use company rank first like speedrun
@@ -1324,12 +1304,10 @@ export async function GET(request: NextRequest) {
             where: {
               workspaceId,
               deletedAt: null,
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { mainSellerId: userId },
-                  { mainSellerId: null }
-                ]
-              })
+              OR: [
+                { mainSellerId: userId },
+                { mainSellerId: null }
+              ]
             },
             orderBy: [
               { updatedAt: 'desc' }
@@ -1359,12 +1337,10 @@ export async function GET(request: NextRequest) {
               workspaceId,
               deletedAt: null,
               role: 'seller',
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { mainSellerId: userId },
-                  { mainSellerId: null }
-                ]
-              })
+              OR: [
+                { mainSellerId: userId },
+                { mainSellerId: null }
+              ]
             },
             orderBy: [
               { updatedAt: 'desc' }
@@ -1472,12 +1448,10 @@ export async function GET(request: NextRequest) {
             where: {
               workspaceId,
               deletedAt: null,
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { mainSellerId: userId },
-                  { mainSellerId: null }
-                ]
-              })
+              OR: [
+                { mainSellerId: userId },
+                { mainSellerId: null }
+              ]
             }
           });
           break;
@@ -1487,12 +1461,10 @@ export async function GET(request: NextRequest) {
               workspaceId,
               deletedAt: null,
               status: 'OPPORTUNITY',
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { mainSellerId: userId },
-                  { mainSellerId: null }
-                ]
-              })
+              OR: [
+                { mainSellerId: userId },
+                { mainSellerId: null }
+              ]
             }
           });
           break;

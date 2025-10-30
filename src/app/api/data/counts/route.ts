@@ -88,12 +88,7 @@ export async function GET(request: NextRequest) {
     
     console.log(`🚀 [COUNTS API] Loading counts for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🎯 DEMO MODE: Detect if we're in demo mode for Dan's workspace only
-    const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                      workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
-                      userId === 'demo-user-2025' || 
-                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM'; // Dan's user ID only
-    console.log(`🎯 [COUNTS API] Demo mode detected: ${isDemoMode}`);
+    // User assignment filters are now applied universally for proper data isolation
     
     // 🚀 PERFORMANCE: Use direct Prisma queries for better reliability with error handling
     let peopleCounts: Array<{ status: string | null; _count: { id: number } }> = [];
@@ -109,12 +104,10 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId,
             deletedAt: null, // Only count non-deleted records
-            ...(isDemoMode ? {} : {
-              OR: [
-                { mainSellerId: userId },
-                { mainSellerId: null }
-              ]
-            })
+            OR: [
+              { mainSellerId: userId },
+              { mainSellerId: null }
+            ]
           },
           _count: { id: true }
         }).catch((error) => {
@@ -127,12 +120,10 @@ export async function GET(request: NextRequest) {
           where: {
             workspaceId,
             deletedAt: null, // Only count non-deleted records
-            ...(isDemoMode ? {} : {
-              OR: [
-                { mainSellerId: userId },
-                { mainSellerId: null }
-              ]
-            })
+            OR: [
+              { mainSellerId: userId },
+              { mainSellerId: null }
+            ]
           },
           _count: { id: true }
         }).catch((error) => {
@@ -146,9 +137,7 @@ export async function GET(request: NextRequest) {
             deletedAt: null, // Only count non-deleted records
             companyId: { not: null }, // Only people with companies
             globalRank: { not: null, gte: 1, lte: 50 }, // Only people with ranks 1-50 (per-user)
-            ...(isDemoMode ? {} : {
-              mainSellerId: userId // Only count people assigned to this user
-            })
+            mainSellerId: userId // Only count people assigned to this user
           }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching speedrun people count:', error);
@@ -161,9 +150,7 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             globalRank: { not: null, gte: 1, lte: 50 }, // Only companies with ranks 1-50
             people: { none: {} }, // CRITICAL: Only companies with 0 people (companies with people are represented by their people)
-            ...(isDemoMode ? {} : {
-              mainSellerId: userId
-            })
+            mainSellerId: userId
           }
         }).catch((error) => {
           console.error('❌ [COUNTS API] Error fetching speedrun companies count:', error);
@@ -203,12 +190,10 @@ export async function GET(request: NextRequest) {
         where: {
           workspaceId,
           deletedAt: null,
-          ...(isDemoMode ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          }),
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ],
           people: { none: {} } // Companies with 0 people (any status)
         }
       });

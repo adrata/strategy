@@ -174,22 +174,13 @@ export async function GET(request: NextRequest) {
     // Enhanced where clause for pipeline management
     console.log(`🔍 [V1 COMPANIES API] Querying with workspace: ${finalWorkspaceId}, user: ${context.userId}`);
     
-    // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
-    const isDemoMode = finalWorkspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                      finalWorkspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1' || // Notary Everyday
-                      finalWorkspaceId === '01K7464TNANHQXPCZT1FYX205V'; // Adrata workspace
-    
-    console.log(`🎯 [V1 COMPANIES API] Demo mode check:`, { isDemoMode, finalWorkspaceId });
-    
     const where: any = {
       workspaceId: finalWorkspaceId, // Use final workspace ID (from URL or JWT)
       deletedAt: null, // Only show non-deleted records
-      ...(isDemoMode ? {} : {
-        OR: [
-          { mainSellerId: context.userId },
-          { mainSellerId: null }
-        ]
-      })
+      OR: [
+        { mainSellerId: context.userId },
+        { mainSellerId: null }
+      ]
     };
     console.log(`🔍 [V1 COMPANIES API] Where clause:`, where);
     

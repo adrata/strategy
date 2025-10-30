@@ -48,9 +48,7 @@ export async function GET(request: NextRequest) {
     
     // Define the fetch function for cache
     const fetchSpeedrunData = async () => {
-      // 🎯 DEMO MODE: Detect if we're in demo mode to bypass user assignment filters
-      const isDemoMode = context.workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || // Demo Workspace only
-                        context.userId === 'demo-user-2025'; // Demo user only
+      // User assignment filters are now applied universally for proper data isolation
       
       console.log(`🚀 [SPEEDRUN API] Loading top ${limit} speedrun prospects for workspace: ${context.workspaceId}, user: ${context.userId}`);
 
@@ -63,12 +61,10 @@ export async function GET(request: NextRequest) {
               workspaceId: context.workspaceId,
               deletedAt: null,
               companyId: { not: null },
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { mainSellerId: context.userId },
-                  { mainSellerId: null }
-                ]
-              })
+              OR: [
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
+              ]
             }
           }),
           prisma.people.count({
@@ -76,12 +72,10 @@ export async function GET(request: NextRequest) {
               workspaceId: context.workspaceId,
               deletedAt: null,
               globalRank: { not: null },
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { mainSellerId: context.userId },
-                  { mainSellerId: null }
-                ]
-              })
+              OR: [
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
+              ]
             }
           }),
           prisma.people.count({
@@ -90,12 +84,10 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
               companyId: { not: null },
               globalRank: { not: null },
-              ...(isDemoMode ? {} : {
-                OR: [
-                  { mainSellerId: context.userId },
-                  { mainSellerId: null }
-                ]
-              })
+              OR: [
+                { mainSellerId: context.userId },
+                { mainSellerId: null }
+              ]
             }
           })
         ]);
@@ -122,16 +114,12 @@ export async function GET(request: NextRequest) {
             workspaceId: context.workspaceId,
             deletedAt: null,
             globalRank: { not: null, gte: 1, lte: 50 }, // Only top 50 Speedrun ranks
-            ...(isDemoMode ? {} : {
-              mainSellerId: context.userId
-            }),
+            mainSellerId: context.userId,
             // Only companies with 0 people
             people: {
               none: {
                 deletedAt: null,
-                ...(isDemoMode ? {} : {
-                  mainSellerId: context.userId
-                })
+                mainSellerId: context.userId
               }
             }
           },
@@ -168,9 +156,7 @@ export async function GET(request: NextRequest) {
             deletedAt: null,
             companyId: { not: null }, // Only people with company relationships
             globalRank: { not: null, gte: 1, lte: 50 }, // Only top 50 Speedrun ranks
-            ...(isDemoMode ? {} : {
-              mainSellerId: context.userId
-            })
+            mainSellerId: context.userId
           },
           select: {
             id: true,

@@ -63,13 +63,7 @@ export async function GET(request: NextRequest) {
     
     console.log(`🚀 [METRICS API] Loading metrics for workspace: ${workspaceId}, user: ${userId}`);
     
-    // 🎯 DEMO MODE: Detect if we're in demo mode OR Ryan Serrato in Notary Everyday
-    const isDemoMode = workspaceId === '01K1VBYX2YERMXBFJ60RC6J194' || 
-                      workspaceId === '01K1VBYXHD0J895XAN0HGFBKJP' || // Dan's actual workspace
-                      workspaceId === '01K7464TNANHQXPCZT1FYX205V' || // Ross's workspace
-                      userId === 'demo-user-2025' || 
-                      userId === '01K1VBYZMWTCT09FWEKBDMCXZM' || // Dan's user ID
-                      userId === '01K7469230N74BVGK2PABPNNZ9'; // Ross's user ID
+    // User assignment filters are now applied universally for proper data isolation
     
     // 🎯 RYAN SERRATO: Check if this is Ryan Serrato in Notary Everyday
     const isRyanSerratoInNotaryEveryday = (workspaceId === '01K1VBYmf75hgmvmz06psnc9ug' || workspaceId === '01K7DNYR5VZ7JY36KGKKN76XZ1') && 
@@ -111,12 +105,10 @@ export async function GET(request: NextRequest) {
         where: {
           workspaceId,
           deletedAt: null,
-          ...((isDemoMode || isRyanSerratoInNotaryEveryday) ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          })
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ]
         },
         select: {
           id: true,
@@ -134,12 +126,10 @@ export async function GET(request: NextRequest) {
         where: {
           workspaceId,
           deletedAt: null,
-          ...((isDemoMode || isRyanSerratoInNotaryEveryday) ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          })
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ]
         },
         _count: { id: true }
       }),
@@ -150,12 +140,10 @@ export async function GET(request: NextRequest) {
         where: {
           workspaceId,
           deletedAt: null,
-          ...((isDemoMode || isRyanSerratoInNotaryEveryday) ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          })
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ]
         },
         _count: { id: true }
       }),
@@ -165,12 +153,10 @@ export async function GET(request: NextRequest) {
         where: {
           workspaceId,
           deletedAt: null,
-          ...((isDemoMode || isRyanSerratoInNotaryEveryday) ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          })
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ]
         },
         select: {
           id: true,
@@ -186,12 +172,10 @@ export async function GET(request: NextRequest) {
         where: {
           workspaceId,
           deletedAt: null,
-          ...((isDemoMode || isRyanSerratoInNotaryEveryday) ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          })
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ]
         },
         _count: { id: true }
       }),
@@ -203,12 +187,10 @@ export async function GET(request: NextRequest) {
           workspaceId,
           completedAt: { gte: startOfToday, lt: endOfToday },
           deletedAt: null,
-          ...((isDemoMode || isRyanSerratoInNotaryEveryday) ? {} : {
-            OR: [
-              { userId: userId },
-              { userId: null }
-            ]
-          })
+          OR: [
+            { userId: userId },
+            { userId: null }
+          ]
         },
         _count: { id: true }
       }),
@@ -220,12 +202,10 @@ export async function GET(request: NextRequest) {
           workspaceId,
           completedAt: { gte: startOfYesterday, lt: endOfYesterday },
           deletedAt: null,
-          ...((isDemoMode || isRyanSerratoInNotaryEveryday) ? {} : {
-            OR: [
-              { userId: userId },
-              { userId: null }
-            ]
-          })
+          OR: [
+            { userId: userId },
+            { userId: null }
+          ]
         },
         _count: { id: true }
       }),
@@ -237,12 +217,10 @@ export async function GET(request: NextRequest) {
           status: 'WON',
           updatedAt: { gte: startOfWeek },
           deletedAt: null,
-          ...((isDemoMode || isRyanSerratoInNotaryEveryday) ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          })
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ]
         }
       }).then(count => count || 2), // Fallback to 2 if no data
 
@@ -252,12 +230,10 @@ export async function GET(request: NextRequest) {
           workspaceId,
           createdAt: { gte: startOfToday, lt: endOfToday },
           deletedAt: null,
-          ...((isDemoMode || isRyanSerratoInNotaryEveryday) ? {} : {
-            OR: [
-              { mainSellerId: userId },
-              { mainSellerId: null }
-            ]
-          })
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ]
         }
       }).then(count => count || 3), // Fallback to 3 if no data
 
@@ -267,12 +243,10 @@ export async function GET(request: NextRequest) {
           workspaceId,
           completedAt: { gte: startOfWeek },
           deletedAt: null,
-          ...((isDemoMode || isRyanSerratoInNotaryEveryday) ? {} : {
-            OR: [
-              { userId: userId },
-              { userId: null }
-            ]
-          })
+          OR: [
+            { userId: userId },
+            { userId: null }
+          ]
         },
         select: {
           type: true,
