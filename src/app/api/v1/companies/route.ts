@@ -842,6 +842,7 @@ export async function POST(request: NextRequest) {
       name: body.name,
       workspaceId: context.workspaceId,
       state: body.state || null,
+      status: body.status || 'ACTIVE', // Use provided status or default to ACTIVE
       createdAt: new Date(),
       updatedAt: new Date()
     };

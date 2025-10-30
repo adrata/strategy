@@ -717,7 +717,7 @@ export async function GET(request: NextRequest) {
           title: null,
           phone: null,
           department: null,
-          status: 'PROSPECT',
+          status: company.status || 'PROSPECT', // Use actual company status
           priority: company.priority,
           globalRank: company.globalRank,
           lastAction: company.lastAction,

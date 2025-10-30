@@ -623,7 +623,7 @@ export async function GET(request: NextRequest) {
           title: null,
           phone: null,
           department: null,
-          status: 'LEAD',
+          status: company.status || 'LEAD', // Use actual company status
           priority: company.priority,
           globalRank: company.globalRank,
           lastAction: company.lastAction,
