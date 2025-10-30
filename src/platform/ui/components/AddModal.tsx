@@ -1075,6 +1075,23 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
             </div>
           )}
 
+          {activeSection === "accounts" && (
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                LinkedIn
+              </label>
+              <input
+                type="text"
+                value={formData.linkedin || ""}
+                onChange={(e) =>
+                  setFormData((prev: any) => ({ ...prev, linkedin: e.target.value }))
+                }
+                placeholder="linkedin.com/company/example"
+                className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+              />
+            </div>
+          )}
+
           {/* Account-specific fields */}
           {activeSection === "accounts" && (
             <div>
@@ -1270,6 +1287,28 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                     setFormData((prev: any) => ({ ...prev, website: e.target.value }))
                   }
                   placeholder="https://example.com"
+                  className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
+                  onFocus={(e) => {
+                    e.target.style.borderColor = categoryColors.primary;
+                    e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d1d5db';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  LinkedIn
+                </label>
+                <input
+                  type="text"
+                  value={formData.linkedin || ""}
+                  onChange={(e) =>
+                    setFormData((prev: any) => ({ ...prev, linkedin: e.target.value }))
+                  }
+                  placeholder="linkedin.com/company/example"
                   className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
                   onFocus={(e) => {
                     e.target.style.borderColor = categoryColors.primary;

@@ -291,7 +291,9 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">Add New Prospect</h2>
+              <h2 className="text-xl font-bold text-[var(--foreground)]">
+                {activeTab === 'person' ? 'Add New Person Prospect' : 'Add New Company Prospect'}
+              </h2>
               <p className="text-sm text-[var(--muted)]">Create a new prospect contact</p>
             </div>
           </div>

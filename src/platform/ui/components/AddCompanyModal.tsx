@@ -42,6 +42,7 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
   const [formData, setFormData] = useState({
     name: "",
     website: "",
+    linkedin: "",
     notes: "",
     state: ""
   });
@@ -432,6 +433,20 @@ export function AddCompanyModal({ isOpen, onClose, onCompanyAdded, section = 'co
               value={formData.website}
               onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
               placeholder="example.com or https://example.com"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+            />
+          </div>
+
+          {/* LinkedIn */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              LinkedIn
+            </label>
+            <input
+              type="text"
+              value={formData.linkedin}
+              onChange={(e) => setFormData(prev => ({ ...prev, linkedin: e.target.value }))}
+              placeholder="linkedin.com/company/example"
               className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
             />
           </div>

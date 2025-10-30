@@ -285,7 +285,7 @@ export const AddLeadModal = React.memo(function AddLeadModal({ isOpen, onClose, 
               </div>
               <div>
                 <h2 className="text-xl font-bold text-[var(--foreground)]">
-                  {activeTab === 'person' ? `Add New ${personFormData.status}` : 'Add New Company'}
+                  {activeTab === 'person' ? `Add New Person ${personFormData.status}` : `Add New Company ${personFormData.status}`}
                 </h2>
                 <p className="text-sm text-[var(--muted)]">Create a new contact or company</p>
               </div>
