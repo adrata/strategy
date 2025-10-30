@@ -66,6 +66,7 @@ export interface FormData {
   contactTitle?: string;
   commissionStructure?: string;
   website?: string;
+  linkedin?: string;
   lastContactDate?: string;
   nextContactDate?: string;
   nextAction?: string;
