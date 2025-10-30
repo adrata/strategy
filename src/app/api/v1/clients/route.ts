@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = Math.min(parseInt(searchParams.get('limit') || '100'), 1000); // Cap at 1000, default 100
+    const limit = parseInt(searchParams.get('limit') || '100'); // Default 100, no cap
     const search = searchParams.get('search') || '';
     const priority = searchParams.get('priority') || '';
     const companyId = searchParams.get('companyId') || '';

@@ -190,7 +190,6 @@ export function UpdateModal({ isOpen, onClose, record, recordType, onUpdate, onD
             { id: 'overview', label: 'Overview' },
             { id: 'strategy', label: 'Intelligence' },
             { id: 'actions', label: 'Actions' },
-            { id: 'news', label: 'News' },
             { id: 'buyer-groups', label: 'Buyer Group' },
             { id: 'notes', label: 'Notes' },
             { id: 'delete', label: 'Delete' }

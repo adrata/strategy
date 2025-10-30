@@ -948,9 +948,17 @@ function inferRole(title: string): string {
 function inferSeniority(title: string, experience: any): string {
   const lowerTitle = title.toLowerCase();
   
+  // Executive level - CEO, C-suite, Presidents, VPs, Directors
+  if (lowerTitle.includes('ceo') || lowerTitle.includes('president') || lowerTitle.includes('founder')) return 'executive';
+  if (lowerTitle.includes('cfo') || lowerTitle.includes('cto') || lowerTitle.includes('coo') || lowerTitle.includes('cmo')) return 'executive';
+  if (lowerTitle.includes('chief') || lowerTitle.includes('c-level')) return 'executive';
+  if (lowerTitle.includes('director') || lowerTitle.includes('vp') || lowerTitle.includes('vice president')) return 'executive';
+  
+  // Senior level
   if (lowerTitle.includes('senior') || lowerTitle.includes('principal') || lowerTitle.includes('lead')) return 'senior';
+  
+  // Junior level
   if (lowerTitle.includes('junior') || lowerTitle.includes('associate') || lowerTitle.includes('entry')) return 'junior';
-  if (lowerTitle.includes('director') || lowerTitle.includes('vp') || lowerTitle.includes('c-level')) return 'executive';
   
   return 'mid';
 }

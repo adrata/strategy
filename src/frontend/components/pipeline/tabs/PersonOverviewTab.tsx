@@ -163,11 +163,12 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     // Location info - Coresignal data only
     location: coresignalData.location_full || coresignalData.city || coresignalData.state || coresignalData.country || null,
     
-    // CoreSignal intelligence - use customFields directly
-    influenceLevel: record.customFields?.influenceLevel || null,
+    // CoreSignal intelligence - check top-level fields first, then customFields
+    influenceLevel: record.influenceLevel ?? record.customFields?.influenceLevel ?? null,
     engagementStrategy: record.customFields?.engagementStrategy || null,
-    isBuyerGroupMember: record.customFields?.isBuyerGroupMember || false,
-    buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
+    isBuyerGroupMember: record.isBuyerGroupMember ?? record.customFields?.isBuyerGroupMember ?? false,
+    buyerGroupOptimized: record.buyerGroupOptimized ?? record.customFields?.buyerGroupOptimized ?? false,
+    buyerGroupRole: record.buyerGroupRole ?? record.customFields?.buyerGroupRole ?? null,
     
     // Experience and skills - use CoreSignal data
     totalExperience: coresignalData.total_experience_duration_months || coresignalData.totalExperienceMonths || 0,
@@ -198,7 +199,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     totalFields: record.customFields?.totalFields || 13,
     status: record.status || 'LEAD',
     source: record.customFields?.source || 'Data Enrichment',
-    seniority: record.customFields?.seniority || 'Mid-level'
+    seniority: record.seniority ?? record.customFields?.seniority ?? 'Mid-level'
   };
 
   return { coresignalData, coresignalProfile, enrichedData, personData };
@@ -342,14 +343,14 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
   const lastActions = generateLastActions();
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold text-[var(--foreground)]">Overview</h2>
       </div>
 
       {/* Who are they */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Basic Information Card */}
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
@@ -470,6 +471,12 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   {personData.buyerGroupOptimized ? 'Yes' : 'No'}
                 </span>
               </div>
+              {personData.buyerGroupRole && (
+                <div className="flex justify-between">
+                  <span className="text-sm text-[var(--muted)]">Buyer Group Role:</span>
+                  <span className="text-sm font-medium text-[var(--foreground)] capitalize">{personData.buyerGroupRole}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-sm text-[var(--muted)]">Seniority:</span>
                 <span className="text-sm font-medium text-[var(--foreground)] capitalize">{personData.seniority}</span>
@@ -480,7 +487,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
       </div>
 
       {/* How do I reach them */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Information Card */}
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
@@ -573,7 +580,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
 
 
       {/* What do they care about */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <h4 className="font-medium text-[var(--foreground)] mb-3">
             Professional Insights: Based on their role as {personData.title} at {personData.company}, they likely care about:
@@ -606,7 +613,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
       </div>
 
         {/* Last Actions */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">What did I last do</h3>
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
             <h4 className="font-medium text-[var(--foreground)] mb-3">Last Actions:</h4>
@@ -644,7 +651,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
         </div>
 
       {/* Notes on them */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Notes on them</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">

@@ -374,7 +374,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         </div>
 
       {/* Company Summary */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h3 className="text-lg font-semibold text-[var(--foreground)]">{companyName} Summary</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <InlineEditField
@@ -408,7 +408,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       </div>
 
       {/* Key Metrics Dashboard */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h3 className="text-lg font-semibold text-[var(--foreground)]">Key Metrics</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] flex flex-col justify-between">
@@ -447,7 +447,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       {/* Company Information & Contact */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Company Details */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           <h3 className="text-lg font-semibold text-[var(--foreground)]">Company Details</h3>
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] space-y-3">
             <div className="flex items-center">
@@ -534,7 +534,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
         </div>
 
         {/* Contact & Location */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           <h3 className="text-lg font-semibold text-[var(--foreground)]">Contact & Location</h3>
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] space-y-3">
             <div className="flex items-center">
@@ -619,7 +619,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       </div>
 
       {/* Seller Intelligence */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h3 className="text-lg font-semibold text-[var(--foreground)]">Seller Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] space-y-3">
@@ -736,7 +736,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       </div>
 
       {/* Recent Actions */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h3 className="text-lg font-semibold text-[var(--foreground)]">Recent Actions</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           {actionsLoading ? (
@@ -773,7 +773,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       </div>
 
       {/* Notes & Tags */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h3 className="text-lg font-semibold text-[var(--foreground)]">Notes & Tags</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">

@@ -92,6 +92,7 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
   // Business tabs
   'buyer-groups': UniversalBuyerGroupsTab,
   'people': UniversalPeopleTab,
+  'co-workers': UniversalPeopleTab,
   'competitors': UniversalCompetitorsTab,
   'companies': UniversalSellerCompaniesTab,
   
@@ -150,18 +151,18 @@ export const TAB_COMPONENTS: Record<string, React.ComponentType<any>> = {
 export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   leads: [
     { id: 'overview', label: 'Overview', component: UniversalOverviewTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
-    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
   prospects: [
     { id: 'overview', label: 'Overview', component: ProspectOverviewTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'intelligence', label: 'Intelligence', component: UniversalInsightsTab },
-    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
@@ -190,19 +191,21 @@ export const TAB_CONFIGURATIONS: Record<string, TabConfig[]> = {
   
   people: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
-    { id: 'company', label: 'Company', component: CompanyOverviewTab },
+    { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
+    { id: 'co-workers', label: 'Co-workers', component: UniversalPeopleTab },
     { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
   speedrun: [
     { id: 'overview', label: 'Overview', component: PersonOverviewTab },
+    { id: 'company', label: 'Company', component: CompanyOverviewTab },
     { id: 'actions', label: 'Actions', component: UniversalActionsTab },
     { id: 'intelligence', label: 'Intelligence', component: ComprehensiveInsightsTab },
-    { id: 'people', label: 'People', component: UniversalPeopleTab },
-    { id: 'buyer-groups', label: 'Buyer Group', component: UniversalBuyerGroupsTab },
+    { id: 'career', label: 'Career', component: ComprehensiveCareerTab },
     { id: 'notes', label: 'Notes', component: UniversalActionsTab }
   ],
   
@@ -244,13 +247,23 @@ export function getTabsForRecordType(recordType: string, record?: any): TabConfi
                          (recordType === 'prospects' && record?.isCompanyLead === true);
   
   // For company records, filter out person-specific tabs and use company tab set
-  const filteredTabs = isCompanyRecord 
+  let filteredTabs = isCompanyRecord 
     ? baseTabs.filter(tab => 
         tab.id !== 'news' &&      // Already filtered
         tab.id !== 'career' &&    // Person-specific
         tab.id !== 'company'      // Redundant for company records
       )
     : baseTabs;
+  
+  // For people records, show either buyer-groups or co-workers based on buyer group membership
+  if (recordType === 'people' && record) {
+    const isInBuyerGroup = record.isBuyerGroupMember || record.buyerGroupRole || record.customFields?.buyerGroupRole;
+    filteredTabs = baseTabs.filter(tab => {
+      if (tab.id === 'buyer-groups' && !isInBuyerGroup) return false;
+      if (tab.id === 'co-workers' && isInBuyerGroup) return false;
+      return true;
+    });
+  }
   
   // Dynamically resolve components based on record type
   return filteredTabs.map(tab => {

@@ -306,9 +306,9 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
           
           // 🚀 ULTRA-FAST: Use dedicated fast buyer group API
           try {
-            console.log('🔍 [BUYER GROUPS] Making API call to:', `/api/v1/intelligence/buyer-group?companyId=${companyId}`);
+            console.log('🔍 [BUYER GROUPS] Making API call to:', `/api/v1/intelligence/buyer-group?company=${encodeURIComponent(companyName)}`);
             console.log('🔍 [BUYER GROUPS] authFetch function:', typeof authFetch);
-            const fastResult = await authFetch(`/api/v1/intelligence/buyer-group?companyId=${companyId}&companyName=${encodeURIComponent(companyName)}`);
+            const fastResult = await authFetch(`/api/v1/intelligence/buyer-group?company=${encodeURIComponent(companyName)}`);
             console.log('🔍 [BUYER GROUPS] API response:', fastResult);
             console.log('🔍 [BUYER GROUPS] API response success:', fastResult?.success);
             console.log('🔍 [BUYER GROUPS] API response data length:', fastResult?.data?.length);

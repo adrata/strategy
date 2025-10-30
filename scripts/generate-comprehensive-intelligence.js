@@ -96,7 +96,12 @@ function generateSeniority(coresignalData) {
   
   if (currentExp) {
     const title = currentExp.position_title?.toLowerCase() || '';
-    if (title.includes('director') || title.includes('vp') || title.includes('chief')) {
+    // C-suite and executive titles
+    if (title.includes('ceo') || title.includes('president') || title.includes('founder')) {
+      return 'Executive';
+    } else if (title.includes('cfo') || title.includes('cto') || title.includes('coo') || title.includes('cmo')) {
+      return 'Executive';
+    } else if (title.includes('director') || title.includes('vp') || title.includes('vice president') || title.includes('chief')) {
       return 'Executive';
     } else if (title.includes('senior') || yearsExperience >= 10) {
       return 'Senior';

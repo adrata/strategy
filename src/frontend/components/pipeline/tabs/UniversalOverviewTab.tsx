@@ -318,11 +318,12 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     state: record?.state || record?.company?.state || null,
     hqState: record?.hqState || record?.company?.hqState || null,
     
-    // CoreSignal intelligence - use customFields directly
-    influenceLevel: record.customFields?.influenceLevel || null,
+    // CoreSignal intelligence - check top-level fields first, then customFields
+    influenceLevel: record.influenceLevel ?? record.customFields?.influenceLevel ?? null,
     engagementStrategy: record.customFields?.engagementStrategy || null,
-    isBuyerGroupMember: record.isBuyerGroupMember || !!record.buyerGroupRole, // Defensive: show Yes if has role, even if flag is false
-    buyerGroupOptimized: record.customFields?.buyerGroupOptimized || false,
+    isBuyerGroupMember: record.isBuyerGroupMember ?? record.customFields?.isBuyerGroupMember ?? !!record.buyerGroupRole ?? false,
+    buyerGroupOptimized: record.buyerGroupOptimized ?? record.customFields?.buyerGroupOptimized ?? false,
+    buyerGroupRole: record.buyerGroupRole ?? record.customFields?.buyerGroupRole ?? null,
     
     // Experience and skills - use CoreSignal data
     totalExperience: coresignalData.total_experience_duration_months || coresignalData.totalExperienceMonths || 0,
@@ -351,7 +352,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
     totalFields: record.customFields?.totalFields || 13,
     status: record.status || 'active',
     source: record.customFields?.source || 'Data Enrichment',
-    seniority: record.customFields?.seniority || 'Mid-level'
+    seniority: record.seniority ?? record.customFields?.seniority ?? 'Mid-level'
   }), [record, coresignalData, actions]);
 
   const formatRelativeDate = (dateString: string | Date | null | undefined): string => {
@@ -649,14 +650,14 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
   }, [actions, actionsLoading, actionsError, timestampRefresh]);
 
         return (
-          <div className="space-y-6">
+          <div className="p-6 space-y-6">
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold text-[var(--foreground)]">Overview</h2>
       </div>
 
       {/* Overview Summary */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <div className="text-sm text-[var(--foreground)]">
             {generateBioText()}
@@ -665,7 +666,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       </div>
 
       {/* Who are they */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Basic Information Card */}
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
@@ -859,7 +860,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       </div>
 
       {/* How do I reach them */}
-                <div className="space-y-4">
+                <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Information Card */}
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
@@ -974,7 +975,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
 
 
       {/* Last Actions */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Top Recent Actions</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           {actionsLoading ? (
@@ -1006,7 +1007,7 @@ export function UniversalOverviewTab({ recordType, record: recordProp, onSave }:
       </div>
 
       {/* Notes on them */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Notes on them</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">

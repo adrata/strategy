@@ -38,14 +38,14 @@ export const PAGINATION_CONFIGS: Record<string, PaginationConfig> = {
   people: {
     defaultPageSize: 100,
     maxPageSize: 200,
-    maxTotalRecords: 1000
+    maxTotalRecords: 50000
   },
   
   // Companies data - medium size, optimized for performance
   companies: {
     defaultPageSize: 100,
     maxPageSize: 200,
-    maxTotalRecords: 1000
+    maxTotalRecords: 50000
   },
   
   // Leads data - can be large, but paginated
@@ -80,7 +80,7 @@ export const PAGINATION_CONFIGS: Record<string, PaginationConfig> = {
   default: {
     defaultPageSize: 100,
     maxPageSize: 200,
-    maxTotalRecords: 1000
+    maxTotalRecords: 50000
   }
 };
 

@@ -412,9 +412,9 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
   const lastActions = generateLastActions();
 
   return (
-    <div className="space-y-8">
+    <div className="p-6 space-y-8">
       {/* Who are they */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Basic Information Card */}
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
@@ -583,7 +583,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
       </div>
 
       {/* How do I reach them */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Information Card */}
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
@@ -681,7 +681,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
       </div>
 
       {/* What do they care about */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <h4 className="font-medium text-[var(--foreground)] mb-3">
             Wants & Needs: Based on their role as {prospectData.title} at {prospectData.company}, they likely care about:
@@ -714,7 +714,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
       </div>
 
       {/* What did I last do */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">What did I last do</h3>
         <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
           <h4 className="font-medium text-[var(--foreground)] mb-3">Last Actions:</h4>
@@ -752,7 +752,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
       </div>
 
       {/* Notes on them */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Notes on them</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
