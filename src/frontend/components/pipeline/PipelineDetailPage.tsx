@@ -802,13 +802,15 @@ export function PipelineDetailPage({ section, slug, standalone = false }: Pipeli
           // instead of database rank to ensure navigation works correctly
           if (section === 'speedrun') {
             const index = data.findIndex((r: any) => r['id'] === recordToShow.id);
-            const recordIndex = index >= 0 ? index + 1 : 1;
+            const recordIndex = index >= 0 ? index + 1 : (recordToShow?.globalRank || recordToShow?.rank || 1);
             console.log(`🔍 [SPEEDRUN NAVIGATION] Using sequential position:`, {
               recordId: recordToShow?.id,
               recordName: recordToShow?.name,
               dataLength: data.length,
               foundIndex: index,
               calculatedRecordIndex: recordIndex,
+              recordGlobalRank: recordToShow?.globalRank,
+              recordRank: recordToShow?.rank,
               dataSample: data.slice(0, 3).map(r => ({ id: r.id, name: r.name, rank: r.rank }))
             });
             return recordIndex;
