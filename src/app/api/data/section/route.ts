@@ -665,7 +665,94 @@ export async function GET(request: NextRequest) {
           return true;
         });
         
-        sectionData = deduplicatedProspects.map((person, index) => {
+        // 🏢 ADD COMPANY PROSPECTS: Fetch companies with status PROSPECT that have 0 people
+        const companiesWithNoPeople = await prisma.companies.findMany({
+          where: {
+            workspaceId,
+            deletedAt: null,
+            OR: [
+              { mainSellerId: userId },
+              { mainSellerId: null }
+            ],
+            status: 'PROSPECT', // Only prospect companies
+            people: { none: {} } // Companies with 0 people
+          },
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            status: true,
+            priority: true,
+            globalRank: true,
+            lastAction: true,
+            nextAction: true,
+            lastActionDate: true,
+            nextActionDate: true,
+            mainSellerId: true,
+            hqState: true,
+            createdAt: true,
+            updatedAt: true,
+            mainSeller: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                name: true,
+                email: true
+              }
+            }
+          }
+        });
+
+        console.log(`🏢 [PROSPECTS API] Found ${companiesWithNoPeople.length} prospect companies with 0 people`);
+
+        // Transform companies to look like person records
+        const companyProspects = companiesWithNoPeople.map(company => ({
+          id: company.id,
+          fullName: company.name, // Use company name in name column
+          firstName: null,
+          lastName: null,
+          email: null,
+          jobTitle: null,
+          title: null,
+          phone: null,
+          department: null,
+          status: 'PROSPECT',
+          priority: company.priority,
+          globalRank: company.globalRank,
+          lastAction: company.lastAction,
+          nextAction: company.nextAction,
+          lastActionDate: company.lastActionDate,
+          nextActionDate: company.nextActionDate,
+          companyId: company.id,
+          mainSellerId: company.mainSellerId,
+          company: {
+            id: company.id,
+            name: company.name, // Show company name in company column too
+            industry: company.industry,
+            size: null,
+            globalRank: company.globalRank,
+            hqState: company.hqState
+          },
+          mainSeller: company.mainSeller 
+            ? (company.mainSeller.id === userId
+                ? 'Me'
+                : company.mainSeller.firstName && company.mainSeller.lastName 
+                  ? `${company.mainSeller.firstName} ${company.mainSeller.lastName}`.trim()
+                  : company.mainSeller.name || company.mainSeller.email || '-')
+            : '-',
+          mainSellerData: company.mainSeller,
+          isCompanyLead: true, // Flag to identify company records
+          createdAt: company.createdAt,
+          updatedAt: company.updatedAt,
+          _count: { actions: 0 }
+        }));
+
+        // Combine people and company prospects
+        const allProspects = [...deduplicatedProspects, ...companyProspects];
+        console.log(`🏢 [PROSPECTS API] Combined prospects: ${deduplicatedProspects.length} people + ${companyProspects.length} companies = ${allProspects.length} total`);
+        
+        sectionData = allProspects.map((person, index) => {
           // Extract Coresignal data
           const coresignalData = (person.customFields as any)?.coresignalData || (person.customFields as any)?.coresignal || {};
           
