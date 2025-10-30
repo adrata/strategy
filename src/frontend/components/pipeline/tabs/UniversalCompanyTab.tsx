@@ -69,11 +69,18 @@ export function UniversalCompanyTab({ recordType, record: recordProp, onSave }: 
         console.log(`🏢 [UniversalCompanyTab] Fetching full company data for companyId: ${companyId}`);
         const response = await authFetch(`/api/v1/companies/${companyId}`);
         
-        if (response && response.success && response.data) {
-          console.log(`✅ [UniversalCompanyTab] Fetched company data:`, response.data);
-          setFullCompanyData(response.data);
+        if (!response.ok) {
+          const status = response?.status || 'unknown';
+          throw new Error(`Failed to fetch company data: ${status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          console.log(`✅ [UniversalCompanyTab] Fetched company data:`, result.data);
+          setFullCompanyData(result.data);
         } else {
-          throw new Error(response?.error || 'Failed to fetch company data');
+          throw new Error(result.error || 'Failed to fetch company data');
         }
       } catch (error) {
         console.error('❌ [UniversalCompanyTab] Error fetching company data:', error);

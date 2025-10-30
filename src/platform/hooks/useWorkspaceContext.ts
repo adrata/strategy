@@ -61,21 +61,8 @@ export function useWorkspaceContext(): UseWorkspaceContextReturn {
         }
       }
       
-      // 1. Try to get from JWT token (most reliable)
-      const session = await import('@/platform/auth/service').then(m => m.UnifiedAuthService.getSession());
-      if (session?.accessToken) {
-        try {
-          const jwt = await import('jsonwebtoken');
-          const secret = process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production";
-          const decoded = jwt.verify(session.accessToken, secret) as any;
-          if (decoded?.workspaceId) {
-            console.log(`🔍 [WORKSPACE CONTEXT] Got workspace ID from JWT: ${decoded.workspaceId}`);
-            return { workspaceId: decoded.workspaceId, userId: decoded.userId || authUser?.id };
-          }
-        } catch (error) {
-          console.warn('⚠️ [WORKSPACE CONTEXT] Failed to decode JWT token:', error);
-        }
-      }
+      // 1. JWT verification removed - should only happen server-side for security
+      // Client-side JWT verification causes instanceof errors and is not secure
       
       // 2. Fallback to acquisitionData
       if (acquisitionData?.auth?.authUser?.activeWorkspaceId) {
