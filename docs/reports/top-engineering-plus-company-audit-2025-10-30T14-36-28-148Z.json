@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2025-10-30T14:36:28.148Z",
+  "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK",
+  "summary": {
+    "totalCompanies": 340,
+    "byIndustryCategory": {
+      "expected": 119,
+      "mismatched": 0,
+      "unclear": 221
+    },
+    "byGeography": {
+      "us": 308,
+      "international": 0,
+      "unknown": 32
+    },
+    "bySource": {
+      "Unknown": 340
+    }
+  },
+  "issues": {
+    "industryMismatches": [],
+    "geographyMismatches": [],
+    "suspiciousCompanies": [],
+    "noPeopleLinked": [
+      {
+        "id": "01K7DW2VT11VTGF42RA9YF1QC2",
+        "name": "Alabama Power Company"
+      },
+      {
+        "id": "01K7DW2GRQC17HC8970STY5GE9",
+        "name": "Great Plains Natural Gas"
+      },
+      {
+        "id": "01K7DW2A7YAXS15D7AFWDRJTGG",
+        "name": "Southern California Edison (SCE)"
+      }
+    ],
+    "badOrMissingDomain": []
+  },
+  "highlighted": []
+}

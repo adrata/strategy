@@ -1,0 +1,1004 @@
+{
+  "generatedAt": "2025-10-30T14:31:10.742Z",
+  "workspaceId": "01K75ZD7DWHG1XF16HAF2YVKCK",
+  "summary": {
+    "totalCompanies": 474,
+    "byIndustryCategory": {
+      "expected": 134,
+      "mismatched": 19,
+      "unclear": 321
+    },
+    "byGeography": {
+      "us": 394,
+      "international": 37,
+      "unknown": 43
+    },
+    "bySource": {
+      "Unknown": 474
+    }
+  },
+  "issues": {
+    "industryMismatches": [
+      {
+        "id": "01K7DW4ENJWJNPPJ31B0SCDQBT",
+        "name": "A B S Telecom Comercio Equipamentos E Servicos De Telefonia",
+        "industry": "Retail",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4ERZR5RPCAZTQYFDMYD9",
+        "name": "Big Easy Cajun",
+        "industry": "Restaurants",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW375W3SMJGK8PR1DH63XW",
+        "name": "Blue Ribbon Luxury",
+        "industry": "Travel Arrangements",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW2V1P9SZS2TF6YR6HPMYQ",
+        "name": "Bows, Blings & Things of Georgia",
+        "industry": "Retail Art Supplies",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW2VP44MHZBX0NYJC7ARX3",
+        "name": "Burbank Animation Studios",
+        "industry": "Animation and Post-production",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4RKGSY60N76NVDWXF0FP",
+        "name": "Car-Tel Communications AT&T Authorized Retailer",
+        "industry": "Telecommunications",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3SK8J0X5BBC11FP26ZQB",
+        "name": "Corning Photography",
+        "industry": "Photography",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW2X2WSWDV3ATP7ZHR5782",
+        "name": "Hotel Augusta",
+        "industry": "Hospitality",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW33X55TG4CM52D2CXPB26",
+        "name": "Hotel Casa de Guadalupe",
+        "industry": "Hospitality",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3VG3D3Y63XFNS72C9H22",
+        "name": "HP COMMUNICATIONS AND SECURITY",
+        "industry": "Retail Office Equipment",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW60AA4D20G8Z33QTYV0SZ",
+        "name": "Irby Dance Studio",
+        "industry": "Performing Arts",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4YGXQ4JBVBN5EKBAR86W",
+        "name": "Midwest Propane",
+        "industry": "Retail",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4BT4YQPYC0N3FZZJCAN1",
+        "name": "Omni Fashions BD",
+        "industry": "Retail Apparel and Fashion",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW2TBSK2C5F2WJ75P1CGBR",
+        "name": "SC Meeker Studios",
+        "industry": "Artists and Writers",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4214SCGSQHT3B1GVT4S9",
+        "name": "Techline Studio/Furniture at Work, Inc",
+        "industry": "Furniture and Home Furnishings Manufacturing",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4NR2PFDNWKCZN3JYFFFR",
+        "name": "The Rockport Company",
+        "industry": "Retail Apparel and Fashion",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW5XW08F0Z5CY92KZZG1WR",
+        "name": "Triumph Cabling Systems, LLC",
+        "industry": "Telecommunications",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3J0QGJ49JDBDFKVTYMEG",
+        "name": "VyVE",
+        "industry": "Retail Apparel and Fashion",
+        "sector": "Telecommunications",
+        "sources": []
+      },
+      {
+        "id": "01K7DW5GD73BSASZNCWHYTYQJN",
+        "name": "Washoe Metal Fabricating",
+        "industry": "Retail",
+        "sector": "Telecommunications",
+        "sources": []
+      }
+    ],
+    "geographyMismatches": [
+      {
+        "id": "01K7DW4NACGZZ935Q9P17XBDWN",
+        "name": "Aether Global",
+        "city": null,
+        "state": null,
+        "country": "Philippines",
+        "sources": []
+      },
+      {
+        "id": "01K7DW5Z5PS2FV4J1WTVXKRDP3",
+        "name": "AHC - Allman Horrocks Consulting Ltd.",
+        "city": null,
+        "state": null,
+        "country": "United Kingdom",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3KDYYJXXA2EM1WYPDY9A",
+        "name": "APPROVE INFOWAYS - India",
+        "city": null,
+        "state": null,
+        "country": "India",
+        "sources": []
+      },
+      {
+        "id": "01K7DW5WH8G5ZJ2VD2J2VTAG1F",
+        "name": "Australasian College of Road Safety (ACRS)",
+        "city": null,
+        "state": null,
+        "country": "Australia",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3DB5HGRA1D013HV6NQA9",
+        "name": "BC Hydro",
+        "city": null,
+        "state": null,
+        "country": "Canada",
+        "sources": []
+      },
+      {
+        "id": "01K7DW2MZ2JZ43BSCDXEAM7PRV",
+        "name": "Big Picture Marketing",
+        "city": null,
+        "state": null,
+        "country": "Ireland",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4N3RVGYFWASYKQ4K7DD5",
+        "name": "Bird Comm",
+        "city": null,
+        "state": null,
+        "country": "Canada",
+        "sources": []
+      },
+      {
+        "id": "01K7DW53XG8EDX71BWPGEETKK6",
+        "name": "Brain Injury Services of Northern Ontario",
+        "city": "Thunder Bay",
+        "state": "Ontario",
+        "country": "Canada",
+        "sources": []
+      },
+      {
+        "id": "01K7DW593V9202KXTNE4EMV8K0",
+        "name": "Bright Angel Coastal Consultants",
+        "city": null,
+        "state": null,
+        "country": "United Kingdom",
+        "sources": []
+      },
+      {
+        "id": "01K7DW2VP44MHZBX0NYJC7ARX3",
+        "name": "Burbank Animation Studios",
+        "city": "Willoughby",
+        "state": "New South Wales",
+        "country": "Australia",
+        "sources": []
+      },
+      {
+        "id": "01K7DW5AXZ4R5YDE4ZYB6A7BP9",
+        "name": "Central Lincoln People's Utility District",
+        "city": null,
+        "state": null,
+        "country": "United Kingdom",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3M0ZDMXEA3GP2XPS713J",
+        "name": "Chevron Construction Services Ltd.",
+        "city": null,
+        "state": null,
+        "country": "Canada",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3KT9PDTCJB7T7YE9RSGE",
+        "name": "COMSTAR SERVICES LIMITED",
+        "city": null,
+        "state": null,
+        "country": "United Kingdom",
+        "sources": []
+      },
+      {
+        "id": "01K7DW2P1DWMT9VV12ZHFRXM38",
+        "name": "Comtest Wireless Limited",
+        "city": null,
+        "state": null,
+        "country": "United Kingdom",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3N24Z3NNEFC7M7YTCK10",
+        "name": "Emtelle",
+        "city": null,
+        "state": null,
+        "country": "United Kingdom",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4HR7JTPQBTTVTSCE8SF8",
+        "name": "EPS Global",
+        "city": null,
+        "state": null,
+        "country": "Ireland",
+        "sources": []
+      },
+      {
+        "id": "01K7DW35KRFEVJ77T2VKBQ3TPJ",
+        "name": "Forsk Coding School",
+        "city": null,
+        "state": null,
+        "country": "India",
+        "sources": []
+      },
+      {
+        "id": "01K7DW48YP5Z40MDWVR4B638DX",
+        "name": "GAC Environmental Ltd",
+        "city": null,
+        "state": null,
+        "country": "United Kingdom",
+        "sources": []
+      },
+      {
+        "id": "01K7DW2PB5CBNPJDDXG9XHVTVH",
+        "name": "Graybar Canada",
+        "city": null,
+        "state": null,
+        "country": "Canada",
+        "sources": []
+      },
+      {
+        "id": "01K7DW5S3WKXBXRS5HQPJVJNMD",
+        "name": "Hamilton Industries Ltd - India",
+        "city": "Burnaby",
+        "state": "British Columbia",
+        "country": "Canada",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3VG3D3Y63XFNS72C9H22",
+        "name": "HP COMMUNICATIONS AND SECURITY",
+        "city": null,
+        "state": null,
+        "country": "India",
+        "sources": []
+      },
+      {
+        "id": "01K7DW46NKV7DK2HCMHF31WJHP",
+        "name": "ITC Employees Housing Co-operative Society Ltd",
+        "city": "Freeland",
+        "state": "Washington",
+        "country": "India",
+        "sources": []
+      },
+      {
+        "id": "01K7DW5Z8N1B9A2MX4AXKKHTTZ",
+        "name": "JDTC Inc",
+        "city": null,
+        "state": null,
+        "country": "Australia",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3GQ22X65JA7MAGW75BR2",
+        "name": "Jigsaw24",
+        "city": null,
+        "state": null,
+        "country": "United Kingdom",
+        "sources": []
+      },
+      {
+        "id": "01K7DW50HPE45ZB36HSFKF4KK6",
+        "name": "Kck Institute - India",
+        "city": null,
+        "state": null,
+        "country": "India",
+        "sources": []
+      },
+      {
+        "id": "01K7DW32RQSTY559RJ135STEZD",
+        "name": "M&S Engineering",
+        "city": null,
+        "state": null,
+        "country": "India",
+        "sources": []
+      },
+      {
+        "id": "01K7DW5VTF7RXZQ89FRGH01J63",
+        "name": "Marla Janzen Realtor",
+        "city": null,
+        "state": null,
+        "country": "Canada",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4YGXQ4JBVBN5EKBAR86W",
+        "name": "Midwest Propane",
+        "city": null,
+        "state": null,
+        "country": "Canada",
+        "sources": []
+      },
+      {
+        "id": "01K7DW5QNY11M5JWBPBXQQJ67T",
+        "name": "Mimomax is now Ubiik",
+        "city": null,
+        "state": null,
+        "country": "New Zealand",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4BT4YQPYC0N3FZZJCAN1",
+        "name": "Omni Fashions BD",
+        "city": "Dhaka CantonmentTSO",
+        "state": "Dhaka",
+        "country": "Bangladesh",
+        "sources": []
+      },
+      {
+        "id": "01K7DW407GD00CJPJK98NCRRH0",
+        "name": "Paxcom India (P) Ltd - A Paymentus Company",
+        "city": null,
+        "state": null,
+        "country": "India",
+        "sources": []
+      },
+      {
+        "id": "01K7DW48DN7V2EBJRPXTG3HFDA",
+        "name": "PIMMS GROUP",
+        "city": null,
+        "state": null,
+        "country": "South Africa",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4N734X825AEYNGKQ6M2A",
+        "name": "Swyft Connect",
+        "city": null,
+        "state": null,
+        "country": "South Africa",
+        "sources": []
+      },
+      {
+        "id": "01K7DW2QGQ0D3ZCT8159PWFBEK",
+        "name": "TBD Telecom By Design Inc.",
+        "city": null,
+        "state": null,
+        "country": "Canada",
+        "sources": []
+      },
+      {
+        "id": "01K7DW4D35418P5SYZ1D2MDN97",
+        "name": "Velocity Agency | Amazon & eBay Specialists",
+        "city": null,
+        "state": null,
+        "country": "United Kingdom",
+        "sources": []
+      },
+      {
+        "id": "01K7DW3J0QGJ49JDBDFKVTYMEG",
+        "name": "VyVE",
+        "city": null,
+        "state": null,
+        "country": "India",
+        "sources": []
+      },
+      {
+        "id": "01K7DW2NXQ291C29PT48JDF10B",
+        "name": "Website Design & Web Development",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "country": "India",
+        "sources": []
+      }
+    ],
+    "suspiciousCompanies": [
+      {
+        "id": "01K7DW2FGWRAGB74NAWBYHNAEC",
+        "name": "0",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW2GBV0NMTDDP6APC0M3D2",
+        "name": "Actelant",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW2RGEZ79230RJ58AWXR46",
+        "name": "ADB",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW35CX6QY2PF30DMECKEQ1",
+        "name": "Adtran",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW48H7THW649685K28N388",
+        "name": "AMC LLC",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4X25W9JKXR15TXBA4K4F",
+        "name": "Ameren",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3ZA0S3Z31EC94RN0A9G1",
+        "name": "AOL",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW32J2ABSTS3F7JVCDS59T",
+        "name": "ArchComm LLC",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW2KZ1CYP1CJXBST7XJRXV",
+        "name": "AVANGRID",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW5R2N29H7FKVNPQ6Y45WM",
+        "name": "Cablcon",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW5V0Y6PG06VPY759RHABN",
+        "name": "Cablcon",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4J7Z5J5XGG1XY6BJS3MP",
+        "name": "Cadsourcing, LLC",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4NEBDQQ2KD6QPVBE0Q8K",
+        "name": "Calix",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3RDPE5TV9Q7Q46EAXSG3",
+        "name": "Cenmex",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4CMPRJM403P8AMH782M7",
+        "name": "Ciena",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4VPSBFRYXR7KG8MESHHV",
+        "name": "Cleco",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW39JH376CR5Z2CC1Z9REH",
+        "name": "Cleco",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3D78YKDYQVS0EET7DHKP",
+        "name": "ComEd",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7MDS5GCK5TJ5MSW0C4PKQR5",
+        "name": "CoServ",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4CB2BWDFFQQJEGF5QY40",
+        "name": "DoubleRadius, Inc.",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3Z6FYSQ43K9JQ0HZ3ZVH",
+        "name": "DZS",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3GFTEHJGXPS2Q3V52T91",
+        "name": "Ekinops",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW60DET6KEE89CF26GS57Y",
+        "name": "ElectriCom, LLC",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3PJYGPDVG940C0RNA69J",
+        "name": "ELGi",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3N24Z3NNEFC7M7YTCK10",
+        "name": "Emtelle",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW30K88WD1SMWZ9G1G7WD5",
+        "name": "Eversource",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW2VBH8H3DSQT4W36FPXQD",
+        "name": "Exelon",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4WC6AXFB8DDRFKGNHG8C",
+        "name": "Exelon",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW2V55J5AHPQ9A3V6TYD08",
+        "name": "Exelon",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW60PJED2GTZ3K9YJGQ5A6",
+        "name": "Fiberlight",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4P2N600A4XPQXE55DFTC",
+        "name": "Gallagher",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW30PVDJM313255AGEFTPC",
+        "name": "Gallagher",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW43TFQSWZNSZV15RAGFA1",
+        "name": "GOCare",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW46624M0NAN7YAFF9Z9AV",
+        "name": "GVTC",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW46SQZ1NVW5H17WJS2G3J",
+        "name": "HCTC",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4THEKWNHQVTRCG6P3QCA",
+        "name": "Hilliary",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW2R4764X1QZ7N7JBJP4MH",
+        "name": "Irby Co.",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4GYDKY8QEBNRN6NJQDBQ",
+        "name": "Jameson LLC",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW5Z8N1B9A2MX4AXKKHTTZ",
+        "name": "JDTC Inc",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3GQ22X65JA7MAGW75BR2",
+        "name": "Jigsaw24",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4EWRVRVFG4H3PV24E0AH",
+        "name": "JSI",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3YKYDETJS0NC97VGMC4S",
+        "name": "Molex",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4F0TG4W4KCJV3TR2EX2J",
+        "name": "Netceed",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3BE3N5DQF42VGBZ1PB04",
+        "name": "NiSource",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW589CWRE4PXSH6KJ46F1W",
+        "name": "NiSource",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW5DSBDFHK1S2XZSV923Y5",
+        "name": "NTEST INC",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW45FX59T4MASADJ29GFKQ",
+        "name": "OmniCable",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3MYKGRM02HRY6FY8RZAW",
+        "name": "PGTELCO",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW2PTYTK548320N2VNBJXP",
+        "name": "PowerTrunk Inc.",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3B6S6TNC608XBTRDHNFS",
+        "name": "PSEG",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW2AWNSV09FHCZ0WHZ6GP9",
+        "name": "Southern Company",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW4R2XD0BY3S9CT61T02TH",
+        "name": "Splicers Inc",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW44SBJ6237F1PRFJJQPWY",
+        "name": "Syntrio",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW5REV3SE5QEY0C9YMKAXB",
+        "name": "Talley Inc.",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3F6S0FCCDGNXYCHK10G3",
+        "name": "TSTCI",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW5RN396PYNZX7D1A88791",
+        "name": "Underline",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3J0QGJ49JDBDFKVTYMEG",
+        "name": "VyVE",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW47XYD7FWBQT1T1Q5YAV5",
+        "name": "Westell",
+        "reason": "Generic or low-information name"
+      },
+      {
+        "id": "01K7DW3337WR9DTWE6BCTBG9W8",
+        "name": "上海空间电源研究所",
+        "reason": "Generic or low-information name"
+      }
+    ],
+    "noPeopleLinked": [
+      {
+        "id": "01K7DW2FGWRAGB74NAWBYHNAEC",
+        "name": "0"
+      },
+      {
+        "id": "01K7DW2M21SCBSA3T6VFFSREJM",
+        "name": "5Bars Services"
+      },
+      {
+        "id": "01K7DW2GBV0NMTDDP6APC0M3D2",
+        "name": "Actelant"
+      },
+      {
+        "id": "01K7DW2RGEZ79230RJ58AWXR46",
+        "name": "ADB"
+      },
+      {
+        "id": "01K7DW5Z5PS2FV4J1WTVXKRDP3",
+        "name": "AHC - Allman Horrocks Consulting Ltd."
+      },
+      {
+        "id": "01K7DW2VT11VTGF42RA9YF1QC2",
+        "name": "Alabama Power Company"
+      },
+      {
+        "id": "01K7DW2KZ1CYP1CJXBST7XJRXV",
+        "name": "AVANGRID"
+      },
+      {
+        "id": "01K7DW2M8TX67Z9TN2ZW2AEZCW",
+        "name": "Bar None Creative"
+      },
+      {
+        "id": "01K7DW2NG8GXCH25AW5QTTXSP7",
+        "name": "Bernadette Gillespie LLC"
+      },
+      {
+        "id": "01K7DW2MEW13XXYA9HHCP6JKC0",
+        "name": "BOTTOM LINE INNOVATION ASSOCIATES, INC."
+      },
+      {
+        "id": "01K7DW3Y6ZJFWXEE0CMXQSRZ9F",
+        "name": "BridgeGap Global Management"
+      },
+      {
+        "id": "01K7DW2JGMMBVDWK5T72VS0V51",
+        "name": "City of Mobile, AL"
+      },
+      {
+        "id": "01K7DW5VHPTY3GEGAZ8DQ02DPK",
+        "name": "Coleman County Telephone Coop. Inc."
+      },
+      {
+        "id": "01K7DW2VEX2P6V2RNSFK9HRPXC",
+        "name": "Duke Energy Corporation"
+      },
+      {
+        "id": "01K7DW5RHTES6FZXXAFR0MDV19",
+        "name": "Eastex Dental Academy-Longview"
+      },
+      {
+        "id": "01K7DW30K88WD1SMWZ9G1G7WD5",
+        "name": "Eversource"
+      },
+      {
+        "id": "01K7DW2MNR4ZRRCCMX5REC89KY",
+        "name": "Grant County PUD"
+      },
+      {
+        "id": "01K7DW2GRQC17HC8970STY5GE9",
+        "name": "Great Plains Natural Gas"
+      },
+      {
+        "id": "01K7DW5S3WKXBXRS5HQPJVJNMD",
+        "name": "Hamilton Industries Ltd - India"
+      },
+      {
+        "id": "01K7DW3HKGV2KEPBB0CQPJTPSG",
+        "name": "High Plateau Truss Inc"
+      },
+      {
+        "id": "01K7DW5YZ1Y7VRFAYGM7VMRZAH",
+        "name": "Hill Country Telephone Cooperative"
+      },
+      {
+        "id": "01K7DW2JD670SR2SGJXYS9Z9X7",
+        "name": "Holiday In Dixie Festival"
+      },
+      {
+        "id": "01K7DW2X2WSWDV3ATP7ZHR5782",
+        "name": "Hotel Augusta"
+      },
+      {
+        "id": "01K7DW60AA4D20G8Z33QTYV0SZ",
+        "name": "Irby Dance Studio"
+      },
+      {
+        "id": "01K7DW41GKWD7740K9GY33FXVV",
+        "name": "LTS Managed Technical Services, LLC"
+      },
+      {
+        "id": "01K7DW5VTF7RXZQ89FRGH01J63",
+        "name": "Marla Janzen Realtor"
+      },
+      {
+        "id": "01K7DW5QNY11M5JWBPBXQQJ67T",
+        "name": "Mimomax is now Ubiik"
+      },
+      {
+        "id": "01K7DW2GF4PDAZ7WDMTSVTGHV3",
+        "name": "Nokia of America Corporation"
+      },
+      {
+        "id": "01K7DW5YVSZPE2F7HGZZEAX2YT",
+        "name": "Optical Construction & Design  (OC&D)"
+      },
+      {
+        "id": "01K7DW2G5Q1M0ZMQC5XQJST327",
+        "name": "Pecan Creek Construction"
+      },
+      {
+        "id": "01K7DW3MMNCENSSEN56V8N78JX",
+        "name": "PlumbingSupply Group, LLC"
+      },
+      {
+        "id": "01K7DW5ZBNXJW4F7DJ34RDA78J",
+        "name": "Polarity Networks LLC"
+      },
+      {
+        "id": "01K7DW2GNDC9KM9PKVFB16V45C",
+        "name": "PSEG-LI"
+      },
+      {
+        "id": "01K7DW5TTQRD8ZADDETHXAJ7W5",
+        "name": "Ribbon Communications"
+      },
+      {
+        "id": "01K7DW2A7YAXS15D7AFWDRJTGG",
+        "name": "Southern California Edison (SCE)"
+      },
+      {
+        "id": "01K7DW2AWNSV09FHCZ0WHZ6GP9",
+        "name": "Southern Company"
+      },
+      {
+        "id": "01K7DW2MJ570HQQDT4NBMQXSJE",
+        "name": "SRP Communications Engineering"
+      },
+      {
+        "id": "01K7DW5REV3SE5QEY0C9YMKAXB",
+        "name": "Talley Inc."
+      },
+      {
+        "id": "01K7DW518HWYWBV12MSADDTF2Z",
+        "name": "Tri County Door Service"
+      },
+      {
+        "id": "01K7DW3F6S0FCCDGNXYCHK10G3",
+        "name": "TSTCI"
+      },
+      {
+        "id": "01K7DW2FQ9BV2DWKQGQZ9D1S7Q",
+        "name": "Tucson Electric Power Co"
+      },
+      {
+        "id": "01K7DW2MVX9E2C01ESNWW66Q4B",
+        "name": "Upper Gunnison River Water"
+      },
+      {
+        "id": "01K7DW2QX3DJSAKQXN2NTQ3NPQ",
+        "name": "WESCO Environmental, Inc."
+      },
+      {
+        "id": "01K7DW2FKSQS22HC39ZHZRQHAH",
+        "name": "Yuba County Water Agency"
+      },
+      {
+        "id": "01K7DW5Z2D4T3VWQ9RP4ZM98EY",
+        "name": "Zebra Four Technologies"
+      }
+    ],
+    "badOrMissingDomain": [
+      {
+        "id": "01K7MDS5GCK5TJ5MSW0C4PKQR5",
+        "name": "CoServ",
+        "website": null,
+        "domain": null
+      },
+      {
+        "id": "01K7DW2G5Q1M0ZMQC5XQJST327",
+        "name": "Pecan Creek Construction",
+        "website": "https://www.pecan creek construction.com",
+        "domain": null
+      },
+      {
+        "id": "01K7DW5AXZ4R5YDE4ZYB6A7BP9",
+        "name": "Central Lincoln People's Utility District",
+        "website": "https://www.http:/www.bcbcentral.co.uk",
+        "domain": null
+      },
+      {
+        "id": "01K7DW2FGWRAGB74NAWBYHNAEC",
+        "name": "0",
+        "website": null,
+        "domain": null
+      },
+      {
+        "id": "01K7DW2RGEZ79230RJ58AWXR46",
+        "name": "ADB",
+        "website": null,
+        "domain": null
+      }
+    ]
+  },
+  "highlighted": [
+    {
+      "id": "01K7DW2VP44MHZBX0NYJC7ARX3",
+      "name": "Burbank Animation Studios",
+      "industry": "Animation and Post-production",
+      "sector": "Telecommunications",
+      "city": "Willoughby",
+      "state": "New South Wales",
+      "country": "Australia",
+      "website": "https://www.burbankanimation.com",
+      "sources": [],
+      "peopleCount": 11
+    },
+    {
+      "id": "01K7DW2V1P9SZS2TF6YR6HPMYQ",
+      "name": "Bows, Blings & Things of Georgia",
+      "industry": "Retail Art Supplies",
+      "sector": "Telecommunications",
+      "city": null,
+      "state": null,
+      "country": null,
+      "website": "https://www.dessiedockins.com",
+      "sources": [],
+      "peopleCount": 1
+    },
+    {
+      "id": "01K7DW3KDYYJXXA2EM1WYPDY9A",
+      "name": "APPROVE INFOWAYS - India",
+      "industry": "Information Technology & Services",
+      "sector": "Telecommunications",
+      "city": null,
+      "state": null,
+      "country": "India",
+      "website": "https://www.approveinfoways.com",
+      "sources": [],
+      "peopleCount": 11
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2025-10-30T14:29:01.895Z",
+  "workspaceId": "01K5D01YCQJ9TJ7CT4DZDE79T1",
+  "summary": {
+    "totalCompanies": 0,
+    "byIndustryCategory": {
+      "expected": 0,
+      "mismatched": 0,
+      "unclear": 0
+    },
+    "byGeography": {
+      "us": 0,
+      "international": 0,
+      "unknown": 0
+    },
+    "bySource": {}
+  },
+  "issues": {
+    "industryMismatches": [],
+    "geographyMismatches": [],
+    "suspiciousCompanies": [],
+    "noPeopleLinked": [],
+    "badOrMissingDomain": []
+  },
+  "highlighted": []
+}

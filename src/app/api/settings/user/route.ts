@@ -6,6 +6,12 @@ import bcrypt from 'bcryptjs';
 export async function GET(request: NextRequest) {
   try {
     const { workspaceId, userId } = await WorkspaceDataRouter.getWorkspaceContext(request);
+    if (!userId || !workspaceId) {
+      return NextResponse.json({
+        success: false,
+        error: 'Unauthorized'
+      }, { status: 401 });
+    }
     
     // Get user with profile information
     const user = await prisma.users.findUnique({

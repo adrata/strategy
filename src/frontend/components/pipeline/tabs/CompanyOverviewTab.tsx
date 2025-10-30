@@ -86,8 +86,20 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
 
   // Fetch full company data when we have partial data
   const fetchFullCompanyData = useCallback(async () => {
-    if (!companyId || !hasPartialCompanyData || fullCompanyData) {
-      return; // No company ID, no partial data, or already fetched
+    if (fullCompanyData) {
+      return; // Already fetched
+    }
+
+    // Defensive guard: for speedrun person records with no linked company
+    if (!companyId) {
+      if (recordType === 'speedrun' && record?.recordType !== 'company') {
+        setCompanyError('No linked company found for this person');
+      }
+      return;
+    }
+
+    if (!hasPartialCompanyData) {
+      return; // Nothing to fetch
     }
 
     setIsLoadingCompany(true);
@@ -96,20 +108,14 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     try {
       console.log(`🏢 [COMPANY OVERVIEW] Fetching full company data for companyId: ${companyId}`);
       
-      const response = await authFetch(`/api/v1/companies/${companyId}`);
+      const result = await authFetch(`/api/v1/companies/${companyId}`);
       
-      if (!response.ok) {
-        const status = response?.status || 'unknown';
-        throw new Error(`Failed to fetch company data: ${status}`);
-      }
-
-      const result = await response.json();
-      
-      if (result.success && result.data) {
+      if (result?.success && result?.data) {
         setFullCompanyData(result.data);
         console.log(`✅ [COMPANY OVERVIEW] Successfully fetched full company data:`, result.data.name);
       } else {
-        throw new Error(result.error || 'Failed to fetch company data');
+        const errorMessage = (result && (result.error || result.message)) || 'Failed to fetch company data';
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error('❌ [COMPANY OVERVIEW] Error fetching company data:', error);
@@ -117,7 +123,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
     } finally {
       setIsLoadingCompany(false);
     }
-  }, [companyId, hasPartialCompanyData, fullCompanyData]);
+  }, [companyId, hasPartialCompanyData, fullCompanyData, record, recordType]);
 
   // Fetch full company data when component mounts or dependencies change
   useEffect(() => {
