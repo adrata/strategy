@@ -56,6 +56,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
   const [companyFormData, setCompanyFormData] = useState({
     name: "",
     website: "",
+    linkedin: "",
     notes: "",
     state: ""
   });
@@ -524,6 +525,20 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   value={companyFormData.website}
                   onChange={(e) => setCompanyFormData(prev => ({ ...prev, website: e.target.value }))}
                   placeholder="example.com"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+                />
+              </div>
+
+              {/* LinkedIn */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  LinkedIn
+                </label>
+                <input
+                  type="text"
+                  value={companyFormData.linkedin}
+                  onChange={(e) => setCompanyFormData(prev => ({ ...prev, linkedin: e.target.value }))}
+                  placeholder="linkedin.com/company/example"
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
                 />
               </div>
