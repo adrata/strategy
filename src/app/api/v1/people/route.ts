@@ -318,12 +318,7 @@ export async function GET(request: NextRequest) {
                 ],
                 AND: [
                   { people: { none: {} } },
-                  {
-                    OR: [
-                      { status: 'PROSPECT' },
-                      { status: 'prospect' }
-                    ]
-                  }
+                  { status: 'PROSPECT' }
                 ]
               }
             })
@@ -724,12 +719,7 @@ export async function GET(request: NextRequest) {
             ],
             AND: [
               { people: { none: {} } }, // Companies with 0 people
-              {
-                OR: [
-                  { status: 'PROSPECT' },
-                  { status: 'prospect' } // Handle case variations
-                ]
-              }
+              { status: 'PROSPECT' }
             ]
           },
           select: {
