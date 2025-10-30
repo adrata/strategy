@@ -194,7 +194,15 @@ export async function GET(request: NextRequest) {
             { mainSellerId: userId },
             { mainSellerId: null }
           ],
-          people: { none: {} } // Companies with 0 people (any status)
+          AND: [
+            { people: { none: {} } }, // Companies with 0 people
+            {
+              OR: [
+                { status: 'LEAD' as any },
+                { status: null } // Include companies without status set
+              ]
+            }
+          ]
         }
       });
     } catch (error) {
@@ -202,10 +210,33 @@ export async function GET(request: NextRequest) {
       companiesWithNoPeopleCount = 0;
     }
 
+    // 🚀 PROSPECTS: Include companies with 0 people and PROSPECT status
+    let companiesProspectsCount = 0;
+    try {
+      companiesProspectsCount = await prisma.companies.count({
+        where: {
+          workspaceId,
+          deletedAt: null,
+          OR: [
+            { mainSellerId: userId },
+            { mainSellerId: null }
+          ],
+          AND: [
+            { people: { none: {} } }, // Companies with 0 people
+            { status: 'PROSPECT' as any }
+          ]
+        }
+      });
+    } catch (error) {
+      console.error('❌ [COUNTS API] Error fetching prospect companies count:', error);
+      companiesProspectsCount = 0;
+    }
+
     // Debug logging for counts
     console.log(`🔍 [COUNTS API] People counts by status:`, peopleCountsMap);
     console.log(`🔍 [COUNTS API] Companies counts by status:`, companiesCountsMap);
-    console.log(`🔍 [COUNTS API] Companies with 0 people count:`, companiesWithNoPeopleCount);
+    console.log(`🔍 [COUNTS API] Companies with 0 people count (leads):`, companiesWithNoPeopleCount);
+    console.log(`🔍 [COUNTS API] Companies with 0 people count (prospects):`, companiesProspectsCount);
     console.log(`🔍 [COUNTS API] Speedrun counts:`, { 
       people: speedrunPeopleCount, 
       companies: speedrunCompaniesCount,
@@ -215,7 +246,7 @@ export async function GET(request: NextRequest) {
     // Map counts to our expected format
     // Note: PersonStatus enum doesn't have PARTNER - only LEAD, PROSPECT, OPPORTUNITY, CLIENT, SUPERFAN
     const leadsCount = (peopleCountsMap['LEAD'] || 0) + companiesWithNoPeopleCount;
-    const prospectsCount = peopleCountsMap['PROSPECT'] || 0;
+    const prospectsCount = (peopleCountsMap['PROSPECT'] || 0) + companiesProspectsCount;
     const opportunitiesCount = peopleCountsMap['OPPORTUNITY'] || 0;
     const companiesCount = Object.values(companiesCountsMap).reduce((sum: number, count: any) => sum + count, 0);
     const peopleCount = Object.values(peopleCountsMap).reduce((sum: number, count: any) => sum + count, 0);
