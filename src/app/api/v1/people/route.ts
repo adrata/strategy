@@ -281,7 +281,15 @@ export async function GET(request: NextRequest) {
                   { mainSellerId: context.userId },
                   { mainSellerId: null }
                 ],
-                people: { none: {} } // Companies with 0 people (any status)
+                AND: [
+                  { people: { none: {} } }, // Companies with 0 people
+                  {
+                    OR: [
+                      { status: 'LEAD' },
+                      { status: null } // Include companies without status set
+                    ]
+                  }
+                ]
               }
             })
           ]);
@@ -581,7 +589,15 @@ export async function GET(request: NextRequest) {
               { mainSellerId: context.userId },
               { mainSellerId: null }
             ],
-            people: { none: {} } // Companies with 0 people (any status)
+            AND: [
+              { people: { none: {} } }, // Companies with 0 people
+              {
+                OR: [
+                  { status: 'LEAD' },
+                  { status: null } // Include companies without status set
+                ]
+              }
+            ]
           },
           select: {
             id: true,
