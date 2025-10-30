@@ -1667,10 +1667,10 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
         onLeadAdded={(lead) => {
           console.log('🎉 [AddModal] onLeadAdded called with lead:', lead);
           setShowSuccessMessage(true);
-          setSuccessMessage(`Lead "${lead.fullName}" created successfully!`);
+          setSuccessMessage(`Lead "${lead.fullName || lead.name}" created successfully!`);
           console.log('🎉 [AddModal] Success message state set:', {
             showSuccessMessage: true,
-            successMessage: `Lead "${lead.fullName}" created successfully!`
+            successMessage: `Lead "${lead.fullName || lead.name}" created successfully!`
           });
           setShowAddLeadModal(false);
           setIsAddModalOpen(false);
@@ -1689,7 +1689,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
         }}
         onProspectAdded={(prospect) => {
           setShowSuccessMessage(true);
-          setSuccessMessage(`Prospect "${prospect.fullName}" created successfully!`);
+          setSuccessMessage(`Prospect "${prospect.fullName || prospect.name}" created successfully!`);
           setShowAddProspectModal(false);
           setIsAddModalOpen(false);
           if (refreshData) {

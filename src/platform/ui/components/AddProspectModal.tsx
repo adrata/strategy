@@ -316,20 +316,6 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
           <div className="flex gap-1 bg-[var(--panel-background)] rounded-lg p-1 -mt-3">
             <button
               type="button"
-              onClick={() => setActiveTab('person')}
-              className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                activeTab === 'person'
-                  ? 'text-white shadow-sm'
-                  : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
-              }`}
-              style={{
-                backgroundColor: activeTab === 'person' ? colors.primary : 'transparent'
-              }}
-            >
-              Person
-            </button>
-            <button
-              type="button"
               onClick={() => setActiveTab('company')}
               className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === 'company'
@@ -341,6 +327,20 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
               }}
             >
               Company
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('person')}
+              className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                activeTab === 'person'
+                  ? 'text-white shadow-sm'
+                  : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+              }`}
+              style={{
+                backgroundColor: activeTab === 'person' ? colors.primary : 'transparent'
+              }}
+            >
+              Person
             </button>
           </div>
 
@@ -529,20 +529,6 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                 />
               </div>
 
-              {/* Website */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Website
-                </label>
-                <input
-                  type="text"
-                  value={companyFormData.website}
-                  onChange={(e) => setCompanyFormData(prev => ({ ...prev, website: e.target.value }))}
-                  placeholder="example.com"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
-                />
-              </div>
-
               {/* LinkedIn */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -553,6 +539,20 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   value={companyFormData.linkedin}
                   onChange={(e) => setCompanyFormData(prev => ({ ...prev, linkedin: e.target.value }))}
                   placeholder="linkedin.com/company/example"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+                />
+              </div>
+
+              {/* Website */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Website
+                </label>
+                <input
+                  type="text"
+                  value={companyFormData.website}
+                  onChange={(e) => setCompanyFormData(prev => ({ ...prev, website: e.target.value }))}
+                  placeholder="example.com"
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
                 />
               </div>
