@@ -137,6 +137,13 @@ export function RecordTemplateV2({
       case 'leads':
       case 'prospects':
       case 'speedrun':
+        // Check if this is a company record
+        if (record?.isCompanyLead || record?.recordType === 'company') {
+          const coresignalData = record?.customFields?.coresignalData;
+          const categories = coresignalData?.categories_and_keywords || [];
+          const employeeCount = coresignalData?.employees_count || record?.size || record?.employeeCount;
+          return `${employeeCount ? `${employeeCount} employees` : 'Company'} • ${categories.length > 0 ? categories[0] : record?.industry || 'Unknown industry'}`;
+        }
         const title = record?.title || record?.jobTitle;
         return title || 'Unknown Title';
       case 'opportunities':

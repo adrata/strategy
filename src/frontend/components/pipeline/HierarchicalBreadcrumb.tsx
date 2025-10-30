@@ -159,7 +159,27 @@ export function HierarchicalBreadcrumb({
     );
   }
 
-  // Hierarchical breadcrumb for leads and prospects
+  // Check if this is a company record (isCompanyLead flag)
+  // For company records in leads/prospects, show simple breadcrumb without hierarchy
+  if (record?.isCompanyLead) {
+    return (
+      <div className="flex items-center gap-2">
+        <button 
+          onClick={onBack}
+          className="flex items-center gap-1 text-sm text-[var(--muted)] hover:text-gray-700 transition-colors capitalize"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          All {recordType}
+        </button>
+        <span className="text-sm text-[var(--muted)]">/</span>
+        <span className="text-sm font-medium text-[var(--foreground)]">{getCompanyName()}</span>
+      </div>
+    );
+  }
+
+  // Hierarchical breadcrumb for person records in leads and prospects
   return (
     <div className="flex items-center gap-2">
       <button 

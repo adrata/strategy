@@ -206,6 +206,7 @@ export async function GET(request: NextRequest) {
           ...companiesWithoutPeople.map(company => ({
             ...company,
             type: 'company',
+            isCompanyLead: true, // Add flag for consistency with leads/prospects
             displayName: company.name,
             companyName: company.name,
             jobTitle: null,

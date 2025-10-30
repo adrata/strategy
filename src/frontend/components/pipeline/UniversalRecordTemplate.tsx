@@ -134,8 +134,21 @@ const getTabsForRecordType = (recordType: string, record?: any): TabConfig[] => 
   // Get company name for dynamic tab label
   const companyName = record?.company || record?.companyName || 'Company';
   
-  // For company leads, use company tabs instead of person tabs
-  if (recordType === 'leads' && record?.isCompanyLead) {
+  // For company records in leads/prospects, use company tabs instead of person tabs
+  if ((recordType === 'leads' || recordType === 'prospects') && record?.isCompanyLead) {
+    return [
+      { id: 'overview', label: 'Overview' },
+      { id: 'actions', label: 'Actions' },
+      { id: 'intelligence', label: 'Intelligence' },
+      { id: 'news', label: 'News' },
+      { id: 'people', label: 'People' },
+      { id: 'buyer-groups', label: 'Buyer Group' },
+      { id: 'notes', label: 'Notes' }
+    ];
+  }
+
+  // For company records in speedrun, use company tabs
+  if (recordType === 'speedrun' && record?.recordType === 'company') {
     return [
       { id: 'overview', label: 'Overview' },
       { id: 'actions', label: 'Actions' },

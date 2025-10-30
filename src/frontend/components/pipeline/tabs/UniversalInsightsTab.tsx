@@ -32,16 +32,19 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
     setTimeout(() => setShowSuccessMessage(false), 3000);
   };
 
-  // Load existing strategy data on component mount
+  // Check if this is a company record (strategy API only works for person records)
+  const isCompanyRecord = record?.isCompanyLead || record?.recordType === 'company';
+
+  // Load existing strategy data on component mount (only for person records)
   useEffect(() => {
-    if (record?.id) {
+    if (record?.id && !isCompanyRecord) {
       loadStrategyData();
     }
-  }, [record?.id]);
+  }, [record?.id, isCompanyRecord]);
 
-  // Auto-generate strategy if no data exists
+  // Auto-generate strategy if no data exists (only for person records)
   useEffect(() => {
-    if (record?.id && !strategyData && !isGeneratingStrategy) {
+    if (record?.id && !isCompanyRecord && !strategyData && !isGeneratingStrategy) {
       // Check if strategy fields exist in customFields
       const hasStrategy = record.customFields?.strategySituation && 
                          record.customFields?.strategyComplication && 
@@ -51,7 +54,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
         handleGenerateStrategy();
       }
     }
-  }, [record?.id, strategyData, isGeneratingStrategy]);
+  }, [record?.id, isCompanyRecord, strategyData, isGeneratingStrategy]);
 
   const loadStrategyData = async () => {
     try {
@@ -304,6 +307,26 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-[var(--foreground)]">Strategy Summary</h3>
         </div>
+        
+        {/* Company Record Message */}
+        {isCompanyRecord && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-blue-800">Strategy Not Available for Company Records</h4>
+                <p className="text-sm text-blue-600 mt-1">
+                  Strategy summaries are generated for individual people, not companies. 
+                  To see strategy insights, navigate to specific people within this company.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* Strategy Summary Content */}
         {isGeneratingStrategy ? (
