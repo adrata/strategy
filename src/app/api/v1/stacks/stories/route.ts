@@ -6,6 +6,8 @@ import { prisma } from '@/platform/database/prisma-client';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  let workspaceId: string | null = null;
+  
   try {
     console.log('🔍 [STACKS API] GET request received');
     console.log('🔍 [STACKS API] Request URL:', request.url);
@@ -33,7 +35,7 @@ export async function GET(request: NextRequest) {
     const userId = context.userId;
     
     // Use query parameter if provided, otherwise fall back to authenticated context
-    const workspaceId = queryWorkspaceId || contextWorkspaceId;
+    workspaceId = queryWorkspaceId || contextWorkspaceId;
     
     console.log('✅ [STACKS API] Authenticated user:', userId);
     console.log('🔍 [STACKS API] Workspace ID - Query param:', queryWorkspaceId, 'Context:', contextWorkspaceId, 'Using:', workspaceId);
@@ -442,7 +444,7 @@ export async function POST(request: NextRequest) {
     // Handle P2022 error (column does not exist)
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
       const prismaError = error as any;
-      const columnName = prismaError.meta?.column_name;
+      const columnName = prismaError.meta?.column_name || 'unknown';
       console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
         columnName,
         meta: prismaError.meta,
@@ -505,7 +507,6 @@ export async function POST(request: NextRequest) {
         }
       }
       
-      const columnName = prismaError.meta?.column_name || 'unknown';
       console.error('❌ [STACKS API] Database column missing:', columnName);
       return createErrorResponse(
         columnName !== 'unknown' 
