@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { AtriumFolder } from "../types/folder";
+import { WorkshopFolder } from "../types/folder";
 import { 
   FolderIcon,
   ChevronRightIcon,
@@ -14,7 +14,7 @@ interface FolderTreeProps {
 }
 
 export function FolderTree({ onFolderSelect }: FolderTreeProps) {
-  const [folders, setFolders] = useState<AtriumFolder[]>([]);
+  const [folders, setFolders] = useState<WorkshopFolder[]>([]);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +33,7 @@ export function FolderTree({ onFolderSelect }: FolderTreeProps) {
       // const data = await response.json();
       
       // Mock data for now
-      const mockFolders: AtriumFolder[] = [
+      const mockFolders: WorkshopFolder[] = [
         {
           id: '1',
           name: 'Projects',
@@ -106,13 +106,13 @@ export function FolderTree({ onFolderSelect }: FolderTreeProps) {
     onFolderSelect(null);
   };
 
-  const buildFolderTree = (parentId: string | null = null, level: number = 0): AtriumFolder[] => {
+  const buildFolderTree = (parentId: string | null = null, level: number = 0): WorkshopFolder[] => {
     return folders
       .filter(folder => folder.parentId === parentId)
       .sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  const renderFolder = (folder: AtriumFolder, level: number = 0) => {
+  const renderFolder = (folder: WorkshopFolder, level: number = 0) => {
     const isExpanded = expandedFolders.has(folder.id);
     const isSelected = selectedFolderId === folder.id;
     const hasChildren = folder._count?.children > 0;

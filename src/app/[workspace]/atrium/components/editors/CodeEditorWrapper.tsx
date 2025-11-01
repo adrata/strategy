@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { AtriumDocument } from "../../types/document";
+import { WorkshopDocument } from "../../types/document";
 import Editor from '@monaco-editor/react';
 
 interface CodeEditorWrapperProps {
-  document: AtriumDocument;
+  document: WorkshopDocument;
   onSave: (content: any) => void;
   onAutoSave: (content: any) => void;
 }
@@ -135,14 +135,14 @@ export function CodeEditorWrapper({ document, onSave, onAutoSave }: CodeEditorWr
     // Default content based on language
     switch (language) {
       case 'javascript':
-        return `// Welcome to Atrium Code Editor
+        return `// Welcome to Workshop Code Editor
 function hello() {
   console.log("Hello, World!");
 }
 
 hello();`;
       case 'python':
-        return `# Welcome to Atrium Code Editor
+        return `# Welcome to Workshop Code Editor
 def hello():
     print("Hello, World!")
 
@@ -166,7 +166,7 @@ hello()`;
   "description": "A sample JSON file"
 }`;
       default:
-        return `// Welcome to Atrium Code Editor
+        return `// Welcome to Workshop Code Editor
 // Start coding here...`;
     }
   };

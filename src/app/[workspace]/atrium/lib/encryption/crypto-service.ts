@@ -1,5 +1,5 @@
 /**
- * Atrium Encryption Service
+ * Workshop Encryption Service
  * 
  * Provides client-side encryption using Web Crypto API with AES-256-GCM
  * for secure document storage and transmission.
@@ -300,7 +300,7 @@ export class CryptoService {
       };
 
       // Store in IndexedDB
-      const request = indexedDB.open('AtriumKeys', 1);
+      const request = indexedDB.open('WorkshopKeys', 1);
       
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
@@ -327,7 +327,7 @@ export class CryptoService {
   private async loadKeyFromStorage(keyId: string): Promise<CryptoKey | null> {
     try {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('AtriumKeys', 1);
+        const request = indexedDB.open('WorkshopKeys', 1);
         
         request.onsuccess = (event) => {
           const db = (event.target as IDBOpenDBRequest).result;

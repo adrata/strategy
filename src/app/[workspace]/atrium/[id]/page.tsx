@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useAtrium } from "../layout";
-import { AtriumDocument } from "../types/document";
+import { useWorkshop } from "../layout";
+import { WorkshopDocument } from "../types/document";
 import { extractIdFromSlug } from "@/platform/utils/url-utils";
 import { PaperEditor } from "../editors/PaperEditor";
 import { CodeEditor } from "../editors/CodeEditor";
@@ -23,8 +23,8 @@ interface DocumentEditorPageProps {}
 export default function DocumentEditorPage({}: DocumentEditorPageProps) {
   const params = useParams();
   const router = useRouter();
-  const { workspace } = useAtrium();
-  const [document, setDocument] = useState<AtriumDocument | null>(null);
+  const { workspace } = useWorkshop();
+  const [document, setDocument] = useState<WorkshopDocument | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -290,7 +290,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
           Back
         </button>
         <span className="text-[var(--muted)]">/</span>
-        <span className="text-sm text-[var(--muted)]">Atrium</span>
+        <span className="text-sm text-[var(--muted)]">Workshop</span>
         <span className="text-[var(--muted)]">/</span>
         <div className="flex items-center gap-2">
           {getDocumentIcon(document.documentType)}

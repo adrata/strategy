@@ -42,7 +42,7 @@ export function DocumentGrid() {
       setError(null);
       
       // TODO: Implement actual API call
-      // const response = await fetch('/api/atrium/documents?...');
+      // const response = await fetch('/api/workshop/documents?...');
       // const data = await response.json();
       
       // Mock data for now
@@ -100,7 +100,7 @@ export function DocumentGrid() {
           downloadCount: 1,
           createdAt: new Date('2024-01-10'),
           updatedAt: new Date('2024-01-18'),
-          content: `// Welcome to Atrium Code Editor
+          content: `// Welcome to Workshop Code Editor
 function calculateTotal(items) {
   return items.reduce((sum, item) => sum + item.price, 0);
 }

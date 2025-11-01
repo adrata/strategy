@@ -38,7 +38,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
     
     try {
       // TODO: Implement actual API call
-      // const response = await fetch(`/api/atrium/documents/${document.id}/share`, {
+      // const response = await fetch(`/api/workshop/documents/${document.id}/share`, {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify({

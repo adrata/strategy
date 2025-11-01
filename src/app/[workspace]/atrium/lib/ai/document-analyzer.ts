@@ -1,5 +1,5 @@
 /**
- * Atrium Document Analysis Service
+ * Workshop Document Analysis Service
  * 
  * Integrates with Claude AI for document analysis, summarization,
  * entity extraction, and smart classification.

@@ -262,7 +262,7 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
           <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
             <button
               onClick={() => {
-                // Navigate back to atrium main page
+                // Navigate back to workshop main page
                 const currentPath = window.location.pathname;
                 const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
                 if (workspaceMatch) {

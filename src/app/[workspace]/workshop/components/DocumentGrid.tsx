@@ -42,7 +42,7 @@ export function DocumentGrid() {
       setError(null);
       
       // TODO: Implement actual API call
-      // const response = await fetch('/api/atrium/documents?...');
+      // const response = await fetch('/api/workshop/documents?...');
       // const data = await response.json();
       
       // Mock data for now
