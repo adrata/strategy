@@ -2331,7 +2331,9 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             setShowDirectMessagesList(true);
             loadDMs();
           }}
-          onToggleLeftPanel={ui.toggleLeftPanel}
+          // Only show hamburger menu in full screen chat experience (like /pinpoint/adrata)
+          // Regular right panel views (like stacks) should not show it
+          onToggleLeftPanel={pathname.includes('/pinpoint/adrata') ? ui.toggleLeftPanel : undefined}
         />
       )}
 

@@ -121,7 +121,7 @@ export function useStacksData() {
     }
 
     try {
-      const response = await fetch(`/api/stacks/stories?workspaceId=${user.activeWorkspaceId}`, {
+      const response = await fetch(`/api/v1/stacks/stories?workspaceId=${user.activeWorkspaceId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

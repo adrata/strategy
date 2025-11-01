@@ -1,18 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
+import { getSecureApiContext, createErrorResponse, logAndCreateErrorResponse } from '@/platform/services/secure-api-helper';
 
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
+// Force dynamic rendering to prevent caching issues and ensure proper authentication
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  let context: any = null;
+  
   try {
+    // Authenticate and authorize user
+    const authResult = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+    
+    const { context: authContext, response } = authResult;
+    context = authContext;
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const workspaceId = context.workspaceId;
     const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
     const projectId = searchParams.get('projectId');
     const search = searchParams.get('search');
 
     if (!workspaceId) {
-      return NextResponse.json({ error: 'Workspace ID is required' }, { status: 400 });
+      return createErrorResponse('Workspace ID is required', 'WORKSPACE_REQUIRED', 400);
     }
 
     const where: any = {
@@ -46,18 +66,49 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ epics });
   } catch (error) {
-    console.error('Error fetching epics:', error);
-    return NextResponse.json({ error: 'Failed to fetch epics' }, { status: 500 });
+    return logAndCreateErrorResponse(
+      error,
+      {
+        endpoint: 'STACKS_EPICS_API_GET',
+        userId: context?.userId,
+        workspaceId: context?.workspaceId,
+        requestId: request.headers.get('x-request-id') || undefined
+      },
+      'Failed to fetch epics',
+      'STACKS_EPICS_FETCH_ERROR',
+      500
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
+  let context: any = null;
+  
   try {
+    // Authenticate and authorize user
+    const authResult = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+    
+    const { context: authContext, response } = authResult;
+    context = authContext;
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
     const body = await request.json();
-    const { workspaceId, userId, projectId, title, description, status, priority, product, section } = body;
+    const { projectId, title, description, status, priority, product, section } = body;
 
     if (!workspaceId || !userId || !projectId || !title) {
-      return NextResponse.json({ error: 'Workspace ID, user ID, project ID, and title are required' }, { status: 400 });
+      return createErrorResponse('Workspace ID, user ID, project ID, and title are required', 'MISSING_REQUIRED_FIELDS', 400);
     }
 
     const epic = await prisma.stacksEpic.create({
@@ -79,7 +130,17 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ epic });
   } catch (error) {
-    console.error('Error creating epic:', error);
-    return NextResponse.json({ error: 'Failed to create epic' }, { status: 500 });
+    return logAndCreateErrorResponse(
+      error,
+      {
+        endpoint: 'STACKS_EPICS_API_POST',
+        userId: context?.userId,
+        workspaceId: context?.workspaceId,
+        requestId: request.headers.get('x-request-id') || undefined
+      },
+      'Failed to create epic',
+      'STACKS_EPICS_CREATE_ERROR',
+      500
+    );
   }
 }
