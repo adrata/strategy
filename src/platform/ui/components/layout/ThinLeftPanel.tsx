@@ -585,8 +585,13 @@ function QuickAppSwitcher({
 
                   {/* App Info */}
                   <div className="flex-1">
-                    <div className="text-base font-medium text-[var(--foreground)]">
-                      {app.name}
+                    <div className="flex items-center gap-2">
+                      <div className="text-base font-medium text-[var(--foreground)]">
+                        {app.name}
+                      </div>
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-blue-600">
+                        Pro
+                      </span>
                     </div>
                     <div className="text-sm text-[var(--muted)] leading-tight">
                       {app.description}
@@ -1112,9 +1117,14 @@ export function ThinLeftPanel({
                     </div>
                   )}
                 </div>
-                <span className="font-medium" style={{ fontSize: "10px" }}>
-                  {app.name}
-                </span>
+                <div className="flex items-center gap-1">
+                  <span className="font-medium" style={{ fontSize: "10px" }}>
+                    {app.name}
+                  </span>
+                  <span className="px-1.5 py-0.5 text-[9px] font-medium rounded-full bg-blue-50 text-blue-600">
+                    Pro
+                  </span>
+                </div>
               </button>
             );
           })}
