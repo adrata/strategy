@@ -170,11 +170,11 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
 
   // Update activeSubSection based on pathname (for workstream URL)
   useEffect(() => {
-    if (pathname.includes('/stacks/workstream')) {
+    if (pathname.includes('/stacks/workstream') || pathname.includes('/workstream')) {
       onSubSectionChange('workstream');
-    } else if (pathname.includes('/stacks/backlog')) {
+    } else if (pathname.includes('/stacks/backlog') || pathname.includes('/backlog')) {
       onSubSectionChange('backlog');
-    } else if (pathname.includes('/stacks/metrics')) {
+    } else if (pathname.includes('/stacks/metrics') || pathname.includes('/metrics')) {
       onSubSectionChange('metrics');
     }
   }, [pathname, onSubSectionChange]);

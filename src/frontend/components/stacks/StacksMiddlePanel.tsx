@@ -447,6 +447,34 @@ export function StacksMiddlePanel({
     );
   }
 
+  // Get header title and description based on active section
+  const getHeaderInfo = () => {
+    switch (activeSubSection) {
+      case 'workstream':
+        return {
+          title: 'Workstream',
+          description: 'Visual task management board'
+        };
+      case 'backlog':
+        return {
+          title: 'Backlog',
+          description: 'Prioritized work queue'
+        };
+      case 'metrics':
+        return {
+          title: 'Metrics',
+          description: 'Performance and analytics'
+        };
+      default:
+        return {
+          title: 'Stacks',
+          description: 'Visual task management board'
+        };
+    }
+  };
+
+  const headerInfo = getHeaderInfo();
+
   // Handle stacks section (also handles workstream)
   if (activeSubSection === 'stacks' || activeSubSection === 'stacks-build' || activeSubSection === 'workstream') {
     return (
@@ -456,10 +484,10 @@ export function StacksMiddlePanel({
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-[var(--foreground)]">
-                Stacks
+                {headerInfo.title}
               </h1>
               <p className="text-sm text-[var(--muted)] mt-1">
-                Visual task management board
+                {headerInfo.description}
               </p>
             </div>
             <div className="flex items-center gap-3">

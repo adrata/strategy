@@ -9,7 +9,7 @@ import {
   ExclamationTriangleIcon,
   XCircleIcon,
   CogIcon,
-  RocketLaunchIcon
+  PaperAirplaneIcon
 } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';

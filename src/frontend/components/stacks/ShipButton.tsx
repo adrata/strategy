@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { RocketLaunchIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { ReleaseNotesModal } from './ReleaseNotesModal';
 
@@ -115,7 +115,7 @@ export function ShipButton() {
             : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
         } disabled:opacity-50 disabled:cursor-not-allowed`}
       >
-        <RocketLaunchIcon className="h-4 w-4" />
+        <PaperAirplaneIcon className="h-4 w-4" />
         Ship {shippedCount > 0 && `(${shippedCount})`}
       </button>
       
