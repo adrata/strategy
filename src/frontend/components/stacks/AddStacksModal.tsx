@@ -3,8 +3,8 @@
 /**
  * Add Stacks Modal Component
  * 
- * Modal for creating new stacks (Story, Epic, or Epoch)
- * with Company or Person context tabs
+ * Simple, clean modal for creating Story, Epic, or Epoch
+ * Similar to Add Lead modal - single column, minimal design
  */
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -18,37 +18,58 @@ interface AddStacksModalProps {
   onStacksAdded: (stacks: any) => void;
 }
 
-type ContextTab = 'company' | 'person';
 type WorkTypeTab = 'story' | 'epic' | 'epoch';
 
 export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModalProps) {
   const { ui } = useRevenueOS();
   const { user } = useUnifiedAuth();
-  const [activeContextTab, setActiveContextTab] = useState<ContextTab>('company');
   const [activeWorkType, setActiveWorkType] = useState<WorkTypeTab>('story');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Company form data
-  const [companyFormData, setCompanyFormData] = useState({
-    companyName: '',
-    website: '',
-    linkedin: ''
-  });
-
-  // Person form data
-  const [personFormData, setPersonFormData] = useState({
-    firstName: '',
-    lastName: '',
-    jobTitle: '',
-    company: ''
-  });
-
-  // Stack details (shared)
-  const [stackFormData, setStackFormData] = useState({
+  // Form data - different fields for different types
+  const [formData, setFormData] = useState({
     title: '',
     description: '',
-    priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent'
+    priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
+    // Story-specific
+    epicId: '',
+    // Epic-specific
+    epochId: '',
+    // Epoch-specific
+    goal: '',
+    timeframe: ''
   });
+
+  // Fetch available epics and epochs for selection
+  const [availableEpics, setAvailableEpics] = useState<any[]>([]);
+  const [availableEpochs, setAvailableEpochs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchEpicsAndEpochs = async () => {
+      if (!ui.activeWorkspace?.id) return;
+
+      try {
+        // Fetch epics
+        const response = await fetch(
+          `/api/stacks/epics?workspaceId=${ui.activeWorkspace.id}`,
+          { credentials: 'include' }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const epics = data.epics || [];
+          setAvailableEpics(epics.filter((e: any) => !e.isEpoch));
+          setAvailableEpochs(epics.filter((e: any) => e.isEpoch));
+        }
+      } catch (error) {
+        console.error('Failed to fetch epics/epochs:', error);
+      }
+    };
+
+    if (isOpen) {
+      fetchEpicsAndEpochs();
+    }
+  }, [isOpen, ui.activeWorkspace?.id]);
 
   const titleInputRef = useRef<HTMLInputElement>(null);
 
@@ -64,18 +85,23 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
   // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
-      setActiveContextTab('company');
       setActiveWorkType('story');
-      setCompanyFormData({ companyName: '', website: '', linkedin: '' });
-      setPersonFormData({ firstName: '', lastName: '', jobTitle: '', company: '' });
-      setStackFormData({ title: '', description: '', priority: 'medium' });
+      setFormData({
+        title: '',
+        description: '',
+        priority: 'medium',
+        epicId: '',
+        epochId: '',
+        goal: '',
+        timeframe: ''
+      });
     }
   }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!stackFormData.title.trim()) {
+    if (!formData.title.trim()) {
       alert('Please enter a title');
       return;
     }
@@ -83,15 +109,13 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     setIsLoading(true);
 
     try {
-      // Get workspace ID
       const workspaceId = ui.activeWorkspace?.id;
       if (!workspaceId) {
         alert('No workspace found');
         return;
       }
 
-      // First, get or create project (we'll use a default project for now)
-      // In a real implementation, you'd want to let users select/create projects
+      // Get or create project
       const projectResponse = await fetch(`/api/stacks/projects?workspaceId=${workspaceId}`, {
         credentials: 'include'
       });
@@ -100,11 +124,9 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
       if (projectResponse.ok) {
         const projectsData = await projectResponse.json();
         const projects = projectsData.projects || [];
-        // Use first project or create a default one
         if (projects.length > 0) {
           projectId = projects[0].id;
         } else {
-          // Create default project
           const userId = user?.id || '';
           if (!userId) {
             alert('User ID not found');
@@ -135,51 +157,19 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         return;
       }
 
-      // Determine if we need to create an Epic or Epoch first
-      let epicId = null;
-
-      if (activeWorkType === 'epic' || activeWorkType === 'epoch') {
-        // For Epic/Epoch, we create them as epics in the system
-        // Epoch is treated as a special epic
-        const userId = user?.id || '';
-        if (!userId) {
-          alert('User ID not found');
-          setIsLoading(false);
-          return;
-        }
-        const epicResponse = await fetch('/api/stacks/epics', {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            workspaceId,
-            userId,
-            projectId,
-            title: stackFormData.title,
-            description: stackFormData.description || undefined,
-            priority: stackFormData.priority,
-            status: 'todo'
-          })
-        });
-
-        if (epicResponse.ok) {
-          const epicData = await epicResponse.json();
-          epicId = epicData.epic?.id;
-          onStacksAdded(epicData.epic || epicData);
-          onClose();
-        } else {
-          const error = await epicResponse.json();
-          alert(error.error || 'Failed to create epic/epoch');
-        }
-      } else {
-        // Create story directly
+      if (activeWorkType === 'story') {
+        // Create story
         const storyData: any = {
           projectId,
-          title: stackFormData.title,
-          description: stackFormData.description || undefined,
+          title: formData.title,
+          description: formData.description || undefined,
           status: 'up-next',
-          priority: stackFormData.priority
+          priority: formData.priority
         };
+
+        if (formData.epicId) {
+          storyData.epicId = formData.epicId;
+        }
 
         const response = await fetch('/api/v1/stacks/stories', {
           method: 'POST',
@@ -194,7 +184,82 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           onClose();
         } else {
           const error = await response.json();
-          alert(error.error || 'Failed to create stack');
+          alert(error.error || 'Failed to create story');
+        }
+      } else if (activeWorkType === 'epic') {
+        // Create epic
+        const userId = user?.id || '';
+        if (!userId) {
+          alert('User ID not found');
+          setIsLoading(false);
+          return;
+        }
+
+        const epicData: any = {
+          workspaceId,
+          userId,
+          projectId,
+          title: formData.title,
+          description: formData.description || undefined,
+          priority: formData.priority,
+          status: 'todo'
+        };
+
+        if (formData.epochId) {
+          epicData.epochId = formData.epochId;
+        }
+
+        const response = await fetch('/api/stacks/epics', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(epicData)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          onStacksAdded(data.epic || data);
+          onClose();
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Failed to create epic');
+        }
+      } else if (activeWorkType === 'epoch') {
+        // Create epoch (as epic with epoch flag)
+        const userId = user?.id || '';
+        if (!userId) {
+          alert('User ID not found');
+          setIsLoading(false);
+          return;
+        }
+
+        const epochData: any = {
+          workspaceId,
+          userId,
+          projectId,
+          title: formData.title,
+          description: formData.description || undefined,
+          priority: formData.priority,
+          status: 'todo',
+          isEpoch: true,
+          goal: formData.goal || undefined,
+          timeframe: formData.timeframe || undefined
+        };
+
+        const response = await fetch('/api/stacks/epics', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(epochData)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          onStacksAdded(data.epic || data);
+          onClose();
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Failed to create epoch');
         }
       }
     } catch (error) {
@@ -213,53 +278,39 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     epoch: 'Epoch'
   };
 
-  const workTypeDescriptions = {
-    story: 'Short work',
-    epic: 'Longer work',
-    epoch: 'Major work'
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">
-                Add Stacks
-              </h2>
-              <p className="text-sm text-[var(--muted)]">Create a new {workTypeLabels[activeWorkType].toLowerCase()}</p>
-            </div>
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Add {workTypeLabels[activeWorkType]}
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Create a new {workTypeLabels[activeWorkType].toLowerCase()}
+            </p>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
+            className="p-1 hover:bg-gray-100 rounded transition-colors"
           >
-            <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
+            <XMarkIcon className="h-5 w-5 text-gray-500" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
-          {/* Work Type Tabs */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
+          {/* Work Type Tabs - Minimal */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Work Type
-            </label>
-            <div className="flex gap-1 bg-[var(--panel-background)] rounded-lg p-1">
+            <div className="flex gap-2 border-b border-gray-200">
               <button
                 type="button"
                 onClick={() => setActiveWorkType('story')}
-                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeWorkType === 'story'
-                    ? 'text-white shadow-sm bg-blue-600'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                    ? 'text-gray-900 border-b-2 border-gray-900'
+                    : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
                 Story
@@ -267,10 +318,10 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               <button
                 type="button"
                 onClick={() => setActiveWorkType('epic')}
-                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeWorkType === 'epic'
-                    ? 'text-white shadow-sm bg-blue-600'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                    ? 'text-gray-900 border-b-2 border-gray-900'
+                    : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
                 Epic
@@ -278,219 +329,149 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               <button
                 type="button"
                 onClick={() => setActiveWorkType('epoch')}
-                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeWorkType === 'epoch'
-                    ? 'text-white shadow-sm bg-blue-600'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                    ? 'text-gray-900 border-b-2 border-gray-900'
+                    : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
                 Epoch
               </button>
             </div>
-            <p className="text-xs text-[var(--muted)] mt-1">
-              {workTypeDescriptions[activeWorkType]}
-            </p>
           </div>
 
-          {/* Context Tabs (Company or Person) */}
+          {/* Title - Required for all */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Context
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Title <span className="text-red-500">*</span>
             </label>
-            <div className="flex gap-1 bg-[var(--panel-background)] rounded-lg p-1">
-              <button
-                type="button"
-                onClick={() => setActiveContextTab('company')}
-                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                  activeContextTab === 'company'
-                    ? 'text-white shadow-sm bg-blue-600'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
-                }`}
-              >
-                Company
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveContextTab('person')}
-                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                  activeContextTab === 'person'
-                    ? 'text-white shadow-sm bg-blue-600'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
-                }`}
-              >
-                Person
-              </button>
-            </div>
+            <input
+              ref={titleInputRef}
+              type="text"
+              value={formData.title}
+              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              placeholder={`Enter ${activeWorkType} title`}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
+              required
+            />
           </div>
 
-          {/* Two Column Layout */}
-          <div className="grid grid-cols-2 gap-6">
-            {/* Left Column - Context Details */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-[var(--foreground)]">
-                {activeContextTab === 'company' ? 'Company Details' : 'Person Details'}
-              </h3>
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              placeholder={`Describe the ${activeWorkType}`}
+              rows={4}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none resize-none"
+            />
+          </div>
 
-              {activeContextTab === 'company' ? (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Company Name
-                    </label>
-                    <input
-                      type="text"
-                      value={companyFormData.companyName}
-                      onChange={(e) => setCompanyFormData(prev => ({ ...prev, companyName: e.target.value }))}
-                      placeholder="Enter company name"
-                      className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Website
-                    </label>
-                    <input
-                      type="text"
-                      value={companyFormData.website}
-                      onChange={(e) => setCompanyFormData(prev => ({ ...prev, website: e.target.value }))}
-                      placeholder="Enter website"
-                      className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      LinkedIn
-                    </label>
-                    <input
-                      type="text"
-                      value={companyFormData.linkedin}
-                      onChange={(e) => setCompanyFormData(prev => ({ ...prev, linkedin: e.target.value }))}
-                      placeholder="Enter LinkedIn URL"
-                      className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        value={personFormData.firstName}
-                        onChange={(e) => setPersonFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                        placeholder="Enter first name"
-                        className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        value={personFormData.lastName}
-                        onChange={(e) => setPersonFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                        placeholder="Enter last name"
-                        className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Job Title
-                    </label>
-                    <input
-                      type="text"
-                      value={personFormData.jobTitle}
-                      onChange={(e) => setPersonFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
-                      placeholder="Enter job title"
-                      className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Company
-                    </label>
-                    <input
-                      type="text"
-                      value={personFormData.company}
-                      onChange={(e) => setPersonFormData(prev => ({ ...prev, company: e.target.value }))}
-                      placeholder="Enter company"
-                      className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-                    />
-                  </div>
-                </>
-              )}
+          {/* Story-specific fields */}
+          {activeWorkType === 'story' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Epic (optional)
+              </label>
+              <select
+                value={formData.epicId}
+                onChange={(e) => setFormData(prev => ({ ...prev, epicId: e.target.value }))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
+              >
+                <option value="">None</option>
+                {availableEpics.map((epic) => (
+                  <option key={epic.id} value={epic.id}>
+                    {epic.title}
+                  </option>
+                ))}
+              </select>
             </div>
+          )}
 
-            {/* Right Column - Stack Details */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-[var(--foreground)]">
-                {workTypeLabels[activeWorkType]} Details
-              </h3>
+          {/* Epic-specific fields */}
+          {activeWorkType === 'epic' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Epoch (optional)
+              </label>
+              <select
+                value={formData.epochId}
+                onChange={(e) => setFormData(prev => ({ ...prev, epochId: e.target.value }))}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
+              >
+                <option value="">None</option>
+                {availableEpochs.map((epoch) => (
+                  <option key={epoch.id} value={epoch.id}>
+                    {epoch.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
+          {/* Epoch-specific fields */}
+          {activeWorkType === 'epoch' && (
+            <>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Title <span className="text-red-500">*</span>
+                  Goal
                 </label>
                 <input
-                  ref={titleInputRef}
                   type="text"
-                  value={stackFormData.title}
-                  onChange={(e) => setStackFormData(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder={`Enter ${workTypeLabels[activeWorkType].toLowerCase()} title`}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-                  required
+                  value={formData.goal}
+                  onChange={(e) => setFormData(prev => ({ ...prev, goal: e.target.value }))}
+                  placeholder="What is the main goal of this epoch?"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
+                  Timeframe
                 </label>
-                <textarea
-                  value={stackFormData.description}
-                  onChange={(e) => setStackFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder={`Describe the ${workTypeLabels[activeWorkType].toLowerCase()}`}
-                  rows={6}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors resize-none"
+                <input
+                  type="text"
+                  value={formData.timeframe}
+                  onChange={(e) => setFormData(prev => ({ ...prev, timeframe: e.target.value }))}
+                  placeholder="e.g., Q1 2024, 6 months"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
                 />
               </div>
+            </>
+          )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Priority
-                </label>
-                <select
-                  value={stackFormData.priority}
-                  onChange={(e) => setStackFormData(prev => ({ ...prev, priority: e.target.value as any }))}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-colors"
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                  <option value="urgent">Urgent</option>
-                </select>
-              </div>
-            </div>
+          {/* Priority - Common field */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Priority
+            </label>
+            <select
+              value={formData.priority}
+              onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as any }))}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border)]">
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-700 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Creating...' : `Create ${workTypeLabels[activeWorkType]}`}
             </button>
@@ -500,4 +481,3 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     </div>
   );
 }
-
