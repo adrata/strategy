@@ -184,7 +184,7 @@ export function StacksFilters({
       <div className="relative flex-1">
         <input
           type="text"
-          placeholder={`Search ${section}...`}
+          placeholder="Search stacks..."
           value={searchQuery}
           onChange={handleSearchChange}
           className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
