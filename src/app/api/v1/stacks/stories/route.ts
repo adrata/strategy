@@ -297,19 +297,36 @@ export async function GET(request: NextRequest) {
       const prismaError = error as any;
       
       if (prismaError.code === 'P2022') {
+        const columnName = prismaError.meta?.column_name;
         console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
-          columnName: prismaError.meta?.column_name,
+          columnName,
           tableName: prismaError.meta?.table_name,
-          modelName: prismaError.meta?.modelName
+          modelName: prismaError.meta?.modelName,
+          fullMeta: prismaError.meta
         });
         
-        // If it's the viewType column, this should have been handled by explicit select
-        // But log it for diagnostics
-        if (prismaError.meta?.column_name === 'viewType' || prismaError.meta?.modelName === 'StacksStory') {
-          console.warn('⚠️ [STACKS API] viewType column missing - falling back to explicit select query');
-          // The explicit select above should prevent this, but if it still happens, return a helpful error
+        // Only use column name in error message if it's actually defined
+        if (columnName) {
+          // If it's the viewType column, return specific error
+          if (columnName === 'viewType') {
+            console.warn('⚠️ [STACKS API] viewType column missing - falling back to explicit select query');
+            return createErrorResponse(
+              'Database schema mismatch: viewType column not found. Please run database migrations.',
+              'SCHEMA_MISMATCH',
+              500
+            );
+          }
+          // For other columns, return specific error with column name
           return createErrorResponse(
-            'Database schema mismatch: viewType column not found. Please run database migrations.',
+            `Database column '${columnName}' does not exist. Please run database migrations.`,
+            'SCHEMA_MISMATCH',
+            500
+          );
+        } else {
+          // Column name is undefined - return generic error
+          console.error('❌ [STACKS API] P2022 Error but column_name is undefined - generic schema mismatch');
+          return createErrorResponse(
+            'Database schema mismatch detected. Please run database migrations.',
             'SCHEMA_MISMATCH',
             500
           );
