@@ -28,6 +28,7 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<any>;
   description: string;
+  getCount?: (stats: { total: number; active: number; completed: number }) => number | React.ReactNode;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -35,19 +36,22 @@ const navigationItems: NavigationItem[] = [
     id: 'workstream',
     label: 'Workstream',
     icon: QueueListIcon,
-    description: 'Visual task management'
+    description: 'Visual task management',
+    getCount: (stats) => stats.active
   },
   {
     id: 'backlog',
     label: 'Backlog',
     icon: ClipboardDocumentListIcon,
-    description: 'Prioritized work queue'
+    description: 'Prioritized work queue',
+    getCount: (stats) => stats.total // Backlog shows total items
   },
   {
     id: 'metrics',
     label: 'Metrics',
     icon: ChartBarIcon,
-    description: 'Performance and analytics'
+    description: 'Performance and analytics',
+    getCount: () => null // Metrics doesn't show count
   }
 ];
 
@@ -262,6 +266,15 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-sm">{item.label}</span>
+                  {item.getCount && (
+                    <span className="text-xs font-semibold text-[var(--foreground)]">
+                      {statsLoading ? (
+                        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                      ) : (
+                        item.getCount(stats) ?? 0
+                      )}
+                    </span>
+                  )}
                 </div>
                 <div className="text-xs text-[var(--muted)] mt-1">
                   {item.description}
