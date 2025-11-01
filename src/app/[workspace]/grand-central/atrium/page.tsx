@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useWorkshopDocuments } from "../hooks/useWorkshopDocuments";
+import { useAtriumDocuments } from "../hooks/useAtriumDocuments";
 import { useUnifiedAuth } from "@/platform/auth";
 import { DocumentIcon, PresentationChartBarIcon, TableCellsIcon, CodeBracketIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import { StandardHeader } from "@/platform/ui/components/layout/StandardHeader";
@@ -14,7 +14,7 @@ export default function WorkshopPage() {
   const params = useParams();
   const workspace = params.workspace;
   const { user: authUser } = useUnifiedAuth();
-  const { documents, loading, getDocumentsByType, getDocumentCounts } = useWorkshopDocuments(authUser?.activeWorkspaceId || '');
+  const { documents, loading, getDocumentsByType, getDocumentCounts } = useAtriumDocuments(authUser?.activeWorkspaceId || '');
   const [selectedType, setSelectedType] = useState<'paper' | 'pitch' | 'grid' | 'code' | 'matrix' | 'all'>('all');
   const [showLibrary, setShowLibrary] = useState(false);
 

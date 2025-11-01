@@ -8,7 +8,7 @@ import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
-import { AtriumLeftPanel } from "./components/AtriumLeftPanel";
+import { WorkshopLeftPanel } from "./components/WorkshopLeftPanel";
 import { WorkshopDocument } from "./types/document";
 import { WorkshopFolder } from "./types/folder";
 
@@ -133,6 +133,10 @@ export default function WorkshopLayout({ children }: WorkshopLayoutProps) {
   );
 }
 
+// Custom Right Panel for Workshop
+function WorkshopRightPanel() {
+  return <RightPanel />;
+}
 
 // Layout content component that can use context hooks
 function WorkshopLayoutContent({ children }: { children: React.ReactNode }) {
@@ -141,9 +145,9 @@ function WorkshopLayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <PanelLayout
       thinLeftPanel={null}
-      leftPanel={<AtriumLeftPanel />}
+      leftPanel={<WorkshopLeftPanel />}
       middlePanel={children}
-      rightPanel={<RightPanel />}
+      rightPanel={<WorkshopRightPanel />}
       zoom={100}
       isLeftPanelVisible={ui.isLeftPanelVisible}
       isRightPanelVisible={ui.isRightPanelVisible}

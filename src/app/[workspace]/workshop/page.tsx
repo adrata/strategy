@@ -56,7 +56,7 @@ export default function WorkshopPage() {
 
   // Set page title dynamically
   useEffect(() => {
-    document.title = "Atrium • Documents";
+    document.title = "Workshop • Documents";
   }, []);
 
   const handleCreateDocument = useCallback(async (documentType: string) => {
@@ -129,7 +129,7 @@ export default function WorkshopPage() {
       {/* Standardized Header - Only show when not viewing a document */}
       {!viewingDocument && (
         <StandardHeader
-          title="Atrium"
+          title="Workshop"
           subtitle={
             <div className="flex items-center gap-2">
               <span className="text-sm text-[var(--muted)]">

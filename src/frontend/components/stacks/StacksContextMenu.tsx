@@ -60,32 +60,32 @@ export function StacksContextMenu({
       label: 'Move to Top',
       icon: ArrowUpIcon,
       onClick: onMoveToTop,
-      className: 'text-gray-700 hover:bg-gray-100'
+      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]'
     },
     {
       label: 'Move Up One',
       icon: ChevronUpIcon,
       onClick: onMoveUp,
-      className: 'text-gray-700 hover:bg-gray-100'
+      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]'
     },
     {
       label: 'Move Down One',
       icon: ChevronDownIcon,
       onClick: onMoveDown,
-      className: 'text-gray-700 hover:bg-gray-100'
+      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]'
     },
     {
       label: 'Move to Bottom',
       icon: ArrowDownIcon,
       onClick: onMoveToBottom,
-      className: 'text-gray-700 hover:bg-gray-100'
+      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]'
     }
   ];
 
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[160px]"
+      className="fixed z-50 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[160px]"
       style={{
         left: position.x,
         top: position.y,

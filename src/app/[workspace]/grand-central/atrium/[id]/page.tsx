@@ -2,9 +2,9 @@
 
 import React from "react";
 import { notFound } from "next/navigation";
-import { useWorkshopDocuments } from "../../hooks/useWorkshopDocuments";
+import { useAtriumDocuments } from "../../hooks/useAtriumDocuments";
 import { useUnifiedAuth } from "@/platform/auth";
-import { WorkshopDetailView } from "../../components/WorkshopDetailView";
+import { AtriumDetailView } from "../../components/AtriumDetailView";
 
 interface WorkshopDetailPageProps {
   params: {
@@ -14,7 +14,7 @@ interface WorkshopDetailPageProps {
 
 export default function WorkshopDetailPage({ params }: WorkshopDetailPageProps) {
   const { user: authUser } = useUnifiedAuth();
-  const { getDocumentById } = useWorkshopDocuments(authUser?.activeWorkspaceId || '');
+  const { getDocumentById } = useAtriumDocuments(authUser?.activeWorkspaceId || '');
   
   const document = getDocumentById(params.id);
   
@@ -23,7 +23,7 @@ export default function WorkshopDetailPage({ params }: WorkshopDetailPageProps) 
   }
 
   return (
-    <WorkshopDetailView 
+    <AtriumDetailView 
       document={document}
       displayName={document.title}
     />

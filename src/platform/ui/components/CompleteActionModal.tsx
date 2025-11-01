@@ -528,7 +528,7 @@ export function CompleteActionModal({
                     value={personSearchQuery}
                     onChange={(e) => setPersonSearchQuery(e.target.value)}
                     placeholder="Search for person..."
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent text-sm"
+                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:border-transparent text-sm"
                     style={{
                       '--tw-ring-color': categoryColors.primary
                     } as React.CSSProperties}

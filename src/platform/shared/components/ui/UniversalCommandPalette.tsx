@@ -334,7 +334,7 @@ export default function UniversalCommandPalette({
               placeholder="Type a command or search..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-[var(--foreground)] dark:text-[var(--foreground)] placeholder-gray-500 ml-3"
+              className="flex-1 bg-transparent outline-none text-[var(--foreground)] placeholder-[var(--muted)] ml-3"
               autoFocus
             />
             <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
