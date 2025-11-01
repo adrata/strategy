@@ -212,8 +212,13 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
             <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--background)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
               <span className="text-lg font-bold text-black">S</span>
             </div>
-            <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Stacks</h2>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-semibold text-[var(--foreground)]">Stacks</h2>
+                <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-blue-600">
+                  Pro
+                </span>
+              </div>
               <p className="text-xs text-[var(--muted)]">Work Acceleration</p>
             </div>
           </div>
