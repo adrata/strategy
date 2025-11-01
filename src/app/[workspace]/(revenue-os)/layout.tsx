@@ -200,6 +200,11 @@ function PipelineLayoutInner({
   const shouldShowLeftPanel = true;
   const isLeftPanelVisible = shouldShowLeftPanel && ui.isLeftPanelVisible;
 
+  // Determine right panel visibility based on route
+  const isRightPanelVisible = pathname.includes('/pinpoint/adrata') 
+    ? false 
+    : ui.isRightPanelVisible;
+
   return (
     <>
       <PanelLayout
@@ -223,7 +228,7 @@ function PipelineLayoutInner({
         isProfilePanelVisible={isProfilePanelVisible}
         zoom={100}
         isLeftPanelVisible={isLeftPanelVisible}
-        isRightPanelVisible={ui.isRightPanelVisible}
+        isRightPanelVisible={isRightPanelVisible}
         onToggleLeftPanel={ui.toggleLeftPanel}
         onToggleRightPanel={ui.toggleRightPanel}
       />
