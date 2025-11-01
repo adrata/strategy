@@ -120,6 +120,17 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
       }
     });
 
+    // Sort conversations within each group by lastActivity (most recent first)
+    groups['Today'].sort((a, b) => 
+      new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
+    );
+    groups['Yesterday'].sort((a, b) => 
+      new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
+    );
+    groups['Earlier'].sort((a, b) => 
+      new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime()
+    );
+
     return groups;
   };
 
