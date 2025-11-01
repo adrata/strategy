@@ -162,13 +162,13 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { signOut, isDesktop, user } = useUnifiedAuth();
+  const { signOut, isDesktop, user: authUser } = useUnifiedAuth();
   const { setIsSettingsOpen } = useSettingsPopup();
   const { hasDesktopDownload } = useFeatureAccess();
 
   // Get userId and workspaceId for checklist
-  const userId = user?.id;
-  const workspaceId = user?.activeWorkspaceId || (typeof workspace === 'string' ? undefined : workspace?.id);
+  const userId = authUser?.id;
+  const workspaceId = authUser?.activeWorkspaceId || (typeof workspace === 'string' ? undefined : workspace?.id);
 
   // Checklist hook
   const {
