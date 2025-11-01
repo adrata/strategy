@@ -103,9 +103,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch stories with epic and assignee information
-    // Use explicit select to avoid including viewType which may not exist in database
+    // Use defensive select - try with optional columns first, fallback without them if they don't exist
     let stories;
     try {
+      // First attempt: try with product and section columns (may not exist in production)
       stories = await prisma.stacksStory.findMany({
         where,
         select: {
@@ -150,79 +151,135 @@ export async function GET(request: NextRequest) {
         ]
       });
     } catch (queryError) {
-      console.error('❌ [STACKS API] Error querying stories:', queryError);
-      console.error('❌ [STACKS API] Query error details:', {
-        message: queryError instanceof Error ? queryError.message : String(queryError),
-        code: queryError && typeof queryError === 'object' && 'code' in queryError ? (queryError as any).code : 'unknown',
-        meta: queryError && typeof queryError === 'object' && 'meta' in queryError ? (queryError as any).meta : undefined,
-        where: JSON.stringify(where, null, 2)
-      });
+      // Check if this is a P2022 error (column doesn't exist) for product or section
+      const isColumnError = queryError && typeof queryError === 'object' && 'code' in queryError && (queryError as any).code === 'P2022';
+      const columnName = isColumnError ? ((queryError as any).meta?.column_name || '').toLowerCase() : '';
+      const isProductOrSectionError = isColumnError && (columnName.includes('product') || columnName.includes('section'));
       
-      // If the nested project query fails, try a simpler query first to get project IDs
-      try {
-        const projects = await prisma.stacksProject.findMany({
-          where: { workspaceId },
-          select: { id: true }
-        });
+      if (isProductOrSectionError) {
+        console.warn('⚠️ [STACKS API] product/section columns missing, querying without them:', columnName);
         
-        if (projects.length === 0) {
-          return NextResponse.json({ stories: [] });
-        }
-        
-        const projectIds = projects.map(p => p.id);
-        const simplifiedWhere = {
-          projectId: { in: projectIds },
-          ...(status && { status }),
-          ...(epicId && { epicId }),
-          ...(assigneeId && { assigneeId })
-        };
-        
-        stories = await prisma.stacksStory.findMany({
-          where: simplifiedWhere,
-          select: {
-            id: true,
-            epicId: true,
-            projectId: true,
-            title: true,
-            description: true,
-            status: true,
-            priority: true,
-            assigneeId: true,
-            product: true,
-            section: true,
-            createdAt: true,
-            updatedAt: true,
-            // Don't select viewType - handle it separately if it exists
-            epic: {
-              select: {
-                id: true,
-                title: true,
-                description: true
+        // Fallback: query without product and section columns
+        try {
+          stories = await prisma.stacksStory.findMany({
+            where,
+            select: {
+              id: true,
+              epicId: true,
+              projectId: true,
+              title: true,
+              description: true,
+              status: true,
+              priority: true,
+              assigneeId: true,
+              // product and section omitted - they don't exist in database
+              createdAt: true,
+              updatedAt: true,
+              epic: {
+                select: {
+                  id: true,
+                  title: true,
+                  description: true
+                }
+              },
+              assignee: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true
+                }
+              },
+              project: {
+                select: {
+                  id: true,
+                  name: true
+                }
               }
             },
-            assignee: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true
-              }
-            },
-            project: {
-              select: {
-                id: true,
-                name: true
-              }
+            orderBy: [
+              { createdAt: 'desc' },
+              { priority: 'desc' }
+            ]
+          });
+        } catch (fallbackError) {
+          console.error('❌ [STACKS API] Fallback query without product/section also failed:', fallbackError);
+          
+          // If the nested project query fails, try a simpler query first to get project IDs
+          try {
+            const projects = await prisma.stacksProject.findMany({
+              where: { workspaceId },
+              select: { id: true }
+            });
+            
+            if (projects.length === 0) {
+              return NextResponse.json({ stories: [] });
             }
-          },
-          orderBy: [
-            { createdAt: 'desc' },
-            { priority: 'desc' }
-          ]
+            
+            const projectIds = projects.map(p => p.id);
+            const simplifiedWhere = {
+              projectId: { in: projectIds },
+              ...(status && { status }),
+              ...(epicId && { epicId }),
+              ...(assigneeId && { assigneeId })
+            };
+            
+            stories = await prisma.stacksStory.findMany({
+              where: simplifiedWhere,
+              select: {
+                id: true,
+                epicId: true,
+                projectId: true,
+                title: true,
+                description: true,
+                status: true,
+                priority: true,
+                assigneeId: true,
+                // product and section omitted - they don't exist in database
+                createdAt: true,
+                updatedAt: true,
+                epic: {
+                  select: {
+                    id: true,
+                    title: true,
+                    description: true
+                  }
+                },
+                assignee: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true
+                  }
+                },
+                project: {
+                  select: {
+                    id: true,
+                    name: true
+                  }
+                }
+              },
+              orderBy: [
+                { createdAt: 'desc' },
+                { priority: 'desc' }
+              ]
+            });
+          } catch (simplifiedError) {
+            console.error('❌ [STACKS API] Simplified query also failed:', simplifiedError);
+            throw queryError; // Throw original error
+          }
+        }
+      } else {
+        // Not a product/section error - log and rethrow
+        console.error('❌ [STACKS API] Error querying stories:', queryError);
+        console.error('❌ [STACKS API] Query error details:', {
+          message: queryError instanceof Error ? queryError.message : String(queryError),
+          code: queryError && typeof queryError === 'object' && 'code' in queryError ? (queryError as any).code : 'unknown',
+          meta: queryError && typeof queryError === 'object' && 'meta' in queryError ? (queryError as any).meta : undefined,
+          where: JSON.stringify(where, null, 2)
         });
-      } catch (fallbackError) {
-        console.error('❌ [STACKS API] Fallback query also failed:', fallbackError);
-        throw queryError; // Throw original error
+        throw queryError;
       }
     }
 
