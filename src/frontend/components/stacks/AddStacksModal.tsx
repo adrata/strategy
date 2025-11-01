@@ -11,6 +11,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useUnifiedAuth } from '@/platform/auth';
+import { Select } from '@/platform/ui/components/Select';
 
 interface AddStacksModalProps {
   isOpen: boolean;
@@ -587,12 +588,20 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         });
 
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.json().catch(() => ({}));
           onStacksAdded(data.story || data);
           onClose();
         } else {
-          const error = await response.json();
-          alert(error.error || 'Failed to create story');
+          let errorMessage = 'Failed to create story';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            // Response might not be valid JSON
+            const text = await response.text().catch(() => '');
+            errorMessage = text || `Failed to create story (${response.status})`;
+          }
+          alert(errorMessage);
         }
       } else if (activeWorkType === 'bug') {
         // Create bug as task with type='bug'
@@ -620,12 +629,20 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         });
 
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.json().catch(() => ({}));
           onStacksAdded(data.task || data);
           onClose();
         } else {
-          const error = await response.json();
-          alert(error.error || 'Failed to create bug');
+          let errorMessage = 'Failed to create bug';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            // Response might not be valid JSON
+            const text = await response.text().catch(() => '');
+            errorMessage = text || `Failed to create bug (${response.status})`;
+          }
+          alert(errorMessage);
         }
       } else if (activeWorkType === 'epic') {
         // Create epic
@@ -663,12 +680,20 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         });
 
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.json().catch(() => ({}));
           onStacksAdded(data.epic || data);
           onClose();
         } else {
-          const error = await response.json();
-          alert(error.error || 'Failed to create epic');
+          let errorMessage = 'Failed to create epic';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            // Response might not be valid JSON
+            const text = await response.text().catch(() => '');
+            errorMessage = text || `Failed to create epic (${response.status})`;
+          }
+          alert(errorMessage);
         }
       } else if (activeWorkType === 'epoch') {
         // Create epoch (as epic with epoch flag)
@@ -809,45 +834,47 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               Product
             </label>
-            <select
+            <Select
               value={formData.product}
-              onChange={(e) => {
-                const newProduct = e.target.value as typeof formData.product;
+              onChange={(newProduct) => {
                 setFormData(prev => ({ 
                   ...prev, 
-                  product: newProduct,
+                  product: newProduct as typeof formData.product,
                   section: newProduct !== 'RevenueOS' ? '' : prev.section // Clear section if product changes away from RevenueOS
                 }));
               }}
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
-            >
-              <option value="">Select a product...</option>
-              <option value="RevenueOS">RevenueOS</option>
-              <option value="Workshop">Workshop</option>
-              <option value="Adrata">Adrata</option>
-              <option value="Oasis">Oasis</option>
-              <option value="Stacks">Stacks</option>
-            </select>
+              options={[
+                { value: '', label: 'Select a product...' },
+                { value: 'RevenueOS', label: 'RevenueOS' },
+                { value: 'Workshop', label: 'Workshop' },
+                { value: 'Adrata', label: 'Adrata' },
+                { value: 'Oasis', label: 'Oasis' },
+                { value: 'Stacks', label: 'Stacks' }
+              ]}
+              placeholder="Select a product..."
+              className="w-full"
+            />
           </div>
 
-          {/* Sub-Product Dropdown - Only show when RevenueOS is selected */}
+          {/* Features Dropdown - Only show when RevenueOS is selected */}
           {formData.product === 'RevenueOS' && (
             <div>
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Sub-Product
+                Features
               </label>
-              <select
+              <Select
                 value={formData.section}
-                onChange={(e) => setFormData(prev => ({ ...prev, section: e.target.value }))}
-                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
-              >
-                <option value="">Select a sub-product...</option>
-                {revenueOSSections.map((section) => (
-                  <option key={section.value} value={section.value}>
-                    {section.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => setFormData(prev => ({ ...prev, section: value }))}
+                options={[
+                  { value: '', label: 'Select a feature...' },
+                  ...revenueOSSections.map((section) => ({
+                    value: section.value,
+                    label: section.label
+                  }))
+                ]}
+                placeholder="Select a feature..."
+                className="w-full"
+              />
             </div>
           )}
 

@@ -103,12 +103,25 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch stories with epic and assignee information
-    // Use include (like the original working version) - it's simpler and more reliable
+    // Use explicit select to avoid including viewType which may not exist in database
     let stories;
     try {
       stories = await prisma.stacksStory.findMany({
         where,
-        include: {
+        select: {
+          id: true,
+          epicId: true,
+          projectId: true,
+          title: true,
+          description: true,
+          status: true,
+          priority: true,
+          assigneeId: true,
+          product: true,
+          section: true,
+          createdAt: true,
+          updatedAt: true,
+          // Don't select viewType - handle it separately if it exists
           epic: {
             select: {
               id: true,
@@ -166,7 +179,20 @@ export async function GET(request: NextRequest) {
         
         stories = await prisma.stacksStory.findMany({
           where: simplifiedWhere,
-          include: {
+          select: {
+            id: true,
+            epicId: true,
+            projectId: true,
+            title: true,
+            description: true,
+            status: true,
+            priority: true,
+            assigneeId: true,
+            product: true,
+            section: true,
+            createdAt: true,
+            updatedAt: true,
+            // Don't select viewType - handle it separately if it exists
             epic: {
               select: {
                 id: true,
@@ -353,6 +379,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  let createData: any = {};
+  
   try {
     // Use platform's unified authentication system
     const { context, response } = await getSecureApiContext(request, {
@@ -368,7 +396,13 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error('❌ [STACKS API] Error parsing request body:', parseError);
+      return createErrorResponse('Invalid request body', 'INVALID_BODY', 400);
+    }
     const { title, description, status, priority, assigneeId, epicId, projectId, viewType, product, section } = body;
 
     if (!title || !projectId) {
@@ -521,6 +555,11 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ story: transformedStory });
         } catch (fallbackError) {
           console.error('❌ [STACKS API] Fallback create also failed:', fallbackError);
+          return createErrorResponse(
+            'Failed to create story due to database schema issue',
+            'SCHEMA_MISMATCH',
+            500
+          );
         }
       }
       
@@ -534,7 +573,19 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    // Handle other errors - ensure we always return a response
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('❌ [STACKS API] Error creating story (non-P2022):', {
+      error: errorMessage,
+      createDataKeys: Object.keys(createData),
+      errorObject: error
+    });
+    
+    return createErrorResponse(
+      'Failed to create story. Please try again.',
+      'STORY_CREATE_ERROR',
+      500
+    );
   }
 }
 

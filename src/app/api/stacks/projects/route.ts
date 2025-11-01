@@ -1,15 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
+import { getSecureApiContext, createErrorResponse, logAndCreateErrorResponse } from '@/platform/services/secure-api-helper';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  let context: any = null;
+  
   try {
-    const { searchParams } = new URL(request.url);
-    const workspaceId = searchParams.get('workspaceId');
+    // Authenticate and authorize user
+    const authResult = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+    
+    const { context: authContext, response } = authResult;
+    context = authContext;
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const workspaceId = context.workspaceId;
 
     if (!workspaceId) {
-      return NextResponse.json({ error: 'Workspace ID is required' }, { status: 400 });
+      return createErrorResponse('Workspace ID is required', 'WORKSPACE_REQUIRED', 400);
     }
 
     const projects = await prisma.stacksProject.findMany({
@@ -28,18 +47,49 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ projects });
   } catch (error) {
-    console.error('Error fetching projects:', error);
-    return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
+    return logAndCreateErrorResponse(
+      error,
+      {
+        endpoint: 'STACKS_PROJECTS_API_GET',
+        userId: context?.userId,
+        workspaceId: context?.workspaceId,
+        requestId: request.headers.get('x-request-id') || undefined
+      },
+      'Failed to fetch projects',
+      'STACKS_PROJECTS_FETCH_ERROR',
+      500
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
+  let context: any = null;
+  
   try {
+    // Authenticate and authorize user
+    const authResult = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+    
+    const { context: authContext, response } = authResult;
+    context = authContext;
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const workspaceId = context.workspaceId;
+    const userId = context.userId;
     const body = await request.json();
-    const { workspaceId, userId, name, description } = body;
+    const { name, description } = body;
 
     if (!workspaceId || !userId || !name) {
-      return NextResponse.json({ error: 'Workspace ID, user ID, and name are required' }, { status: 400 });
+      return createErrorResponse('Workspace ID, user ID, and name are required', 'MISSING_REQUIRED_FIELDS', 400);
     }
 
     const project = await prisma.stacksProject.create({
@@ -52,7 +102,17 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ project });
   } catch (error) {
-    console.error('Error creating project:', error);
-    return NextResponse.json({ error: 'Failed to create project' }, { status: 500 });
+    return logAndCreateErrorResponse(
+      error,
+      {
+        endpoint: 'STACKS_PROJECTS_API_POST',
+        userId: context?.userId,
+        workspaceId: context?.workspaceId,
+        requestId: request.headers.get('x-request-id') || undefined
+      },
+      'Failed to create project',
+      'STACKS_PROJECTS_CREATE_ERROR',
+      500
+    );
   }
 }
