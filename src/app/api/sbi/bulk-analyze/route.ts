@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🏢 SBI BULK COMPANY ANALYSIS API
  * 
  * Endpoint for processing multiple companies through the complete intelligence pipeline:

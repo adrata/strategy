@@ -4,6 +4,9 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * GET /api/database/tables/[tableName]
  * 
  * Returns schema information for a specific table

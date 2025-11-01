@@ -3,6 +3,9 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function POST(request: NextRequest) {
   try {
     // 1. Authenticate and authorize user

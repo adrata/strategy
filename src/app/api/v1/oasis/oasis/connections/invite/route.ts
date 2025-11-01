@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Oasis External Connection Invitation API
  * 
  * Handles inviting external users for cross-workspace messaging

@@ -24,9 +24,10 @@ import { NovaBrowser } from "@/products/pipeline/components/NovaBrowser";
 import { ProfilePanel } from "@/platform/ui/components/ProfilePanel";
 import { ProfilePanelProvider, useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
 import { FeatureAccessProvider } from "@/platform/ui/context/FeatureAccessProvider";
+import { OasisProvider } from "@/products/oasis/context/OasisProvider";
 
-// Oasis Context
-interface OasisContextType {
+// Oasis Context - Local state for layout-specific needs
+interface OasisLayoutContextType {
   activeSection: 'channels' | 'direct-messages' | 'mentions' | 'starred' | 'archived' | 'settings';
   setActiveSection: (section: 'channels' | 'direct-messages' | 'mentions' | 'starred' | 'archived' | 'settings') => void;
   selectedChannel: any | null;
@@ -37,14 +38,12 @@ interface OasisContextType {
   setVideoCallRoom: (room: { id: string; name: string } | null) => void;
 }
 
-const OasisContext = createContext<OasisContextType | undefined>(undefined);
+const OasisLayoutContext = createContext<OasisLayoutContextType | undefined>(undefined);
 
-export const useOasis = () => {
-  const context = useContext(OasisContext);
+export const useOasisLayout = () => {
+  const context = useContext(OasisLayoutContext);
   if (!context) {
-    console.error('useOasis hook called outside of OasisProvider');
-    console.error('Current context value:', context);
-    throw new Error('useOasis must be used within OasisProvider');
+    throw new Error('useOasisLayout must be used within OasisLayoutProvider');
   }
   return context;
 };
@@ -289,7 +288,7 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
   const [isVideoCallActive, setIsVideoCallActive] = useState(false);
   const [videoCallRoom, setVideoCallRoom] = useState<{ id: string; name: string } | null>(null);
 
-  const oasisContextValue = {
+  const oasisLayoutContextValue = {
     activeSection,
     setActiveSection,
     selectedChannel,
@@ -333,33 +332,35 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
             <StacksProvider>
               <SpeedrunDataProvider>
                 <SprintProvider>
-                  <OasisContext.Provider value={oasisContextValue}>
-                    <ProfilePopupProvider>
-                      <SettingsPopupProvider>
-                        <ProfilePanelProvider>
-                          <PipelineLayoutInner
-                            currentSection={isNovaActive ? "nova" : currentSection}
-                            onSectionChange={handleSectionChange}
-                            isSpeedrunVisible={isSpeedrunVisible}
-                            setIsSpeedrunVisible={setIsSpeedrunVisible}
-                            isOpportunitiesVisible={isOpportunitiesVisible}
-                            setIsOpportunitiesVisible={setIsOpportunitiesVisible}
-                            isProspectsVisible={isProspectsVisible}
-                            setIsProspectsVisible={setIsProspectsVisible}
-                            isLeadsVisible={isLeadsVisible}
-                            setIsLeadsVisible={setIsLeadsVisible}
-                            isCustomersVisible={isCustomersVisible}
-                            setIsCustomersVisible={setIsCustomersVisible}
-                            isPartnersVisible={isPartnersVisible}
-                            setIsPartnersVisible={setIsPartnersVisible}
-                            isNovaActive={isNovaActive}
-                          >
-                            {children}
-                          </PipelineLayoutInner>
-                        </ProfilePanelProvider>
-                      </SettingsPopupProvider>
-                    </ProfilePopupProvider>
-                  </OasisContext.Provider>
+                  <OasisLayoutContext.Provider value={oasisLayoutContextValue}>
+                    <OasisProvider>
+                      <ProfilePopupProvider>
+                        <SettingsPopupProvider>
+                          <ProfilePanelProvider>
+                            <PipelineLayoutInner
+                              currentSection={isNovaActive ? "nova" : currentSection}
+                              onSectionChange={handleSectionChange}
+                              isSpeedrunVisible={isSpeedrunVisible}
+                              setIsSpeedrunVisible={setIsSpeedrunVisible}
+                              isOpportunitiesVisible={isOpportunitiesVisible}
+                              setIsOpportunitiesVisible={setIsOpportunitiesVisible}
+                              isProspectsVisible={isProspectsVisible}
+                              setIsProspectsVisible={setIsProspectsVisible}
+                              isLeadsVisible={isLeadsVisible}
+                              setIsLeadsVisible={setIsLeadsVisible}
+                              isCustomersVisible={isCustomersVisible}
+                              setIsCustomersVisible={setIsCustomersVisible}
+                              isPartnersVisible={isPartnersVisible}
+                              setIsPartnersVisible={setIsPartnersVisible}
+                              isNovaActive={isNovaActive}
+                            >
+                              {children}
+                            </PipelineLayoutInner>
+                          </ProfilePanelProvider>
+                        </SettingsPopupProvider>
+                      </ProfilePopupProvider>
+                    </OasisProvider>
+                  </OasisLayoutContext.Provider>
                 </SprintProvider>
               </SpeedrunDataProvider>
             </StacksProvider>

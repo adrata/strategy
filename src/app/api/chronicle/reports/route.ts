@@ -3,6 +3,9 @@ import { prisma } from '@/platform/prisma';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * GET /api/chronicle/reports
  * Fetch Chronicle reports for the current user's workspace
  */

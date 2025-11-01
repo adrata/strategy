@@ -3,6 +3,9 @@ import { getSecureApiContext, createErrorResponse } from '@/platform/services/se
 import { autoStrategyPopulationService } from '@/platform/services/auto-strategy-population-service';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Auto Strategy Population API
  * POST /api/v1/strategy/populate - Populate strategy data for all companies
  */

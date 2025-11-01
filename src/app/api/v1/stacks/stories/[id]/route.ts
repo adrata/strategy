@@ -3,6 +3,9 @@ import { getSecureApiContext, createErrorResponse } from '@/platform/services/se
 import { prisma } from '@/platform/database/prisma-client';
 import { extractIdFromSlug } from '@/platform/utils/url-utils';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

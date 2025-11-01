@@ -6,6 +6,9 @@ import { verifyAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
 // WebSocket server instance
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 let wss: WebSocketServer | null = null;
 
 // Room management

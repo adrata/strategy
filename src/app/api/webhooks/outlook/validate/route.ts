@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Dedicated Microsoft Graph Webhook Validation Endpoint
  * 
  * Microsoft Graph sometimes has issues with validation on the main webhook endpoint

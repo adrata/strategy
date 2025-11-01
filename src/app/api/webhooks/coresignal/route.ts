@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * CORESIGNAL WEBHOOK API ROUTE
  * 
  * Handles incoming webhook notifications from Coresignal for real-time data updates

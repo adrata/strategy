@@ -5,6 +5,9 @@ import { cache } from '@/platform/services/unified-cache';
 import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 
 // 🚀 PERFORMANCE: Aggressive caching for speedrun data (rarely changes)
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /**

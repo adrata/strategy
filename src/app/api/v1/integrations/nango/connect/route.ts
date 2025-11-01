@@ -3,6 +3,9 @@ import { getUnifiedAuthUser } from '@/platform/api-auth';
 import { prisma } from '@/platform/database/prisma-client';
 import { Nango } from '@nangohq/node';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const nango = new Nango({
   secretKey: process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY!,
   host: process.env.NANGO_HOST || 'https://api.nango.dev'

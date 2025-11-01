@@ -6,6 +6,9 @@ import crypto from 'crypto';
 import { sendInvitationEmail } from '@/platform/services/InvitationEmailService';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * POST /api/v1/admin/invite-user
  * Invite a user to join a workspace
  */

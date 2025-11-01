@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 📦 BULK BUYER GROUP DISCOVERY API
  * 
  * Real buyer group analysis using CoreSignal and the actual buyer group pipeline

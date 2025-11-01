@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🌐 BROWSER ACTION API ENDPOINT
  * 
  * Handles browser automation requests from Claude AI

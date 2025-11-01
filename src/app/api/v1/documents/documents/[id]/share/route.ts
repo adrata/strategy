@@ -5,6 +5,9 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { randomBytes } from 'crypto';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * POST /api/workshop/documents/[id]/share
  * Create a share link for a document
  */

@@ -371,7 +371,7 @@ ${results.successful_tests === results.total_tests ?
   const fs = require('fs');
   const path = require('path');
   
-  const reportDir = 'src/app/(locker)/private/TOP/';
+  const reportDir = 'src/app/(workshop)/private/TOP/';
   if (!fs.existsSync(reportDir)) {
     fs.mkdirSync(reportDir, { recursive: true });
   }

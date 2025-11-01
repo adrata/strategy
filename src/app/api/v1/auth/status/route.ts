@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getV1AuthUser } from '../../auth';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * V1 Auth Status API
  * GET /api/v1/auth/status - Check authentication status
  */

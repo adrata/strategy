@@ -4,6 +4,9 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * POST /api/database/record - Create a new record
  * PATCH /api/database/record - Update an existing record
  * DELETE /api/database/record - Delete a record

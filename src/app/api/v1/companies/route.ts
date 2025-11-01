@@ -5,6 +5,9 @@ import { IntelligentNextActionService } from '@/platform/services/IntelligentNex
 import { addBusinessDays } from '@/platform/utils/actionUtils';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Clean and normalize website URL
  * Handles various input formats: example.com, www.example.com, https://example.com, https//:example.com, etc.
  */

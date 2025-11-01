@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Tower Metrics API Endpoint
  * 
  * Aggregates system health data from various sources for the Tower monitoring dashboard

@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * EMPLOYEE ANALYTICS API ENDPOINT
  * 
  * POST /api/v1/intelligence/employee/analytics

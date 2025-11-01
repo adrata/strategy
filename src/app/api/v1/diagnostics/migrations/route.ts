@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma';
 import { getSecureApiContext } from '@/platform/services/secure-api-helper';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Migration Diagnostics Endpoint
  * 
  * This endpoint helps verify which migrations have been applied to the database

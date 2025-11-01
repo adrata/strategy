@@ -4,6 +4,9 @@ import { getV1AuthUser } from '../../auth';
 import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const prisma = new PrismaClient();
 
 /**

@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * User Settings API
  * 
  * GET /api/v1/user/settings - Get user settings including speedrun ranking preferences

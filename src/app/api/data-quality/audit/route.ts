@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🔍 DATA QUALITY AUDIT API
  * 
  * Endpoint for auditing and fixing employment data quality issues

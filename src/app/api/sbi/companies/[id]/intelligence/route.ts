@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { CompanyIntelligenceGenerator, CoreSignalCompanyData } from '@/platform/services/company-intelligence-generator';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const prisma = new PrismaClient();
 
 async function generateOptimizedContent(prompt: string): Promise<string> {

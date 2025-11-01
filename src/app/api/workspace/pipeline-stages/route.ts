@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { WorkspaceDataRouter } from '@/platform/services/workspace-data-router';
 import { prisma } from '@/platform/database/prisma-client';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function POST(request: NextRequest) {
   try {
     const { workspaceId, sectionType } = await request.json();

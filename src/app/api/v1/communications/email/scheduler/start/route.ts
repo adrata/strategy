@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { EmailScheduler } from '@/platform/services/EmailScheduler';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function POST(request: NextRequest) {
   try {
     const scheduler = EmailScheduler.getInstance();

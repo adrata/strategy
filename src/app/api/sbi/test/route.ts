@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🧪 SBI SYSTEM TEST API
  * 
  * Endpoint for testing the complete SBI system

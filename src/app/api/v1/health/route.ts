@@ -3,6 +3,9 @@ import { createSuccessResponse, createInternalErrorResponse } from '../utils';
 import { HealthCheckData } from '../types';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Health check endpoint for API v1
  * GET /api/v1/health
  */

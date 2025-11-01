@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Oasis External Connections API
  * 
  * Handles external workspace connections for cross-workspace messaging

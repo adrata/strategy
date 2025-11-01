@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Database Health Check Endpoint
  * 
  * Provides a simple way to verify database connectivity in production

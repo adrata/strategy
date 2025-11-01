@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🚀 ENHANCED AI API ENDPOINT
  * 
  * Provides the best AI models, fastest responses, and deepest context understanding

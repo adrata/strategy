@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Real buyer group analysis results from CoreSignal API
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const realBuyerGroupData = {
   "success": true,
   "summary": {

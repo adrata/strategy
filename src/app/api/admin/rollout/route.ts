@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🎛️ ROLLOUT ADMIN API
  * 
  * Admin endpoints for managing OpenRouter gradual rollout

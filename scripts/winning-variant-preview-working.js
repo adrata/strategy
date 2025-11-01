@@ -215,7 +215,7 @@ async function generateBuyerGroups() {
   }
   
   // Save results
-  const outputDir = 'src/app/(locker)/private/winning-variant/data';
+  const outputDir = 'src/app/(workshop)/private/winning-variant/data';
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }

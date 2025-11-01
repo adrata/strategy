@@ -7,6 +7,9 @@ import { findOrCreateCompany } from '@/platform/services/company-linking-service
 import { addBusinessDays } from '@/platform/utils/actionUtils';
 
 // 🚀 PERFORMANCE: Enhanced caching with Redis
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const PARTNERS_CACHE_TTL = 2 * 60 * 1000; // 2 minutes for partners
 
 /**

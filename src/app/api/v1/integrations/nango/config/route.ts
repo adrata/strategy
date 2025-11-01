@@ -3,6 +3,9 @@ import { getUnifiedAuthUser } from '@/platform/api-auth';
 import { Nango } from '@nangohq/node';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * GET /api/grand-central/nango/config
  * Check Nango configuration status
  */

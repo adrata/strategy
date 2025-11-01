@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🚀 INTELLIGENT CSV IMPORT API
  * 
  * Handles CSV file uploads with AI-powered data cleaning and mapping:

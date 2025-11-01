@@ -70,7 +70,7 @@ async function discoverWinningVariantBuyerGroups() {
                 console.log(`   Processing time: ${result.metadata?.executionTime}ms`);
                 
                 // Save individual result
-                const outputDir = path.join(__dirname, '..', 'src', 'app', '(locker)', 'private', 'winning-variant', 'data');
+                const outputDir = path.join(__dirname, '..', 'src', 'app', '(workshop)', 'private', 'winning-variant', 'data');
                 if (!fs.existsSync(outputDir)) {
                     fs.mkdirSync(outputDir, { recursive: true });
                 }

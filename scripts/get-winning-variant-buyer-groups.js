@@ -278,7 +278,7 @@ function generatePersonalizedApproach(member, company) {
  * Save data to files
  */
 function saveData(company, roles) {
-  const outputDir = path.join(__dirname, '..', 'src', 'app', '(locker)', 'private', 'winning-variant', 'data');
+  const outputDir = path.join(__dirname, '..', 'src', 'app', '(workshop)', 'private', 'winning-variant', 'data');
   
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
@@ -431,7 +431,7 @@ async function getWinningVariantBuyerGroups() {
   }
   
   // Save summary
-  const outputDir = path.join(__dirname, '..', 'src', 'app', '(locker)', 'private', 'winning-variant', 'data');
+  const outputDir = path.join(__dirname, '..', 'src', 'app', '(workshop)', 'private', 'winning-variant', 'data');
   const summaryFile = path.join(outputDir, 'winning-variant-buyer-groups-summary.json');
   
   fs.writeFileSync(summaryFile, JSON.stringify({

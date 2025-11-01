@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendFridayCombinedEmail, User, DailyProgress, WeeklySummary } from '@/platform/services/SalesEmailService';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function POST(request: NextRequest) {
   try {
     const { user, dailyProgress, weeklySummary } = await request.json();

@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Oasis Channels API
  * 
  * Handles channel creation and listing for workspaces

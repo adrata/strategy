@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Buyer Group Intelligence API
  * 
  * GET /api/intelligence/buyer-group/[companyId]

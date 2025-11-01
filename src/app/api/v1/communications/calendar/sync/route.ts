@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { CalendarSyncService } from '@/platform/services/calendar-sync-service';
 import { PrismaClient } from '@prisma/client';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const prisma = new PrismaClient();
 
 /**
