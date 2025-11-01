@@ -393,8 +393,27 @@ export async function POST(request: NextRequest) {
     }
     const { title, description, status, priority, assigneeId, epicId, projectId, product, section } = body;
 
-    if (!title || !projectId) {
-      return createErrorResponse('Title and project ID are required', 'MISSING_REQUIRED_FIELDS', 400);
+    if (!title) {
+      return createErrorResponse('Title is required', 'MISSING_REQUIRED_FIELDS', 400);
+    }
+
+    // Auto-create or get project for workspace
+    let finalProjectId = projectId;
+    if (!finalProjectId) {
+      let project = await prisma.stacksProject.findFirst({
+        where: { workspaceId: context.workspaceId }
+      });
+      
+      if (!project) {
+        project = await prisma.stacksProject.create({
+          data: {
+            workspaceId: context.workspaceId,
+            name: 'Default Project',
+            description: 'Default project for stacks'
+          }
+        });
+      }
+      finalProjectId = project.id;
     }
 
     // Build create data - only include defined fields, exclude undefined values
@@ -403,7 +422,7 @@ export async function POST(request: NextRequest) {
       description: description || '',
       status: status || 'todo',
       priority: priority || 'medium',
-      projectId
+      projectId: finalProjectId
     };
     
     // Only include optional fields if they are provided and not undefined
