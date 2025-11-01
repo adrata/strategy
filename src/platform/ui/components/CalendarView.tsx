@@ -233,6 +233,172 @@ export function CalendarView({ onClose }: CalendarViewProps) {
     return blocks.find((block) => block.startTime === time);
   };
 
+  // Calculate time slot from Y position
+  const getTimeFromY = useCallback((y: number): string | null => {
+    if (!calendarGridRef.current) return null;
+    
+    const rect = calendarGridRef.current.getBoundingClientRect();
+    const relativeY = y - rect.top - 16; // Account for padding
+    const slotIndex = Math.round(relativeY / 60);
+    
+    if (slotIndex < 0 || slotIndex >= TIME_SLOTS.length) return null;
+    
+    return TIME_SLOTS[slotIndex]!;
+  }, []);
+
+  // Handle drag start
+  const handleDragStart = useCallback((block: ActionBlock, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setDraggedBlock(block);
+    setDragStartY(e.clientY);
+    setDragCurrentY(e.clientY);
+    setDragStartTime(block.startTime);
+    setIsDragging(true);
+    
+    // Disable text selection during drag
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'grabbing';
+  }, []);
+
+  // Handle drag move
+  const handleDragMove = useCallback((e: MouseEvent) => {
+    if (!isDragging || !draggedBlock || !calendarGridRef.current) return;
+    
+    setDragCurrentY(e.clientY);
+  }, [isDragging, draggedBlock]);
+
+  // Handle drag end
+  const handleDragEnd = useCallback(() => {
+    if (!isDragging || !draggedBlock) return;
+    
+    const newTime = getTimeFromY(dragCurrentY);
+    
+    if (newTime && newTime !== dragStartTime) {
+      // Calculate duration
+      const startMinutes = timeToMinutes(draggedBlock.startTime);
+      const endMinutes = timeToMinutes(draggedBlock.endTime);
+      const duration = endMinutes - startMinutes;
+      
+      // Calculate new end time
+      const newStartMinutes = timeToMinutes(newTime);
+      const newEndMinutes = newStartMinutes + duration;
+      
+      // Check bounds
+      const lastSlotMinutes = timeToMinutes(TIME_SLOTS[TIME_SLOTS.length - 1]!);
+      if (newEndMinutes <= lastSlotMinutes && newStartMinutes >= timeToMinutes(TIME_SLOTS[0]!)) {
+        const newEndTime = minutesToTime(newEndMinutes);
+        
+        CalendarService.updateBlock(draggedBlock.id, {
+          startTime: newTime,
+          endTime: newEndTime,
+        });
+      }
+    }
+    
+    // Reset drag state
+    setDraggedBlock(null);
+    setIsDragging(false);
+    setDragStartY(0);
+    setDragCurrentY(0);
+    setDragStartTime('');
+    
+    // Re-enable text selection
+    document.body.style.userSelect = '';
+    document.body.style.cursor = '';
+  }, [isDragging, draggedBlock, dragCurrentY, dragStartTime, getTimeFromY]);
+
+  // Handle resize start
+  const handleResizeStart = useCallback((block: ActionBlock, edge: 'top' | 'bottom', e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setDraggedBlock(block);
+    setDragStartY(e.clientY);
+    setDragCurrentY(e.clientY);
+    setIsResizing(true);
+    setResizeEdge(edge);
+    
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = edge === 'top' ? 'n-resize' : 's-resize';
+  }, []);
+
+  // Handle resize move
+  const handleResizeMove = useCallback((e: MouseEvent) => {
+    if (!isResizing || !draggedBlock || !resizeEdge || !calendarGridRef.current) return;
+    
+    setDragCurrentY(e.clientY);
+  }, [isResizing, draggedBlock, resizeEdge]);
+
+  // Handle resize end
+  const handleResizeEnd = useCallback(() => {
+    if (!isResizing || !draggedBlock || !resizeEdge) return;
+    
+    const newTime = getTimeFromY(dragCurrentY);
+    
+    if (newTime) {
+      const currentStartMinutes = timeToMinutes(draggedBlock.startTime);
+      const currentEndMinutes = timeToMinutes(draggedBlock.endTime);
+      const newTimeMinutes = timeToMinutes(newTime);
+      
+      let newStartTime = draggedBlock.startTime;
+      let newEndTime = draggedBlock.endTime;
+      
+      if (resizeEdge === 'top') {
+        // Resizing top edge - change start time
+        if (newTimeMinutes < currentEndMinutes && newTimeMinutes >= timeToMinutes(TIME_SLOTS[0]!)) {
+          newStartTime = newTime;
+        }
+      } else {
+        // Resizing bottom edge - change end time
+        if (newTimeMinutes > currentStartMinutes && newTimeMinutes <= timeToMinutes(TIME_SLOTS[TIME_SLOTS.length - 1]!)) {
+          newEndTime = newTime;
+        }
+      }
+      
+      if (newStartTime !== draggedBlock.startTime || newEndTime !== draggedBlock.endTime) {
+        CalendarService.updateBlock(draggedBlock.id, {
+          startTime: newStartTime,
+          endTime: newEndTime,
+        });
+      }
+    }
+    
+    // Reset resize state
+    setDraggedBlock(null);
+    setIsResizing(false);
+    setResizeEdge(null);
+    setDragStartY(0);
+    setDragCurrentY(0);
+    
+    document.body.style.userSelect = '';
+    document.body.style.cursor = '';
+  }, [isResizing, draggedBlock, resizeEdge, dragCurrentY, getTimeFromY]);
+
+  // Set up global mouse event listeners
+  useEffect(() => {
+    if (isDragging && !isResizing) {
+      window.addEventListener('mousemove', handleDragMove);
+      window.addEventListener('mouseup', handleDragEnd);
+      return () => {
+        window.removeEventListener('mousemove', handleDragMove);
+        window.removeEventListener('mouseup', handleDragEnd);
+      };
+    }
+  }, [isDragging, isResizing, handleDragMove, handleDragEnd]);
+
+  useEffect(() => {
+    if (isResizing) {
+      window.addEventListener('mousemove', handleResizeMove);
+      window.addEventListener('mouseup', handleResizeEnd);
+      return () => {
+        window.removeEventListener('mousemove', handleResizeMove);
+        window.removeEventListener('mouseup', handleResizeEnd);
+      };
+    }
+  }, [isResizing, handleResizeMove, handleResizeEnd]);
+
   const isToday = formatDate(currentDate) === formatDate(new Date());
 
   return (
@@ -282,7 +448,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
 
       {/* Calendar Grid */}
       <div className="flex-1 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-        <div className="relative p-4">
+        <div ref={calendarGridRef} className="relative p-4">
           {/* Time slots */}
           <div className="space-y-0">
             {TIME_SLOTS.map((time, index) => {
@@ -313,11 +479,16 @@ export function CalendarView({ onClose }: CalendarViewProps) {
                   {/* Time slot content */}
                   <div
                     className="flex-1 relative cursor-pointer hover:bg-[var(--hover-bg)]/50 transition-colors"
-                    onClick={() => handleTimeSlotClick(time)}
+                    onClick={(e) => {
+                      // Don't open modal if we're dragging
+                      if (!isDragging && !isResizing) {
+                        handleTimeSlotClick(time);
+                      }
+                    }}
                     style={{ minHeight: "60px" }}
                   >
                     {/* Block starting at this slot */}
-                    {blockStartingHere && (
+                    {blockStartingHere && blockStartingHere.id !== draggedBlock?.id && (
                       <div
                         className="absolute left-0 right-2 z-10"
                         style={{
@@ -331,9 +502,44 @@ export function CalendarView({ onClose }: CalendarViewProps) {
                           onComplete={() => handleCompleteBlock(blockStartingHere.id)}
                           onEdit={() => handleEditBlock(blockStartingHere)}
                           onDelete={() => handleDeleteBlock(blockStartingHere.id)}
+                          onDragStart={(e) => handleDragStart(blockStartingHere, e)}
+                          onResizeStart={(edge, e) => handleResizeStart(blockStartingHere, edge, e)}
+                          isDragging={false}
                         />
                       </div>
                     )}
+                    
+                    {/* Dragged block preview - shown at current drag position */}
+                    {draggedBlock && isDragging && (() => {
+                      const previewTime = getTimeFromY(dragCurrentY) || draggedBlock.startTime;
+                      const slotMinutes = timeToMinutes(previewTime);
+                      const blockStartMinutes = timeToMinutes(time);
+                      const blockEndMinutes = timeToMinutes(minutesToTime(timeToMinutes(time) + 30));
+                      
+                      // Show preview if mouse is over this time slot
+                      if (slotMinutes >= blockStartMinutes && slotMinutes < blockEndMinutes) {
+                        const previewTop = ((timeToMinutes(previewTime) - timeToMinutes(time)) / TIME_INCREMENT) * 60;
+                        return (
+                          <div
+                            className="absolute left-0 right-2 z-20 pointer-events-none opacity-60"
+                            style={{
+                              top: `${previewTop}px`,
+                              height: `${getBlockHeight(draggedBlock.startTime, draggedBlock.endTime) - 8}px`,
+                            }}
+                          >
+                            <ActionBlockComponent
+                              block={draggedBlock}
+                              onExecute={() => {}}
+                              onComplete={() => {}}
+                              onEdit={() => {}}
+                              onDelete={() => {}}
+                              isDragging={true}
+                            />
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
                 </div>
               );
