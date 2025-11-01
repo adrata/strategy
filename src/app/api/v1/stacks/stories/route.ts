@@ -268,7 +268,7 @@ export async function GET(request: NextRequest) {
           description: story.description || '',
           status: story.status || 'todo',
           priority: story.priority || 'medium',
-          viewType: (story as any).viewType || 'main', // Use include so viewType is available if it exists
+          viewType: 'main', // Always use 'main' as default - viewType column removed from queries
           product: story.product || null,
           section: story.section || null,
           assignee,
@@ -290,7 +290,7 @@ export async function GET(request: NextRequest) {
           description: story.description || '',
           status: story.status || 'todo',
           priority: story.priority || 'medium',
-          viewType: 'main',
+          viewType: 'main', // Always use 'main' as default
           product: null,
           section: null,
           assignee: null,
@@ -318,7 +318,7 @@ export async function GET(request: NextRequest) {
       errorObject: error
     });
     
-    // Handle P2022 error (column does not exist) - specifically for viewType column
+    // Handle P2022 error (column does not exist)
     if (error && typeof error === 'object' && 'code' in error) {
       const prismaError = error as any;
       
@@ -331,26 +331,14 @@ export async function GET(request: NextRequest) {
           fullMeta: prismaError.meta
         });
         
-        // Only use column name in error message if it's actually defined
+        // Return specific error with column name if available
         if (columnName) {
-          // If it's the viewType column, return specific error
-          if (columnName === 'viewType') {
-            console.warn('⚠️ [STACKS API] viewType column missing - falling back to explicit select query');
-            return createErrorResponse(
-              'Database schema mismatch: viewType column not found. Please run database migrations.',
-              'SCHEMA_MISMATCH',
-              500
-            );
-          }
-          // For other columns, return specific error with column name
           return createErrorResponse(
             `Database column '${columnName}' does not exist. Please run database migrations.`,
             'SCHEMA_MISMATCH',
             500
           );
         } else {
-          // Column name is undefined - return generic error
-          console.error('❌ [STACKS API] P2022 Error but column_name is undefined - generic schema mismatch');
           return createErrorResponse(
             'Database schema mismatch detected. Please run database migrations.',
             'SCHEMA_MISMATCH',
@@ -403,7 +391,7 @@ export async function POST(request: NextRequest) {
       console.error('❌ [STACKS API] Error parsing request body:', parseError);
       return createErrorResponse('Invalid request body', 'INVALID_BODY', 400);
     }
-    const { title, description, status, priority, assigneeId, epicId, projectId, viewType, product, section } = body;
+    const { title, description, status, priority, assigneeId, epicId, projectId, product, section } = body;
 
     if (!title || !projectId) {
       return createErrorResponse('Title and project ID are required', 'MISSING_REQUIRED_FIELDS', 400);
@@ -443,10 +431,7 @@ export async function POST(request: NextRequest) {
       createData.section = null;
     }
     
-    // Only include viewType if provided (will fail if column doesn't exist, handled in catch)
-    if (viewType !== undefined && viewType !== null) {
-      createData.viewType = viewType;
-    }
+    // viewType is not included - always defaults to 'main' in response
 
     const story = await prisma.stacksStory.create({
       data: createData,
@@ -487,10 +472,30 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({ story });
+    // Transform the story to include viewType and ensure consistent format
+    const transformedStory = {
+      ...story,
+      viewType: 'main', // Always use 'main' as default - viewType column removed from queries
+      assignee: story.assignee ? {
+        id: story.assignee.id,
+        name: `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || 'Unknown',
+        email: story.assignee.email || ''
+      } : null,
+      epic: story.epic ? {
+        id: story.epic.id,
+        title: story.epic.title || '',
+        description: story.epic.description || ''
+      } : null,
+      project: story.project ? {
+        id: story.project.id,
+        name: story.project.name || ''
+      } : null
+    };
+
+    return NextResponse.json({ story: transformedStory });
 
   } catch (error) {
-    console.error('Error creating story:', error);
+    console.error('❌ [STACKS API] Error creating story:', error);
     
     // Handle P2022 error (column does not exist)
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
@@ -502,68 +507,6 @@ export async function POST(request: NextRequest) {
         createDataKeys: Object.keys(createData)
       });
       
-      if (columnName === 'viewType') {
-        console.warn('⚠️ [STACKS API] viewType column missing - creating story without viewType');
-        // Try create without viewType
-        try {
-          const { viewType, ...dataWithoutViewType } = createData;
-          const storyWithoutViewType = await prisma.stacksStory.create({
-            data: dataWithoutViewType,
-            select: {
-              id: true,
-              epicId: true,
-              projectId: true,
-              title: true,
-              description: true,
-              status: true,
-              priority: true,
-              assigneeId: true,
-              product: true,
-              section: true,
-              createdAt: true,
-              updatedAt: true,
-              epic: {
-                select: {
-                  id: true,
-                  title: true,
-                  description: true
-                }
-              },
-              assignee: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true
-                }
-              },
-              project: {
-                select: {
-                  id: true,
-                  name: true
-                }
-              }
-            }
-          });
-          
-          // Transform to include default viewType
-          const transformedStory = {
-            ...storyWithoutViewType,
-            viewType: 'main' // Default since column doesn't exist
-          };
-          
-          return NextResponse.json({ story: transformedStory });
-        } catch (fallbackError) {
-          console.error('❌ [STACKS API] Fallback create also failed:', fallbackError);
-          return createErrorResponse(
-            'Failed to create story due to database schema issue',
-            'SCHEMA_MISMATCH',
-            500
-          );
-        }
-      }
-      
-      console.error('❌ [STACKS API] Database column missing:', columnName);
       return createErrorResponse(
         columnName !== 'unknown' 
           ? `Database column '${columnName}' does not exist. Please run database migrations.`
@@ -606,13 +549,13 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, title, description, status, priority, assigneeId, epicId, viewType, product, section } = body;
+    const { id, title, description, status, priority, assigneeId, epicId, product, section } = body;
 
     if (!id) {
       return createErrorResponse('Story ID is required', 'MISSING_STORY_ID', 400);
     }
 
-    // Build update data - exclude viewType if column doesn't exist
+    // Build update data
     const updateData: any = {
       ...(title && { title }),
       ...(description !== undefined && { description }),
@@ -624,11 +567,6 @@ export async function PUT(request: NextRequest) {
       ...(section !== undefined && { section }),
       updatedAt: new Date()
     };
-    
-    // Only include viewType if provided (will fail if column doesn't exist, handled in catch)
-    if (viewType !== undefined) {
-      updateData.viewType = viewType;
-    }
 
     const story = await prisma.stacksStory.update({
       where: { id },
@@ -670,79 +608,50 @@ export async function PUT(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({ story });
+    // Transform the story to include viewType and ensure consistent format
+    const transformedStory = {
+      ...story,
+      viewType: 'main', // Always use 'main' as default - viewType column removed from queries
+      assignee: story.assignee ? {
+        id: story.assignee.id,
+        name: `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || 'Unknown',
+        email: story.assignee.email || ''
+      } : null,
+      epic: story.epic ? {
+        id: story.epic.id,
+        title: story.epic.title || '',
+        description: story.epic.description || ''
+      } : null,
+      project: story.project ? {
+        id: story.project.id,
+        name: story.project.name || ''
+      } : null
+    };
+
+    return NextResponse.json({ story: transformedStory });
 
   } catch (error) {
-    console.error('Error updating story:', error);
+    console.error('❌ [STACKS API] Error updating story:', error);
     
-    // Handle P2022 error (column does not exist) - specifically for viewType column
+    // Handle P2022 error (column does not exist)
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
       const prismaError = error as any;
-      if (prismaError.meta?.column_name === 'viewType') {
-        console.warn('⚠️ [STACKS API] viewType column missing - updating story without viewType');
-        // Try update without viewType
-        try {
-          const { viewType, ...dataWithoutViewType } = updateData;
-          const storyWithoutViewType = await prisma.stacksStory.update({
-            where: { id },
-            data: dataWithoutViewType,
-            select: {
-              id: true,
-              epicId: true,
-              projectId: true,
-              title: true,
-              description: true,
-              status: true,
-              priority: true,
-              assigneeId: true,
-              product: true,
-              section: true,
-              createdAt: true,
-              updatedAt: true,
-              epic: {
-                select: {
-                  id: true,
-                  title: true,
-                  description: true
-                }
-              },
-              assignee: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true
-                }
-              },
-              project: {
-                select: {
-                  id: true,
-                  name: true
-                }
-              }
-            }
-          });
-          
-          // Transform to include default viewType
-          const transformedStory = {
-            ...storyWithoutViewType,
-            viewType: 'main' // Default since column doesn't exist
-          };
-          
-          return NextResponse.json({ story: transformedStory });
-        } catch (fallbackError) {
-          console.error('❌ [STACKS API] Fallback update also failed:', fallbackError);
-        }
-      }
+      const columnName = prismaError.meta?.column_name || 'unknown';
       
       return createErrorResponse(
-        `Database column '${prismaError.meta?.column_name}' does not exist. Please run database migrations.`,
+        columnName !== 'unknown'
+          ? `Database column '${columnName}' does not exist. Please run database migrations.`
+          : 'Database schema mismatch. Please run database migrations.',
         'SCHEMA_MISMATCH',
         500
       );
     }
     
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return createErrorResponse(
+      'Failed to update story. Please try again.',
+      'STORY_UPDATE_ERROR',
+      500
+    );
   }
 }
 

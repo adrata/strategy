@@ -267,12 +267,13 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-sm">{item.label}</span>
                   {item.getCount && (
-                    <span className="text-xs font-semibold text-[var(--foreground)]">
+                    <span className="text-sm text-[var(--muted)]">
                       {statsLoading ? (
                         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                      ) : (
-                        item.getCount(stats) ?? 0
-                      )}
+                      ) : (() => {
+                        const count = item.getCount(stats);
+                        return typeof count === 'number' ? count.toLocaleString() : count ?? 0;
+                      })()}
                     </span>
                   )}
                 </div>
