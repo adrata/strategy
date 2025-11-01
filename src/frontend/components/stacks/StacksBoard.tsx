@@ -16,6 +16,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
+import { getWorkspaceIdBySlug } from '@/platform/config/workspace-mapping';
 // Removed mock data imports
 
 interface StackCard {
@@ -179,12 +180,31 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   // Fetch stories from database
   useEffect(() => {
     const fetchStories = async () => {
-      const workspaceId = ui.activeWorkspace?.id;
+      // Resolve workspace ID with fallback logic
+      let workspaceId = ui.activeWorkspace?.id;
+      
+      // Fallback 1: Get from URL workspace slug if UI workspace is missing
+      if (!workspaceId && workspaceSlug) {
+        const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+        if (urlWorkspaceId) {
+          console.log(`🔍 [StacksBoard] Resolved workspace ID from URL slug "${workspaceSlug}": ${urlWorkspaceId}`);
+          workspaceId = urlWorkspaceId;
+        }
+      }
+      
+      // Fallback 2: Use user's active workspace ID
+      if (!workspaceId && authUser?.activeWorkspaceId) {
+        console.log(`🔍 [StacksBoard] Using user activeWorkspaceId: ${authUser.activeWorkspaceId}`);
+        workspaceId = authUser.activeWorkspaceId;
+      }
+      
       console.log('🔍 [StacksBoard] Starting fetch, workspace:', ui.activeWorkspace);
-      console.log('🔍 [StacksBoard] Workspace ID:', workspaceId);
+      console.log('🔍 [StacksBoard] Workspace ID (resolved):', workspaceId);
+      console.log('🔍 [StacksBoard] URL workspace slug:', workspaceSlug);
+      console.log('🔍 [StacksBoard] User activeWorkspaceId:', authUser?.activeWorkspaceId);
       
       if (!workspaceId) {
-        console.warn('⚠️ [StacksBoard] No workspace ID available, cannot fetch stories');
+        console.warn('⚠️ [StacksBoard] No workspace ID available after all fallbacks, cannot fetch stories');
         console.warn('⚠️ [StacksBoard] activeWorkspace:', ui.activeWorkspace);
         setCards([]);
         setLoading(false);
@@ -284,7 +304,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     };
 
     fetchStories();
-  }, [ui.activeWorkspace?.id, isNotaryEveryday]);
+  }, [ui.activeWorkspace?.id, authUser?.activeWorkspaceId, workspaceSlug, isNotaryEveryday]);
   
   // Helper function to filter selling stories
   const filterSellingStories = (stories: any[]): any[] => {
@@ -300,6 +320,9 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     if (story.status === 'done') {
       mappedStatus = 'built';
     } else if (story.status === 'todo') {
+      mappedStatus = 'up-next';
+    } else if (story.status === 'up-next') {
+      // Ensure "up-next" maps correctly (should already be correct, but explicit is better)
       mappedStatus = 'up-next';
     }
     

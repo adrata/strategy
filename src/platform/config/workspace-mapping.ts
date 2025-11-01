@@ -33,6 +33,12 @@ export const WORKSPACE_MAPPINGS: WorkspaceMapping[] = [
     name: 'Notary Everyday',
     isActive: true
   },
+  {
+    slug: 'pinpoint',
+    id: '01K90EQWJCCN2JDMRQF12F49GN',
+    name: 'Pinpoint',
+    isActive: true
+  },
   // Add more workspaces as needed
   // {
   //   slug: 'demo',

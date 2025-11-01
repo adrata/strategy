@@ -21,7 +21,7 @@ const appIconConfig: Record<
   { slug: string; Icon: IconComponent; label: string }[]
 > = {
   pipeline: [
-    { slug: "pipeline", Icon: HomeIcon, label: "Pipeline" },
+    { slug: "pipeline", Icon: Squares2X2Icon, label: "Pipeline" },
     { slug: "companies", Icon: BriefcaseIcon, label: "Companies" },
     { slug: "people", Icon: UserGroupIcon, label: "People" },
   ],
