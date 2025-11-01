@@ -931,7 +931,7 @@ function PipelineSections({
           onClick={() => handleSectionClick(section.id)}
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                 activeSection === section.id
-                  ? 'bg-[var(--background)] text-gray-800 border-l-2 border-[var(--accent)]'
+                  ? 'bg-[var(--hover)] text-[var(--foreground)]'
                   : 'hover:bg-[var(--panel-background)] text-gray-700'
           }`}
         >
@@ -980,7 +980,7 @@ function PipelineSections({
               }}
               className={`w-full text-left px-3 py-2 pl-8 rounded-lg transition-colors ${
                     activeSection === section.id
-                      ? 'bg-[var(--background)] text-gray-800 border-l-2 border-[var(--accent)]'
+                      ? 'bg-[var(--hover)] text-[var(--foreground)]'
                       : 'hover:bg-[var(--panel-background)] text-gray-700'
               }`}
             >
