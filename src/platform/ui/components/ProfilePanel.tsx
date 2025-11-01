@@ -315,7 +315,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               {typeof workspace === 'string' ? workspace : workspace?.name || 'Workspace'}
             </h3>
             <p className="text-xs text-[var(--muted-foreground)]">
-              RevenueOS Sales Acceleration
+              Workspace
             </p>
           </div>
         </div>
