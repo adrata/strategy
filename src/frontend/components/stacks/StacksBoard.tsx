@@ -426,7 +426,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         return (
           <div
             key={column.key}
-            className="flex-shrink-0 w-64"
+            className="flex-shrink-0 w-72"
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
