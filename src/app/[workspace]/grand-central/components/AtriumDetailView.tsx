@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWorkshopDocuments, WorkshopDocument } from '../hooks/useWorkshopDocuments';
+import { useWorkshopDocuments, WorkshopDocument } from '../hooks/useAtriumDocuments';
 import { Breadcrumb } from './Breadcrumb';
 import { useUnifiedAuth } from '@/platform/auth';
 import { DocumentIcon, PresentationChartBarIcon, TableCellsIcon, CodeBracketIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
