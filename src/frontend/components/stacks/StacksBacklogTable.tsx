@@ -19,6 +19,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { StacksContextMenu } from './StacksContextMenu';
 import { StacksFilters } from './StacksFilters';
+import { AddStacksModal } from './AddStacksModal';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 // Removed mock data imports
@@ -116,6 +117,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   
   const [items, setItems] = useState<BacklogItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAddStacksModal, setShowAddStacksModal] = useState(false);
   
   // Fetch data from API
   useEffect(() => {
@@ -266,6 +268,35 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
+  const handleStacksAdded = (newStack: any) => {
+    // Refresh the backlog items
+    if (!ui.activeWorkspace?.id) return;
+    
+    fetch(`/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`)
+      .then(response => response.json())
+      .then(data => {
+        const backlogItems = data.stories?.map((story: any, index: number) => ({
+          id: story.id,
+          title: story.title,
+          description: story.description,
+          priority: story.priority,
+          status: story.status,
+          assignee: story.assignee?.name || story.assignee,
+          dueDate: story.dueDate,
+          tags: story.tags || [],
+          createdAt: story.createdAt,
+          updatedAt: story.updatedAt,
+          rank: index + 1
+        })) || [];
+        setItems(backlogItems);
+      })
+      .catch(error => {
+        console.error('Error refreshing backlog items:', error);
+      });
+    
+    setShowAddStacksModal(false);
+  };
+
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
@@ -275,11 +306,21 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             <h1 className="text-2xl font-bold text-[var(--foreground)]">Backlog</h1>
             <p className="text-sm text-[var(--muted)] mt-1">Prioritized work queue</p>
           </div>
-          <button className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors">
+          <button 
+            onClick={() => setShowAddStacksModal(true)}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
+          >
             <PlusIcon className="h-4 w-4" />
-            Add Item
+            Add Stacks
           </button>
         </div>
+
+        {/* Add Stacks Modal */}
+        <AddStacksModal
+          isOpen={showAddStacksModal}
+          onClose={() => setShowAddStacksModal(false)}
+          onStacksAdded={handleStacksAdded}
+        />
 
         {/* Search and Filters */}
         <StacksFilters

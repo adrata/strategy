@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get('workspaceId');
     const projectId = searchParams.get('projectId');
+    const search = searchParams.get('search');
 
     if (!workspaceId) {
       return NextResponse.json({ error: 'Workspace ID is required' }, { status: 400 });
@@ -17,6 +18,14 @@ export async function GET(request: NextRequest) {
 
     if (projectId) {
       where.projectId = projectId;
+    }
+
+    // Add search functionality
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } }
+      ];
     }
 
     const epics = await prisma.stacksEpic.findMany({

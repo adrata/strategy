@@ -20,7 +20,9 @@ import {
   DocumentTextIcon,
   BuildingLibraryIcon,
   Squares2X2Icon,
-  DocumentDuplicateIcon
+  DocumentDuplicateIcon,
+  ListBulletIcon,
+  Bars3Icon
 } from "@heroicons/react/24/outline";
 import { X, MessageSquare, FileText, Layers, Building2, Check, GripVertical, PanelLeft } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
@@ -88,6 +90,9 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const { hasDesktopDownload } = useFeatureAccess();
 
   const initial = user.name?.charAt(0).toUpperCase() || "?";
+  
+  // State for view mode (main or action list)
+  const [viewMode, setViewMode] = useState<'main' | 'actionList'>('main');
   
   // State for action items
   const [actionItems, setActionItems] = useState<ActionItem[]>(mockActionItems);
@@ -314,23 +319,37 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             </p>
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
-          title="Close panel"
-        >
-          <PanelLeft className="w-4 h-4 text-[var(--muted-foreground)]" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setViewMode(viewMode === 'main' ? 'actionList' : 'main')}
+            className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
+            title={viewMode === 'main' ? 'Show action list' : 'Show main menu'}
+          >
+            {viewMode === 'main' ? (
+              <ListBulletIcon className="w-4 h-4 text-[var(--muted-foreground)]" />
+            ) : (
+              <Bars3Icon className="w-4 h-4 text-[var(--muted-foreground)]" />
+            )}
+          </button>
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
+            title="Close panel"
+          >
+            <PanelLeft className="w-4 h-4 text-[var(--muted-foreground)]" />
+          </button>
+        </div>
       </div>
 
       {/* App Navigation */}
       <div className="flex-1 p-3 space-y-4">
         {/* Get Started Section */}
-        <div className="space-y-1">
-          <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider px-3">
-            Get Started
-          </h4>
-          <div className="space-y-0.5">
+        {viewMode === 'main' && (
+          <div className="space-y-1">
+            <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider px-3">
+              Get Started
+            </h4>
+            <div className="space-y-0.5">
             {/* RevenueOS */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -419,11 +438,12 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             </button>
 
           </div>
-        </div>
-
+          </div>
+        )}
 
         {/* Action List Section */}
-        <div className="space-y-1 mt-8">
+        {viewMode === 'actionList' && (
+          <div className="space-y-1">
           <div className="flex items-center justify-between px-3">
             <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
               Action List
@@ -457,7 +477,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               </div>
             ))}
           </div>
-        </div>
+          </div>
+        )}
       </div>
 
 

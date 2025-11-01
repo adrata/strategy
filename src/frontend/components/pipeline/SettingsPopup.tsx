@@ -656,7 +656,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 )}
               </div>
             </div>
-          ) : (
+          ) : activeTab === 'notifications' ? (
             <div className="space-y-6">
               {/* Notifications Section */}
               <div>

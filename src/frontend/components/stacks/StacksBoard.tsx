@@ -484,7 +484,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                 <div className="flex justify-between text-xs text-gray-500">
                   <span>{column.description}</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">{cards.length} {cards.length === 1 ? 'story' : 'stories'}</p>
+                <p className="text-xs text-gray-500 mt-1">{cards.length} {cards.length === 1 ? 'stack' : 'stacks'}</p>
               </div>
 
               {/* Stories List */}

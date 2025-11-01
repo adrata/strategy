@@ -283,11 +283,14 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           <div className="flex-1 text-left">
                   <div className="text-sm font-medium text-[var(--foreground)]">
                     {userProfile?.firstName && userProfile?.lastName && userProfile.firstName.trim() && userProfile.lastName.trim()
-                      ? `${userProfile.firstName} ${userProfile.lastName}` 
-                      : authUser?.name || 'User'}
+                      ? `${userProfile.firstName.charAt(0).toUpperCase() + userProfile.firstName.slice(1)} ${userProfile.lastName.charAt(0).toUpperCase() + userProfile.lastName.slice(1)}` 
+                      : authUser?.name ? authUser.name.charAt(0).toUpperCase() + authUser.name.slice(1) : 'User'}
                   </div>
                   <div className="text-xs text-[var(--muted)]">
-                    {ui.activeWorkspace?.name || workspaceSlug?.charAt(0).toUpperCase() + workspaceSlug?.slice(1) || 'Workspace'}
+                    {(() => {
+                      const workspaceName = ui.activeWorkspace?.name || workspaceSlug || 'Workspace';
+                      return workspaceName.charAt(0).toUpperCase() + workspaceName.slice(1);
+                    })()}
                   </div>
           </div>
         </button>
