@@ -132,34 +132,50 @@ export const PipelineContent = React.memo(function PipelineContent({
     });
     
     // Use workspace-specific column order (field names) if available, otherwise use defaults
-    if (sectionConfig.columnOrder) {
-      console.log(`✅ [COLUMN CONFIG] Using workspace config for ${section}:`, sectionConfig.columnOrder);
-      return sectionConfig.columnOrder;
+    let columns = sectionConfig.columnOrder;
+    
+    if (!columns) {
+      console.log(`⚠️ [COLUMN CONFIG] Using fallback config for ${section}`);
+      
+      // Fallback to default configuration (field names)
+      switch (section) {
+        case 'speedrun':
+          columns = ['rank', 'name', 'company', 'state', 'stage', 'actions', 'lastAction', 'nextAction'];
+          break;
+        case 'companies':
+          columns = ['rank', 'company', 'actions', 'lastAction', 'nextAction'];
+          break;
+        case 'leads':
+          columns = ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
+          break;
+        case 'prospects':
+          columns = ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
+          break;
+        case 'opportunities':
+          columns = ['rank', 'name', 'company', 'status', 'lastAction', 'nextAction'];
+          break;
+        case 'people':
+          columns = ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
+          break;
+        case 'clients':
+          columns = ['rank', 'company', 'industry', 'status', 'lastAction', 'nextAction'];
+          break;
+        case 'partners':
+          columns = ['rank', 'company', 'lastAction', 'nextAction'];
+          break;
+        default:
+          columns = ['rank', 'company', 'name', 'title', 'lastAction'];
+      }
     }
     
-    console.log(`⚠️ [COLUMN CONFIG] Using fallback config for ${section}`);
-    
-    // Fallback to default configuration (display names)
-    switch (section) {
-      case 'speedrun':
-        return ['rank', 'name', 'company', 'state', 'stage', 'actions', 'lastAction', 'nextAction'];
-      case 'companies':
-        return ['rank', 'company', 'actions', 'lastAction', 'nextAction'];
-      case 'leads':
-        return ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
-      case 'prospects':
-        return ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
-      case 'opportunities':
-        return ['rank', 'name', 'company', 'status', 'lastAction', 'nextAction'];
-      case 'people':
-        return ['rank', 'company', 'name', 'title', 'actions', 'lastAction', 'nextAction'];
-      case 'clients':
-        return ['rank', 'company', 'industry', 'status', 'lastAction', 'nextAction'];
-      case 'partners':
-        return ['rank', 'company', 'lastAction', 'nextAction'];
-      default:
-        return ['rank', 'company', 'name', 'title', 'lastAction'];
+    // CRITICAL FIX: Ensure company field is always included for People and Leads
+    if ((section === 'people' || section === 'leads') && !columns.includes('company')) {
+      console.log(`🔧 [COLUMN FIX] Adding missing company field to ${section} section`);
+      columns = ['name', 'company', ...columns.filter(col => col !== 'name')];
     }
+    
+    console.log(`✅ [COLUMN CONFIG] Final columns for ${section}:`, columns);
+    return columns;
   };
   
   const [visibleColumns, setVisibleColumns] = useState<string[]>(getDefaultVisibleColumns(section));

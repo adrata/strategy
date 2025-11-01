@@ -498,6 +498,16 @@ class EnrichTOPWorkspaceCoreSignal {
    */
   async updatePersonWithCoreSignalData(person, employeeId, profileData) {
     try {
+      // VALIDATE CORESIGNAL DATA BEFORE UPDATING
+      const validationResult = this.validateCoresignalData(person, profileData);
+      if (!validationResult.isValid) {
+        console.log(`      ❌ VALIDATION FAILED: ${validationResult.reason}`);
+        console.log(`      🚫 Skipping enrichment for ${person.fullName}`);
+        return false;
+      }
+      
+      console.log(`      ✅ Validation passed for ${person.fullName}`);
+      
       // Extract key data from CoreSignal profile
       const enrichedData = {
         // Enhanced contact information
@@ -546,6 +556,120 @@ class EnrichTOPWorkspaceCoreSignal {
       console.log(`      ❌ Database update error: ${error.message}`);
       throw error;
     }
+  }
+
+  /**
+   * 🔍 VALIDATE CORESIGNAL DATA BEFORE UPDATING
+   */
+  validateCoresignalData(person, profileData) {
+    const validation = {
+      isValid: true,
+      reason: null
+    };
+    
+    // 1. LinkedIn URL validation - must match person name
+    if (profileData.linkedin_url && person.linkedinUrl) {
+      if (profileData.linkedin_url !== person.linkedinUrl) {
+        // Check if the LinkedIn URL name matches the person name
+        const urlName = this.extractNameFromLinkedInUrl(profileData.linkedin_url);
+        const personName = person.fullName;
+        
+        if (urlName && personName) {
+          const similarity = this.calculateNameSimilarity(urlName, personName);
+          if (similarity < 0.6) {
+            validation.isValid = false;
+            validation.reason = `LinkedIn URL name mismatch: URL="${urlName}" vs Person="${personName}" (similarity: ${Math.round(similarity * 100)}%)`;
+            return validation;
+          }
+        }
+      }
+    }
+    
+    // 2. Name validation - CoreSignal name must match person name
+    if (profileData.full_name && person.fullName) {
+      const similarity = this.calculateNameSimilarity(profileData.full_name, person.fullName);
+      if (similarity < 0.7) {
+        validation.isValid = false;
+        validation.reason = `Name mismatch: CoreSignal="${profileData.full_name}" vs Person="${person.fullName}" (similarity: ${Math.round(similarity * 100)}%)`;
+        return validation;
+      }
+    }
+    
+    // 3. Company validation - if we have company context
+    if (profileData.active_experience_company && person.company) {
+      const coresignalCompany = profileData.active_experience_company;
+      const personCompany = typeof person.company === 'string' ? person.company : person.company.name;
+      
+      if (personCompany && coresignalCompany) {
+        const similarity = this.calculateCompanySimilarity(coresignalCompany, personCompany);
+        if (similarity < 0.5) {
+          validation.isValid = false;
+          validation.reason = `Company mismatch: CoreSignal="${coresignalCompany}" vs Person="${personCompany}" (similarity: ${Math.round(similarity * 100)}%)`;
+          return validation;
+        }
+      }
+    }
+    
+    return validation;
+  }
+  
+  /**
+   * Extract name from LinkedIn URL
+   */
+  extractNameFromLinkedInUrl(url) {
+    try {
+      const match = url.match(/linkedin\.com\/in\/([^\/\?]+)/);
+      if (match) {
+        return match[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      }
+    } catch (error) {
+      // Ignore parsing errors
+    }
+    return null;
+  }
+  
+  /**
+   * Calculate name similarity
+   */
+  calculateNameSimilarity(name1, name2) {
+    const normalize = (name) => name.toLowerCase().replace(/[^a-z\s]/g, '');
+    const n1 = normalize(name1);
+    const n2 = normalize(name2);
+    
+    // Simple similarity based on common words
+    const words1 = n1.split(/\s+/);
+    const words2 = n2.split(/\s+/);
+    
+    let commonWords = 0;
+    for (const word1 of words1) {
+      if (words2.some(word2 => word1 === word2 || word1.includes(word2) || word2.includes(word1))) {
+        commonWords++;
+      }
+    }
+    
+    return commonWords / Math.max(words1.length, words2.length);
+  }
+  
+  /**
+   * Calculate company similarity
+   */
+  calculateCompanySimilarity(company1, company2) {
+    const normalize = (name) => name.toLowerCase().replace(/[^a-z\s]/g, '');
+    const c1 = normalize(company1);
+    const c2 = normalize(company2);
+    
+    // Simple similarity based on common words
+    const words1 = c1.split(/\s+/);
+    const words2 = c2.split(/\s+/);
+    
+    let commonWords = 0;
+    for (const word1 of words1) {
+      if (words2.some(word2 => word1 === word2 || word1.includes(word2) || word2.includes(word1))) {
+        commonWords++;
+      }
+    }
+    
+    return commonWords / Math.max(words1.length, words2.length);
   }
 
   /**

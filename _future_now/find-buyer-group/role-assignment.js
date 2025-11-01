@@ -12,12 +12,19 @@ const {
 } = require('./company-size-config');
 
 class RoleAssignment {
-  constructor(dealSize, companyRevenue = 0, companyEmployees = 0) {
+  constructor(dealSize, companyRevenue = 0, companyEmployees = 0, rolePriorities = null) {
     this.dealSize = dealSize;
     this.companyRevenue = companyRevenue;
     this.companyEmployees = companyEmployees;
     this.companyTier = determineCompanySizeTier(companyRevenue, companyEmployees);
     this.dealThresholds = getDealSizeThresholds(this.companyTier);
+    this.rolePriorities = rolePriorities || {
+      decision: 10,
+      champion: 8,
+      stakeholder: 6,
+      blocker: 5,
+      introducer: 4
+    };
   }
 
   /**
@@ -68,13 +75,22 @@ class RoleAssignment {
     const employeesWithRoles = [];
     let counts = { decision: 0, champion: 0, stakeholder: 0, blocker: 0, introducer: 0 };
 
-    // Define confidence thresholds for role qualification
+    // Define confidence thresholds for role qualification (adjust based on priorities)
+    const baseThresholds = {
+      decision: 70,
+      champion: 60,
+      blocker: 50,
+      introducer: 50,
+      stakeholder: 40
+    };
+    
+    // Adjust thresholds based on role priorities (higher priority = lower threshold requirement)
     const confidenceThresholds = {
-      decision: 70,    // High confidence required for decision makers
-      champion: 60,    // Medium-high confidence for champions
-      blocker: 50,     // Medium confidence for blockers
-      introducer: 50,  // Medium confidence for introducers
-      stakeholder: 40  // Lower confidence for stakeholders
+      decision: Math.max(50, baseThresholds.decision - (this.rolePriorities.decision - 10) * 2),
+      champion: Math.max(40, baseThresholds.champion - (this.rolePriorities.champion - 8) * 2),
+      blocker: Math.max(30, baseThresholds.blocker - (this.rolePriorities.blocker - 5) * 2),
+      introducer: Math.max(30, baseThresholds.introducer - (this.rolePriorities.introducer - 4) * 2),
+      stakeholder: Math.max(20, baseThresholds.stakeholder - (this.rolePriorities.stakeholder - 6) * 2)
     };
 
     for (const emp of sortedEmployees) {

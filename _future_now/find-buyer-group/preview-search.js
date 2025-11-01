@@ -19,9 +19,10 @@ class PreviewSearch {
    * @param {number} maxPages - Maximum pages to search
    * @param {string} filteringLevel - Filtering level: 'none', 'light', 'moderate', 'strict'
    * @param {string} productCategory - Product category for filtering
+   * @param {object} customFiltering - Custom filtering configuration (optional)
    * @returns {Array} Array of employee previews
    */
-  async discoverAllStakeholders(companyData, maxPages = 5, filteringLevel = 'moderate', productCategory = 'sales') {
+  async discoverAllStakeholders(companyData, maxPages = 5, filteringLevel = 'moderate', productCategory = 'sales', customFiltering = null) {
     console.log(`🔍 Discovering stakeholders for: ${companyData.companyName || companyData.website}`);
     console.log(`📊 Filtering level: ${filteringLevel}, Product: ${productCategory}`);
     
@@ -57,10 +58,25 @@ class PreviewSearch {
       console.log(`📊 No filtering applied - analyzing all ${allEmployeesRaw.length} employees`);
       relevantEmployees = allEmployeesRaw;
     } else {
-      // Apply product-specific filtering
-      const filterConfig = this.getProductSpecificFiltering(productCategory, filteringLevel);
+      // Use custom filtering if provided, otherwise use product-specific filtering
+      let filterConfig;
+      if (customFiltering && (customFiltering.departments || customFiltering.titles)) {
+        console.log('📊 Using personalized filtering configuration');
+        filterConfig = {
+          primary: customFiltering.departments?.primary || [],
+          secondary: customFiltering.departments?.secondary || [],
+          exclude: customFiltering.departments?.exclude || [],
+          titles: {
+            primary: customFiltering.titles?.primary || [],
+            secondary: customFiltering.titles?.secondary || [],
+            exclude: customFiltering.titles?.exclude || []
+          }
+        };
+      } else {
+        filterConfig = this.getProductSpecificFiltering(productCategory, filteringLevel);
+      }
       relevantEmployees = allEmployeesRaw.filter(emp => this.isRelevantEmployee(emp, filterConfig));
-      console.log(`📊 Filtered to ${relevantEmployees.length} relevant employees (${filteringLevel} filtering)`);
+      console.log(`📊 Filtered to ${relevantEmployees.length} relevant employees (${customFiltering ? 'personalized' : filteringLevel} filtering)`);
     }
     
     // Deduplicate and return

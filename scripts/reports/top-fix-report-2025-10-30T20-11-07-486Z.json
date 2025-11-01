@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-10-30T20:11:07.485Z",
+  "fixedRecords": [],
+  "errors": [
+    {
+      "person": "Carl Darnell",
+      "error": "\nInvalid `prisma.people.findFirst()` invocation in\nC:\\Users\\ross\\Development\\adrata\\scripts\\fix-top-incorrect-records.js:51:42\n\n  48 \n  49 try {\n  50   // Find Carl Darnell\n→ 51   const person = await prisma.people.findFirst({\n         where: {\n           workspaceId: \"01K75ZD7DWHG1XF16HAF2YVKCK\",\n           OR: [\n             {\n               fullName: {\n                 contains: \"Carl Darnell\",\n                 mode: \"insensitive\"\n               }\n             },\n             {\n               name: {\n                 contains: \"Carl Darnell\",\n                 mode: \"insensitive\"\n               }\n             }\n           ]\n         }\n       })\n\nUnknown argument `name`. Did you mean `state`? Available options are marked with ?."
+    },
+    {
+      "person": "Scott Crawford",
+      "error": "\nInvalid `prisma.people.findFirst()` invocation in\nC:\\Users\\ross\\Development\\adrata\\scripts\\fix-top-incorrect-records.js:121:42\n\n  118 \n  119 try {\n  120   // Find Scott Crawford\n→ 121   const person = await prisma.people.findFirst({\n          where: {\n            workspaceId: \"01K75ZD7DWHG1XF16HAF2YVKCK\",\n            OR: [\n              {\n                fullName: {\n                  contains: \"Scott Crawford\",\n                  mode: \"insensitive\"\n                }\n              },\n              {\n                name: {\n                  contains: \"Scott Crawford\",\n                  mode: \"insensitive\"\n                }\n              }\n            ]\n          }\n        })\n\nUnknown argument `name`. Did you mean `state`? Available options are marked with ?."
+    },
+    {
+      "person": "Michael Morgan",
+      "error": "\nInvalid `prisma.people.findFirst()` invocation in\nC:\\Users\\ross\\Development\\adrata\\scripts\\fix-top-incorrect-records.js:192:42\n\n  189 \n  190 try {\n  191   // Find Michael Morgan\n→ 192   const person = await prisma.people.findFirst({\n          where: {\n            workspaceId: \"01K75ZD7DWHG1XF16HAF2YVKCK\",\n            OR: [\n              {\n                fullName: {\n                  contains: \"Michael Morgan\",\n                  mode: \"insensitive\"\n                }\n              },\n              {\n                name: {\n                  contains: \"Michael Morgan\",\n                  mode: \"insensitive\"\n                }\n              }\n            ]\n          }\n        })\n\nUnknown argument `name`. Did you mean `state`? Available options are marked with ?."
+    },
+    {
+      "person": "Miles Brusherd",
+      "error": "\nInvalid `prisma.people.findFirst()` invocation in\nC:\\Users\\ross\\Development\\adrata\\scripts\\fix-top-incorrect-records.js:262:42\n\n  259 \n  260 try {\n  261   // Find Miles Brusherd (might be \"MBA Miles Brusherd\")\n→ 262   const person = await prisma.people.findFirst({\n          where: {\n            workspaceId: \"01K75ZD7DWHG1XF16HAF2YVKCK\",\n            OR: [\n              {\n                fullName: {\n                  contains: \"Miles Brusherd\",\n                  mode: \"insensitive\"\n                }\n              },\n              {\n                name: {\n                  contains: \"Miles Brusherd\",\n                  mode: \"insensitive\"\n                }\n              },\n              {\n                fullName: {\n                  contains: \"MBA Miles Brusherd\",\n                  mode: \"insensitive\"\n                }\n              }\n            ]\n          }\n        })\n\nUnknown argument `name`. Did you mean `state`? Available options are marked with ?."
+    }
+  ],
+  "summary": {
+    "totalFixed": 0,
+    "totalErrors": 4
+  }
+}

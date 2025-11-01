@@ -118,13 +118,6 @@ const STACK_COLUMNS = [
     description: 'In progress'
   },
   {
-    key: 'shipped',
-    label: 'Built',
-    color: 'bg-white border-gray-300',
-    icon: RocketLaunchIcon,
-    description: 'Ready for QA'
-  },
-  {
     key: 'qa1',
     label: 'QA1',
     color: 'bg-white border-gray-300',
@@ -144,6 +137,13 @@ const STACK_COLUMNS = [
     color: 'bg-white border-gray-300',
     icon: CheckCircleIcon,
     description: 'Fully completed'
+  },
+  {
+    key: 'shipped',
+    label: 'Shipped',
+    color: 'bg-white border-gray-300',
+    icon: RocketLaunchIcon,
+    description: 'Shipped to production'
   }
 ];
 
@@ -389,10 +389,30 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   };
 
   return (
-    <div 
-      ref={setScrollContainer}
-      className="flex gap-6 px-2 py-1 h-full overflow-x-auto"
-    >
+    <>
+      <style>{`
+        .stacks-kanban-scroll::-webkit-scrollbar {
+          height: 8px;
+        }
+        .stacks-kanban-scroll::-webkit-scrollbar-track {
+          background: #d1d5db;
+        }
+        .stacks-kanban-scroll::-webkit-scrollbar-thumb {
+          background: #6b7280;
+          border-radius: 4px;
+        }
+        .stacks-kanban-scroll::-webkit-scrollbar-thumb:hover {
+          background: #4b5563;
+        }
+      `}</style>
+      <div 
+        ref={setScrollContainer}
+        className="stacks-kanban-scroll flex gap-6 px-2 py-1 h-full overflow-x-auto"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#6b7280 #d1d5db'
+        }}
+      >
       {STACK_COLUMNS.map((column) => {
         const cards = groupedCards[column.key] || [];
         const Icon = column.icon;
@@ -503,6 +523,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
           </div>
         );
       })}
-    </div>
+      </div>
+    </>
   );
 }

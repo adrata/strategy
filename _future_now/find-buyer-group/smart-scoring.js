@@ -8,10 +8,11 @@
 const { calculateOverallConfidence } = require('./utils');
 
 class SmartScoring {
-  constructor(companyIntelligence, dealSize, productCategory = 'sales') {
+  constructor(companyIntelligence, dealSize, productCategory = 'sales', customFiltering = null) {
     this.intelligence = companyIntelligence;
     this.dealSize = dealSize;
     this.productCategory = productCategory;
+    this.customFiltering = customFiltering;
   }
 
   /**
@@ -127,6 +128,40 @@ class SmartScoring {
   scoreDepartmentFit(employee) {
     const dept = employee.department?.toLowerCase() || '';
     const title = employee.title?.toLowerCase() || '';
+    
+    // Use custom filtering if provided
+    if (this.customFiltering && this.customFiltering.departments) {
+      const primary = this.customFiltering.departments.primary || [];
+      const secondary = this.customFiltering.departments.secondary || [];
+      
+      // Check primary departments
+      if (primary.some(d => dept.includes(d.toLowerCase()) || title.includes(d.toLowerCase()))) {
+        return 10;
+      }
+      
+      // Check secondary departments
+      if (secondary.some(d => dept.includes(d.toLowerCase()) || title.includes(d.toLowerCase()))) {
+        return 8;
+      }
+      
+      // Check primary titles
+      if (this.customFiltering.titles?.primary) {
+        const primaryTitles = this.customFiltering.titles.primary || [];
+        if (primaryTitles.some(t => title.includes(t.toLowerCase()))) {
+          return 9;
+        }
+      }
+      
+      // Check secondary titles
+      if (this.customFiltering.titles?.secondary) {
+        const secondaryTitles = this.customFiltering.titles.secondary || [];
+        if (secondaryTitles.some(t => title.includes(t.toLowerCase()))) {
+          return 7;
+        }
+      }
+      
+      return 4; // Default for custom filtering
+    }
     
     // Product-specific relevance (for Sales software)
     if (this.productCategory === 'sales') {
@@ -294,6 +329,28 @@ class SmartScoring {
     }
     
     let relevance = 0;
+    
+    // Use custom filtering if provided
+    if (this.customFiltering && this.customFiltering.departments) {
+      const primary = this.customFiltering.departments.primary || [];
+      const secondary = this.customFiltering.departments.secondary || [];
+      
+      if (primary.some(d => dept.includes(d.toLowerCase()) || title.includes(d.toLowerCase()))) {
+        relevance += 0.5;
+      }
+      if (secondary.some(d => dept.includes(d.toLowerCase()) || title.includes(d.toLowerCase()))) {
+        relevance += 0.3;
+      }
+      
+      if (this.customFiltering.titles?.primary) {
+        const primaryTitles = this.customFiltering.titles.primary || [];
+        if (primaryTitles.some(t => title.includes(t.toLowerCase()))) {
+          relevance += 0.4;
+        }
+      }
+      
+      return Math.min(relevance, 1.0);
+    }
     
     // Product-specific relevance calculation
     if (this.productCategory === 'sales') {

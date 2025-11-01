@@ -86,18 +86,22 @@ export const PipelineView = React.memo(function PipelineView({
   // Check if we're in demo mode to set appropriate defaults
   const isDemoMode = typeof window !== "undefined" && window.location.pathname.startsWith('/demo/');
   
+  // Get workspace context at component level
+  const workspaceName = user?.workspaces?.find(w => w['id'] === user?.activeWorkspaceId)?.['name'] || '';
+  
+  // Check if we're in pinpoint workspace
+  const isPinpointWorkspace = workspaceName?.toLowerCase() === 'pinpoint' || 
+                              user?.activeWorkspaceId === '01K90EQWJCCN2JDMRQF12F49GN';
+  
   const [isSpeedrunVisible, setIsSpeedrunVisible] = useState(true);
   const [isOpportunitiesVisible, setIsOpportunitiesVisible] = useState(!isDemoMode); // true for production, false for demo
   const [isProspectsVisible, setIsProspectsVisible] = useState(!isDemoMode); // true for production, false for demo
   const [isLeadsVisible, setIsLeadsVisible] = useState(!isDemoMode); // true for production, false for demo
   const [isCustomersVisible, setIsCustomersVisible] = useState(false); // Hidden for this workspace
-  const [isPartnersVisible, setIsPartnersVisible] = useState(!isDemoMode); // true for production, false for demo
+  const [isPartnersVisible, setIsPartnersVisible] = useState(!isDemoMode && !isPinpointWorkspace); // false for pinpoint workspace, false for demo
   // Panel visibility is now managed by useRevenueOSUI context
   const [isSpeedrunEngineModalOpen, setIsSpeedrunEngineModalOpen] = useState(false);
   const [timeframeFilter, setTimeframeFilter] = useState<string>('now');
-  
-  // Get workspace context at component level
-  const workspaceName = user?.workspaces?.find(w => w['id'] === user?.activeWorkspaceId)?.['name'] || '';
   
   // Section-specific default visible columns with workspace-specific configuration
   const getDefaultVisibleColumns = (section: string): string[] => {
@@ -106,31 +110,47 @@ export const PipelineView = React.memo(function PipelineView({
     const sectionConfig = getSectionColumns(currentWorkspaceId, section, workspaceName);
     
     // Use workspace-specific column display names if available, otherwise use defaults
-    if (sectionConfig.columns) {
-      return sectionConfig.columns;
+    let columns = sectionConfig.columns;
+    
+    if (!columns) {
+      // Fallback to default configuration (display names)
+      switch (section) {
+        case 'speedrun':
+          columns = ['Rank', 'Person', 'Company', 'Stage', 'Last Action', 'Next Action'];
+          break;
+        case 'companies':
+          columns = ['Company', 'Last Action', 'Next Action'];
+          break;
+        case 'leads':
+          columns = ['Name', 'Company', 'State', 'Title', 'Email', 'Last Action', 'Next Action'];
+          break;
+        case 'prospects':
+          columns = ['Name', 'Company', 'Title', 'Last Action', 'Next Action'];
+          break;
+        case 'opportunities':
+          columns = ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action'];
+          break;
+        case 'people':
+          columns = ['Name', 'Company', 'Title', 'Last Action', 'Next Action'];
+          break;
+        case 'clients':
+          columns = ['Rank', 'Company', 'Industry', 'Status', 'ARR', 'Health Score', 'Last Action'];
+          break;
+        case 'partners':
+          columns = ['Rank', 'Partner', 'Type', 'Relationship', 'Strength', 'Last Action'];
+          break;
+        default:
+          columns = ['Rank', 'Company', 'Name', 'Title', 'Last Action'];
+      }
     }
     
-    // Fallback to default configuration (display names)
-    switch (section) {
-      case 'speedrun':
-        return ['Rank', 'Person', 'Company', 'Stage', 'Last Action', 'Next Action'];
-      case 'companies':
-        return ['Company', 'Last Action', 'Next Action'];
-      case 'leads':
-        return ['Name', 'Company', 'State', 'Title', 'Email', 'Last Action', 'Next Action'];
-      case 'prospects':
-        return ['Name', 'Company', 'Title', 'Last Action', 'Next Action'];
-      case 'opportunities':
-        return ['Rank', 'Name', 'Account', 'Amount', 'Stage', 'Probability', 'Close Date', 'Last Action'];
-      case 'people':
-        return ['Name', 'Company', 'Title', 'Last Action', 'Next Action'];
-      case 'clients':
-        return ['Rank', 'Company', 'Industry', 'Status', 'ARR', 'Health Score', 'Last Action'];
-      case 'partners':
-        return ['Rank', 'Partner', 'Type', 'Relationship', 'Strength', 'Last Action'];
-      default:
-        return ['Rank', 'Company', 'Name', 'Title', 'Last Action'];
+    // CRITICAL FIX: Ensure Company column is always included for People and Leads
+    if ((section === 'people' || section === 'leads') && !columns.includes('Company')) {
+      console.log(`🔧 [COLUMN FIX] Adding missing Company column to ${section} section`);
+      columns = ['Name', 'Company', ...columns.filter(col => col !== 'Name')];
     }
+    
+    return columns;
   };
   
   // Initialize persistence hook with section-specific defaults

@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-10-30T20:11:45.455Z",
+  "fixedRecords": [
+    {
+      "name": "Carl Darnell",
+      "id": "01K7DWFN3H9NWWXDMJ505VFX4H",
+      "fixes": [
+        "title",
+        "linkedin",
+        "coresignal_data"
+      ]
+    },
+    {
+      "name": "Scott Crawford",
+      "id": "01K7DWGCMPBR4XNCJR4X4RSC15",
+      "fixes": [
+        "title",
+        "linkedin",
+        "coresignal_data"
+      ]
+    },
+    {
+      "name": "Michael Morgan",
+      "id": "01K7DWGYA4D1TJ71MVE4QXYC2X",
+      "fixes": [
+        "title",
+        "linkedin",
+        "coresignal_data"
+      ]
+    },
+    {
+      "name": "MBA Miles Brusherd",
+      "id": "01K7DWJ9WRC28KFCN3XZ9YBD6K",
+      "fixes": [
+        "title"
+      ]
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "totalFixed": 4,
+    "totalErrors": 0
+  }
+}

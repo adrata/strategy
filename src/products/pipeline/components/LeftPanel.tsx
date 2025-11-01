@@ -111,13 +111,17 @@ function PipelineSections({
     getUserRestrictions(userId, authUser.email, workspaceName) : 
     { hasRestrictions: false, disabledFeatures: [], allowedSections: {} };
 
+  // Check if we're in pinpoint workspace
+  const isPinpointWorkspace = workspaceName?.toLowerCase() === 'pinpoint' || 
+                              workspaceId === '01K90EQWJCCN2JDMRQF12F49GN';
+  
   // Override feature access hooks with user restrictions (synchronous check)
   const shouldShowChronicle = hasChronicle && (!userRestrictions.hasRestrictions || 
     !userRestrictions.disabledFeatures.includes('CHRONICLE'));
   const shouldShowMetrics = hasMetrics && (!userRestrictions.hasRestrictions || 
     !userRestrictions.disabledFeatures.includes('METRICS'));
-  const shouldShowPartners = !userRestrictions.hasRestrictions || 
-    (userRestrictions.allowedSections['pipeline']?.includes('partners') ?? false);
+  const shouldShowPartners = !isPinpointWorkspace && (!userRestrictions.hasRestrictions || 
+    (userRestrictions.allowedSections['pipeline']?.includes('partners') ?? false));
   const shouldShowClients = !userRestrictions.hasRestrictions || 
     (userRestrictions.allowedSections['pipeline']?.includes('clients') ?? false);
   
@@ -756,7 +760,7 @@ function PipelineSections({
     {
       id: "opportunities",
       name: "Opportunities",
-      description: "Real Pipeline",
+      description: "Real Workstream",
       count: loading ? (
         <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
       ) : (() => {
@@ -1012,7 +1016,7 @@ export function PipelineLeftPanelStandalone({
   setIsLeadsVisible,
   isCustomersVisible = false, // Hidden by default
   setIsCustomersVisible,
-  isPartnersVisible = true,
+  isPartnersVisible = false, // Hidden by default (will be overridden for non-pinpoint workspaces)
   setIsPartnersVisible
 }: PipelineLeftPanelStandaloneProps) {
   // Get auth context to ensure we have proper workspace/user before loading
@@ -1254,7 +1258,7 @@ export function PipelineLeftPanelStandalone({
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Pipeline</span>
+              <span className="text-xs font-medium text-[var(--muted)]">Workstream</span>
               <span className="text-xs font-semibold text-black">
                 {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
                   <div className="w-8 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
@@ -1326,7 +1330,7 @@ export function PipelineLeftPanelStandalone({
         </div>
       </div>
 
-      {/* Scrollable Middle Section - Pipeline Sections */}
+      {/* Scrollable Middle Section - Workstream Sections */}
       <div className="flex-1 overflow-y-auto invisible-scrollbar px-2">
         <PipelineSections
           activeSection={activeSection}
@@ -1360,9 +1364,11 @@ export function PipelineLeftPanelStandalone({
                 ? `${user.firstName} ${user.lastName}` 
                 : user.firstName && user.firstName.trim()
                 ? user.firstName
-                : user.name}
+                : user.name ? (user.name.charAt(0).toUpperCase() + user.name.slice(1)) : 'User'}
             </div>
-            <div className="text-xs text-[var(--muted)]">{workspace?.name || workspaceName || 'Adrata'}</div>
+            <div className="text-xs text-[var(--muted)]">
+              {(workspace?.name || workspaceName || 'Adrata').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}
+            </div>
           </div>
         </button>
       </div>

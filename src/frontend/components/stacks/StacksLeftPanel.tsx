@@ -3,7 +3,7 @@
 /**
  * Stacks Left Panel Component
  * 
- * Left navigation panel for Stacks section with simple Sell/Build sections.
+ * Left navigation panel for Stacks section with Kanban, Backlog, and Deep Backlog.
  * Follows 2025 best practices with proper accessibility and performance.
  */
 
@@ -27,53 +27,26 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<any>;
   description: string;
-  category: 'sell' | 'build';
 }
 
 const navigationItems: NavigationItem[] = [
-  // Sell section
   {
-    id: 'stacks',
-    label: 'Pipeline',
+    id: 'kanban',
+    label: 'Kanban',
     icon: QueueListIcon,
-    description: 'Visual task management',
-    category: 'sell'
+    description: 'Visual task management'
   },
   {
     id: 'backlog',
     label: 'Backlog',
     icon: ClipboardDocumentListIcon,
-    description: 'Task prioritization and planning',
-    category: 'sell'
+    description: 'Task prioritization and planning'
   },
   {
     id: 'deep-backlog',
     label: 'Deep Backlog',
     icon: ArchiveBoxIcon,
-    description: 'Long-term ideas and feedback capture',
-    category: 'sell'
-  },
-  // Build section
-  {
-    id: 'stacks-build',
-    label: 'Pipeline',
-    icon: QueueListIcon,
-    description: 'Visual task management',
-    category: 'build'
-  },
-  {
-    id: 'backlog-build',
-    label: 'Backlog',
-    icon: ClipboardDocumentListIcon,
-    description: 'Task prioritization and planning',
-    category: 'build'
-  },
-  {
-    id: 'deep-backlog-build',
-    label: 'Deep Backlog',
-    icon: ArchiveBoxIcon,
-    description: 'Long-term ideas and feedback capture',
-    category: 'build'
+    description: 'Long-term ideas and feedback capture'
   }
 ];
 
@@ -126,32 +99,25 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   const handleNavigation = (section: string) => {
     onSubSectionChange(section);
     
-    // Determine category based on section
-    let category = 'sell'; // default
-    if (section.includes('-build')) {
-      category = 'build';
-      section = section.replace('-build', ''); // remove -build suffix
-    }
-    
-    // Map section to URL path (category first, then section)
+    // Map section to URL path
     let urlPath = section;
-    if (section === 'stacks') {
-      urlPath = 'pipeline';
+    if (section === 'kanban') {
+      urlPath = 'kanban';
+    } else if (section === 'backlog') {
+      urlPath = 'backlog';
+    } else if (section === 'deep-backlog') {
+      urlPath = 'deep-backlog';
     }
     
-    router.push(`/${workspaceSlug}/stacks/${category}/${urlPath}`);
+    router.push(`/${workspaceSlug}/stacks/${urlPath}`);
   };
 
   const handleProfileClick = () => {
     setIsProfilePanelVisible(!isProfilePanelVisible);
   };
 
-  // Group items by category
-  const sellItems = navigationItems.filter(item => item.category === 'sell');
-  const buildItems = navigationItems.filter(item => item.category === 'build');
-  
-  // For Notary Everyday, show both Sell and Build sections with category headers
-  const displayItems = [...sellItems, ...buildItems];
+  // All navigation items are displayed (no category grouping)
+  const displayItems = navigationItems;
 
   return (
     <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
@@ -196,82 +162,34 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         </div>
       </div>
 
-      {/* Scrollable Middle Section - Navigation with vertical line */}
+      {/* Scrollable Middle Section - Navigation */}
       <div className="flex-1 overflow-y-auto invisible-scrollbar px-2">
         <nav className="space-y-1" role="navigation" aria-label="Stacks navigation">
-          {/* Sell Section */}
-          <div className="space-y-1">
-            <div className="text-xs font-medium text-[var(--muted)] px-3 py-1">
-              Sell
-            </div>
-            <div className="relative">
-              <div className="absolute left-3 top-0 bottom-0 w-px bg-[var(--border)]"></div>
-              <div className="ml-4 space-y-1">
-                {sellItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeSubSection === item.id;
-                  
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleNavigation(item.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                        isActive
-                          ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                          : 'hover:bg-[var(--panel-background)] text-gray-700'
-                      }`}
-                      aria-current={isActive ? 'page' : undefined}
-                      aria-describedby={`${item.id}-description`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-sm">{item.label}</span>
-                      </div>
-                      <div className="text-xs text-[var(--muted)] mt-1">
-                        {item.description}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Build Section */}
-          <div className="space-y-1">
-            <div className="text-xs font-medium text-[var(--muted)] px-3 py-1">
-              Build
-            </div>
-            <div className="relative">
-              <div className="absolute left-3 top-0 bottom-0 w-px bg-[var(--border)]"></div>
-              <div className="ml-4 space-y-1">
-                {buildItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeSubSection === item.id;
-                  
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleNavigation(item.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                        isActive
-                          ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                          : 'hover:bg-[var(--panel-background)] text-gray-700'
-                      }`}
-                      aria-current={isActive ? 'page' : undefined}
-                      aria-describedby={`${item.id}-description`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-sm">{item.label}</span>
-                      </div>
-                      <div className="text-xs text-[var(--muted)] mt-1">
-                        {item.description}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          {displayItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeSubSection === item.id;
+            
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavigation(item.id)}
+                className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                  isActive
+                    ? 'bg-[var(--hover)] text-[var(--foreground)]'
+                    : 'hover:bg-[var(--panel-background)] text-gray-700'
+                }`}
+                aria-current={isActive ? 'page' : undefined}
+                aria-describedby={`${item.id}-description`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-sm">{item.label}</span>
+                </div>
+                <div className="text-xs text-[var(--muted)] mt-1">
+                  {item.description}
+                </div>
+              </button>
+            );
+          })}
         </nav>
       </div>
 

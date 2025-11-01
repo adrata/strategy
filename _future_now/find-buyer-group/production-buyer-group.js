@@ -12,6 +12,9 @@ const { PrismaClient } = require('@prisma/client');
 
 // Import the main pipeline orchestrator
 const { SmartBuyerGroupPipeline } = require('./index');
+const { BuyerGroupInterview } = require('./interview-config');
+const { AIConfigGenerator } = require('./ai-config-generator');
+const { ConfigStorage } = require('./config-storage');
 
 class ProductionBuyerGroupPipeline {
   constructor(options = {}) {
@@ -21,26 +24,75 @@ class ProductionBuyerGroupPipeline {
     this.targetCompany = options.linkedinUrl;
     this.maxPages = options.maxPages || 5;
     this.startTime = Date.now();
+    this.configStorage = new ConfigStorage();
+    this.personalizedConfig = null;
   }
 
   async run() {
     console.log('🚀 Production Buyer Group Discovery Pipeline');
     console.log(`📊 Target: ${this.targetCompany}`);
-    console.log(`💰 Deal Size: $${this.dealSize.toLocaleString()}`);
-    console.log(`📄 Max Pages: ${this.maxPages}`);
     console.log('─'.repeat(60));
     
     try {
-      // Initialize the smart pipeline
-      const pipeline = new SmartBuyerGroupPipeline({
+      // Load or create personalized configuration
+      let config = null;
+      if (!this.options.skipInterview) {
+        config = await this.loadOrCreateConfig();
+      } else if (this.options.workspaceId) {
+        // Try to load saved config even with skip-interview flag
+        config = await this.configStorage.loadConfigFromDatabase(
+          this.options.workspaceId,
+          this.prisma
+        );
+      }
+
+      // Merge config with existing options
+      const pipelineOptions = {
+        ...this.options,
         linkedinUrl: this.targetCompany,
-        dealSize: this.dealSize,
         maxPages: this.maxPages,
         prisma: this.prisma
-      });
+      };
+
+      // Apply personalized configuration if available
+      if (config) {
+        this.personalizedConfig = config;
+        pipelineOptions.dealSize = config.dealSizeRange || this.dealSize;
+        pipelineOptions.productCategory = config.productCategory || 'sales';
+        pipelineOptions.productName = config.productName;
+        pipelineOptions.customFiltering = {
+          departments: {
+            primary: config.departmentFiltering?.primaryDepartments || [],
+            secondary: config.departmentFiltering?.secondaryDepartments || [],
+            exclude: config.departmentFiltering?.excludedDepartments || []
+          },
+          titles: {
+            primary: config.titleFiltering?.primaryTitles || [],
+            secondary: config.titleFiltering?.secondaryTitles || []
+          }
+        };
+        pipelineOptions.buyerGroupSize = config.buyerGroupSizing;
+        pipelineOptions.rolePriorities = config.rolePriorities;
+        
+        console.log(`💰 Deal Size: $${pipelineOptions.dealSize.toLocaleString()}`);
+        console.log(`🏷️  Product: ${pipelineOptions.productName || 'N/A'}`);
+        console.log(`📊 Category: ${pipelineOptions.productCategory}`);
+      } else {
+        console.log(`💰 Deal Size: $${this.dealSize.toLocaleString()}`);
+        console.log(`📄 Max Pages: ${this.maxPages}`);
+      }
+      
+      // Initialize the smart pipeline with personalized config
+      const pipeline = new SmartBuyerGroupPipeline(pipelineOptions);
 
       // Execute the 8-stage pipeline
-      const result = await pipeline.run();
+      // Create company object from target company identifier
+      const company = {
+        name: this.extractCompanyName(this.targetCompany),
+        linkedinUrl: this.targetCompany.includes('linkedin.com') ? this.targetCompany : null,
+        website: this.targetCompany.includes('http') && !this.targetCompany.includes('linkedin.com') ? this.targetCompany : null
+      };
+      const result = await pipeline.run(company);
       
       if (!result) {
         console.log('❌ Pipeline failed to produce results');
@@ -61,6 +113,72 @@ class ProductionBuyerGroupPipeline {
       console.error(error.stack);
       throw error;
     }
+  }
+
+  /**
+   * Run personalization interview and generate config
+   * @returns {Promise<object>} Generated configuration
+   */
+  async runPersonalization() {
+    const interview = new BuyerGroupInterview();
+    const responses = await interview.run();
+
+    const generator = new AIConfigGenerator();
+    const config = await generator.generateConfig(responses);
+
+    // Save to database if workspace ID provided
+    if (this.options.workspaceId && !this.options.exportJson) {
+      await this.configStorage.saveConfigToDatabase(
+        this.options.workspaceId,
+        config,
+        this.prisma
+      );
+    }
+
+    // Export to JSON if requested (for TOP)
+    if (this.options.exportJson) {
+      const outputPath = this.options.jsonOutput || null;
+      await this.configStorage.exportConfigToJSON(
+        this.options.workspaceId,
+        config,
+        outputPath
+      );
+    }
+
+    return config;
+  }
+
+  /**
+   * Load saved config or create new one via interview
+   * @returns {Promise<object|null>} Configuration or null
+   */
+  async loadOrCreateConfig() {
+    if (!this.options.workspaceId) {
+      // No workspace ID, just run interview and return config
+      return await this.runPersonalization();
+    }
+
+    // Check for saved config
+    const hasConfig = await this.configStorage.hasSavedConfig(
+      this.options.workspaceId,
+      this.prisma
+    );
+
+    if (hasConfig) {
+      const savedConfig = await this.configStorage.loadConfigFromDatabase(
+        this.options.workspaceId,
+        this.prisma
+      );
+
+      if (savedConfig) {
+        console.log('✅ Using saved buyer group configuration\n');
+        return savedConfig;
+      }
+    }
+
+    // No saved config, run interview
+    console.log('📋 No saved configuration found. Starting personalization interview...\n');
+    return await this.runPersonalization();
   }
 
   displayResults(result) {
@@ -153,7 +271,7 @@ class ProductionBuyerGroupPipeline {
           industry: result.companyIntelligence?.industry || null,
           companySize: result.companyIntelligence?.size || null,
           companyTier: result.companyIntelligence?.companyTier || null,
-          dealSize: this.dealSize || null,
+          dealSize: this.personalizedConfig?.dealSizeRange || this.dealSize || null,
           totalEmployeesFound: result.previewEmployees?.length || 0,
           totalCost: result.costs?.total || 0,
           workspaceId: this.options.workspaceId || null,
@@ -222,6 +340,20 @@ async function main() {
       case 'max-pages':
         options.maxPages = parseInt(value);
         break;
+      case 'workspace-id':
+        options.workspaceId = value;
+        break;
+      case 'skip-interview':
+        options.skipInterview = true;
+        i--; // No value for boolean flags
+        break;
+      case 'export-json':
+        options.exportJson = true;
+        i--; // No value for boolean flags
+        break;
+      case 'json-output':
+        options.jsonOutput = value;
+        break;
       default:
         options[key] = value;
     }
@@ -230,7 +362,13 @@ async function main() {
   // Validate required options
   if (!options.linkedinUrl) {
     console.error('❌ Error: --linkedin-url is required');
-    console.log('Usage: node production-buyer-group.js --linkedin-url "https://linkedin.com/company/example" --deal-size 150000');
+    console.log('\nUsage:');
+    console.log('  Standard (with personalization):');
+    console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..."');
+    console.log('\n  Skip interview (use saved config):');
+    console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..." --skip-interview');
+    console.log('\n  Export JSON (for TOP):');
+    console.log('    node production-buyer-group.js --linkedin-url "..." --workspace-id "..." --export-json --json-output "./config.json"');
     process.exit(1);
   }
   

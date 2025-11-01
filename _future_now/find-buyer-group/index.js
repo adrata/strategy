@@ -22,6 +22,7 @@ class SmartBuyerGroupPipeline {
     this.dealSize = options.dealSize || 150000;
     this.productCategory = options.productCategory || 'sales';
     this.targetCompany = options.targetCompany || options.linkedinUrl;
+    this.options = options; // Store all options for passing to modules
     
     // Initialize modules
     this.companyIntel = new CompanyIntelligence(this.prisma, this.workspaceId);
@@ -72,7 +73,8 @@ class SmartBuyerGroupPipeline {
           },
           params.maxPreviewPages,
           params.filteringLevel,
-          this.productCategory
+          this.productCategory,
+          this.options.customFiltering || null
         );
       });
       
@@ -81,7 +83,7 @@ class SmartBuyerGroupPipeline {
       
       // Stage 3: Smart Scoring & Filtering (free)
       const scoredEmployees = await this.executeStage('smart-scoring', async () => {
-        const scoring = new SmartScoring(intelligence, this.dealSize, this.productCategory);
+        const scoring = new SmartScoring(intelligence, this.dealSize, this.productCategory, this.options.customFiltering || null);
         return scoring.scoreEmployees(previewEmployees);
       });
       
@@ -226,12 +228,14 @@ class SmartBuyerGroupPipeline {
       
       // Stage 5: Select Optimal Group (free)
       const initialBuyerGroup = await this.executeStage('group-selection', async () => {
+        const buyerGroupSize = this.options.buyerGroupSize || params.buyerGroupSize;
         const roleAssignment = new RoleAssignment(
           this.dealSize, 
           intelligence.revenue || 0, 
-          intelligence.employeeCount || 0
+          intelligence.employeeCount || 0,
+          this.options.rolePriorities || null
         );
-        return roleAssignment.selectOptimalBuyerGroup(aiValidatedEmployees, params.buyerGroupSize);
+        return roleAssignment.selectOptimalBuyerGroup(aiValidatedEmployees, buyerGroupSize);
       });
       
       // Stage 6: Cross-Functional Coverage (free)

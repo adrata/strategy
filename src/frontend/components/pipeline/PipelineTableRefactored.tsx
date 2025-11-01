@@ -487,14 +487,41 @@ export function PipelineTable({
                             const company = record['company'];
                             let companyName = '';
                             
+                            // Debug logging for company data
+                            console.log(`🔍 [COMPANY DEBUG] Section: ${section}, Record ID: ${record.id}`, {
+                              company: company,
+                              companyType: typeof company,
+                              companyName: company?.name,
+                              companyNameField: record['companyName'],
+                              fullRecord: {
+                                id: record.id,
+                                name: record.name || record.fullName,
+                                company: record.company,
+                                companyName: record.companyName
+                              }
+                            });
+                            
                             if (typeof company === 'object' && company !== null) {
-                              companyName = company.name || company.companyName || '';
+                              companyName = company.name || company.companyName || company.tradingName || company.legalName || '';
                             } else {
-                              companyName = company || record['companyName'] || '';
+                              companyName = company || record['companyName'] || record['companyName'] || '';
+                            }
+                            
+                            // Additional fallback: try to extract from email domain if no company found
+                            if (!companyName || companyName.trim() === '') {
+                              const email = record['email'] || record['workEmail'] || '';
+                              if (email && email.includes('@')) {
+                                const domain = email.split('@')[1];
+                                if (domain && !domain.includes('gmail.com') && !domain.includes('yahoo.com') && !domain.includes('hotmail.com')) {
+                                  companyName = domain.split('.')[0].replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                }
+                              }
                             }
                             
                             // Show dash for "Unknown Company" or empty values
                             cellContent = (companyName && companyName !== 'Unknown Company' && companyName.trim() !== '') ? companyName : '-';
+                            
+                            console.log(`🏢 [COMPANY RESULT] Final company name: "${cellContent}"`);
                           }
                         }
                         break;
