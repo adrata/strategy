@@ -100,57 +100,76 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     fetchUserProfile();
   }, [authUser?.id]);
 
-  // Fetch story counts
+  // Fetch story and task counts
   useEffect(() => {
-    const fetchStoryCounts = async () => {
+    const fetchStacksCounts = async () => {
       if (!ui.activeWorkspace?.id) {
         setStats({ total: 0, active: 0, completed: 0 });
         setStatsLoading(false);
         return;
       }
 
-      setStatsLoading(true);
-      
       try {
-        const response = await fetch(`/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`, {
+        // Fetch stories
+        const storiesResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`, {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          const stories = data.stories || [];
-          
-          const total = stories.length;
-          // Active = all statuses except 'done' and 'shipped'
-          const active = stories.filter((story: any) => 
-            story.status && story.status !== 'done' && story.status !== 'shipped'
-          ).length;
-          // Completed = 'done' and 'shipped'
-          const completed = stories.filter((story: any) => 
-            story.status === 'done' || story.status === 'shipped'
-          ).length;
+        // Fetch tasks/bugs
+        const tasksResponse = await fetch(`/api/stacks/tasks?workspaceId=${ui.activeWorkspace.id}`, {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-          console.log('📊 [StacksLeftPanel] Story counts:', { total, active, completed, storyCount: stories.length });
-          setStats({ total, active, completed });
+        let stories: any[] = [];
+        let tasks: any[] = [];
+
+        if (storiesResponse.ok) {
+          const storiesData = await storiesResponse.json();
+          stories = storiesData.stories || [];
         } else {
-          // Log the error for debugging
-          const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-          console.error('❌ [StacksLeftPanel] Failed to fetch story counts:', response.status, errorData);
-          // Keep existing stats instead of resetting to 0 on error
-          // This way if the API temporarily fails, we don't lose the last known counts
+          console.warn('⚠️ [StacksLeftPanel] Stories API returned:', storiesResponse.status);
         }
+
+        if (tasksResponse.ok) {
+          const tasksData = await tasksResponse.json();
+          tasks = tasksData.tasks || [];
+        } else {
+          console.warn('⚠️ [StacksLeftPanel] Tasks API returned:', tasksResponse.status);
+        }
+
+        // Combine stories and tasks for totals
+        const allItems = [...stories, ...tasks];
+        const total = allItems.length;
+        
+        // Active = all statuses except 'done' and 'shipped'
+        const active = allItems.filter((item: any) => 
+          item.status && item.status !== 'done' && item.status !== 'shipped'
+        ).length;
+        
+        // Completed = 'done' and 'shipped'
+        const completed = allItems.filter((item: any) => 
+          item.status === 'done' || item.status === 'shipped'
+        ).length;
+
+        console.log('📊 [StacksLeftPanel] Counts:', { total, active, completed, stories: stories.length, tasks: tasks.length });
+
+        setStats({ total, active, completed });
       } catch (error) {
-        console.error('❌ [StacksLeftPanel] Error fetching story counts:', error);
+        console.error('Failed to fetch story/task counts:', error);
         // Keep existing stats instead of resetting to 0 on error
+        // This way if the API temporarily fails, we don't lose the last known counts
       } finally {
         setStatsLoading(false);
       }
     };
 
-    fetchStoryCounts();
+    fetchStacksCounts();
   }, [ui.activeWorkspace?.id]);
 
   // Get current workspace from pathname
