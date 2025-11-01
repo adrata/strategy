@@ -83,6 +83,17 @@ export async function GET(request: NextRequest) {
 
     console.log('🔍 [STACKS API] Query where clause:', JSON.stringify(where, null, 2));
 
+    // First check if there are any projects for this workspace
+    // If no projects exist, return empty array (can't have stories without projects)
+    const projectCount = await prisma.stacksProject.count({
+      where: { workspaceId }
+    });
+
+    if (projectCount === 0) {
+      console.log('ℹ️ [STACKS API] No projects found for workspace, returning empty stories array');
+      return NextResponse.json({ stories: [] });
+    }
+
     // Fetch stories with epic and assignee information
     // Use explicit select to avoid selecting viewType column that may not exist in database
     const stories = await prisma.stacksStory.findMany({
