@@ -107,13 +107,32 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { projectId, title, description, status, priority, product, section } = body;
 
-    if (!workspaceId || !userId || !projectId || !title) {
-      return createErrorResponse('Workspace ID, user ID, project ID, and title are required', 'MISSING_REQUIRED_FIELDS', 400);
+    if (!workspaceId || !userId || !title) {
+      return createErrorResponse('Workspace ID, user ID, and title are required', 'MISSING_REQUIRED_FIELDS', 400);
+    }
+
+    // Auto-create or get project for workspace
+    let finalProjectId = projectId;
+    if (!finalProjectId) {
+      let project = await prisma.stacksProject.findFirst({
+        where: { workspaceId }
+      });
+      
+      if (!project) {
+        project = await prisma.stacksProject.create({
+          data: {
+            workspaceId,
+            name: 'Default Project',
+            description: 'Default project for stacks'
+          }
+        });
+      }
+      finalProjectId = project.id;
     }
 
     const epic = await prisma.stacksEpic.create({
       data: {
-        projectId,
+        projectId: finalProjectId,
         title,
         description,
         status: status || 'todo',

@@ -47,6 +47,25 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ projects });
   } catch (error) {
+    // Handle P2022 error (column does not exist)
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
+      const prismaError = error as any;
+      const columnName = prismaError.meta?.column_name || 'unknown';
+      console.error('❌ [STACKS PROJECTS API] P2022 Error - Column does not exist:', {
+        columnName,
+        meta: prismaError.meta,
+        endpoint: 'GET'
+      });
+      
+      return createErrorResponse(
+        columnName !== 'unknown' 
+          ? `Database column '${columnName}' does not exist. Please run database migrations.`
+          : 'Database schema mismatch. Please run database migrations.',
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+
     return logAndCreateErrorResponse(
       error,
       {
@@ -102,6 +121,27 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ project });
   } catch (error) {
+    console.error('❌ [STACKS PROJECTS API] Error creating project:', error);
+    
+    // Handle P2022 error (column does not exist)
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
+      const prismaError = error as any;
+      const columnName = prismaError.meta?.column_name || 'unknown';
+      console.error('❌ [STACKS PROJECTS API] P2022 Error - Column does not exist:', {
+        columnName,
+        meta: prismaError.meta,
+        endpoint: 'POST'
+      });
+      
+      return createErrorResponse(
+        columnName !== 'unknown' 
+          ? `Database column '${columnName}' does not exist. Please run database migrations.`
+          : 'Database schema mismatch. Please run database migrations.',
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+
     return logAndCreateErrorResponse(
       error,
       {
