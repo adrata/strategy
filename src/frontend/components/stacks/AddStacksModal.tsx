@@ -277,42 +277,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     const workspaceId = ui.activeWorkspace?.id;
     if (!workspaceId || !user?.id) return;
 
-    // Get or create project first
-    const projectResponse = await fetch(`/api/stacks/projects?workspaceId=${workspaceId}`, {
-      credentials: 'include'
-    });
-
-    let projectId;
-    if (projectResponse.ok) {
-      const projectsData = await projectResponse.json();
-      const projects = projectsData.projects || [];
-      if (projects.length > 0) {
-        projectId = projects[0].id;
-      } else {
-        const createProjectResponse = await fetch('/api/stacks/projects', {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            workspaceId,
-            userId: user.id,
-            name: 'Default Project',
-            description: 'Default project for stacks'
-          })
-        });
-        if (createProjectResponse.ok) {
-          const newProject = await createProjectResponse.json();
-          projectId = newProject.project?.id;
-        }
-      }
-    }
-
-    if (!projectId) {
-      alert('Failed to get or create project');
-      return;
-    }
-
     try {
+      // API will auto-create project if needed
       const response = await fetch('/api/stacks/epics', {
         method: 'POST',
         credentials: 'include',
@@ -320,7 +286,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         body: JSON.stringify({
           workspaceId,
           userId: user.id,
-          projectId,
           title: newEpicTitle,
           status: 'todo'
         })
@@ -357,72 +322,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     const workspaceId = ui.activeWorkspace?.id;
     if (!workspaceId || !user?.id) return;
 
-    // Get or create project first
-    const projectResponse = await fetch(`/api/stacks/projects?workspaceId=${workspaceId}`, {
-      credentials: 'include'
-    });
-
-    let projectId;
-    if (projectResponse.ok) {
-      const projectsData = await projectResponse.json();
-      const projects = projectsData.projects || [];
-      if (projects.length > 0) {
-        projectId = projects[0].id;
-      } else {
-        const createProjectResponse = await fetch('/api/stacks/projects', {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            workspaceId,
-            userId: user.id,
-            name: 'Default Project',
-            description: 'Default project for stacks'
-          })
-        });
-        if (createProjectResponse.ok) {
-          const newProject = await createProjectResponse.json();
-          projectId = newProject.project?.id;
-        } else {
-          const errorData = await createProjectResponse.json().catch(() => ({ error: 'Unknown error' }));
-          console.error('Failed to create project:', errorData);
-          alert(`Failed to create project: ${errorData.error || 'Unknown error'}`);
-          return;
-        }
-      }
-    } else {
-      // Handle project fetch error
-      const errorData = await projectResponse.json().catch(() => ({ error: 'Unknown error' }));
-      console.error('Failed to fetch projects:', errorData);
-      // Try to create project anyway if fetch failed
-      const createProjectResponse = await fetch('/api/stacks/projects', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          workspaceId,
-          userId: user.id,
-          name: 'Default Project',
-          description: 'Default project for stacks'
-        })
-      });
-      if (createProjectResponse.ok) {
-        const newProject = await createProjectResponse.json();
-        projectId = newProject.project?.id;
-      } else {
-        const createErrorData = await createProjectResponse.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Failed to create project after fetch error:', createErrorData);
-        alert(`Failed to get or create project: ${createErrorData.error || 'Unknown error'}`);
-        return;
-      }
-    }
-
-    if (!projectId) {
-      alert('Failed to get or create project');
-      return;
-    }
-
     try {
+      // API will auto-create project if needed
       const response = await fetch('/api/stacks/epics', {
         method: 'POST',
         credentials: 'include',
@@ -430,7 +331,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         body: JSON.stringify({
           workspaceId,
           userId: user.id,
-          projectId,
           title: newEpochTitle,
           status: 'todo',
           isEpoch: true
@@ -479,92 +379,9 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         return;
       }
 
-      // Get or create project
-      const projectResponse = await fetch(`/api/stacks/projects?workspaceId=${workspaceId}`, {
-        credentials: 'include'
-      });
-
-      let projectId;
-      if (projectResponse.ok) {
-        const projectsData = await projectResponse.json();
-        const projects = projectsData.projects || [];
-        if (projects.length > 0) {
-          projectId = projects[0].id;
-        } else {
-          // No projects exist, create one
-          const userId = user?.id || '';
-          if (!userId) {
-            alert('User ID not found');
-            setIsLoading(false);
-            return;
-          }
-          const createProjectResponse = await fetch('/api/stacks/projects', {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              workspaceId,
-              userId,
-              name: 'Default Project',
-              description: 'Default project for stacks'
-            })
-          });
-          if (createProjectResponse.ok) {
-            const newProject = await createProjectResponse.json();
-            projectId = newProject.project?.id;
-          } else {
-            // Handle project creation error
-            const errorData = await createProjectResponse.json().catch(() => ({ error: 'Unknown error' }));
-            console.error('Failed to create project:', errorData);
-            alert(`Failed to create project: ${errorData.error || 'Unknown error'}`);
-            setIsLoading(false);
-            return;
-          }
-        }
-      } else {
-        // Handle project fetch error
-        const errorData = await projectResponse.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Failed to fetch projects:', errorData);
-        // Try to create project anyway if fetch failed
-        const userId = user?.id || '';
-        if (!userId) {
-          alert('User ID not found');
-          setIsLoading(false);
-          return;
-        }
-        const createProjectResponse = await fetch('/api/stacks/projects', {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            workspaceId,
-            userId,
-            name: 'Default Project',
-            description: 'Default project for stacks'
-          })
-        });
-        if (createProjectResponse.ok) {
-          const newProject = await createProjectResponse.json();
-          projectId = newProject.project?.id;
-        } else {
-          const createErrorData = await createProjectResponse.json().catch(() => ({ error: 'Unknown error' }));
-          console.error('Failed to create project after fetch error:', createErrorData);
-          alert(`Failed to get or create project: ${createErrorData.error || 'Unknown error'}`);
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      if (!projectId) {
-        alert('Failed to get or create project');
-        setIsLoading(false);
-        return;
-      }
-
       if (activeWorkType === 'story') {
-        // Create story
+        // Create story - API will auto-create project if needed
         const storyData: any = {
-          projectId,
           title: formData.title,
           description: formData.description || undefined,
           status: 'up-next'
@@ -579,6 +396,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         if (formData.epicId) {
           storyData.epicId = formData.epicId;
         }
+        // Note: projectId is auto-created by API if not provided
 
         const response = await fetch('/api/v1/stacks/stories', {
           method: 'POST',
@@ -604,9 +422,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           alert(errorMessage);
         }
       } else if (activeWorkType === 'bug') {
-        // Create bug as task with type='bug'
+        // Create bug as task with type='bug' - API will auto-create project if needed
         const bugData: any = {
-          projectId,
           title: formData.title,
           description: formData.description || undefined,
           status: 'todo',
@@ -656,7 +473,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         const epicData: any = {
           workspaceId,
           userId,
-          projectId,
+          // projectId will be auto-created by API if not provided
           title: formData.title,
           description: formData.description || undefined,
           status: 'todo'
@@ -707,7 +524,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         const epochData: any = {
           workspaceId,
           userId,
-          projectId,
+          // projectId will be auto-created by API if not provided
           title: formData.title,
           description: formData.description || undefined,
           status: 'todo',

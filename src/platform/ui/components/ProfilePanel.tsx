@@ -30,6 +30,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Check, PanelLeft, Trash2, Pencil } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
+import { CalendarView } from "./CalendarView";
 
 interface ProfilePanelProps {
   user: { name: string; lastName?: string };
@@ -286,8 +287,9 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   // Use detected app or fallback to prop
   const currentApp = getCurrentAppFromPath();
   
-  // State for view mode (main or action list)
-  const [viewMode, setViewMode] = useState<'main' | 'actionList'>('main');
+  // State for view mode (main, action list, or calendar)
+  const [viewMode, setViewMode] = useState<'main' | 'actionList' | 'calendar'>('main');
+  const [previousViewMode, setPreviousViewMode] = useState<'main' | 'actionList'>('main');
   
   // State for action list input
   const [newItemText, setNewItemText] = useState('');
@@ -572,9 +574,17 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setViewMode(viewMode === 'main' ? 'actionList' : 'main')}
+            onClick={() => {
+              if (viewMode === 'calendar') {
+                setViewMode(previousViewMode);
+              } else {
+                const newMode = viewMode === 'main' ? 'actionList' : 'main';
+                setPreviousViewMode(newMode);
+                setViewMode(newMode);
+              }
+            }}
             className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
-            title={viewMode === 'main' ? 'Show action list' : 'Go home'}
+            title={viewMode === 'main' ? 'Show action list' : viewMode === 'calendar' ? 'Go back' : 'Go home'}
           >
             {viewMode === 'main' ? (
               <ListBulletIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
@@ -582,14 +592,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <HomeIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
             )}
           </button>
-          {viewMode === 'actionList' && (
-            <button
-              className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
-              title="Calendar view"
-            >
-              <CalendarIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
-            </button>
-          )}
           <button
             onClick={onClose}
             className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
@@ -603,7 +605,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
       {/* App Navigation */}
       <div className="flex-1 p-3 space-y-4">
         {/* Get Started Section */}
-        {viewMode === 'main' && (
+        {(viewMode === 'main' || viewMode === 'actionList') && (
           <div className="space-y-1">
             <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider px-3">
               Get Started
@@ -700,6 +702,22 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">Grand Central</span>
             </button>
 
+            {/* Calendar */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                viewMode === 'calendar'
+                  ? 'bg-slate-100 text-slate-700' 
+                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+              }`}
+              onClick={() => {
+                setPreviousViewMode(viewMode === 'calendar' ? previousViewMode : (viewMode === 'actionList' ? 'actionList' : 'main'));
+                setViewMode('calendar');
+              }}
+            >
+              <CalendarIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Calendar</span>
+            </button>
+
             {/* Settings */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -728,9 +746,16 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
           </div>
         )}
 
+        {/* Calendar Section */}
+        {viewMode === 'calendar' && (
+          <div className="h-full flex flex-col">
+            <CalendarView onClose={() => setViewMode(previousViewMode)} />
+          </div>
+        )}
+
         {/* Action List Section */}
         {viewMode === 'actionList' && (
-          <div className="space-y-2">
+          <div className="space-y-2 flex flex-col h-full">
             <div className="flex items-center justify-between px-3">
               <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
                 Action List
@@ -767,7 +792,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
             {/* Action List Items */}
             <div 
-              className="max-h-96 overflow-y-auto space-y-1"
+              className="flex-1 overflow-y-auto space-y-1"
               role="list"
               aria-label="Action list items"
               aria-live="polite"
@@ -820,8 +845,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               )}
             </div>
 
-            {/* Add Item Input */}
-            <div className="px-3">
+            {/* Add Item Input - Positioned at bottom */}
+            <div className="px-3 pt-2 pb-3 mt-auto">
               <div className="flex items-center gap-1">
                 <input
                   ref={inputRef}
@@ -837,7 +862,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                 <button
                   onClick={handleAddItem}
                   disabled={!newItemText.trim()}
-                  className="p-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]/50 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center min-w-[32px]"
+                  className="p-1.5 border border-[var(--border)]/50 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]/50 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center min-w-[32px]"
                   aria-label="Add item to action list"
                   title="Add item (Enter)"
                 >
@@ -854,7 +879,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
       {/* Footer Section - Desktop Download */}
       {hasDesktopDownload && (
-        <div className="border-t border-[var(--border)] p-3">
+        <div className="p-3">
           <button
             className="w-full flex items-center px-3 py-2.5 text-sm text-[var(--foreground)] rounded-md hover:bg-[var(--hover-bg)] transition-colors group"
             onClick={handleDownloadDesktopApp}
