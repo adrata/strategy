@@ -363,19 +363,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">RevenueOS</span>
             </button>
 
-            {/* Workshop */}
-            <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'workshop' 
-                  ? 'bg-blue-100 text-blue-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
-              }`}
-              onClick={() => handleNavigation("/workshop")}
-            >
-              <DocumentDuplicateIcon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Workshop</span>
-            </button>
-
             {/* Leonardo */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -387,6 +374,19 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <SparklesIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Leonardo</span>
+            </button>
+
+            {/* Workshop */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'workshop' 
+                  ? 'bg-blue-100 text-blue-700' 
+                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+              }`}
+              onClick={() => handleNavigation("/workshop")}
+            >
+              <DocumentDuplicateIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Workshop</span>
             </button>
 
             {/* Oasis */}

@@ -504,21 +504,33 @@ export function LeonardoChatPanel() {
   };
 
   const getWelcomeMessage = (app: string): string => {
+    // Get user's first name for personalization
+    const getUserFirstName = () => {
+      if (user?.name) {
+        return user.name.split(' ')[0];
+      }
+      return null;
+    };
+    
+    const firstName = getUserFirstName();
+    
     if (currentRecord && recordType) {
       const recordName = currentRecord.name || currentRecord.fullName || 'this record';
       const company = currentRecord.company || currentRecord.companyName || 'their company';
       
+      const personalizedGreeting = firstName ? `Hi, ${firstName}. I'm Leonardo.` : "Hi! I'm Leonardo.";
+      
       switch (recordType) {
         case 'leads':
-          return `Hi! I can see you're looking at ${recordName} from ${company}. What would you like to know about them?`;
+          return `${personalizedGreeting} I can see you're looking at ${recordName} from ${company}. What would you like to know about them?`;
         case 'prospects':
-          return `I see you're working with ${recordName} at ${company}. How can I help you engage with them?`;
+          return `${personalizedGreeting} I see you're working with ${recordName} at ${company}. How can I help you engage with them?`;
         default:
-          return `I can help you with ${recordName}. What would you like to explore?`;
+          return `${personalizedGreeting} I can help you with ${recordName}. What would you like to explore?`;
       }
     }
     
-    return QUICK_ACTIONS[app]?.[0] || "How can I help you today?";
+    return firstName ? `Hi, ${firstName}. I'm Leonardo. What would you like to work on today?` : "Hi! I'm Leonardo. What would you like to work on today?";
   };
 
   const handleQuickAction = (action: string) => {
