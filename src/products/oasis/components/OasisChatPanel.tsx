@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useOasis } from '@/app/[workspace]/(revenue-os)/layout';
+import { useOasisLayout } from '@/app/[workspace]/(revenue-os)/layout';
 import { useUnifiedAuth } from "@/platform/auth";
 import { useOasisMessages } from '@/products/oasis/hooks/useOasisMessages';
 import { useOasisTyping } from '@/products/oasis/hooks/useOasisTyping';
@@ -49,7 +49,7 @@ interface OasisChatPanelProps {
 // Mock data will be replaced with real data from hooks
 
 export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
-  const { activeSection, selectedChannel, setIsVideoCallActive, setVideoCallRoom } = useOasis();
+  const { activeSection, selectedChannel, setIsVideoCallActive, setVideoCallRoom } = useOasisLayout();
   const { user: authUser } = useUnifiedAuth();
   
   // Get workspace ID from auth user

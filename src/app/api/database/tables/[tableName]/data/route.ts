@@ -3,10 +3,15 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 
-/**
 // Required for static export (desktop build)
 export const dynamic = 'force-static';
 
+// Required for static export with dynamic routes
+export async function generateStaticParams() {
+  return []; // Empty array for static export - routes won't be pre-rendered
+}
+
+/**
  * GET /api/database/tables/[tableName]/data
  * 
  * Returns paginated data for a specific table

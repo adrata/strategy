@@ -205,6 +205,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   // State for action list input
   const [newItemText, setNewItemText] = useState('');
   const [removingItemIds, setRemovingItemIds] = useState<Set<string>>(new Set());
+  const [showAllItems, setShowAllItems] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
   // State for sign out confirmation
@@ -641,9 +642,13 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               </h4>
               <div className="flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
                 {completedCount > 0 && (
-                  <span className="font-medium">
+                  <button
+                    onClick={() => setShowAllItems(!showAllItems)}
+                    className="font-medium hover:text-[var(--foreground)] cursor-pointer transition-colors"
+                    title={showAllItems ? "Show only active items" : "Show all items"}
+                  >
                     {completedCount} completed
-                  </span>
+                  </button>
                 )}
                 {remainingCount > 0 && (
                   <span>
@@ -662,7 +667,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   value={newItemText}
                   onChange={(e) => setNewItemText(e.target.value)}
                   onKeyDown={handleInputKeyDown}
-                  placeholder="Add a new item..."
+                  placeholder="Add item..."
                   className="flex-1 px-3 py-2.5 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent focus:shadow-sm transition-all"
                   aria-label="Add action list item"
                   aria-describedby="action-list-input-help"
@@ -670,12 +675,11 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                 <button
                   onClick={handleAddItem}
                   disabled={!newItemText.trim()}
-                  className="px-4 py-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-1.5 shadow-sm hover:shadow-md"
+                  className="p-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center shadow-sm hover:shadow-md"
                   aria-label="Add item to action list"
                   title="Add item (Enter)"
                 >
                   <PlusIcon className="w-4 h-4" />
-                  <span className="text-xs font-medium">Add</span>
                 </button>
               </div>
               <p id="action-list-input-help" className="sr-only">
@@ -715,7 +719,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   </p>
                 </div>
               ) : (
-                activeItems.map((item) => (
+                (showAllItems ? checklistItems : activeItems).map((item) => (
                     <ChecklistItemComponent
                       key={item.id}
                       item={item}
