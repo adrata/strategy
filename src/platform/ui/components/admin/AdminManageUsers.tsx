@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   UsersIcon,
-  MagnifyingGlassIcon,
   FunnelIcon,
   PencilIcon,
   UserMinusIcon,
@@ -227,12 +226,11 @@ export const AdminManageUsers: React.FC = () => {
                   Search
                 </label>
                 <div className="relative">
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
                   <input
                     type="text"
                     value={filters.search}
                     onChange={(e) => handleFilterChange('search', e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Search users..."
                   />
                 </div>

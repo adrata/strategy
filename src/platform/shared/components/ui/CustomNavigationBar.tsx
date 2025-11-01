@@ -288,7 +288,7 @@ export function CustomNavigationBar({
             <input
               type="text"
               placeholder="Search across all apps..."
-              className="block w-full px-3 py-1.5 border border-[var(--border)] rounded-md leading-5 bg-[var(--background)] placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              className="block w-full px-3 py-1.5 border border-[var(--border)] rounded-md leading-5 bg-[var(--background)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setIsSearchFocused(true)}
