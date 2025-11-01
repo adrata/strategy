@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     const workspaceId = context.workspaceId;
     const userId = context.userId;
     const body = await request.json();
-    const { projectId, storyId, title, description, status, priority, type, assigneeId } = body;
+    const { projectId, storyId, title, description, status, priority, type, assigneeId, product, section } = body;
 
     if (!workspaceId || !userId || !projectId || !title) {
       return createErrorResponse('Workspace ID, user ID, project ID, and title are required', 'MISSING_REQUIRED_FIELDS', 400);
@@ -121,7 +121,9 @@ export async function POST(request: NextRequest) {
         status: status || 'todo',
         priority: priority || 'medium',
         type: type || 'task',
-        assigneeId: assigneeId || null
+        assigneeId: assigneeId || null,
+        product: product || null,
+        section: section || null
       },
       include: {
         project: {

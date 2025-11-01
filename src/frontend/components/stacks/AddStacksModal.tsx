@@ -31,6 +31,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     title: '',
     description: '',
     priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
+    product: '' as '' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
+    section: '',
     // Story-specific
     epicId: '',
     // Epic-specific
@@ -100,6 +102,21 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
     }
   }, [isOpen]);
 
+  // RevenueOS sections for the section dropdown
+  const revenueOSSections = [
+    { value: 'speedrun', label: 'Speedrun' },
+    { value: 'leads', label: 'Leads' },
+    { value: 'prospects', label: 'Prospects' },
+    { value: 'opportunities', label: 'Opportunities' },
+    { value: 'clients', label: 'Clients' },
+    { value: 'people', label: 'People' },
+    { value: 'companies', label: 'Companies' },
+    { value: 'partners', label: 'Partners' },
+    { value: 'chronicle', label: 'Chronicle' },
+    { value: 'metrics', label: 'Metrics' },
+    { value: 'dashboard', label: 'Dashboard' }
+  ];
+
   // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
@@ -108,6 +125,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         title: '',
         description: '',
         priority: 'medium',
+        product: '',
+        section: '',
         epicId: '',
         epochId: '',
         goal: '',
@@ -485,6 +504,12 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           priority: formData.priority
         };
 
+        if (formData.product) {
+          storyData.product = formData.product;
+        }
+        if (formData.section) {
+          storyData.section = formData.section;
+        }
         if (formData.epicId) {
           storyData.epicId = formData.epicId;
         }
@@ -515,6 +540,13 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           type: 'bug',
           storyId: null
         };
+
+        if (formData.product) {
+          bugData.product = formData.product;
+        }
+        if (formData.section) {
+          bugData.section = formData.section;
+        }
 
         const response = await fetch('/api/stacks/tasks', {
           method: 'POST',
@@ -550,6 +582,12 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           status: 'todo'
         };
 
+        if (formData.product) {
+          epicData.product = formData.product;
+        }
+        if (formData.section) {
+          epicData.section = formData.section;
+        }
         if (formData.epochId) {
           epicData.epochId = formData.epochId;
         }
@@ -590,6 +628,13 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           goal: formData.goal || undefined,
           timeframe: formData.timeframe || undefined
         };
+
+        if (formData.product) {
+          epochData.product = formData.product;
+        }
+        if (formData.section) {
+          epochData.section = formData.section;
+        }
 
         const response = await fetch('/api/stacks/epics', {
           method: 'POST',
@@ -726,6 +771,53 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none resize-none"
             />
           </div>
+
+          {/* Product Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              Product
+            </label>
+            <select
+              value={formData.product}
+              onChange={(e) => {
+                const newProduct = e.target.value as typeof formData.product;
+                setFormData(prev => ({ 
+                  ...prev, 
+                  product: newProduct,
+                  section: newProduct !== 'RevenueOS' ? '' : prev.section // Clear section if product changes away from RevenueOS
+                }));
+              }}
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
+            >
+              <option value="">Select a product...</option>
+              <option value="RevenueOS">RevenueOS</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Adrata">Adrata</option>
+              <option value="Oasis">Oasis</option>
+              <option value="Stacks">Stacks</option>
+            </select>
+          </div>
+
+          {/* Section Dropdown - Only show when RevenueOS is selected */}
+          {formData.product === 'RevenueOS' && (
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                Section
+              </label>
+              <select
+                value={formData.section}
+                onChange={(e) => setFormData(prev => ({ ...prev, section: e.target.value }))}
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
+              >
+                <option value="">Select a section...</option>
+                {revenueOSSections.map((section) => (
+                  <option key={section.value} value={section.value}>
+                    {section.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Story-specific fields */}
           {activeWorkType === 'story' && (

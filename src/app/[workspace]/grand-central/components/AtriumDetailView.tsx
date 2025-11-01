@@ -113,7 +113,7 @@ export function WorkshopDetailView({ documentId, displayName, onBack, onBackToLi
     <div className="h-full flex flex-col">
       <Breadcrumb items={[
         { label: 'Grand Central', onClick: onBack },
-        { label: 'Atrium', onClick: onBackToList },
+        { label: 'Workshop', onClick: onBackToList },
         { label: 'Documents' }
       ]} />
 

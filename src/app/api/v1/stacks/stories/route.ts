@@ -102,6 +102,9 @@ export async function GET(request: NextRequest) {
       description: story.description,
       status: story.status,
       priority: story.priority,
+      viewType: story.viewType || 'main',
+      product: story.product || null,
+      section: story.section || null,
       assignee: story.assignee ? {
         id: story.assignee.id,
         name: `${story.assignee.firstName} ${story.assignee.lastName}`,
@@ -149,7 +152,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, status, priority, assigneeId, epicId, projectId } = body;
+    const { title, description, status, priority, assigneeId, epicId, projectId, viewType, product, section } = body;
 
     if (!title || !projectId) {
       return createErrorResponse('Title and project ID are required', 'MISSING_REQUIRED_FIELDS', 400);
@@ -164,6 +167,9 @@ export async function POST(request: NextRequest) {
         assigneeId: assigneeId || null,
         epicId: epicId || null,
         projectId,
+        viewType: viewType || 'main',
+        product: product || null,
+        section: section || null,
         // dueDate and tags fields don't exist in schema yet
         createdAt: new Date(),
         updatedAt: new Date()
@@ -218,7 +224,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, title, description, status, priority, assigneeId, epicId } = body;
+    const { id, title, description, status, priority, assigneeId, epicId, viewType, product, section } = body;
 
     if (!id) {
       return createErrorResponse('Story ID is required', 'MISSING_STORY_ID', 400);
@@ -233,6 +239,9 @@ export async function PUT(request: NextRequest) {
         ...(priority && { priority }),
         ...(assigneeId !== undefined && { assigneeId }),
         ...(epicId !== undefined && { epicId }),
+        ...(viewType !== undefined && { viewType }),
+        ...(product !== undefined && { product }),
+        ...(section !== undefined && { section }),
         // dueDate and tags fields don't exist in schema yet
         updatedAt: new Date()
       },

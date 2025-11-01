@@ -402,9 +402,9 @@ export class QueryComplexityAnalyzer {
           score += 25;
           factors.push('grand-central-context');
           break;
-        case 'atrium':
+        case 'workshop':
           score += 10;
-          factors.push('atrium-context');
+          factors.push('workshop-context');
           break;
       }
     }

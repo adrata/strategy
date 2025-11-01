@@ -203,9 +203,9 @@ export function DeepValueReportView({
           setContent(fullContent);
         } else if (chunk.type === 'complete') {
           setIsGenerating(false);
-          // Auto-save to Atrium
+          // Auto-save to Workshop
           try {
-            await deepValueReportService.saveReportToAtrium(report, fullContent);
+            await deepValueReportService.saveReportToWorkshop(report, fullContent);
           } catch (error) {
             console.error('Failed to auto-save report:', error);
           }
@@ -272,7 +272,7 @@ export function DeepValueReportView({
           setEditInstruction('');
           // Auto-save updated content
           try {
-            await deepValueReportService.saveReportToAtrium(report, updatedContent);
+            await deepValueReportService.saveReportToWorkshop(report, updatedContent);
           } catch (error) {
             console.error('Failed to save updated report:', error);
           }

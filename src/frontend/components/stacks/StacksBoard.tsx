@@ -25,6 +25,8 @@ interface StackCard {
   priority: 'low' | 'medium' | 'high' | 'urgent';
   status: 'up-next' | 'in-progress' | 'shipped' | 'qa1' | 'qa2' | 'built';
   viewType?: 'main' | 'list' | 'grid';
+  product?: string | null;
+  section?: string | null;
   assignee?: string;
   dueDate?: string;
   tags?: string[];
@@ -256,6 +258,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       priority: story.priority || 'medium',
       status: mappedStatus as StackCard['status'],
       viewType: story.viewType || 'main',
+      product: story.product || null,
+      section: story.section || null,
       assignee: story.assignee ? `${story.assignee.firstName} ${story.assignee.lastName}` : undefined,
       dueDate: story.dueDate,
       tags: story.tags || [],

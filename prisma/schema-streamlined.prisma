@@ -846,6 +846,8 @@ model StacksEpic {
   description String?
   status      String        @default("todo") @db.VarChar(20)
   priority    String        @default("medium") @db.VarChar(20)
+  product     String?       @db.VarChar(50)
+  section     String?       @db.VarChar(50)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   project     StacksProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -864,6 +866,9 @@ model StacksStory {
   status      String        @default("todo") @db.VarChar(20)
   priority    String        @default("medium") @db.VarChar(20)
   assigneeId  String?       @db.VarChar(30)
+  viewType    String?       @db.VarChar(20)
+  product     String?       @db.VarChar(50)
+  section     String?       @db.VarChar(50)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   assignee    users?        @relation(fields: [assigneeId], references: [id])
@@ -887,6 +892,8 @@ model StacksTask {
   priority    String        @default("medium") @db.VarChar(20)
   type        String        @default("task") @db.VarChar(20)
   assigneeId  String?       @db.VarChar(30)
+  product     String?       @db.VarChar(50)
+  section     String?       @db.VarChar(50)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   assignee    users?        @relation(fields: [assigneeId], references: [id])

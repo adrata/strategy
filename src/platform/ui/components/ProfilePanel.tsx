@@ -6,25 +6,24 @@
  */
 
 import React, { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useUnifiedAuth } from "@/platform/auth";
 import { useSettingsPopup } from "./SettingsPopupContext";
 import { useFeatureAccess } from "@/platform/ui/context/FeatureAccessProvider";
+import { useChecklist, type ChecklistItem } from "./useChecklist";
 import {
   UserIcon,
   CogIcon,
-  BuildingOfficeIcon,
   ChartBarIcon,
   SparklesIcon,
   ChatBubbleLeftRightIcon,
-  DocumentTextIcon,
-  BuildingLibraryIcon,
   Squares2X2Icon,
   ClipboardDocumentCheckIcon,
   HomeIcon,
-  ArrowLeftIcon
+  ListBulletIcon,
+  PlusIcon
 } from "@heroicons/react/24/outline";
-import { X, MessageSquare, FileText, Layers, Building2, Check, GripVertical, PanelLeft } from "lucide-react";
+import { Check, PanelLeft, Trash2 } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
 
 interface ProfilePanelProps {
@@ -37,38 +36,115 @@ interface ProfilePanelProps {
   currentApp?: string;
 }
 
-interface ActionItem {
-  id: string;
-  task: string;
-  assignee: 'me' | 'adrata';
-  completed: boolean;
+// Checklist Item Component with animations
+interface ChecklistItemComponentProps {
+  item: ChecklistItem;
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
+  isRemoving: boolean;
 }
 
-// Mock action list data
-const mockActionItems: ActionItem[] = [
-  { id: '1', task: 'Review Q1 pipeline forecast', assignee: 'me', completed: false },
-  { id: '2', task: 'Update CRM integration settings', assignee: 'adrata', completed: true },
-  { id: '3', task: 'Schedule team standup for tomorrow', assignee: 'me', completed: false },
-  { id: '4', task: 'Generate monthly performance report', assignee: 'adrata', completed: false },
-  { id: '5', task: 'Follow up with Acme Corp prospect', assignee: 'me', completed: true },
-  { id: '6', task: 'Optimize database queries for speedrun', assignee: 'adrata', completed: false },
-];
+const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
+  item,
+  onToggle,
+  onDelete,
+  isRemoving
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const itemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isRemoving && itemRef.current) {
+      // Trigger exit animation
+      itemRef.current.style.opacity = '0';
+      itemRef.current.style.transform = 'translateY(-10px)';
+      itemRef.current.style.maxHeight = '0';
+      itemRef.current.style.paddingTop = '0';
+      itemRef.current.style.paddingBottom = '0';
+      itemRef.current.style.marginBottom = '0';
+    }
+  }, [isRemoving]);
+
+  return (
+    <div
+      ref={itemRef}
+      className={`flex items-start gap-3 px-3 py-2 hover:bg-[var(--hover-bg)] rounded-md transition-all duration-300 ease-in-out ${
+        isRemoving ? 'opacity-0 max-h-0 overflow-hidden' : 'opacity-100'
+      }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      role="listitem"
+      aria-label={`Checklist item: ${item.text}`}
+    >
+      <Checkbox
+        checked={item.completed}
+        onChange={() => onToggle(item.id)}
+        aria-label={item.completed ? `Uncomplete ${item.text}` : `Complete ${item.text}`}
+      />
+      <div className="flex-1 min-w-0">
+        <div 
+          className={`text-sm transition-all duration-200 ${
+            item.completed 
+              ? 'line-through text-[var(--muted-foreground)]' 
+              : 'text-[var(--foreground)]'
+          }`}
+        >
+          {item.text}
+        </div>
+      </div>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(item.id);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            e.stopPropagation();
+            onDelete(item.id);
+          }
+        }}
+        className={`ml-2 p-1 rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 ${
+          isHovered || isRemoving
+            ? 'opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50'
+            : 'opacity-0'
+        }`}
+        aria-label={`Delete ${item.text}`}
+        title="Delete item"
+        tabIndex={isHovered || isRemoving ? 0 : -1}
+      >
+        <Trash2 className="w-4 h-4" />
+      </button>
+    </div>
+  );
+};
 
 // Simple Checkbox Component
 const Checkbox: React.FC<{
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;
-}> = ({ checked, onChange, disabled = false }) => {
+  'aria-label'?: string;
+}> = ({ checked, onChange, disabled = false, 'aria-label': ariaLabel }) => {
   return (
     <button
       onClick={() => !disabled && onChange(!checked)}
+      onKeyDown={(e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          if (!disabled) onChange(!checked);
+        }
+      }}
       disabled={disabled}
-      className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+      className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 ${
         checked
           ? 'bg-blue-600 border-blue-600 text-white'
           : 'border-gray-300 hover:border-gray-400'
       } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+      aria-label={ariaLabel}
+      aria-checked={checked}
+      role="checkbox"
+      tabIndex={disabled ? -1 : 0}
     >
       {checked && <Check className="w-3 h-3" />}
     </button>
@@ -82,20 +158,48 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   isOpen,
   onClose,
   username,
-  currentApp = 'revenueos',
+  currentApp: propCurrentApp = 'revenueos',
 }) => {
   const router = useRouter();
-  const { signOut, isDesktop } = useUnifiedAuth();
+  const pathname = usePathname();
+  const { signOut, isDesktop, user } = useUnifiedAuth();
   const { setIsSettingsOpen } = useSettingsPopup();
   const { hasDesktopDownload } = useFeatureAccess();
 
-  const initial = user.name?.charAt(0).toUpperCase() || "?";
+  // Get userId and workspaceId for checklist
+  const userId = user?.id;
+  const workspaceId = user?.activeWorkspaceId || (typeof workspace === 'string' ? undefined : workspace?.id);
+
+  // Checklist hook
+  const {
+    items: checklistItems,
+    addItem,
+    deleteItem,
+    toggleItem,
+    isLoading: checklistLoading,
+    error: checklistError
+  } = useChecklist(userId, workspaceId);
+
+  // Automatically detect current app from pathname if not provided
+  const getCurrentAppFromPath = (): string => {
+    if (pathname.includes('/oasis')) return 'oasis';
+    if (pathname.includes('/workshop')) return 'workshop';
+    if (pathname.includes('/adrata')) return 'adrata';
+    if (pathname.includes('/stacks')) return 'stacks';
+    if (pathname.includes('/speedrun') || pathname.includes('/pipeline')) return 'revenueos';
+    return propCurrentApp; // Fallback to prop or default
+  };
+
+  // Use detected app or fallback to prop
+  const currentApp = getCurrentAppFromPath();
   
   // State for view mode (main or action list)
   const [viewMode, setViewMode] = useState<'main' | 'actionList'>('main');
   
-  // State for action items
-  const [actionItems, setActionItems] = useState<ActionItem[]>(mockActionItems);
+  // State for checklist input
+  const [newItemText, setNewItemText] = useState('');
+  const [removingItemIds, setRemovingItemIds] = useState<Set<string>>(new Set());
+  const inputRef = useRef<HTMLInputElement>(null);
   
   // State for sign out confirmation
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
@@ -151,13 +255,70 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     setShowSignOutConfirm(false);
   };
 
-  const handleActionItemToggle = (id: string) => {
-    setActionItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, completed: !item.completed } : item
-      )
-    );
+  // Checklist handlers
+  const handleAddItem = () => {
+    const trimmed = newItemText.trim();
+    if (trimmed) {
+      addItem(trimmed);
+      setNewItemText('');
+      // Refocus input after adding
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
   };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddItem();
+    }
+  };
+
+  const handleToggleItem = (id: string) => {
+    const item = checklistItems.find(i => i.id === id);
+    if (item && !item.completed) {
+      // Item is being completed - start removal animation
+      setRemovingItemIds(prev => new Set(prev).add(id));
+      
+      // Mark as completed first (triggers visual state change)
+      toggleItem(id);
+      
+      // Remove after animation completes (350ms for smooth fade-out)
+      setTimeout(() => {
+        deleteItem(id);
+        setRemovingItemIds(prev => {
+          const next = new Set(prev);
+          next.delete(id);
+          return next;
+        });
+      }, 350);
+    }
+    // If already completed, do nothing (shouldn't happen as completed items are removed)
+  };
+
+  const handleDeleteItem = (id: string) => {
+    setRemovingItemIds(prev => new Set(prev).add(id));
+    
+    // Remove after animation
+    setTimeout(() => {
+      deleteItem(id);
+      setRemovingItemIds(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }, 350);
+  };
+
+  // Filter out completed items for display (they're removed after animation)
+  const activeItems = checklistItems.filter(item => !item.completed);
+  const remainingCount = activeItems.length;
+
+  // Auto-focus input when switching to actionList view
+  useEffect(() => {
+    if (viewMode === 'actionList' && isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [viewMode, isOpen]);
 
   // Resize functionality handlers
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -323,12 +484,12 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
           <button
             onClick={() => setViewMode(viewMode === 'main' ? 'actionList' : 'main')}
             className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
-            title={viewMode === 'main' ? 'Show action list' : 'Return to main'}
+            title={viewMode === 'main' ? 'Show action list' : 'Go home'}
           >
             {viewMode === 'main' ? (
-              <ClipboardDocumentCheckIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
+              <ListBulletIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
             ) : (
-              <ArrowLeftIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
+              <HomeIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
             )}
           </button>
           <button
@@ -454,42 +615,91 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
           </div>
         )}
 
-        {/* Action List Section */}
+        {/* Checklist Section */}
         {viewMode === 'actionList' && (
-          <div className="space-y-1">
-          <div className="flex items-center justify-between px-3">
-            <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
-              Action List
-            </h4>
-            <span className="text-xs text-[var(--muted-foreground)]">
-              {actionItems.filter(item => item.completed).length}/{actionItems.length} completed
-            </span>
-          </div>
-          <div className="max-h-96 overflow-y-auto space-y-1">
-            {actionItems.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-start gap-3 px-3 py-2 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
-              >
-                <Checkbox
-                  checked={item.completed}
-                  onChange={() => handleActionItemToggle(item.id)}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between px-3">
+              <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
+                Checklist
+              </h4>
+              {remainingCount > 0 && (
+                <span className="text-xs text-[var(--muted-foreground)]">
+                  {remainingCount} remaining
+                </span>
+              )}
+            </div>
+
+            {/* Add Item Input */}
+            <div className="px-3">
+              <div className="flex gap-2">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={newItemText}
+                  onChange={(e) => setNewItemText(e.target.value)}
+                  onKeyDown={handleInputKeyDown}
+                  placeholder="Add a new item..."
+                  className="flex-1 px-3 py-2 text-sm border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  aria-label="Add checklist item"
+                  aria-describedby="checklist-input-help"
                 />
-                <div className="flex-1 min-w-0">
-                  <div className={`text-sm ${item.completed ? 'line-through text-[var(--muted-foreground)]' : 'text-[var(--foreground)]'}`}>
-                    {item.task}
-                  </div>
-                  <div className={`text-xs mt-0.5 ${
-                    item.assignee === 'me' 
-                      ? 'text-blue-600' 
-                      : 'text-blue-400'
-                  }`}>
-                    {item.assignee === 'me' ? 'Me' : 'Adrata'}
-                  </div>
-                </div>
+                <button
+                  onClick={handleAddItem}
+                  disabled={!newItemText.trim()}
+                  className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                  aria-label="Add item to checklist"
+                  title="Add item (Enter)"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                  <span className="text-xs">Add</span>
+                </button>
               </div>
-            ))}
-          </div>
+              <p id="checklist-input-help" className="sr-only">
+                Type an item and press Enter or click Add to add it to your checklist
+              </p>
+            </div>
+
+            {/* Error Message */}
+            {checklistError && (
+              <div className="px-3 py-2 mx-3 bg-yellow-50 border border-yellow-200 rounded-md text-xs text-yellow-800" role="alert">
+                {checklistError}
+              </div>
+            )}
+
+            {/* Checklist Items */}
+            <div 
+              className="max-h-96 overflow-y-auto space-y-1"
+              role="list"
+              aria-label="Checklist items"
+              aria-live="polite"
+              aria-atomic="false"
+            >
+              {checklistLoading ? (
+                <div className="px-3 py-4 text-center text-xs text-[var(--muted-foreground)]">
+                  Loading checklist...
+                </div>
+              ) : remainingCount === 0 ? (
+                <div className="px-3 py-8 text-center" role="status">
+                  <ClipboardDocumentCheckIcon className="w-12 h-12 mx-auto text-[var(--muted-foreground)] mb-3 opacity-50" />
+                  <p className="text-sm font-medium text-[var(--foreground)] mb-1">
+                    No checklist items yet
+                  </p>
+                  <p className="text-xs text-[var(--muted-foreground)]">
+                    Add your first item above
+                  </p>
+                </div>
+              ) : (
+                activeItems.map((item) => (
+                    <ChecklistItemComponent
+                      key={item.id}
+                      item={item}
+                      onToggle={handleToggleItem}
+                      onDelete={handleDeleteItem}
+                      isRemoving={removingItemIds.has(item.id)}
+                    />
+                  ))
+              )}
+            </div>
           </div>
         )}
       </div>

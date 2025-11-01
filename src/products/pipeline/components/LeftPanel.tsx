@@ -1101,6 +1101,23 @@ export function PipelineLeftPanelStandalone({
     event.preventDefault();
     event.stopPropagation();
     
+    // Check if this is Leonardo user - allow ProfilePanel access on RevenueOS
+    const isLeonardo = authUser?.email?.toLowerCase() === 'leonardo@pinpoint-adrata.com' ||
+                      authUser?.id === '01K90EQX4S34RS0PFRWY0ATFS2';
+    
+    // Check if this is Pinpoint workspace (RevenueOS)
+    const isPinpointWorkspace = workspace?.name?.toLowerCase() === 'pinpoint' ||
+                               workspace?.name?.toLowerCase() === 'revenueos';
+    
+    // Allow Leonardo to access ProfilePanel on RevenueOS
+    if (isLeonardo && isPinpointWorkspace) {
+      console.log('🔘 Opening ProfilePanel for Leonardo on RevenueOS:', workspace?.name);
+      const newState = !isProfilePanelVisible;
+      console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
+      setIsProfilePanelVisible(newState);
+      return;
+    }
+    
     // Check user restrictions first - if user has restrictions, use ProfileBox popup (like TOP)
     const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
     const userRestrictions = authUser?.id && authUser?.email ? 

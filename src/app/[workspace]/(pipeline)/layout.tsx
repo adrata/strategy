@@ -178,8 +178,11 @@ function PipelineLayoutInner({
 
   // Determine which right panel to show based on the current route
   const getRightPanel = () => {
-    if (pathname.includes('/adrata')) {
-      // Adrata route - show RightPanel alongside middle chat
+    if (pathname.includes('/pinpoint/adrata')) {
+      // Pinpoint adrata route - no right panel
+      return null;
+    } else if (pathname.includes('/adrata')) {
+      // Other adrata routes - show RightPanel alongside middle chat
       return <RightPanel />;
     } else if (pathname.includes('/oasis')) {
       return <RightPanel />;

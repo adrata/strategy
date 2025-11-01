@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { workspaceId, userId, projectId, title, description, status, priority } = body;
+    const { workspaceId, userId, projectId, title, description, status, priority, product, section } = body;
 
     if (!workspaceId || !userId || !projectId || !title) {
       return NextResponse.json({ error: 'Workspace ID, user ID, project ID, and title are required' }, { status: 400 });
@@ -63,7 +63,9 @@ export async function POST(request: NextRequest) {
         title,
         description,
         status: status || 'todo',
-        priority: priority || 'medium'
+        priority: priority || 'medium',
+        product: product || null,
+        section: section || null
       },
       include: {
         project: {

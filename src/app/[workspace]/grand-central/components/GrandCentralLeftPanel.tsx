@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
 import { useGrandCentral } from "../layout";
@@ -15,10 +15,59 @@ export function GrandCentralLeftPanel() {
   const { user: authUser } = useUnifiedAuth();
   // const { user, workspace: workspaceName } = usePipeline();
   
+  // User profile data for firstName and lastName
+  const [userProfile, setUserProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
+  
+  // Fetch user profile data with firstName and lastName
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!authUser?.id) return;
+      
+      try {
+        const response = await fetch('/api/settings/user', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.settings) {
+            setUserProfile({
+              firstName: data.settings.firstName,
+              lastName: data.settings.lastName
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [authUser?.id]);
+  
   // Determine current tab from pathname
   const currentTab = pathname.includes('/apis') ? 'apis' :
                     pathname.includes('/mcps') ? 'mcps' :
                     pathname.includes('/connectors') ? 'all-connectors' : 'apis';
+  
+  // Get display name - prefer firstName + lastName, fallback to name
+  const getDisplayName = () => {
+    if (userProfile?.firstName && userProfile?.lastName && userProfile.firstName.trim() && userProfile.lastName.trim()) {
+      return `${userProfile.firstName} ${userProfile.lastName}`;
+    }
+    if (userProfile?.firstName && userProfile.firstName.trim()) {
+      return userProfile.firstName;
+    }
+    return authUser?.name || 'User';
+  };
+  
+  // Get initial for avatar
+  const getInitial = () => {
+    if (userProfile?.firstName) {
+      return userProfile.firstName.charAt(0).toUpperCase();
+    }
+    return authUser?.name?.charAt(0)?.toUpperCase() || 'U';
+  };
 
   return (
     <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
@@ -126,10 +175,10 @@ export function GrandCentralLeftPanel() {
           title="Profile"
         >
           <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
-            <span className="text-sm font-medium text-gray-700">{authUser?.name?.charAt(0) || 'U'}</span>
+            <span className="text-sm font-medium text-gray-700">{getInitial()}</span>
           </div>
           <div className="flex-1 text-left">
-            <div className="text-sm font-medium text-[var(--foreground)]">{authUser?.name || 'User'}</div>
+            <div className="text-sm font-medium text-[var(--foreground)]">{getDisplayName()}</div>
             <div className="text-xs text-[var(--muted)]">{typeof workspace === 'string' ? workspace : workspace?.name || authUser?.workspaces?.find(w => w.id === authUser.activeWorkspaceId)?.name || 'Workspace'}</div>
           </div>
         </button>

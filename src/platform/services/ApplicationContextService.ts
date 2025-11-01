@@ -272,7 +272,7 @@ export class ApplicationContextService {
         'What workflows can I automate?'
       ],
       dataTypes: ['API configurations', 'Integration settings', 'Sync rules', 'Workflow definitions'],
-      relatedSections: ['apis', 'connectors', 'mcps', 'atrium']
+      relatedSections: ['apis', 'connectors', 'mcps', 'workshop']
     }],
 
     ['apis', {
@@ -323,8 +323,8 @@ export class ApplicationContextService {
       relatedSections: ['grand-central', 'apis']
     }],
 
-    ['atrium', {
-      name: 'Atrium',
+    ['workshop', {
+      name: 'Workshop',
       purpose: 'Document management and collaboration',
       capabilities: ['Document storage', 'Version control', 'Collaboration', 'Search and organization'],
       commonTasks: ['Organize documents', 'Manage versions', 'Enable collaboration', 'Search content'],
@@ -437,8 +437,8 @@ export class ApplicationContextService {
     }],
 
     // OTHER SECTIONS
-    ['atrium', {
-      name: 'Atrium',
+    ['workshop', {
+      name: 'Workshop',
       purpose: 'Document management and collaboration platform',
       capabilities: ['Document storage', 'Version control', 'Collaboration', 'Search and organization'],
       commonTasks: ['Organize documents', 'Manage versions', 'Enable collaboration', 'Search content'],
@@ -530,7 +530,7 @@ export class ApplicationContextService {
         'What documentation standards apply?'
       ],
       dataTypes: ['Documents', 'Knowledge base', 'Content', 'Search indexes'],
-      relatedSections: ['atrium', 'action-guide']
+      relatedSections: ['workshop', 'action-guide']
     }],
 
     ['stacks', {

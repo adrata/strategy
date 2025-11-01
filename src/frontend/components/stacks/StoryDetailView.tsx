@@ -63,6 +63,10 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
             console.log('✅ [StoryDetailView] Story loaded:', data.story);
             setStory(data.story);
             
+            // Initialize view type from story data (default to 'main' if not set)
+            const savedViewType = data.story.viewType || 'main';
+            setViewType(savedViewType as ViewType);
+            
             // Redirect to slugged URL if current URL is just an ID
             if (data.story.title && !hasRedirected) {
               const pathParts = pathname.split('/').filter(Boolean);
@@ -106,9 +110,8 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
     if (onClose) {
       onClose();
     } else {
-      // Navigate back to stacks
-      const workspaceSlug = window.location.pathname.split('/')[1];
-      router.push(`/${workspaceSlug}/stacks/workstream`);
+      // Use browser history for smooth navigation without page reload
+      router.back();
     }
   };
 
@@ -167,7 +170,34 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
             {viewButtons.map(({ type, label, icon: Icon }) => (
               <button
                 key={type}
-                onClick={() => setViewType(type)}
+                onClick={async () => {
+                  setViewType(type);
+                  // Save view type preference to database
+                  if (story?.id) {
+                    try {
+                      const response = await fetch(`/api/v1/stacks/stories/${story.id}`, {
+                        method: 'PATCH',
+                        credentials: 'include',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          viewType: type
+                        })
+                      });
+
+                      if (response.ok) {
+                        console.log(`✅ [StoryDetailView] Saved view type preference: ${type}`);
+                        // Update local story state
+                        setStory((prev: any) => ({ ...prev, viewType: type }));
+                      } else {
+                        console.error('Failed to save view type preference:', await response.text());
+                      }
+                    } catch (error) {
+                      console.error('Error saving view type preference:', error);
+                    }
+                  }
+                }}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
                   viewType === type
                     ? 'bg-blue-600 text-white shadow-sm'
