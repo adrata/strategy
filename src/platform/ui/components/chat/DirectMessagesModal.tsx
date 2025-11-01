@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { 
   XMarkIcon, 
   UserCircleIcon,
-  MagnifyingGlassIcon,
   PlusIcon
 } from "@heroicons/react/24/outline";
 import { useUnifiedAuth } from "@/platform/auth";
@@ -122,13 +121,12 @@ export function DirectMessagesModal({
         {/* Search */}
         <div className="p-4 border-b border-[var(--border)]">
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
             <input
               type="text"
               placeholder="Search people..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[var(--panel-background)] border border-[var(--border)] rounded-md text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 bg-[var(--panel-background)] border border-[var(--border)] rounded-md text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>

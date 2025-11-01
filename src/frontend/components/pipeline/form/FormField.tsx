@@ -66,8 +66,8 @@ export function FormField({
 
   // Get label classes
   const getLabelClasses = () => {
-    const baseClasses = 'block text-sm font-medium text-gray-700 mb-1';
-    const errorClasses = error ? 'text-red-700' : '';
+    const baseClasses = 'block text-sm font-medium text-[var(--foreground)] mb-1';
+    const errorClasses = error ? 'text-red-700 dark:text-red-300' : '';
     
     return `${baseClasses} ${errorClasses} ${labelClassName}`.trim();
   };

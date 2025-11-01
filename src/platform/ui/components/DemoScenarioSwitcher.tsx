@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { demoScenarioService } from '@/platform/services/DemoScenarioService';
 
 interface DemoScenario {
@@ -89,13 +89,12 @@ export function DemoScenarioSwitcher({
         {/* Search */}
         <div className="p-6 border-b border-[var(--border)]">
           <div className="relative">
-            <MagnifyingGlassIcon className="absolute right-3 top-3 w-5 h-5 text-[var(--muted)]" />
             <input
               type="text"
               placeholder="Search scenarios..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-4 pr-10 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent outline-none"
             />
           </div>
         </div>

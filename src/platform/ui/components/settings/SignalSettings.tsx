@@ -258,7 +258,7 @@ export function SignalSettings({ isVisible, onClose }: SignalSettingsProps) {
                       value={newRuleInput}
                       onChange={(e) => setNewRuleInput(e.target.value)}
                       placeholder="e.g., Alert me when Nike hires a new CTO"
-                      className="w-full p-3 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
+                      className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] resize-none"
                       rows={3}
                     />
                     <div className="flex gap-2">

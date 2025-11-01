@@ -115,7 +115,7 @@ export function HomeContent() {
                 type="text"
                 autoComplete="username email"
                 required
-                className="appearance-none block w-full px-3 py-2 border border-[var(--border)] rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm bg-[var(--background)] text-[var(--foreground)]"
+                className="appearance-none block w-full px-3 py-2 border border-[var(--border)] rounded-md shadow-sm placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm bg-[var(--background)] text-[var(--foreground)]"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoFocus
@@ -137,7 +137,7 @@ export function HomeContent() {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none block w-full px-3 py-2 border border-[var(--border)] rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm bg-[var(--background)] text-[var(--foreground)]"
+                className="appearance-none block w-full px-3 py-2 border border-[var(--border)] rounded-md shadow-sm placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm bg-[var(--background)] text-[var(--foreground)]"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"

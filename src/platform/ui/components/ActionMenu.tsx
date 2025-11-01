@@ -513,7 +513,7 @@ export function ActionMenu({
               return (
                 <div
                   key={action.id}
-                  className="border-t border-gray-100 my-1"
+                  className="border-t border-[var(--border)] my-1"
                 />
               );
             }

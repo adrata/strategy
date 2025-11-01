@@ -296,7 +296,7 @@ export default function UniversalSearch({
                 placeholder="Search across all your data..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-[var(--foreground)] dark:text-[var(--foreground)] placeholder-gray-500 text-lg ml-3"
+                className="flex-1 bg-transparent outline-none text-[var(--foreground)] placeholder-[var(--muted)] text-lg ml-3"
                 autoFocus
               />
               {isLoading && (

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { authFetch } from '@/platform/api-fetch';
-import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 interface Contact {
   id: string;
@@ -152,10 +152,9 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name, company, or email..."
-              className="w-full pl-4 pr-10 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               autoFocus
             />
-            <MagnifyingGlassIcon className="absolute right-3 top-3 w-4 h-4 text-[var(--muted)]" />
           </div>
 
           {/* Search Results */}

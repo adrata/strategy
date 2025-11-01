@@ -8,7 +8,6 @@ import {
   UserIcon,
   BuildingOfficeIcon,
   BriefcaseIcon,
-  MagnifyingGlassIcon,
   FolderIcon,
   PhotoIcon,
   DocumentTextIcon,
@@ -382,13 +381,12 @@ export function FilePickerModal({ isOpen, onClose, onAddFiles }: FilePickerModal
                 {selectedDataType && (
                   <div>
                     <div className="relative">
-                      <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--muted)]" />
                       <input
                         type="text"
                         placeholder={`Search ${selectedDataType}...`}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                     </div>
 
