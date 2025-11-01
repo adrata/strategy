@@ -4,6 +4,9 @@ import { prisma } from '@/platform/database/prisma-client';
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 📝 NOTES API - Create and manage notes
  * 
  * This API handles creating notes that are linked to specific records

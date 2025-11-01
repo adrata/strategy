@@ -4,6 +4,9 @@ import { prisma } from '@/lib/prisma';
 import { newsAISummaryService } from '@/platform/services/NewsAISummaryService';
 import { newsRankingEngine } from '@/platform/services/NewsRankingEngine';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function GET(request: NextRequest) {
   try {
     const { workspaceId, userId } = await WorkspaceDataRouter.getWorkspaceContext(request);

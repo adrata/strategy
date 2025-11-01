@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Oasis Read Receipt API
  * 
  * Handles marking messages as read

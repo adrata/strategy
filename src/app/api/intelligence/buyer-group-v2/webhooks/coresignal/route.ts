@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * CORESIGNAL WEBHOOK ENDPOINT
  * 
  * Handles incoming webhook events from Coresignal for real-time buyer group updates

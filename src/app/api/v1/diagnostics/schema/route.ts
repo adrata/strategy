@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma';
 import { getSecureApiContext } from '@/platform/services/secure-api-helper';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Schema Diagnostics Endpoint
  * 
  * This endpoint helps diagnose database schema issues by:

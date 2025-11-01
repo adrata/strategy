@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { 
-  hasMultipleFeatureAccess, 
-  getWorkspaceFeatures, 
+import {
+  hasMultipleFeatureAccess,
+  getWorkspaceFeatures,
   getUserFeatures,
-  type FeatureName 
+  type FeatureName
 } from '@/platform/services/feature-permission-service';
+
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
 
 export async function POST(request: NextRequest) {
   try {

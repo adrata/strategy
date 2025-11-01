@@ -4,6 +4,9 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { createSuccessResponse, createErrorResponse } from '@/platform/api/response';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 interface ChronicleReportData {
   title: string;
   reportType: 'DAILY' | 'WEEKLY' | 'BIWEEKLY';

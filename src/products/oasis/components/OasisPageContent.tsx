@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { OasisChatPanel } from "@/products/oasis/components/OasisChatPanel";
 import { OasisThreadView } from "@/products/oasis/components/OasisThreadView";
 import { VideoCallPanel } from "@/products/oasis/components/VideoCallPanel";
-import { useOasis } from "@/app/[workspace]/(pipeline)/layout";
+import { useOasis } from "@/app/[workspace]/(revenue-os)/layout";
 
 interface OasisPageContentProps {
   conversationType?: string;

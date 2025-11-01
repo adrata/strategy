@@ -3,6 +3,9 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 📅 TIMELINE API - Get timeline events for any entity
  * 
  * This API provides timeline data for leads, prospects, opportunities, accounts, contacts

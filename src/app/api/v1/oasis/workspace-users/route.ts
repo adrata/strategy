@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Oasis Workspace Users API
  * 
  * Fetches all active users in a workspace for DM creation

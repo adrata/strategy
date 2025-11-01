@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/platform/prisma";
 import bcrypt from "bcryptjs";
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function POST(request: NextRequest) {
   try {
     const { token, password } = await request.json();

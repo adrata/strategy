@@ -8,6 +8,9 @@ import { PrismaClient } from '@prisma/client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { trackQueryPerformance } from '@/platform/services/database/performance-monitor';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {

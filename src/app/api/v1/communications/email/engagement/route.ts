@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { emailEngagementAnalyzer } from '@/platform/services/email-engagement-analyzer';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 📧 EMAIL ENGAGEMENT ANALYSIS API
  * 
  * GET: Analyze email engagement patterns

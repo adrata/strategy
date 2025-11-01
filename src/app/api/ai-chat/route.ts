@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🤖 AI CHAT API ENDPOINT
  * 
  * OpenRouter-powered AI integration with intelligent model routing

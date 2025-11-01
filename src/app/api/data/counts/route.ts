@@ -11,6 +11,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 // 🚀 PERFORMANCE: Ultra-aggressive caching for counts
 const COUNTS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const countsCache = new Map<string, { data: any; timestamp: number }>();

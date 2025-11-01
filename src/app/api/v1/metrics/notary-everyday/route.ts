@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { prisma } from '@/lib/prisma';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 interface NotaryEverydayMetrics {
   currentPeriod: string;
   metrics: {

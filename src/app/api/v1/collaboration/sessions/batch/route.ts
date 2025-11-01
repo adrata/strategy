@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from '@/platform/database/prisma-client';
 
 // GET: Batch retrieve chat sessions (for query parameters)
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

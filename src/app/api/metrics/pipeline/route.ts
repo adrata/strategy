@@ -3,6 +3,9 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 // 🚀 PERFORMANCE: Aggressive caching for metrics (rarely changes)
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const METRICS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const metricsCache = new Map<string, { data: any; timestamp: number }>();
 

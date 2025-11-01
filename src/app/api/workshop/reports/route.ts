@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { authFetch } from '@/platform/api-fetch';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {

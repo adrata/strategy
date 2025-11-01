@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🚀 UNIFIED INTELLIGENCE API - ENTERPRISE GRADE
  * 
  * Single endpoint for ALL intelligence operations across the platform

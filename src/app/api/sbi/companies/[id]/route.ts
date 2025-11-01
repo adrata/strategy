@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🏢 SBI SINGLE COMPANY API
  * 
  * Endpoint for managing individual company data

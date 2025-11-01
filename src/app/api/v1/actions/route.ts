@@ -6,6 +6,9 @@ import { cache } from '@/platform/services/unified-cache';
 import { isMeaningfulAction } from '@/platform/utils/meaningfulActions';
 import { isEngagementAction } from '@/platform/utils/actionUtils';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const prisma = new PrismaClient();
 
 /**

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Check if KV is available
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 let kv: any = null;
 try {
   const { kv: kvClient } = require('@vercel/kv');

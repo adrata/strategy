@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Dashboard API Route
  * 
  * Provides optimized dashboard data with multi-layer caching and workspace context.

@@ -3,6 +3,9 @@ import { getSecureApiContext, createErrorResponse } from '@/platform/services/se
 import { prisma } from '@/platform/database/prisma-client';
 import { extractIdFromSlug } from '@/platform/utils/url-utils';
 
+// Force dynamic rendering to prevent caching issues
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -50,6 +53,7 @@ export async function GET(
     }
 
     // Fetch the story with workspace validation
+    // Use explicit select to avoid selecting viewType column that may not exist in database
     const story = await prisma.stacksStory.findFirst({
       where: {
         id: storyId,
@@ -57,7 +61,19 @@ export async function GET(
           workspaceId: workspaceId
         }
       },
-      include: {
+      select: {
+        id: true,
+        epicId: true,
+        projectId: true,
+        title: true,
+        description: true,
+        status: true,
+        priority: true,
+        assigneeId: true,
+        product: true,
+        section: true,
+        createdAt: true,
+        updatedAt: true,
         epic: {
           select: {
             id: true,
@@ -124,6 +140,23 @@ export async function GET(
 
   } catch (error) {
     console.error('❌ [STACKS API] Error fetching story:', error);
+    
+    // Handle P2022 error (column does not exist) - specifically for viewType column
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
+      const prismaError = error as any;
+      console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
+        columnName: prismaError.meta?.column_name,
+        tableName: prismaError.meta?.table_name,
+        modelName: prismaError.meta?.modelName
+      });
+      
+      return createErrorResponse(
+        'Database schema mismatch: viewType column not found. Please run database migrations.',
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+    
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -182,16 +215,35 @@ export async function PATCH(
     }
 
     // Update story
+    // Build update data, excluding viewType if column doesn't exist
+    const updateData: any = {
+      ...(status && { status }),
+      ...(product !== undefined && { product }),
+      ...(section !== undefined && { section }),
+      updatedAt: new Date()
+    };
+    
+    // Only include viewType if we're actually updating it (will fail if column doesn't exist, but that's handled in catch)
+    if (viewType !== undefined) {
+      updateData.viewType = viewType;
+    }
+
     const story = await prisma.stacksStory.update({
       where: { id: storyId },
-      data: {
-        ...(status && { status }),
-        ...(viewType !== undefined && { viewType }),
-        ...(product !== undefined && { product }),
-        ...(section !== undefined && { section }),
-        updatedAt: new Date()
-      },
-      include: {
+      data: updateData,
+      select: {
+        id: true,
+        epicId: true,
+        projectId: true,
+        title: true,
+        description: true,
+        status: true,
+        priority: true,
+        assigneeId: true,
+        product: true,
+        section: true,
+        createdAt: true,
+        updatedAt: true,
         epic: {
           select: {
             id: true,
@@ -248,6 +300,100 @@ export async function PATCH(
 
   } catch (error) {
     console.error('❌ [STACKS API] Error updating story:', error);
+    
+    // Handle P2022 error (column does not exist) - specifically for viewType column
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
+      const prismaError = error as any;
+      if (prismaError.meta?.column_name === 'viewType') {
+        console.warn('⚠️ [STACKS API] viewType column missing - update attempted without viewType');
+        // Try update without viewType
+        try {
+          const { viewType, ...dataWithoutViewType } = JSON.parse(JSON.stringify(updateData || {}));
+          const storyWithoutViewType = await prisma.stacksStory.update({
+            where: { id: storyId },
+            data: {
+              ...(status && { status }),
+              ...(product !== undefined && { product }),
+              ...(section !== undefined && { section }),
+              updatedAt: new Date()
+            },
+            select: {
+              id: true,
+              epicId: true,
+              projectId: true,
+              title: true,
+              description: true,
+              status: true,
+              priority: true,
+              assigneeId: true,
+              product: true,
+              section: true,
+              createdAt: true,
+              updatedAt: true,
+              epic: {
+                select: {
+                  id: true,
+                  title: true,
+                  description: true
+                }
+              },
+              assignee: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true
+                }
+              },
+              project: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              }
+            }
+          });
+          
+          const transformedStory = {
+            id: storyWithoutViewType.id,
+            title: storyWithoutViewType.title,
+            description: storyWithoutViewType.description,
+            status: storyWithoutViewType.status,
+            priority: storyWithoutViewType.priority,
+            viewType: 'main', // Default since column doesn't exist
+            product: storyWithoutViewType.product || null,
+            section: storyWithoutViewType.section || null,
+            assignee: storyWithoutViewType.assignee ? {
+              id: storyWithoutViewType.assignee.id,
+              name: `${storyWithoutViewType.assignee.firstName} ${storyWithoutViewType.assignee.lastName}`,
+              email: storyWithoutViewType.assignee.email
+            } : null,
+            epic: storyWithoutViewType.epic ? {
+              id: storyWithoutViewType.epic.id,
+              title: storyWithoutViewType.epic.title,
+              description: storyWithoutViewType.epic.description
+            } : null,
+            project: storyWithoutViewType.project ? {
+              id: storyWithoutViewType.project.id,
+              name: storyWithoutViewType.project.name
+            } : null,
+            createdAt: storyWithoutViewType.createdAt,
+            updatedAt: storyWithoutViewType.updatedAt
+          };
+          
+          return NextResponse.json({ story: transformedStory });
+        } catch (fallbackError) {
+          console.error('❌ [STACKS API] Fallback update also failed:', fallbackError);
+        }
+      }
+      
+      return createErrorResponse(
+        `Database column '${prismaError.meta?.column_name}' does not exist. Please run database migrations.`,
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+    
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

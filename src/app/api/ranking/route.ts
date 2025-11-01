@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🏆 RANKING API ENDPOINT
  * 
  * Unified API for the event-driven ranking system

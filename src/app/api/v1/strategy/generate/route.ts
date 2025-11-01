@@ -6,6 +6,9 @@ import { inferSeniority } from '@/platform/utils/normalization';
 import { prisma } from '@/platform/database/prisma-client';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * POST /api/v1/strategy/generate
  * Generate personalized strategy summary for a person
  */

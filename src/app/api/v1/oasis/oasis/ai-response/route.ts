@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Oasis AI Response API
  * 
  * Handles AI responses to messages in Adrata AI DMs

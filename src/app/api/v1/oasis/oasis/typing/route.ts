@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Oasis Typing Indicators API
  * 
  * Handles typing indicators (ephemeral, no DB storage)

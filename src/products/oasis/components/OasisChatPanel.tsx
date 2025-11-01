@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useOasis } from '@/app/[workspace]/(pipeline)/layout';
+import { useOasis } from '@/app/[workspace]/(revenue-os)/layout';
 import { useUnifiedAuth } from "@/platform/auth";
 import { useOasisMessages } from '@/products/oasis/hooks/useOasisMessages';
 import { useOasisTyping } from '@/products/oasis/hooks/useOasisTyping';

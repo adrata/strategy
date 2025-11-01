@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Comprehensive Person Intelligence API
  * 
  * GET /api/intelligence/person/[id]/comprehensive

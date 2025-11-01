@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UnifiedEnrichmentSystem, UnifiedEnrichmentFactory } from '@/platform/services/unified-enrichment-system';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 interface ExecuteStepRequest {
   stepId: string;
   companyName: string;

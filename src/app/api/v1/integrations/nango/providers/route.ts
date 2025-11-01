@@ -3,6 +3,9 @@ import { Nango } from '@nangohq/node';
 import { integrationCategories } from '@/app/[workspace]/grand-central/utils/integrationCategories';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * GET /api/grand-central/nango/providers
  * Get all available integration providers from Nango
  */

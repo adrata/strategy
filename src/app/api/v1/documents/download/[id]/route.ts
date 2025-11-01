@@ -6,6 +6,9 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * GET /api/workshop/download/[id]
  * Download a document file
  */

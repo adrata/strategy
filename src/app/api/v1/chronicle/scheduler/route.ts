@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // This would typically be called by a cron job or scheduled task
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function POST(request: NextRequest) {
   try {
     const { reportType, workspaceId } = await request.json();

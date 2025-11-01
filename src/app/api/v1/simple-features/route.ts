@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSimpleFeatureAccess, type SimpleFeatureName } from '@/platform/services/simple-feature-service';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

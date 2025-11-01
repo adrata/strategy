@@ -4,6 +4,9 @@ import { getV1AuthUser } from '../../auth';
 import { findOrCreateCompany } from '@/platform/services/company-linking-service';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Individual Person CRUD API v1
  * GET /api/v1/people/[id] - Get a specific person
  * PUT /api/v1/people/[id] - Update a person (full replacement)

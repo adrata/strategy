@@ -4,6 +4,14 @@ import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/prisma';
 import { UnifiedEmailSyncService } from '@/platform/services/UnifiedEmailSyncService';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
+// Required for static export with dynamic routes
+export async function generateStaticParams() {
+  return []; // Empty array for static export - routes won't be pre-rendered
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { connectionId: string } }

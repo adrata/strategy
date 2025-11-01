@@ -3,6 +3,9 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Admin API Endpoint to Fix Workspace Data
  * 
  * This endpoint fixes:

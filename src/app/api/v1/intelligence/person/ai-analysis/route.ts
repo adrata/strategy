@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * AI PERSON INTELLIGENCE API ENDPOINT
  * 
  * POST /api/v1/intelligence/person/ai-analysis

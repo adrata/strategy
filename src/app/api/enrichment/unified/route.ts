@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🚀 UNIFIED ENRICHMENT API - PRODUCTION ENDPOINT
  * 
  * Single API endpoint for ALL enrichment operations

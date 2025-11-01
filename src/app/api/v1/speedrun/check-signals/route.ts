@@ -3,6 +3,9 @@ import { getV1AuthUser } from '@/app/api/v1/auth';
 import { prisma } from '@/platform/database/prisma-client';
 
 // 🚀 PERFORMANCE: Optimized speedrun signals check with caching
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const signalsCache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL = 30 * 1000; // 30 seconds cache
 

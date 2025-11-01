@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🏢 SBI STATUS API
  * 
  * Health check and status endpoint for SBI services

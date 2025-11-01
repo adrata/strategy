@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🎯 SBI EXECUTIVE VERIFICATION API
  * 
  * Endpoint for verifying executive identity through multi-source verification

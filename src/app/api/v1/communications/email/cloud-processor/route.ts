@@ -3,6 +3,9 @@ import { PrismaClient } from '@prisma/client';
 
 
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const prisma = new PrismaClient();
 
 /**
