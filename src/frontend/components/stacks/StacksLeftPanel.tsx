@@ -41,7 +41,7 @@ const navigationItems: NavigationItem[] = [
     id: 'backlog',
     label: 'Backlog',
     icon: ClipboardDocumentListIcon,
-    description: 'Task planning'
+    description: 'Prioritized work queue'
   },
   {
     id: 'metrics',

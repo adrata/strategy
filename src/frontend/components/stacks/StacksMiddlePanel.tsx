@@ -22,6 +22,7 @@ import { StacksBacklogList } from './StacksBacklogList';
 import { StacksBacklogTable } from './StacksBacklogTable';
 import { StacksFilters } from './StacksFilters';
 import { ShipButton } from './ShipButton';
+import { AddStacksModal } from './AddStacksModal';
 
 interface StacksMiddlePanelProps {
   activeSubSection: string;
@@ -184,6 +185,7 @@ export function StacksMiddlePanel({
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [detailItem, setDetailItem] = useState<StacksItem | null>(null);
+  const [showAddStacksModal, setShowAddStacksModal] = useState(false);
   const [sortField, setSortField] = useState('priority');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [visibleColumns, setVisibleColumns] = useState(['title', 'priority', 'status', 'assignee', 'epic', 'workstream', 'dueDate', 'timeInStatus']);
@@ -267,8 +269,14 @@ export function StacksMiddlePanel({
   }, [currentItems, searchQuery, filterStatus]);
 
   const handleCreateItem = () => {
-    // TODO: Implement item creation modal
-    console.log('Create new item');
+    setShowAddStacksModal(true);
+  };
+
+  const handleStacksAdded = (stacks: any) => {
+    console.log('Stacks added:', stacks);
+    // Refresh the board/stories
+    // The component will automatically refresh when the workspace context updates
+    window.location.reload(); // Temporary - in production, use a proper refresh mechanism
   };
 
   const handleItemClick = (item: StacksItem) => {
@@ -460,11 +468,18 @@ export function StacksMiddlePanel({
                   className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
                 >
                   <PlusIcon className="h-4 w-4" />
-                  Add Story
+                  Add Stacks
                 </button>
                 <ShipButton />
             </div>
           </div>
+
+          {/* Add Stacks Modal */}
+          <AddStacksModal
+            isOpen={showAddStacksModal}
+            onClose={() => setShowAddStacksModal(false)}
+            onStacksAdded={handleStacksAdded}
+          />
 
           {/* Search and Filters */}
           <StacksFilters
