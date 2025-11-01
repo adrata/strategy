@@ -383,6 +383,17 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">Atrium</span>
             </button>
 
+            {/* Desktop Download - conditionally shown above Settings */}
+            {hasDesktopDownload && (
+              <button
+                className="w-full flex items-center px-3 py-2.5 text-sm text-[var(--foreground)] rounded-md hover:bg-[var(--hover-bg)] transition-colors group"
+                onClick={handleDownloadDesktopApp}
+              >
+                <PlatformIcon className="w-4 h-4 mr-3" />
+                <span className="font-medium">Desktop Download</span>
+              </button>
+            )}
+
             {/* Settings */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -396,6 +407,15 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <CogIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Settings</span>
+            </button>
+
+            {/* Sign Out */}
+            <button
+              className="w-full flex items-center px-3 py-2.5 text-sm text-gray-600 rounded-md hover:bg-gray-100 transition-colors group"
+              onClick={handleSignOutClick}
+            >
+              <UserIcon className="w-4 h-4 mr-3 group-hover:text-gray-700" />
+              <span className="font-medium">Sign Out</span>
             </button>
 
           </div>
@@ -440,27 +460,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         </div>
       </div>
 
-      {/* Footer - Desktop Download and Sign Out */}
-      <div className="p-3 space-y-0.5">
-        <button
-          className="w-full flex items-center px-3 py-2.5 text-sm text-gray-600 rounded-md hover:bg-gray-100 transition-colors group"
-          onClick={handleSignOutClick}
-        >
-          <UserIcon className="w-4 h-4 mr-3 group-hover:text-gray-700" />
-          <span className="font-medium">Sign Out</span>
-        </button>
-        
-        {/* Desktop Download - conditionally shown below Sign Out */}
-        {hasDesktopDownload && (
-          <button
-            className="w-full flex items-center px-3 py-2.5 text-sm text-[var(--foreground)] rounded-md hover:bg-[var(--hover-bg)] transition-colors group"
-            onClick={handleDownloadDesktopApp}
-          >
-            <PlatformIcon className="w-4 h-4 mr-3" />
-            <span className="font-medium">Desktop Download</span>
-          </button>
-        )}
-      </div>
 
       {/* Sign Out Confirmation Modal */}
       {showSignOutConfirm && (

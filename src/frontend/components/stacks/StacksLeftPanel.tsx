@@ -269,7 +269,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         >
           <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-gray-700">
-              {authUser?.name?.charAt(0) || 'U'}
+              {(userProfile?.firstName?.charAt(0) || authUser?.name?.charAt(0) || 'U').toUpperCase()}
             </span>
           </div>
           <div className="flex-1 text-left">
@@ -279,7 +279,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
                       : authUser?.name || 'User'}
                   </div>
                   <div className="text-xs text-[var(--muted)]">
-                    Workspace
+                    {ui.activeWorkspace?.name || workspaceSlug?.charAt(0).toUpperCase() + workspaceSlug?.slice(1) || 'Workspace'}
                   </div>
           </div>
         </button>

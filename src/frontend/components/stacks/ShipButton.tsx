@@ -104,19 +104,19 @@ export function ShipButton() {
     }
   };
 
-  if (shippedCount === 0) {
-    return null; // Don't show button if no shipped items
-  }
-
   return (
     <>
       <button
         onClick={handleShip}
-        disabled={loading}
-        className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 text-white border border-blue-700 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={loading || shippedCount === 0}
+        className={`flex items-center gap-2 px-3 py-1.5 text-sm border rounded-md transition-colors ${
+          shippedCount > 0
+            ? 'bg-blue-600 text-white border-blue-700 hover:bg-blue-700'
+            : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+        } disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         <RocketLaunchIcon className="h-4 w-4" />
-        Ship ({shippedCount})
+        Ship {shippedCount > 0 && `(${shippedCount})`}
       </button>
       
       {showModal && (

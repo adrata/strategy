@@ -449,7 +449,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
               <div className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {cards.length === 0 ? (
                   <div className="text-center py-8 text-gray-400">
-                    <p className="text-xs">No stories</p>
+                    <p className="text-xs">No stacks</p>
                   </div>
                 ) : (
                   cards.map((card, index) => (
