@@ -272,8 +272,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Backlog</h2>
-            <p className="text-sm text-[var(--muted)]">Prioritized work queue</p>
+            <h1 className="text-2xl font-bold text-[var(--foreground)]">Backlog</h1>
+            <p className="text-sm text-[var(--muted)] mt-1">Prioritized work queue</p>
           </div>
           <button className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors">
             <PlusIcon className="h-4 w-4" />
