@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -88,6 +88,16 @@ export function CalendarView({ onClose }: CalendarViewProps) {
     description: "",
   });
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Drag and drop state
+  const [draggedBlock, setDraggedBlock] = useState<ActionBlock | null>(null);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [dragCurrentY, setDragCurrentY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizeEdge, setResizeEdge] = useState<'top' | 'bottom' | null>(null);
+  const [dragStartTime, setDragStartTime] = useState<string>('');
+  const calendarGridRef = useRef<HTMLDivElement>(null);
 
   // Initialize calendar service
   useEffect(() => {
@@ -231,15 +241,6 @@ export function CalendarView({ onClose }: CalendarViewProps) {
       <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)] p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {onClose && (
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
-                title="Close calendar"
-              >
-                <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
-              </button>
-            )}
             <div>
               <h1 className="text-xl font-semibold text-[var(--foreground)]">
                 Calendar
@@ -280,7 +281,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
       </div>
 
       {/* Calendar Grid */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <div className="relative p-4">
           {/* Time slots */}
           <div className="space-y-0">

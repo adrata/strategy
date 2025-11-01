@@ -593,6 +593,18 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             )}
           </button>
           <button
+            onClick={() => {
+              setPreviousViewMode(viewMode === 'calendar' ? previousViewMode : (viewMode === 'main' ? 'main' : viewMode));
+              setViewMode('calendar');
+            }}
+            className={`p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors ${
+              viewMode === 'calendar' ? 'bg-[var(--hover-bg)]' : ''
+            }`}
+            title="Calendar"
+          >
+            <CalendarIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
+          </button>
+          <button
             onClick={onClose}
             className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
             title="Close panel"
@@ -844,35 +856,37 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   ))
               )}
             </div>
+          </div>
+        )}
 
-            {/* Add Item Input - Positioned at bottom */}
-            <div className="px-3 pt-2 pb-3 mt-auto">
-              <div className="flex items-center gap-1">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={newItemText}
-                  onChange={(e) => setNewItemText(e.target.value)}
-                  onKeyDown={handleInputKeyDown}
-                  placeholder="Add item..."
-                  className="flex-1 px-2 py-1.5 text-sm border border-[var(--border)]/50 rounded-md bg-transparent text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-1 focus:ring-slate-500/30 focus:border-slate-500/70 transition-all"
-                  aria-label="Add action list item"
-                  aria-describedby="action-list-input-help"
-                />
-                <button
-                  onClick={handleAddItem}
-                  disabled={!newItemText.trim()}
-                  className="p-1.5 border border-[var(--border)]/50 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]/50 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center min-w-[32px]"
-                  aria-label="Add item to action list"
-                  title="Add item (Enter)"
-                >
-                  <PlusIcon className="w-4 h-4" />
-                </button>
-              </div>
-              <p id="action-list-input-help" className="sr-only">
-                Type an item and press Enter or click Add to add it to your action list
-              </p>
+        {/* Add Item Input - Positioned above Desktop Download */}
+        {viewMode === 'actionList' && (
+          <div className="px-3 pt-2 pb-3">
+            <div className="flex items-center gap-1">
+              <input
+                ref={inputRef}
+                type="text"
+                value={newItemText}
+                onChange={(e) => setNewItemText(e.target.value)}
+                onKeyDown={handleInputKeyDown}
+                placeholder="Add item..."
+                className="flex-1 px-2 py-1.5 text-sm border border-[var(--border)]/50 rounded-md bg-transparent text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-1 focus:ring-slate-500/30 focus:border-slate-500/70 transition-all"
+                aria-label="Add action list item"
+                aria-describedby="action-list-input-help"
+              />
+              <button
+                onClick={handleAddItem}
+                disabled={!newItemText.trim()}
+                className="p-1.5 border border-[var(--border)]/50 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]/50 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center min-w-[32px]"
+                aria-label="Add item to action list"
+                title="Add item (Enter)"
+              >
+                <PlusIcon className="w-4 h-4" />
+              </button>
             </div>
+            <p id="action-list-input-help" className="sr-only">
+              Type an item and press Enter or click Add to add it to your action list
+            </p>
           </div>
         )}
       </div>
