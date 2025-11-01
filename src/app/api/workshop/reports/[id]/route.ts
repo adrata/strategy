@@ -118,7 +118,7 @@ export async function GET(
     });
 
   } catch (error) {
-    console.error('Error fetching Atrium report:', error);
+    console.error('Error fetching Workshop report:', error);
     return NextResponse.json({ error: 'Failed to fetch report' }, { status: 500 });
   }
 }

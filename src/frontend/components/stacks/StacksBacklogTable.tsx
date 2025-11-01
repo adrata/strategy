@@ -66,7 +66,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   const [draggedItem, setDraggedItem] = useState<BacklogItem | null>(null);
   const [sortField, setSortField] = useState('rank');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [visibleColumns, setVisibleColumns] = useState(['rank', 'title', 'priority', 'status', 'assignee', 'dueDate', 'workstream']);
+  const [visibleColumns, setVisibleColumns] = useState(['rank', 'title', 'status', 'assignee', 'dueDate', 'workstream']);
   const [filters, setFilters] = useState({
     priority: 'all',
     status: 'all',
@@ -116,7 +116,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   // Removed mock data functions
   
   const [items, setItems] = useState<BacklogItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showAddStacksModal, setShowAddStacksModal] = useState(false);
   
   // Fetch data from API
@@ -220,6 +220,10 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           return 0;
       }
     });
+
+  // Separate items into "Up Next" (status='up-next') and other items
+  const upNextItems = filteredItems.filter(item => item.status === 'up-next');
+  const otherItems = filteredItems.filter(item => item.status !== 'up-next');
 
   const handleContextMenu = (e: React.MouseEvent, itemId: string) => {
     e.preventDefault();
@@ -338,7 +342,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
       {/* Table Content */}
       <div className="flex-1 overflow-y-auto invisible-scrollbar">
-        {filteredItems.length === 0 ? (
+        {upNextItems.length === 0 && otherItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📋</div>
             <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
@@ -358,38 +362,37 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
             {/* Desktop Table View */}
             <div className="hidden lg:block">
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-[var(--panel-background)] border-b border-[var(--border)]">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                        Rank
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                        Title
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                        Priority
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                        Assignee
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                        Due Date
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                        Workstream
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border)]">
-                    {filteredItems.map((item, index) => {
+              {/* Up Next Items Table */}
+              {upNextItems.length > 0 && (
+                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden mb-4">
+                  <table className="w-full">
+                    <thead className="bg-[var(--panel-background)] border-b border-[var(--border)]">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Rank
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Title
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Assignee
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Due Date
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Workstream
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border)]">
+                      {upNextItems.map((item, index) => {
                       const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
                       
                       return (
@@ -413,11 +416,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                                   </div>
                                 )}
                               </div>
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap">
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${PRIORITY_COLORS[item.priority] || PRIORITY_COLORS.medium}`}>
-                                {item.priority}
-                              </span>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-2">
@@ -448,15 +446,112 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                           </tr>
                         </React.Fragment>
                       );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Divider Line */}
+              {upNextItems.length > 0 && otherItems.length > 0 && (
+                <hr className="border-[var(--border)] my-4" />
+              )}
+
+              {/* Other Items Table */}
+              {otherItems.length > 0 && (
+                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-[var(--panel-background)] border-b border-[var(--border)]">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Rank
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Title
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Assignee
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Due Date
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Workstream
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border)]">
+                      {otherItems.map((item, index) => {
+                        const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
+                        
+                        return (
+                          <React.Fragment key={item.id}>
+                            <tr 
+                              className="hover:bg-[var(--hover)] cursor-pointer"
+                              onClick={() => onItemClick?.(item)}
+                              onContextMenu={(e) => handleContextMenu(e, item.id)}
+                            >
+                              <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-[var(--foreground)]">
+                                #{item.rank || index + 1}
+                              </td>
+                              <td className="px-4 py-4">
+                                <div>
+                                  <div className="text-sm font-medium text-[var(--foreground)]">
+                                    {item.title}
+                                  </div>
+                                  {item.description && (
+                                    <div className="text-sm text-[var(--muted)] mt-1">
+                                      {item.description}
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap">
+                                <div className="flex items-center gap-2">
+                                  <StatusIcon className="h-4 w-4 text-[var(--muted)]" />
+                                  <span className="text-sm text-[var(--foreground)] capitalize">
+                                    {item.status}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
+                                {item.assignee || '-'}
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
+                                {item.dueDate ? formatRelativeTime(item.dueDate) : '-'}
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap">
+                                {item.tags && item.tags.length > 0 && (
+                                  <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
+                                    {item.tags[0]}
+                                  </span>
+                                )}
+                              </td>
+                              <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button className="p-1 hover:bg-[var(--hover)] rounded transition-colors">
+                                  <EllipsisVerticalIcon className="h-4 w-4 text-[var(--muted)]" />
+                                </button>
+                              </td>
+                            </tr>
+                          </React.Fragment>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
             {/* Mobile/Tablet Card View */}
             <div className="lg:hidden space-y-3">
-              {filteredItems.map((item, index) => {
+              {/* Up Next Items */}
+              {upNextItems.map((item, index) => {
                 const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
                 
                 return (
@@ -472,9 +567,74 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                           <div className="flex items-center justify-center w-6 h-6 bg-[var(--panel-background)] text-[var(--muted)] text-xs font-bold rounded-full">
                             {item.rank || index + 1}
                           </div>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${PRIORITY_COLORS[item.priority] || PRIORITY_COLORS.medium}`}>
-                            {item.priority}
+                        </div>
+                        <h3 className="text-sm font-medium text-[var(--foreground)] mb-1">
+                          {item.title}
+                        </h3>
+                        {item.description && (
+                          <p className="text-sm text-[var(--muted)] mb-2">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                      <button className="p-1 hover:bg-[var(--hover)] rounded transition-colors">
+                        <EllipsisVerticalIcon className="h-4 w-4 text-[var(--muted)]" />
+                      </button>
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1">
+                          <StatusIcon className="h-4 w-4 text-[var(--muted)]" />
+                          <span className="text-[var(--muted)] capitalize">
+                            {item.status}
                           </span>
+                        </div>
+                        {item.assignee && (
+                          <div className="flex items-center gap-1">
+                            <UserIcon className="h-4 w-4 text-[var(--muted)]" />
+                            <span className="text-[var(--muted)]">{item.assignee}</span>
+                          </div>
+                        )}
+                        {item.dueDate && (
+                          <div className="flex items-center gap-1">
+                            <CalendarIcon className="h-4 w-4 text-[var(--muted)]" />
+                            <span className="text-[var(--muted)]">{formatRelativeTime(item.dueDate)}</span>
+                          </div>
+                        )}
+                      </div>
+                      {item.tags && item.tags.length > 0 && (
+                        <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
+                          {item.tags[0]}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Divider Line */}
+              {upNextItems.length > 0 && otherItems.length > 0 && (
+                <hr className="border-[var(--border)] my-4" />
+              )}
+
+              {/* Other Items */}
+              {otherItems.map((item, index) => {
+                const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
+                
+                return (
+                  <div
+                    key={item.id}
+                    className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-[var(--accent)] transition-colors cursor-pointer"
+                    onClick={() => onItemClick?.(item)}
+                    onContextMenu={(e) => handleContextMenu(e, item.id)}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="flex items-center justify-center w-6 h-6 bg-[var(--panel-background)] text-[var(--muted)] text-xs font-bold rounded-full">
+                            {item.rank || index + 1}
+                          </div>
                         </div>
                         <h3 className="text-sm font-medium text-[var(--foreground)] mb-1">
                           {item.title}

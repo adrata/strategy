@@ -17,11 +17,12 @@ import {
   ArrowLeftIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { StoryMainView } from './story-views/StoryMainView';
 import { StoryListView } from './story-views/StoryListView';
 import { StoryGridView } from './story-views/StoryGridView';
+import { generateSlug, extractIdFromSlug } from '@/platform/utils/url-utils';
 
 interface StoryDetailViewProps {
   storyId: string;
@@ -32,12 +33,14 @@ type ViewType = 'main' | 'list' | 'grid';
 
 export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { ui } = useRevenueOS();
   const [viewType, setViewType] = useState<ViewType>('main');
   const [story, setStory] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [hasRedirected, setHasRedirected] = useState(false);
 
-  // Fetch story data
+  // Fetch story data and redirect to slugged URL if needed
   useEffect(() => {
     const fetchStory = async () => {
       if (!ui.activeWorkspace?.id || !storyId) {
@@ -59,6 +62,26 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
           if (data.story) {
             console.log('✅ [StoryDetailView] Story loaded:', data.story);
             setStory(data.story);
+            
+            // Redirect to slugged URL if current URL is just an ID
+            if (data.story.title && !hasRedirected) {
+              const pathParts = pathname.split('/').filter(Boolean);
+              const lastSegment = pathParts[pathParts.length - 1];
+              
+              // Check if current URL is just an ID (no title in slug)
+              const extractedId = extractIdFromSlug(lastSegment);
+              // If the last segment equals the storyId (raw ID), redirect to slugged version
+              if (lastSegment === storyId || (extractedId === storyId && !lastSegment.includes('-'))) {
+                const workspaceSlug = pathParts[0];
+                const slug = generateSlug(data.story.title, storyId);
+                const newUrl = `/${workspaceSlug}/stacks/${slug}`;
+                
+                console.log('🔄 [StoryDetailView] Redirecting to slugged URL:', newUrl);
+                setHasRedirected(true);
+                router.replace(newUrl);
+                return;
+              }
+            }
           } else {
             console.warn('⚠️ [StoryDetailView] No story in response');
             setStory(null);
@@ -77,7 +100,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
     };
 
     fetchStory();
-  }, [storyId, ui.activeWorkspace?.id]);
+  }, [storyId, ui.activeWorkspace?.id, pathname, router, hasRedirected]);
 
   const handleBack = () => {
     if (onClose) {

@@ -9,7 +9,7 @@ import {
   createTestPersonWithCoreSignal,
   createTestCompanyWithDetails,
   createTestDeepValueReport,
-  createTestAtriumDocument,
+  createTestWorkshopDocument,
   TEST_USER,
   validateTestData
 } from '../../utils/test-factories';
@@ -47,7 +47,7 @@ describe('Deep Value Report Service', () => {
       expect(deepValueReportService.generateAllReports).toBeDefined();
       expect(deepValueReportService.streamReportGeneration).toBeDefined();
       expect(deepValueReportService.updateReportWithAI).toBeDefined();
-      expect(deepValueReportService.saveReportToAtrium).toBeDefined();
+      expect(deepValueReportService.saveReportToWorkshop).toBeDefined();
     });
   });
 
@@ -90,8 +90,8 @@ describe('Deep Value Report Service', () => {
     });
   });
 
-  describe('saveReportToAtrium', () => {
-    it('should save report to Atrium successfully', async () => {
+  describe('saveReportToWorkshop', () => {
+      it('should save report to Workshop successfully', async () => {
       const report = createTestDeepValueReport('executive_summary');
 
       mockAuthFetch.mockResolvedValue({
@@ -108,7 +108,7 @@ describe('Deep Value Report Service', () => {
         })
       } as Response);
 
-      const result = await deepValueReportService.saveReportToAtrium(report, report.content);
+      const result = await deepValueReportService.saveReportToWorkshop(report, report.content);
 
       expect(result).toBe('atrium-doc-123');
       expect(mockAuthFetch).toHaveBeenCalledWith(
@@ -129,7 +129,7 @@ describe('Deep Value Report Service', () => {
       mockAuthFetch.mockRejectedValue(new Error('Atrium service unavailable'));
 
       await expect(
-        deepValueReportService.saveReportToAtrium(report, report.content)
+        deepValueReportService.saveReportToWorkshop(report, report.content)
       ).rejects.toThrow('Atrium service unavailable');
     });
   });

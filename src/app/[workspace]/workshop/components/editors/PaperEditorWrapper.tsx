@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useRef } from "react";
-import { AtriumDocument } from "../../types/document";
+import { WorkshopDocument } from "../../types/document";
 import { 
   BoldIcon,
   ItalicIcon,
@@ -32,7 +32,7 @@ import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { TRANSFORMERS } from '@lexical/markdown';
 
 interface PaperEditorWrapperProps {
-  document: AtriumDocument;
+  document: WorkshopDocument;
   onSave: (content: any) => void;
   onAutoSave: (content: any) => void;
 }

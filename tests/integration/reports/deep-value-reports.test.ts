@@ -8,7 +8,7 @@ import {
   createTestPersonWithCoreSignal,
   createTestCompanyWithDetails,
   createTestDeepValueReport,
-  createTestAtriumDocument,
+  createTestWorkshopDocument,
   TEST_USER,
   getTestAuthHeaders,
   getTestApiUrl,
@@ -83,7 +83,7 @@ describe('Deep Value Reports Integration Tests', () => {
       mockGenerateStreamingResponse.mockResolvedValue(mockStream);
 
       // Mock Atrium document creation
-      const mockAtriumDoc = createTestAtriumDocument('PAPER', {
+      const mockAtriumDoc = createTestWorkshopDocument('PAPER', {
         metadata: {
           reportType: 'executive_summary',
           recordType: 'people',
@@ -148,7 +148,7 @@ describe('Deep Value Reports Integration Tests', () => {
       mockGenerateStreamingResponse.mockResolvedValue(mockStream);
 
       // Mock Atrium document creation
-      const mockAtriumDoc = createTestAtriumDocument('PAPER', {
+      const mockAtriumDoc = createTestWorkshopDocument('PAPER', {
         metadata: {
           reportType: 'executive_summary',
           recordType: 'companies',
@@ -255,7 +255,7 @@ describe('Deep Value Reports Integration Tests', () => {
       ];
 
       mockPrisma.atriumDocument.findMany.mockResolvedValue(
-        existingReports.map(report => createTestAtriumDocument('PAPER', {
+        existingReports.map(report => createTestWorkshopDocument('PAPER', {
           metadata: {
             reportType: report.type,
             recordType: report.recordType,
@@ -281,7 +281,7 @@ describe('Deep Value Reports Integration Tests', () => {
 
     it('should retrieve specific report by ID', async () => {
       const report = createTestDeepValueReport('executive_summary');
-      const atriumDoc = createTestAtriumDocument('PAPER', {
+      const atriumDoc = createTestWorkshopDocument('PAPER', {
         metadata: {
           reportType: report.type,
           recordType: report.recordType,
@@ -326,7 +326,7 @@ describe('Deep Value Reports Integration Tests', () => {
       const report = createTestDeepValueReport('executive_summary');
       const updatedContent = '# Executive Summary\n\nUpdated content';
       
-      const updatedAtriumDoc = createTestAtriumDocument('PAPER', {
+      const updatedAtriumDoc = createTestWorkshopDocument('PAPER', {
         content: updatedContent,
         metadata: {
           reportType: report.type,
@@ -398,7 +398,7 @@ describe('Deep Value Reports Integration Tests', () => {
 
       mockGenerateStreamingResponse.mockResolvedValue(mockStream);
 
-      const updatedAtriumDoc = createTestAtriumDocument('PAPER', {
+      const updatedAtriumDoc = createTestWorkshopDocument('PAPER', {
         content: 'Concise version of the report.',
         metadata: {
           reportType: report.type,
@@ -467,7 +467,7 @@ describe('Deep Value Reports Integration Tests', () => {
       ];
 
       mockPrisma.atriumDocument.findMany.mockResolvedValue(
-        executiveReports.map(report => createTestAtriumDocument('PAPER', {
+        executiveReports.map(report => createTestWorkshopDocument('PAPER', {
           metadata: {
             reportType: report.type,
             recordType: report.recordType,
@@ -513,7 +513,7 @@ describe('Deep Value Reports Integration Tests', () => {
       ];
 
       mockPrisma.atriumDocument.findMany.mockResolvedValue(
-        peopleReports.map(report => createTestAtriumDocument('PAPER', {
+        peopleReports.map(report => createTestWorkshopDocument('PAPER', {
           metadata: {
             reportType: report.type,
             recordType: report.recordType,

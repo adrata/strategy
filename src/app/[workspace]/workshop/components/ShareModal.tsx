@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { AtriumDocument } from "../types/document";
+import { WorkshopDocument } from "../types/document";
 import { 
   XMarkIcon,
   LinkIcon,
@@ -15,7 +15,7 @@ import {
 interface ShareModalProps {
   isOpen: boolean;
   onClose: () => void;
-  document: AtriumDocument;
+  document: WorkshopDocument;
 }
 
 export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {

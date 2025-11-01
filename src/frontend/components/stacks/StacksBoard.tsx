@@ -160,7 +160,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   const [draggedCard, setDraggedCard] = useState<StackCard | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
   const [cards, setCards] = useState<StackCard[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
   
   // Check if we're in Notary Everyday workspace (check by workspace slug 'ne')
@@ -390,6 +390,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  // Always show board structure immediately to prevent loading glitch
+
   return (
     <>
       <style>{`
@@ -434,26 +436,27 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         }
         
         .stacks-kanban-container::-webkit-scrollbar {
-          height: 8px;
-          width: 8px;
+          display: none;
         }
-        .stacks-kanban-container::-webkit-scrollbar-track {
-          background: #d1d5db;
+        .stacks-kanban-container {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
-        .stacks-kanban-container::-webkit-scrollbar-thumb {
-          background: #6b7280;
-          border-radius: 4px;
+        
+        .stacks-column-content::-webkit-scrollbar {
+          display: none;
         }
-        .stacks-kanban-container::-webkit-scrollbar-thumb:hover {
-          background: #4b5563;
+        .stacks-column-content {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
       `}</style>
       <div 
         ref={setScrollContainer}
         className="stacks-kanban-container"
         style={{
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#6b7280 #d1d5db'
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
         }}
       >
       {STACK_COLUMNS.map((column) => {
@@ -496,9 +499,14 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
               </div>
 
               {/* Stories List */}
-              <div className={`flex-1 p-4 space-y-2 overflow-y-auto transition-colors duration-200 ${
+              <div className={`stacks-column-content flex-1 p-4 space-y-2 overflow-y-auto transition-colors duration-200 ${
                 isDragOver ? 'bg-[var(--hover)]/20' : ''
-              }`}>
+              }`}
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
+              >
                 {cards.length === 0 ? (
                   <div className={`text-center py-8 text-[var(--muted)] transition-colors duration-200 ${
                     isDragOver ? 'border-2 border-dashed border-[var(--accent)] rounded-lg bg-[var(--accent)]/5 flex flex-col items-center justify-center min-h-[120px]' : ''
@@ -523,7 +531,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         onClick={() => onCardClick?.(card)}
                       >
                         {/* Rank number in top left */}
-                        <div className="absolute top-2 left-2 w-6 h-6 bg-[var(--panel-background)] text-[var(--foreground)] rounded-full flex items-center justify-center text-xs font-bold">
+                        <div className="absolute top-2 left-2 w-6 h-6 bg-[var(--panel-background)] text-[var(--foreground)] rounded-[12px] flex items-center justify-center text-xs font-bold">
                           {index + 1}
                         </div>
                         

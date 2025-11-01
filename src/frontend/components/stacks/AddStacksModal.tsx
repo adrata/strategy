@@ -3,7 +3,7 @@
 /**
  * Add Stacks Modal Component
  * 
- * Simple, clean modal for creating Story, Epic, or Epoch
+ * Simple, clean modal for creating Story, Bug, Epic, or Epoch
  * Similar to Add Lead modal - single column, minimal design
  */
 
@@ -18,7 +18,7 @@ interface AddStacksModalProps {
   onStacksAdded: (stacks: any) => void;
 }
 
-type WorkTypeTab = 'story' | 'epic' | 'epoch';
+type WorkTypeTab = 'story' | 'bug' | 'epic' | 'epoch';
 
 export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModalProps) {
   const { ui } = useRevenueOS();
@@ -140,6 +140,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
+    return undefined;
   }, [isOpen]);
 
   const searchEpics = async (query: string) => {
@@ -503,6 +504,33 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           const error = await response.json();
           alert(error.error || 'Failed to create story');
         }
+      } else if (activeWorkType === 'bug') {
+        // Create bug as task with type='bug'
+        const bugData: any = {
+          projectId,
+          title: formData.title,
+          description: formData.description || undefined,
+          status: 'todo',
+          priority: formData.priority,
+          type: 'bug',
+          storyId: null
+        };
+
+        const response = await fetch('/api/stacks/tasks', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bugData)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          onStacksAdded(data.task || data);
+          onClose();
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Failed to create bug');
+        }
       } else if (activeWorkType === 'epic') {
         // Create epic
         const userId = user?.id || '';
@@ -591,6 +619,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
 
   const workTypeLabels = {
     story: 'Story',
+    bug: 'Bug',
     epic: 'Epic',
     epoch: 'Epoch'
   };
@@ -631,6 +660,17 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                 }`}
               >
                 Story
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveWorkType('bug')}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeWorkType === 'bug'
+                    ? 'text-[var(--foreground)] border-b-2 border-[var(--accent)]'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                }`}
+              >
+                Bugs
               </button>
               <button
                 type="button"
@@ -721,6 +761,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                       }}
                       placeholder="Search or create epic..."
                       className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
+                      style={{ paddingRight: '1rem' }}
                     />
                   </div>
                   {showEpicDropdown && (epicSearchResults.length > 0 || epicSearchQuery.trim() || showCreateEpicForm) && (
@@ -956,8 +997,22 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             <button
               type="submit"
               disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium bg-gray-900 text-white border border-gray-900 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ color: 'white' }}
+              className="px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ 
+                backgroundColor: '#111827',
+                color: '#ffffff',
+                border: '1px solid #111827'
+              }}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.backgroundColor = '#1f2937';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.backgroundColor = '#111827';
+                }
+              }}
             >
               {isLoading ? 'Creating...' : `Create ${workTypeLabels[activeWorkType]}`}
             </button>

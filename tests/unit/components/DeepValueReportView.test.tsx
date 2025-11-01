@@ -37,7 +37,7 @@ import { generateStreamingResponse } from '@/platform/ai/ai-service';
 import { updateAtriumDocument } from '@/platform/api/atrium-api';
 
 const mockGenerateStreamingResponse = generateStreamingResponse as jest.MockedFunction<typeof generateStreamingResponse>;
-const mockUpdateAtriumDocument = updateAtriumDocument as jest.MockedFunction<typeof updateAtriumDocument>;
+const mockUpdateWorkshopDocument = updateAtriumDocument as jest.MockedFunction<typeof updateAtriumDocument>;
 
 describe('DeepValueReportView Component', () => {
   const mockOnBack = jest.fn();
@@ -224,7 +224,7 @@ describe('DeepValueReportView Component', () => {
       };
 
       mockGenerateStreamingResponse.mockResolvedValue(mockStream);
-      mockUpdateAtriumDocument.mockResolvedValue({});
+      mockUpdateWorkshopDocument.mockResolvedValue({});
 
       render(
         <DeepValueReportView

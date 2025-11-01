@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useAtrium } from "../layout";
-import { AtriumDocument } from "../types/document";
+import { useWorkshop } from "../layout";
+import { WorkshopDocument } from "../types/document";
 import { 
   BoldIcon,
   ItalicIcon,
@@ -37,7 +37,7 @@ import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { TRANSFORMERS } from '@lexical/markdown';
 
 interface PaperEditorProps {
-  document: AtriumDocument;
+  document: WorkshopDocument;
   onSave: (content: any) => void;
   onAutoSave: (content: any) => void;
 }
@@ -244,7 +244,7 @@ function AutoSavePlugin({ onAutoSave }: { onAutoSave: (content: any) => void }) 
   return null;
 }
 
-function InitializePlugin({ document, onInitialized }: { document: AtriumDocument, onInitialized: () => void }) {
+function InitializePlugin({ document, onInitialized }: { document: WorkshopDocument, onInitialized: () => void }) {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {

@@ -19,16 +19,16 @@ jest.mock('@/platform/services/deep-value-report-service', () => ({
   generateDeepValueReport: jest.fn(),
 }));
 
-// Mock the Atrium API
-jest.mock('@/platform/api/atrium-api', () => ({
-  getAtriumDocuments: jest.fn(),
+// Mock the Workshop API
+jest.mock('@/platform/api/workshop-api', () => ({
+  getWorkshopDocuments: jest.fn(),
 }));
 
 import { generateDeepValueReport } from '@/platform/services/deep-value-report-service';
-import { getAtriumDocuments } from '@/platform/api/atrium-api';
+import { getWorkshopDocuments } from '@/platform/api/workshop-api';
 
 const mockGenerateDeepValueReport = generateDeepValueReport as jest.MockedFunction<typeof generateDeepValueReport>;
-const mockGetAtriumDocuments = getAtriumDocuments as jest.MockedFunction<typeof getAtriumDocuments>;
+const mockGetWorkshopDocuments = getWorkshopDocuments as jest.MockedFunction<typeof getWorkshopDocuments>;
 
 describe('ValueTab Component', () => {
   const mockOnReportClick = jest.fn();
@@ -165,7 +165,7 @@ describe('ValueTab Component', () => {
         })
       ];
 
-      mockGetAtriumDocuments.mockResolvedValue(existingReports);
+      mockGetWorkshopDocuments.mockResolvedValue(existingReports);
 
       render(
         <ValueTab
@@ -188,7 +188,7 @@ describe('ValueTab Component', () => {
         status: 'completed'
       });
 
-      mockGetAtriumDocuments.mockResolvedValue([mockReport]);
+      mockGetWorkshopDocuments.mockResolvedValue([mockReport]);
 
       render(
         <ValueTab
@@ -273,7 +273,7 @@ describe('ValueTab Component', () => {
         status: 'completed'
       });
 
-      mockGetAtriumDocuments.mockResolvedValue([completedReport]);
+      mockGetWorkshopDocuments.mockResolvedValue([completedReport]);
 
       render(
         <ValueTab
@@ -384,7 +384,7 @@ describe('ValueTab Component', () => {
     });
 
     it('should handle Atrium API errors', async () => {
-      mockGetAtriumDocuments.mockRejectedValue(new Error('Atrium API error'));
+      mockGetWorkshopDocuments.mockRejectedValue(new Error('Atrium API error'));
 
       render(
         <ValueTab

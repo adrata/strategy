@@ -8,9 +8,9 @@ const prisma = new PrismaClient({
   }
 });
 
-async function verifyAdrataAtriumAccess() {
+async function verifyAdrataWorkshopAccess() {
   try {
-    console.log('🔍 Verifying Adrata Atrium access for Dan and Todd...');
+    console.log('🔍 Verifying Adrata Workshop access for Dan and Todd...');
 
     // Find the Adrata workspace
     const workspace = await prisma.workspaces.findFirst({
@@ -75,7 +75,7 @@ async function verifyAdrataAtriumAccess() {
       console.log(`❌ Todd user not found`);
     }
 
-    // Get all Atrium documents in the workspace
+    // Get all Workshop documents in the workspace
     const documents = await prisma.workshopDocument.findMany({
       where: {
         workspaceId: workspace.id,
@@ -108,7 +108,7 @@ async function verifyAdrataAtriumAccess() {
       }
     });
 
-    console.log(`\n📄 Atrium Documents in ${workspace.name}:`);
+    console.log(`\n📄 Workshop Documents in ${workspace.name}:`);
     console.log(`   Total documents: ${documents.length}`);
 
     if (documents.length > 0) {
@@ -170,17 +170,17 @@ async function verifyAdrataAtriumAccess() {
     console.log(`\n✅ Verification completed!`);
     console.log(`\n💡 Access Summary:`);
     console.log(`   - Dan and Todd can access documents through workspace membership`);
-    console.log(`   - All documents are stored in the Atrium system`);
+      console.log(`   - All documents are stored in the Workshop system`);
     console.log(`   - Documents are organized in folders`);
     console.log(`   - Activity tracking is enabled for audit trails`);
     console.log(`   - Platform: Buyer Group Intelligence & Go-to-Buyer Operating System`);
 
   } catch (error) {
-    console.error('❌ Error verifying Adrata Atrium access:', error);
+    console.error('❌ Error verifying Adrata Workshop access:', error);
   } finally {
     await prisma.$disconnect();
   }
 }
 
 // Run the verification
-verifyAdrataAtriumAccess();
+verifyAdrataWorkshopAccess();

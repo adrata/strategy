@@ -291,7 +291,7 @@ Please provide the updated report content with the requested changes.`;
       const result = await response.json();
       return result.documentId;
     } catch (error) {
-      console.error('Failed to save report to Atrium:', error);
+      console.error('Failed to save report to Workshop:', error);
       throw error;
     }
   }

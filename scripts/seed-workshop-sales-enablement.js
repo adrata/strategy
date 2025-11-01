@@ -74,9 +74,9 @@ const salesEnablementDocs = [
   }
 ];
 
-async function seedAtriumSalesEnablement() {
+async function seedWorkshopSalesEnablement() {
   try {
-    console.log('🚀 Starting Atrium sales enablement document seeding...');
+    console.log('🚀 Starting Workshop sales enablement document seeding...');
 
     // Find the Notary Everyday workspace
     const workspace = await prisma.workspaces.findFirst({
@@ -275,11 +275,11 @@ async function seedAtriumSalesEnablement() {
     console.log(`   - Total documents: ${salesEnablementDocs.length}`);
 
   } catch (error) {
-    console.error('❌ Error seeding Atrium sales enablement documents:', error);
+    console.error('❌ Error seeding Workshop sales enablement documents:', error);
   } finally {
     await prisma.$disconnect();
   }
 }
 
 // Run the seeding
-seedAtriumSalesEnablement();
+seedWorkshopSalesEnablement();

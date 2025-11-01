@@ -8,9 +8,9 @@ const prisma = new PrismaClient({
   }
 });
 
-async function verifyAtriumAccess() {
+async function verifyWorkshopAccess() {
   try {
-    console.log('🔍 Verifying Atrium access for Dan and Noel...');
+    console.log('🔍 Verifying Workshop access for Dan and Noel...');
 
     // Find the Notary Everyday workspace
     const workspace = await prisma.workspaces.findFirst({
@@ -76,7 +76,7 @@ async function verifyAtriumAccess() {
       console.log(`❌ Noel user not found`);
     }
 
-    // Get all Atrium documents in the workspace
+    // Get all Workshop documents in the workspace
     const documents = await prisma.workshopDocument.findMany({
       where: {
         workspaceId: workspace.id,
@@ -109,7 +109,7 @@ async function verifyAtriumAccess() {
       }
     });
 
-    console.log(`\n📄 Atrium Documents in ${workspace.name}:`);
+    console.log(`\n📄 Workshop Documents in ${workspace.name}:`);
     console.log(`   Total documents: ${documents.length}`);
 
     if (documents.length > 0) {
@@ -171,16 +171,16 @@ async function verifyAtriumAccess() {
     console.log(`\n✅ Verification completed!`);
     console.log(`\n💡 Access Summary:`);
     console.log(`   - Dano and Noel can access documents through workspace membership`);
-    console.log(`   - All documents are stored in the Atrium system`);
+      console.log(`   - All documents are stored in the Workshop system`);
     console.log(`   - Documents are organized in folders`);
     console.log(`   - Activity tracking is enabled for audit trails`);
 
   } catch (error) {
-    console.error('❌ Error verifying Atrium access:', error);
+    console.error('❌ Error verifying Workshop access:', error);
   } finally {
     await prisma.$disconnect();
   }
 }
 
 // Run the verification
-verifyAtriumAccess();
+verifyWorkshopAccess();

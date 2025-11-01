@@ -20,7 +20,7 @@ const createdTestIds = {
   people: new Set<string>(),
   actions: new Set<string>(),
   reports: new Set<string>(),
-  atriumDocuments: new Set<string>(),
+  workshopDocuments: new Set<string>(),
 };
 
 /**
@@ -194,17 +194,17 @@ export function createTestDeepValueReport(
 }
 
 /**
- * Generate test Atrium document data
+ * Generate test Workshop document data
  */
-export function createTestAtriumDocument(
+export function createTestWorkshopDocument(
   documentType: 'PAPER' | 'FOLDER' | 'TEMPLATE' = 'PAPER',
   overrides: Partial<any> = {}
 ) {
   const timestamp = Date.now();
   const document = {
-    id: `atrium_doc_${timestamp}`,
+    id: `workshop_doc_${timestamp}`,
     title: `Test ${documentType} Document ${timestamp}`,
-    content: documentType === 'PAPER' ? `# Test Paper Document\n\nThis is test content for an Atrium paper document.` : null,
+    content: documentType === 'PAPER' ? `# Test Paper Document\n\nThis is test content for a Workshop paper document.` : null,
     type: documentType,
     status: 'ACTIVE' as const,
     workspaceId: TEST_USER.workspaceId,
@@ -330,7 +330,7 @@ export function createTestCompanyWithDetails(overrides: Partial<any> = {}) {
 /**
  * Track created test data for cleanup
  */
-export function trackTestData(type: 'companies' | 'people' | 'actions' | 'reports' | 'atriumDocuments', id: string) {
+export function trackTestData(type: 'companies' | 'people' | 'actions' | 'reports' | 'workshopDocuments', id: string) {
   createdTestIds[type].add(id);
 }
 
@@ -343,7 +343,7 @@ export function getTrackedTestData() {
     people: Array.from(createdTestIds.people),
     actions: Array.from(createdTestIds.actions),
     reports: Array.from(createdTestIds.reports),
-    atriumDocuments: Array.from(createdTestIds.atriumDocuments),
+    workshopDocuments: Array.from(createdTestIds.workshopDocuments),
   };
 }
 
@@ -355,7 +355,7 @@ export function clearTrackedTestData() {
   createdTestIds.people.clear();
   createdTestIds.actions.clear();
   createdTestIds.reports.clear();
-  createdTestIds.atriumDocuments.clear();
+  createdTestIds.workshopDocuments.clear();
 }
 
 /**
@@ -423,10 +423,10 @@ export const TEST_PIPELINE_DATA = {
   engagementStrategy: () => createTestDeepValueReport('engagement_strategy'),
   riskAssessment: () => createTestDeepValueReport('risk_assessment'),
   
-  // Atrium documents
-  atriumPaper: () => createTestAtriumDocument('PAPER'),
-  atriumFolder: () => createTestAtriumDocument('FOLDER'),
-  atriumTemplate: () => createTestAtriumDocument('TEMPLATE'),
+  // Workshop documents
+  workshopPaper: () => createTestWorkshopDocument('PAPER'),
+  workshopFolder: () => createTestWorkshopDocument('FOLDER'),
+  workshopTemplate: () => createTestWorkshopDocument('TEMPLATE'),
   
   // Person with CoreSignal data
   personWithCoreSignal: () => createTestPersonWithCoreSignal(),

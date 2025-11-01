@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSecureApiContext, createErrorResponse } from '@/platform/services/secure-api-helper';
 import { prisma } from '@/platform/database/prisma-client';
+import { extractIdFromSlug } from '@/platform/utils/url-utils';
 
 export async function GET(
   request: NextRequest,
@@ -9,10 +10,14 @@ export async function GET(
   try {
     // Resolve params (Next.js 15+ compatibility)
     const resolvedParams = await params;
-    const storyId = resolvedParams.id;
+    const paramValue = resolvedParams.id;
+    
+    // Extract ID from slug (handles both slug format "name-id" and raw ID)
+    const storyId = extractIdFromSlug(paramValue);
     
     console.log('🔍 [STACKS API] GET single story request received');
-    console.log('🔍 [STACKS API] Story ID:', storyId);
+    console.log('🔍 [STACKS API] Param value:', paramValue);
+    console.log('🔍 [STACKS API] Extracted story ID:', storyId);
     
     // Use platform's unified authentication system
     const { context, response } = await getSecureApiContext(request, {
@@ -119,4 +124,3 @@ export async function GET(
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-

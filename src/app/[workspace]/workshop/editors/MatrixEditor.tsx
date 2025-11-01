@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { useAtrium } from "../layout";
-import { AtriumDocument } from "../types/document";
+import { useWorkshop } from "../layout";
+import { WorkshopDocument } from "../types/document";
 import { 
   ChartBarIcon,
   CheckIcon,
@@ -39,7 +39,7 @@ import {
 } from 'recharts';
 
 interface MatrixEditorProps {
-  document: AtriumDocument;
+  document: WorkshopDocument;
   onSave: (content: any) => void;
   onAutoSave: (content: any) => void;
 }

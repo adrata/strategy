@@ -1,5 +1,5 @@
 /**
- * Y.js Provider for Atrium Real-time Collaboration
+ * Y.js Provider for Workshop Real-time Collaboration
  * 
  * Provides real-time collaborative editing using Y.js CRDTs and WebSockets
  * with conflict resolution and offline support.
@@ -104,7 +104,7 @@ export class YjsProvider {
   private async setupPersistence(): Promise<void> {
     try {
       this.state.persistence = new IndexeddbPersistence(
-        `atrium-doc-${this.documentId}`,
+        `workshop-doc-${this.documentId}`,
         this.state.doc
       );
 
@@ -130,7 +130,7 @@ export class YjsProvider {
       
       this.state.provider = new WebsocketProvider(
         wsUrl,
-        `atrium-doc-${this.documentId}`,
+        `workshop-doc-${this.documentId}`,
         this.state.doc,
         {
           connect: true,

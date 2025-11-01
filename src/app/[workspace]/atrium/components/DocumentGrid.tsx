@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAtrium } from "../layout";
-import { AtriumDocument } from "../types/document";
+import { useWorkshop } from "../layout";
+import { WorkshopDocument } from "../types/document";
 import { generateSlug } from "@/platform/utils/url-utils";
 import { 
   DocumentTextIcon,
@@ -25,9 +25,9 @@ export function DocumentGrid() {
     selectedDocumentType,
     currentFolderId,
     workspace,
-  } = useAtrium();
+  } = useWorkshop();
 
-  const [documents, setDocuments] = useState<AtriumDocument[]>([]);
+  const [documents, setDocuments] = useState<WorkshopDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +46,7 @@ export function DocumentGrid() {
       // const data = await response.json();
       
       // Mock data for now
-      const mockDocuments: AtriumDocument[] = [
+      const mockDocuments: WorkshopDocument[] = [
         {
           id: '1',
           title: 'Project Proposal',

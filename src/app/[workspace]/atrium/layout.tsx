@@ -8,7 +8,7 @@ import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
-import { AtriumLeftPanel } from "./components/AtriumLeftPanel";
+import { WorkshopLeftPanel } from "./components/WorkshopLeftPanel";
 import { WorkshopDocument } from "./types/document";
 import { WorkshopFolder } from "./types/folder";
 
@@ -141,7 +141,7 @@ function WorkshopLayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <PanelLayout
       thinLeftPanel={null}
-      leftPanel={<AtriumLeftPanel />}
+      leftPanel={<WorkshopLeftPanel />}
       middlePanel={children}
       rightPanel={<RightPanel />}
       zoom={100}

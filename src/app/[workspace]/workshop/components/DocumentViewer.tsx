@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { AtriumDocument } from "../types/document";
+import { WorkshopDocument } from "../types/document";
 import { PaperEditorWrapper } from "./editors/PaperEditorWrapper";
 import { CodeEditorWrapper } from "./editors/CodeEditorWrapper";
 import { MatrixEditor } from "../editors/MatrixEditor";
@@ -20,7 +20,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 interface DocumentViewerProps {
-  document: AtriumDocument;
+  document: WorkshopDocument;
   isEditMode: boolean;
   onBack: () => void;
   onToggleEditMode: () => void;

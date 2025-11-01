@@ -7,7 +7,7 @@ import { randomBytes } from 'crypto';
 
 /**
  * POST /api/workshop/upload
- * Upload a file to Atrium
+ * Upload a file to Workshop
  */
 export async function POST(request: NextRequest) {
   try {
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     const secureFilename = `${randomBytes(16).toString('hex')}.${fileExtension}`;
     
     // Create upload directory if it doesn't exist
-    const uploadDir = join(process.cwd(), 'uploads', 'atrium', workspaceId);
+    const uploadDir = join(process.cwd(), 'uploads', 'workshop', workspaceId);
     await mkdir(uploadDir, { recursive: true });
 
     // Save file to disk
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
         title: title || file.name,
         description,
         documentType: detectedDocumentType,
-        fileUrl: `/uploads/atrium/${workspaceId}/${secureFilename}`,
+        fileUrl: `/uploads/workshop/${workspaceId}/${secureFilename}`,
         fileType: file.type,
         fileSize: file.size,
         folderId: folderId || null,
