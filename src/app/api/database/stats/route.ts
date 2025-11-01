@@ -8,9 +8,6 @@ import { getStreamlinedModels } from '@/app/[workspace]/database/utils/schemaPar
 export const dynamic = 'force-static';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
-
  * GET /api/database/stats
  * 
  * Returns database statistics for the workspace
