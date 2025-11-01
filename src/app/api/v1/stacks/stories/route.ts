@@ -123,73 +123,143 @@ export async function GET(request: NextRequest) {
         }
       },
       orderBy: [
-        { priority: 'desc' },
-        { createdAt: 'desc' }
+        { createdAt: 'desc' },
+        { priority: 'desc' }
       ]
     });
 
     console.log('📊 [STACKS API] Found', stories.length, 'stories for workspace', workspaceId);
 
     // Transform the data to match the expected format
-    const transformedStories = stories.map(story => ({
-      id: story.id,
-      title: story.title,
-      description: story.description,
-      status: story.status,
-      priority: story.priority,
-      viewType: story.viewType || 'main',
-      product: story.product || null,
-      section: story.section || null,
-      assignee: story.assignee ? {
-        id: story.assignee.id,
-        name: `${story.assignee.firstName} ${story.assignee.lastName}`,
-        email: story.assignee.email
-      } : null,
-      epic: story.epic ? {
-        id: story.epic.id,
-        title: story.epic.title,
-        description: story.epic.description
-      } : null,
-      project: story.project ? {
-        id: story.project.id,
-        name: story.project.name
-      } : null,
-      dueDate: null, // dueDate field doesn't exist in schema yet
-      tags: [], // tags field doesn't exist in schema yet
-      createdAt: story.createdAt,
-      updatedAt: story.updatedAt,
-      // Calculate time in current status (in days)
-      timeInStatus: story.updatedAt ? Math.floor((Date.now() - new Date(story.updatedAt).getTime()) / (1000 * 60 * 60 * 24)) : 0
-    }));
+    const transformedStories = stories.map(story => {
+      try {
+        // Safely handle assignee with null checks
+        let assignee = null;
+        if (story.assignee) {
+          const firstName = story.assignee.firstName || '';
+          const lastName = story.assignee.lastName || '';
+          assignee = {
+            id: story.assignee.id,
+            name: `${firstName} ${lastName}`.trim() || 'Unknown',
+            email: story.assignee.email || ''
+          };
+        }
 
+        // Safely handle epic with null checks
+        let epic = null;
+        if (story.epic) {
+          epic = {
+            id: story.epic.id,
+            title: story.epic.title || '',
+            description: story.epic.description || ''
+          };
+        }
+
+        // Safely handle project with null checks
+        let project = null;
+        if (story.project) {
+          project = {
+            id: story.project.id,
+            name: story.project.name || ''
+          };
+        }
+
+        return {
+          id: story.id,
+          title: story.title || '',
+          description: story.description || '',
+          status: story.status || 'todo',
+          priority: story.priority || 'medium',
+          viewType: 'main', // Default since viewType is not in select
+          product: story.product || null,
+          section: story.section || null,
+          assignee,
+          epic,
+          project,
+          dueDate: null, // dueDate field doesn't exist in schema yet
+          tags: [], // tags field doesn't exist in schema yet
+          createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
+          updatedAt: story.updatedAt?.toISOString() || new Date().toISOString(),
+          // Calculate time in current status (in days)
+          timeInStatus: story.updatedAt ? Math.floor((Date.now() - new Date(story.updatedAt).getTime()) / (1000 * 60 * 60 * 24)) : 0
+        };
+      } catch (transformError) {
+        console.error(`❌ [STACKS API] Error transforming story ${story.id}:`, transformError);
+        // Return a safe fallback story object
+        return {
+          id: story.id,
+          title: story.title || 'Unknown',
+          description: story.description || '',
+          status: story.status || 'todo',
+          priority: story.priority || 'medium',
+          viewType: 'main',
+          product: null,
+          section: null,
+          assignee: null,
+          epic: null,
+          project: null,
+          dueDate: null,
+          tags: [],
+          createdAt: story.createdAt?.toISOString() || new Date().toISOString(),
+          updatedAt: story.updatedAt?.toISOString() || new Date().toISOString(),
+          timeInStatus: 0
+        };
+      }
+    });
+
+    console.log('✅ [STACKS API] Successfully transformed', transformedStories.length, 'stories');
     return NextResponse.json({ stories: transformedStories });
 
   } catch (error) {
-    console.error('Error fetching stories:', error);
+    console.error('❌ [STACKS API] Error fetching stories:', error);
+    console.error('❌ [STACKS API] Error details:', {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : typeof error,
+      workspaceId,
+      errorObject: error
+    });
     
     // Handle P2022 error (column does not exist) - specifically for viewType column
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
+    if (error && typeof error === 'object' && 'code' in error) {
       const prismaError = error as any;
-      console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
-        columnName: prismaError.meta?.column_name,
-        tableName: prismaError.meta?.table_name,
-        modelName: prismaError.meta?.modelName
-      });
       
-      // If it's the viewType column, this should have been handled by explicit select
-      // But log it for diagnostics
-      if (prismaError.meta?.column_name === 'viewType' || prismaError.meta?.modelName === 'StacksStory') {
-        console.warn('⚠️ [STACKS API] viewType column missing - falling back to explicit select query');
-        // The explicit select above should prevent this, but if it still happens, return a helpful error
-        return createErrorResponse(
-          'Database schema mismatch: viewType column not found. Please run database migrations.',
-          'SCHEMA_MISMATCH',
-          500
-        );
+      if (prismaError.code === 'P2022') {
+        console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
+          columnName: prismaError.meta?.column_name,
+          tableName: prismaError.meta?.table_name,
+          modelName: prismaError.meta?.modelName
+        });
+        
+        // If it's the viewType column, this should have been handled by explicit select
+        // But log it for diagnostics
+        if (prismaError.meta?.column_name === 'viewType' || prismaError.meta?.modelName === 'StacksStory') {
+          console.warn('⚠️ [STACKS API] viewType column missing - falling back to explicit select query');
+          // The explicit select above should prevent this, but if it still happens, return a helpful error
+          return createErrorResponse(
+            'Database schema mismatch: viewType column not found. Please run database migrations.',
+            'SCHEMA_MISMATCH',
+            500
+          );
+        }
+      }
+      
+      // Log other Prisma errors
+      console.error('❌ [STACKS API] Prisma error code:', prismaError.code);
+      if (prismaError.meta) {
+        console.error('❌ [STACKS API] Prisma error meta:', prismaError.meta);
       }
     }
     
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    // Return detailed error for debugging (in development) or generic error (in production)
+    const errorMessage = process.env.NODE_ENV === 'development' 
+      ? (error instanceof Error ? error.message : String(error))
+      : 'Internal server error';
+    
+    return NextResponse.json({ 
+      error: errorMessage,
+      code: error && typeof error === 'object' && 'code' in error ? (error as any).code : 'UNKNOWN_ERROR'
+    }, { status: 500 });
   }
 }
 

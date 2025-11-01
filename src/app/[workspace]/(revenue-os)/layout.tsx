@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { PanelLayout } from "@/platform/ui/components/layout/PanelLayout";
 import { LeftPanel } from "@/products/pipeline/components/LeftPanel";
 import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
+import { ConversationsListGrouped } from "@/platform/ui/components/chat/ConversationsListGrouped";
 import { SpeedrunSprintLeftPanel } from "@/frontend/components/pipeline/SpeedrunSprintLeftPanel";
 import { SprintProvider, useSprint } from "@/frontend/components/pipeline/SprintContext";
 import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
@@ -178,8 +179,8 @@ function PipelineLayoutInner({
   // Determine which right panel to show based on the current route
   const getRightPanel = () => {
     if (pathname.includes('/pinpoint/adrata')) {
-      // Pinpoint adrata route - no right panel
-      return null;
+      // Pinpoint adrata route - show conversation list grouped by date
+      return <ConversationsListGrouped />;
     } else if (pathname.includes('/adrata')) {
       // Other adrata routes - show RightPanel alongside middle chat
       return <RightPanel />;
@@ -202,7 +203,7 @@ function PipelineLayoutInner({
 
   // Determine right panel visibility based on route
   const isRightPanelVisible = pathname.includes('/pinpoint/adrata') 
-    ? false 
+    ? true 
     : ui.isRightPanelVisible;
 
   return (
