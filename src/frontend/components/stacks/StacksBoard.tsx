@@ -142,7 +142,7 @@ const STACK_COLUMNS = [
     key: 'shipped',
     label: 'Shipped',
     color: 'bg-white border-gray-300',
-    icon: RocketLaunchIcon,
+    icon: PaperAirplaneIcon,
     description: 'Shipped to production'
   }
 ];
