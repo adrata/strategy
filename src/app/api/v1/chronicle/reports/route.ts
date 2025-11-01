@@ -4,6 +4,9 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { sampleChronicleReports } from '@/lib/chronicle-sample-data';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

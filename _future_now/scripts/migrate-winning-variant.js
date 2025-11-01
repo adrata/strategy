@@ -11,7 +11,7 @@ const { ConsolidatedBuyerGroupEngine } = require('../buyer-group-consolidated');
 
 class WinningVariantMigrator {
   constructor() {
-    this.winningVariantPath = path.join(__dirname, '../../src/app/(locker)/private/winning-variant');
+    this.winningVariantPath = path.join(__dirname, '../../src/app/(workshop)/private/winning-variant');
     this.backupPath = path.join(__dirname, '../backups');
     this.migrationLog = [];
     

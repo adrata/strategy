@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { OasisChatPanel } from "@/products/oasis/components/OasisChatPanel";
 import { OasisThreadView } from "@/products/oasis/components/OasisThreadView";
 import { VideoCallPanel } from "@/products/oasis/components/VideoCallPanel";
-import { useOasis } from "@/app/[workspace]/(pipeline)/layout";
+// Import from layout for layout-specific state
+import { useOasisLayout } from '@/app/[workspace]/(revenue-os)/layout';
 
 interface OasisPageContentProps {
   conversationType?: string;
@@ -13,7 +14,7 @@ interface OasisPageContentProps {
 
 export function OasisPageContent({ conversationType, conversationId }: OasisPageContentProps) {
   const [isThreadVisible, setIsThreadVisible] = useState(false);
-  const { isVideoCallActive, videoCallRoom, setIsVideoCallActive, setVideoCallRoom } = useOasis();
+  const { isVideoCallActive, videoCallRoom, setIsVideoCallActive, setVideoCallRoom } = useOasisLayout();
 
   // Note: Channel selection is handled by OasisLeftPanel based on URL parameters
   // This component just renders the chat interface

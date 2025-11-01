@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Oasis Auto-Create DMs API
  * 
  * Creates DM conversations between Ross and all workspace users

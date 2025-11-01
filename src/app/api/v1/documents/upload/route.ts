@@ -6,6 +6,9 @@ import { join } from 'path';
 import { randomBytes } from 'crypto';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * POST /api/workshop/upload
  * Upload a file to Workshop
  */

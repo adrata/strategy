@@ -3,6 +3,9 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Individual Conversation API v1
  * GET /api/v1/conversations/{id} - Get conversation with messages
  * PATCH /api/v1/conversations/{id} - Update conversation

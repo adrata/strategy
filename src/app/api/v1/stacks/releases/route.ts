@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSecureApiContext, createErrorResponse } from '@/platform/services/secure-api-helper';
 import { prisma } from '@/platform/database/prisma-client';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function POST(request: NextRequest) {
   try {
     const { context, response } = await getSecureApiContext(request, {

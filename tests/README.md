@@ -55,16 +55,16 @@ This comprehensive testing framework provides extensive coverage for all record 
 ## Record Types Tested
 
 ### Pipeline Record Pages
-- **People**: `/[workspace]/(pipeline)/people/[id]/page.tsx`
-- **Companies**: `/[workspace]/(pipeline)/companies/[id]/page.tsx`
-- **Leads**: `/[workspace]/(pipeline)/leads/[id]/page.tsx`
-- **Prospects**: `/[workspace]/(pipeline)/prospects/[id]/page.tsx`
-- **Opportunities**: `/[workspace]/(pipeline)/opportunities/[id]/page.tsx`
-- **Clients**: `/[workspace]/(pipeline)/clients/[id]/page.tsx`
+- **People**: `/[workspace]/(revenue-os)/people/[id]/page.tsx`
+- **Companies**: `/[workspace]/(revenue-os)/companies/[id]/page.tsx`
+- **Leads**: `/[workspace]/(revenue-os)/leads/[id]/page.tsx`
+- **Prospects**: `/[workspace]/(revenue-os)/prospects/[id]/page.tsx`
+- **Opportunities**: `/[workspace]/(revenue-os)/opportunities/[id]/page.tsx`
+- **Clients**: `/[workspace]/(revenue-os)/clients/[id]/page.tsx`
 
 ### Speedrun Record Pages
-- **Speedrun Detail**: `/[workspace]/(pipeline)/speedrun/[id]/page.tsx`
-- **Sprint Page**: `/[workspace]/(pipeline)/speedrun/sprint/page.tsx`
+- **Speedrun Detail**: `/[workspace]/(revenue-os)/speedrun/[id]/page.tsx`
+- **Sprint Page**: `/[workspace]/(revenue-os)/speedrun/sprint/page.tsx`
 
 ## Test Utilities
 

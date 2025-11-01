@@ -4,6 +4,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
 import { PrismaClient } from '@prisma/client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 import { trackQueryPerformance } from '@/platform/services/database/performance-monitor';

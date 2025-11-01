@@ -3,6 +3,9 @@ import { WorkspaceDataRouter } from '@/platform/services/workspace-data-router';
 import { prisma } from '@/platform/database/prisma-client';
 
 // 🚀 PERFORMANCE: Request deduplication to prevent multiple calls
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const pendingRequests = new Map<string, Promise<any>>();
 
 export async function POST(request: NextRequest) {

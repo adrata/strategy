@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Oasis Direct Messages API
  * 
  * Handles DM conversation creation and listing

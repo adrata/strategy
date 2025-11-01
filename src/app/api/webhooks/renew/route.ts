@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { webhookRenewalService } from '@/platform/services/webhook-renewal-service';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Webhook Renewal API
  * Manually trigger webhook renewal and get status
  */

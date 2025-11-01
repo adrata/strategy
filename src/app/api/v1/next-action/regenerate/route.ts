@@ -3,6 +3,9 @@ import { prisma } from '@/platform/database/prisma-client';
 import { getV1AuthUser } from '../../auth';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Manual Next Action Regeneration API
  * POST /api/v1/next-action/regenerate - Regenerate next actions for records
  */

@@ -4,6 +4,9 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * GET /api/particle/experiments
  * Get all experiments for the current workspace with filtering
  */

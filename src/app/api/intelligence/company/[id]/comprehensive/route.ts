@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Comprehensive Company Intelligence API
  * 
  * GET /api/intelligence/company/[id]/comprehensive

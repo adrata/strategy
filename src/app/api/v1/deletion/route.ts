@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🗑️ DELETION API - 2025 Best Practices
  * 
  * Provides endpoints for:

@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ companyName: string }> }

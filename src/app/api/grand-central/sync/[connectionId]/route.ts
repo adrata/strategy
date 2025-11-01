@@ -4,6 +4,9 @@ import { authOptions } from '@/lib/auth-options';
 import { prisma } from '@/lib/prisma';
 import { UnifiedEmailSyncService } from '@/platform/services/UnifiedEmailSyncService';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { connectionId: string } }

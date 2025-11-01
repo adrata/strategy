@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 📊 EXCEL IMPORT API ENDPOINT
  * 
  * Intelligent Excel file processing for lead import via AI chat

@@ -4,6 +4,9 @@ import { prisma } from '@/platform/database/prisma-client';
 import { Nango } from '@nangohq/node';
 
 // Initialize Nango with error handling
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 let nango: Nango | null = null;
 try {
   const secretKey = process.env.NANGO_SECRET_KEY_DEV || process.env.NANGO_SECRET_KEY;

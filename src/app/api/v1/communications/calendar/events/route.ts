@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { CalendarSyncService } from '@/platform/services/calendar-sync-service';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 📅 CALENDAR EVENTS API ENDPOINT
  * GET /api/calendar/events
  * Retrieves calendar events for a specific date range

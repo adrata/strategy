@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { calendarSyncScheduler } from '@/platform/services/CalendarSyncScheduler';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 📅 CALENDAR SYNC SCHEDULER API ENDPOINT
  * 
  * GET: Get scheduler status

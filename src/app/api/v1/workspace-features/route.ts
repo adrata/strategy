@@ -3,6 +3,9 @@ import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {

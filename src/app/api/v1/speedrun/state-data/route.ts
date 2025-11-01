@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Speedrun State Data API
  * 
  * GET /api/v1/speedrun/state-data - Get state ranking data for workspace

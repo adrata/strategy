@@ -472,7 +472,7 @@
         },
         "contactsEnriched": 0
       },
-      "filepath": "C:\\Users\\ross\\Development\\adrata\\src\\app\\(locker)\\private\\winning-variant\\data\\match-group-buyer-group-comprehensive.json",
+      "filepath": "C:\\Users\\ross\\Development\\adrata\\src\\app\\(workshop)\\private\\winning-variant\\data\\match-group-buyer-group-comprehensive.json",
       "timestamp": "2025-10-22T15:53:37.232Z"
     },
     {
@@ -940,7 +940,7 @@
         },
         "contactsEnriched": 0
       },
-      "filepath": "C:\\Users\\ross\\Development\\adrata\\src\\app\\(locker)\\private\\winning-variant\\data\\brex-buyer-group-comprehensive.json",
+      "filepath": "C:\\Users\\ross\\Development\\adrata\\src\\app\\(workshop)\\private\\winning-variant\\data\\brex-buyer-group-comprehensive.json",
       "timestamp": "2025-10-22T15:55:35.942Z"
     },
     {
@@ -1408,7 +1408,7 @@
         },
         "contactsEnriched": 0
       },
-      "filepath": "C:\\Users\\ross\\Development\\adrata\\src\\app\\(locker)\\private\\winning-variant\\data\\first-premier-bank-buyer-group-comprehensive.json",
+      "filepath": "C:\\Users\\ross\\Development\\adrata\\src\\app\\(workshop)\\private\\winning-variant\\data\\first-premier-bank-buyer-group-comprehensive.json",
       "timestamp": "2025-10-22T15:56:29.781Z"
     },
     {
@@ -1876,7 +1876,7 @@
         },
         "contactsEnriched": 0
       },
-      "filepath": "C:\\Users\\ross\\Development\\adrata\\src\\app\\(locker)\\private\\winning-variant\\data\\zuora-buyer-group-comprehensive.json",
+      "filepath": "C:\\Users\\ross\\Development\\adrata\\src\\app\\(workshop)\\private\\winning-variant\\data\\zuora-buyer-group-comprehensive.json",
       "timestamp": "2025-10-22T15:58:17.150Z"
     }
   ],

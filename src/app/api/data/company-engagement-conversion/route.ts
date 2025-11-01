@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { companyEngagementConverter } from '@/platform/services/company-engagement-conversion';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * GET: Get company engagement conversion statistics
  */
 export async function GET(request: NextRequest) {

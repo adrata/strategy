@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { token: string } }

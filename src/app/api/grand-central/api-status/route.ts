@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { API_REGISTRY } from '@/app/[workspace]/grand-central/data/api-registry';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function GET() {
   try {
     const apiStatuses = API_REGISTRY.map(api => {

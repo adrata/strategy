@@ -5,6 +5,9 @@ import { getDefaultUserSettings } from '@/products/speedrun/state';
 import { StateRankingService } from '@/products/speedrun/state-ranking';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Calculate next action date based on global rank
  * This matches the logic from /api/v1/next-action/regenerate/route.ts
  */

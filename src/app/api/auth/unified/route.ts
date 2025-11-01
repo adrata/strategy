@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * UNIFIED AUTH API - ENTERPRISE GRADE
  * 
  * Single endpoint for ALL authentication operations across the platform.

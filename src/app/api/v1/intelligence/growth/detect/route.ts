@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * SALES INTENT DETECTION API ENDPOINT
  * 
  * POST /api/v1/intelligence/sales-intent/detect

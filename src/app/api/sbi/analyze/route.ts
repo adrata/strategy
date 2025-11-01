@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🔍 SBI SINGLE COMPANY ANALYSIS API
  * 
  * Endpoint for analyzing a single company through the 4-step pipeline

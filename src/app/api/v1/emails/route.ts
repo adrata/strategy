@@ -4,6 +4,9 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Email API Endpoint
  * 
  * Provides access to email messages with filtering by person, company, or workspace.

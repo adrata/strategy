@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/prisma';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * GET /api/chronicle/share/[token]
  * Access a shared Chronicle report
  */

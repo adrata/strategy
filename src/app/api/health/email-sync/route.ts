@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Email Sync Health Check Endpoint
  * 
  * Provides health status for Grand Central email integration

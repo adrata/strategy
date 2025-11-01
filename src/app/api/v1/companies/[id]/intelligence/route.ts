@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma';
 import { getV1AuthUser } from '../../../auth';
 
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Company Intelligence API v1
  * GET /api/v1/companies/[id]/intelligence - Get company intelligence
  * POST /api/v1/companies/[id]/intelligence - Force regenerate intelligence

@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * Auto-Create Ross DMs API
  * 
  * Automatically creates DMs with Ross for all users in a workspace
