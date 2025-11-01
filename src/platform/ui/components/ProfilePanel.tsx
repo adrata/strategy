@@ -21,8 +21,8 @@ import {
   BuildingLibraryIcon,
   Squares2X2Icon,
   DocumentDuplicateIcon,
-  ListBulletIcon,
-  Bars3Icon
+  ClipboardDocumentCheckIcon,
+  HomeIcon
 } from "@heroicons/react/24/outline";
 import { X, MessageSquare, FileText, Layers, Building2, Check, GripVertical, PanelLeft } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
@@ -120,11 +120,11 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     const fullPath = `/${workspaceSlug}${path}`;
     console.log(`🧭 ProfilePanel: Full navigation path: ${fullPath}`);
     
-    // Close panel for Stacks, keep open for Atrium and others
+    // Close panel for Stacks, keep open for Workshop and others
     if (path === '/stacks') {
       onClose();
     }
-    // For Atrium and other apps, keep panel open
+    // For Workshop and other apps, keep panel open
     
     router.push(fullPath);
   };
@@ -326,9 +326,9 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             title={viewMode === 'main' ? 'Show action list' : 'Show main menu'}
           >
             {viewMode === 'main' ? (
-              <ListBulletIcon className="w-4 h-4 text-[var(--muted-foreground)]" />
+              <ClipboardDocumentCheckIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
             ) : (
-              <Bars3Icon className="w-4 h-4 text-[var(--muted-foreground)]" />
+              <HomeIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
             )}
           </button>
           <button
@@ -363,6 +363,19 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">RevenueOS</span>
             </button>
 
+            {/* Workshop */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'workshop' 
+                  ? 'bg-blue-100 text-blue-700' 
+                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+              }`}
+              onClick={() => handleNavigation("/workshop")}
+            >
+              <DocumentDuplicateIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Workshop</span>
+            </button>
+
             {/* Oasis */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -389,19 +402,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">Stacks</span>
             </button>
 
-            {/* Atrium */}
-            <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'atrium' 
-                  ? 'bg-blue-100 text-blue-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
-              }`}
-              onClick={() => handleNavigation("/atrium")}
-            >
-              <DocumentDuplicateIcon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Atrium</span>
-            </button>
-
             {/* Settings */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -415,6 +415,19 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <CogIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Settings</span>
+            </button>
+
+            {/* Leonardo */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'leonardo' 
+                  ? 'bg-blue-100 text-blue-700' 
+                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+              }`}
+              onClick={() => handleNavigation("/leonardo")}
+            >
+              <SparklesIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Leonardo</span>
             </button>
 
             {/* Desktop Download - conditionally shown below Settings */}
