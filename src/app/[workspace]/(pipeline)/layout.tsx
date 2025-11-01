@@ -128,7 +128,9 @@ function PipelineLayoutInner({
   // Determine current app based on pathname
   const getCurrentApp = () => {
     if (pathname.includes('/oasis')) return 'oasis';
-    if (pathname.includes('/atrium')) return 'atrium';
+    if (pathname.includes('/workshop')) return 'workshop';
+    if (pathname.includes('/leonardo')) return 'leonardo';
+    if (pathname.includes('/stacks')) return 'stacks';
     return 'revenueos'; // Default to AcquisitionOS
   };
   const currentApp = getCurrentApp();
@@ -140,7 +142,10 @@ function PipelineLayoutInner({
 
   // Determine which left panel to show based on the current route
   const getLeftPanel = () => {
-    if (pathname.includes('/oasis')) {
+    if (pathname.includes('/leonardo')) {
+      // Leonardo route - minimal or null left panel since chat is in middle
+      return null;
+    } else if (pathname.includes('/oasis')) {
       return <OasisLeftPanel key="oasis-left-panel" />;
     } else if (pathname.includes('/stacks')) {
       return <StacksLeftPanel activeSubSection={stacksContext?.activeSubSection || 'stacks'} onSubSectionChange={stacksContext?.onSubSectionChange || (() => {})} />;
@@ -173,7 +178,10 @@ function PipelineLayoutInner({
 
   // Determine which right panel to show based on the current route
   const getRightPanel = () => {
-    if (pathname.includes('/oasis')) {
+    if (pathname.includes('/leonardo')) {
+      // Leonardo route - hide right panel since chat is in middle
+      return null;
+    } else if (pathname.includes('/oasis')) {
       return <RightPanel />;
     } else if (pathname.includes('/stacks')) {
       if (stacksContext?.selectedItem) {
