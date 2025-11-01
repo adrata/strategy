@@ -179,18 +179,23 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   // Fetch stories from database
   useEffect(() => {
     const fetchStories = async () => {
+      const workspaceId = ui.activeWorkspace?.id;
       console.log('🔍 [StacksBoard] Starting fetch, workspace:', ui.activeWorkspace);
+      console.log('🔍 [StacksBoard] Workspace ID:', workspaceId);
       
-      if (!ui.activeWorkspace?.id) {
-        console.warn('⚠️ [StacksBoard] No workspace ID, setting empty cards');
+      if (!workspaceId) {
+        console.warn('⚠️ [StacksBoard] No workspace ID available, cannot fetch stories');
+        console.warn('⚠️ [StacksBoard] activeWorkspace:', ui.activeWorkspace);
         setCards([]);
         setLoading(false);
         return;
       }
 
       try {
-        const apiUrl = `/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`;
+        setLoading(true);
+        const apiUrl = `/api/v1/stacks/stories?workspaceId=${workspaceId}`;
         console.log('🔍 [StacksBoard] Fetching from:', apiUrl);
+        console.log('🔍 [StacksBoard] Request workspace ID:', workspaceId);
         
         const response = await fetch(apiUrl, {
           credentials: 'include', // Include cookies for authentication
@@ -198,6 +203,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
             'Content-Type': 'application/json',
           },
         });
+        
         console.log('🔍 [StacksBoard] Response status:', response.status, response.ok);
         
         if (response.ok) {
@@ -205,28 +211,72 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
           console.log('📊 [StacksBoard] Fetched stories from database:', {
             totalStories: data.stories?.length || 0,
             stories: data.stories,
+            workspaceId,
             isNotaryEveryday
           });
           
           if (data.stories && Array.isArray(data.stories)) {
+            if (data.stories.length === 0) {
+              console.log('ℹ️ [StacksBoard] No stories found for workspace:', workspaceId);
+            }
+            
             const sellingStories = filterSellingStories(data.stories);
-            console.log('🎯 [StacksBoard] Filtered selling stories:', sellingStories);
+            console.log('🎯 [StacksBoard] Filtered selling stories:', {
+              original: data.stories.length,
+              filtered: sellingStories.length,
+              stories: sellingStories
+            });
             
             const convertedCards = sellingStories.map(convertNotaryStoryToStackCard);
-            console.log('🔄 [StacksBoard] Converted cards:', convertedCards);
+            console.log('🔄 [StacksBoard] Converted cards:', convertedCards.length, 'cards');
             
             setCards(convertedCards);
           } else {
-            console.warn('⚠️ [StacksBoard] No stories in response or invalid format');
+            console.warn('⚠️ [StacksBoard] Invalid response format - stories is not an array');
+            console.warn('⚠️ [StacksBoard] Response data:', data);
             setCards([]);
           }
         } else {
-          const errorText = await response.text();
-          console.warn('⚠️ [StacksBoard] API failed:', response.status, errorText);
+          let errorData;
+          try {
+            const errorText = await response.text();
+            errorData = errorText;
+            // Try to parse as JSON
+            try {
+              errorData = JSON.parse(errorText);
+            } catch {
+              // Keep as text if not JSON
+            }
+          } catch (parseError) {
+            errorData = { error: 'Failed to parse error response' };
+          }
+          
+          console.error('❌ [StacksBoard] API request failed:', {
+            status: response.status,
+            statusText: response.statusText,
+            workspaceId,
+            error: errorData
+          });
+          
+          if (response.status === 400 && errorData?.code === 'WORKSPACE_REQUIRED') {
+            console.error('❌ [StacksBoard] Workspace ID missing or invalid');
+          } else if (response.status === 401) {
+            console.error('❌ [StacksBoard] Authentication failed');
+          } else if (response.status === 403) {
+            console.error('❌ [StacksBoard] Access denied to workspace');
+          } else {
+            console.error('❌ [StacksBoard] Unexpected error:', response.status);
+          }
+          
           setCards([]);
         }
       } catch (error) {
         console.error('❌ [StacksBoard] Error fetching stories:', error);
+        console.error('❌ [StacksBoard] Error details:', {
+          message: error instanceof Error ? error.message : String(error),
+          workspaceId,
+          stack: error instanceof Error ? error.stack : undefined
+        });
         setCards([]);
       } finally {
         setLoading(false);

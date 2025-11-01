@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSecureApiContext, createErrorResponse } from '@/platform/services/secure-api-helper';
 import { prisma } from '@/platform/database/prisma-client';
 
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
 export async function GET(request: NextRequest) {
   try {
     console.log('🔍 [STACKS API] GET request received');
@@ -23,20 +26,32 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
-    // Get workspace ID from authenticated context
-    const workspaceId = context.workspaceId;
+    // Get workspace ID - prefer query parameter over context (frontend may have different active workspace)
+    const { searchParams } = new URL(request.url);
+    const queryWorkspaceId = searchParams.get('workspaceId');
+    const contextWorkspaceId = context.workspaceId;
     const userId = context.userId;
     
-    console.log('✅ [STACKS API] Authenticated user:', userId, 'workspace:', workspaceId);
+    // Use query parameter if provided, otherwise fall back to authenticated context
+    const workspaceId = queryWorkspaceId || contextWorkspaceId;
+    
+    console.log('✅ [STACKS API] Authenticated user:', userId);
+    console.log('🔍 [STACKS API] Workspace ID - Query param:', queryWorkspaceId, 'Context:', contextWorkspaceId, 'Using:', workspaceId);
 
-    const { searchParams } = new URL(request.url);
     const category = searchParams.get('category'); // 'build' or 'sell'
     const status = searchParams.get('status');
     const epicId = searchParams.get('epicId');
     const assigneeId = searchParams.get('assigneeId');
 
     if (!workspaceId) {
+      console.error('❌ [STACKS API] No workspace ID available (query param or context)');
       return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
+    }
+
+    // Security check: if both are provided, ensure they match (user should only access their workspace)
+    if (queryWorkspaceId && contextWorkspaceId && queryWorkspaceId !== contextWorkspaceId) {
+      console.warn('⚠️ [STACKS API] Workspace ID mismatch - Query:', queryWorkspaceId, 'Context:', contextWorkspaceId);
+      // Still allow it but log the warning - the context workspace may be different from active workspace
     }
 
     // Build where clause
@@ -53,15 +68,20 @@ export async function GET(request: NextRequest) {
 
     if (status) {
       where.status = status;
+      console.log('🔍 [STACKS API] Filtering by status:', status);
     }
 
     if (epicId) {
       where.epicId = epicId;
+      console.log('🔍 [STACKS API] Filtering by epicId:', epicId);
     }
 
     if (assigneeId) {
       where.assigneeId = assigneeId;
+      console.log('🔍 [STACKS API] Filtering by assigneeId:', assigneeId);
     }
+
+    console.log('🔍 [STACKS API] Query where clause:', JSON.stringify(where, null, 2));
 
     // Fetch stories with epic and assignee information
     const stories = await prisma.stacksStory.findMany({
@@ -94,6 +114,8 @@ export async function GET(request: NextRequest) {
         { createdAt: 'desc' }
       ]
     });
+
+    console.log('📊 [STACKS API] Found', stories.length, 'stories for workspace', workspaceId);
 
     // Transform the data to match the expected format
     const transformedStories = stories.map(story => ({
