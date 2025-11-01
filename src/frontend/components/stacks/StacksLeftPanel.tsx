@@ -170,14 +170,21 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
 
   // Update activeSubSection based on pathname (for workstream URL)
   useEffect(() => {
+    // Only update if pathname explicitly includes these paths
     if (pathname.includes('/stacks/workstream') || pathname.includes('/workstream')) {
-      onSubSectionChange('workstream');
+      if (activeSubSection !== 'workstream') {
+        onSubSectionChange('workstream');
+      }
     } else if (pathname.includes('/stacks/backlog') || pathname.includes('/backlog')) {
-      onSubSectionChange('backlog');
+      if (activeSubSection !== 'backlog') {
+        onSubSectionChange('backlog');
+      }
     } else if (pathname.includes('/stacks/metrics') || pathname.includes('/metrics')) {
-      onSubSectionChange('metrics');
+      if (activeSubSection !== 'metrics') {
+        onSubSectionChange('metrics');
+      }
     }
-  }, [pathname, onSubSectionChange]);
+  }, [pathname, onSubSectionChange, activeSubSection]);
 
   const handleProfileClick = () => {
     setIsProfilePanelVisible(!isProfilePanelVisible);
@@ -234,6 +241,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         <nav className="space-y-1" role="navigation" aria-label="Stacks navigation">
           {displayItems.map((item) => {
             const Icon = item.icon;
+            // Check if this item is active - prioritize activeSubSection from props, then check pathname
             const isActive = activeSubSection === item.id;
             
             return (
