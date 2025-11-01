@@ -8,6 +8,10 @@ async function applyStacksMigration() {
 
     await prisma.$executeRawUnsafe('ALTER TABLE "StacksStory" ADD COLUMN IF NOT EXISTS "viewType" VARCHAR(20)');
     console.log('✅ Added viewType column to StacksStory');
+    await prisma.$executeRawUnsafe('ALTER TABLE "StacksStory" ADD COLUMN IF NOT EXISTS "product" VARCHAR(50)');
+    console.log('✅ Added product column to StacksStory');
+    await prisma.$executeRawUnsafe('ALTER TABLE "StacksStory" ADD COLUMN IF NOT EXISTS "section" VARCHAR(50)');
+    console.log('✅ Added section column to StacksStory');
 
     await prisma.$executeRawUnsafe('ALTER TABLE "StacksTask" ADD COLUMN IF NOT EXISTS "product" VARCHAR(50)');
     console.log('✅ Added product column to StacksTask');
