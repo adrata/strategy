@@ -397,23 +397,64 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   return (
     <>
       <style>{`
-        .stacks-kanban-scroll::-webkit-scrollbar {
-          height: 8px;
+        .stacks-kanban-container {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(288px, 1fr));
+          gap: 1.5rem;
+          padding: 0.5rem;
+          height: 100%;
+          overflow-y: auto;
         }
-        .stacks-kanban-scroll::-webkit-scrollbar-track {
+        
+        /* At wider screens, show all in one row with horizontal scroll */
+        @media (min-width: 1920px) {
+          .stacks-kanban-container {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+          }
+        }
+        
+        /* At medium screens, allow 2 rows */
+        @media (min-width: 1400px) and (max-width: 1919px) {
+          .stacks-kanban-container {
+            grid-template-columns: repeat(3, 288px);
+          }
+        }
+        
+        /* At smaller screens, allow wrapping to 2 rows */
+        @media (max-width: 1399px) {
+          .stacks-kanban-container {
+            grid-template-columns: repeat(2, 288px);
+          }
+        }
+        
+        /* Very small screens - single column */
+        @media (max-width: 640px) {
+          .stacks-kanban-container {
+            grid-template-columns: 1fr;
+          }
+        }
+        
+        .stacks-kanban-container::-webkit-scrollbar {
+          height: 8px;
+          width: 8px;
+        }
+        .stacks-kanban-container::-webkit-scrollbar-track {
           background: #d1d5db;
         }
-        .stacks-kanban-scroll::-webkit-scrollbar-thumb {
+        .stacks-kanban-container::-webkit-scrollbar-thumb {
           background: #6b7280;
           border-radius: 4px;
         }
-        .stacks-kanban-scroll::-webkit-scrollbar-thumb:hover {
+        .stacks-kanban-container::-webkit-scrollbar-thumb:hover {
           background: #4b5563;
         }
       `}</style>
       <div 
         ref={setScrollContainer}
-        className="stacks-kanban-scroll flex gap-6 px-2 py-1 h-full overflow-x-auto"
+        className="stacks-kanban-container"
         style={{
           scrollbarWidth: 'thin',
           scrollbarColor: '#6b7280 #d1d5db'
@@ -426,7 +467,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         return (
           <div
             key={column.key}
-            className="flex-shrink-0 w-72"
+            className="flex-shrink-0"
+            style={{ minWidth: '288px', width: '288px' }}
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
