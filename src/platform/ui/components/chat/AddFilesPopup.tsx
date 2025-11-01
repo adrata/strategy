@@ -485,7 +485,7 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={`Search ${DATA_CATEGORIES.find(cat => cat['id'] === activeDataCategory)?.label.toLowerCase() || 'data'}...`}
-                className="w-full pl-8 pr-3 py-1.5 text-xs border border-[var(--border)] dark:border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] dark:text-[var(--foreground)] placeholder-gray-500 dark:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-8 pr-3 py-1.5 text-xs border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>

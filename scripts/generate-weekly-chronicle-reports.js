@@ -256,7 +256,7 @@ async function generateWeeklyChronicleReports() {
       }
     });
 
-    const atriumDocs = await prisma.atriumDocument.findMany({
+    const atriumDocs = await prisma.workshopDocument.findMany({
       where: {
         workspaceId: workspace.id,
         sourceRecordType: 'CHRONICLE',

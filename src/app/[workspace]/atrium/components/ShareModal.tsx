@@ -55,7 +55,7 @@ export function ShareModal({ isOpen, onClose, document }: ShareModalProps) {
       // });
       
       // Mock response
-      const mockShareUrl = `https://atrium.example.com/shared/${Math.random().toString(36).substr(2, 9)}`;
+      const mockShareUrl = `https://workshop.example.com/shared/${Math.random().toString(36).substr(2, 9)}`;
       setShareUrl(mockShareUrl);
     } catch (err) {
       setError('Failed to create share link. Please try again.');

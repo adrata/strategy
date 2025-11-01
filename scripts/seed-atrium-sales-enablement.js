@@ -164,7 +164,7 @@ async function seedAtriumSalesEnablement() {
     }
 
     // Create a sales enablement folder
-    let salesFolder = await prisma.atriumFolder.findFirst({
+    let salesFolder = await prisma.workshopFolder.findFirst({
       where: {
         name: 'Sales Enablement',
         workspaceId: workspace.id
@@ -172,7 +172,7 @@ async function seedAtriumSalesEnablement() {
     });
 
     if (!salesFolder) {
-      salesFolder = await prisma.atriumFolder.create({
+      salesFolder = await prisma.workshopFolder.create({
         data: {
           name: 'Sales Enablement',
           description: 'Sales enablement documents and resources',
@@ -191,7 +191,7 @@ async function seedAtriumSalesEnablement() {
 
     for (const doc of salesEnablementDocs) {
       // Check if document already exists
-      const existing = await prisma.atriumDocument.findFirst({
+      const existing = await prisma.workshopDocument.findFirst({
         where: {
           title: doc.title,
           workspaceId: workspace.id,
@@ -222,7 +222,7 @@ async function seedAtriumSalesEnablement() {
       }
 
       // Create the document
-      const document = await prisma.atriumDocument.create({
+      const document = await prisma.workshopDocument.create({
         data: {
           title: doc.title,
           description: doc.description,
@@ -251,7 +251,7 @@ async function seedAtriumSalesEnablement() {
       });
 
       // Create activity record
-      await prisma.atriumActivity.create({
+      await prisma.workshopActivity.create({
         data: {
           documentId: document.id,
           activityType: 'CREATED',

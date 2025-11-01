@@ -129,7 +129,7 @@ function PipelineLayoutInner({
   const getCurrentApp = () => {
     if (pathname.includes('/oasis')) return 'oasis';
     if (pathname.includes('/workshop')) return 'workshop';
-    if (pathname.includes('/leonardo')) return 'leonardo';
+    if (pathname.includes('/adrata')) return 'adrata';
     if (pathname.includes('/stacks')) return 'stacks';
     return 'revenueos'; // Default to AcquisitionOS
   };
@@ -142,8 +142,8 @@ function PipelineLayoutInner({
 
   // Determine which left panel to show based on the current route
   const getLeftPanel = () => {
-    if (pathname.includes('/leonardo')) {
-      // Leonardo route - minimal or null left panel since chat is in middle
+    if (pathname.includes('/adrata')) {
+      // Adrata route - minimal or null left panel since chat is in middle
       return null;
     } else if (pathname.includes('/oasis')) {
       return <OasisLeftPanel key="oasis-left-panel" />;
@@ -178,9 +178,9 @@ function PipelineLayoutInner({
 
   // Determine which right panel to show based on the current route
   const getRightPanel = () => {
-    if (pathname.includes('/leonardo')) {
-      // Leonardo route - hide right panel since chat is in middle
-      return null;
+    if (pathname.includes('/adrata')) {
+      // Adrata route - show RightPanel alongside middle chat
+      return <RightPanel />;
     } else if (pathname.includes('/oasis')) {
       return <RightPanel />;
     } else if (pathname.includes('/stacks')) {

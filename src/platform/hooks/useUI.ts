@@ -221,8 +221,8 @@ export function useUI(): UseUIReturn {
           appFromUrl = 'stacks';
         } else if (path.includes('/oasis')) {
           appFromUrl = 'oasis';
-        } else if (path.includes('/atrium')) {
-          appFromUrl = 'atrium';
+        } else if (path.includes('/workshop')) {
+          appFromUrl = 'workshop';
         } else if (path.includes('/dashboard') || path.includes('/leads') || path.includes('/opportunities') || path.includes('/companies') || path.includes('/people') || path.includes('/partners') || path.includes('/prospects') || path.includes('/sellers') || path.includes('/clients') || path.includes('/metrics') || path.includes('/speedrun')) {
           // Standalone pipeline routes - use a different app name to distinguish from embedded
           appFromUrl = 'standalone-pipeline';

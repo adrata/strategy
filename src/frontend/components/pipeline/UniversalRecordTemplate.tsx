@@ -3416,8 +3416,8 @@ export function UniversalRecordTemplate({
     if (!activeReport) return;
     
     try {
-      // Save report content to Atrium
-      const response = await authFetch('/api/atrium/reports', {
+      // Save report content to Workshop
+      const response = await authFetch('/api/workshop/reports', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -3436,7 +3436,7 @@ export function UniversalRecordTemplate({
       });
 
       if (response.ok) {
-        console.log('✅ [UNIVERSAL] Report saved to Atrium');
+        console.log('✅ [UNIVERSAL] Report saved to Workshop');
       }
     } catch (error) {
       console.error('❌ [UNIVERSAL] Failed to save report:', error);

@@ -2,19 +2,19 @@
 
 import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useAtriumDocuments } from "../hooks/useAtriumDocuments";
+import { useWorkshopDocuments } from "../hooks/useWorkshopDocuments";
 import { useUnifiedAuth } from "@/platform/auth";
 import { DocumentIcon, PresentationChartBarIcon, TableCellsIcon, CodeBracketIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import { StandardHeader } from "@/platform/ui/components/layout/StandardHeader";
 import { IntegrationLibrary } from "../components/IntegrationLibrary";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
-export default function AtriumPage() {
+export default function WorkshopPage() {
   const router = useRouter();
   const params = useParams();
   const workspace = params.workspace;
   const { user: authUser } = useUnifiedAuth();
-  const { documents, loading, getDocumentsByType, getDocumentCounts } = useAtriumDocuments(authUser?.activeWorkspaceId || '');
+  const { documents, loading, getDocumentsByType, getDocumentCounts } = useWorkshopDocuments(authUser?.activeWorkspaceId || '');
   const [selectedType, setSelectedType] = useState<'paper' | 'pitch' | 'grid' | 'code' | 'matrix' | 'all'>('all');
   const [showLibrary, setShowLibrary] = useState(false);
 
@@ -32,7 +32,7 @@ export default function AtriumPage() {
     : getDocumentsByType(selectedType);
 
   const handleDocumentClick = (documentId: string) => {
-    router.push(`/${workspace}/grand-central/atrium/${documentId}`);
+    router.push(`/${workspace}/grand-central/workshop/${documentId}`);
   };
 
   const getStatusColor = (status: string) => {
@@ -54,7 +54,7 @@ export default function AtriumPage() {
     <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Standardized Header */}
       <StandardHeader
-        title="Atrium"
+        title="Workshop"
         subtitle="Document management and collaboration"
         stats={[
           { label: "Papers", value: getDocumentCounts().paper },
@@ -107,10 +107,10 @@ export default function AtriumPage() {
                 {selectedType === 'all' ? 'All Documents' : documentTypes.find(t => t.id === selectedType)?.name} ({filteredDocuments.length})
               </h3>
               <button
-                onClick={() => window.open(`/${authUser?.activeWorkspaceId}/atrium`, '_blank')}
+                onClick={() => window.open(`/${authUser?.activeWorkspaceId}/workshop`, '_blank')}
                 className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Open Atrium
+                Open Workshop
               </button>
             </div>
 
@@ -142,7 +142,7 @@ export default function AtriumPage() {
               <div className="text-center py-12">
                 <DocumentIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No documents found</h3>
-                <p className="text-[var(--muted)]">Create your first document in Atrium to get started.</p>
+                <p className="text-[var(--muted)]">Create your first document in Workshop to get started.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

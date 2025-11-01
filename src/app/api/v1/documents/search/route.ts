@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
- * POST /api/atrium/search
+ * POST /api/workshop/search
  * Search documents across the workspace
  */
 export async function POST(request: NextRequest) {
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     // Get search results with pagination
     const [documents, total] = await Promise.all([
-      prisma.atriumDocument.findMany({
+      prisma.workshopDocument.findMany({
         where,
         orderBy,
         skip: (page - 1) * limit,
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
           },
         },
       }),
-      prisma.atriumDocument.count({ where }),
+      prisma.workshopDocument.count({ where }),
     ]);
 
     // Calculate search metadata
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * GET /api/atrium/search/suggestions
+ * GET /api/workshop/search/suggestions
  * Get search suggestions based on partial query
  */
 export async function GET(request: NextRequest) {
@@ -203,7 +203,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get document title suggestions
-    const documentSuggestions = await prisma.atriumDocument.findMany({
+    const documentSuggestions = await prisma.workshopDocument.findMany({
       where: {
         workspaceId,
         status: { not: 'deleted' },
@@ -224,7 +224,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Get tag suggestions
-    const tagSuggestions = await prisma.atriumDocument.findMany({
+    const tagSuggestions = await prisma.workshopDocument.findMany({
       where: {
         workspaceId,
         status: { not: 'deleted' },

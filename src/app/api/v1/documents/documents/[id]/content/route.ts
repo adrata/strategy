@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
- * GET /api/atrium/documents/[id]/content
+ * GET /api/workshop/documents/[id]/content
  * Get document content
  */
 export async function GET(
@@ -17,7 +17,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const document = await prisma.atriumDocument.findUnique({
+    const document = await prisma.workshopDocument.findUnique({
       where: {
         id: (await params).id,
         status: { not: 'deleted' },
@@ -54,7 +54,7 @@ export async function GET(
     }
 
     // Log content access
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: (await params).id,
         userId: session.user.id,
@@ -84,7 +84,7 @@ export async function GET(
 }
 
 /**
- * PUT /api/atrium/documents/[id]/content
+ * PUT /api/workshop/documents/[id]/content
  * Update document content
  */
 export async function PUT(
@@ -101,7 +101,7 @@ export async function PUT(
     const { content, fileUrl, fileSize, createVersion = false } = body;
 
     // Get existing document to check permissions
-    const existingDocument = await prisma.atriumDocument.findUnique({
+    const existingDocument = await prisma.workshopDocument.findUnique({
       where: { id: (await params).id },
       include: {
         shares: true,
@@ -120,7 +120,7 @@ export async function PUT(
 
     // Create version if requested
     if (createVersion) {
-      await prisma.atriumVersion.create({
+      await prisma.workshopVersion.create({
         data: {
           documentId: (await params).id,
           version: existingDocument.version,
@@ -144,7 +144,7 @@ export async function PUT(
     const currentVersion = parseFloat(existingDocument.version);
     updateData.version = (currentVersion + 0.1).toFixed(1);
 
-    const document = await prisma.atriumDocument.update({
+    const document = await prisma.workshopDocument.update({
       where: { id: (await params).id },
       data: updateData,
       select: {
@@ -160,7 +160,7 @@ export async function PUT(
     });
 
     // Log content update
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: (await params).id,
         userId: session.user.id,

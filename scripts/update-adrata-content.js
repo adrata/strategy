@@ -1984,7 +1984,7 @@ async function updateAdrataDocuments() {
     // Update each document with comprehensive content
     for (const [title, content] of Object.entries(adrataContentLibrary)) {
       // Find the document
-      const document = await prisma.atriumDocument.findFirst({
+      const document = await prisma.workshopDocument.findFirst({
         where: {
           title: title,
           workspaceId: workspace.id,
@@ -1998,7 +1998,7 @@ async function updateAdrataDocuments() {
       }
 
       // Update the document content
-      await prisma.atriumDocument.update({
+      await prisma.workshopDocument.update({
         where: { id: document.id },
         data: {
           content: {
@@ -2011,7 +2011,7 @@ async function updateAdrataDocuments() {
       });
 
       // Create activity record
-      await prisma.atriumActivity.create({
+      await prisma.workshopActivity.create({
         data: {
           documentId: document.id,
           activityType: 'UPDATED',

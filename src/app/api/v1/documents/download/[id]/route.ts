@@ -6,7 +6,7 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 
 /**
- * GET /api/atrium/download/[id]
+ * GET /api/workshop/download/[id]
  * Download a document file
  */
 export async function GET(
@@ -20,7 +20,7 @@ export async function GET(
     }
 
     // Get document
-    const document = await prisma.atriumDocument.findUnique({
+    const document = await prisma.workshopDocument.findUnique({
       where: {
         id: (await params).id,
         status: { not: 'deleted' },
@@ -59,7 +59,7 @@ export async function GET(
       const fileBuffer = await readFile(filePath);
       
       // Update download count
-      await prisma.atriumDocument.update({
+      await prisma.workshopDocument.update({
         where: { id: (await params).id },
         data: {
           downloadCount: { increment: 1 },
@@ -67,7 +67,7 @@ export async function GET(
       });
 
       // Log download activity
-      await prisma.atriumActivity.create({
+      await prisma.workshopActivity.create({
         data: {
           documentId: (await params).id,
           userId: session.user.id,

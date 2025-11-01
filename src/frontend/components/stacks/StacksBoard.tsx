@@ -106,42 +106,42 @@ const STACK_COLUMNS = [
   {
     key: 'up-next',
     label: 'Up Next',
-    color: 'bg-white border-gray-300',
+    color: 'bg-[var(--background)] border-[var(--border)]',
     icon: ClockIcon,
     description: 'Ready to start'
   },
   {
     key: 'in-progress',
     label: 'Working On',
-    color: 'bg-white border-gray-300',
+    color: 'bg-[var(--background)] border-[var(--border)]',
     icon: CogIcon,
     description: 'In progress'
   },
   {
     key: 'built',
     label: 'Built',
-    color: 'bg-white border-gray-300',
+    color: 'bg-[var(--background)] border-[var(--border)]',
     icon: CheckCircleIcon,
     description: 'Fully completed'
   },
   {
     key: 'qa1',
     label: 'QA1',
-    color: 'bg-white border-gray-300',
+    color: 'bg-[var(--background)] border-[var(--border)]',
     icon: ClockIcon,
     description: 'First quality assurance'
   },
   {
     key: 'qa2',
     label: 'QA2',
-    color: 'bg-white border-gray-300',
+    color: 'bg-[var(--background)] border-[var(--border)]',
     icon: ClockIcon,
     description: 'Second quality assurance'
   },
   {
     key: 'shipped',
     label: 'Shipped',
-    color: 'bg-white border-gray-300',
+    color: 'bg-[var(--background)] border-[var(--border)]',
     icon: PaperAirplaneIcon,
     description: 'Shipped to production'
   }
@@ -360,8 +360,10 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     
     // Remove visual feedback for drop zone with smooth transition
     if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.style.borderColor = '#d1d5db';
-      e.currentTarget.style.backgroundColor = 'white';
+      const borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#d1d5db';
+      const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--background').trim() || '#ffffff';
+      e.currentTarget.style.borderColor = borderColor;
+      e.currentTarget.style.backgroundColor = bgColor;
       e.currentTarget.style.borderWidth = '1px';
       e.currentTarget.style.borderStyle = 'solid';
       e.currentTarget.style.transform = 'scale(1)';
@@ -474,30 +476,30 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
             onDragLeave={handleDragLeave}
             onDrop={(e) => handleDrop(e, column.key)}
           >
-            <div className={`bg-white rounded-lg h-full flex flex-col`}>
+            <div className={`bg-[var(--background)] rounded-lg h-full flex flex-col`}>
               {/* Stage Header */}
-              <div className="p-4 border-b border-gray-200">
-                <h3 className="font-medium text-gray-900 mb-2 text-sm uppercase tracking-wide flex items-center gap-2">
+              <div className="p-4 border-b border-[var(--border)]">
+                <h3 className="font-medium text-[var(--foreground)] mb-2 text-sm uppercase tracking-wide flex items-center gap-2">
                   <Icon className="h-4 w-4" />
                   {column.label}
                 </h3>
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex justify-between text-xs text-[var(--muted)]">
                   <span>{column.description}</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">{cards.length} {cards.length === 1 ? 'stack' : 'stacks'}</p>
+                <p className="text-xs text-[var(--muted)] mt-1">{cards.length} {cards.length === 1 ? 'stack' : 'stacks'}</p>
               </div>
 
               {/* Stories List */}
               <div className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {cards.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">
+                  <div className="text-center py-8 text-[var(--muted)]">
                     <p className="text-xs">No stacks</p>
                   </div>
                 ) : (
                   cards.map((card, index) => (
                     <div
                       key={card.id}
-                      className={`relative bg-white border border-gray-300 rounded-lg p-3 hover:border-gray-400 transition-colors cursor-pointer ${
+                      className={`relative bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:border-[var(--accent)] transition-colors cursor-pointer ${
                         draggedCard?.id === card.id ? 'opacity-50' : ''
                       }`}
                       draggable={true}
@@ -506,16 +508,16 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                       onClick={() => onCardClick?.(card)}
                     >
                       {/* Rank number in top left */}
-                      <div className="absolute top-2 left-2 w-6 h-6 bg-gray-200 text-gray-700 rounded-full flex items-center justify-center text-xs font-bold">
+                      <div className="absolute top-2 left-2 w-6 h-6 bg-[var(--panel-background)] text-[var(--foreground)] rounded-full flex items-center justify-center text-xs font-bold">
                         {index + 1}
                       </div>
                       
                       <div className="mb-2 ml-8">
-                        <h4 className="font-medium text-gray-900 text-sm leading-tight mb-1">
+                        <h4 className="font-medium text-[var(--foreground)] text-sm leading-tight mb-1">
                           {card.title}
                         </h4>
                         {card.description && (
-                          <p className="text-xs text-gray-600">
+                          <p className="text-xs text-[var(--muted)]">
                             {card.description}
                           </p>
                         )}
@@ -524,27 +526,27 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                       {/* Epic Tag */}
                       {card.epic && (
                         <div className="mb-2 ml-8">
-                          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                          <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
                             Ep: {card.epic.title.replace(' Workstream', '')}
                           </span>
                         </div>
                       )}
                       
-                      <div className="flex justify-between items-center text-xs text-gray-500">
+                      <div className="flex justify-between items-center text-xs text-[var(--muted)]">
                         <div className="flex items-center gap-2">
                           {card.assignee && (
-                            <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
+                            <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded-full">
                               {card.assignee}
                             </span>
                           )}
                           {card.timeInStatus !== undefined && card.timeInStatus >= 3 && (
-                            <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-medium">
+                            <span className="bg-[var(--error-bg)] text-[var(--error-text)] px-2 py-1 rounded text-xs font-medium">
                               {card.timeInStatus === 1 ? '1 Day' : `${card.timeInStatus} Days`}
                             </span>
                           )}
                         </div>
                         {card.updatedAt && (
-                          <span className="text-gray-500">
+                          <span className="text-[var(--muted)]">
                             {formatRelativeTime(card.updatedAt)}
                           </span>
                         )}
@@ -556,7 +558,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                           {card.tags.map((tag, tagIndex) => (
                             <span
                               key={tagIndex}
-                              className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs"
+                              className="bg-[var(--panel-background)] text-[var(--muted)] px-2 py-1 rounded text-xs"
                             >
                               {tag}
                             </span>

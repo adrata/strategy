@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
- * GET /api/atrium/documents/[id]/versions
+ * GET /api/workshop/documents/[id]/versions
  * Get version history for a document
  */
 export async function GET(
@@ -22,7 +22,7 @@ export async function GET(
     const limit = parseInt(searchParams.get('limit') || '20');
 
     // Get document to check permissions
-    const document = await prisma.atriumDocument.findUnique({
+    const document = await prisma.workshopDocument.findUnique({
       where: { id: (await params).id },
       include: {
         shares: true,
@@ -41,7 +41,7 @@ export async function GET(
 
     // Get versions with pagination
     const [versions, total] = await Promise.all([
-      prisma.atriumVersion.findMany({
+      prisma.workshopVersion.findMany({
         where: { documentId: (await params).id },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
@@ -63,7 +63,7 @@ export async function GET(
           },
         },
       }),
-      prisma.atriumVersion.count({
+      prisma.workshopVersion.count({
         where: { documentId: (await params).id },
       }),
     ]);
@@ -87,7 +87,7 @@ export async function GET(
 }
 
 /**
- * POST /api/atrium/documents/[id]/versions
+ * POST /api/workshop/documents/[id]/versions
  * Create a new version of a document
  */
 export async function POST(
@@ -104,7 +104,7 @@ export async function POST(
     const { content, fileUrl, fileSize, changelog, isAutoSave = false } = body;
 
     // Get document to check permissions
-    const document = await prisma.atriumDocument.findUnique({
+    const document = await prisma.workshopDocument.findUnique({
       where: { id: (await params).id },
       include: {
         shares: true,
@@ -122,7 +122,7 @@ export async function POST(
     }
 
     // Create new version
-    const version = await prisma.atriumVersion.create({
+    const version = await prisma.workshopVersion.create({
       data: {
         documentId: (await params).id,
         version: document.version,
@@ -145,7 +145,7 @@ export async function POST(
     });
 
     // Log version creation
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: (await params).id,
         userId: session.user.id,
@@ -170,7 +170,7 @@ export async function POST(
 }
 
 /**
- * PUT /api/atrium/documents/[id]/versions/restore
+ * PUT /api/workshop/documents/[id]/versions/restore
  * Restore a document to a specific version
  */
 export async function PUT(
@@ -191,7 +191,7 @@ export async function PUT(
     }
 
     // Get document to check permissions
-    const document = await prisma.atriumDocument.findUnique({
+    const document = await prisma.workshopDocument.findUnique({
       where: { id: (await params).id },
       include: {
         shares: true,
@@ -209,7 +209,7 @@ export async function PUT(
     }
 
     // Get version to restore
-    const version = await prisma.atriumVersion.findUnique({
+    const version = await prisma.workshopVersion.findUnique({
       where: { id: versionId },
     });
 
@@ -218,7 +218,7 @@ export async function PUT(
     }
 
     // Create a backup of current version before restoring
-    await prisma.atriumVersion.create({
+    await prisma.workshopVersion.create({
       data: {
         documentId: (await params).id,
         version: document.version,
@@ -232,7 +232,7 @@ export async function PUT(
     });
 
     // Restore document to the selected version
-    const restoredDocument = await prisma.atriumDocument.update({
+    const restoredDocument = await prisma.workshopDocument.update({
       where: { id: (await params).id },
       data: {
         content: version.content,
@@ -252,7 +252,7 @@ export async function PUT(
     });
 
     // Log restoration
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: (await params).id,
         userId: session.user.id,

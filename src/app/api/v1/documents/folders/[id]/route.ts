@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
- * GET /api/atrium/folders/[id]
+ * GET /api/workshop/folders/[id]
  * Get a specific folder by ID
  */
 export async function GET(
@@ -17,7 +17,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const folder = await prisma.atriumFolder.findUnique({
+    const folder = await prisma.workshopFolder.findUnique({
       where: { id: (await params).id },
       include: {
         owner: {
@@ -109,7 +109,7 @@ export async function GET(
 }
 
 /**
- * PATCH /api/atrium/folders/[id]
+ * PATCH /api/workshop/folders/[id]
  * Update a folder
  */
 export async function PATCH(
@@ -132,7 +132,7 @@ export async function PATCH(
     } = body;
 
     // Get existing folder to check permissions
-    const existingFolder = await prisma.atriumFolder.findUnique({
+    const existingFolder = await prisma.workshopFolder.findUnique({
       where: { id: (await params).id },
     });
 
@@ -149,7 +149,7 @@ export async function PATCH(
     // Check if moving to a new parent
     if (parentId && parentId !== existingFolder.parentId) {
       // Check if new parent exists and user has access
-      const newParent = await prisma.atriumFolder.findUnique({
+      const newParent = await prisma.workshopFolder.findUnique({
         where: { id: parentId },
       });
 
@@ -171,7 +171,7 @@ export async function PATCH(
 
       // Check if folder with same name already exists in new parent
       if (name && name !== existingFolder.name) {
-        const existingName = await prisma.atriumFolder.findFirst({
+        const existingName = await prisma.workshopFolder.findFirst({
           where: {
             name,
             parentId,
@@ -198,7 +198,7 @@ export async function PATCH(
     if (icon !== undefined) updateData.icon = icon;
 
     // Update folder
-    const folder = await prisma.atriumFolder.update({
+    const folder = await prisma.workshopFolder.update({
       where: { id: (await params).id },
       data: updateData,
       include: {
@@ -239,7 +239,7 @@ export async function PATCH(
 }
 
 /**
- * DELETE /api/atrium/folders/[id]
+ * DELETE /api/workshop/folders/[id]
  * Delete a folder (only if empty)
  */
 export async function DELETE(
@@ -253,7 +253,7 @@ export async function DELETE(
     }
 
     // Get existing folder to check permissions
-    const existingFolder = await prisma.atriumFolder.findUnique({
+    const existingFolder = await prisma.workshopFolder.findUnique({
       where: { id: (await params).id },
       include: {
         _count: {
@@ -288,7 +288,7 @@ export async function DELETE(
     }
 
     // Delete folder
-    await prisma.atriumFolder.delete({
+    await prisma.workshopFolder.delete({
       where: { id: (await params).id },
     });
 
@@ -358,7 +358,7 @@ async function wouldCreateCircularReference(folderId: string, newParentId: strin
       return true;
     }
     
-    const parent = await prisma.atriumFolder.findUnique({
+    const parent = await prisma.workshopFolder.findUnique({
       where: { id: currentParentId },
       select: { parentId: true },
     });

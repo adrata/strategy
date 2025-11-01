@@ -267,9 +267,9 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
                 const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
                 if (workspaceMatch) {
                   const workspaceSlug = workspaceMatch[1];
-                  router.push(`/${workspaceSlug}/atrium`);
+                  router.push(`/${workspaceSlug}/workshop`);
                 } else {
-                  router.push('/atrium');
+                  router.push('/workshop');
                 }
               }}
               className="hover:text-[var(--foreground)] transition-colors"

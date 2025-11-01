@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate feature names
-    const validFeatures = ['OASIS', 'STACKS', 'ATRIUM', 'REVENUEOS', 'METRICS', 'CHRONICLE'];
+    const validFeatures = ['OASIS', 'STACKS', 'WORKSHOP', 'REVENUEOS', 'METRICS', 'CHRONICLE'];
     const invalidFeatures = enabledFeatures.filter(f => !validFeatures.includes(f));
     
     if (invalidFeatures.length > 0) {

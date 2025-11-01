@@ -10,7 +10,7 @@ export default function GrandCentralPage() {
   
   useEffect(() => {
     // Redirect to the full workspace path
-    router.replace(`/${workspace}/grand-central/atrium`);
+    router.replace(`/${workspace}/grand-central/workshop`);
   }, [router, workspace]);
   
   return null; // Or loading state

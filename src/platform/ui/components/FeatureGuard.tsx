@@ -7,7 +7,7 @@ import { useUnifiedAuth } from '@/platform/auth';
 import { StacksSkeletonLoader } from '@/frontend/components/stacks/StacksSkeletonLoader';
 
 interface FeatureGuardProps {
-  feature: 'OASIS' | 'STACKS' | 'ATRIUM' | 'REVENUEOS' | 'METRICS' | 'CHRONICLE';
+  feature: 'OASIS' | 'STACKS' | 'WORKSHOP' | 'REVENUEOS' | 'METRICS' | 'CHRONICLE';
   children: React.ReactNode;
   fallback?: React.ReactNode;
   redirectTo?: string;
@@ -98,9 +98,9 @@ export function StacksGuard({ children, fallback, redirectTo }: Omit<FeatureGuar
   );
 }
 
-export function AtriumGuard({ children, fallback, redirectTo }: Omit<FeatureGuardProps, 'feature'>) {
+export function WorkshopGuard({ children, fallback, redirectTo }: Omit<FeatureGuardProps, 'feature'>) {
   return (
-    <FeatureGuard feature="ATRIUM" fallback={fallback} redirectTo={redirectTo}>
+    <FeatureGuard feature="WORKSHOP" fallback={fallback} redirectTo={redirectTo}>
       {children}
     </FeatureGuard>
   );

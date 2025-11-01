@@ -75,7 +75,7 @@ async function auditChronicleReports() {
     console.log('📄 Atrium Documents (Chronicle):');
     console.log('--------------------------------');
     
-    const atriumChronicleDocs = await prisma.atriumDocument.findMany({
+    const atriumChronicleDocs = await prisma.workshopDocument.findMany({
       where: {
         workspaceId: workspace.id,
         sourceRecordType: 'CHRONICLE',

@@ -8,9 +8,9 @@ import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
-import { AtriumLeftPanel } from "./components/AtriumLeftPanel";
-import { AtriumDocument } from "./types/document";
-import { AtriumFolder } from "./types/folder";
+import { WorkshopLeftPanel } from "./components/WorkshopLeftPanel";
+import { WorkshopDocument } from "./types/document";
+import { WorkshopFolder } from "./types/folder";
 
 const queryClient = new QueryClient();
 
@@ -23,16 +23,16 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
   }) as T;
 }
 
-interface AtriumContextType {
+interface WorkshopContextType {
   // Selected items
-  selectedDocument: AtriumDocument | null;
-  setSelectedDocument: (document: AtriumDocument | null) => void;
-  selectedFolder: AtriumFolder | null;
-  setSelectedFolder: (folder: AtriumFolder | null) => void;
+  selectedDocument: WorkshopDocument | null;
+  setSelectedDocument: (document: WorkshopDocument | null) => void;
+  selectedFolder: WorkshopFolder | null;
+  setSelectedFolder: (folder: WorkshopFolder | null) => void;
   
   // Document viewing in middle panel
-  viewingDocument: AtriumDocument | null;
-  setViewingDocument: (document: AtriumDocument | null) => void;
+  viewingDocument: WorkshopDocument | null;
+  setViewingDocument: (document: WorkshopDocument | null) => void;
   isEditMode: boolean;
   setIsEditMode: (editMode: boolean) => void;
   
@@ -63,24 +63,24 @@ interface AtriumContextType {
   setIsShareModalOpen: (open: boolean) => void;
 }
 
-const AtriumContext = createContext<AtriumContextType | undefined>(undefined);
+const WorkshopContext = createContext<WorkshopContextType | undefined>(undefined);
 
-export const useAtrium = () => {
-  const context = useContext(AtriumContext);
+export const useWorkshop = () => {
+  const context = useContext(WorkshopContext);
   if (!context) {
-    throw new Error('useAtrium must be used within AtriumProvider');
+    throw new Error('useWorkshop must be used within WorkshopProvider');
   }
   return context;
 };
 
-interface AtriumLayoutProps {
+interface WorkshopLayoutProps {
   children: React.ReactNode;
 }
 
-export default function AtriumLayout({ children }: AtriumLayoutProps) {
-  const [selectedDocument, setSelectedDocument] = useState<AtriumDocument | null>(null);
-  const [selectedFolder, setSelectedFolder] = useState<AtriumFolder | null>(null);
-  const [viewingDocument, setViewingDocument] = useState<AtriumDocument | null>(null);
+export default function WorkshopLayout({ children }: WorkshopLayoutProps) {
+  const [selectedDocument, setSelectedDocument] = useState<WorkshopDocument | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<WorkshopFolder | null>(null);
+  const [viewingDocument, setViewingDocument] = useState<WorkshopDocument | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [activeTab, setActiveTab] = useState<'my-documents' | 'shared-with-me' | 'recent' | 'starred' | 'trash'>('my-documents');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -93,7 +93,7 @@ export default function AtriumLayout({ children }: AtriumLayoutProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AtriumContext.Provider value={{ 
+      <WorkshopContext.Provider value={{ 
         selectedDocument, 
         setSelectedDocument,
         selectedFolder,
@@ -122,32 +122,32 @@ export default function AtriumLayout({ children }: AtriumLayoutProps) {
         <RevenueOSProvider>
           <ZoomProvider>
             <ProfilePopupProvider>
-              <AtriumLayoutContent>
+              <WorkshopLayoutContent>
                 {children}
-              </AtriumLayoutContent>
+              </WorkshopLayoutContent>
             </ProfilePopupProvider>
           </ZoomProvider>
         </RevenueOSProvider>
-      </AtriumContext.Provider>
+      </WorkshopContext.Provider>
     </QueryClientProvider>
   );
 }
 
-// Custom Right Panel for Atrium
-function AtriumRightPanel() {
+// Custom Right Panel for Workshop
+function WorkshopRightPanel() {
   return <RightPanel />;
 }
 
 // Layout content component that can use context hooks
-function AtriumLayoutContent({ children }: { children: React.ReactNode }) {
+function WorkshopLayoutContent({ children }: { children: React.ReactNode }) {
   const { ui } = useRevenueOS();
 
   return (
     <PanelLayout
       thinLeftPanel={null}
-      leftPanel={<AtriumLeftPanel />}
+      leftPanel={<WorkshopLeftPanel />}
       middlePanel={children}
-      rightPanel={<AtriumRightPanel />}
+      rightPanel={<WorkshopRightPanel />}
       zoom={100}
       isLeftPanelVisible={ui.isLeftPanelVisible}
       isRightPanelVisible={ui.isRightPanelVisible}

@@ -109,7 +109,7 @@ async function seedDocuments() {
         const content = fs.readFileSync(filePath, 'utf-8');
 
         // Check if document already exists
-        const existing = await prisma.atriumDocument.findFirst({
+        const existing = await prisma.workshopDocument.findFirst({
           where: {
             title: doc.title,
             workspaceId: NOTARY_EVERYDAY_WORKSPACE_ID,
@@ -123,7 +123,7 @@ async function seedDocuments() {
         }
 
         // Create the document
-        const document = await prisma.atriumDocument.create({
+        const document = await prisma.workshopDocument.create({
           data: {
             title: doc.title,
             content: {
@@ -147,7 +147,7 @@ async function seedDocuments() {
         });
 
         // Create activity log
-        await prisma.atriumActivity.create({
+        await prisma.workshopActivity.create({
           data: {
             documentId: document.id,
             activityType: 'CREATED',
