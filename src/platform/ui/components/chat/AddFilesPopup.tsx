@@ -18,7 +18,6 @@ import {
   ChartBarIcon,
   UserGroupIcon,
   BriefcaseIcon,
-  MagnifyingGlassIcon,
   SparklesIcon,
   ClockIcon,
   StarIcon,
@@ -479,13 +478,12 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
         {showDataOptions && (
           <div className="px-4 pb-3">
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-[var(--muted)]" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={`Search ${DATA_CATEGORIES.find(cat => cat['id'] === activeDataCategory)?.label.toLowerCase() || 'data'}...`}
-                className="w-full pl-8 pr-3 py-1.5 text-xs border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-1.5 text-xs border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>

@@ -179,7 +179,7 @@ export function MessageInput({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled || uploadingImage}
-            className="flex-shrink-0 p-2 text-[var(--muted)] hover:text-gray-700 dark:text-[var(--muted)] dark:hover:text-gray-200 disabled:opacity-50"
+            className="flex-shrink-0 p-2 text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
           >
             <PlusIcon className="h-5 w-5" />
           </button>
@@ -197,7 +197,7 @@ export function MessageInput({
               placeholder={placeholder}
               disabled={disabled}
               rows={1}
-              className="w-full resize-none border border-[var(--border)] dark:border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--background)] text-[var(--foreground)] dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full resize-none border border-[var(--border)] rounded-lg px-3 py-2 bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 minHeight: "40px",
                 maxHeight: "120px",
@@ -209,7 +209,7 @@ export function MessageInput({
             <button
               type="button"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="absolute right-2 top-2 p-1 text-[var(--muted)] hover:text-gray-700 dark:text-[var(--muted)] dark:hover:text-gray-200"
+              className="absolute right-2 top-2 p-1 text-[var(--muted)] hover:text-[var(--foreground)]"
             >
               😊
             </button>

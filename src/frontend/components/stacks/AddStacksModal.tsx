@@ -8,7 +8,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { XMarkIcon, MagnifyingGlassIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { useUnifiedAuth } from '@/platform/auth';
 
@@ -707,7 +707,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               ) : (
                 <div className="relative">
                   <div className="relative">
-                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
                     <input
                       type="text"
                       value={epicSearchQuery}
@@ -721,7 +720,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                         }
                       }}
                       placeholder="Search or create epic..."
-                      className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
+                      className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
                     />
                   </div>
                   {showEpicDropdown && (epicSearchResults.length > 0 || epicSearchQuery.trim() || showCreateEpicForm) && (
@@ -813,7 +812,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               ) : (
                 <div className="relative">
                   <div className="relative">
-                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <input
                       type="text"
                       value={epochSearchQuery}
@@ -827,7 +825,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                         }
                       }}
                       placeholder="Search or create epoch..."
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
                     />
                   </div>
                   {showEpochDropdown && (epochSearchResults.length > 0 || epochSearchQuery.trim() || showCreateEpochForm) && (

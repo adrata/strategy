@@ -116,8 +116,8 @@ export function Select({
         disabled={disabled}
         className={`
           w-full px-3 py-2 text-left border border-[var(--border)] rounded-lg 
-          bg-[var(--background)] text-[var(--foreground)] placeholder-gray-500 text-sm shadow-sm
-          hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500
+          bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] text-sm shadow-sm
+          hover:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500
           transition-colors duration-200
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         `}

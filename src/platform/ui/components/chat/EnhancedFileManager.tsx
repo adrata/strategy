@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   DocumentIcon, 
   FolderIcon, 
-  MagnifyingGlassIcon,
   ComputerDesktopIcon,
   CloudIcon,
   PhotoIcon,
@@ -227,13 +226,12 @@ export function EnhancedFileManager({ isOpen, onClose, onFileSelect, onAddFiles 
             {/* Search Bar */}
             <div className="p-4 border-b border-[var(--border)] dark:border-[var(--border)]">
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
                 <input
                   type="text"
                   placeholder="Search files..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] dark:text-[var(--foreground)] placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>

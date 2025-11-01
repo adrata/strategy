@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useEffect } from "react";
-import { useAtrium } from "./layout";
+import { useWorkshop } from "./layout";
 import { DocumentGrid } from "./components/DocumentGrid";
 import { DocumentList } from "./components/DocumentList";
 import { DocumentViewer } from "./components/DocumentViewer";
@@ -22,7 +22,7 @@ import {
   ArrowsUpDownIcon,
 } from "@heroicons/react/24/outline";
 
-export default function AtriumPage() {
+export default function WorkshopPage() {
   const router = useRouter();
   const {
     selectedDocument,
@@ -46,7 +46,7 @@ export default function AtriumPage() {
     isShareModalOpen,
     setIsShareModalOpen,
     workspace,
-  } = useAtrium();
+  } = useWorkshop();
 
   const [showFilters, setShowFilters] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
