@@ -25,9 +25,10 @@ import {
   ArrowRightOnRectangleIcon,
   LinkIcon,
   DocumentTextIcon,
-  PresentationChartBarIcon
+  PresentationChartBarIcon,
+  CalendarIcon
 } from "@heroicons/react/24/outline";
-import { Check, PanelLeft, Trash2 } from "lucide-react";
+import { Check, PanelLeft, Trash2, Pencil } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
 
 interface ProfilePanelProps {
@@ -45,6 +46,7 @@ interface ChecklistItemComponentProps {
   item: ChecklistItem;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onEdit: (id: string, text: string) => void;
   isRemoving: boolean;
 }
 
@@ -52,9 +54,13 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
   item,
   onToggle,
   onDelete,
+  onEdit,
   isRemoving
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(item.text);
+  const editInputRef = useRef<HTMLInputElement>(null);
   const itemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -68,6 +74,45 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
       itemRef.current.style.marginBottom = '0';
     }
   }, [isRemoving]);
+
+  // Focus input when entering edit mode
+  useEffect(() => {
+    if (isEditing && editInputRef.current) {
+      editInputRef.current.focus();
+      editInputRef.current.select();
+    }
+  }, [isEditing]);
+
+  // Update edit text when item changes
+  useEffect(() => {
+    if (!isEditing) {
+      setEditText(item.text);
+    }
+  }, [item.text, isEditing]);
+
+  const handleSaveEdit = () => {
+    const trimmed = editText.trim();
+    if (trimmed && trimmed !== item.text) {
+      onEdit(item.id, trimmed);
+    }
+    setIsEditing(false);
+    setEditText(item.text);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditText(item.text);
+  };
+
+  const handleEditKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSaveEdit();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      handleCancelEdit();
+    }
+  };
 
   return (
     <div
@@ -83,42 +128,83 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
       <Checkbox
         checked={item.completed}
         onChange={() => onToggle(item.id)}
+        disabled={isEditing}
         aria-label={item.completed ? `Uncomplete ${item.text}` : `Complete ${item.text}`}
       />
       <div className="flex-1 min-w-0">
-        <div 
-          className={`text-sm transition-all duration-200 ${
-            item.completed 
-              ? 'line-through text-[var(--muted-foreground)]' 
-              : 'text-[var(--foreground)]'
-          }`}
-        >
-          {item.text}
-        </div>
+        {isEditing ? (
+          <input
+            ref={editInputRef}
+            type="text"
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            onKeyDown={handleEditKeyDown}
+            onBlur={handleSaveEdit}
+            className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+            aria-label="Edit item text"
+          />
+        ) : (
+          <div 
+            className={`text-sm transition-all duration-200 ${
+              item.completed 
+                ? 'line-through text-[var(--muted-foreground)]' 
+                : 'text-[var(--foreground)]'
+            }`}
+          >
+            {item.text}
+          </div>
+        )}
       </div>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete(item.id);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            e.stopPropagation();
-            onDelete(item.id);
-          }
-        }}
-        className={`ml-2 p-1 rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 ${
-          isHovered || isRemoving
-            ? 'opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50'
-            : 'opacity-0'
-        }`}
-        aria-label={`Delete ${item.text}`}
-        title="Delete item"
-        tabIndex={isHovered || isRemoving ? 0 : -1}
-      >
-        <Trash2 className="w-4 h-4" />
-      </button>
+      {!isEditing && (
+        <div className="flex items-center gap-1">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditing(true);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsEditing(true);
+              }
+            }}
+            className={`ml-2 p-1 rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-1 ${
+              isHovered || isRemoving
+                ? 'opacity-100 text-slate-600 hover:text-slate-800 hover:bg-slate-100'
+                : 'opacity-0'
+            }`}
+            aria-label={`Edit ${item.text}`}
+            title="Edit item"
+            tabIndex={isHovered || isRemoving ? 0 : -1}
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(item.id);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
+                onDelete(item.id);
+              }
+            }}
+            className={`p-1 rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 ${
+              isHovered || isRemoving
+                ? 'opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50'
+                : 'opacity-0'
+            }`}
+            aria-label={`Delete ${item.text}`}
+            title="Delete item"
+            tabIndex={isHovered || isRemoving ? 0 : -1}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
@@ -180,6 +266,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     addItem,
     deleteItem,
     toggleItem,
+    editItem,
     isLoading: checklistLoading,
     error: checklistError
   } = useChecklist(userId, workspaceId);
@@ -206,6 +293,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const [newItemText, setNewItemText] = useState('');
   const [removingItemIds, setRemovingItemIds] = useState<Set<string>>(new Set());
   const [showAllItems, setShowAllItems] = useState(false);
+  const [showOnlyCompleted, setShowOnlyCompleted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
   // State for sign out confirmation
@@ -303,6 +391,10 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         return next;
       });
     }, 350);
+  };
+
+  const handleEditItem = (id: string, text: string) => {
+    editItem(id, text);
   };
 
   // Filter items for display
@@ -490,6 +582,14 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <HomeIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
             )}
           </button>
+          {viewMode === 'actionList' && (
+            <button
+              className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
+              title="Calendar view"
+            >
+              <CalendarIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
+            </button>
+          )}
           <button
             onClick={onClose}
             className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
@@ -615,17 +715,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">Settings</span>
             </button>
 
-            {/* Desktop Download - conditionally shown below Settings */}
-            {hasDesktopDownload && (
-              <button
-                className="w-full flex items-center px-3 py-2.5 text-sm text-[var(--foreground)] rounded-md hover:bg-[var(--hover-bg)] transition-colors group"
-                onClick={handleDownloadDesktopApp}
-              >
-                <PlatformIcon className="w-4 h-4 mr-3" />
-                <span className="font-medium">Desktop Download</span>
-              </button>
-            )}
-
             {/* Sign Out */}
             <button
               className="w-full flex items-center px-3 py-2.5 text-sm text-gray-600 rounded-md hover:bg-gray-100 transition-colors group"
@@ -649,48 +738,24 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <div className="flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
                 {completedCount > 0 && (
                   <button
-                    onClick={() => setShowAllItems(!showAllItems)}
-                    className="font-medium hover:text-[var(--foreground)] cursor-pointer transition-colors"
-                    title={showAllItems ? "Show only active items" : "Show all items"}
+                    onClick={() => {
+                      setShowOnlyCompleted(!showOnlyCompleted);
+                      setShowAllItems(false);
+                    }}
+                    className={`font-medium hover:text-[var(--foreground)] cursor-pointer transition-colors ${
+                      showOnlyCompleted ? 'text-[var(--foreground)]' : ''
+                    }`}
+                    title={showOnlyCompleted ? "Show all items" : "Show only completed items"}
                   >
-                    {completedCount} completed
+                    {completedCount} {showOnlyCompleted ? 'all time completed' : 'completed'}
                   </button>
                 )}
-                {remainingCount > 0 && (
+                {!showOnlyCompleted && remainingCount > 0 && (
                   <span>
                     {remainingCount} remaining
                   </span>
                 )}
               </div>
-            </div>
-
-            {/* Add Item Input */}
-            <div className="px-3">
-              <div className="flex gap-2">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={newItemText}
-                  onChange={(e) => setNewItemText(e.target.value)}
-                  onKeyDown={handleInputKeyDown}
-                  placeholder="Add item..."
-                  className="flex-1 px-3 py-2.5 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent focus:shadow-sm transition-all"
-                  aria-label="Add action list item"
-                  aria-describedby="action-list-input-help"
-                />
-                <button
-                  onClick={handleAddItem}
-                  disabled={!newItemText.trim()}
-                  className="p-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center shadow-sm hover:shadow-md"
-                  aria-label="Add item to action list"
-                  title="Add item (Enter)"
-                >
-                  <PlusIcon className="w-4 h-4" />
-                </button>
-              </div>
-              <p id="action-list-input-help" className="sr-only">
-                Type an item and press Enter or click Add to add it to your action list
-              </p>
             </div>
 
             {/* Error Message */}
@@ -721,25 +786,84 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     No action items yet
                   </p>
                   <p className="text-xs text-[var(--muted-foreground)]">
-                    Add your first item above
+                    Add your first item below
+                  </p>
+                </div>
+              ) : showOnlyCompleted && completedItems.length === 0 ? (
+                <div className="px-3 py-12 text-center" role="status">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-xl border-2 border-[var(--border)] flex items-center justify-center bg-[var(--hover-bg)]">
+                    <ClipboardDocumentCheckIcon className="w-8 h-8 text-[var(--muted-foreground)] opacity-60" />
+                  </div>
+                  <p className="text-sm font-semibold text-[var(--foreground)] mb-1.5">
+                    No completed items
+                  </p>
+                  <p className="text-xs text-[var(--muted-foreground)]">
+                    Complete items to see them here
                   </p>
                 </div>
               ) : (
-                (showAllItems ? checklistItems : activeItems).map((item) => (
+                (showOnlyCompleted 
+                  ? completedItems 
+                  : showAllItems 
+                    ? checklistItems 
+                    : activeItems
+                ).map((item) => (
                     <ChecklistItemComponent
                       key={item.id}
                       item={item}
                       onToggle={handleToggleItem}
                       onDelete={handleDeleteItem}
+                      onEdit={handleEditItem}
                       isRemoving={removingItemIds.has(item.id)}
                     />
                   ))
               )}
             </div>
+
+            {/* Add Item Input */}
+            <div className="px-3">
+              <div className="flex items-center gap-1">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={newItemText}
+                  onChange={(e) => setNewItemText(e.target.value)}
+                  onKeyDown={handleInputKeyDown}
+                  placeholder="Add item..."
+                  className="flex-1 px-2 py-1.5 text-sm border border-[var(--border)]/50 rounded-md bg-transparent text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-1 focus:ring-slate-500/30 focus:border-slate-500/70 transition-all"
+                  aria-label="Add action list item"
+                  aria-describedby="action-list-input-help"
+                />
+                <button
+                  onClick={handleAddItem}
+                  disabled={!newItemText.trim()}
+                  className="p-1.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]/50 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center min-w-[32px]"
+                  aria-label="Add item to action list"
+                  title="Add item (Enter)"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                </button>
+              </div>
+              <p id="action-list-input-help" className="sr-only">
+                Type an item and press Enter or click Add to add it to your action list
+              </p>
+            </div>
           </div>
         )}
       </div>
 
+      {/* Footer Section - Desktop Download */}
+      {hasDesktopDownload && (
+        <div className="border-t border-[var(--border)] p-3">
+          <button
+            className="w-full flex items-center px-3 py-2.5 text-sm text-[var(--foreground)] rounded-md hover:bg-[var(--hover-bg)] transition-colors group"
+            onClick={handleDownloadDesktopApp}
+          >
+            <PlatformIcon className="w-4 h-4 mr-3" />
+            <span className="font-medium">Desktop Download</span>
+          </button>
+        </div>
+      )}
 
       {/* Sign Out Confirmation Modal */}
       {showSignOutConfirm && (
