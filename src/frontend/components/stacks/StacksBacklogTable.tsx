@@ -390,7 +390,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   </thead>
                   <tbody className="divide-y divide-[var(--border)]">
                     {filteredItems.map((item, index) => {
-                      const StatusIcon = STATUS_ICONS[item.status];
+                      const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
                       
                       return (
                         <React.Fragment key={item.id}>
@@ -415,7 +415,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                               </div>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${PRIORITY_COLORS[item.priority]}`}>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${PRIORITY_COLORS[item.priority] || PRIORITY_COLORS.medium}`}>
                                 {item.priority}
                               </span>
                             </td>
@@ -457,7 +457,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             {/* Mobile/Tablet Card View */}
             <div className="lg:hidden space-y-3">
               {filteredItems.map((item, index) => {
-                const StatusIcon = STATUS_ICONS[item.status];
+                const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
                 
                 return (
                   <div
@@ -472,7 +472,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                           <div className="flex items-center justify-center w-6 h-6 bg-[var(--panel-background)] text-[var(--muted)] text-xs font-bold rounded-full">
                             {item.rank || index + 1}
                           </div>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${PRIORITY_COLORS[item.priority]}`}>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${PRIORITY_COLORS[item.priority] || PRIORITY_COLORS.medium}`}>
                             {item.priority}
                           </span>
                         </div>

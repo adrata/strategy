@@ -20,7 +20,6 @@ import {
   DocumentTextIcon,
   BuildingLibraryIcon,
   Squares2X2Icon,
-  DocumentDuplicateIcon,
   ClipboardDocumentCheckIcon,
   HomeIcon,
   ArrowLeftIcon
@@ -386,7 +385,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               }`}
               onClick={() => handleNavigation("/workshop")}
             >
-              <DocumentDuplicateIcon className="w-4 h-4 mr-3" />
+              <ClipboardDocumentCheckIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Workshop</span>
             </button>
 
