@@ -2379,9 +2379,22 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
               }}
             />
 
-            {/* Welcome section at top when no messages */}
+            {/* Messages at top when there are messages */}
+            {chatMessages['length'] > 0 && (
+              <div className="flex-1 flex flex-col">
+                <MessageList
+                  messages={chatMessages}
+                  chatEndRef={chatEndRef}
+                  onUpdateChatSessions={chat.setChatSessions}
+                  activeSubApp={activeSubApp}
+                  onRecordSearch={handleRecordSearch}
+                />
+              </div>
+            )}
+
+            {/* Welcome section at bottom when no messages */}
             {chatMessages['length'] === 0 && (
-              <div className="flex-1 flex items-start">
+              <div className="flex-1 flex items-end">
                 <WelcomeSection
                   activeSubApp={activeSubApp}
                   workspaceId={workspaceId || 'demo-workspace'}
@@ -2392,19 +2405,6 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
                   getWelcomeMessage={getWelcomeMessage}
                   quickActions={quickActions}
                   activeConversationId={activeConversationId}
-                />
-              </div>
-            )}
-
-            {/* Messages at bottom when there are messages */}
-            {chatMessages['length'] > 0 && (
-              <div className="flex-1 flex flex-col justify-end">
-                <MessageList
-                  messages={chatMessages}
-                  chatEndRef={chatEndRef}
-                  onUpdateChatSessions={chat.setChatSessions}
-                  activeSubApp={activeSubApp}
-                  onRecordSearch={handleRecordSearch}
                 />
               </div>
             )}

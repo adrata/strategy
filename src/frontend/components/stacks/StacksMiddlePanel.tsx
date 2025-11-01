@@ -21,6 +21,7 @@ import { StacksBoard } from './StacksBoard';
 import { StacksBacklogList } from './StacksBacklogList';
 import { StacksBacklogTable } from './StacksBacklogTable';
 import { StacksFilters } from './StacksFilters';
+import { ShipButton } from './ShipButton';
 
 interface StacksMiddlePanelProps {
   activeSubSection: string;
@@ -438,8 +439,8 @@ export function StacksMiddlePanel({
     );
   }
 
-  // Handle stacks section
-  if (activeSubSection === 'stacks' || activeSubSection === 'stacks-build') {
+  // Handle stacks section (also handles workstream)
+  if (activeSubSection === 'stacks' || activeSubSection === 'stacks-build' || activeSubSection === 'workstream') {
     return (
       <div className="h-full flex flex-col bg-[var(--background)]">
         {/* Header */}
@@ -461,6 +462,7 @@ export function StacksMiddlePanel({
                   <PlusIcon className="h-4 w-4" />
                   Add Story
                 </button>
+                <ShipButton />
             </div>
           </div>
 
@@ -489,6 +491,11 @@ export function StacksMiddlePanel({
   // Handle backlog section (both sell and build)
   if (activeSubSection === 'backlog' || activeSubSection === 'backlog-build') {
     return <StacksBacklogTable onItemClick={onItemClick} />;
+  }
+
+  // Handle metrics section
+  if (activeSubSection === 'metrics') {
+    return <StacksMetrics />;
   }
 
   // Handle deep backlog section (both sell and build)

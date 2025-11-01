@@ -27,7 +27,13 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     console.log('🔍 [StacksContainer] URL changed:', pathname);
     
     // New URL structure: /stacks/{category}/{section}
-    if (pathname.includes('/stacks/sell/deep-backlog')) {
+    if (pathname.includes('/stacks/workstream')) {
+      console.log('✅ [StacksContainer] Setting: workstream');
+      onSubSectionChange('workstream');
+    } else if (pathname.includes('/stacks/metrics')) {
+      console.log('✅ [StacksContainer] Setting: metrics');
+      onSubSectionChange('metrics');
+    } else if (pathname.includes('/stacks/sell/deep-backlog')) {
       console.log('✅ [StacksContainer] Setting: deep-backlog');
       onSubSectionChange('deep-backlog');
     } else if (pathname.includes('/stacks/build/deep-backlog')) {

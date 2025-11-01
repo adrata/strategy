@@ -20,7 +20,7 @@ interface StackCard {
   title: string;
   description?: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'up-next' | 'in-progress' | 'shipped' | 'qa1' | 'qa2' | 'done';
+  status: 'up-next' | 'in-progress' | 'shipped' | 'qa1' | 'qa2' | 'built';
   assignee?: string;
   dueDate?: string;
   tags?: string[];
@@ -95,7 +95,7 @@ const MOCK_CARDS: StackCard[] = [
     title: 'Performance monitoring',
     description: 'Set up monitoring and alerting',
     priority: 'medium',
-    status: 'done',
+    status: 'built',
     assignee: 'David',
     dueDate: '2024-01-30',
     tags: ['monitoring', 'performance']
@@ -132,8 +132,8 @@ const STACK_COLUMNS = [
     description: 'Second quality assurance'
   },
   {
-    key: 'done',
-    label: 'Done',
+    key: 'built',
+    label: 'Built',
     color: 'bg-white border-gray-300',
     icon: CheckCircleIcon,
     description: 'Fully completed'
@@ -238,12 +238,18 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
 
   // Helper function to convert Notary story to StackCard format
   const convertNotaryStoryToStackCard = (story: any): StackCard => {
+    // Map 'done' status to 'built' for backward compatibility
+    let mappedStatus = story.status;
+    if (story.status === 'done') {
+      mappedStatus = 'built';
+    }
+    
     return {
       id: story.id,
       title: story.title,
       description: story.description,
       priority: story.priority || 'medium',
-      status: story.status,
+      status: mappedStatus as StackCard['status'],
       assignee: story.assignee ? `${story.assignee.firstName} ${story.assignee.lastName}` : undefined,
       dueDate: story.dueDate,
       tags: story.tags || [],
@@ -420,7 +426,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         return (
           <div
             key={column.key}
-            className="flex-shrink-0 w-80"
+            className="flex-shrink-0 w-64"
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}

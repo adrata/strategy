@@ -442,7 +442,15 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
       {/* Footer - Desktop Download and Sign Out */}
       <div className="p-3 space-y-0.5">
-        {/* Desktop Download - conditionally shown */}
+        <button
+          className="w-full flex items-center px-3 py-2.5 text-sm text-gray-600 rounded-md hover:bg-gray-100 transition-colors group"
+          onClick={handleSignOutClick}
+        >
+          <UserIcon className="w-4 h-4 mr-3 group-hover:text-gray-700" />
+          <span className="font-medium">Sign Out</span>
+        </button>
+        
+        {/* Desktop Download - conditionally shown below Sign Out */}
         {hasDesktopDownload && (
           <button
             className="w-full flex items-center px-3 py-2.5 text-sm text-[var(--foreground)] rounded-md hover:bg-[var(--hover-bg)] transition-colors group"
@@ -452,14 +460,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <span className="font-medium">Desktop Download</span>
           </button>
         )}
-        
-        <button
-          className="w-full flex items-center px-3 py-2.5 text-sm text-gray-600 rounded-md hover:bg-gray-100 transition-colors group"
-          onClick={handleSignOutClick}
-        >
-          <UserIcon className="w-4 h-4 mr-3 group-hover:text-gray-700" />
-          <span className="font-medium">Sign Out</span>
-        </button>
       </div>
 
       {/* Sign Out Confirmation Modal */}
