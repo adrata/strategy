@@ -444,7 +444,7 @@ export async function POST(request: NextRequest) {
     // Handle P2022 error (column does not exist)
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
       const prismaError = error as any;
-      const columnName = prismaError.meta?.column_name;
+      const columnName = prismaError.meta?.column_name || 'unknown';
       console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
         columnName,
         meta: prismaError.meta,
@@ -507,7 +507,6 @@ export async function POST(request: NextRequest) {
         }
       }
       
-      const columnName = prismaError.meta?.column_name || 'unknown';
       console.error('❌ [STACKS API] Database column missing:', columnName);
       return createErrorResponse(
         columnName !== 'unknown' 
