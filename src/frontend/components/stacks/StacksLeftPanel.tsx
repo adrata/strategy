@@ -109,8 +109,6 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         return;
       }
 
-      setStatsLoading(true);
-      
       try {
         // Fetch stories
         const storiesResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`, {
@@ -134,11 +132,15 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         if (storiesResponse.ok) {
           const storiesData = await storiesResponse.json();
           stories = storiesData.stories || [];
+        } else {
+          console.warn('⚠️ [StacksLeftPanel] Stories API returned:', storiesResponse.status);
         }
 
         if (tasksResponse.ok) {
           const tasksData = await tasksResponse.json();
           tasks = tasksData.tasks || [];
+        } else {
+          console.warn('⚠️ [StacksLeftPanel] Tasks API returned:', tasksResponse.status);
         }
 
         // Combine stories and tasks for totals
@@ -160,7 +162,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
         setStats({ total, active, completed });
       } catch (error) {
         console.error('Failed to fetch story/task counts:', error);
-        setStats({ total: 0, active: 0, completed: 0 });
+        // Keep existing stats instead of resetting to 0 on error
+        // This way if the API temporarily fails, we don't lose the last known counts
       } finally {
         setStatsLoading(false);
       }
