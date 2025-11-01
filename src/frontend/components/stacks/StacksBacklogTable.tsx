@@ -15,7 +15,8 @@ import {
   UserIcon,
   TagIcon,
   ChevronUpIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  PaperAirplaneIcon
 } from '@heroicons/react/24/outline';
 import { StacksContextMenu } from './StacksContextMenu';
 import { StacksFilters } from './StacksFilters';
@@ -29,7 +30,7 @@ interface BacklogItem {
   title: string;
   description?: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'todo' | 'in-progress' | 'review' | 'done';
+  status: 'todo' | 'up-next' | 'in-progress' | 'review' | 'done' | 'shipped' | 'qa1' | 'qa2' | 'built';
   assignee?: string;
   dueDate?: string;
   tags?: string[];
@@ -52,9 +53,14 @@ const PRIORITY_COLORS = {
 
 const STATUS_ICONS = {
   todo: ClockIcon,
+  'up-next': ClockIcon,
   'in-progress': ExclamationTriangleIcon,
   review: ClockIcon,
-  done: CheckCircleIcon
+  done: CheckCircleIcon,
+  shipped: PaperAirplaneIcon,
+  qa1: ClockIcon,
+  qa2: ClockIcon,
+  built: CheckCircleIcon
 };
 
 export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
@@ -220,6 +226,12 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           return 0;
       }
     });
+
+  // Helper function to check if an item is a bug
+  const isBug = (item: BacklogItem): boolean => {
+    if (!item.tags || item.tags.length === 0) return false;
+    return item.tags.some(tag => tag.toLowerCase() === 'bug' || tag.toLowerCase().includes('bug'));
+  };
 
   // Separate items into "Up Next" (status='up-next') and other items
   const upNextItems = filteredItems.filter(item => item.status === 'up-next');
@@ -407,8 +419,18 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                             </td>
                             <td className="px-4 py-4">
                               <div>
-                                <div className="text-sm font-medium text-[var(--foreground)]">
-                                  {item.title}
+                                <div className="flex items-center gap-2">
+                                  {isBug(item) && (
+                                    <>
+                                      <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
+                                      <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                                        bug
+                                      </span>
+                                    </>
+                                  )}
+                                  <div className="text-sm font-medium text-[var(--foreground)]">
+                                    {item.title}
+                                  </div>
                                 </div>
                                 {item.description && (
                                   <div className="text-sm text-[var(--muted)] mt-1">
@@ -502,8 +524,18 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                               </td>
                               <td className="px-4 py-4">
                                 <div>
-                                  <div className="text-sm font-medium text-[var(--foreground)]">
-                                    {item.title}
+                                  <div className="flex items-center gap-2">
+                                    {isBug(item) && (
+                                      <>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
+                                        <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                                          bug
+                                        </span>
+                                      </>
+                                    )}
+                                    <div className="text-sm font-medium text-[var(--foreground)]">
+                                      {item.title}
+                                    </div>
                                   </div>
                                   {item.description && (
                                     <div className="text-sm text-[var(--muted)] mt-1">
@@ -567,6 +599,14 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                           <div className="flex items-center justify-center w-6 h-6 bg-[var(--panel-background)] text-[var(--muted)] text-xs font-bold rounded-full">
                             {item.rank || index + 1}
                           </div>
+                          {isBug(item) && (
+                            <>
+                              <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
+                              <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                                bug
+                              </span>
+                            </>
+                          )}
                         </div>
                         <h3 className="text-sm font-medium text-[var(--foreground)] mb-1">
                           {item.title}
@@ -635,6 +675,14 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                           <div className="flex items-center justify-center w-6 h-6 bg-[var(--panel-background)] text-[var(--muted)] text-xs font-bold rounded-full">
                             {item.rank || index + 1}
                           </div>
+                          {isBug(item) && (
+                            <>
+                              <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
+                              <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                                bug
+                              </span>
+                            </>
+                          )}
                         </div>
                         <h3 className="text-sm font-medium text-[var(--foreground)] mb-1">
                           {item.title}

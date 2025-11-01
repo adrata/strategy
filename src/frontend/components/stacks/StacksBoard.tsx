@@ -9,7 +9,10 @@ import {
   ExclamationTriangleIcon,
   XCircleIcon,
   CogIcon,
-  PaperAirplaneIcon
+  PaperAirplaneIcon,
+  Squares2X2Icon,
+  ListBulletIcon,
+  TableCellsIcon
 } from '@heroicons/react/24/outline';
 import { useUnifiedAuth } from '@/platform/auth';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
@@ -21,6 +24,7 @@ interface StackCard {
   description?: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   status: 'up-next' | 'in-progress' | 'shipped' | 'qa1' | 'qa2' | 'built';
+  viewType?: 'main' | 'list' | 'grid';
   assignee?: string;
   dueDate?: string;
   tags?: string[];
@@ -251,6 +255,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       description: story.description,
       priority: story.priority || 'medium',
       status: mappedStatus as StackCard['status'],
+      viewType: story.viewType || 'main',
       assignee: story.assignee ? `${story.assignee.firstName} ${story.assignee.lastName}` : undefined,
       dueDate: story.dueDate,
       tags: story.tags || [],
@@ -363,7 +368,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     }
   };
 
-  const handleDrop = (e: React.DragEvent, targetStatus: string) => {
+  const handleDrop = async (e: React.DragEvent, targetStatus: string) => {
     e.preventDefault();
     setDragOverColumn(null);
     
@@ -372,7 +377,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       return;
     }
 
-    // Update card status in state
+    // Optimistic UI update
+    const previousStatus = draggedCard.status;
     setCards(prevCards => 
       prevCards.map(card => 
         card.id === draggedCard.id 
@@ -383,6 +389,44 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     
     console.log(`Moving card ${draggedCard.title} to ${targetStatus}`);
     setDraggedCard(null);
+
+    // Persist to database in background
+    try {
+      const response = await fetch(`/api/v1/stacks/stories/${draggedCard.id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: targetStatus
+        })
+      });
+
+      if (!response.ok) {
+        // Revert optimistic update on failure
+        setCards(prevCards => 
+          prevCards.map(card => 
+            card.id === draggedCard.id 
+              ? { ...card, status: previousStatus as StackCard['status'] }
+              : card
+          )
+        );
+        console.error('Failed to update card status:', await response.text());
+      } else {
+        console.log(`Successfully moved card ${draggedCard.title} to ${targetStatus}`);
+      }
+    } catch (error) {
+      // Revert optimistic update on error
+      setCards(prevCards => 
+        prevCards.map(card => 
+          card.id === draggedCard.id 
+            ? { ...card, status: previousStatus as StackCard['status'] }
+            : card
+        )
+      );
+      console.error('Error updating card status:', error);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -459,11 +503,16 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
           msOverflowStyle: 'none'
         }}
       >
-      {STACK_COLUMNS.map((column) => {
+      {STACK_COLUMNS.map((column, columnIndex) => {
         const cards = groupedCards[column.key] || [];
         const Icon = column.icon;
 
         const isDragOver = dragOverColumn === column.key && draggedCard?.status !== column.key;
+        
+        // Helper function to convert index to letter (0 -> A, 1 -> B, etc.)
+        const getLetterSuffix = (index: number): string => {
+          return String.fromCharCode(65 + index); // 65 is ASCII for 'A'
+        };
         
         return (
           <div
@@ -519,7 +568,25 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                   </div>
                 ) : (
                   <>
-                    {cards.map((card, index) => (
+                    {cards.map((card, index) => {
+                      const columnNumber = columnIndex + 1;
+                      const letterSuffix = getLetterSuffix(index);
+                      const displayNumber = `${columnNumber}${letterSuffix}`;
+                      
+                      // Get view type icon
+                      const getViewTypeIcon = () => {
+                        const viewType = card.viewType || 'main';
+                        switch (viewType) {
+                          case 'list':
+                            return <ListBulletIcon className="h-3.5 w-3.5" />;
+                          case 'grid':
+                            return <TableCellsIcon className="h-3.5 w-3.5" />;
+                          default:
+                            return <Squares2X2Icon className="h-3.5 w-3.5" />;
+                        }
+                      };
+                      
+                      return (
                       <div
                         key={card.id}
                         className={`relative bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:border-[var(--accent)] transition-colors cursor-pointer ${
@@ -531,11 +598,16 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         onClick={() => onCardClick?.(card)}
                       >
                         {/* Rank number in top left */}
-                        <div className="absolute top-2 left-2 w-6 h-6 bg-[var(--panel-background)] text-[var(--foreground)] rounded-[12px] flex items-center justify-center text-xs font-bold">
-                          {index + 1}
+                        <div className="absolute top-2 left-2 w-6 h-6 bg-[var(--panel-background)] text-[var(--foreground)] rounded-[12px] flex items-center justify-center text-xs font-bold flex-shrink-0 shrink-0">
+                          {displayNumber}
                         </div>
                         
-                        <div className="mb-2 ml-8">
+                        {/* View type icon in top right */}
+                        <div className="absolute top-2 right-2 w-5 h-5 bg-[var(--panel-background)] text-[var(--muted)] rounded flex items-center justify-center flex-shrink-0 shrink-0">
+                          {getViewTypeIcon()}
+                        </div>
+                        
+                        <div className="mb-2 ml-8 mr-8">
                           <h4 className="font-medium text-[var(--foreground)] text-sm leading-tight mb-1">
                             {card.title}
                           </h4>
@@ -557,22 +629,24 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                         
                         <div className="flex justify-between items-center text-xs text-[var(--muted)]">
                           <div className="flex items-center gap-2">
-                            {card.assignee && (
-                              <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded-full">
-                                {card.assignee}
-                              </span>
-                            )}
                             {card.timeInStatus !== undefined && card.timeInStatus >= 3 && (
                               <span className="bg-[var(--error-bg)] text-[var(--error-text)] px-2 py-1 rounded text-xs font-medium">
                                 {card.timeInStatus === 1 ? '1 Day' : `${card.timeInStatus} Days`}
                               </span>
                             )}
                           </div>
-                          {card.updatedAt && (
-                            <span className="text-[var(--muted)]">
-                              {formatRelativeTime(card.updatedAt)}
-                            </span>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {card.assignee && (
+                              <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded-full text-xs">
+                                {card.assignee}
+                              </span>
+                            )}
+                            {card.updatedAt && (
+                              <span className="text-[var(--muted)]">
+                                {formatRelativeTime(card.updatedAt)}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         {/* Tags */}
@@ -589,7 +663,8 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
                           </div>
                         )}
                       </div>
-                    ))}
+                      );
+                    })}
                     {isDragOver && (
                       <div className="mt-2 py-3 border-2 border-dashed border-[var(--accent)] rounded-lg bg-[var(--accent)]/5 flex items-center justify-center">
                         <span className="text-xs text-[var(--accent)] font-medium">Drop here</span>
