@@ -296,6 +296,16 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 Profile
               </button>
               <button
+                onClick={() => setActiveTab('theme')}
+                className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'theme'
+                    ? 'bg-[var(--accent)] text-white'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                }`}
+              >
+                Theme
+              </button>
+              <button
                 onClick={() => setActiveTab('security')}
                 className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === 'security'
@@ -314,16 +324,6 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 }`}
               >
                 Notifications
-              </button>
-              <button
-                onClick={() => setActiveTab('theme')}
-                className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
-                  activeTab === 'theme'
-                    ? 'bg-[var(--accent)] text-white'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
-                }`}
-              >
-                Theme
               </button>
             </nav>
           </div>
@@ -674,7 +674,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                       type="checkbox"
                       checked={userSettings.emailNotifications}
                       onChange={(e) => setUserSettings(prev => ({ ...prev, emailNotifications: e.target.checked }))}
-                      className="rounded border-[var(--border)]"
+                      className="rounded border-[var(--border)] bg-[var(--background)] text-[var(--accent)] focus:ring-[var(--focus-ring)] focus:ring-2"
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -686,7 +686,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                       type="checkbox"
                       checked={userSettings.pushNotifications}
                       onChange={(e) => setUserSettings(prev => ({ ...prev, pushNotifications: e.target.checked }))}
-                      className="rounded border-[var(--border)]"
+                      className="rounded border-[var(--border)] bg-[var(--background)] text-[var(--accent)] focus:ring-[var(--focus-ring)] focus:ring-2"
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -698,7 +698,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                       type="checkbox"
                       checked={userSettings.weeklyReports}
                       onChange={(e) => setUserSettings(prev => ({ ...prev, weeklyReports: e.target.checked }))}
-                      className="rounded border-[var(--border)]"
+                      className="rounded border-[var(--border)] bg-[var(--background)] text-[var(--accent)] focus:ring-[var(--focus-ring)] focus:ring-2"
                     />
                   </div>
                 </div>

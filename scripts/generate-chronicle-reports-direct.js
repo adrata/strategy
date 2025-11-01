@@ -52,7 +52,7 @@ async function generateChronicleReportDirect(reportType, workspaceId, userId, ta
     });
 
     // Create corresponding Atrium document
-    const atriumDocument = await prisma.atriumDocument.create({
+    const atriumDocument = await prisma.workshopDocument.create({
       data: {
         title: reportData.title,
         content: reportData.content,
@@ -75,7 +75,7 @@ async function generateChronicleReportDirect(reportType, workspaceId, userId, ta
     });
 
     // Create activity log
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: atriumDocument.id,
         activityType: 'CREATED',
@@ -733,7 +733,7 @@ async function generateWeeklyChronicleReportsDirect() {
       }
     });
 
-    const atriumDocs = await prisma.atriumDocument.findMany({
+    const atriumDocs = await prisma.workshopDocument.findMany({
       where: {
         workspaceId: workspace.id,
         sourceRecordType: 'CHRONICLE',

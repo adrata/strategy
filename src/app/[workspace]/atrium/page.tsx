@@ -85,7 +85,7 @@ export default function AtriumPage() {
       const workspaceSlug = workspace?.slug || 'default';
       
       // Navigate to the new document using slug-based URL
-      router.push(`/${workspaceSlug}/atrium/${slug}`);
+      router.push(`/${workspaceSlug}/workshop/${slug}`);
       
       setIsCreateModalOpen(false);
     } catch (error) {

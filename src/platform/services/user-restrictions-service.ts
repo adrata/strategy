@@ -41,7 +41,7 @@ const USER_RESTRICTIONS: UserRestriction[] = [
           'monaco': ['companies', 'people', 'sellers', 'sequences', 'analytics'],
           'Speedrun': ['inbox', 'prospects', 'leads', 'pipeline', 'analytics', 'settings']
         },
-        disabledFeatures: ['OASIS', 'STACKS', 'ATRIUM', 'METRICS', 'CHRONICLE']
+        disabledFeatures: ['OASIS', 'STACKS', 'WORKSHOP', 'METRICS', 'CHRONICLE']
       },
       'Adrata': {
         allowedApps: ['Speedrun', 'pipeline', 'monaco'],
@@ -50,7 +50,7 @@ const USER_RESTRICTIONS: UserRestriction[] = [
           'monaco': ['companies', 'people', 'sellers', 'sequences', 'analytics'],
           'Speedrun': ['inbox', 'prospects', 'leads', 'pipeline', 'analytics', 'settings']
         },
-        disabledFeatures: ['OASIS', 'STACKS', 'ATRIUM', 'METRICS', 'CHRONICLE']
+        disabledFeatures: ['OASIS', 'STACKS', 'WORKSHOP', 'METRICS', 'CHRONICLE']
       }
     }
   },
@@ -64,7 +64,7 @@ const USER_RESTRICTIONS: UserRestriction[] = [
           'pipeline': ['speedrun', 'leads', 'prospects', 'opportunities', 'clients', 'people', 'companies', 'partners'],
           'monaco': ['companies', 'people', 'sellers', 'sequences', 'analytics']
         },
-        disabledFeatures: ['OASIS', 'STACKS', 'ATRIUM', 'METRICS', 'CHRONICLE'],
+        disabledFeatures: ['OASIS', 'STACKS', 'WORKSHOP', 'METRICS', 'CHRONICLE'],
         sectionOrder: ['clients', 'people', 'companies', 'partners'] // Custom section ordering
       },
       'Notary Everyday': {
@@ -73,7 +73,7 @@ const USER_RESTRICTIONS: UserRestriction[] = [
           'pipeline': ['speedrun', 'leads', 'prospects', 'opportunities', 'clients', 'people', 'companies', 'partners'],
           'monaco': ['companies', 'people', 'sellers', 'sequences', 'analytics']
         },
-        disabledFeatures: ['OASIS', 'STACKS', 'ATRIUM', 'METRICS', 'CHRONICLE'],
+        disabledFeatures: ['OASIS', 'STACKS', 'WORKSHOP', 'METRICS', 'CHRONICLE'],
         sectionOrder: ['clients', 'people', 'companies', 'partners'] // Custom section ordering
       }
     }

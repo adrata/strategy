@@ -43,7 +43,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
           setLoading(true);
           setError(null);
 
-          const response = await fetch(`/api/atrium/documents/${fallbackId}`, {
+          const response = await fetch(`/api/workshop/documents/${fallbackId}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/atrium/documents/${documentId}`, {
+        const response = await fetch(`/api/workshop/documents/${documentId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
     if (!document) return;
 
     try {
-      const response = await fetch(`/api/atrium/documents/${document.id}/content`, {
+      const response = await fetch(`/api/workshop/documents/${document.id}/content`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
 
     try {
       // Auto-save with minimal error handling
-      await fetch(`/api/atrium/documents/${document.id}/content`, {
+      await fetch(`/api/workshop/documents/${document.id}/content`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

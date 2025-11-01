@@ -198,7 +198,7 @@ export function ChatInput({
               className={`relative flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm border transition-all duration-200 cursor-pointer ${
                 isVoiceModeActive || isModalListening
                   ? 'bg-blue-100 text-blue-700 border-blue-300 shadow-sm'
-                  : 'bg-white text-gray-600 border-gray-300 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600'
+                  : 'bg-[var(--background)] text-[var(--muted)] border-[var(--border)] hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600'
               }`}
               >
                 <RiVoiceAiFill className="w-4 h-4" />
@@ -322,8 +322,10 @@ export function ChatInput({
                 paddingRight: '48px',
                 paddingTop: '43px',
                 paddingBottom: '60px',
-                border: '1px solid #e5e7eb',
-                borderColor: '#e5e7eb',
+                border: `1px solid var(--border)`,
+                borderColor: 'var(--border)',
+                backgroundColor: 'var(--background)',
+                color: 'var(--foreground)',
                 overflowY: textareaHeight >= Math.floor(182 * 1.3) ? 'scroll' : 'hidden'
               }}
             />
@@ -348,8 +350,8 @@ export function ChatInput({
                 height: '31px', 
                 right: '11px',
                 bottom: '20.5px',
-                background: rightChatInput.trim().length > 0 ? '#f3f4f6' : '#fff',
-                color: rightChatInput.trim().length > 0 ? '#374151' : '#222',
+                background: rightChatInput.trim().length > 0 ? 'var(--panel-background)' : 'var(--background)',
+                color: rightChatInput.trim().length > 0 ? 'var(--foreground)' : 'var(--muted)',
                 transition: 'background-color 50ms ease-out, color 50ms ease-out',
                 boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
               }}

@@ -259,11 +259,11 @@ Please provide the updated report content with the requested changes.`;
   }
 
   /**
-   * Save report to Atrium
+   * Save report to Workshop
    */
-  async saveReportToAtrium(report: DeepValueReport, content: string): Promise<string> {
+  async saveReportToWorkshop(report: DeepValueReport, content: string): Promise<string> {
     try {
-      const response = await authFetch('/api/atrium/reports', {
+      const response = await authFetch('/api/workshop/reports', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

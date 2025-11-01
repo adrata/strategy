@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
- * GET /api/atrium/documents
+ * GET /api/workshop/documents
  * Get all documents for the current workspace with optional filtering
  */
 export async function GET(request: NextRequest) {
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
 
     // Get documents with pagination
     const [documents, total] = await Promise.all([
-      prisma.atriumDocument.findMany({
+      prisma.workshopDocument.findMany({
         where,
         orderBy,
         skip: (page - 1) * limit,
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
           },
         },
       }),
-      prisma.atriumDocument.count({ where }),
+      prisma.workshopDocument.count({ where }),
     ]);
 
     return NextResponse.json({
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * POST /api/atrium/documents
+ * POST /api/workshop/documents
  * Create a new document
  */
 export async function POST(request: NextRequest) {
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create document
-    const document = await prisma.atriumDocument.create({
+    const document = await prisma.workshopDocument.create({
       data: {
         title,
         description,
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Create activity log
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: document.id,
         userId: session.user.id,

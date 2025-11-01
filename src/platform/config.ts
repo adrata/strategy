@@ -145,7 +145,7 @@ export const QUICK_ACTIONS: Record<string, string[]> = {
     "Schedule video call",
     "Share file in chat",
   ],
-  atrium: [
+  workshop: [
     "Create new document",
     "Organize knowledge base",
     "Generate meeting notes",

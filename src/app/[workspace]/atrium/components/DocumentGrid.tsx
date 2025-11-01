@@ -231,7 +231,7 @@ console.log('Total:', total);
               onClick={() => {
                 const slug = generateSlug(document.title, document.id);
                 const workspaceSlug = workspace?.slug || 'default';
-                router.push(`/${workspaceSlug}/atrium/${slug}`);
+                router.push(`/${workspaceSlug}/workshop/${slug}`);
               }}
               className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
             >

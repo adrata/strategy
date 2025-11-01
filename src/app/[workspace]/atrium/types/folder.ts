@@ -1,4 +1,4 @@
-export interface AtriumFolder {
+export interface WorkshopFolder {
   id: string;
   name: string;
   description?: string;
@@ -24,8 +24,8 @@ export interface AtriumFolder {
     id: string;
     name: string;
   };
-  children?: AtriumFolder[];
-  documents?: any[]; // AtriumDocument[]
+  children?: WorkshopFolder[];
+  documents?: any[]; // WorkshopDocument[]
   
   // Counts
   _count?: {

@@ -44,10 +44,10 @@ interface StacksBacklogTableProps {
 
 
 const PRIORITY_COLORS = {
-  urgent: 'bg-gray-200 text-gray-800',
-  high: 'bg-gray-200 text-gray-800',
-  medium: 'bg-gray-100 text-gray-700',
-  low: 'bg-gray-100 text-gray-600',
+  urgent: 'bg-[var(--priority-high-bg)] text-[var(--priority-high-text)]',
+  high: 'bg-[var(--priority-high-bg)] text-[var(--priority-high-text)]',
+  medium: 'bg-[var(--priority-medium-bg)] text-[var(--priority-medium-text)]',
+  low: 'bg-[var(--priority-low-bg)] text-[var(--priority-low-text)]',
 };
 
 const STATUS_ICONS = {
@@ -308,7 +308,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           </div>
           <button 
             onClick={() => setShowAddStacksModal(true)}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-[var(--panel-background)] text-[var(--foreground)] border border-[var(--border)] rounded-md hover:bg-[var(--hover)] transition-colors"
           >
             <PlusIcon className="h-4 w-4" />
             Add Stacks
@@ -352,38 +352,38 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           <div className="p-4">
             {/* Up Next Section Header */}
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Up Next</h3>
-              <div className="text-xs text-gray-500">Backlog</div>
+              <h3 className="text-sm font-medium text-[var(--foreground)] mb-2">Up Next</h3>
+              <div className="text-xs text-[var(--muted)]">Backlog</div>
             </div>
 
             {/* Desktop Table View */}
             <div className="hidden lg:block">
-              <div className="bg-white border border-[var(--border)] rounded-lg overflow-hidden">
+              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-[var(--border)]">
+                  <thead className="bg-[var(--panel-background)] border-b border-[var(--border)]">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                         Rank
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                         Title
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                         Priority
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                         Assignee
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                         Due Date
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                         Workstream
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -395,20 +395,20 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                       return (
                         <React.Fragment key={item.id}>
                           <tr 
-                            className="hover:bg-gray-50 cursor-pointer"
+                            className="hover:bg-[var(--hover)] cursor-pointer"
                             onClick={() => onItemClick?.(item)}
                             onContextMenu={(e) => handleContextMenu(e, item.id)}
                           >
-                            <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-[var(--foreground)]">
                               #{item.rank || index + 1}
                             </td>
                             <td className="px-4 py-4">
                               <div>
-                                <div className="text-sm font-medium text-gray-900">
+                                <div className="text-sm font-medium text-[var(--foreground)]">
                                   {item.title}
                                 </div>
                                 {item.description && (
-                                  <div className="text-sm text-gray-500 mt-1">
+                                  <div className="text-sm text-[var(--muted)] mt-1">
                                     {item.description}
                                   </div>
                                 )}
@@ -421,28 +421,28 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-2">
-                                <StatusIcon className="h-4 w-4 text-gray-400" />
-                                <span className="text-sm text-gray-900 capitalize">
+                                <StatusIcon className="h-4 w-4 text-[var(--muted)]" />
+                                <span className="text-sm text-[var(--foreground)] capitalize">
                                   {item.status}
                                 </span>
                               </div>
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
                               {item.assignee || '-'}
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
                               {item.dueDate ? formatRelativeTime(item.dueDate) : '-'}
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
                               {item.tags && item.tags.length > 0 && (
-                                <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                                <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
                                   {item.tags[0]}
                                 </span>
                               )}
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                                <EllipsisVerticalIcon className="h-4 w-4 text-gray-400" />
+                              <button className="p-1 hover:bg-[var(--hover)] rounded transition-colors">
+                                <EllipsisVerticalIcon className="h-4 w-4 text-[var(--muted)]" />
                               </button>
                             </td>
                           </tr>
@@ -462,57 +462,57 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                 return (
                   <div
                     key={item.id}
-                    className="bg-white border border-[var(--border)] rounded-lg p-4 hover:border-gray-300 transition-colors cursor-pointer"
+                    className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-[var(--accent)] transition-colors cursor-pointer"
                     onClick={() => onItemClick?.(item)}
                     onContextMenu={(e) => handleContextMenu(e, item.id)}
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <div className="flex items-center justify-center w-6 h-6 bg-gray-100 text-gray-600 text-xs font-bold rounded-full">
+                          <div className="flex items-center justify-center w-6 h-6 bg-[var(--panel-background)] text-[var(--muted)] text-xs font-bold rounded-full">
                             {item.rank || index + 1}
                           </div>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${PRIORITY_COLORS[item.priority]}`}>
                             {item.priority}
                           </span>
                         </div>
-                        <h3 className="text-sm font-medium text-gray-900 mb-1">
+                        <h3 className="text-sm font-medium text-[var(--foreground)] mb-1">
                           {item.title}
                         </h3>
                         {item.description && (
-                          <p className="text-sm text-gray-500 mb-2">
+                          <p className="text-sm text-[var(--muted)] mb-2">
                             {item.description}
                           </p>
                         )}
                       </div>
-                      <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                        <EllipsisVerticalIcon className="h-4 w-4 text-gray-400" />
+                      <button className="p-1 hover:bg-[var(--hover)] rounded transition-colors">
+                        <EllipsisVerticalIcon className="h-4 w-4 text-[var(--muted)]" />
                       </button>
                     </div>
                     
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1">
-                          <StatusIcon className="h-4 w-4 text-gray-400" />
-                          <span className="text-gray-600 capitalize">
+                          <StatusIcon className="h-4 w-4 text-[var(--muted)]" />
+                          <span className="text-[var(--muted)] capitalize">
                             {item.status}
                           </span>
                         </div>
                         {item.assignee && (
                           <div className="flex items-center gap-1">
-                            <UserIcon className="h-4 w-4 text-gray-400" />
-                            <span className="text-gray-600">{item.assignee}</span>
+                            <UserIcon className="h-4 w-4 text-[var(--muted)]" />
+                            <span className="text-[var(--muted)]">{item.assignee}</span>
                           </div>
                         )}
                         {item.dueDate && (
                           <div className="flex items-center gap-1">
-                            <CalendarIcon className="h-4 w-4 text-gray-400" />
-                            <span className="text-gray-600">{formatRelativeTime(item.dueDate)}</span>
+                            <CalendarIcon className="h-4 w-4 text-[var(--muted)]" />
+                            <span className="text-[var(--muted)]">{formatRelativeTime(item.dueDate)}</span>
                           </div>
                         )}
                       </div>
                       {item.tags && item.tags.length > 0 && (
-                        <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                        <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
                           {item.tags[0]}
                         </span>
                       )}

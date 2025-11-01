@@ -117,9 +117,9 @@ model workspaces {
   users                     users[]
   workspace_users           workspace_users[]
   
-  // Atrium relations
-  atriumDocuments           atriumDocument[]
-  atriumFolders            atriumFolder[]
+  // Workshop relations
+  workshopDocuments           workshopDocument[]
+  workshopFolders            workshopFolder[]
 
   @@index([slug])
   @@index([isActive])
@@ -165,14 +165,14 @@ model users {
   workspaces                                                            workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
   workspace_users                                                       workspace_users[]
   
-  // Atrium relations
-  atriumDocumentsOwned                                                 atriumDocument[]            @relation("AtriumDocumentOwner")
-  atriumDocumentsCreated                                               atriumDocument[]            @relation("AtriumDocumentCreatedBy")
-  atriumFoldersOwned                                                   atriumFolder[]
-  atriumSharesCreated                                                  atriumShare[]
-  atriumVersionsCreated                                                atriumVersion[]
-  atriumCommentsCreated                                                atriumComment[]
-  atriumActivitiesPerformed                                            atriumActivity[]
+  // Workshop relations
+  workshopDocumentsOwned                                                 workshopDocument[]            @relation("WorkshopDocumentOwner")
+  workshopDocumentsCreated                                               workshopDocument[]            @relation("WorkshopDocumentCreatedBy")
+  workshopFoldersOwned                                                   workshopFolder[]
+  workshopSharesCreated                                                  workshopShare[]
+  workshopVersionsCreated                                                workshopVersion[]
+  workshopCommentsCreated                                                workshopComment[]
+  workshopActivitiesPerformed                                            workshopActivity[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -362,7 +362,7 @@ model companies {
   workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   emails                 email_messages[]
   people                 people[]
-  atriumDocuments        atriumDocument[]
+  workshopDocuments        workshopDocument[]
 
   @@index([workspaceId])
   @@index([mainSellerId])
@@ -1084,8 +1084,8 @@ model OasisExternalConnection {
   @@index([userId])
 }
 
-/// Atrium Document Management System
-model atriumDocument {
+/// Workshop Document Management System
+model workshopDocument {
   id                String   @id @default(ulid())
   title             String   @db.VarChar(500)
   description       String?
@@ -1134,15 +1134,15 @@ model atriumDocument {
   createdById       String   @db.VarChar(30)
   
   // Relations
-  owner             users    @relation("AtriumDocumentOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  owner             users    @relation("WorkshopDocumentOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   workspace         workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   company           companies? @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdBy         users    @relation("AtriumDocumentCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
-  folder            atriumFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
-  shares            atriumShare[]
-  versions          atriumVersion[]
-  comments          atriumComment[]
-  activities        atriumActivity[]
+  createdBy         users    @relation("WorkshopDocumentCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  folder            workshopFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  shares            workshopShare[]
+  versions          workshopVersion[]
+  comments          workshopComment[]
+  activities        workshopActivity[]
 
   @@index([workspaceId])
   @@index([ownerId])
@@ -1158,7 +1158,7 @@ model atriumDocument {
   @@index([sourceRecordType, sourceRecordId])
 }
 
-model atriumFolder {
+model workshopFolder {
   id          String   @id @default(ulid())
   name        String   @db.VarChar(255)
   description String?
@@ -1171,11 +1171,11 @@ model atriumFolder {
   deletedAt   DateTime?
   
   // Relations
-  parent      atriumFolder? @relation("AtriumFolderParent", fields: [parentId], references: [id], onDelete: Cascade)
-  children    atriumFolder[] @relation("AtriumFolderParent")
+  parent      workshopFolder? @relation("WorkshopFolderParent", fields: [parentId], references: [id], onDelete: Cascade)
+  children    workshopFolder[] @relation("WorkshopFolderParent")
   workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   owner       users    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  documents   atriumDocument[]
+  documents   workshopDocument[]
 
   @@index([workspaceId])
   @@index([parentId])
@@ -1183,7 +1183,7 @@ model atriumFolder {
   @@index([deletedAt])
 }
 
-model atriumShare {
+model workshopShare {
   id          String    @id @default(ulid())
   documentId  String    @db.VarChar(30)
   shareToken  String    @unique @db.VarChar(100)
@@ -1197,7 +1197,7 @@ model atriumShare {
   updatedAt   DateTime  @updatedAt
   
   // Relations
-  document    atriumDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  document    workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
   createdBy   users    @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   @@index([documentId])
@@ -1206,7 +1206,7 @@ model atriumShare {
   @@index([isActive])
 }
 
-model atriumVersion {
+model workshopVersion {
   id                String   @id @default(ulid())
   documentId        String   @db.VarChar(30)
   versionNumber     Int
@@ -1217,7 +1217,7 @@ model atriumVersion {
   createdAt         DateTime @default(now())
   
   // Relations
-  document          atriumDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  document          workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
   createdBy         users    @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   @@unique([documentId, versionNumber])
@@ -1225,7 +1225,7 @@ model atriumVersion {
   @@index([createdAt])
 }
 
-model atriumComment {
+model workshopComment {
   id          String   @id @default(ulid())
   documentId  String   @db.VarChar(30)
   parentId    String?  @db.VarChar(30)
@@ -1236,9 +1236,9 @@ model atriumComment {
   deletedAt   DateTime?
   
   // Relations
-  document    atriumDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  parent      atriumComment? @relation("AtriumCommentParent", fields: [parentId], references: [id], onDelete: Cascade)
-  replies     atriumComment[] @relation("AtriumCommentParent")
+  document    workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  parent      workshopComment? @relation("WorkshopCommentParent", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     workshopComment[] @relation("WorkshopCommentParent")
   createdBy   users    @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   @@index([documentId])
@@ -1247,7 +1247,7 @@ model atriumComment {
   @@index([deletedAt])
 }
 
-model atriumActivity {
+model workshopActivity {
   id            String   @id @default(ulid())
   documentId    String   @db.VarChar(30)
   activityType  String   @db.VarChar(50) // CREATED, UPDATED, VIEWED, SHARED, COMMENTED, DELETED
@@ -1257,7 +1257,7 @@ model atriumActivity {
   createdAt     DateTime @default(now())
   
   // Relations
-  document      atriumDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  document      workshopDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
   performedBy   users    @relation(fields: [performedById], references: [id], onDelete: Cascade)
 
   @@index([documentId])
@@ -1299,7 +1299,7 @@ enum Permission {
   AUDIT_EXPORT
   OASIS_ACCESS
   STACKS_ACCESS
-  ATRIUM_ACCESS
+  WORKSHOP_ACCESS
   REVENUEOS_ACCESS
   METRICS_ACCESS
   CHRONICLE_ACCESS

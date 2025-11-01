@@ -203,7 +203,7 @@ export function StacksFilters({
         </button>
         
         {isSortOpen && (
-          <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-[var(--border)] rounded-lg shadow-lg z-50">
+          <div className="absolute right-0 top-full mt-1 w-48 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg z-50">
             <div className="py-1">
               {SORT_OPTIONS.map((option) => (
                 <button
@@ -247,7 +247,7 @@ export function StacksFilters({
         </button>
         
         {isFilterOpen && (
-          <div className="absolute right-0 top-full mt-1 w-64 bg-white border border-[var(--border)] rounded-lg shadow-lg z-50">
+          <div className="absolute right-0 top-full mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg z-50">
             <div className="p-4 space-y-4">
               {/* Priority Filter */}
               <div>
@@ -330,7 +330,7 @@ export function StacksFilters({
         </button>
         
         {isColumnOpen && (
-          <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-[var(--border)] rounded-lg shadow-lg z-50">
+          <div className="absolute right-0 top-full mt-1 w-48 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg z-50">
             <div className="py-1">
               {COLUMN_OPTIONS.map((option) => (
                 <button

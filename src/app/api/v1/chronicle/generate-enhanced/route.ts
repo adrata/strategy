@@ -113,8 +113,8 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Store in Atrium as well
-    await storeInAtrium(reportData, workspaceId, reportUserId);
+    // Store in Workshop as well
+    await storeInWorkshop(reportData, workspaceId, reportUserId);
 
     return createSuccessResponse(report);
 
@@ -484,17 +484,17 @@ function calculateConversionVelocity(statusChanges: any[]): number {
   return statusChanges.length / 30; // conversions per day over last 30 days
 }
 
-async function storeInAtrium(reportData: ChronicleReportData, workspaceId: string, userId: string) {
+async function storeInWorkshop(reportData: ChronicleReportData, workspaceId: string, userId: string) {
   try {
-    console.log('Storing Chronicle report in Atrium:', {
+    console.log('Storing Chronicle report in Workshop:', {
       title: reportData.title,
       workspaceId,
       userId,
       type: 'PAPER'
     });
 
-    // Create the document in Atrium
-    const document = await prisma.atriumDocument.create({
+    // Create the document in Workshop
+    const document = await prisma.workshopDocument.create({
       data: {
         title: reportData.title,
         content: reportData.content,
@@ -525,7 +525,7 @@ async function storeInAtrium(reportData: ChronicleReportData, workspaceId: strin
     });
 
     // Create activity log
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: document.id,
         activityType: 'CREATED',
@@ -539,12 +539,12 @@ async function storeInAtrium(reportData: ChronicleReportData, workspaceId: strin
       }
     });
 
-    console.log('✅ Chronicle report stored in Atrium:', document.id);
+    console.log('✅ Chronicle report stored in Workshop:', document.id);
     return document;
 
   } catch (error) {
-    console.error('❌ Failed to store Chronicle report in Atrium:', error);
-    // Don't throw - we don't want Atrium storage failure to break Chronicle generation
+    console.error('❌ Failed to store Chronicle report in Workshop:', error);
+    // Don't throw - we don't want Workshop storage failure to break Chronicle generation
     return null;
   }
 }

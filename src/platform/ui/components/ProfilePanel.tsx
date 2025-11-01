@@ -22,7 +22,8 @@ import {
   Squares2X2Icon,
   DocumentDuplicateIcon,
   ClipboardDocumentCheckIcon,
-  HomeIcon
+  HomeIcon,
+  ArrowLeftIcon
 } from "@heroicons/react/24/outline";
 import { X, MessageSquare, FileText, Layers, Building2, Check, GripVertical, PanelLeft } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
@@ -323,12 +324,12 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
           <button
             onClick={() => setViewMode(viewMode === 'main' ? 'actionList' : 'main')}
             className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
-            title={viewMode === 'main' ? 'Show action list' : 'Show main menu'}
+            title={viewMode === 'main' ? 'Show action list' : 'Return to main'}
           >
             {viewMode === 'main' ? (
               <ClipboardDocumentCheckIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
             ) : (
-              <HomeIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
+              <ArrowLeftIcon className="w-5 h-5 text-[var(--muted-foreground)]" />
             )}
           </button>
           <button
@@ -363,6 +364,19 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">RevenueOS</span>
             </button>
 
+            {/* Adrata */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'adrata' 
+                  ? 'bg-blue-100 text-blue-700' 
+                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+              }`}
+              onClick={() => handleNavigation("/adrata")}
+            >
+              <SparklesIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Adrata</span>
+            </button>
+
             {/* Workshop */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -374,19 +388,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             >
               <DocumentDuplicateIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Workshop</span>
-            </button>
-
-            {/* Leonardo */}
-            <button
-              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
-                currentApp === 'leonardo' 
-                  ? 'bg-blue-100 text-blue-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
-              }`}
-              onClick={() => handleNavigation("/leonardo")}
-            >
-              <SparklesIcon className="w-4 h-4 mr-3" />
-              <span className="font-medium">Leonardo</span>
             </button>
 
             {/* Oasis */}

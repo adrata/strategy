@@ -171,7 +171,7 @@ async function fixNotaryEverydaySeeding() {
         const content = fs.readFileSync(filePath, 'utf-8');
 
         // Check if document already exists
-        const existing = await prisma.atriumDocument.findFirst({
+        const existing = await prisma.workshopDocument.findFirst({
           where: {
             title: doc.title,
             workspaceId: workspace.id,
@@ -185,7 +185,7 @@ async function fixNotaryEverydaySeeding() {
         }
 
         // Create the document
-        const document = await prisma.atriumDocument.create({
+        const document = await prisma.workshopDocument.create({
           data: {
             title: doc.title,
             content: {

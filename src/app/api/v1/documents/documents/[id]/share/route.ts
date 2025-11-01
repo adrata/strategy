@@ -5,7 +5,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { randomBytes } from 'crypto';
 
 /**
- * POST /api/atrium/documents/[id]/share
+ * POST /api/workshop/documents/[id]/share
  * Create a share link for a document
  */
 export async function POST(
@@ -33,7 +33,7 @@ export async function POST(
     } = body;
 
     // Get existing document to check permissions
-    const document = await prisma.atriumDocument.findUnique({
+    const document = await prisma.workshopDocument.findUnique({
       where: { id: (await params).id },
       include: {
         shares: true,
@@ -52,10 +52,10 @@ export async function POST(
 
     // Generate secure share token
     const shareToken = randomBytes(32).toString('hex');
-    const shareUrl = `${process.env.NEXTAUTH_URL}/atrium/shared/${shareToken}`;
+    const shareUrl = `${process.env.NEXTAUTH_URL}/workshop/shared/${shareToken}`;
 
     // Create share
-    const share = await prisma.atriumShare.create({
+    const share = await prisma.workshopShare.create({
       data: {
         documentId: (await params).id,
         shareType,
@@ -74,7 +74,7 @@ export async function POST(
     });
 
     // Log share creation
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: (await params).id,
         userId: session.user.id,
@@ -101,7 +101,7 @@ export async function POST(
 }
 
 /**
- * GET /api/atrium/documents/[id]/share
+ * GET /api/workshop/documents/[id]/share
  * Get all shares for a document
  */
 export async function GET(
@@ -115,7 +115,7 @@ export async function GET(
     }
 
     // Get existing document to check permissions
-    const document = await prisma.atriumDocument.findUnique({
+    const document = await prisma.workshopDocument.findUnique({
       where: { id: (await params).id },
       include: {
         shares: true,
@@ -133,7 +133,7 @@ export async function GET(
     }
 
     // Get all active shares
-    const shares = await prisma.atriumShare.findMany({
+    const shares = await prisma.workshopShare.findMany({
       where: {
         documentId: (await params).id,
         OR: [
@@ -157,7 +157,7 @@ export async function GET(
 }
 
 /**
- * DELETE /api/atrium/documents/[id]/share
+ * DELETE /api/workshop/documents/[id]/share
  * Revoke a share link
  */
 export async function DELETE(
@@ -178,7 +178,7 @@ export async function DELETE(
     }
 
     // Get share to check permissions
-    const share = await prisma.atriumShare.findUnique({
+    const share = await prisma.workshopShare.findUnique({
       where: { id: shareId },
       include: {
         document: true,
@@ -200,12 +200,12 @@ export async function DELETE(
     }
 
     // Delete share
-    await prisma.atriumShare.delete({
+    await prisma.workshopShare.delete({
       where: { id: shareId },
     });
 
     // Log share revocation
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: (await params).id,
         userId: session.user.id,

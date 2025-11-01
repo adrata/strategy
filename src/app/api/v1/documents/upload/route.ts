@@ -6,7 +6,7 @@ import { join } from 'path';
 import { randomBytes } from 'crypto';
 
 /**
- * POST /api/atrium/upload
+ * POST /api/workshop/upload
  * Upload a file to Atrium
  */
 export async function POST(request: NextRequest) {
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
 
     // Create document record in database
     const { prisma } = await import('@/platform/prisma');
-    const document = await prisma.atriumDocument.create({
+    const document = await prisma.workshopDocument.create({
       data: {
         title: title || file.name,
         description,
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Log upload activity
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: document.id,
         userId: session.user.id,

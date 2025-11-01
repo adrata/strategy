@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { documentAnalyzer } from '@/app/[workspace]/atrium/lib/ai/document-analyzer';
+import { documentAnalyzer } from '@/app/[workspace]/workshop/lib/ai/document-analyzer';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify user has access to the document
-    const document = await prisma.atriumDocument.findFirst({
+    const document = await prisma.workshopDocument.findFirst({
       where: {
         id: documentId,
         OR: [
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Log the analysis activity
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId,
         userId: user.id,

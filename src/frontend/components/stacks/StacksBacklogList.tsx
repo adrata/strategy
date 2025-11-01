@@ -291,7 +291,7 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
           <div className="p-4">
             {/* Desktop Table View */}
             <div className="hidden lg:block">
-              <div className="bg-white border border-[var(--border)] rounded-lg overflow-hidden">
+              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-[var(--border)]">
                     <tr>
@@ -395,7 +395,7 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
                 return (
                   <div
                     key={item.id}
-                    className="bg-white border border-[var(--border)] rounded-lg p-4 hover:border-gray-300 transition-colors cursor-pointer"
+                    className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-[var(--accent)] transition-colors cursor-pointer"
                     onClick={() => onItemClick?.(item)}
                     onContextMenu={(e) => handleContextMenu(e, item.id)}
                   >

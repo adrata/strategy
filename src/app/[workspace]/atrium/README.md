@@ -1,10 +1,10 @@
-# Atrium - Secure Document Storage & Management
+# Workshop - Secure Document Storage & Management
 
-Atrium is a comprehensive document management system built for the Adrata platform, providing secure storage, organization, and collaboration features for all types of documents.
+Workshop is a comprehensive document management system built for the Adrata platform, providing secure storage, organization, and collaboration features for all types of documents.
 
-## 🏛️ Overview
+## Overview
 
-Atrium follows the established Grand Central + Speedrun pattern with a three-panel layout:
+Workshop follows the established Grand Central + Speedrun pattern with a three-panel layout:
 - **Left Panel**: Navigation, folders, and quick actions
 - **Middle Panel**: Document grid/list view with search and filtering
 - **Right Panel**: Document details, sharing, and activity
@@ -12,27 +12,27 @@ Atrium follows the established Grand Central + Speedrun pattern with a three-pan
 ## 📁 Architecture
 
 ### Database Schema
-- `AtriumDocument` - Core document model with encryption, versioning, and metadata
-- `AtriumFolder` - Hierarchical folder structure for organization
-- `AtriumShare` - Document sharing with permissions and expiration
-- `AtriumVersion` - Version history tracking with diff support
-- `AtriumComment` - Collaborative comments and annotations
-- `AtriumActivity` - Comprehensive audit log for all document activities
+- `WorkshopDocument` - Core document model with encryption, versioning, and metadata
+- `WorkshopFolder` - Hierarchical folder structure for organization
+- `WorkshopShare` - Document sharing with permissions and expiration
+- `WorkshopVersion` - Version history tracking with diff support
+- `WorkshopComment` - Collaborative comments and annotations
+- `WorkshopActivity` - Comprehensive audit log for all document activities
 
 ### API Routes
-- `/api/atrium/documents` - Document CRUD operations
-- `/api/atrium/documents/[id]` - Individual document management
-- `/api/atrium/documents/[id]/content` - Document content access
-- `/api/atrium/documents/[id]/share` - Sharing functionality
-- `/api/atrium/documents/[id]/versions` - Version control
-- `/api/atrium/folders` - Folder management
-- `/api/atrium/upload` - Secure file upload
-- `/api/atrium/download/[id]` - Secure file download
-- `/api/atrium/search` - Full-text search and filtering
+- `/api/workshop/documents` - Document CRUD operations
+- `/api/workshop/documents/[id]` - Individual document management
+- `/api/workshop/documents/[id]/content` - Document content access
+- `/api/workshop/documents/[id]/share` - Sharing functionality
+- `/api/workshop/documents/[id]/versions` - Version control
+- `/api/workshop/folders` - Folder management
+- `/api/workshop/upload` - Secure file upload
+- `/api/workshop/download/[id]` - Secure file download
+- `/api/workshop/search` - Full-text search and filtering
 
-## 🎯 Document Types
+## Document Types
 
-Atrium supports four distinct document types:
+Workshop supports four distinct document types:
 
 ### 1. Paper 📄
 - Rich text documents for notes, articles, and reports
@@ -158,7 +158,7 @@ Atrium supports four distinct document types:
 
 ## 🚀 Getting Started
 
-1. **Access Atrium**: Navigate to `/[workspace]/atrium` in your workspace
+1. **Access Workshop**: Navigate to `/[workspace]/workshop` in your workspace
 2. **Create Documents**: Use the "Create" button to start with any document type
 3. **Upload Files**: Drag and drop files or use the upload button
 4. **Organize**: Create folders and use tags to organize your documents
@@ -208,7 +208,7 @@ Atrium supports four distinct document types:
 1. Install dependencies: `npm install`
 2. Set up database: `npx prisma migrate dev`
 3. Start development server: `npm run dev`
-4. Access Atrium at `http://localhost:3000/[workspace]/atrium`
+4. Access Workshop at `http://localhost:3000/[workspace]/workshop`
 
 ### Testing
 - Unit tests for utility functions

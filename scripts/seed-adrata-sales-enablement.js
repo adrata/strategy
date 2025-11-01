@@ -175,7 +175,7 @@ async function seedAdrataSalesEnablement() {
     }
 
     // Create a sales enablement folder
-    let salesFolder = await prisma.atriumFolder.findFirst({
+    let salesFolder = await prisma.workshopFolder.findFirst({
       where: {
         name: 'Sales Enablement',
         workspaceId: workspace.id
@@ -183,7 +183,7 @@ async function seedAdrataSalesEnablement() {
     });
 
     if (!salesFolder) {
-      salesFolder = await prisma.atriumFolder.create({
+      salesFolder = await prisma.workshopFolder.create({
         data: {
           name: 'Sales Enablement',
           description: 'Sales enablement documents for Adrata buyer group intelligence platform',
@@ -202,7 +202,7 @@ async function seedAdrataSalesEnablement() {
 
     for (const doc of adrataSalesEnablementDocs) {
       // Check if document already exists
-      const existing = await prisma.atriumDocument.findFirst({
+      const existing = await prisma.workshopDocument.findFirst({
         where: {
           title: doc.title,
           workspaceId: workspace.id,
@@ -427,7 +427,7 @@ A buyer group is a collection of individuals within an organization who collecti
       }
 
       // Create the document
-      const document = await prisma.atriumDocument.create({
+      const document = await prisma.workshopDocument.create({
         data: {
           title: doc.title,
           description: doc.description,
@@ -457,7 +457,7 @@ A buyer group is a collection of individuals within an organization who collecti
       });
 
       // Create activity record
-      await prisma.atriumActivity.create({
+      await prisma.workshopActivity.create({
         data: {
           documentId: document.id,
           activityType: 'CREATED',
