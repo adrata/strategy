@@ -251,10 +251,16 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     
     try {
       await signOut();
-      // Redirect to sign-in page
-      router.push('/sign-in/');
+      // Redirect to sign-in page using hard redirect to bypass workspace layout checks
+      if (typeof window !== "undefined") {
+        window.location.replace('/sign-in/');
+      }
     } catch (error) {
       console.error("❌ ProfilePanel: Sign out error:", error);
+      // Fallback: force redirect even if there's an error
+      if (typeof window !== "undefined") {
+        window.location.replace('/sign-in/');
+      }
     }
   };
 
