@@ -179,7 +179,7 @@ export function StacksMetrics() {
 
   return (
     <div className="h-full overflow-y-auto invisible-scrollbar p-6">
-      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">Workstream Metrics</h1>
+      {/* Header removed - already shown in StacksMiddlePanel */}
       
       {/* 3x3 Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl">
