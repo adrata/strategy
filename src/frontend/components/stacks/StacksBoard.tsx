@@ -118,6 +118,13 @@ const STACK_COLUMNS = [
     description: 'In progress'
   },
   {
+    key: 'built',
+    label: 'Built',
+    color: 'bg-white border-gray-300',
+    icon: CheckCircleIcon,
+    description: 'Fully completed'
+  },
+  {
     key: 'qa1',
     label: 'QA1',
     color: 'bg-white border-gray-300',
@@ -130,13 +137,6 @@ const STACK_COLUMNS = [
     color: 'bg-white border-gray-300',
     icon: ClockIcon,
     description: 'Second quality assurance'
-  },
-  {
-    key: 'built',
-    label: 'Built',
-    color: 'bg-white border-gray-300',
-    icon: CheckCircleIcon,
-    description: 'Fully completed'
   },
   {
     key: 'shipped',

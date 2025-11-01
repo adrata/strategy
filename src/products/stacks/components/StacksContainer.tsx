@@ -39,6 +39,9 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     } else if (pathname.includes('/stacks/build/deep-backlog')) {
       console.log('✅ [StacksContainer] Setting: deep-backlog-build');
       onSubSectionChange('deep-backlog-build');
+    } else if (pathname.includes('/stacks/backlog')) {
+      console.log('✅ [StacksContainer] Setting: backlog');
+      onSubSectionChange('backlog');
     } else if (pathname.includes('/stacks/sell/backlog')) {
       console.log('✅ [StacksContainer] Setting: backlog');
       onSubSectionChange('backlog');
