@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSecureApiContext, createErrorResponse } from '@/platform/services/secure-api-helper';
 import { prisma } from '@/platform/database/prisma-client';
 
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
+// Force dynamic rendering to prevent caching issues
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
