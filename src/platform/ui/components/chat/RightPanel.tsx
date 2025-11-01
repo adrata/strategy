@@ -2073,6 +2073,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           onClosePanel={() => ui.toggleRightPanel()}
           menuPopupRef={menuPopupRef}
           conversationHistoryRef={conversationHistoryRef}
+          onToggleLeftPanel={ui.toggleLeftPanel}
         />
         
         <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -2151,6 +2152,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           onClosePanel={() => ui.toggleRightPanel()}
           menuPopupRef={menuPopupRef}
           conversationHistoryRef={conversationHistoryRef}
+          onToggleLeftPanel={ui.toggleLeftPanel}
         />
         
         <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -2221,6 +2223,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           onClosePanel={() => ui.toggleRightPanel()}
           menuPopupRef={menuPopupRef}
           conversationHistoryRef={conversationHistoryRef}
+          onToggleLeftPanel={ui.toggleLeftPanel}
         />
         
         <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -2328,6 +2331,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
             setShowDirectMessagesList(true);
             loadDMs();
           }}
+          onToggleLeftPanel={ui.toggleLeftPanel}
         />
       )}
 
