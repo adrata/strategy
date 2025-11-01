@@ -110,7 +110,7 @@ export async function GET(
       description: story.description,
       status: story.status,
       priority: story.priority,
-      viewType: story.viewType || 'main',
+      viewType: 'main', // Always use 'main' as default - viewType column removed from queries
       product: story.product || null,
       section: story.section || null,
       assignee: story.assignee ? {
@@ -141,23 +141,30 @@ export async function GET(
   } catch (error) {
     console.error('❌ [STACKS API] Error fetching story:', error);
     
-    // Handle P2022 error (column does not exist) - specifically for viewType column
+    // Handle P2022 error (column does not exist)
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
       const prismaError = error as any;
+      const columnName = prismaError.meta?.column_name || 'unknown';
       console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
-        columnName: prismaError.meta?.column_name,
+        columnName,
         tableName: prismaError.meta?.table_name,
         modelName: prismaError.meta?.modelName
       });
       
       return createErrorResponse(
-        'Database schema mismatch: viewType column not found. Please run database migrations.',
+        columnName !== 'unknown'
+          ? `Database column '${columnName}' does not exist. Please run database migrations.`
+          : 'Database schema mismatch. Please run database migrations.',
         'SCHEMA_MISMATCH',
         500
       );
     }
     
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return createErrorResponse(
+      'Failed to fetch story. Please try again.',
+      'STORY_FETCH_ERROR',
+      500
+    );
   }
 }
 
@@ -198,7 +205,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { status, viewType, product, section } = body;
+    const { status, product, section } = body;
 
     // Verify story belongs to workspace
     const existingStory = await prisma.stacksStory.findFirst({
@@ -215,18 +222,13 @@ export async function PATCH(
     }
 
     // Update story
-    // Build update data, excluding viewType if column doesn't exist
+    // Build update data
     const updateData: any = {
       ...(status && { status }),
       ...(product !== undefined && { product }),
       ...(section !== undefined && { section }),
       updatedAt: new Date()
     };
-    
-    // Only include viewType if we're actually updating it (will fail if column doesn't exist, but that's handled in catch)
-    if (viewType !== undefined) {
-      updateData.viewType = viewType;
-    }
 
     const story = await prisma.stacksStory.update({
       where: { id: storyId },
@@ -275,7 +277,7 @@ export async function PATCH(
       description: story.description,
       status: story.status,
       priority: story.priority,
-      viewType: story.viewType || 'main',
+      viewType: 'main', // Always use 'main' as default - viewType column removed from queries
       product: story.product || null,
       section: story.section || null,
       assignee: story.assignee ? {
@@ -301,99 +303,24 @@ export async function PATCH(
   } catch (error) {
     console.error('❌ [STACKS API] Error updating story:', error);
     
-    // Handle P2022 error (column does not exist) - specifically for viewType column
+    // Handle P2022 error (column does not exist)
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
       const prismaError = error as any;
-      if (prismaError.meta?.column_name === 'viewType') {
-        console.warn('⚠️ [STACKS API] viewType column missing - update attempted without viewType');
-        // Try update without viewType
-        try {
-          const { viewType, ...dataWithoutViewType } = JSON.parse(JSON.stringify(updateData || {}));
-          const storyWithoutViewType = await prisma.stacksStory.update({
-            where: { id: storyId },
-            data: {
-              ...(status && { status }),
-              ...(product !== undefined && { product }),
-              ...(section !== undefined && { section }),
-              updatedAt: new Date()
-            },
-            select: {
-              id: true,
-              epicId: true,
-              projectId: true,
-              title: true,
-              description: true,
-              status: true,
-              priority: true,
-              assigneeId: true,
-              product: true,
-              section: true,
-              createdAt: true,
-              updatedAt: true,
-              epic: {
-                select: {
-                  id: true,
-                  title: true,
-                  description: true
-                }
-              },
-              assignee: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true
-                }
-              },
-              project: {
-                select: {
-                  id: true,
-                  name: true
-                }
-              }
-            }
-          });
-          
-          const transformedStory = {
-            id: storyWithoutViewType.id,
-            title: storyWithoutViewType.title,
-            description: storyWithoutViewType.description,
-            status: storyWithoutViewType.status,
-            priority: storyWithoutViewType.priority,
-            viewType: 'main', // Default since column doesn't exist
-            product: storyWithoutViewType.product || null,
-            section: storyWithoutViewType.section || null,
-            assignee: storyWithoutViewType.assignee ? {
-              id: storyWithoutViewType.assignee.id,
-              name: `${storyWithoutViewType.assignee.firstName} ${storyWithoutViewType.assignee.lastName}`,
-              email: storyWithoutViewType.assignee.email
-            } : null,
-            epic: storyWithoutViewType.epic ? {
-              id: storyWithoutViewType.epic.id,
-              title: storyWithoutViewType.epic.title,
-              description: storyWithoutViewType.epic.description
-            } : null,
-            project: storyWithoutViewType.project ? {
-              id: storyWithoutViewType.project.id,
-              name: storyWithoutViewType.project.name
-            } : null,
-            createdAt: storyWithoutViewType.createdAt,
-            updatedAt: storyWithoutViewType.updatedAt
-          };
-          
-          return NextResponse.json({ story: transformedStory });
-        } catch (fallbackError) {
-          console.error('❌ [STACKS API] Fallback update also failed:', fallbackError);
-        }
-      }
+      const columnName = prismaError.meta?.column_name || 'unknown';
       
       return createErrorResponse(
-        `Database column '${prismaError.meta?.column_name}' does not exist. Please run database migrations.`,
+        columnName !== 'unknown'
+          ? `Database column '${columnName}' does not exist. Please run database migrations.`
+          : 'Database schema mismatch. Please run database migrations.',
         'SCHEMA_MISMATCH',
         500
       );
     }
     
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return createErrorResponse(
+      'Failed to update story. Please try again.',
+      'STORY_UPDATE_ERROR',
+      500
+    );
   }
 }

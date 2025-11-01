@@ -9,6 +9,7 @@ import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
+import { ProfilePanelProvider } from "@/platform/ui/components/ProfilePanelContext";
 import { IntegrationNode } from "./types/integration";
 import { GrandCentralLeftPanel } from "./components/GrandCentralLeftPanel";
 
@@ -67,9 +68,11 @@ export default function GrandCentralLayout({ children }: GrandCentralLayoutProps
         <RevenueOSProvider>
           <ZoomProvider>
             <ProfilePopupProvider>
-              <GrandCentralLayoutContent>
-                {children}
-              </GrandCentralLayoutContent>
+              <ProfilePanelProvider>
+                <GrandCentralLayoutContent>
+                  {children}
+                </GrandCentralLayoutContent>
+              </ProfilePanelProvider>
             </ProfilePopupProvider>
           </ZoomProvider>
         </RevenueOSProvider>

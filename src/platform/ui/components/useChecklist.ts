@@ -20,6 +20,7 @@ interface UseChecklistReturn {
   addItem: (text: string) => void;
   deleteItem: (id: string) => void;
   toggleItem: (id: string) => void;
+  editItem: (id: string, text: string) => void;
   isLoading: boolean;
   error: string | null;
 }
@@ -202,6 +203,26 @@ export function useChecklist(
     });
   }, [saveItems]);
 
+  // Edit item text
+  const editItem = useCallback((id: string, text: string) => {
+    const trimmedText = text.trim();
+    if (!trimmedText) return; // Don't allow empty items
+    
+    setItems(prev => {
+      const newItems = prev.map(item => {
+        if (item.id === id) {
+          return {
+            ...item,
+            text: trimmedText
+          };
+        }
+        return item;
+      });
+      saveItems(newItems);
+      return newItems;
+    });
+  }, [saveItems]);
+
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
@@ -216,6 +237,7 @@ export function useChecklist(
     addItem,
     deleteItem,
     toggleItem,
+    editItem,
     isLoading,
     error
   };
