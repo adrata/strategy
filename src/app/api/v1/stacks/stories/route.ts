@@ -85,9 +85,15 @@ export async function GET(request: NextRequest) {
 
     // First check if there are any projects for this workspace
     // If no projects exist, return empty array (can't have stories without projects)
-    const projectCount = await prisma.stacksProject.count({
-      where: { workspaceId }
-    });
+    let projectCount = 0;
+    try {
+      projectCount = await prisma.stacksProject.count({
+        where: { workspaceId }
+      });
+    } catch (countError) {
+      console.error('❌ [STACKS API] Error counting projects:', countError);
+      // If counting fails, still try to query stories (maybe there are orphaned stories)
+    }
 
     if (projectCount === 0) {
       console.log('ℹ️ [STACKS API] No projects found for workspace, returning empty stories array');
@@ -96,48 +102,125 @@ export async function GET(request: NextRequest) {
 
     // Fetch stories with epic and assignee information
     // Use explicit select to avoid selecting viewType column that may not exist in database
-    const stories = await prisma.stacksStory.findMany({
-      where,
-      select: {
-        id: true,
-        epicId: true,
-        projectId: true,
-        title: true,
-        description: true,
-        status: true,
-        priority: true,
-        assigneeId: true,
-        product: true,
-        section: true,
-        createdAt: true,
-        updatedAt: true,
-        epic: {
-          select: {
-            id: true,
-            title: true,
-            description: true
+    let stories;
+    try {
+      stories = await prisma.stacksStory.findMany({
+        where,
+        select: {
+          id: true,
+          epicId: true,
+          projectId: true,
+          title: true,
+          description: true,
+          status: true,
+          priority: true,
+          assigneeId: true,
+          product: true,
+          section: true,
+          createdAt: true,
+          updatedAt: true,
+          epic: {
+            select: {
+              id: true,
+              title: true,
+              description: true
+            }
+          },
+          assignee: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          },
+          project: {
+            select: {
+              id: true,
+              name: true
+            }
           }
         },
-        assignee: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true
-          }
-        },
-        project: {
-          select: {
-            id: true,
-            name: true
-          }
+        orderBy: [
+          { createdAt: 'desc' },
+          { priority: 'desc' }
+        ]
+      });
+    } catch (queryError) {
+      console.error('❌ [STACKS API] Error querying stories:', queryError);
+      console.error('❌ [STACKS API] Query error details:', {
+        message: queryError instanceof Error ? queryError.message : String(queryError),
+        code: queryError && typeof queryError === 'object' && 'code' in queryError ? (queryError as any).code : 'unknown',
+        meta: queryError && typeof queryError === 'object' && 'meta' in queryError ? (queryError as any).meta : undefined,
+        where: JSON.stringify(where, null, 2)
+      });
+      
+      // If the nested project query fails, try a simpler query first to get project IDs
+      try {
+        const projects = await prisma.stacksProject.findMany({
+          where: { workspaceId },
+          select: { id: true }
+        });
+        
+        if (projects.length === 0) {
+          return NextResponse.json({ stories: [] });
         }
-      },
-      orderBy: [
-        { createdAt: 'desc' },
-        { priority: 'desc' }
-      ]
-    });
+        
+        const projectIds = projects.map(p => p.id);
+        const simplifiedWhere = {
+          projectId: { in: projectIds },
+          ...(status && { status }),
+          ...(epicId && { epicId }),
+          ...(assigneeId && { assigneeId })
+        };
+        
+        stories = await prisma.stacksStory.findMany({
+          where: simplifiedWhere,
+          select: {
+            id: true,
+            epicId: true,
+            projectId: true,
+            title: true,
+            description: true,
+            status: true,
+            priority: true,
+            assigneeId: true,
+            product: true,
+            section: true,
+            createdAt: true,
+            updatedAt: true,
+            epic: {
+              select: {
+                id: true,
+                title: true,
+                description: true
+              }
+            },
+            assignee: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true
+              }
+            },
+            project: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          },
+          orderBy: [
+            { createdAt: 'desc' },
+            { priority: 'desc' }
+          ]
+        });
+      } catch (fallbackError) {
+        console.error('❌ [STACKS API] Fallback query also failed:', fallbackError);
+        throw queryError; // Throw original error
+      }
+    }
 
     console.log('📊 [STACKS API] Found', stories.length, 'stories for workspace', workspaceId);
 
