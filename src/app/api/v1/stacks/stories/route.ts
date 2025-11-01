@@ -101,24 +101,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch stories with epic and assignee information
-    // Use explicit select to avoid selecting viewType column that may not exist in database
+    // Use include (like the original working version) - it's simpler and more reliable
     let stories;
     try {
       stories = await prisma.stacksStory.findMany({
         where,
-        select: {
-          id: true,
-          epicId: true,
-          projectId: true,
-          title: true,
-          description: true,
-          status: true,
-          priority: true,
-          assigneeId: true,
-          product: true,
-          section: true,
-          createdAt: true,
-          updatedAt: true,
+        include: {
           epic: {
             select: {
               id: true,
@@ -176,19 +164,7 @@ export async function GET(request: NextRequest) {
         
         stories = await prisma.stacksStory.findMany({
           where: simplifiedWhere,
-          select: {
-            id: true,
-            epicId: true,
-            projectId: true,
-            title: true,
-            description: true,
-            status: true,
-            priority: true,
-            assigneeId: true,
-            product: true,
-            section: true,
-            createdAt: true,
-            updatedAt: true,
+          include: {
             epic: {
               select: {
                 id: true,
@@ -264,7 +240,7 @@ export async function GET(request: NextRequest) {
           description: story.description || '',
           status: story.status || 'todo',
           priority: story.priority || 'medium',
-          viewType: 'main', // Default since viewType is not in select
+          viewType: (story as any).viewType || 'main', // Use include so viewType is available if it exists
           product: story.product || null,
           section: story.section || null,
           assignee,
