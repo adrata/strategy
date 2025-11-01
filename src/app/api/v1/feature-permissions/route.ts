@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { 
-  hasMultipleFeatureAccess, 
-  getWorkspaceFeatures, 
+import {
+  hasMultipleFeatureAccess,
+  getWorkspaceFeatures,
   getUserFeatures,
-  type FeatureName 
+  type FeatureName
 } from '@/platform/services/feature-permission-service';
 
 // Required for static export (desktop build)

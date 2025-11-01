@@ -47,9 +47,22 @@ export async function GET(request: NextRequest) {
       where.epicId = epicId;
     }
 
+    // Use explicit select to avoid selecting viewType column that may not exist in database
     const stories = await prisma.stacksStory.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        epicId: true,
+        projectId: true,
+        title: true,
+        description: true,
+        status: true,
+        priority: true,
+        assigneeId: true,
+        product: true,
+        section: true,
+        createdAt: true,
+        updatedAt: true,
         project: {
           select: { id: true, name: true }
         },
@@ -57,7 +70,7 @@ export async function GET(request: NextRequest) {
           select: { id: true, title: true }
         },
         assignee: {
-          select: { id: true, name: true, email: true }
+          select: { id: true, firstName: true, lastName: true, email: true }
         },
         _count: {
           select: { tasks: true }
@@ -123,7 +136,19 @@ export async function POST(request: NextRequest) {
         priority: priority || 'medium',
         assigneeId: assigneeId || null
       },
-      include: {
+      select: {
+        id: true,
+        epicId: true,
+        projectId: true,
+        title: true,
+        description: true,
+        status: true,
+        priority: true,
+        assigneeId: true,
+        product: true,
+        section: true,
+        createdAt: true,
+        updatedAt: true,
         project: {
           select: { id: true, name: true }
         },
@@ -131,7 +156,7 @@ export async function POST(request: NextRequest) {
           select: { id: true, title: true }
         },
         assignee: {
-          select: { id: true, name: true, email: true }
+          select: { id: true, firstName: true, lastName: true, email: true }
         }
       }
     });

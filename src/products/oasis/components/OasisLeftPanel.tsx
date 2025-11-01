@@ -11,8 +11,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useUnifiedAuth } from "@/platform/auth";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
-// Import from layout for layout-specific state
-import { useOasisLayout } from '@/app/[workspace]/(revenue-os)/layout';
+import { useOasis } from '@/app/[workspace]/(revenue-os)/layout';
 import { useOasisChannels } from '@/products/oasis/hooks/useOasisChannels';
 import { useOasisDMs } from '@/products/oasis/hooks/useOasisDMs';
 import { useOasisPresence } from '@/products/oasis/hooks/useOasisPresence';
@@ -61,7 +60,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   // Add error boundary for context usage
   let oasisContext;
   try {
-    oasisContext = useOasisLayout();
+    oasisContext = useOasis();
   } catch (error) {
     console.error('Failed to get Oasis context:', error);
     return (
