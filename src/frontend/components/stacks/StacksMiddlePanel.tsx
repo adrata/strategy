@@ -23,6 +23,7 @@ import { StacksBacklogTable } from './StacksBacklogTable';
 import { StacksFilters } from './StacksFilters';
 import { ShipButton } from './ShipButton';
 import { AddStacksModal } from './AddStacksModal';
+import { StoryDetailView } from './StoryDetailView';
 
 interface StacksMiddlePanelProps {
   activeSubSection: string;
@@ -208,40 +209,14 @@ export function StacksMiddlePanel({
   // Show story detail view if storyId is provided
   if (storyId) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
-        {/* Header */}
-        <div className="p-4 border-b border-[var(--border)]">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)]">
-                Story Details
-              </h1>
-              <p className="text-sm text-[var(--muted)] mt-1">
-                Story ID: {storyId}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Story Detail Content */}
-        <div className="flex-1 overflow-hidden p-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="animate-pulse">
-              <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
-              <div className="space-y-2">
-                <div className="h-3 bg-gray-200 rounded w-full"></div>
-                <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                <div className="h-3 bg-gray-200 rounded w-4/6"></div>
-              </div>
-            </div>
-            <p className="text-sm text-gray-500 mt-4">
-              Story detail view coming soon...
-            </p>
-          </div>
-        </div>
-      </div>
+      <StoryDetailView 
+        storyId={storyId}
+        onClose={() => {
+          // Navigate back to workstream
+          const workspaceSlug = window.location.pathname.split('/')[1];
+          window.location.href = `/${workspaceSlug}/stacks/workstream`;
+        }}
+      />
     );
   }
 
