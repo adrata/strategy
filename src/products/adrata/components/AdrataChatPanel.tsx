@@ -191,6 +191,9 @@ export function AdrataChatPanel() {
         const storageKey = `adrata-conversations-${workspaceId}`;
         localStorage.setItem(storageKey, JSON.stringify(conversations));
         console.log('💾 [ADRATA] Saved conversations to localStorage:', conversations.length, 'for workspace:', workspaceId);
+        
+        // Dispatch event to notify other components of conversation updates
+        window.dispatchEvent(new CustomEvent('conversationsUpdated'));
       } catch (error) {
         console.warn('Failed to save conversations to localStorage:', error);
       }
@@ -380,6 +383,28 @@ export function AdrataChatPanel() {
     
     return () => clearInterval(interval);
   }, [workspaceId, userId]);
+
+  // Listen for conversation switch events from right panel
+  useEffect(() => {
+    const handleSwitchConversation = (event: CustomEvent) => {
+      const { conversationId } = event.detail;
+      if (conversationId && activeConversationId !== conversationId) {
+        setConversations(prev => prev.map(c => ({
+          ...c,
+          isActive: c['id'] === conversationId
+        })));
+        setActiveConversationId(conversationId);
+        setShowConversationHistory(false);
+        setRightChatInput('');
+      }
+    };
+
+    window.addEventListener('switchConversation', handleSwitchConversation as EventListener);
+    
+    return () => {
+      window.removeEventListener('switchConversation', handleSwitchConversation as EventListener);
+    };
+  }, [activeConversationId]);
 
   // Refs
   const chatEndRef = useRef<HTMLDivElement>(null);
