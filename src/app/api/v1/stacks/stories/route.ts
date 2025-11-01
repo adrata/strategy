@@ -299,21 +299,42 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Title and project ID are required', 'MISSING_REQUIRED_FIELDS', 400);
     }
 
-    // Build create data - exclude viewType if column doesn't exist (will be handled in catch)
+    // Build create data - only include defined fields, exclude undefined values
     const createData: any = {
       title,
       description: description || '',
       status: status || 'todo',
       priority: priority || 'medium',
-      assigneeId: assigneeId || null,
-      epicId: epicId || null,
-      projectId,
-      product: product || null,
-      section: section || null
+      projectId
     };
     
+    // Only include optional fields if they are provided and not undefined
+    if (assigneeId !== undefined && assigneeId !== null) {
+      createData.assigneeId = assigneeId;
+    } else {
+      createData.assigneeId = null;
+    }
+    
+    if (epicId !== undefined && epicId !== null) {
+      createData.epicId = epicId;
+    } else {
+      createData.epicId = null;
+    }
+    
+    if (product !== undefined && product !== null) {
+      createData.product = product;
+    } else {
+      createData.product = null;
+    }
+    
+    if (section !== undefined && section !== null) {
+      createData.section = section;
+    } else {
+      createData.section = null;
+    }
+    
     // Only include viewType if provided (will fail if column doesn't exist, handled in catch)
-    if (viewType) {
+    if (viewType !== undefined && viewType !== null) {
       createData.viewType = viewType;
     }
 
@@ -361,10 +382,17 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating story:', error);
     
-    // Handle P2022 error (column does not exist) - specifically for viewType column
+    // Handle P2022 error (column does not exist)
     if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
       const prismaError = error as any;
-      if (prismaError.meta?.column_name === 'viewType') {
+      const columnName = prismaError.meta?.column_name;
+      console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
+        columnName,
+        meta: prismaError.meta,
+        createDataKeys: Object.keys(createData)
+      });
+      
+      if (columnName === 'viewType') {
         console.warn('⚠️ [STACKS API] viewType column missing - creating story without viewType');
         // Try create without viewType
         try {
@@ -420,8 +448,12 @@ export async function POST(request: NextRequest) {
         }
       }
       
+      const columnName = prismaError.meta?.column_name || 'unknown';
+      console.error('❌ [STACKS API] Database column missing:', columnName);
       return createErrorResponse(
-        `Database column '${prismaError.meta?.column_name}' does not exist. Please run database migrations.`,
+        columnName !== 'unknown' 
+          ? `Database column '${columnName}' does not exist. Please run database migrations.`
+          : 'Database schema mismatch. Please run database migrations.',
         'SCHEMA_MISMATCH',
         500
       );
