@@ -196,9 +196,9 @@ export async function POST(request: NextRequest) {
 // Generate initial greeting based on conversation type
 function generateInitialGreeting(conversationType: 'channel' | 'dm'): string {
   if (conversationType === 'channel') {
-    return "Hi! I'm Adrata. What would you like to work on today?";
+    return "Hi. I'm Adrata. What would you like to work on today?";
   } else {
-    return "Hi! I'm Adrata. What would you like to work on today?";
+    return "Hi. I'm Adrata. What would you like to work on today?";
   }
 }
 

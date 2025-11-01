@@ -19,10 +19,13 @@ import {
   ChatBubbleLeftRightIcon,
   Squares2X2Icon,
   ClipboardDocumentCheckIcon,
-  DocumentTextIcon,
   HomeIcon,
   ListBulletIcon,
-  PlusIcon
+  PlusIcon,
+  ArrowRightOnRectangleIcon,
+  LinkIcon,
+  DocumentTextIcon,
+  PresentationChartBarIcon
 } from "@heroicons/react/24/outline";
 import { Check, PanelLeft, Trash2 } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
@@ -187,6 +190,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     if (pathname.includes('/workshop')) return 'workshop';
     if (pathname.includes('/adrata')) return 'adrata';
     if (pathname.includes('/stacks')) return 'stacks';
+    if (pathname.includes('/olympus')) return 'olympus';
+    if (pathname.includes('/grand-central')) return 'grand-central';
     if (pathname.includes('/speedrun') || pathname.includes('/pipeline')) return 'revenueos';
     return propCurrentApp; // Fallback to prop or default
   };
@@ -562,6 +567,32 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               <span className="font-medium">Stacks</span>
             </button>
 
+            {/* Olympus */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'olympus' 
+                  ? 'bg-slate-100 text-slate-700' 
+                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+              }`}
+              onClick={() => handleNavigation("/olympus")}
+            >
+              <PresentationChartBarIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Olympus</span>
+            </button>
+
+            {/* Grand Central */}
+            <button
+              className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
+                currentApp === 'grand-central' 
+                  ? 'bg-slate-100 text-slate-700' 
+                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+              }`}
+              onClick={() => handleNavigation("/grand-central")}
+            >
+              <LinkIcon className="w-4 h-4 mr-3" />
+              <span className="font-medium">Grand Central</span>
+            </button>
+
             {/* Settings */}
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
@@ -593,7 +624,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               className="w-full flex items-center px-3 py-2.5 text-sm text-gray-600 rounded-md hover:bg-gray-100 transition-colors group"
               onClick={handleSignOutClick}
             >
-              <UserIcon className="w-4 h-4 mr-3 group-hover:text-gray-700" />
+              <ArrowRightOnRectangleIcon className="w-4 h-4 mr-3 group-hover:text-gray-700" />
               <span className="font-medium">Sign Out</span>
             </button>
 

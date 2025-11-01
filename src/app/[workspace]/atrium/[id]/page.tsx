@@ -7,7 +7,9 @@ import { WorkshopDocument } from "../types/document";
 import { extractIdFromSlug } from "@/platform/utils/url-utils";
 import { PaperEditor } from "../editors/PaperEditor";
 import { CodeEditor } from "../editors/CodeEditor";
+import { GridEditor } from "../editors/GridEditor";
 import { MatrixEditor } from "../editors/MatrixEditor";
+import { PitchEditorWrapper } from "../components/editors/PitchEditorWrapper";
 import { 
   ArrowLeftIcon,
   DocumentTextIcon,
@@ -197,27 +199,9 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
       case 'matrix':
         return <MatrixEditor {...editorProps} />;
       case 'pitch':
-        // TODO: Implement PitchEditor
-        return (
-          <div className="h-full flex items-center justify-center bg-[var(--background)]">
-            <div className="text-center">
-              <PresentationChartBarIcon className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Pitch Editor</h3>
-              <p className="text-[var(--muted)]">Presentation editor coming soon...</p>
-            </div>
-          </div>
-        );
+        return <PitchEditorWrapper {...editorProps} />;
       case 'grid':
-        // TODO: Implement GridEditor
-        return (
-          <div className="h-full flex items-center justify-center bg-[var(--background)]">
-            <div className="text-center">
-              <TableCellsIcon className="w-16 h-16 text-green-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Grid Editor</h3>
-              <p className="text-[var(--muted)]">Spreadsheet editor coming soon...</p>
-            </div>
-          </div>
-        );
+        return <GridEditor {...editorProps} />;
       default:
         return (
           <div className="h-full flex items-center justify-center bg-[var(--background)]">

@@ -31,6 +31,115 @@ async function executeCommand(command, args = []) {
   });
 }
 
+/**
+ * Add static export configuration to API routes that need it
+ */
+async function configureApiRoutesForStaticExport() {
+  console.log("🔧 Configuring API routes for static export...");
+
+  const apiDir = path.join(__dirname, '..', '..', 'src', 'app', 'api');
+  if (!fs.existsSync(apiDir)) {
+    console.log("ℹ️  No API directory found, skipping...");
+    return;
+  }
+
+  const routeFiles = [];
+  
+  // Recursively find all route.ts files
+  function findRouteFiles(dir) {
+    if (!fs.existsSync(dir)) return;
+    
+    const items = fs.readdirSync(dir);
+    for (const item of items) {
+      const fullPath = path.join(dir, item);
+      try {
+        const stat = fs.statSync(fullPath);
+        
+        if (stat.isDirectory()) {
+          findRouteFiles(fullPath);
+        } else if (item === 'route.ts' || item === 'route.tsx') {
+          routeFiles.push(fullPath);
+        }
+      } catch (error) {
+        // Skip if can't read
+      }
+    }
+  }
+
+  findRouteFiles(apiDir);
+  
+  let modifiedCount = 0;
+  const backupDir = path.join(__dirname, '..', '..', '.api-routes-backup');
+  
+  // Create backup directory
+  if (!fs.existsSync(backupDir)) {
+    fs.mkdirSync(backupDir, { recursive: true });
+  }
+
+  // Process each route file
+  for (const filePath of routeFiles) {
+    try {
+      const content = fs.readFileSync(filePath, 'utf8');
+      
+      // Check if file already has dynamic export
+      if (content.includes('export const dynamic')) {
+        continue; // Skip if already configured
+      }
+      
+      // Check if file has exports - if not, might be a special case
+      if (!content.includes('export')) {
+        continue;
+      }
+      
+      // Create backup
+      const relativePath = path.relative(apiDir, filePath);
+      const backupPath = path.join(backupDir, relativePath);
+      const backupFileDir = path.dirname(backupPath);
+      if (!fs.existsSync(backupFileDir)) {
+        fs.mkdirSync(backupFileDir, { recursive: true });
+      }
+      fs.copyFileSync(filePath, backupPath);
+      
+      // Add dynamic export after imports but before other exports
+      const lines = content.split('\n');
+      let insertIndex = 0;
+      
+      // Find the end of imports (first non-import/comment line or first export)
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line === '' || line.startsWith('//') || line.startsWith('import') || line.startsWith('/*')) {
+          insertIndex = i + 1;
+        } else if (line.startsWith('export')) {
+          // Found first export statement, insert before it
+          insertIndex = i;
+          break;
+        } else {
+          // Found non-import, non-comment, non-export line - insert here
+          insertIndex = i;
+          break;
+        }
+      }
+      
+      // Insert dynamic export configuration
+      const dynamicExport = "// Required for static export (desktop build)\nexport const dynamic = 'force-static';\n";
+      lines.splice(insertIndex, 0, dynamicExport);
+      
+      // Write updated content
+      fs.writeFileSync(filePath, lines.join('\n'), 'utf8');
+      modifiedCount++;
+      
+    } catch (error) {
+      console.error(`⚠️  Failed to process ${filePath}:`, error.message);
+    }
+  }
+  
+  if (modifiedCount > 0) {
+    console.log(`✅ Added static export config to ${modifiedCount} API route(s)`);
+  } else {
+    console.log("ℹ️  No API routes needed configuration");
+  }
+}
+
 async function fixApiConflicts() {
   console.log("🔧 Fixing API export conflicts...");
 
@@ -69,7 +178,10 @@ async function main() {
       }
     }
 
-    // Step 2: Build with static export (enabled conditionally in next.config.mjs)
+    // Step 2: Configure API routes for static export
+    await configureApiRoutesForStaticExport();
+
+    // Step 3: Build with static export (enabled conditionally in next.config.mjs)
     console.log("📦 Building Next.js application with static export...");
     await executeCommand("npx", [
       "cross-env",

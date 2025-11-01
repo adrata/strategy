@@ -8,6 +8,9 @@ import { RightPanel } from "@/platform/ui/components/chat/RightPanel";
 import { RevenueOSProvider, useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { ZoomProvider } from "@/platform/ui/components/ZoomProvider";
 import { ProfilePopupProvider } from "@/platform/ui/components/ProfilePopupContext";
+import { ProfilePanelProvider, useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
+import { ProfilePanel } from "@/platform/ui/components/ProfilePanel";
+import { useUnifiedAuth } from "@/platform/auth";
 import { WorkshopLeftPanel } from "./components/WorkshopLeftPanel";
 import { WorkshopDocument } from "./types/document";
 import { WorkshopFolder } from "./types/folder";
@@ -122,9 +125,11 @@ export default function WorkshopLayout({ children }: WorkshopLayoutProps) {
         <RevenueOSProvider>
           <ZoomProvider>
             <ProfilePopupProvider>
-              <WorkshopLayoutContent>
-                {children}
-              </WorkshopLayoutContent>
+              <ProfilePanelProvider>
+                <WorkshopLayoutContent>
+                  {children}
+                </WorkshopLayoutContent>
+              </ProfilePanelProvider>
             </ProfilePopupProvider>
           </ZoomProvider>
         </RevenueOSProvider>
@@ -141,6 +146,23 @@ function WorkshopRightPanel() {
 // Layout content component that can use context hooks
 function WorkshopLayoutContent({ children }: { children: React.ReactNode }) {
   const { ui } = useRevenueOS();
+  const { user: authUser } = useUnifiedAuth();
+  const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
+  const params = useParams();
+  const workspaceSlug = params.workspace as string;
+
+  // Prepare user data for ProfilePanel
+  const profileUser = {
+    name: authUser?.name || 'User',
+    lastName: undefined
+  };
+
+  // Get workspace name
+  const workspace = ui.activeWorkspace?.name || workspaceSlug || 'Workspace';
+  const company = workspace;
+
+  // Get username from auth
+  const username = authUser?.name || undefined;
 
   return (
     <PanelLayout
@@ -148,6 +170,18 @@ function WorkshopLayoutContent({ children }: { children: React.ReactNode }) {
       leftPanel={<WorkshopLeftPanel />}
       middlePanel={children}
       rightPanel={<WorkshopRightPanel />}
+      profilePanel={
+        <ProfilePanel
+          user={profileUser}
+          company={company}
+          workspace={workspace}
+          isOpen={isProfilePanelVisible}
+          onClose={() => setIsProfilePanelVisible(false)}
+          username={username}
+          currentApp="workshop"
+        />
+      }
+      isProfilePanelVisible={isProfilePanelVisible}
       zoom={100}
       isLeftPanelVisible={ui.isLeftPanelVisible}
       isRightPanelVisible={ui.isRightPanelVisible}

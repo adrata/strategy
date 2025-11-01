@@ -8,7 +8,7 @@
 
 import React from 'react';
 
-// Import all tab components
+// Import all tab components from tabs directory
 import {
   UniversalOverviewTab,
   UniversalInsightsTab,
@@ -28,9 +28,6 @@ import {
   UniversalBusinessTab,
   UniversalSuccessTab,
   UniversalPartnershipTab,
-  NotesTab,
-} from '../UniversalRecordTemplate';
-import {
   UniversalCollaborationTab,
   UniversalPerformanceTab,
   UniversalIndustryTab,
@@ -45,6 +42,9 @@ import {
   UniversalCompetitorsTab,
   UniversalSellerCompaniesTab
 } from '../tabs';
+
+// Import NotesTab from UniversalRecordTemplate (only component exported from there)
+import { NotesTab } from '../UniversalRecordTemplate';
 
 import { UniversalNewsTab } from '../tabs/UniversalNewsTab';
 import { UniversalRoleTab } from '../tabs/UniversalRoleTab';

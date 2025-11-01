@@ -539,17 +539,7 @@ export function AdrataChatPanel() {
       }
     }
 
-    // Get user's first name for personalization
-    const getUserFirstName = () => {
-      if (user?.name) {
-        return user.name.split(' ')[0];
-      }
-      return null;
-    };
-    
-    const firstName = getUserFirstName();
-    const capitalizedFirstName = firstName ? firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase() : null;
-    const greeting = capitalizedFirstName ? `Hi, ${capitalizedFirstName}. I'm Adrata. What would you like to work on today?` : "Hi! I'm Adrata. What would you like to work on today?";
+    const greeting = "Hi. I'm Adrata. What would you like to work on today?";
 
     if (activeConv?.id === 'main-chat') {
       const isPipelineContext = typeof window !== 'undefined' && (window.location.pathname.includes('/dashboard') || window.location.pathname.includes('/leads') || window.location.pathname.includes('/opportunities') || window.location.pathname.includes('/companies') || window.location.pathname.includes('/people') || window.location.pathname.includes('/partners') || window.location.pathname.includes('/prospects') || window.location.pathname.includes('/sellers') || window.location.pathname.includes('/clients') || window.location.pathname.includes('/metrics') || window.location.pathname.includes('/speedrun'));

@@ -7,7 +7,9 @@ import { WorkshopDocument } from "../types/document";
 import { extractIdFromSlug } from "@/platform/utils/url-utils";
 import { PaperEditor } from "../editors/PaperEditor";
 import { CodeEditor } from "../editors/CodeEditor";
+import { GridEditor } from "../editors/GridEditor";
 import { MatrixEditor } from "../editors/MatrixEditor";
+import { PitchEditorWrapper } from "../components/editors/PitchEditorWrapper";
 import { 
   ArrowLeftIcon,
   DocumentTextIcon,
@@ -197,27 +199,9 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
       case 'matrix':
         return <MatrixEditor {...editorProps} />;
       case 'pitch':
-        // TODO: Implement PitchEditor
-        return (
-          <div className="h-full flex items-center justify-center bg-[var(--background)]">
-            <div className="text-center">
-              <PresentationChartBarIcon className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Pitch Editor</h3>
-              <p className="text-[var(--muted)]">Presentation editor coming soon...</p>
-            </div>
-          </div>
-        );
+        return <PitchEditorWrapper {...editorProps} />;
       case 'grid':
-        // TODO: Implement GridEditor
-        return (
-          <div className="h-full flex items-center justify-center bg-[var(--background)]">
-            <div className="text-center">
-              <TableCellsIcon className="w-16 h-16 text-green-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Grid Editor</h3>
-              <p className="text-[var(--muted)]">Spreadsheet editor coming soon...</p>
-            </div>
-          </div>
-        );
+        return <GridEditor {...editorProps} />;
       default:
         return (
           <div className="h-full flex items-center justify-center bg-[var(--background)]">
@@ -280,22 +264,15 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
 
   return (
     <div className="h-full flex flex-col bg-[var(--background)]">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 px-6 py-3 border-b border-[var(--border)] bg-[var(--panel-background)]">
+      {/* Minimal Breadcrumb */}
+      <div className="flex items-center gap-2 px-6 py-2 border-b border-[var(--border)] bg-[var(--background)]">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-1 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          className="flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
         >
-          <ArrowLeftIcon className="w-4 h-4" />
-          Back
+          <ArrowLeftIcon className="w-3 h-3" />
+          <span>Back</span>
         </button>
-        <span className="text-[var(--muted)]">/</span>
-        <span className="text-sm text-[var(--muted)]">Atrium</span>
-        <span className="text-[var(--muted)]">/</span>
-        <div className="flex items-center gap-2">
-          {getDocumentIcon(document.documentType)}
-          <span className="text-sm font-medium text-[var(--foreground)]">{document.title}</span>
-        </div>
       </div>
 
       {/* Editor */}

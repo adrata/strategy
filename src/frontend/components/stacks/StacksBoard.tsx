@@ -245,10 +245,12 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
 
   // Helper function to convert Notary story to StackCard format
   const convertNotaryStoryToStackCard = (story: any): StackCard => {
-    // Map 'done' status to 'built' for backward compatibility
+    // Map status values to board column statuses
     let mappedStatus = story.status;
     if (story.status === 'done') {
       mappedStatus = 'built';
+    } else if (story.status === 'todo') {
+      mappedStatus = 'up-next';
     }
     
     return {

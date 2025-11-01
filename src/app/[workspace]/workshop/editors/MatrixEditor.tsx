@@ -88,6 +88,7 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
   const [showAddChart, setShowAddChart] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [dataSource, setDataSource] = useState<any[]>(sampleData);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -293,92 +294,53 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
 
   return (
     <div className="h-full flex flex-col bg-[var(--background)]">
-      {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
-        <div className="flex items-center gap-3">
-          <ChartBarIcon className="w-6 h-6 text-orange-600" />
-          <div>
-            <h1 className="text-lg font-semibold text-[var(--foreground)]">{document.title}</h1>
-            <p className="text-sm text-[var(--muted)]">Matrix Dashboard</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          {/* Chart Count */}
-          <div className="text-sm text-[var(--muted)]">
-            {charts.length} chart{charts.length !== 1 ? 's' : ''}
-          </div>
-          
-          {/* Save Status */}
-          <div className="flex items-center gap-2">
-            {saveStatus === 'saved' && (
-              <div className="flex items-center gap-1 text-green-600">
-                <CheckIcon className="w-4 h-4" />
-                <span className="text-sm">Saved</span>
+      {/* Minimal Header - Olympus Style */}
+      <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)]">
+        <div className="px-6 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[var(--background)] border border-[var(--border)] rounded-lg flex items-center justify-center">
+                <ChartBarIcon className="w-5 h-5 text-orange-600" />
               </div>
-            )}
-            {saveStatus === 'saving' && (
-              <div className="flex items-center gap-1 text-blue-600">
-                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                <span className="text-sm">Saving...</span>
+              <div>
+                <h1 className="text-xl font-semibold text-[var(--foreground)]">{document.title}</h1>
+                <p className="text-xs text-[var(--muted)]">
+                  {charts.length} chart{charts.length !== 1 ? 's' : ''} 
+                  {saveStatus === 'saved' && ' • ✓ Saved'}
+                  {saveStatus === 'saving' && ' • Saving...'}
+                  {saveStatus === 'error' && ' • Error'}
+                </p>
               </div>
-            )}
-            {saveStatus === 'error' && (
-              <div className="flex items-center gap-1 text-red-600">
-                <XMarkIcon className="w-4 h-4" />
-                <span className="text-sm">Error</span>
-              </div>
-            )}
-          </div>
-          
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIsPreviewMode(!isPreviewMode)}
-              className={`px-3 py-1 text-sm rounded transition-colors ${
-                isPreviewMode 
-                  ? 'bg-blue-100 text-blue-700' 
-                  : 'bg-[var(--hover)] text-gray-700 hover:bg-[var(--loading-bg)]'
-              }`}
-            >
-              <EyeIcon className="w-4 h-4" />
-            </button>
-            <button
-              onClick={exportDashboard}
-              className="px-3 py-1 text-sm bg-[var(--hover)] text-gray-700 rounded hover:bg-[var(--loading-bg)] transition-colors"
-            >
-              <DocumentArrowDownIcon className="w-4 h-4" />
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {isSaving ? 'Saving...' : 'Save'}
-            </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="px-4 py-1 bg-blue-100 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-200 transition-colors">
+                Share
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        {!isPreviewMode && (
-          <div className="w-80 border-r border-[var(--border)] bg-[var(--panel-background)] flex flex-col">
-            {/* Add Chart */}
-            <div className="p-4 border-b border-[var(--border)]">
+      {/* Main Content - Full Page Canvas */}
+      <div className="flex-1 relative overflow-hidden">
+        {/* Sidebar - Collapsible */}
+        {!isPreviewMode && !isSidebarCollapsed && (
+          <div className="absolute left-0 top-0 bottom-0 w-80 border-r border-[var(--border)] bg-[var(--panel-background)] flex flex-col z-20 shadow-lg">
+            {/* Sidebar Header */}
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
+              <h3 className="text-sm font-medium text-gray-700">Charts</h3>
               <button
-                onClick={() => setShowAddChart(true)}
-                className="w-full flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                onClick={() => setIsSidebarCollapsed(true)}
+                className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
               >
-                <PlusIcon className="w-4 h-4" />
-                Add Chart
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
 
             {/* Chart List */}
             <div className="flex-1 overflow-y-auto p-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Charts</h3>
               <div className="space-y-2">
                 {charts.map((chart) => (
                   <div
@@ -412,8 +374,20 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
           </div>
         )}
 
+        {/* Sidebar Toggle Button when collapsed */}
+        {!isPreviewMode && isSidebarCollapsed && (
+          <button
+            onClick={() => setIsSidebarCollapsed(false)}
+            className="absolute left-4 top-4 z-20 p-2 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg hover:bg-[var(--panel-background)] transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        )}
+
         {/* Canvas */}
-        <div className="flex-1 relative overflow-auto bg-[var(--hover)]">
+        <div className="h-full relative overflow-auto bg-[var(--hover)]">
           {charts.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
@@ -458,6 +432,60 @@ export function MatrixEditor({ document, onSave, onAutoSave }: MatrixEditorProps
               </div>
             </div>
           )}
+        </div>
+
+        {/* Floating Toolbar */}
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="flex items-center gap-2 bg-[var(--background)] border border-[var(--border)] rounded-lg px-2 py-1.5 shadow-lg">
+            <button
+              onClick={() => setShowAddChart(true)}
+              className="p-1.5 text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)] transition-colors"
+              title="Add Chart"
+            >
+              <PlusIcon className="w-4 h-4" />
+            </button>
+            
+            <div className="w-px h-6 bg-[var(--border)]" />
+            
+            <button
+              onClick={() => setIsPreviewMode(!isPreviewMode)}
+              className={`p-1.5 rounded transition-colors ${
+                isPreviewMode
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)]'
+              }`}
+              title="Preview Mode"
+            >
+              <EyeIcon className="w-4 h-4" />
+            </button>
+            
+            <button
+              onClick={exportDashboard}
+              className="p-1.5 text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)] transition-colors"
+              title="Export"
+            >
+              <DocumentArrowDownIcon className="w-4 h-4" />
+            </button>
+            
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className={`p-1.5 rounded transition-colors ${
+                isSaving
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)]'
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+              title="Save"
+            >
+              {saveStatus === 'saved' ? (
+                <CheckIcon className="w-4 h-4" />
+              ) : saveStatus === 'saving' ? (
+                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Cog6ToothIcon className="w-4 h-4" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 

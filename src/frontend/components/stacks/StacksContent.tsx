@@ -28,7 +28,7 @@ export function StacksContent({ section }: StacksContentProps) {
   const { ui } = useRevenueOS();
   
   // State management
-  const [activeSubSection, setActiveSubSection] = useState<string>('stacks');
+  const [activeSubSection, setActiveSubSection] = useState<string>('workstream');
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,10 +50,12 @@ export function StacksContent({ section }: StacksContentProps) {
       setActiveSubSection('bugs');
     } else if (pathname.includes('/futures')) {
       setActiveSubSection('futures');
+    } else if (pathname.includes('/sell/pipeline') || pathname.includes('/pipeline/sell')) {
+      setActiveSubSection('workstream');
     } else if (pathname.includes('/metrics')) {
       setActiveSubSection('metrics');
     } else {
-      setActiveSubSection('stacks');
+      setActiveSubSection('workstream');
     }
   }, [pathname]);
 

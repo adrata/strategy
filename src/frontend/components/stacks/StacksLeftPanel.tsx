@@ -175,6 +175,10 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
       if (activeSubSection !== 'workstream') {
         onSubSectionChange('workstream');
       }
+    } else if (pathname.includes('/sell/pipeline') || pathname.includes('/pipeline/sell')) {
+      if (activeSubSection !== 'workstream') {
+        onSubSectionChange('workstream');
+      }
     } else if (pathname.includes('/stacks/backlog') || pathname.includes('/backlog')) {
       if (activeSubSection !== 'backlog') {
         onSubSectionChange('backlog');
