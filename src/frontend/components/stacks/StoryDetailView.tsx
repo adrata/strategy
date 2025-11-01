@@ -40,34 +40,43 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   // Fetch story data
   useEffect(() => {
     const fetchStory = async () => {
-      if (!ui.activeWorkspace?.id) return;
+      if (!ui.activeWorkspace?.id || !storyId) {
+        setLoading(false);
+        return;
+      }
 
       try {
         setLoading(true);
+        console.log('🔍 [StoryDetailView] Fetching story:', storyId);
+        
         const response = await fetch(
-          `/api/v1/stacks/stories?status=all`,
+          `/api/v1/stacks/stories/${storyId}`,
           { credentials: 'include' }
         );
 
         if (response.ok) {
           const data = await response.json();
-          const stories = data.stories || [];
-          // Find the story with matching ID
-          const foundStory = stories.find((s: any) => s.id === storyId);
-          if (foundStory) {
-            setStory(foundStory);
+          if (data.story) {
+            console.log('✅ [StoryDetailView] Story loaded:', data.story);
+            setStory(data.story);
+          } else {
+            console.warn('⚠️ [StoryDetailView] No story in response');
+            setStory(null);
           }
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('❌ [StoryDetailView] Failed to fetch story:', response.status, errorData);
+          setStory(null);
         }
       } catch (error) {
-        console.error('Failed to fetch story:', error);
+        console.error('❌ [StoryDetailView] Error fetching story:', error);
+        setStory(null);
       } finally {
         setLoading(false);
       }
     };
 
-    if (storyId) {
-      fetchStory();
-    }
+    fetchStory();
   }, [storyId, ui.activeWorkspace?.id]);
 
   const handleBack = () => {
