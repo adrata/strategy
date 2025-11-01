@@ -30,7 +30,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
     product: '' as '' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
     section: '',
     // Story-specific
@@ -124,7 +123,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
       setFormData({
         title: '',
         description: '',
-        priority: 'medium',
         product: '',
         section: '',
         epicId: '',
@@ -323,8 +321,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           userId: user.id,
           projectId,
           title: newEpicTitle,
-          status: 'todo',
-          priority: formData.priority
+          status: 'todo'
         })
       });
 
@@ -385,7 +382,37 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         if (createProjectResponse.ok) {
           const newProject = await createProjectResponse.json();
           projectId = newProject.project?.id;
+        } else {
+          const errorData = await createProjectResponse.json().catch(() => ({ error: 'Unknown error' }));
+          console.error('Failed to create project:', errorData);
+          alert(`Failed to create project: ${errorData.error || 'Unknown error'}`);
+          return;
         }
+      }
+    } else {
+      // Handle project fetch error
+      const errorData = await projectResponse.json().catch(() => ({ error: 'Unknown error' }));
+      console.error('Failed to fetch projects:', errorData);
+      // Try to create project anyway if fetch failed
+      const createProjectResponse = await fetch('/api/stacks/projects', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workspaceId,
+          userId: user.id,
+          name: 'Default Project',
+          description: 'Default project for stacks'
+        })
+      });
+      if (createProjectResponse.ok) {
+        const newProject = await createProjectResponse.json();
+        projectId = newProject.project?.id;
+      } else {
+        const createErrorData = await createProjectResponse.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Failed to create project after fetch error:', createErrorData);
+        alert(`Failed to get or create project: ${createErrorData.error || 'Unknown error'}`);
+        return;
       }
     }
 
@@ -405,7 +432,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           projectId,
           title: newEpochTitle,
           status: 'todo',
-          priority: formData.priority,
           isEpoch: true
         })
       });
@@ -464,6 +490,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         if (projects.length > 0) {
           projectId = projects[0].id;
         } else {
+          // No projects exist, create one
           const userId = user?.id || '';
           if (!userId) {
             alert('User ID not found');
@@ -484,7 +511,46 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           if (createProjectResponse.ok) {
             const newProject = await createProjectResponse.json();
             projectId = newProject.project?.id;
+          } else {
+            // Handle project creation error
+            const errorData = await createProjectResponse.json().catch(() => ({ error: 'Unknown error' }));
+            console.error('Failed to create project:', errorData);
+            alert(`Failed to create project: ${errorData.error || 'Unknown error'}`);
+            setIsLoading(false);
+            return;
           }
+        }
+      } else {
+        // Handle project fetch error
+        const errorData = await projectResponse.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Failed to fetch projects:', errorData);
+        // Try to create project anyway if fetch failed
+        const userId = user?.id || '';
+        if (!userId) {
+          alert('User ID not found');
+          setIsLoading(false);
+          return;
+        }
+        const createProjectResponse = await fetch('/api/stacks/projects', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            workspaceId,
+            userId,
+            name: 'Default Project',
+            description: 'Default project for stacks'
+          })
+        });
+        if (createProjectResponse.ok) {
+          const newProject = await createProjectResponse.json();
+          projectId = newProject.project?.id;
+        } else {
+          const createErrorData = await createProjectResponse.json().catch(() => ({ error: 'Unknown error' }));
+          console.error('Failed to create project after fetch error:', createErrorData);
+          alert(`Failed to get or create project: ${createErrorData.error || 'Unknown error'}`);
+          setIsLoading(false);
+          return;
         }
       }
 
@@ -500,8 +566,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           projectId,
           title: formData.title,
           description: formData.description || undefined,
-          status: 'up-next',
-          priority: formData.priority
+          status: 'up-next'
         };
 
         if (formData.product) {
@@ -536,7 +601,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           title: formData.title,
           description: formData.description || undefined,
           status: 'todo',
-          priority: formData.priority,
           type: 'bug',
           storyId: null
         };
@@ -578,7 +642,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           projectId,
           title: formData.title,
           description: formData.description || undefined,
-          priority: formData.priority,
           status: 'todo'
         };
 
@@ -622,7 +685,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
           projectId,
           title: formData.title,
           description: formData.description || undefined,
-          priority: formData.priority,
           status: 'todo',
           isEpoch: true,
           goal: formData.goal || undefined,
@@ -742,6 +804,53 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             </div>
           </div>
 
+          {/* Product Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              Product
+            </label>
+            <select
+              value={formData.product}
+              onChange={(e) => {
+                const newProduct = e.target.value as typeof formData.product;
+                setFormData(prev => ({ 
+                  ...prev, 
+                  product: newProduct,
+                  section: newProduct !== 'RevenueOS' ? '' : prev.section // Clear section if product changes away from RevenueOS
+                }));
+              }}
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
+            >
+              <option value="">Select a product...</option>
+              <option value="RevenueOS">RevenueOS</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Adrata">Adrata</option>
+              <option value="Oasis">Oasis</option>
+              <option value="Stacks">Stacks</option>
+            </select>
+          </div>
+
+          {/* Sub-Product Dropdown - Only show when RevenueOS is selected */}
+          {formData.product === 'RevenueOS' && (
+            <div>
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                Sub-Product
+              </label>
+              <select
+                value={formData.section}
+                onChange={(e) => setFormData(prev => ({ ...prev, section: e.target.value }))}
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
+              >
+                <option value="">Select a sub-product...</option>
+                {revenueOSSections.map((section) => (
+                  <option key={section.value} value={section.value}>
+                    {section.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Title - Required for all */}
           <div>
             <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
@@ -771,53 +880,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none resize-none"
             />
           </div>
-
-          {/* Product Dropdown */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Product
-            </label>
-            <select
-              value={formData.product}
-              onChange={(e) => {
-                const newProduct = e.target.value as typeof formData.product;
-                setFormData(prev => ({ 
-                  ...prev, 
-                  product: newProduct,
-                  section: newProduct !== 'RevenueOS' ? '' : prev.section // Clear section if product changes away from RevenueOS
-                }));
-              }}
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
-            >
-              <option value="">Select a product...</option>
-              <option value="RevenueOS">RevenueOS</option>
-              <option value="Workshop">Workshop</option>
-              <option value="Adrata">Adrata</option>
-              <option value="Oasis">Oasis</option>
-              <option value="Stacks">Stacks</option>
-            </select>
-          </div>
-
-          {/* Section Dropdown - Only show when RevenueOS is selected */}
-          {formData.product === 'RevenueOS' && (
-            <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Section
-              </label>
-              <select
-                value={formData.section}
-                onChange={(e) => setFormData(prev => ({ ...prev, section: e.target.value }))}
-                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
-              >
-                <option value="">Select a section...</option>
-                {revenueOSSections.map((section) => (
-                  <option key={section.value} value={section.value}>
-                    {section.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
 
           {/* Story-specific fields */}
           {activeWorkType === 'story' && (
@@ -1059,23 +1121,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               </div>
             </>
           )}
-
-          {/* Priority - Common field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Priority
-            </label>
-            <select
-              value={formData.priority}
-              onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as any }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="urgent">Urgent</option>
-            </select>
-          </div>
 
           {/* Footer */}
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">

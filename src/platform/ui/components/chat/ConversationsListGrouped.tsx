@@ -174,7 +174,7 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
 
     return (
       <div key={title} className="mb-6">
-        <h3 className="text-xs font-semibold text-[var(--muted)] dark:text-[var(--muted)] uppercase tracking-wide mb-2 px-4">
+        <h3 className="text-xs font-semibold text-[var(--muted)] dark:text-[var(--muted)] uppercase tracking-wide mb-2">
           {title}
         </h3>
         <div className="space-y-1">
@@ -224,10 +224,10 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
     <div className="flex flex-col h-full bg-[var(--background)]">
       <div className="flex-shrink-0 px-4 py-4 border-b border-[var(--border)] dark:border-[var(--border)]">
         <h2 className="text-lg font-semibold text-[var(--foreground)] dark:text-[var(--foreground)]">
-          Conversations
+          Chats
         </h2>
       </div>
-      <div className="flex-1 overflow-y-auto py-4">
+      <div className="flex-1 overflow-y-auto py-4 px-4">
         {renderConversationGroup('Today', groupedConversations['Today'])}
         {renderConversationGroup('Yesterday', groupedConversations['Yesterday'])}
         {renderConversationGroup('Earlier', groupedConversations['Earlier'])}

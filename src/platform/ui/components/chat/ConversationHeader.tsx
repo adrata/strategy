@@ -43,6 +43,7 @@ interface ConversationHeaderProps {
   conversationHistoryRef: React.RefObject<HTMLDivElement>;
   showChatIcon?: boolean;
   onToggleDirectMessages?: () => void;
+  onToggleLeftPanel?: () => void;
 }
 
 function formatTimeAgo(date: Date): string {
@@ -75,7 +76,8 @@ export function ConversationHeader({
   menuPopupRef,
   conversationHistoryRef,
   showChatIcon = false,
-  onToggleDirectMessages
+  onToggleDirectMessages,
+  onToggleLeftPanel
 }: ConversationHeaderProps) {
   // Feature access control
   const hasOasis = useOasisAccess();
@@ -125,14 +127,16 @@ export function ConversationHeader({
     <div className="flex flex-col flex-shrink-0">
       {/* Top row with tabs and controls */}
       <div className="flex flex-row items-center justify-between px-4 pt-5 pb-2">
-        {/* Profile Panel Icon */}
-        <button
-          onClick={() => setIsProfilePanelVisible(true)}
-          className="w-7 h-7 mr-3 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors flex items-center justify-center flex-shrink-0"
-          title="Open Profile"
-        >
-          <Bars3Icon className="w-5 h-5" />
-        </button>
+        {/* Left Panel Toggle - Only shown in full app experience */}
+        {onToggleLeftPanel && (
+          <button
+            onClick={onToggleLeftPanel}
+            className="w-7 h-7 mr-3 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors flex items-center justify-center flex-shrink-0"
+            title="Toggle Left Panel"
+          >
+            <Bars3Icon className="w-5 h-5" />
+          </button>
+        )}
         
         {/* Conversation Tabs */}
         <div className="flex items-center overflow-x-auto flex-1 mr-4">
