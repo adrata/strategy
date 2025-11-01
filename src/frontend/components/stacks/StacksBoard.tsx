@@ -158,6 +158,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   const { user: authUser } = useUnifiedAuth();
   const { ui } = useRevenueOS();
   const [draggedCard, setDraggedCard] = useState<StackCard | null>(null);
+  const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
   const [cards, setCards] = useState<StackCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
@@ -317,6 +318,7 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       e.currentTarget.style.cursor = 'grab';
     }
     setDraggedCard(null);
+    setDragOverColumn(null);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -338,19 +340,11 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     }
   };
 
-  const handleDragEnter = (e: React.DragEvent) => {
+  const handleDragEnter = (e: React.DragEvent, columnKey: string) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    // Add visual feedback for drop zone with better styling
-    if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.style.borderColor = '#2563eb';
-      e.currentTarget.style.backgroundColor = '#eff6ff';
-      e.currentTarget.style.borderWidth = '2px';
-      e.currentTarget.style.borderStyle = 'dashed';
-      e.currentTarget.style.transition = 'all 0.2s ease-in-out';
-      e.currentTarget.style.transform = 'scale(1.02)';
-      e.currentTarget.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.15)';
+    if (draggedCard && draggedCard.status !== columnKey) {
+      setDragOverColumn(columnKey);
     }
   };
 
@@ -358,21 +352,21 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     e.preventDefault();
     e.stopPropagation();
     
-    // Remove visual feedback for drop zone with smooth transition
-    if (e.currentTarget instanceof HTMLElement) {
-      const borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#d1d5db';
-      const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--background').trim() || '#ffffff';
-      e.currentTarget.style.borderColor = borderColor;
-      e.currentTarget.style.backgroundColor = bgColor;
-      e.currentTarget.style.borderWidth = '1px';
-      e.currentTarget.style.borderStyle = 'solid';
-      e.currentTarget.style.transform = 'scale(1)';
-      e.currentTarget.style.boxShadow = 'none';
+    // Only clear if we're actually leaving the column container
+    // Check if the relatedTarget is outside the current target
+    const currentTarget = e.currentTarget as HTMLElement;
+    const relatedTarget = e.relatedTarget as HTMLElement | null;
+    
+    // If there's no related target or it's not a child of current target, clear drag over
+    if (!relatedTarget || !currentTarget.contains(relatedTarget)) {
+      setDragOverColumn(null);
     }
   };
 
   const handleDrop = (e: React.DragEvent, targetStatus: string) => {
     e.preventDefault();
+    setDragOverColumn(null);
+    
     if (!draggedCard || draggedCard.status === targetStatus) {
       setDraggedCard(null);
       return;
@@ -466,19 +460,31 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
         const cards = groupedCards[column.key] || [];
         const Icon = column.icon;
 
+        const isDragOver = dragOverColumn === column.key && draggedCard?.status !== column.key;
+        
         return (
           <div
             key={column.key}
             className="flex-shrink-0"
             style={{ minWidth: '288px', width: '288px' }}
             onDragOver={handleDragOver}
-            onDragEnter={handleDragEnter}
+            onDragEnter={(e) => handleDragEnter(e, column.key)}
             onDragLeave={handleDragLeave}
             onDrop={(e) => handleDrop(e, column.key)}
           >
-            <div className={`bg-[var(--background)] rounded-lg h-full flex flex-col`}>
+            <div 
+              className={`bg-[var(--background)] rounded-lg h-full flex flex-col transition-all duration-200 ${
+                isDragOver 
+                  ? 'ring-2 ring-[var(--accent)] border-2 border-[var(--accent)]' 
+                  : 'border border-[var(--border)]'
+              }`}
+            >
               {/* Stage Header */}
-              <div className="p-4 border-b border-[var(--border)]">
+              <div className={`p-4 border-b transition-colors duration-200 ${
+                isDragOver 
+                  ? 'border-[var(--accent)]/50 bg-[var(--hover)]/30' 
+                  : 'border-[var(--border)]'
+              }`}>
                 <h3 className="font-medium text-[var(--foreground)] mb-2 text-sm uppercase tracking-wide flex items-center gap-2">
                   <Icon className="h-4 w-4" />
                   {column.label}
@@ -490,83 +496,98 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
               </div>
 
               {/* Stories List */}
-              <div className="flex-1 p-4 space-y-2 overflow-y-auto">
+              <div className={`flex-1 p-4 space-y-2 overflow-y-auto transition-colors duration-200 ${
+                isDragOver ? 'bg-[var(--hover)]/20' : ''
+              }`}>
                 {cards.length === 0 ? (
-                  <div className="text-center py-8 text-[var(--muted)]">
-                    <p className="text-xs">No stacks</p>
+                  <div className={`text-center py-8 text-[var(--muted)] transition-colors duration-200 ${
+                    isDragOver ? 'border-2 border-dashed border-[var(--accent)] rounded-lg bg-[var(--accent)]/5 flex flex-col items-center justify-center min-h-[120px]' : ''
+                  }`}>
+                    {isDragOver ? (
+                      <span className="text-sm text-[var(--accent)] font-medium">Drop here</span>
+                    ) : (
+                      <p className="text-xs">No stacks</p>
+                    )}
                   </div>
                 ) : (
-                  cards.map((card, index) => (
-                    <div
-                      key={card.id}
-                      className={`relative bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:border-[var(--accent)] transition-colors cursor-pointer ${
-                        draggedCard?.id === card.id ? 'opacity-50' : ''
-                      }`}
-                      draggable={true}
-                      onDragStart={(e) => handleDragStart(e, card)}
-                      onDragEnd={handleDragEnd}
-                      onClick={() => onCardClick?.(card)}
-                    >
-                      {/* Rank number in top left */}
-                      <div className="absolute top-2 left-2 w-6 h-6 bg-[var(--panel-background)] text-[var(--foreground)] rounded-full flex items-center justify-center text-xs font-bold">
-                        {index + 1}
-                      </div>
-                      
-                      <div className="mb-2 ml-8">
-                        <h4 className="font-medium text-[var(--foreground)] text-sm leading-tight mb-1">
-                          {card.title}
-                        </h4>
-                        {card.description && (
-                          <p className="text-xs text-[var(--muted)]">
-                            {card.description}
-                          </p>
-                        )}
-                      </div>
-                      
-                      {/* Epic Tag */}
-                      {card.epic && (
+                  <>
+                    {cards.map((card, index) => (
+                      <div
+                        key={card.id}
+                        className={`relative bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:border-[var(--accent)] transition-colors cursor-pointer ${
+                          draggedCard?.id === card.id ? 'opacity-50' : ''
+                        }`}
+                        draggable={true}
+                        onDragStart={(e) => handleDragStart(e, card)}
+                        onDragEnd={handleDragEnd}
+                        onClick={() => onCardClick?.(card)}
+                      >
+                        {/* Rank number in top left */}
+                        <div className="absolute top-2 left-2 w-6 h-6 bg-[var(--panel-background)] text-[var(--foreground)] rounded-full flex items-center justify-center text-xs font-bold">
+                          {index + 1}
+                        </div>
+                        
                         <div className="mb-2 ml-8">
-                          <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
-                            Ep: {card.epic.title.replace(' Workstream', '')}
-                          </span>
-                        </div>
-                      )}
-                      
-                      <div className="flex justify-between items-center text-xs text-[var(--muted)]">
-                        <div className="flex items-center gap-2">
-                          {card.assignee && (
-                            <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded-full">
-                              {card.assignee}
-                            </span>
-                          )}
-                          {card.timeInStatus !== undefined && card.timeInStatus >= 3 && (
-                            <span className="bg-[var(--error-bg)] text-[var(--error-text)] px-2 py-1 rounded text-xs font-medium">
-                              {card.timeInStatus === 1 ? '1 Day' : `${card.timeInStatus} Days`}
-                            </span>
+                          <h4 className="font-medium text-[var(--foreground)] text-sm leading-tight mb-1">
+                            {card.title}
+                          </h4>
+                          {card.description && (
+                            <p className="text-xs text-[var(--muted)]">
+                              {card.description}
+                            </p>
                           )}
                         </div>
-                        {card.updatedAt && (
-                          <span className="text-[var(--muted)]">
-                            {formatRelativeTime(card.updatedAt)}
-                          </span>
+                        
+                        {/* Epic Tag */}
+                        {card.epic && (
+                          <div className="mb-2 ml-8">
+                            <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
+                              Ep: {card.epic.title.replace(' Workstream', '')}
+                            </span>
+                          </div>
+                        )}
+                        
+                        <div className="flex justify-between items-center text-xs text-[var(--muted)]">
+                          <div className="flex items-center gap-2">
+                            {card.assignee && (
+                              <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded-full">
+                                {card.assignee}
+                              </span>
+                            )}
+                            {card.timeInStatus !== undefined && card.timeInStatus >= 3 && (
+                              <span className="bg-[var(--error-bg)] text-[var(--error-text)] px-2 py-1 rounded text-xs font-medium">
+                                {card.timeInStatus === 1 ? '1 Day' : `${card.timeInStatus} Days`}
+                              </span>
+                            )}
+                          </div>
+                          {card.updatedAt && (
+                            <span className="text-[var(--muted)]">
+                              {formatRelativeTime(card.updatedAt)}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Tags */}
+                        {card.tags && card.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {card.tags.map((tag, tagIndex) => (
+                              <span
+                                key={tagIndex}
+                                className="bg-[var(--panel-background)] text-[var(--muted)] px-2 py-1 rounded text-xs"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
                         )}
                       </div>
-
-                      {/* Tags */}
-                      {card.tags && card.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {card.tags.map((tag, tagIndex) => (
-                            <span
-                              key={tagIndex}
-                              className="bg-[var(--panel-background)] text-[var(--muted)] px-2 py-1 rounded text-xs"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))
+                    ))}
+                    {isDragOver && (
+                      <div className="mt-2 py-3 border-2 border-dashed border-[var(--accent)] rounded-lg bg-[var(--accent)]/5 flex items-center justify-center">
+                        <span className="text-xs text-[var(--accent)] font-medium">Drop here</span>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
