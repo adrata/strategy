@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
- * GET /api/atrium/folders
+ * GET /api/workshop/folders
  * Get all folders for the current workspace
  */
 export async function GET(request: NextRequest) {
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get folders with document counts
-    const folders = await prisma.atriumFolder.findMany({
+    const folders = await prisma.workshopFolder.findMany({
       where,
       orderBy: {
         name: 'asc',
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * POST /api/atrium/folders
+ * POST /api/workshop/folders
  * Create a new folder
  */
 export async function POST(request: NextRequest) {
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
 
     // Check if parent folder exists and user has access
     if (parentId) {
-      const parentFolder = await prisma.atriumFolder.findUnique({
+      const parentFolder = await prisma.workshopFolder.findUnique({
         where: { id: parentId },
       });
 
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if folder with same name already exists in the same parent
-    const existingFolder = await prisma.atriumFolder.findFirst({
+    const existingFolder = await prisma.workshopFolder.findFirst({
       where: {
         name,
         parentId: parentId || null,
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create folder
-    const folder = await prisma.atriumFolder.create({
+    const folder = await prisma.workshopFolder.create({
       data: {
         name,
         description,

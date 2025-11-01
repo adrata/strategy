@@ -597,22 +597,22 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
+      <div className="bg-[var(--background)] rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-[var(--foreground)]">
               Add Stacks
             </h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-[var(--muted)] mt-1">
               Create a new {workTypeLabels[activeWorkType].toLowerCase()}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded transition-colors"
+            className="p-1 hover:bg-[var(--hover)] rounded transition-colors"
           >
-            <XMarkIcon className="h-5 w-5 text-gray-500" />
+            <XMarkIcon className="h-5 w-5 text-[var(--muted)]" />
           </button>
         </div>
 
@@ -620,14 +620,14 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
           {/* Work Type Tabs - Minimal */}
           <div>
-            <div className="flex gap-2 border-b border-gray-200">
+            <div className="flex gap-2 border-b border-[var(--border)]">
               <button
                 type="button"
                 onClick={() => setActiveWorkType('story')}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeWorkType === 'story'
-                    ? 'text-gray-900 border-b-2 border-gray-900'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'text-[var(--foreground)] border-b-2 border-[var(--accent)]'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
                 }`}
               >
                 Story
@@ -637,8 +637,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                 onClick={() => setActiveWorkType('epic')}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeWorkType === 'epic'
-                    ? 'text-gray-900 border-b-2 border-gray-900'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'text-[var(--foreground)] border-b-2 border-[var(--accent)]'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
                 }`}
               >
                 Epic
@@ -648,8 +648,8 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                 onClick={() => setActiveWorkType('epoch')}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeWorkType === 'epoch'
-                    ? 'text-gray-900 border-b-2 border-gray-900'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'text-[var(--foreground)] border-b-2 border-[var(--accent)]'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
                 }`}
               >
                 Epoch
@@ -659,7 +659,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
 
           {/* Title - Required for all */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -668,14 +668,14 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
               placeholder={`Enter ${activeWorkType} title`}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
               required
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
               Description
             </label>
             <textarea
@@ -683,31 +683,31 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder={`Describe the ${activeWorkType}`}
               rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none resize-none"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none resize-none"
             />
           </div>
 
           {/* Story-specific fields */}
           {activeWorkType === 'story' && (
             <div className="relative epic-search-container">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Epic
               </label>
               {selectedEpic ? (
-                <div className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-300 rounded-lg">
-                  <span className="flex-1 text-sm text-gray-900">{selectedEpic.title}</span>
+                <div className="flex items-center gap-2 p-2 bg-[var(--panel-background)] border border-[var(--border)] rounded-lg">
+                  <span className="flex-1 text-sm text-[var(--foreground)]">{selectedEpic.title}</span>
                   <button
                     type="button"
                     onClick={handleEpicRemove}
-                    className="p-1 hover:bg-gray-200 rounded transition-colors"
+                    className="p-1 hover:bg-[var(--hover)] rounded transition-colors"
                   >
-                    <XMarkIcon className="h-4 w-4 text-gray-500" />
+                    <XMarkIcon className="h-4 w-4 text-[var(--muted)]" />
                   </button>
                 </div>
               ) : (
                 <div className="relative">
                   <div className="relative">
-                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
                     <input
                       type="text"
                       value={epicSearchQuery}
@@ -721,13 +721,13 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                         }
                       }}
                       placeholder="Search or create epic..."
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 outline-none"
+                      className="w-full pl-10 pr-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-1 focus:ring-[var(--focus-ring)] focus:border-[var(--accent)] outline-none"
                     />
                   </div>
                   {showEpicDropdown && (epicSearchResults.length > 0 || epicSearchQuery.trim() || showCreateEpicForm) && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-60 overflow-y-auto">
                       {isSearchingEpics ? (
-                        <div className="p-3 text-sm text-gray-500">Searching...</div>
+                        <div className="p-3 text-sm text-[var(--muted)]">Searching...</div>
                       ) : (
                         <>
                           {epicSearchResults.map((epic) => (
@@ -735,7 +735,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                               key={epic.id}
                               type="button"
                               onClick={() => handleEpicSelect(epic)}
-                              className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-gray-900"
+                              className="w-full text-left px-4 py-2 hover:bg-[var(--hover)] text-sm text-[var(--foreground)]"
                             >
                               {epic.title}
                             </button>
@@ -747,7 +747,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                                 setShowCreateEpicForm(true);
                                 setNewEpicTitle(epicSearchQuery);
                               }}
-                              className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-blue-600 flex items-center gap-2"
+                              className="w-full text-left px-4 py-2 hover:bg-[var(--hover)] text-sm text-blue-600 flex items-center gap-2"
                             >
                               <PlusIcon className="h-4 w-4" />
                               Create "{epicSearchQuery}"
@@ -831,7 +831,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                     />
                   </div>
                   {showEpochDropdown && (epochSearchResults.length > 0 || epochSearchQuery.trim() || showCreateEpochForm) && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-60 overflow-y-auto">
                       {isSearchingEpochs ? (
                         <div className="p-3 text-sm text-gray-500">Searching...</div>
                       ) : (
@@ -951,7 +951,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors"
             >
               Cancel
             </button>

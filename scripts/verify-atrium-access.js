@@ -77,7 +77,7 @@ async function verifyAtriumAccess() {
     }
 
     // Get all Atrium documents in the workspace
-    const documents = await prisma.atriumDocument.findMany({
+    const documents = await prisma.workshopDocument.findMany({
       where: {
         workspaceId: workspace.id,
         deletedAt: null
@@ -149,7 +149,7 @@ async function verifyAtriumAccess() {
     }
 
     // Verify folder structure
-    const folders = await prisma.atriumFolder.findMany({
+    const folders = await prisma.workshopFolder.findMany({
       where: {
         workspaceId: workspace.id,
         deletedAt: null

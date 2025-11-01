@@ -5,7 +5,7 @@
  * that works with the simplified schema and v1 APIs.
  */
 
-export type SimpleFeatureName = 'OASIS' | 'STACKS' | 'ATRIUM' | 'REVENUEOS' | 'METRICS' | 'CHRONICLE' | 'DESKTOP_DOWNLOAD';
+export type SimpleFeatureName = 'OASIS' | 'STACKS' | 'WORKSHOP' | 'REVENUEOS' | 'METRICS' | 'CHRONICLE' | 'DESKTOP_DOWNLOAD';
 
 interface SimpleFeatureAccess {
   [key: string]: boolean;
@@ -41,7 +41,7 @@ export function getSimpleFeatureAccess(
     return {
       OASIS: true,
       STACKS: true,
-      ATRIUM: true,
+      WORKSHOP: true,
       REVENUEOS: true,
       METRICS: true,
       CHRONICLE: true,
@@ -53,7 +53,7 @@ export function getSimpleFeatureAccess(
   return {
     OASIS: false,
     STACKS: false,
-    ATRIUM: false,
+    WORKSHOP: false,
     REVENUEOS: false,
     METRICS: false,
     CHRONICLE: false,

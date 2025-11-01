@@ -367,7 +367,7 @@ function AcquisitionOSLayoutInner({
         { id: "pipeline", name: "Pipeline", description: "Win major deals.", icon: FunnelIcon, color: "#059669", sections: ["speedrun", "chronicle", "opportunities", "leads", "prospects", "clients", "partners", "companies", "people", "metrics"] },
         { id: "monaco", name: "Monaco", description: "Make connections.", icon: UserGroupIcon, color: "#7C3AED", sections: ["companies", "people", "sellers", "sequences", "analytics"] },
         { id: "stacks", name: "Stacks", description: "Product + Engineering collaboration.", icon: Squares2X2Icon, color: "#7C3AED", sections: ["stacks", "backlog", "epics", "stories", "bugs"] },
-        { id: "atrium", name: "Atrium", description: "Document collaboration & management.", icon: DocumentIcon, color: "#10B981", sections: ["documents", "templates", "shared"] },
+        { id: "workshop", name: "Workshop", description: "Document collaboration & management.", icon: DocumentIcon, color: "#10B981", sections: ["documents", "templates", "shared"] },
         { id: "tower", name: "Tower", description: "Operations control center.", icon: ChartBarIcon, color: "#8B5CF6", sections: ["operations", "control", "optimization"] },
         { id: "grand-central", name: "Grand Central", description: "Integration hub & workflow automation.", icon: Cog6ToothIcon, color: "#8B5CF6", sections: ["integrations", "automation", "workflows"] },
         { id: "olympus", name: "Olympus", description: "Workflow orchestration & execution.", icon: PresentationChartBarIcon, color: "#DC2626", sections: ["workflows", "orchestration", "execution"] },

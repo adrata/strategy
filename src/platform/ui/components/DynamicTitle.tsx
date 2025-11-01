@@ -190,8 +190,8 @@ export function DynamicTitle() {
             title = 'Tower • Intelligence';
           } else if (pathname.includes('/database')) {
             title = 'Database • Records';
-          } else if (pathname.includes('/atrium')) {
-            title = 'Atrium • Documents';
+          } else if (pathname.includes('/workshop')) {
+            title = 'Workshop • Documents';
           } else if (pathname.includes('/oasis')) {
             // Extract channel or DM name from URL
             const pathSegments = pathname.split('/').filter(Boolean);

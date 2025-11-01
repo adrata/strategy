@@ -258,8 +258,8 @@ const platformApps: AdrataPlatformApp[] = [
     tags: ["Operations", "Control", "Optimization"],
   },
   {
-    name: "Atrium",
-    slug: "atrium",
+    name: "Workshop",
+    slug: "workshop",
     description: "Document collaboration & management.",
     icon: DocumentIcon,
     color: "#10B981",
@@ -474,7 +474,7 @@ function QuickAppSwitcher({
   const quickApps = isAdminUser ? [
     platformApps.find((app) => app['slug'] === "aos"),
     platformApps.find((app) => app['slug'] === "stacks"),
-    platformApps.find((app) => app['slug'] === "atrium"),
+    platformApps.find((app) => app['slug'] === "workshop"),
     platformApps.find((app) => app['slug'] === "tower"),
     platformApps.find((app) => app['slug'] === "grand-central"),
   ].filter((app): app is AdrataPlatformApp => app !== undefined) : [

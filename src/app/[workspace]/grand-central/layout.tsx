@@ -26,8 +26,8 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
 interface GrandCentralContextType {
   selectedNode: IntegrationNode | null;
   setSelectedNode: (node: IntegrationNode | null) => void;
-  activeTab: 'apis' | 'mcps' | 'atrium' | 'all-connectors';
-  setActiveTab: (tab: 'apis' | 'mcps' | 'atrium' | 'all-connectors') => void;
+  activeTab: 'apis' | 'mcps' | 'workshop' | 'all-connectors';
+  setActiveTab: (tab: 'apis' | 'mcps' | 'workshop' | 'all-connectors') => void;
   selectedConnection: any | null;
   setSelectedConnection: (connection: any | null) => void;
 }
@@ -48,7 +48,7 @@ interface GrandCentralLayoutProps {
 
 export default function GrandCentralLayout({ children }: GrandCentralLayoutProps) {
   const [selectedNode, setSelectedNode] = useState<IntegrationNode | null>(null);
-  const [activeTab, setActiveTab] = useState<'apis' | 'mcps' | 'atrium' | 'all-connectors'>('atrium');
+  const [activeTab, setActiveTab] = useState<'apis' | 'mcps' | 'workshop' | 'all-connectors'>('workshop');
   const [selectedConnection, setSelectedConnection] = useState<any | null>(null);
   const { user: authUser } = useUnifiedAuth();
   const router = useRouter();

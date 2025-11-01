@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     const user = authResult.user;
 
     // Verify user has access to the document
-    const document = await prisma.atriumDocument.findFirst({
+    const document = await prisma.workshopDocument.findFirst({
       where: {
         id: documentId,
         workspaceId,
@@ -112,7 +112,7 @@ export function initializeWebSocketServer(server: any) {
 
   wss = new WebSocketServer({ 
     server,
-    path: '/api/atrium/collaboration',
+    path: '/api/workshop/collaboration',
   });
 
   wss.on('connection', async (ws: any, request: IncomingMessage) => {
@@ -137,7 +137,7 @@ export function initializeWebSocketServer(server: any) {
       const user = authResult.user;
 
       // Verify document access
-      const document = await prisma.atriumDocument.findFirst({
+      const document = await prisma.workshopDocument.findFirst({
         where: {
           id: documentId,
           workspaceId,

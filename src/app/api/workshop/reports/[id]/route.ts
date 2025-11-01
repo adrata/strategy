@@ -10,7 +10,7 @@ export async function GET(
   try {
     const { id } = params;
 
-    const document = await prisma.atriumDocument.findUnique({
+    const document = await prisma.workshopDocument.findUnique({
       where: {
         id,
         deletedAt: null
@@ -103,7 +103,7 @@ export async function GET(
     }
 
     // Log view activity
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: document.id,
         activityType: 'VIEWED',
@@ -142,7 +142,7 @@ export async function PUT(
     }
 
     // Get current document
-    const currentDocument = await prisma.atriumDocument.findUnique({
+    const currentDocument = await prisma.workshopDocument.findUnique({
       where: { id }
     });
 
@@ -151,14 +151,14 @@ export async function PUT(
     }
 
     // Create version before updating
-    const latestVersion = await prisma.atriumVersion.findFirst({
+    const latestVersion = await prisma.workshopVersion.findFirst({
       where: { documentId: id },
       orderBy: { versionNumber: 'desc' }
     });
 
     const newVersionNumber = (latestVersion?.versionNumber || 0) + 1;
 
-    await prisma.atriumVersion.create({
+    await prisma.workshopVersion.create({
       data: {
         documentId: id,
         versionNumber: newVersionNumber,
@@ -170,7 +170,7 @@ export async function PUT(
     });
 
     // Update document
-    const updatedDocument = await prisma.atriumDocument.update({
+    const updatedDocument = await prisma.workshopDocument.update({
       where: { id },
       data: {
         ...(title && { title }),
@@ -197,7 +197,7 @@ export async function PUT(
     });
 
     // Log update activity
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: id,
         activityType: 'UPDATED',
@@ -216,7 +216,7 @@ export async function PUT(
     });
 
   } catch (error) {
-    console.error('Error updating Atrium report:', error);
+    console.error('Error updating Workshop report:', error);
     return NextResponse.json({ error: 'Failed to update report' }, { status: 500 });
   }
 }
@@ -235,7 +235,7 @@ export async function DELETE(
     }
 
     // Soft delete the document
-    const deletedDocument = await prisma.atriumDocument.update({
+    const deletedDocument = await prisma.workshopDocument.update({
       where: { id },
       data: {
         deletedAt: new Date()
@@ -243,7 +243,7 @@ export async function DELETE(
     });
 
     // Log deletion activity
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: id,
         activityType: 'DELETED',
@@ -258,7 +258,7 @@ export async function DELETE(
     });
 
   } catch (error) {
-    console.error('Error deleting Atrium report:', error);
+    console.error('Error deleting Workshop report:', error);
     return NextResponse.json({ error: 'Failed to delete report' }, { status: 500 });
   }
 }

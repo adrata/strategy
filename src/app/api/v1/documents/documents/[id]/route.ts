@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
- * GET /api/atrium/documents/[id]
+ * GET /api/workshop/documents/[id]
  * Get a specific document by ID
  */
 export async function GET(
@@ -17,7 +17,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const document = await prisma.atriumDocument.findUnique({
+    const document = await prisma.workshopDocument.findUnique({
       where: {
         id: (await params).id,
         status: { not: 'deleted' },
@@ -113,7 +113,7 @@ export async function GET(
     }
 
     // Update view count and last accessed
-    await prisma.atriumDocument.update({
+    await prisma.workshopDocument.update({
       where: { id: (await params).id },
       data: {
         viewCount: { increment: 1 },
@@ -122,7 +122,7 @@ export async function GET(
     });
 
     // Log view activity
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: (await params).id,
         userId: session.user.id,
@@ -146,7 +146,7 @@ export async function GET(
 }
 
 /**
- * PATCH /api/atrium/documents/[id]
+ * PATCH /api/workshop/documents/[id]
  * Update a document
  */
 export async function PATCH(
@@ -172,7 +172,7 @@ export async function PATCH(
     } = body;
 
     // Get existing document to check permissions
-    const existingDocument = await prisma.atriumDocument.findUnique({
+    const existingDocument = await prisma.workshopDocument.findUnique({
       where: { id: (await params).id },
       include: {
         shares: true,
@@ -201,7 +201,7 @@ export async function PATCH(
     if (classification !== undefined) updateData.classification = classification;
 
     // Update document
-    const document = await prisma.atriumDocument.update({
+    const document = await prisma.workshopDocument.update({
       where: { id: (await params).id },
       data: updateData,
       include: {
@@ -228,7 +228,7 @@ export async function PATCH(
     });
 
     // Log update activity
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: (await params).id,
         userId: session.user.id,
@@ -251,7 +251,7 @@ export async function PATCH(
 }
 
 /**
- * DELETE /api/atrium/documents/[id]
+ * DELETE /api/workshop/documents/[id]
  * Soft delete a document (move to trash)
  */
 export async function DELETE(
@@ -265,7 +265,7 @@ export async function DELETE(
     }
 
     // Get existing document to check permissions
-    const existingDocument = await prisma.atriumDocument.findUnique({
+    const existingDocument = await prisma.workshopDocument.findUnique({
       where: { id: (await params).id },
       include: {
         shares: true,
@@ -283,7 +283,7 @@ export async function DELETE(
     }
 
     // Soft delete (update status to deleted)
-    const document = await prisma.atriumDocument.update({
+    const document = await prisma.workshopDocument.update({
       where: { id: (await params).id },
       data: {
         status: 'deleted',
@@ -292,7 +292,7 @@ export async function DELETE(
     });
 
     // Log delete activity
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: (await params).id,
         userId: session.user.id,

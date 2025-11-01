@@ -1115,8 +1115,8 @@ export function RightPanel() {
     };
     
     const firstName = getUserFirstName();
-    const greeting = firstName ? `Hi, ${firstName}. I'm Leonardo. What would you like to work on today?` : "Hi! I'm Leonardo. What would you like to work on today?";
-    
+    const greeting = firstName ? `Hi, ${firstName}. I'm Adrata. What would you like to work on today?` : "Hi! I'm Adrata. What would you like to work on today?";
+
     if (activeConv?.id === 'main-chat') {
       const isPipelineContext = typeof window !== 'undefined' && (window.location.pathname.includes('/dashboard') || window.location.pathname.includes('/leads') || window.location.pathname.includes('/opportunities') || window.location.pathname.includes('/companies') || window.location.pathname.includes('/people') || window.location.pathname.includes('/partners') || window.location.pathname.includes('/prospects') || window.location.pathname.includes('/sellers') || window.location.pathname.includes('/clients') || window.location.pathname.includes('/metrics') || window.location.pathname.includes('/speedrun'));
       

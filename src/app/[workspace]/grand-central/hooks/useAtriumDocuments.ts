@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export interface AtriumDocument {
+export interface WorkshopDocument {
   id: string;
   title: string;
   documentType: 'paper' | 'pitch' | 'grid' | 'code' | 'matrix';
@@ -13,8 +13,8 @@ export interface AtriumDocument {
   };
 }
 
-export function useAtriumDocuments(workspaceId: string) {
-  const [documents, setDocuments] = useState<AtriumDocument[]>([]);
+export function useWorkshopDocuments(workspaceId: string) {
+  const [documents, setDocuments] = useState<WorkshopDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +26,7 @@ export function useAtriumDocuments(workspaceId: string) {
       setError(null);
       
       try {
-        const response = await fetch(`/api/atrium/documents?workspaceId=${workspaceId}`);
+        const response = await fetch(`/api/workshop/documents?workspaceId=${workspaceId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch documents');
         }
@@ -72,7 +72,7 @@ export function useAtriumDocuments(workspaceId: string) {
     fetchDocuments();
   }, [workspaceId]);
 
-  const getDocumentsByType = (type: AtriumDocument['documentType']) => {
+  const getDocumentsByType = (type: WorkshopDocument['documentType']) => {
     return documents.filter(doc => doc.documentType === type);
   };
 

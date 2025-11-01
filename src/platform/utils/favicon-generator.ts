@@ -16,11 +16,11 @@ export const APP_THEMES: Record<string, AppTheme> = {
     color: '#dbeafe', // blue-100 (light blue background)
     name: 'RevenueOS'
   },
-  // Atrium
-  'atrium': {
-    letter: 'A', 
+  // Workshop
+  'workshop': {
+    letter: 'W', 
     color: '#ede9fe', // violet-100 (light purple background)
-    name: 'Atrium'
+    name: 'Workshop'
   },
   // Database
   'database': {
@@ -189,8 +189,8 @@ export function getAppThemeFromPath(pathname: string): AppTheme {
   const cleanPath = pathname.replace(/^\/[^\/]+/, '') || '/';
   
   // Check for specific app routes
-  if (cleanPath.includes('/atrium')) {
-    return APP_THEMES.atrium;
+  if (cleanPath.includes('/workshop')) {
+    return APP_THEMES.workshop;
   }
   
   if (cleanPath.includes('/database')) {

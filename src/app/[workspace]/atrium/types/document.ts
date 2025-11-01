@@ -1,4 +1,4 @@
-export interface AtriumDocument {
+export interface WorkshopDocument {
   id: string;
   title: string;
   description?: string;
@@ -51,10 +51,10 @@ export interface AtriumDocument {
     id: string;
     name: string;
   };
-  shares?: AtriumShare[];
-  versions?: AtriumVersion[];
-  comments?: AtriumComment[];
-  activities?: AtriumActivity[];
+  shares?: WorkshopShare[];
+  versions?: WorkshopVersion[];
+  comments?: WorkshopComment[];
+  activities?: WorkshopActivity[];
   
   // Counts
   _count?: {
@@ -65,7 +65,7 @@ export interface AtriumDocument {
   };
 }
 
-export interface AtriumShare {
+export interface WorkshopShare {
   id: string;
   documentId: string;
   shareType: 'internal' | 'external' | 'public';
@@ -101,7 +101,7 @@ export interface AtriumShare {
   };
 }
 
-export interface AtriumVersion {
+export interface WorkshopVersion {
   id: string;
   documentId: string;
   version: string;
@@ -121,7 +121,7 @@ export interface AtriumVersion {
   createdAt: Date;
   
   // Relations
-  document?: AtriumDocument;
+  document?: WorkshopDocument;
   createdBy?: {
     id: string;
     name: string;
@@ -132,10 +132,10 @@ export interface AtriumVersion {
     version: string;
     createdAt: Date;
   };
-  childVersions?: AtriumVersion[];
+  childVersions?: WorkshopVersion[];
 }
 
-export interface AtriumComment {
+export interface WorkshopComment {
   id: string;
   documentId: string;
   content: string;
@@ -155,15 +155,15 @@ export interface AtriumComment {
   updatedAt: Date;
   
   // Relations
-  document?: AtriumDocument;
+  document?: WorkshopDocument;
   author: {
     id: string;
     name: string;
     email: string;
   };
   authorId: string;
-  parentComment?: AtriumComment;
-  replies?: AtriumComment[];
+  parentComment?: WorkshopComment;
+  replies?: WorkshopComment[];
   resolvedBy?: {
     id: string;
     name: string;
@@ -171,7 +171,7 @@ export interface AtriumComment {
   };
 }
 
-export interface AtriumActivity {
+export interface WorkshopActivity {
   id: string;
   documentId: string;
   activityType: string;
@@ -186,7 +186,7 @@ export interface AtriumActivity {
   createdAt: Date;
   
   // Relations
-  document?: AtriumDocument;
+  document?: WorkshopDocument;
   user: {
     id: string;
     name: string;
@@ -243,7 +243,7 @@ export interface DocumentSearchParams {
 }
 
 export interface DocumentSearchResult {
-  documents: AtriumDocument[];
+  documents: WorkshopDocument[];
   searchMetadata: {
     query?: string;
     totalResults: number;

@@ -20,7 +20,7 @@ async function verifyContentQuality() {
     if (adrataWorkspace) {
       console.log(`\n📊 Adrata Workspace Content Analysis:`);
       
-      const adrataDocs = await prisma.atriumDocument.findMany({
+      const adrataDocs = await prisma.workshopDocument.findMany({
         where: {
           workspaceId: adrataWorkspace.id,
           reportType: 'SALES_ENABLEMENT',
@@ -58,7 +58,7 @@ async function verifyContentQuality() {
     if (notaryWorkspace) {
       console.log(`\n📊 Notary Everyday Workspace Content Analysis:`);
       
-      const notaryDocs = await prisma.atriumDocument.findMany({
+      const notaryDocs = await prisma.workshopDocument.findMany({
         where: {
           workspaceId: notaryWorkspace.id,
           reportType: 'SALES_ENABLEMENT',

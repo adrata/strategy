@@ -66,12 +66,12 @@ interface ContextFile {
 }
 
 /**
- * Leonardo Chat Panel - Middle Chat Interface
+ * Adrata Chat Panel - Middle Chat Interface
  * 
  * Full-width AI chat interface that shares the same conversations as RightPanel
  * Uses the same localStorage key and API endpoints for complete parity
  */
-export function LeonardoChatPanel() {
+export function AdrataChatPanel() {
   const { ui, chat } = useRevenueOS();
   const router = useRouter();
   const pathname = usePathname();
@@ -190,7 +190,7 @@ export function LeonardoChatPanel() {
       try {
         const storageKey = `adrata-conversations-${workspaceId}`;
         localStorage.setItem(storageKey, JSON.stringify(conversations));
-        console.log('💾 [LEONARDO] Saved conversations to localStorage:', conversations.length, 'for workspace:', workspaceId);
+        console.log('💾 [ADRATA] Saved conversations to localStorage:', conversations.length, 'for workspace:', workspaceId);
       } catch (error) {
         console.warn('Failed to save conversations to localStorage:', error);
       }
@@ -228,7 +228,7 @@ export function LeonardoChatPanel() {
             }))
           }));
           setConversations(restoredConversations);
-          console.log('📂 [LEONARDO] Loaded conversations from localStorage:', restoredConversations.length);
+          console.log('📂 [ADRATA] Loaded conversations from localStorage:', restoredConversations.length);
           conversationsLoadedRef.current = true;
         }
       } catch (error) {
@@ -243,7 +243,7 @@ export function LeonardoChatPanel() {
     
     setIsSyncing(true);
     try {
-      console.log('🔄 [LEONARDO] Syncing conversations from API...');
+      console.log('🔄 [ADRATA] Syncing conversations from API...');
       const response = await fetch('/api/v1/conversations?includeMessages=true');
       const result = await response.json();
       
@@ -273,10 +273,10 @@ export function LeonardoChatPanel() {
         });
         
         setLastSyncTime(new Date());
-        console.log('✅ [LEONARDO] Synced conversations from API:', apiConversations.length);
+        console.log('✅ [ADRATA] Synced conversations from API:', apiConversations.length);
       }
     } catch (error) {
-      console.warn('⚠️ [LEONARDO] Failed to sync conversations from API:', error);
+      console.warn('⚠️ [ADRATA] Failed to sync conversations from API:', error);
     } finally {
       setIsSyncing(false);
     }
@@ -292,17 +292,17 @@ export function LeonardoChatPanel() {
         body: JSON.stringify({
           title: conversation.title,
           welcomeMessage: conversation.welcomeMessage,
-          metadata: { source: 'leonardo' }
+          metadata: { source: 'adrata' }
         })
       });
       
       const result = await response.json();
       if (result.success) {
-        console.log('✅ [LEONARDO] Saved conversation to API:', result.data.conversation.id);
+        console.log('✅ [ADRATA] Saved conversation to API:', result.data.conversation.id);
         return result.data.conversation.id;
       }
     } catch (error) {
-      console.warn('⚠️ [LEONARDO] Failed to save conversation to API:', error);
+      console.warn('⚠️ [ADRATA] Failed to save conversation to API:', error);
     }
     return null;
   };
@@ -333,11 +333,11 @@ export function LeonardoChatPanel() {
       
       const result = await response.json();
       if (result.success) {
-        console.log('✅ [LEONARDO] Saved message to API:', result.data.message.id);
+        console.log('✅ [ADRATA] Saved message to API:', result.data.message.id);
         return result.data.message.id;
       }
     } catch (error) {
-      console.warn('⚠️ [LEONARDO] Failed to save message to API:', error);
+      console.warn('⚠️ [ADRATA] Failed to save message to API:', error);
     }
     return null;
   };
@@ -352,10 +352,10 @@ export function LeonardoChatPanel() {
       
       const result = await response.json();
       if (result.success) {
-        console.log('✅ [LEONARDO] Deleted conversation from API:', conversationId);
+        console.log('✅ [ADRATA] Deleted conversation from API:', conversationId);
       }
     } catch (error) {
-      console.warn('⚠️ [LEONARDO] Failed to delete conversation from API:', error);
+      console.warn('⚠️ [ADRATA] Failed to delete conversation from API:', error);
     }
   };
 
@@ -504,6 +504,41 @@ export function LeonardoChatPanel() {
   };
 
   const getWelcomeMessage = (app: string): string => {
+    const activeConv = getActiveConversation();
+    if (activeConv?.welcomeMessage && activeConv['messages']['length'] === 0) {
+      return activeConv.welcomeMessage;
+    }
+
+    if (currentRecord && recordType) {
+      const recordName = currentRecord.name || currentRecord.fullName || 
+                        (currentRecord['firstName'] && currentRecord.lastName ? `${currentRecord.firstName} ${currentRecord.lastName}` : '') ||
+                        currentRecord.companyName || 'this record';
+      
+      const company = currentRecord.company || currentRecord.companyName || (recordType === 'companies' ? currentRecord.name : 'their company');
+      const title = currentRecord.title || currentRecord.jobTitle || 'their role';
+      const status = currentRecord.status || 'new';
+      const priority = currentRecord.priority || 'medium';
+      
+      // Generate more natural, conversational welcome messages based on record type and data
+      switch (recordType) {
+        case 'leads':
+          return `Hi! I can see you're looking at ${recordName} from ${company}. As a ${title}, they could be a great fit for your solution. What would you like to know about them or how can I help you move this forward?`;
+        case 'prospects':
+          return `I see you're working with ${recordName} at ${company}. They seem like a promising prospect in the ${title} role. What's your strategy for engaging with them?`;
+        case 'opportunities':
+          return `Great! You have an active opportunity with ${company}. ${recordName} (${title}) looks like they're ready to move forward. How can I help you close this deal?`;
+        case 'companies':
+          const employeeCount = currentRecord?.customFields?.coresignalData?.employees_count || currentRecord?.size || 'unknown';
+          const industry = currentRecord?.industry || currentRecord?.customFields?.coresignalData?.categories_and_keywords?.[0] || 'business';
+          return `Interesting company - ${company}. This looks like a ${industry} company with ${employeeCount} employees. What's your approach for building this relationship?`;
+        case 'people':
+          const article = title && /^[aeiouAEIOU]/.test(title.trim()) ? 'an' : 'a';
+          return `I can see you're focused on ${recordName} at ${company}. As ${article} ${title}, they could be valuable for your business. What would you like to explore about this contact?`;
+        default:
+          return `I notice you're reviewing ${recordName} at ${company}. They look like they could be important for your sales efforts. How can I help you with this?`;
+      }
+    }
+
     // Get user's first name for personalization
     const getUserFirstName = () => {
       if (user?.name) {
@@ -513,24 +548,24 @@ export function LeonardoChatPanel() {
     };
     
     const firstName = getUserFirstName();
-    
-    if (currentRecord && recordType) {
-      const recordName = currentRecord.name || currentRecord.fullName || 'this record';
-      const company = currentRecord.company || currentRecord.companyName || 'their company';
+    const greeting = firstName ? `Hi, ${firstName}. I'm Adrata. What would you like to work on today?` : "Hi! I'm Adrata. What would you like to work on today?";
+
+    if (activeConv?.id === 'main-chat') {
+      const isPipelineContext = typeof window !== 'undefined' && (window.location.pathname.includes('/dashboard') || window.location.pathname.includes('/leads') || window.location.pathname.includes('/opportunities') || window.location.pathname.includes('/companies') || window.location.pathname.includes('/people') || window.location.pathname.includes('/partners') || window.location.pathname.includes('/prospects') || window.location.pathname.includes('/sellers') || window.location.pathname.includes('/clients') || window.location.pathname.includes('/metrics') || window.location.pathname.includes('/speedrun'));
       
-      const personalizedGreeting = firstName ? `Hi, ${firstName}. I'm Leonardo.` : "Hi! I'm Leonardo.";
-      
-      switch (recordType) {
-        case 'leads':
-          return `${personalizedGreeting} I can see you're looking at ${recordName} from ${company}. What would you like to know about them?`;
-        case 'prospects':
-          return `${personalizedGreeting} I see you're working with ${recordName} at ${company}. How can I help you engage with them?`;
+      switch (app) {
+        case "Speedrun":
+          return greeting;
+        case "pipeline":
+          return greeting;
+        case "monaco":
+          return greeting;
         default:
-          return `${personalizedGreeting} I can help you with ${recordName}. What would you like to explore?`;
+          return greeting;
       }
     }
-    
-    return firstName ? `Hi, ${firstName}. I'm Leonardo. What would you like to work on today?` : "Hi! I'm Leonardo. What would you like to work on today?";
+
+    return activeConv?.welcomeMessage || greeting;
   };
 
   const handleQuickAction = (action: string) => {
@@ -600,7 +635,7 @@ export function LeonardoChatPanel() {
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache',
-          'X-Request-ID': `leonardo-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          'X-Request-ID': `adrata-chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
         },
         body: JSON.stringify({
           message: input,
@@ -618,7 +653,7 @@ export function LeonardoChatPanel() {
             currentUrl: typeof window !== 'undefined' ? window.location.href : '',
             userAgent: typeof window !== 'undefined' ? navigator.userAgent : '',
             timestamp: new Date().toISOString(),
-            sessionId: `leonardo-session-${Date.now()}`
+            sessionId: `adrata-session-${Date.now()}`
           },
           selectedModel: selectedAIModel.id
         })

@@ -9,7 +9,7 @@ interface FeatureAccessContextType {
   hasFeature: (feature: SimpleFeatureName) => boolean;
   hasOasis: boolean;
   hasStacks: boolean;
-  hasAtrium: boolean;
+  hasWorkshop: boolean;
   hasRevenueOS: boolean;
   hasMetrics: boolean;
   hasChronicle: boolean;
@@ -43,7 +43,7 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
   const [featureAccess, setFeatureAccess] = useState<Record<SimpleFeatureName, boolean>>({
     OASIS: false,
     STACKS: false,
-    ATRIUM: false,
+    WORKSHOP: false,
     REVENUEOS: false,
     METRICS: false,
     CHRONICLE: false,
@@ -87,14 +87,14 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
         setFeatureAccess({
           OASIS: true,
           STACKS: true,
-          ATRIUM: true,
+          WORKSHOP: true,
           REVENUEOS: true,
           METRICS: true,
           CHRONICLE: true,
           DESKTOP_DOWNLOAD: true
         });
-        setWorkspaceFeatures(['OASIS', 'STACKS', 'ATRIUM', 'REVENUEOS', 'METRICS', 'CHRONICLE', 'DESKTOP_DOWNLOAD']);
-        setUserFeatures(['OASIS', 'STACKS', 'ATRIUM', 'REVENUEOS', 'METRICS', 'CHRONICLE', 'DESKTOP_DOWNLOAD']);
+        setWorkspaceFeatures(['OASIS', 'STACKS', 'WORKSHOP', 'REVENUEOS', 'METRICS', 'CHRONICLE', 'DESKTOP_DOWNLOAD']);
+        setUserFeatures(['OASIS', 'STACKS', 'WORKSHOP', 'REVENUEOS', 'METRICS', 'CHRONICLE', 'DESKTOP_DOWNLOAD']);
         return;
       }
 
@@ -106,14 +106,14 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
         setFeatureAccess({
           OASIS: true,
           STACKS: true,
-          ATRIUM: true,
+          WORKSHOP: true,
           REVENUEOS: true,
           METRICS: true,
           CHRONICLE: true,
           DESKTOP_DOWNLOAD: true
         });
-        setWorkspaceFeatures(['OASIS', 'STACKS', 'ATRIUM', 'REVENUEOS', 'METRICS', 'CHRONICLE', 'DESKTOP_DOWNLOAD']);
-        setUserFeatures(['OASIS', 'STACKS', 'ATRIUM', 'REVENUEOS', 'METRICS', 'CHRONICLE', 'DESKTOP_DOWNLOAD']);
+        setWorkspaceFeatures(['OASIS', 'STACKS', 'WORKSHOP', 'REVENUEOS', 'METRICS', 'CHRONICLE', 'DESKTOP_DOWNLOAD']);
+        setUserFeatures(['OASIS', 'STACKS', 'WORKSHOP', 'REVENUEOS', 'METRICS', 'CHRONICLE', 'DESKTOP_DOWNLOAD']);
         return;
       }
 
@@ -155,7 +155,7 @@ export function FeatureAccessProvider({ children }: FeatureAccessProviderProps) 
     hasFeature,
     hasOasis: hasFeature('OASIS'),
     hasStacks: hasFeature('STACKS'),
-    hasAtrium: hasFeature('ATRIUM'),
+    hasWorkshop: hasFeature('WORKSHOP'),
     hasRevenueOS: hasFeature('REVENUEOS'),
     hasMetrics: hasFeature('METRICS'),
     hasChronicle: hasFeature('CHRONICLE'),
@@ -194,9 +194,9 @@ export function useStacksAccess(): boolean {
   return hasStacks;
 }
 
-export function useAtriumAccess(): boolean {
-  const { hasAtrium } = useFeatureAccess();
-  return hasAtrium;
+export function useWorkshopAccess(): boolean {
+  const { hasWorkshop } = useFeatureAccess();
+  return hasWorkshop;
 }
 
 export function useRevenueOSAccess(): boolean {

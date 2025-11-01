@@ -225,7 +225,7 @@ export class YjsProvider {
   private getWebSocketUrl(): string {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.host;
-    return `${protocol}//${host}/api/atrium/collaboration`;
+    return `${protocol}//${host}/api/workshop/collaboration`;
   }
 
   /**

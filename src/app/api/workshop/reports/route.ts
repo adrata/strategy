@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the document
-    const document = await prisma.atriumDocument.create({
+    const document = await prisma.workshopDocument.create({
       data: {
         title,
         content,
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Create activity log
-    await prisma.atriumActivity.create({
+    await prisma.workshopActivity.create({
       data: {
         documentId: document.id,
         activityType: 'CREATED',
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error creating Atrium report:', error);
+    console.error('Error creating Workshop report:', error);
     return NextResponse.json({ error: 'Failed to create report' }, { status: 500 });
   }
 }
@@ -117,7 +117,7 @@ export async function GET(request: NextRequest) {
       where.generatedByAI = generatedByAI;
     }
 
-    const documents = await prisma.atriumDocument.findMany({
+    const documents = await prisma.workshopDocument.findMany({
       where,
       include: {
         workspace: {
@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching Atrium reports:', error);
+    console.error('Error fetching Workshop reports:', error);
     return NextResponse.json({ error: 'Failed to fetch reports' }, { status: 500 });
   }
 }

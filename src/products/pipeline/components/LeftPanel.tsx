@@ -17,7 +17,7 @@ import { getWorkspaceBySlug } from "@/platform/config/workspace-mapping";
 import { useChronicleCount } from "@/platform/hooks/useChronicleCount";
 import { useMetricsCount } from "@/platform/hooks/useMetricsCount";
 import { getPlatform } from "@/platform/platform-detection";
-import { useStacksAccess, useOasisAccess, useAtriumAccess, useMetricsAccess, useChronicleAccess, useDesktopDownloadAccess } from "@/platform/ui/context/FeatureAccessProvider";
+import { useStacksAccess, useOasisAccess, useWorkshopAccess, useMetricsAccess, useChronicleAccess, useDesktopDownloadAccess } from "@/platform/ui/context/FeatureAccessProvider";
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { getFilteredSectionsForWorkspace } from "@/platform/utils/section-filter";
 import { getCustomSectionOrder } from "@/platform/services/user-restrictions-service";
@@ -96,7 +96,7 @@ function PipelineSections({
   // Feature access hooks
   const hasOasis = useOasisAccess();
   const hasStacks = useStacksAccess();
-  const hasAtrium = useAtriumAccess();
+  const hasWorkshop = useWorkshopAccess();
   const hasMetrics = useMetricsAccess();
   const hasChronicle = useChronicleAccess();
   const hasDesktopDownload = useDesktopDownloadAccess();

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useAtriumDocuments, AtriumDocument } from '../hooks/useAtriumDocuments';
+import { useWorkshopDocuments, WorkshopDocument } from '../hooks/useWorkshopDocuments';
 import { Breadcrumb } from './Breadcrumb';
 import { useUnifiedAuth } from '@/platform/auth';
 import { DocumentIcon, PresentationChartBarIcon, TableCellsIcon, CodeBracketIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
 
-interface AtriumDetailViewProps {
+interface WorkshopDetailViewProps {
   documentId?: string;
   displayName?: string; // New prop for showing name with ULID
   onBack: () => void;
@@ -12,10 +12,10 @@ interface AtriumDetailViewProps {
   onSelectDocument: (id: string) => void;
 }
 
-export function AtriumDetailView({ documentId, displayName, onBack, onBackToList, onSelectDocument }: AtriumDetailViewProps) {
+export function WorkshopDetailView({ documentId, displayName, onBack, onBackToList, onSelectDocument }: WorkshopDetailViewProps) {
   const { user: authUser } = useUnifiedAuth();
-  const { documents, loading, getDocumentsByType, getDocumentCounts } = useAtriumDocuments(authUser?.activeWorkspaceId || '');
-  const [selectedType, setSelectedType] = useState<AtriumDocument['documentType'] | 'all'>('all');
+  const { documents, loading, getDocumentsByType, getDocumentCounts } = useWorkshopDocuments(authUser?.activeWorkspaceId || '');
+  const [selectedType, setSelectedType] = useState<WorkshopDocument['documentType'] | 'all'>('all');
 
   const documentTypes = [
     { id: 'all', name: 'All Documents', icon: DocumentIcon, count: getDocumentCounts().total },
@@ -39,7 +39,7 @@ export function AtriumDetailView({ documentId, displayName, onBack, onBackToList
     }
   };
 
-  const getTypeIcon = (type: AtriumDocument['documentType']) => {
+  const getTypeIcon = (type: WorkshopDocument['documentType']) => {
     const typeConfig = documentTypes.find(t => t.id === type);
     const IconComponent = typeConfig?.icon || DocumentIcon;
     return <IconComponent className="w-5 h-5" />;
