@@ -1,4 +1,7 @@
 /**
+// Required for static export (desktop build)
+export const dynamic = 'force-static';
+
  * 🚀 FAST COUNTS API - LIGHTNING SPEED NAVIGATION COUNTS
  * 
  * Ultra-fast endpoint for left panel navigation counts only

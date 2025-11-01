@@ -203,7 +203,7 @@
 - **Purpose**: Alternative buyer group UI
 - **Status**: ✅ Production-ready
 
-**Location**: `src/app/(locker)/private/winning-variant/components/`
+**Location**: `src/app/(workshop)/private/winning-variant/components/`
 
 #### `BuyerGroupMemberCard.tsx`
 - **Purpose**: Card component for buyer group members
