@@ -7,6 +7,7 @@
 
 const { spawn } = require("child_process");
 const fs = require("fs");
+const path = require("path");
 
 async function executeCommand(command, args = []) {
   return new Promise((resolve, reject) => {
@@ -56,42 +57,35 @@ async function fixApiConflicts() {
 
 async function main() {
   try {
-    console.log("🏗️ Building Next.js application for Tauri...");
+    console.log("🏗️ Building Next.js application for Tauri (online-only desktop app)...");
 
     // Step 1: Clean any existing build artifacts to prevent conflicts
     console.log("🧹 Cleaning build artifacts...");
-    await executeCommand("rm", ["-rf", ".next", "out"]);
+    const cleanPaths = [path.join(__dirname, '..', '..', '.next'), path.join(__dirname, '..', '..', 'out')];
+    for (const cleanPath of cleanPaths) {
+      if (fs.existsSync(cleanPath)) {
+        fs.rmSync(cleanPath, { recursive: true, force: true });
+        console.log(`✅ Cleaned: ${cleanPath}`);
+      }
+    }
 
-    // Step 2: Run a standard Next.js build first (without export)
-    console.log("📦 Building Next.js application...");
+    // Step 2: Build with static export (enabled conditionally in next.config.mjs)
+    console.log("📦 Building Next.js application with static export...");
     await executeCommand("npx", [
       "cross-env",
       "NODE_OPTIONS=--max-old-space-size=8192",
       "TAURI_BUILD=true",
       "NEXT_PUBLIC_IS_DESKTOP=true",
+      // Set API base URL if not already set (defaults to https://adrata.com/api in desktop-config.ts)
+      process.env.NEXT_PUBLIC_API_BASE_URL ? `NEXT_PUBLIC_API_BASE_URL=${process.env.NEXT_PUBLIC_API_BASE_URL}` : "",
       "next",
       "build",
-    ]);
-    console.log("✅ Next.js build completed");
+    ].filter(Boolean)); // Remove empty strings
+    console.log("✅ Next.js static export build completed");
 
-    // Step 3: Fix API conflicts before export
-    console.log("🔧 Fixing API conflicts before export...");
-    await fixApiConflicts();
-
-    // Step 4: Run second build with export enabled (Next.js 15 approach)
-    console.log("📦 Running static export build...");
-    await executeCommand("npx", [
-      "cross-env",
-      "NODE_OPTIONS=--max-old-space-size=8192",
-      "TAURI_BUILD=true",
-      "TAURI_EXPORT=true",
-      "NEXT_PUBLIC_IS_DESKTOP=true",
-      "next",
-      "build",
-    ]);
-    console.log("✅ Static export completed");
-
-    console.log("🎉 Tauri build completed successfully!");
+    console.log("🎉 Tauri build preparation completed successfully!");
+    console.log("ℹ️  Note: Next.js static export is configured in next.config.mjs");
+    console.log("ℹ️  API calls will be routed to backend server (online-only mode)");
   } catch (error) {
     console.error("❌ Tauri build failed:", error.message);
     process.exit(1);

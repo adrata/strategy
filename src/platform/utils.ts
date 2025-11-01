@@ -45,7 +45,6 @@ export const dynamic =
 export function isDesktopMode(): boolean {
   return (
     process['env']['TAURI_BUILD'] === "true" ||
-    process['env']['CAPACITOR_BUILD'] === "true" ||
     process['env']['NEXT_PUBLIC_IS_DESKTOP'] === "true"
   );
 }
@@ -54,12 +53,7 @@ export function isWebMode(): boolean {
   return !isDesktopMode();
 }
 
-export function isMobileMode(): boolean {
-  return process['env']['CAPACITOR_BUILD'] === "true";
-}
-
-export function getTauriPlatform(): "desktop" | "web" | "mobile" {
+export function getTauriPlatform(): "desktop" | "web" {
   if (isDesktopMode()) return "desktop";
-  if (isMobileMode()) return "mobile";
   return "web";
 }

@@ -84,10 +84,8 @@ export function getPlatform(): "web" | "mobile" | "desktop" {
     // File protocol detection for static builds (only actual file protocol)
     (window['location']['protocol'] === "file:" && window.location.pathname.includes("index.html"));
 
-  // More robust mobile detection - check if Capacitor is actually available and native
-  const isMobile = (window as any).Capacitor && 
-    typeof (window as any).Capacitor['isNativePlatform'] === 'function' && 
-    (window as any).Capacitor.isNativePlatform();
+  // Mobile detection removed - no longer using Capacitor
+  const isMobile = false;
 
   // Log detailed detection in debug mode OR production for troubleshooting
   if (process['env']['NODE_ENV'] === 'development' && process['env']['ADRATA_DEBUG_PLATFORM'] === 'true' || process['env']['NODE_ENV'] === 'production') {
@@ -99,7 +97,6 @@ export function getPlatform(): "web" | "mobile" | "desktop" {
     console.log("  - window.__TAURI__:", !!(window as any).__TAURI__);
     console.log("  - window.__TAURI_METADATA__:", !!(window as any).__TAURI_METADATA__);
     console.log("  - window.__TAURI_INTERNALS__:", !!(window as any).__TAURI_INTERNALS__);
-    console.log("  - window.Capacitor:", !!(window as any).Capacitor);
     console.log("  - isDesktop:", isDesktop);
     console.log("  - isMobile:", isMobile);
   }

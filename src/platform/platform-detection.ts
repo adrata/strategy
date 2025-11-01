@@ -1,5 +1,5 @@
 // LIGHTNING-FAST MULTI-PLATFORM DETECTION - 2025 OPTIMIZED
-// Production-ready for: Vercel Web + Tauri Desktop + Capacitor Mobile
+// Production-ready for: Vercel Web + Tauri Desktop
 // Includes Safari compatibility handling
 
 export type Platform = "web" | "desktop" | "mobile";
@@ -108,16 +108,6 @@ export const getPlatform = (): Platform => {
       cachedPlatform = "desktop";
       // Environment variable detected as desktop
       return cachedPlatform;
-    }
-
-    // FAST: Capacitor detection (mobile runtime)
-    if (typeof window !== "undefined" && (window as any).Capacitor) {
-      const isNative = typeof (window as any).Capacitor['isNativePlatform'] === 'function' && 
-        (window as any).Capacitor.isNativePlatform();
-      if (isNative) {
-        cachedPlatform = "mobile";
-        return cachedPlatform;
-      }
     }
 
     // FAST: Tauri detection (desktop runtime) - ONLY if not in web browser
@@ -410,8 +400,6 @@ export const getPlatformDebugInfo = () => {
       runtime: {
         hasWindow: typeof window !== "undefined",
         hasTauri: typeof window !== "undefined" && !!(window as any).__TAURI__,
-        hasCapacitor:
-          typeof window !== "undefined" && !!(window as any).Capacitor,
         userAgent:
           typeof navigator !== "undefined" ? navigator.userAgent : "server",
         protocol: window.location.protocol,

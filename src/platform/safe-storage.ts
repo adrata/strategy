@@ -133,9 +133,7 @@ export const platformStorage = {
   // Store data with platform prefix
   setItemWithPlatform: (key: string, value: string): void => {
     const platform =
-      typeof window !== "undefined" && (window as any).Capacitor
-        ? "mobile"
-        : typeof window !== "undefined" && (window as any).__TAURI__
+      typeof window !== "undefined" && (window as any).__TAURI__
           ? "desktop"
           : "web";
     safeStorage.setItem(`${platform}_${key}`, value);
@@ -143,9 +141,7 @@ export const platformStorage = {
 
   getItemWithPlatform: (key: string): string | null => {
     const platform =
-      typeof window !== "undefined" && (window as any).Capacitor
-        ? "mobile"
-        : typeof window !== "undefined" && (window as any).__TAURI__
+      typeof window !== "undefined" && (window as any).__TAURI__
           ? "desktop"
           : "web";
     return safeStorage.getItem(`${platform}_${key}`);

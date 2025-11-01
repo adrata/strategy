@@ -229,18 +229,6 @@ export class ThemeApplier {
     theme: Theme, 
     options: Required<ThemeApplicationOptions>
   ): Promise<void> {
-    // Update status bar color
-    if (typeof window !== 'undefined' && (window as any).Capacitor) {
-      try {
-        const { StatusBar } = await import('@capacitor/status-bar');
-        await StatusBar.setBackgroundColor({ 
-          color: theme.colors.background 
-        });
-      } catch (error) {
-        console.warn('Failed to update status bar color:', error);
-      }
-    }
-
     // Update meta theme color
     if (options.updateMetaThemeColor) {
       this.updateMetaThemeColor(theme.colors.background);

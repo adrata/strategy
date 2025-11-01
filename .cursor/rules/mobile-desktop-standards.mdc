@@ -1,15 +1,13 @@
 ---
-description: Mobile and desktop application development standards
+description: Desktop application development standards
 globs:
   - src-tauri/**/*.rs
   - src-tauri/**/*.ts
-  - capacitor.config.ts
-  - src/**/*mobile*.ts
   - src/**/*desktop*.ts
 alwaysApply: false
 ---
 
-# Mobile & Desktop Development Standards
+# Desktop Development Standards
 
 ## Tauri Desktop Development
 - Use proper Rust patterns for Tauri backend development
@@ -17,13 +15,6 @@ alwaysApply: false
 - Use proper TypeScript integration for frontend communication
 - Implement proper file system operations with proper permissions
 - Use proper native API integrations and permissions
-
-## Capacitor Mobile Development
-- Use proper Capacitor plugins for native functionality
-- Implement proper mobile-specific UI patterns and navigation
-- Use proper mobile performance optimization techniques
-- Implement proper offline functionality and data synchronization
-- Use proper mobile-specific security considerations
 
 ## Cross-Platform Considerations
 - Use proper responsive design for different screen sizes

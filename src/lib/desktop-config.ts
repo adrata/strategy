@@ -26,8 +26,8 @@ export const desktopConfig = {
   // Server-side rendering
   enableSSR: !isDesktopBuild,
   
-  // Database connection
-  useLocalDatabase: isDesktopBuild,
+  // Database connection (online-only: no local database)
+  useLocalDatabase: false,
   
   // Authentication
   useDesktopAuth: isDesktopBuild,
@@ -35,10 +35,19 @@ export const desktopConfig = {
 
 // Environment-specific API base URL
 export const getAPIBaseURL = () => {
+  // For desktop builds, use backend API server
   if (isDesktopBuild) {
-    return '/api/desktop'; // Will be handled by Tauri commands
+    // Use environment variable if set, otherwise default to production API
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    if (apiBaseUrl) {
+      // If it already ends with /api, return as-is; otherwise append /api
+      return apiBaseUrl.endsWith('/api') ? apiBaseUrl : `${apiBaseUrl}/api`;
+    }
+    // Default to production API for desktop
+    return 'https://adrata.com/api';
   }
   
+  // Web mode: use relative URLs (same domain)
   if (typeof window !== 'undefined') {
     return window.location.origin + '/api';
   }
@@ -46,24 +55,24 @@ export const getAPIBaseURL = () => {
   return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 };
 
-// Desktop-specific feature flags
+// Desktop-specific feature flags (online-only mode)
 export const desktopFeatures = {
-  // Enable offline capabilities
-  offlineMode: isDesktopBuild,
+  // Online-only: no offline capabilities
+  offlineMode: false,
   
-  // Use local SQLite database
-  localDatabase: isDesktopBuild,
+  // Online-only: no local database needed
+  localDatabase: false,
   
-  // Enable Tauri-specific features
+  // Enable Tauri-specific native features
   tauriFeatures: isDesktopBuild,
   
   // Disable web-specific features
   webFeatures: !isDesktopBuild,
   
-  // Enable desktop notifications
+  // Enable desktop notifications (native feature)
   desktopNotifications: isDesktopBuild,
   
-  // Enable file system access
+  // Enable file system access (native feature)
   fileSystemAccess: isDesktopBuild,
 };
 

@@ -18,7 +18,7 @@ export class DesktopAPIClient {
 
   // Check if we're running in Tauri
   private isTauri(): boolean {
-    return typeof window !== 'undefined' && !!window.__TAURI__;
+    return typeof window !== 'undefined' && !!(window as any).__TAURI__;
   }
 
   // Browser methods
@@ -103,97 +103,42 @@ export class DesktopAPIClient {
     }
   }
 
-  // Generic API call that routes to Tauri commands
+  // Generic API call that routes to backend API (online-only)
   async call<T>(endpoint: string, data?: any): Promise<T> {
-    if (this.isTauri()) {
-      // Use Tauri invoke commands for desktop
-      return this.callTauriCommand<T>(endpoint, data);
-    } else {
-      // Fallback to HTTP for web development
-      return this.callHTTP<T>(endpoint, data);
-    }
+    // Always use HTTP for API calls - desktop app is online-only
+    // Tauri commands are only for native features (notifications, file system, etc.)
+    return this.callHTTP<T>(endpoint, data);
   }
 
-  // Call Tauri command using invoke()
-  private async callTauriCommand<T>(endpoint: string, data?: any): Promise<T> {
-    const { invoke } = await import('@tauri-apps/api/core');
-    
-    // Map API endpoints to Tauri commands
-    const commandMap: Record<string, string> = {
-      // Companies API
-      '/api/v1/companies': 'get_companies',
-      '/api/v1/companies/[id]': 'get_company',
-      
-      // People API  
-      '/api/v1/people': 'get_people',
-      '/api/v1/people/[id]': 'get_person',
-      
-      // Actions API
-      '/api/v1/actions': 'get_actions',
-      '/api/v1/actions/[id]': 'get_action',
-      
-      // Speedrun API
-      '/api/v1/speedrun': 'get_speedrun_data',
-      '/api/v1/speedrun/prospects': 'get_speedrun_prospects',
-      
-      // Chronicle API
-      '/api/v1/chronicle/generate': 'generate_chronicle_report',
-      '/api/v1/chronicle/reports': 'get_chronicle_reports',
-      
-      // Intelligence API
-      '/api/v1/intelligence': 'generate_intelligence',
-      '/api/v1/intelligence/buyer-group': 'generate_buyer_group_intelligence',
-      
-      // Auth API
-      '/api/v1/auth/sign-in': 'authenticate_user',
-      '/api/v1/auth/sign-out': 'sign_out_user',
-      '/api/v1/auth/status': 'get_auth_status',
-      
-      // Data API
-      '/api/v1/data/search': 'search_data',
-      '/api/v1/data/counts': 'get_data_counts',
-    };
+  // Tauri commands are now only used for native features (browser windows, notifications, etc.)
+  // All API calls go directly to the backend server
 
-    // Extract command name from endpoint
-    let command = 'generic_api_call';
-    for (const [pattern, cmd] of Object.entries(commandMap)) {
-      if (endpoint.includes(pattern.replace('/[id]', ''))) {
-        command = cmd;
-        break;
-      }
-    }
-    
-    try {
-      console.log(`🔄 Calling Tauri command: ${command} for endpoint: ${endpoint}`);
-      
-      const result = await invoke(command, { 
-        endpoint, 
-        data: data || {},
-        method: data ? 'POST' : 'GET'
-      });
-      
-      console.log(`✅ Tauri command ${command} completed successfully`);
-      return result as T;
-    } catch (error) {
-      console.error(`❌ Tauri command failed for ${endpoint}:`, error);
-      throw new Error(`Desktop API call failed: ${error}`);
-    }
-  }
-
-  // Fallback HTTP call for web development
+  // HTTP call to backend API (online-only desktop app)
   private async callHTTP<T>(endpoint: string, data?: any): Promise<T> {
-    console.log(`🌐 Making HTTP call to: ${endpoint}`);
+    // Get API base URL from desktop config
+    const { getAPIBaseURL } = await import('./desktop-config');
+    const apiBaseUrl = getAPIBaseURL();
     
-    const response = await fetch(endpoint, {
+    // Construct full URL
+    const fullUrl = endpoint.startsWith('http') 
+      ? endpoint 
+      : `${apiBaseUrl}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+    
+    console.log(`🌐 [DESKTOP API] Making HTTP call to: ${fullUrl}`);
+    
+    const response = await fetch(fullUrl, {
       method: data ? 'POST' : 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // Include cookies for authentication
       body: data ? JSON.stringify(data) : undefined,
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text().catch(() => 'Unknown error');
+      console.error(`❌ [DESKTOP API] HTTP error ${response.status}: ${errorText}`);
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
 
     return response.json();
@@ -270,11 +215,11 @@ export function useDesktopAPI() {
   return {
     api: desktopAPI,
     endpoints: desktopEndpoints,
-    isTauri: typeof window !== 'undefined' && !!window.__TAURI__,
+    isTauri: typeof window !== 'undefined' && !!(window as any).__TAURI__,
   };
 }
 
 // Utility function to check if running in Tauri
 export function isTauriEnvironment(): boolean {
-  return typeof window !== 'undefined' && !!window.__TAURI__;
+  return typeof window !== 'undefined' && !!(window as any).__TAURI__;
 }

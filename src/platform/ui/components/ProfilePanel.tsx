@@ -19,6 +19,7 @@ import {
   ChatBubbleLeftRightIcon,
   Squares2X2Icon,
   ClipboardDocumentCheckIcon,
+  DocumentTextIcon,
   HomeIcon,
   ListBulletIcon,
   PlusIcon
@@ -36,7 +37,7 @@ interface ProfilePanelProps {
   currentApp?: string;
 }
 
-// Checklist Item Component with animations
+// Action List Item Component with animations
 interface ChecklistItemComponentProps {
   item: ChecklistItem;
   onToggle: (id: string) => void;
@@ -74,7 +75,7 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       role="listitem"
-      aria-label={`Checklist item: ${item.text}`}
+      aria-label={`Action list item: ${item.text}`}
     >
       <Checkbox
         checked={item.completed}
@@ -136,9 +137,9 @@ const Checkbox: React.FC<{
         }
       }}
       disabled={disabled}
-      className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 ${
+      className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-1 ${
         checked
-          ? 'bg-blue-600 border-blue-600 text-white'
+          ? 'bg-slate-700 border-slate-700 text-white'
           : 'border-gray-300 hover:border-gray-400'
       } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
       aria-label={ariaLabel}
@@ -166,11 +167,11 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const { setIsSettingsOpen } = useSettingsPopup();
   const { hasDesktopDownload } = useFeatureAccess();
 
-  // Get userId and workspaceId for checklist
+  // Get userId and workspaceId for action list
   const userId = authUser?.id;
   const workspaceId = authUser?.activeWorkspaceId || (typeof workspace === 'string' ? undefined : workspace?.id);
 
-  // Checklist hook
+  // Action list hook
   const {
     items: checklistItems,
     addItem,
@@ -196,7 +197,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   // State for view mode (main or action list)
   const [viewMode, setViewMode] = useState<'main' | 'actionList'>('main');
   
-  // State for checklist input
+  // State for action list input
   const [newItemText, setNewItemText] = useState('');
   const [removingItemIds, setRemovingItemIds] = useState<Set<string>>(new Set());
   const inputRef = useRef<HTMLInputElement>(null);
@@ -255,7 +256,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     setShowSignOutConfirm(false);
   };
 
-  // Checklist handlers
+  // Action list handlers
   const handleAddItem = () => {
     const trimmed = newItemText.trim();
     if (trimmed) {
@@ -274,25 +275,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   };
 
   const handleToggleItem = (id: string) => {
-    const item = checklistItems.find(i => i.id === id);
-    if (item && !item.completed) {
-      // Item is being completed - start removal animation
-      setRemovingItemIds(prev => new Set(prev).add(id));
-      
-      // Mark as completed first (triggers visual state change)
-      toggleItem(id);
-      
-      // Remove after animation completes (350ms for smooth fade-out)
-      setTimeout(() => {
-        deleteItem(id);
-        setRemovingItemIds(prev => {
-          const next = new Set(prev);
-          next.delete(id);
-          return next;
-        });
-      }, 350);
-    }
-    // If already completed, do nothing (shouldn't happen as completed items are removed)
+    // Simply toggle the item - completed items stay in the list now
+    toggleItem(id);
   };
 
   const handleDeleteItem = (id: string) => {
@@ -309,9 +293,11 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     }, 350);
   };
 
-  // Filter out completed items for display (they're removed after animation)
+  // Filter items for display
   const activeItems = checklistItems.filter(item => !item.completed);
+  const completedItems = checklistItems.filter(item => item.completed);
   const remainingCount = activeItems.length;
+  const completedCount = completedItems.length;
 
   // Auto-focus input when switching to actionList view
   useEffect(() => {
@@ -457,12 +443,12 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
       {/* Resize Handle */}
       <div 
         ref={resizeHandleRef}
-        className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-blue-500/20 transition-colors z-10 group"
+        className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-slate-500/20 transition-colors z-10 group"
         onMouseDown={handleMouseDown}
         onDoubleClick={handleDoubleClick}
         title="Drag to resize panel, double-click to reset"
       >
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-transparent group-hover:bg-blue-500/40 rounded-full transition-colors" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-transparent group-hover:bg-slate-500/40 rounded-full transition-colors" />
       </div>
 
       {/* Header with close button */}
@@ -515,7 +501,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'revenueos' 
-                  ? 'bg-blue-100 text-blue-700' 
+                  ? 'bg-slate-100 text-slate-700' 
                   : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
               }`}
               onClick={() => handleNavigation("/speedrun")}
@@ -528,7 +514,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'adrata' 
-                  ? 'bg-blue-100 text-blue-700' 
+                  ? 'bg-slate-100 text-slate-700' 
                   : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
               }`}
               onClick={() => handleNavigation("/adrata")}
@@ -541,12 +527,12 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'workshop' 
-                  ? 'bg-blue-100 text-blue-700' 
+                  ? 'bg-slate-100 text-slate-700' 
                   : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
               }`}
               onClick={() => handleNavigation("/workshop")}
             >
-              <ClipboardDocumentCheckIcon className="w-4 h-4 mr-3" />
+              <DocumentTextIcon className="w-4 h-4 mr-3" />
               <span className="font-medium">Workshop</span>
             </button>
 
@@ -554,7 +540,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'oasis' 
-                  ? 'bg-blue-100 text-blue-700' 
+                  ? 'bg-slate-100 text-slate-700' 
                   : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
               }`}
               onClick={() => handleNavigation("/oasis")}
@@ -567,7 +553,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'stacks' 
-                  ? 'bg-blue-100 text-blue-700' 
+                  ? 'bg-slate-100 text-slate-700' 
                   : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
               }`}
               onClick={() => handleNavigation("/stacks")}
@@ -580,7 +566,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <button
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'settings' 
-                  ? 'bg-blue-100 text-blue-700' 
+                  ? 'bg-slate-100 text-slate-700' 
                   : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
               }`}
               onClick={() => {
@@ -615,18 +601,25 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
           </div>
         )}
 
-        {/* Checklist Section */}
+        {/* Action List Section */}
         {viewMode === 'actionList' && (
           <div className="space-y-2">
             <div className="flex items-center justify-between px-3">
               <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
-                Checklist
+                Action List
               </h4>
-              {remainingCount > 0 && (
-                <span className="text-xs text-[var(--muted-foreground)]">
-                  {remainingCount} remaining
-                </span>
-              )}
+              <div className="flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
+                {completedCount > 0 && (
+                  <span className="font-medium">
+                    {completedCount} completed
+                  </span>
+                )}
+                {remainingCount > 0 && (
+                  <span>
+                    {remainingCount} remaining
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Add Item Input */}
@@ -639,23 +632,23 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   onChange={(e) => setNewItemText(e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   placeholder="Add a new item..."
-                  className="flex-1 px-3 py-2 text-sm border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  aria-label="Add checklist item"
-                  aria-describedby="checklist-input-help"
+                  className="flex-1 px-3 py-2.5 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent focus:shadow-sm transition-all"
+                  aria-label="Add action list item"
+                  aria-describedby="action-list-input-help"
                 />
                 <button
                   onClick={handleAddItem}
                   disabled={!newItemText.trim()}
-                  className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
-                  aria-label="Add item to checklist"
+                  className="px-4 py-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-1.5 shadow-sm hover:shadow-md"
+                  aria-label="Add item to action list"
                   title="Add item (Enter)"
                 >
                   <PlusIcon className="w-4 h-4" />
-                  <span className="text-xs">Add</span>
+                  <span className="text-xs font-medium">Add</span>
                 </button>
               </div>
-              <p id="checklist-input-help" className="sr-only">
-                Type an item and press Enter or click Add to add it to your checklist
+              <p id="action-list-input-help" className="sr-only">
+                Type an item and press Enter or click Add to add it to your action list
               </p>
             </div>
 
@@ -666,23 +659,25 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               </div>
             )}
 
-            {/* Checklist Items */}
+            {/* Action List Items */}
             <div 
               className="max-h-96 overflow-y-auto space-y-1"
               role="list"
-              aria-label="Checklist items"
+              aria-label="Action list items"
               aria-live="polite"
               aria-atomic="false"
             >
               {checklistLoading ? (
                 <div className="px-3 py-4 text-center text-xs text-[var(--muted-foreground)]">
-                  Loading checklist...
+                  Loading action list...
                 </div>
-              ) : remainingCount === 0 ? (
-                <div className="px-3 py-8 text-center" role="status">
-                  <ClipboardDocumentCheckIcon className="w-12 h-12 mx-auto text-[var(--muted-foreground)] mb-3 opacity-50" />
-                  <p className="text-sm font-medium text-[var(--foreground)] mb-1">
-                    No checklist items yet
+              ) : remainingCount === 0 && completedCount === 0 ? (
+                <div className="px-3 py-12 text-center" role="status">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-xl border-2 border-[var(--border)] flex items-center justify-center bg-[var(--hover-bg)]">
+                    <ClipboardDocumentCheckIcon className="w-8 h-8 text-[var(--muted-foreground)] opacity-60" />
+                  </div>
+                  <p className="text-sm font-semibold text-[var(--foreground)] mb-1.5">
+                    No action items yet
                   </p>
                   <p className="text-xs text-[var(--muted-foreground)]">
                     Add your first item above

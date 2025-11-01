@@ -3,8 +3,8 @@
 const isDesktop = process.env.TAURI_BUILD === 'true';
 
 const nextConfig = {
-  // Use regular build mode for web app
-  // output: 'export', // Commented out for web app
+  // Enable static export for Tauri desktop builds
+  output: isDesktop ? 'export' : undefined,
   trailingSlash: true,
   
   

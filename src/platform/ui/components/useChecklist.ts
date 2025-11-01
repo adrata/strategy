@@ -12,6 +12,7 @@ export interface ChecklistItem {
   text: string;
   completed: boolean;
   createdAt: number;
+  completedAt?: number;
 }
 
 interface UseChecklistReturn {
@@ -56,7 +57,8 @@ function loadChecklistItems(storageKey: string): ChecklistItem[] {
             id: item.id,
             text: item.text,
             completed: item.completed,
-            createdAt: item.createdAt
+            createdAt: item.createdAt,
+            completedAt: typeof item.completedAt === 'number' ? item.completedAt : undefined
           }));
       }
     }
@@ -184,9 +186,17 @@ export function useChecklist(
   // Toggle item completion
   const toggleItem = useCallback((id: string) => {
     setItems(prev => {
-      const newItems = prev.map(item =>
-        item.id === id ? { ...item, completed: !item.completed } : item
-      );
+      const newItems = prev.map(item => {
+        if (item.id === id) {
+          const isCompleting = !item.completed;
+          return {
+            ...item,
+            completed: isCompleting,
+            completedAt: isCompleting ? Date.now() : undefined
+          };
+        }
+        return item;
+      });
       saveItems(newItems);
       return newItems;
     });
