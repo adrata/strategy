@@ -2304,24 +2304,6 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         overflow: 'hidden'
       }}>
       
-      {/* Wake Word Toggle - positioned within right panel */}
-      <div className="absolute top-4 right-4 z-10">
-        <button
-          onClick={() => setWakeWordEnabled(!wakeWordEnabled)}
-          className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg border transition-all duration-200 ${
-            wakeWordEnabled
-              ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-              : 'bg-white text-gray-600 border-gray-300 hover:border-blue-300 hover:bg-blue-50'
-          }`}
-          title={wakeWordEnabled ? 'Wake word listening enabled' : 'Click to enable "Hey Adrata" wake word'}
-        >
-          <div className={`w-2 h-2 rounded-full ${wakeWordEnabled ? 'bg-white animate-pulse' : 'bg-gray-400'}`}></div>
-          <span className="font-medium">
-            {wakeWordEnabled ? 'Listening' : 'Wake Word'}
-          </span>
-        </button>
-      </div>
-      
       {/* Only show main header when in AI chat mode */}
       {!showDirectMessagesList && !showDMChat && (
         <ConversationHeader
