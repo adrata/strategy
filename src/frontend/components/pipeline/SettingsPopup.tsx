@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useUnifiedAuth } from '@/platform/auth';
+import { ThemePicker } from '@/platform/ui/components/ThemePicker';
 import { 
   XMarkIcon, 
   CogIcon, 
@@ -13,7 +14,8 @@ import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
   SparklesIcon,
-  BellIcon
+  BellIcon,
+  PaintBrushIcon
 } from '@heroicons/react/24/outline';
 
 interface SettingsPopupProps {
@@ -49,7 +51,7 @@ interface WorkspaceContext {
 
 export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
   const { user } = useUnifiedAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'theme'>('profile');
   const [loading, setLoading] = useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   
@@ -313,6 +315,16 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
               >
                 Notifications
               </button>
+              <button
+                onClick={() => setActiveTab('theme')}
+                className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'theme'
+                    ? 'bg-[var(--accent)] text-white'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                }`}
+              >
+                Theme
+              </button>
             </nav>
           </div>
 
@@ -331,14 +343,24 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
         <div className="flex-1 flex flex-col min-h-0">
           {/* Breadcrumb */}
           <div className="px-6 py-4 border-b border-[var(--border)] bg-[var(--background)] flex-shrink-0">
-            <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
-              <span>Settings</span>
-              <span>›</span>
-              <span className="text-[var(--foreground)] font-medium">
-                {activeTab === 'profile' && 'Profile'}
-                {activeTab === 'security' && 'Security'}
-                {activeTab === 'notifications' && 'Notifications'}
-              </span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
+                <span>Settings</span>
+                <span>›</span>
+                <span className="text-[var(--foreground)] font-medium">
+                  {activeTab === 'profile' && 'Profile'}
+                  {activeTab === 'security' && 'Security'}
+                  {activeTab === 'notifications' && 'Notifications'}
+                  {activeTab === 'theme' && 'Theme'}
+                </span>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-1 hover:bg-[var(--hover)] rounded-md transition-colors"
+                title="Close settings"
+              >
+                <XMarkIcon className="h-5 w-5 text-[var(--muted)]" />
+              </button>
             </div>
           </div>
 
@@ -691,6 +713,22 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 >
                   {loading ? 'Saving...' : 'Save Preferences'}
                 </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Theme Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                  <PaintBrushIcon className="w-5 h-5" />
+                  Theme Preferences
+                </h3>
+                <div className="space-y-4">
+                  <p className="text-sm text-[var(--muted)]">
+                    Customize the appearance of your workspace. Choose between light and dark themes, or let the system decide.
+                  </p>
+                  <ThemePicker />
+                </div>
               </div>
             </div>
           )}
