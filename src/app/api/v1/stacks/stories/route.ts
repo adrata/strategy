@@ -84,9 +84,22 @@ export async function GET(request: NextRequest) {
     console.log('🔍 [STACKS API] Query where clause:', JSON.stringify(where, null, 2));
 
     // Fetch stories with epic and assignee information
+    // Use explicit select to avoid selecting viewType column that may not exist in database
     const stories = await prisma.stacksStory.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        epicId: true,
+        projectId: true,
+        title: true,
+        description: true,
+        status: true,
+        priority: true,
+        assigneeId: true,
+        product: true,
+        section: true,
+        createdAt: true,
+        updatedAt: true,
         epic: {
           select: {
             id: true,
@@ -153,6 +166,29 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching stories:', error);
+    
+    // Handle P2022 error (column does not exist) - specifically for viewType column
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
+      const prismaError = error as any;
+      console.error('❌ [STACKS API] P2022 Error - Column does not exist:', {
+        columnName: prismaError.meta?.column_name,
+        tableName: prismaError.meta?.table_name,
+        modelName: prismaError.meta?.modelName
+      });
+      
+      // If it's the viewType column, this should have been handled by explicit select
+      // But log it for diagnostics
+      if (prismaError.meta?.column_name === 'viewType' || prismaError.meta?.modelName === 'StacksStory') {
+        console.warn('⚠️ [STACKS API] viewType column missing - falling back to explicit select query');
+        // The explicit select above should prevent this, but if it still happens, return a helpful error
+        return createErrorResponse(
+          'Database schema mismatch: viewType column not found. Please run database migrations.',
+          'SCHEMA_MISMATCH',
+          500
+        );
+      }
+    }
+    
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -180,23 +216,39 @@ export async function POST(request: NextRequest) {
       return createErrorResponse('Title and project ID are required', 'MISSING_REQUIRED_FIELDS', 400);
     }
 
+    // Build create data - exclude viewType if column doesn't exist (will be handled in catch)
+    const createData: any = {
+      title,
+      description: description || '',
+      status: status || 'todo',
+      priority: priority || 'medium',
+      assigneeId: assigneeId || null,
+      epicId: epicId || null,
+      projectId,
+      product: product || null,
+      section: section || null
+    };
+    
+    // Only include viewType if provided (will fail if column doesn't exist, handled in catch)
+    if (viewType) {
+      createData.viewType = viewType;
+    }
+
     const story = await prisma.stacksStory.create({
-      data: {
-        title,
-        description: description || '',
-        status: status || 'todo',
-        priority: priority || 'medium',
-        assigneeId: assigneeId || null,
-        epicId: epicId || null,
-        projectId,
-        viewType: viewType || 'main',
-        product: product || null,
-        section: section || null,
-        // dueDate and tags fields don't exist in schema yet
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      include: {
+      data: createData,
+      select: {
+        id: true,
+        epicId: true,
+        projectId: true,
+        title: true,
+        description: true,
+        status: true,
+        priority: true,
+        assigneeId: true,
+        product: true,
+        section: true,
+        createdAt: true,
+        updatedAt: true,
         epic: {
           select: {
             id: true,
@@ -225,6 +277,73 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error creating story:', error);
+    
+    // Handle P2022 error (column does not exist) - specifically for viewType column
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
+      const prismaError = error as any;
+      if (prismaError.meta?.column_name === 'viewType') {
+        console.warn('⚠️ [STACKS API] viewType column missing - creating story without viewType');
+        // Try create without viewType
+        try {
+          const { viewType, ...dataWithoutViewType } = createData;
+          const storyWithoutViewType = await prisma.stacksStory.create({
+            data: dataWithoutViewType,
+            select: {
+              id: true,
+              epicId: true,
+              projectId: true,
+              title: true,
+              description: true,
+              status: true,
+              priority: true,
+              assigneeId: true,
+              product: true,
+              section: true,
+              createdAt: true,
+              updatedAt: true,
+              epic: {
+                select: {
+                  id: true,
+                  title: true,
+                  description: true
+                }
+              },
+              assignee: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true
+                }
+              },
+              project: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              }
+            }
+          });
+          
+          // Transform to include default viewType
+          const transformedStory = {
+            ...storyWithoutViewType,
+            viewType: 'main' // Default since column doesn't exist
+          };
+          
+          return NextResponse.json({ story: transformedStory });
+        } catch (fallbackError) {
+          console.error('❌ [STACKS API] Fallback create also failed:', fallbackError);
+        }
+      }
+      
+      return createErrorResponse(
+        `Database column '${prismaError.meta?.column_name}' does not exist. Please run database migrations.`,
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+    
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -252,22 +371,40 @@ export async function PUT(request: NextRequest) {
       return createErrorResponse('Story ID is required', 'MISSING_STORY_ID', 400);
     }
 
+    // Build update data - exclude viewType if column doesn't exist
+    const updateData: any = {
+      ...(title && { title }),
+      ...(description !== undefined && { description }),
+      ...(status && { status }),
+      ...(priority && { priority }),
+      ...(assigneeId !== undefined && { assigneeId }),
+      ...(epicId !== undefined && { epicId }),
+      ...(product !== undefined && { product }),
+      ...(section !== undefined && { section }),
+      updatedAt: new Date()
+    };
+    
+    // Only include viewType if provided (will fail if column doesn't exist, handled in catch)
+    if (viewType !== undefined) {
+      updateData.viewType = viewType;
+    }
+
     const story = await prisma.stacksStory.update({
       where: { id },
-      data: {
-        ...(title && { title }),
-        ...(description !== undefined && { description }),
-        ...(status && { status }),
-        ...(priority && { priority }),
-        ...(assigneeId !== undefined && { assigneeId }),
-        ...(epicId !== undefined && { epicId }),
-        ...(viewType !== undefined && { viewType }),
-        ...(product !== undefined && { product }),
-        ...(section !== undefined && { section }),
-        // dueDate and tags fields don't exist in schema yet
-        updatedAt: new Date()
-      },
-      include: {
+      data: updateData,
+      select: {
+        id: true,
+        epicId: true,
+        projectId: true,
+        title: true,
+        description: true,
+        status: true,
+        priority: true,
+        assigneeId: true,
+        product: true,
+        section: true,
+        createdAt: true,
+        updatedAt: true,
         epic: {
           select: {
             id: true,
@@ -296,6 +433,74 @@ export async function PUT(request: NextRequest) {
 
   } catch (error) {
     console.error('Error updating story:', error);
+    
+    // Handle P2022 error (column does not exist) - specifically for viewType column
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2022') {
+      const prismaError = error as any;
+      if (prismaError.meta?.column_name === 'viewType') {
+        console.warn('⚠️ [STACKS API] viewType column missing - updating story without viewType');
+        // Try update without viewType
+        try {
+          const { viewType, ...dataWithoutViewType } = updateData;
+          const storyWithoutViewType = await prisma.stacksStory.update({
+            where: { id },
+            data: dataWithoutViewType,
+            select: {
+              id: true,
+              epicId: true,
+              projectId: true,
+              title: true,
+              description: true,
+              status: true,
+              priority: true,
+              assigneeId: true,
+              product: true,
+              section: true,
+              createdAt: true,
+              updatedAt: true,
+              epic: {
+                select: {
+                  id: true,
+                  title: true,
+                  description: true
+                }
+              },
+              assignee: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true
+                }
+              },
+              project: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              }
+            }
+          });
+          
+          // Transform to include default viewType
+          const transformedStory = {
+            ...storyWithoutViewType,
+            viewType: 'main' // Default since column doesn't exist
+          };
+          
+          return NextResponse.json({ story: transformedStory });
+        } catch (fallbackError) {
+          console.error('❌ [STACKS API] Fallback update also failed:', fallbackError);
+        }
+      }
+      
+      return createErrorResponse(
+        `Database column '${prismaError.meta?.column_name}' does not exist. Please run database migrations.`,
+        'SCHEMA_MISMATCH',
+        500
+      );
+    }
+    
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

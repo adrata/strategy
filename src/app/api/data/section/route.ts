@@ -82,8 +82,9 @@ async function getOptimizedWorkspaceContext(request: NextRequest): Promise<{
   }
 }
 
-// Required for static export (desktop build)
+// 🚨 CRITICAL FIX: Force dynamic rendering to prevent caching issues
 export const dynamic = 'force-static';
+export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now();

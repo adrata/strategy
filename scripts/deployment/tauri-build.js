@@ -69,6 +69,7 @@ async function configureApiRoutesForStaticExport() {
   findRouteFiles(apiDir);
   
   let modifiedCount = 0;
+  let staticParamsCount = 0;
   const backupDir = path.join(__dirname, '..', '..', '.api-routes-backup');
   
   // Create backup directory
