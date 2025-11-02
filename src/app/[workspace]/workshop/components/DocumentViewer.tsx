@@ -87,11 +87,11 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
       case 'grid':
         return <TableCellsIcon className="w-5 h-5 text-green-600" />;
       case 'code':
-        return <CodeBracketIcon className="w-5 h-5 text-[var(--muted)]" />;
+        return <CodeBracketIcon className="w-5 h-5 text-muted" />;
       case 'matrix':
         return <ChartBarIcon className="w-5 h-5 text-orange-600" />;
       default:
-        return <DocumentTextIcon className="w-5 h-5 text-[var(--muted)]" />;
+        return <DocumentTextIcon className="w-5 h-5 text-muted" />;
     }
   };
 
@@ -115,11 +115,11 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
         return <GridEditorWrapper {...editorProps} />;
       default:
         return (
-          <div className="h-full flex items-center justify-center bg-[var(--background)]">
+          <div className="h-full flex items-center justify-center bg-background">
             <div className="text-center">
-              <DocumentTextIcon className="w-16 h-16 text-[var(--muted)] mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Unknown Document Type</h3>
-              <p className="text-[var(--muted)]">This document type is not supported yet.</p>
+              <DocumentTextIcon className="w-16 h-16 text-muted mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">Unknown Document Type</h3>
+              <p className="text-muted">This document type is not supported yet.</p>
             </div>
           </div>
         );
@@ -131,13 +131,13 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
     switch (document.documentType) {
       case 'paper':
         return (
-          <div className="h-full bg-[var(--background)] overflow-auto">
+          <div className="h-full bg-background overflow-auto">
             <div className="px-6 py-6">
               <div className="max-w-4xl mx-auto">
                 <div className="prose prose-lg max-w-none">
-                  <h1 className="text-3xl font-bold text-[var(--foreground)] mb-6">{document.title}</h1>
+                  <h1 className="text-3xl font-bold text-foreground mb-6">{document.title}</h1>
                   {document.description && (
-                    <p className="text-lg text-[var(--muted)] mb-8">{document.description}</p>
+                    <p className="text-lg text-muted mb-8">{document.description}</p>
                   )}
                   <div className="text-gray-800 leading-relaxed">
                     {document.content ? (
@@ -150,8 +150,8 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
                       )
                     ) : (
                       <div className="text-center py-12">
-                        <DocumentTextIcon className="w-16 h-16 text-[var(--muted)] mx-auto mb-4" />
-                        <p className="text-[var(--muted)]">This document is empty. Click "Update" to start writing.</p>
+                        <DocumentTextIcon className="w-16 h-16 text-muted mx-auto mb-4" />
+                        <p className="text-muted">This document is empty. Click "Update" to start writing.</p>
                       </div>
                     )}
                   </div>
@@ -163,7 +163,7 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
       
       case 'code':
         return (
-          <div className="h-full bg-[var(--foreground)] text-[var(--foreground)] overflow-auto">
+          <div className="h-full bg-foreground text-foreground overflow-auto">
             <div className="px-6 py-6">
               <pre className="text-sm font-mono leading-relaxed">
                 <code>
@@ -173,8 +173,8 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
                     JSON.stringify(document.content, null, 2)
                   ) : (
                     <div className="text-center py-12">
-                      <CodeBracketIcon className="w-16 h-16 text-[var(--muted)] mx-auto mb-4" />
-                      <p className="text-[var(--muted)]">This code document is empty. Click "Update" to start coding.</p>
+                      <CodeBracketIcon className="w-16 h-16 text-muted mx-auto mb-4" />
+                      <p className="text-muted">This code document is empty. Click "Update" to start coding.</p>
                     </div>
                   )}
                 </code>
@@ -185,16 +185,16 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
       
       case 'matrix':
         return (
-          <div className="h-full bg-[var(--background)] overflow-auto">
+          <div className="h-full bg-background overflow-auto">
             <div className="px-6 py-6">
               {document.content && document.content.charts ? (
                 <div className="space-y-6">
-                  <h1 className="text-2xl font-bold text-[var(--foreground)]">{document.title}</h1>
+                  <h1 className="text-2xl font-bold text-foreground">{document.title}</h1>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {document.content.charts.map((chart: any, index: number) => (
-                      <div key={index} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">{chart.title}</h3>
-                        <div className="text-center text-[var(--muted)]">
+                      <div key={index} className="bg-background border border-border rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-foreground mb-4">{chart.title}</h3>
+                        <div className="text-center text-muted">
                           <ChartBarIcon className="w-12 h-12 mx-auto mb-2" />
                           <p>Chart visualization would appear here</p>
                         </div>
@@ -204,8 +204,8 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <ChartBarIcon className="w-16 h-16 text-[var(--muted)] mx-auto mb-4" />
-                  <p className="text-[var(--muted)]">This dashboard is empty. Click "Update" to create charts.</p>
+                  <ChartBarIcon className="w-16 h-16 text-muted mx-auto mb-4" />
+                  <p className="text-muted">This dashboard is empty. Click "Update" to create charts.</p>
                 </div>
               )}
             </div>
@@ -214,16 +214,16 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
       
       default:
         return (
-          <div className="h-full flex items-center justify-center bg-[var(--background)]">
+          <div className="h-full flex items-center justify-center bg-background">
             <div className="text-center max-w-md">
               <div className="flex items-center justify-center mb-4">
                 {getDocumentIcon(document.documentType)}
               </div>
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">{document.title}</h3>
-              <p className="text-[var(--muted)] mb-4">
+              <h3 className="text-lg font-medium text-foreground mb-2">{document.title}</h3>
+              <p className="text-muted mb-4">
                 {document.description || 'No description available'}
               </p>
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 Click "Update" to modify this document
               </p>
             </div>
@@ -233,17 +233,17 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-[var(--border)] bg-[var(--background)]">
+      <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-background">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="p-1.5 text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-1.5 text-muted hover:text-foreground hover:bg-hover rounded-lg transition-colors"
           >
             <ArrowLeftIcon className="w-4 h-4" />
           </button>
-          <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
+          <div className="flex items-center gap-2 text-sm text-muted">
             <button
               onClick={() => {
                 // Navigate back to atrium main page
@@ -256,18 +256,18 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
                   router.push('/workbench');
                 }
               }}
-              className="hover:text-[var(--foreground)] transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               All Files
             </button>
             <span>/</span>
-            <span className="text-[var(--foreground)] font-medium">{document.title}</span>
+            <span className="text-foreground font-medium">{document.title}</span>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
           {isSaving && (
-            <span className="text-xs text-[var(--muted)]">Saving...</span>
+            <span className="text-xs text-muted">Saving...</span>
           )}
           <button
             onClick={onShare}

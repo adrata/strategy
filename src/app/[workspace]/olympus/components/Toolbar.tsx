@@ -43,14 +43,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 }) => {
   return (
     <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
-      <div className="flex items-center gap-2 bg-[var(--background)] border border-[var(--border)] rounded-lg px-2 py-1.5 shadow-lg">
+      <div className="flex items-center gap-2 bg-background border border-border rounded-lg px-2 py-1.5 shadow-lg">
         {/* Cursor Pointer */}
         <button 
           onClick={() => onToolClick('cursor')}
           className={`p-1.5 rounded transition-colors ${
             activeTool === 'cursor' 
               ? 'text-blue-600 bg-blue-50' 
-              : 'text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)]'
+              : 'text-muted hover:text-gray-800 hover:bg-hover'
           }`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,7 +64,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           className={`p-1.5 rounded transition-colors ${
             activeTool === 'hand' 
               ? 'text-blue-600 bg-blue-50' 
-              : 'text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)]'
+              : 'text-muted hover:text-gray-800 hover:bg-hover'
           }`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,8 +78,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           disabled={historyIndex <= 0}
           className={`p-1.5 transition-colors ${
             historyIndex > 0 
-              ? 'text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)]' 
-              : 'text-[var(--muted)] cursor-not-allowed'
+              ? 'text-muted hover:text-gray-800 hover:bg-hover' 
+              : 'text-muted cursor-not-allowed'
           }`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,8 +93,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           disabled={historyIndex >= positionHistoryLength - 1}
           className={`p-1.5 transition-colors ${
             historyIndex < positionHistoryLength - 1 
-              ? 'text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)]' 
-              : 'text-[var(--muted)] cursor-not-allowed'
+              ? 'text-muted hover:text-gray-800 hover:bg-hover' 
+              : 'text-muted cursor-not-allowed'
           }`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +106,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <div className="relative add-popup-container">
           <button 
             onClick={onToggleAddPopup}
-            className="p-1.5 text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)] transition-colors"
+            className="p-1.5 text-muted hover:text-gray-800 hover:bg-hover transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -115,27 +115,27 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           
           {/* Add Items Popup */}
           {showAddPopup && (
-            <div className="absolute bottom-full mb-4 left-1/2 transform -translate-x-1/2 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-md overflow-hidden min-w-[300px] max-h-[400px] overflow-y-auto">
+            <div className="absolute bottom-full mb-4 left-1/2 transform -translate-x-1/2 bg-background border border-border rounded-lg shadow-md overflow-hidden min-w-[300px] max-h-[400px] overflow-y-auto">
               {workflowCategories.map((category) => (
                 <div key={category.category}>
-                  <div className="px-4 py-3 bg-[var(--panel-background)] border-b border-gray-100">
+                  <div className="px-4 py-3 bg-panel-background border-b border-gray-100">
                     <span className="text-sm font-semibold text-gray-800">{category.category}</span>
                   </div>
                   {category.items.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => onAddItem(item)}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[var(--panel-background)] transition-colors border-b border-gray-100 last:border-b-0"
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-panel-background transition-colors border-b border-gray-100 last:border-b-0"
                     >
-                      <div className="w-5 h-5 border border-[var(--border)] rounded-md flex items-center justify-center">
+                      <div className="w-5 h-5 border border-border rounded-md flex items-center justify-center">
                         {(() => {
                           const IconComponent = getTypeIcon(item.id);
-                          return <IconComponent className="w-3 h-3 text-[var(--muted)]" />;
+                          return <IconComponent className="w-3 h-3 text-muted" />;
                         })()}
                       </div>
                       <div className="flex-1">
                         <div className="text-sm font-medium text-gray-800">{item.title}</div>
-                        <div className="text-xs text-[var(--muted)] mt-0.5">{item.description}</div>
+                        <div className="text-xs text-muted mt-0.5">{item.description}</div>
                       </div>
                     </button>
                   ))}
@@ -149,7 +149,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <button 
           onClick={onOpenStartModal}
           disabled={isExecuting}
-          className="p-1.5 text-[var(--muted)] hover:text-gray-700 hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="p-1.5 text-muted hover:text-gray-700 hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <PlayIcon className="w-4 h-4" />
         </button>

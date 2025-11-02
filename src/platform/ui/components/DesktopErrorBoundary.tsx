@@ -313,8 +313,8 @@ export class DesktopErrorBoundary extends Component<Props, State> {
         }, 2000);
         
         return (
-          <div className="min-h-screen bg-[var(--panel-background)] flex flex-col items-center justify-center p-8">
-            <div className="max-w-2xl w-full bg-[var(--background)] rounded-lg shadow-lg p-6">
+          <div className="min-h-screen bg-panel-background flex flex-col items-center justify-center p-8">
+            <div className="max-w-2xl w-full bg-background rounded-lg shadow-lg p-6">
               <div className="text-center">
                 <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                   <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -322,13 +322,13 @@ export class DesktopErrorBoundary extends Component<Props, State> {
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 </div>
-                <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+                <h2 className="text-xl font-semibold text-foreground mb-2">
                   Loading Updated Code
                 </h2>
-                <p className="text-[var(--muted)] mb-4">
+                <p className="text-muted mb-4">
                   The application has been updated. Reloading...
                 </p>
-                <div className="text-sm text-[var(--muted)]">
+                <div className="text-sm text-muted">
                   If the page doesn't reload automatically, please refresh manually.
                 </div>
               </div>
@@ -345,8 +345,8 @@ export class DesktopErrorBoundary extends Component<Props, State> {
       const solutions = this.getPossibleSolutions();
 
       return (
-        <div className="min-h-screen bg-[var(--panel-background)] flex flex-col items-center justify-center p-8">
-          <div className="max-w-2xl w-full bg-[var(--background)] rounded-lg shadow-lg p-6">
+        <div className="min-h-screen bg-panel-background flex flex-col items-center justify-center p-8">
+          <div className="max-w-2xl w-full bg-background rounded-lg shadow-lg p-6">
             <div className="text-center mb-6">
               <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                 <svg
@@ -370,7 +370,7 @@ export class DesktopErrorBoundary extends Component<Props, State> {
                 </svg>
               </div>
 
-              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 Something unexpected happened
               </h2>
 
@@ -432,7 +432,7 @@ export class DesktopErrorBoundary extends Component<Props, State> {
               <summary className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800">
                 Technical Information (for support)
               </summary>
-              <div className="mt-3 p-4 bg-[var(--hover)] rounded text-xs font-mono text-gray-800 max-h-80 overflow-auto">
+              <div className="mt-3 p-4 bg-hover rounded text-xs font-mono text-gray-800 max-h-80 overflow-auto">
                 <div className="space-y-3">
                   <div>
                     <div className="font-semibold text-blue-700 mb-1">
@@ -476,7 +476,7 @@ export class DesktopErrorBoundary extends Component<Props, State> {
                   {this['state']['errorDetails'] && (
                     <div>
                       <div className="font-semibold mb-1">Debug Context:</div>
-                      <pre className="whitespace-pre-wrap text-xs bg-[var(--background)] p-2 rounded">
+                      <pre className="whitespace-pre-wrap text-xs bg-background p-2 rounded">
                         {JSON.stringify(this.state.errorDetails, null, 2)}
                       </pre>
                     </div>
@@ -485,7 +485,7 @@ export class DesktopErrorBoundary extends Component<Props, State> {
                   {this.state.error?.stack && (
                     <div>
                       <div className="font-semibold mb-1">Stack Trace:</div>
-                      <pre className="whitespace-pre-wrap text-xs bg-[var(--background)] p-2 rounded">
+                      <pre className="whitespace-pre-wrap text-xs bg-background p-2 rounded">
                         {this.state.error.stack}
                       </pre>
                     </div>
@@ -494,7 +494,7 @@ export class DesktopErrorBoundary extends Component<Props, State> {
                   {this.state.errorInfo?.componentStack && (
                     <div>
                       <div className="font-semibold mb-1">Component Stack:</div>
-                      <pre className="whitespace-pre-wrap text-xs bg-[var(--background)] p-2 rounded">
+                      <pre className="whitespace-pre-wrap text-xs bg-background p-2 rounded">
                         {this.state.errorInfo.componentStack}
                       </pre>
                     </div>

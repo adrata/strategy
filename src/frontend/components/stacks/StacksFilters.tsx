@@ -187,7 +187,7 @@ export function StacksFilters({
           placeholder="Search backlog..."
           value={searchQuery}
           onChange={handleSearchChange}
-          className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+          className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
         />
       </div>
 
@@ -195,7 +195,7 @@ export function StacksFilters({
       <div className="relative">
         <button
           onClick={() => setIsSortOpen(!isSortOpen)}
-          className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] border border-[var(--border)] rounded-lg transition-colors"
+          className="flex items-center gap-2 px-3 py-2 text-sm text-muted hover:text-foreground hover:bg-hover border border-border rounded-lg transition-colors"
         >
           <AdjustmentsHorizontalIcon className="h-4 w-4" />
           Sort
@@ -203,14 +203,14 @@ export function StacksFilters({
         </button>
         
         {isSortOpen && (
-          <div className="absolute right-0 top-full mt-1 w-48 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg z-50">
+          <div className="absolute right-0 top-full mt-1 w-48 bg-background border border-border rounded-lg shadow-lg z-50">
             <div className="py-1">
               {SORT_OPTIONS.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => handleSortSelect(option.value)}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-[var(--hover)] ${
-                    sortField === option.value ? 'bg-[var(--hover)] text-[var(--foreground)]' : 'text-[var(--muted)]'
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-hover ${
+                    sortField === option.value ? 'bg-hover text-foreground' : 'text-muted'
                   }`}
                 >
                   {option.label}
@@ -230,10 +230,10 @@ export function StacksFilters({
       <div className="relative">
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
-          className={`flex items-center gap-2 px-3 py-2 text-sm border border-[var(--border)] rounded-lg transition-colors ${
+          className={`flex items-center gap-2 px-3 py-2 text-sm border border-border rounded-lg transition-colors ${
             hasActiveFilters 
               ? 'bg-[var(--primary)] text-white' 
-              : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+              : 'text-muted hover:text-foreground hover:bg-hover'
           }`}
         >
           <FunnelIcon className="h-4 w-4" />
@@ -247,17 +247,17 @@ export function StacksFilters({
         </button>
         
         {isFilterOpen && (
-          <div className="absolute right-0 top-full mt-1 w-64 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg z-50">
+          <div className="absolute right-0 top-full mt-1 w-64 bg-background border border-border rounded-lg shadow-lg z-50">
             <div className="p-4 space-y-4">
               {/* Priority Filter */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Priority
                 </label>
                 <select
                   value={filters.priority}
                   onChange={(e) => handleFilterChange('priority', e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-[var(--primary)]"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-[var(--primary)]"
                 >
                   {PRIORITY_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -269,13 +269,13 @@ export function StacksFilters({
 
               {/* Status Filter */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Status
                 </label>
                 <select
                   value={filters.status}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-[var(--primary)]"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-[var(--primary)]"
                 >
                   {STATUS_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -287,13 +287,13 @@ export function StacksFilters({
 
               {/* Workstream Filter */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Workstream
                 </label>
                 <select
                   value={filters.workstream}
                   onChange={(e) => handleFilterChange('workstream', e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-[var(--primary)]"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-[var(--primary)]"
                 >
                   {WORKSTREAM_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -307,7 +307,7 @@ export function StacksFilters({
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] border border-[var(--border)] rounded-lg transition-colors"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-muted hover:text-foreground hover:bg-hover border border-border rounded-lg transition-colors"
                 >
                   <XMarkIcon className="h-4 w-4" />
                   Clear Filters
@@ -322,7 +322,7 @@ export function StacksFilters({
       <div className="relative">
         <button
           onClick={() => setIsColumnOpen(!isColumnOpen)}
-          className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] border border-[var(--border)] rounded-lg transition-colors"
+          className="flex items-center gap-2 px-3 py-2 text-sm text-muted hover:text-foreground hover:bg-hover border border-border rounded-lg transition-colors"
         >
           <AdjustmentsHorizontalIcon className="h-4 w-4" />
           Columns
@@ -330,20 +330,20 @@ export function StacksFilters({
         </button>
         
         {isColumnOpen && (
-          <div className="absolute right-0 top-full mt-1 w-48 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg z-50">
+          <div className="absolute right-0 top-full mt-1 w-48 bg-background border border-border rounded-lg shadow-lg z-50">
             <div className="py-1">
               {COLUMN_OPTIONS.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => handleColumnToggle(option.value)}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-[var(--hover)] ${
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-hover ${
                     option.value === 'all' 
                       ? visibleColumns.length === COLUMN_OPTIONS.length - 1 
-                        ? 'bg-[var(--hover)] text-[var(--foreground)]' 
-                        : 'text-[var(--muted)]'
+                        ? 'bg-hover text-foreground' 
+                        : 'text-muted'
                       : visibleColumns.includes(option.value)
-                        ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                        : 'text-[var(--muted)]'
+                        ? 'bg-hover text-foreground'
+                        : 'text-muted'
                   }`}
                 >
                   {option.label}

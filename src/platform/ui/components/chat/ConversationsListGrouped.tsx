@@ -174,7 +174,7 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
 
     return (
       <div key={title} className="mb-6">
-        <h3 className="text-xs font-semibold text-[var(--muted)] dark:text-[var(--muted)] uppercase tracking-wide mb-2">
+        <h3 className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">
           {title}
         </h3>
         <div className="space-y-1">
@@ -184,8 +184,8 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
               onClick={() => handleConversationClick(conv.id)}
               className={`w-full px-4 py-3 text-left rounded-lg transition-colors ${
                 selectedConversationId === conv.id || conv.isActive
-                  ? 'bg-[var(--panel-background)] text-[var(--foreground)]'
-                  : 'hover:bg-[var(--panel-background)] text-[var(--foreground)]'
+                  ? 'bg-panel-background text-foreground'
+                  : 'hover:bg-panel-background text-foreground'
               }`}
             >
               <div className="flex flex-col">
@@ -193,11 +193,11 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
                   <span className="font-medium text-sm truncate flex-1">
                     {conv.title}
                   </span>
-                  <span className="text-xs text-[var(--muted)] dark:text-[var(--muted)] ml-2 flex-shrink-0">
+                  <span className="text-xs text-muted ml-2 flex-shrink-0">
                     {formatTime(conv.lastActivity)}
                   </span>
                 </div>
-                <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)] truncate">
+                <p className="text-xs text-muted truncate">
                   {getLastMessagePreview(conv)}
                 </p>
               </div>
@@ -211,7 +211,7 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
   if (conversations.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center p-4">
-        <div className="text-center text-[var(--muted)] dark:text-[var(--muted)]">
+        <div className="text-center text-muted">
           <div className="text-4xl mb-3">💬</div>
           <h3 className="text-sm font-medium mb-1">No conversations yet</h3>
           <p className="text-xs">Start a new conversation to get started</p>
@@ -221,9 +221,9 @@ export function ConversationsListGrouped({ onConversationSelect }: Conversations
   }
 
   return (
-    <div className="flex flex-col h-full bg-[var(--background)]">
-      <div className="flex-shrink-0 px-4 py-4 border-b border-[var(--border)] dark:border-[var(--border)]">
-        <h2 className="text-lg font-semibold text-[var(--foreground)] dark:text-[var(--foreground)]">
+    <div className="flex flex-col h-full bg-background">
+      <div className="flex-shrink-0 px-4 py-4 border-b border-border">
+        <h2 className="text-lg font-semibold text-foreground">
           Chats
         </h2>
       </div>

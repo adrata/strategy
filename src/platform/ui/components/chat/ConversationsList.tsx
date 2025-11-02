@@ -97,7 +97,7 @@ export function ConversationsList({
   if (!Array.isArray(conversations) || conversations['length'] === 0) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-center text-[var(--muted)] dark:text-[var(--muted)]">
+        <div className="text-center text-muted dark:text-muted">
           <div className="text-6xl mb-4">💬</div>
           <h3 className="text-lg font-medium mb-2">No conversations yet</h3>
           <p className="text-sm">Start a new conversation to get started</p>
@@ -109,7 +109,7 @@ export function ConversationsList({
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="p-4">
-        <h2 className="text-lg font-semibold text-[var(--foreground)] dark:text-white mb-4">
+        <h2 className="text-lg font-semibold text-foreground dark:text-white mb-4">
           Recent Conversations
         </h2>
 
@@ -118,7 +118,7 @@ export function ConversationsList({
             <button
               key={conversation.id}
               onClick={() => handleConversationClick(conversation)}
-              className="w-full p-3 rounded-lg hover:bg-[var(--panel-background)] transition-colors text-left group"
+              className="w-full p-3 rounded-lg hover:bg-panel-background transition-colors text-left group"
             >
               <div className="flex items-start space-x-3">
                 {/* Avatar */}
@@ -130,14 +130,14 @@ export function ConversationsList({
                     <h3
                       className={`font-medium truncate ${
                         conversation.unreadCount > 0
-                          ? "text-[var(--foreground)] dark:text-white"
+                          ? "text-foreground dark:text-white"
                           : "text-gray-700 dark:text-gray-300"
                       }`}
                     >
                       {conversation.name}
                     </h3>
                     {conversation['lastMessage'] && (
-                      <span className="text-xs text-[var(--muted)] dark:text-[var(--muted)] flex-shrink-0 ml-2">
+                      <span className="text-xs text-muted dark:text-muted flex-shrink-0 ml-2">
                         {formatTime(conversation.lastMessage.timestamp)}
                       </span>
                     )}
@@ -147,8 +147,8 @@ export function ConversationsList({
                     <p
                       className={`text-sm truncate ${
                         conversation.unreadCount > 0
-                          ? "text-[var(--muted)] dark:text-gray-300 font-medium"
-                          : "text-[var(--muted)] dark:text-[var(--muted)]"
+                          ? "text-muted dark:text-gray-300 font-medium"
+                          : "text-muted dark:text-muted"
                       }`}
                     >
                       {getLastMessagePreview(conversation)}

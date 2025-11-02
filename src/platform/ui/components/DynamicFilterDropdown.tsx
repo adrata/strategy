@@ -40,11 +40,11 @@ export function DynamicFilterDropdown({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-3 py-2 pr-10 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 cursor-pointer hover:border-gray-400 flex items-center justify-between"
+        className="w-full px-3 py-2 pr-10 text-sm border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 cursor-pointer hover:border-gray-400 flex items-center justify-between"
       >
         <span className="truncate">{displayLabel}</span>
         <svg 
-          className={`w-4 h-4 text-[var(--muted)] ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
+          className={`w-4 h-4 text-muted ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
@@ -54,7 +54,7 @@ export function DynamicFilterDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
           <div className="py-1">
             {/* "All" option */}
             <button
@@ -62,7 +62,7 @@ export function DynamicFilterDropdown({
                 onChange('all');
                 setIsOpen(false);
               }}
-              className={`w-full px-3 py-2 text-left text-sm hover:bg-[var(--hover)] transition-colors ${
+              className={`w-full px-3 py-2 text-left text-sm hover:bg-hover transition-colors ${
                 value === 'all' ? 'bg-gray-50 text-gray-600 font-medium' : 'text-gray-700'
               }`}
             >
@@ -77,21 +77,21 @@ export function DynamicFilterDropdown({
                   onChange(option.value);
                   setIsOpen(false);
                 }}
-                className={`w-full px-3 py-2 text-left text-sm hover:bg-[var(--hover)] transition-colors ${
+                className={`w-full px-3 py-2 text-left text-sm hover:bg-hover transition-colors ${
                   value === option.value ? 'bg-gray-50 text-gray-600 font-medium' : 'text-gray-700'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="truncate">{option.label}</span>
                   {option.count !== undefined && (
-                    <span className="text-xs text-[var(--muted)] ml-2">({option.count})</span>
+                    <span className="text-xs text-muted ml-2">({option.count})</span>
                   )}
                 </div>
               </button>
             ))}
             
             {options['length'] === 0 && (
-              <div className="px-3 py-2 text-sm text-[var(--muted)] italic">
+              <div className="px-3 py-2 text-sm text-muted italic">
                 No options available
               </div>
             )}

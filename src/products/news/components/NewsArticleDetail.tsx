@@ -64,13 +64,13 @@ export function NewsArticleDetail({ article, onBack }: NewsArticleDetailProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-[var(--border)] p-6">
+      <div className="flex-shrink-0 border-b border-border p-6">
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -84,7 +84,7 @@ export function NewsArticleDetail({ article, onBack }: NewsArticleDetailProps) {
               className={`p-2 rounded-lg transition-colors ${
                 article.isFavorite 
                   ? 'text-yellow-500 hover:text-yellow-600' 
-                  : 'text-[var(--muted)] hover:text-yellow-500'
+                  : 'text-muted hover:text-yellow-500'
               }`}
               title={article.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
             >
@@ -97,7 +97,7 @@ export function NewsArticleDetail({ article, onBack }: NewsArticleDetailProps) {
               onClick={handleMarkAsRead}
               className={`p-2 rounded-lg transition-colors ${
                 article.isRead 
-                  ? 'text-[var(--muted)] hover:text-blue-500' 
+                  ? 'text-muted hover:text-blue-500' 
                   : 'text-blue-500 hover:text-blue-600'
               }`}
               title={article.isRead ? 'Mark as unread' : 'Mark as read'}
@@ -115,7 +115,7 @@ export function NewsArticleDetail({ article, onBack }: NewsArticleDetailProps) {
               <button
                 onClick={handleReadAloud}
                 disabled={isReading}
-                className="p-2 rounded-lg text-[var(--muted)] hover:text-blue-500 transition-colors disabled:opacity-50"
+                className="p-2 rounded-lg text-muted hover:text-blue-500 transition-colors disabled:opacity-50"
                 title="Read article aloud"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,18 +126,18 @@ export function NewsArticleDetail({ article, onBack }: NewsArticleDetailProps) {
           </div>
         </div>
         
-        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-4 leading-tight">
+        <h1 className="text-2xl font-bold text-foreground mb-4 leading-tight">
           {article.title}
         </h1>
         
-        <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
+        <div className="flex items-center gap-4 text-sm text-muted">
           <span className="font-medium">{article.source}</span>
           {article.author && (
             <span>by {article.author}</span>
           )}
           <span>{formatDate(article.publishedAt)}</span>
           {getContextDisplay() && (
-            <span className="font-medium text-[var(--foreground)]">
+            <span className="font-medium text-foreground">
               {getContextDisplay()}
             </span>
           )}
@@ -163,7 +163,7 @@ export function NewsArticleDetail({ article, onBack }: NewsArticleDetailProps) {
         {/* Description */}
         {article.description && (
           <div className="mb-6">
-            <p className="text-lg text-[var(--muted)] leading-relaxed">
+            <p className="text-lg text-muted leading-relaxed">
               {article.description}
             </p>
           </div>
@@ -172,7 +172,7 @@ export function NewsArticleDetail({ article, onBack }: NewsArticleDetailProps) {
         {/* Content */}
         {article.content && (
           <div className="prose prose-gray max-w-none">
-            <div className="text-[var(--foreground)] leading-relaxed whitespace-pre-wrap">
+            <div className="text-foreground leading-relaxed whitespace-pre-wrap">
               {article.content}
             </div>
           </div>
@@ -180,13 +180,13 @@ export function NewsArticleDetail({ article, onBack }: NewsArticleDetailProps) {
 
         {/* Tags */}
         {article.tags.length > 0 && (
-          <div className="mt-8 pt-6 border-t border-[var(--border)]">
-            <h3 className="text-sm font-medium text-[var(--muted)] mb-3">Tags</h3>
+          <div className="mt-8 pt-6 border-t border-border">
+            <h3 className="text-sm font-medium text-muted mb-3">Tags</h3>
             <div className="flex flex-wrap gap-2">
               {article.tags.map((tag, index) => (
                 <span 
                   key={index}
-                  className="px-3 py-1 text-sm bg-[var(--hover)] text-[var(--muted)] rounded-full"
+                  className="px-3 py-1 text-sm bg-hover text-muted rounded-full"
                 >
                   {tag}
                 </span>
@@ -196,7 +196,7 @@ export function NewsArticleDetail({ article, onBack }: NewsArticleDetailProps) {
         )}
 
         {/* External Link */}
-        <div className="mt-8 pt-6 border-t border-[var(--border)]">
+        <div className="mt-8 pt-6 border-t border-border">
           <a
             href={article.url}
             target="_blank"

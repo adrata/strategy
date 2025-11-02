@@ -22,10 +22,10 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
     <div className="p-6 space-y-8">
       {/* Business Overview */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Business Intelligence</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Business Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Account Value</h4>
+            <h4 className="font-medium text-foreground mb-2">Account Value</h4>
             <InlineEditField
               value={record?.accountValue ? `$${record.accountValue.toLocaleString()}` : record?.revenue ? `$${record.revenue.toLocaleString()}` : ''}
               field="accountValue"
@@ -36,11 +36,11 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
               placeholder="Enter account value"
               className="text-2xl font-bold text-blue-600"
             />
-            <p className="text-sm text-[var(--muted)] mt-1">Annual contract value</p>
+            <p className="text-sm text-muted mt-1">Annual contract value</p>
           </div>
           
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Growth Rate</h4>
+            <h4 className="font-medium text-foreground mb-2">Growth Rate</h4>
             <InlineEditField
               value={record?.growthRate ? `${Math.round(record.growthRate)}%` : ''}
               field="growthRate"
@@ -51,11 +51,11 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
               placeholder="Enter growth rate"
               className="text-2xl font-bold text-green-600"
             />
-            <p className="text-sm text-[var(--muted)] mt-1">Year over year</p>
+            <p className="text-sm text-muted mt-1">Year over year</p>
           </div>
           
           <div className="bg-purple-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Expansion Potential</h4>
+            <h4 className="font-medium text-foreground mb-2">Expansion Potential</h4>
             <InlineEditField
               value={record?.expansionPotential}
               field="expansionPotential"
@@ -66,14 +66,14 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
               placeholder="Enter expansion potential"
               className="text-lg font-bold text-purple-600"
             />
-            <p className="text-sm text-[var(--muted)] mt-1">Upsell opportunity</p>
+            <p className="text-sm text-muted mt-1">Upsell opportunity</p>
           </div>
         </div>
       </div>
 
       {/* Business Challenges */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Business Challenges & Priorities</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Business Challenges & Priorities</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Current Challenges</label>
@@ -135,50 +135,50 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
 
       {/* Industry Context */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Industry Context</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Industry Context</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Company Profile</h4>
+          <div className="bg-panel-background rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-3">Company Profile</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Industry:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.industry || '-'}</span>
+                <span className="text-muted">Industry:</span>
+                <span className="font-medium text-foreground">{record?.industry || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Company Size:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.size || record?.companySize || '-'}</span>
+                <span className="text-muted">Company Size:</span>
+                <span className="font-medium text-foreground">{record?.size || record?.companySize || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Revenue Range:</span>
-                <span className="font-medium text-[var(--foreground)]">
+                <span className="text-muted">Revenue Range:</span>
+                <span className="font-medium text-foreground">
                   {record?.revenue ? `$${record.revenue.toLocaleString()}` : '-'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Market Position:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.marketPosition || 'Established'}</span>
+                <span className="text-muted">Market Position:</span>
+                <span className="font-medium text-foreground">{record?.marketPosition || 'Established'}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Decision Making</h4>
+          <div className="bg-panel-background rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-3">Decision Making</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Budget Cycle:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.budgetCycle || 'Annual'}</span>
+                <span className="text-muted">Budget Cycle:</span>
+                <span className="font-medium text-foreground">{record?.budgetCycle || 'Annual'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Approval Process:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.approvalProcess || 'Committee'}</span>
+                <span className="text-muted">Approval Process:</span>
+                <span className="font-medium text-foreground">{record?.approvalProcess || 'Committee'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Decision Timeline:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.decisionTimeline || '3-6 months'}</span>
+                <span className="text-muted">Decision Timeline:</span>
+                <span className="font-medium text-foreground">{record?.decisionTimeline || '3-6 months'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Key Influencers:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.keyInfluencers || 'C-Level'}</span>
+                <span className="text-muted">Key Influencers:</span>
+                <span className="font-medium text-foreground">{record?.keyInfluencers || 'C-Level'}</span>
               </div>
             </div>
           </div>
@@ -187,10 +187,10 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
 
       {/* Strategic Initiatives */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Strategic Initiatives</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Strategic Initiatives</h3>
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Current Initiatives</h4>
+            <h4 className="font-medium text-foreground mb-2">Current Initiatives</h4>
             <div className="space-y-2 text-sm text-gray-700">
               {record?.strategicInitiatives?.length > 0 ? (
                 record.strategicInitiatives.map((initiative: string, index: number) => (
@@ -202,14 +202,14 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
                   <p>• Customer experience enhancement</p>
                   <p>• Market expansion and growth</p>
                   <p>• Operational efficiency improvements</p>
-                  <p className="text-[var(--muted)] italic mt-2">Ask about current strategic projects</p>
+                  <p className="text-muted italic mt-2">Ask about current strategic projects</p>
                 </div>
               )}
             </div>
           </div>
 
           <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Success Metrics</h4>
+            <h4 className="font-medium text-foreground mb-2">Success Metrics</h4>
             <div className="space-y-2 text-sm text-gray-700">
               {record?.successMetrics?.length > 0 ? (
                 record.successMetrics.map((metric: string, index: number) => (
@@ -221,7 +221,7 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
                   <p>• Customer satisfaction and retention</p>
                   <p>• Operational efficiency gains</p>
                   <p>• Market share expansion</p>
-                  <p className="text-[var(--muted)] italic mt-2">Understand how they measure success</p>
+                  <p className="text-muted italic mt-2">Understand how they measure success</p>
                 </div>
               )}
             </div>
@@ -231,10 +231,10 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
 
       {/* Competitive Landscape */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Competitive Position</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Competitive Position</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Competitive Advantages</h4>
+            <h4 className="font-medium text-foreground mb-2">Competitive Advantages</h4>
             <div className="space-y-1 text-sm text-green-700">
               <p>• {record?.competitiveAdvantages?.[0] || 'Market leadership'}</p>
               <p>• {record?.competitiveAdvantages?.[1] || 'Innovation capability'}</p>
@@ -243,7 +243,7 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
           </div>
           
           <div className="bg-yellow-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Market Threats</h4>
+            <h4 className="font-medium text-foreground mb-2">Market Threats</h4>
             <div className="space-y-1 text-sm text-yellow-700">
               <p>• {record?.marketThreats?.[0] || 'New market entrants'}</p>
               <p>• {record?.marketThreats?.[1] || 'Technology disruption'}</p>
@@ -252,7 +252,7 @@ export function UniversalBusinessTab({ record, recordType, onSave }: UniversalBu
           </div>
           
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Growth Opportunities</h4>
+            <h4 className="font-medium text-foreground mb-2">Growth Opportunities</h4>
             <div className="space-y-1 text-sm text-blue-700">
               <p>• {record?.growthOpportunities?.[0] || 'Market expansion'}</p>
               <p>• {record?.growthOpportunities?.[1] || 'Product innovation'}</p>

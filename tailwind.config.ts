@@ -41,6 +41,128 @@ const config: Config = {
         },
       },
       colors: {
+        // CSS Variable Mappings - Core Theme Colors
+        // These map to CSS variables set by the theme system
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        border: "var(--border)",
+        muted: {
+          DEFAULT: "var(--muted)",
+          light: "var(--muted-light)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          hover: "var(--accent-hover)",
+        },
+        hover: "var(--hover)",
+        "loading-bg": "var(--loading-bg)",
+        "panel-background": "var(--panel-background)",
+        "scrollbar-thumb": "var(--scrollbar-thumb)",
+        
+        // Shadcn Semantic Tokens (mapped to CSS variables)
+        primary: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--button-text)",
+        },
+        secondary: {
+          DEFAULT: "var(--hover)",
+          foreground: "var(--foreground)",
+        },
+        destructive: {
+          DEFAULT: "var(--error)",
+          foreground: "var(--error-text)",
+        },
+        popover: {
+          DEFAULT: "var(--background)",
+          foreground: "var(--foreground)",
+        },
+        card: {
+          DEFAULT: "var(--background)",
+          foreground: "var(--foreground)",
+        },
+        input: "var(--border)",
+        ring: "var(--focus-ring)",
+        
+        // Status Colors
+        success: {
+          DEFAULT: "var(--success)",
+          bg: "var(--success-bg)",
+          text: "var(--success-text)",
+          border: "var(--success-border)",
+        },
+        warning: {
+          DEFAULT: "var(--warning)",
+          bg: "var(--warning-bg)",
+          text: "var(--warning-text)",
+          border: "var(--warning-border)",
+        },
+        error: {
+          DEFAULT: "var(--error)",
+          bg: "var(--error-bg)",
+          text: "var(--error-text)",
+          border: "var(--error-border)",
+        },
+        info: {
+          DEFAULT: "var(--info)",
+          bg: "var(--info-bg)",
+          text: "var(--info-text)",
+          border: "var(--info-border)",
+        },
+        
+        // Badge/Status Semantic Colors
+        "status-new": {
+          bg: "var(--status-new-bg)",
+          text: "var(--status-new-text)",
+        },
+        "status-contacted": {
+          bg: "var(--status-contacted-bg)",
+          text: "var(--status-contacted-text)",
+        },
+        "status-qualified": {
+          bg: "var(--status-qualified-bg)",
+          text: "var(--status-qualified-text)",
+        },
+        "status-won": {
+          bg: "var(--status-won-bg)",
+          text: "var(--status-won-text)",
+        },
+        "status-lost": {
+          bg: "var(--status-lost-bg)",
+          text: "var(--status-lost-text)",
+        },
+        
+        // Priority Colors
+        "priority-high": {
+          bg: "var(--priority-high-bg)",
+          text: "var(--priority-high-text)",
+        },
+        "priority-medium": {
+          bg: "var(--priority-medium-bg)",
+          text: "var(--priority-medium-text)",
+        },
+        "priority-low": {
+          bg: "var(--priority-low-bg)",
+          text: "var(--priority-low-text)",
+        },
+        
+        // Button Colors
+        "button-text": "var(--button-text)",
+        "button-background": "var(--button-background)",
+        "button-hover": "var(--button-hover)",
+        "button-active": "var(--button-active)",
+        
+        // Special Elements
+        "active-app-border": "var(--active-app-border)",
+        "overlay-bg": "var(--overlay-bg)",
+        
+        // High Contrast Colors
+        "high-contrast": {
+          bg: "var(--high-contrast-bg)",
+          fg: "var(--high-contrast-fg)",
+          border: "var(--high-contrast-border)",
+          accent: "var(--high-contrast-accent)",
+        },
+        
         // Custom navy color scheme based on #1B3758
         navy: {
           50: '#f0f4f8',   // Very light navy tint
@@ -55,7 +177,7 @@ const config: Config = {
           900: '#1B3758',  // Base navy color
           950: '#102a43',  // Darkest navy
         },
-        // Category-specific color schemes
+        // Category-specific color schemes (kept for direct access, but prefer category utilities)
         category: {
           speedrun: {
             50: '#ECFDF5',

@@ -177,22 +177,22 @@ export function AIPersonalitySettings({
       <div className="flex items-center space-x-3">
         <SparklesIcon className="w-6 h-6 text-purple-500" />
         <div>
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">AI Personality</h3>
-          <p className="text-sm text-[var(--muted)]">
+          <h3 className="text-lg font-semibold text-foreground">AI Personality</h3>
+          <p className="text-sm text-muted">
             Choose how your AI assistant should interact with you
           </p>
         </div>
       </div>
 
       {/* Current Selection Display */}
-      <div className="bg-[var(--card)] rounded-lg p-4 border border-[var(--border)]">
+      <div className="bg-[var(--card)] rounded-lg p-4 border border-border">
         <div className="flex items-center space-x-3">
           <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${selectedOption.gradient} flex items-center justify-center`}>
             <selectedOption.icon className="w-5 h-5 text-white" />
           </div>
           <div>
-            <div className="font-medium text-[var(--foreground)]">{selectedOption.name}</div>
-            <div className="text-sm text-[var(--muted)]">{selectedOption.description}</div>
+            <div className="font-medium text-foreground">{selectedOption.name}</div>
+            <div className="text-sm text-muted">{selectedOption.description}</div>
           </div>
         </div>
       </div>
@@ -210,7 +210,7 @@ export function AIPersonalitySettings({
                 relative group cursor-pointer rounded-lg border-2 p-4 transition-all duration-200
                 ${isSelected 
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
-                  : 'border-[var(--border)] bg-[var(--card)] hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/10'
+                  : 'border-border bg-[var(--card)] hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/10'
                 }
               `}
               onClick={() => handlePersonalitySelect(personality)}
@@ -231,12 +231,12 @@ export function AIPersonalitySettings({
                     <IconComponent className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <div className="font-medium text-[var(--foreground)]">{personality.name}</div>
-                    <div className="text-xs text-[var(--muted)]">{personality.tone}</div>
+                    <div className="font-medium text-foreground">{personality.name}</div>
+                    <div className="text-xs text-muted">{personality.tone}</div>
                   </div>
                 </div>
 
-                <p className="text-sm text-[var(--muted)] leading-relaxed">
+                <p className="text-sm text-muted leading-relaxed">
                   {personality.description}
                 </p>
 
@@ -259,19 +259,19 @@ export function AIPersonalitySettings({
       {/* Preview Modal */}
       {previewMode && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-6 max-w-md mx-4 shadow-xl">
+          <div className="bg-background rounded-lg border border-border p-6 max-w-md mx-4 shadow-xl">
             <div className="flex items-center space-x-2 mb-4">
               <SparklesIcon className="w-5 h-5 text-blue-500" />
-              <span className="font-medium text-[var(--foreground)]">AI Preview</span>
+              <span className="font-medium text-foreground">AI Preview</span>
             </div>
             
-            <div className="bg-[var(--card)] rounded-lg p-4 border border-[var(--border)]">
-              <p className="text-sm text-[var(--foreground)] leading-relaxed">
+            <div className="bg-[var(--card)] rounded-lg p-4 border border-border">
+              <p className="text-sm text-foreground leading-relaxed">
                 "{previewText}"
               </p>
             </div>
             
-            <div className="mt-4 text-xs text-[var(--muted)] text-center">
+            <div className="mt-4 text-xs text-muted text-center">
               This is how your AI will respond with this personality
             </div>
           </div>
@@ -279,9 +279,9 @@ export function AIPersonalitySettings({
       )}
 
       {/* Usage Tips */}
-      <div className="bg-[var(--card)] rounded-lg p-4 border border-[var(--border)]">
-        <h4 className="font-medium text-[var(--foreground)] mb-2">💡 Tips</h4>
-        <ul className="text-sm text-[var(--muted)] space-y-1">
+      <div className="bg-[var(--card)] rounded-lg p-4 border border-border">
+        <h4 className="font-medium text-foreground mb-2">💡 Tips</h4>
+        <ul className="text-sm text-muted space-y-1">
           <li>• Your AI personality affects ALL responses across Monaco and Pipeline</li>
           <li>• You can change your personality anytime in settings</li>
           <li>• Try different personalities for different situations</li>

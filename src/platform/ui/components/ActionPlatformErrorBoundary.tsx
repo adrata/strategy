@@ -320,7 +320,7 @@ export class ActionPlatformErrorBoundary extends Component<Props, State> {
                   className={`w-full px-4 py-2 rounded-md flex items-center justify-center gap-2 text-sm font-medium transition-colors ${
                     option.primary
                       ? "bg-current text-white hover:opacity-90"
-                      : "bg-[var(--background)]/50 hover:bg-[var(--background)]/70"
+                      : "bg-background/50 hover:bg-background/70"
                   }`}
                 >
                   <option.icon className="w-4 h-4" />
@@ -330,7 +330,7 @@ export class ActionPlatformErrorBoundary extends Component<Props, State> {
 
               <button
                 onClick={this.copyErrorDetails}
-                className="w-full px-4 py-2 rounded-md flex items-center justify-center gap-2 text-sm font-medium bg-[var(--background)]/30 hover:bg-[var(--background)]/50 transition-colors"
+                className="w-full px-4 py-2 rounded-md flex items-center justify-center gap-2 text-sm font-medium bg-background/30 hover:bg-background/50 transition-colors"
               >
                 <ClipboardIcon className="w-4 h-4" />
                 Copy Error Details
@@ -342,7 +342,7 @@ export class ActionPlatformErrorBoundary extends Component<Props, State> {
                 <summary className="cursor-pointer font-medium mb-2">
                   Debug Information
                 </summary>
-                <pre className="bg-[var(--background)]/20 p-2 rounded text-xs overflow-auto max-h-32">
+                <pre className="bg-background/20 p-2 rounded text-xs overflow-auto max-h-32">
                   {this.state.error?.stack}
                 </pre>
               </details>

@@ -103,7 +103,7 @@ export function ZohoNotificationToast({
   };
 
   return (
-    <div className={`fixed top-4 right-4 z-50 max-w-sm w-full bg-[var(--background)] rounded-lg shadow-lg border-l-4 ${getPriorityColor(notification.priority)} animate-in slide-in-from-right-full duration-300`}>
+    <div className={`fixed top-4 right-4 z-50 max-w-sm w-full bg-background rounded-lg shadow-lg border-l-4 ${getPriorityColor(notification.priority)} animate-in slide-in-from-right-full duration-300`}>
       <div className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-start space-x-3 flex-1">
@@ -113,16 +113,16 @@ export function ZohoNotificationToast({
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2 mb-1">
                 <span className="text-lg">{getModuleIcon(notification.module)}</span>
-                <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
+                <h4 className="text-sm font-medium text-foreground truncate">
                   {notification.note.title}
                 </h4>
               </div>
               
-              <p className="text-xs text-[var(--muted)] mb-2 line-clamp-2">
+              <p className="text-xs text-muted mb-2 line-clamp-2">
                 {notification.note.content}
               </p>
               
-              <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+              <div className="flex items-center justify-between text-xs text-muted">
                 <span className="capitalize">
                   {getOperationText(notification.operation)} • {notification.module}
                 </span>
@@ -131,18 +131,18 @@ export function ZohoNotificationToast({
               
               {/* Show changes if available */}
               {notification.changes && notification.changes.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-[var(--border)]">
-                  <p className="text-xs text-[var(--muted)] mb-1">Changes:</p>
+                <div className="mt-2 pt-2 border-t border-border">
+                  <p className="text-xs text-muted mb-1">Changes:</p>
                   <div className="space-y-1">
                     {notification.changes.slice(0, 2).map((change, index) => (
-                      <div key={index} className="text-xs text-[var(--muted)]">
+                      <div key={index} className="text-xs text-muted">
                         <span className="font-medium">{change.field}:</span>{' '}
-                        <span className="text-[var(--muted)] line-through">{change.oldValue}</span>{' '}
+                        <span className="text-muted line-through">{change.oldValue}</span>{' '}
                         → <span className="text-green-600">{change.newValue}</span>
                       </div>
                     ))}
                     {notification.changes.length > 2 && (
-                      <div className="text-xs text-[var(--muted)]">
+                      <div className="text-xs text-muted">
                         ... and {notification.changes.length - 2} more changes
                       </div>
                     )}
@@ -156,7 +156,7 @@ export function ZohoNotificationToast({
             {onMarkAsRead && (
               <button
                 onClick={handleMarkAsRead}
-                className="p-1 text-[var(--muted)] hover:text-green-600 transition-colors"
+                className="p-1 text-muted hover:text-green-600 transition-colors"
                 title="Mark as read"
               >
                 <CheckCircleIcon className="w-4 h-4" />
@@ -164,7 +164,7 @@ export function ZohoNotificationToast({
             )}
             <button
               onClick={onDismiss}
-              className="p-1 text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
+              className="p-1 text-muted hover:text-muted transition-colors"
               title="Dismiss"
             >
               <XMarkIcon className="w-4 h-4" />

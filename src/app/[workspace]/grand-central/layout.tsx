@@ -129,16 +129,16 @@ function GrandCentralRightPanel() {
   // Handle connection selection
   if (selectedConnection) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
+      <div className="h-full flex flex-col bg-background border-l border-border">
         {/* Header with X button */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div>
-            <h2 className="font-semibold text-[var(--foreground)]">{selectedConnection.connectionName || selectedConnection.provider}</h2>
-            <p className="text-sm text-[var(--muted)]">{selectedConnection.provider}</p>
+            <h2 className="font-semibold text-foreground">{selectedConnection.connectionName || selectedConnection.provider}</h2>
+            <p className="text-sm text-muted">{selectedConnection.provider}</p>
           </div>
           <button
             onClick={() => setSelectedConnection(null)}
-            className="p-1.5 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-1.5 hover:bg-hover rounded-lg transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -150,7 +150,7 @@ function GrandCentralRightPanel() {
         <div className="flex-1 p-4 space-y-6 overflow-y-auto">
           {/* Basic Info */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-2">
+            <h3 className="text-sm font-semibold text-foreground border-b border-border pb-2">
               Connection Details
             </h3>
             
@@ -174,7 +174,7 @@ function GrandCentralRightPanel() {
               <input
                 type="text"
                 value={selectedConnection.nangoConnectionId}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--panel-background)] text-[var(--foreground)] font-mono text-sm"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-panel-background text-foreground font-mono text-sm"
                 disabled
               />
             </div>
@@ -186,7 +186,7 @@ function GrandCentralRightPanel() {
               <input
                 type="text"
                 value={new Date(selectedConnection.createdAt).toLocaleString()}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--panel-background)] text-[var(--foreground)]"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-panel-background text-foreground"
                 disabled
               />
             </div>
@@ -199,7 +199,7 @@ function GrandCentralRightPanel() {
                 <input
                   type="text"
                   value={new Date(selectedConnection.lastSyncAt).toLocaleString()}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--panel-background)] text-[var(--foreground)]"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-panel-background text-foreground"
                   disabled
                 />
               </div>
@@ -209,7 +209,7 @@ function GrandCentralRightPanel() {
           {/* Email Settings (if email provider) */}
           {['outlook', 'gmail'].includes(selectedConnection.provider) && (
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-2">
+              <h3 className="text-sm font-semibold text-foreground border-b border-border pb-2">
                 Email Settings
               </h3>
               
@@ -217,7 +217,7 @@ function GrandCentralRightPanel() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Sync Frequency
                 </label>
-                <select className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500">
                   <option value="5">Every 5 minutes</option>
                   <option value="10">Every 10 minutes</option>
                   <option value="15">Every 15 minutes</option>
@@ -233,9 +233,9 @@ function GrandCentralRightPanel() {
                   <input
                     type="checkbox"
                     defaultChecked
-                    className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
+                    className="rounded border-border text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-[var(--foreground)]">Link emails to people and companies</span>
+                  <span className="text-sm text-foreground">Link emails to people and companies</span>
                 </div>
               </div>
 
@@ -248,23 +248,23 @@ function GrandCentralRightPanel() {
                     <input
                       type="checkbox"
                       defaultChecked
-                      className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
+                      className="rounded border-border text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-[var(--foreground)]">Inbox</span>
+                    <span className="text-sm text-foreground">Inbox</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
+                      className="rounded border-border text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-[var(--foreground)]">Sent</span>
+                    <span className="text-sm text-foreground">Sent</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      className="rounded border-[var(--border)] text-blue-600 focus:ring-blue-500"
+                      className="rounded border-border text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-[var(--foreground)]">All folders</span>
+                    <span className="text-sm text-foreground">All folders</span>
                   </div>
                 </div>
               </div>
@@ -273,7 +273,7 @@ function GrandCentralRightPanel() {
 
           {/* Webhook Settings */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-2">
+            <h3 className="text-sm font-semibold text-foreground border-b border-border pb-2">
               Webhook Settings
             </h3>
             
@@ -284,7 +284,7 @@ function GrandCentralRightPanel() {
               <input
                 type="text"
                 value={`${window.location.origin}/api/webhooks/nango/email`}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--panel-background)] text-[var(--foreground)] font-mono text-sm"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-panel-background text-foreground font-mono text-sm"
                 disabled
               />
             </div>
@@ -302,7 +302,7 @@ function GrandCentralRightPanel() {
 
           {/* Actions */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] border-b border-[var(--border)] pb-2">
+            <h3 className="text-sm font-semibold text-foreground border-b border-border pb-2">
               Actions
             </h3>
             
@@ -310,7 +310,7 @@ function GrandCentralRightPanel() {
               <button className="px-3 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors">
                 Test Connection
               </button>
-              <button className="px-3 py-2 bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] rounded-lg text-sm font-medium hover:bg-[var(--hover)] transition-colors">
+              <button className="px-3 py-2 bg-background border border-border text-foreground rounded-lg text-sm font-medium hover:bg-hover transition-colors">
                 View Logs
               </button>
             </div>
@@ -323,16 +323,16 @@ function GrandCentralRightPanel() {
   // Handle node selection (workflow nodes)
   if (selectedNode) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
+      <div className="h-full flex flex-col bg-background border-l border-border">
         {/* Header with X button */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div>
-            <h2 className="font-semibold text-[var(--foreground)]">{selectedNode.title}</h2>
-            <p className="text-sm text-[var(--muted-foreground)]">{selectedNode.description}</p>
+            <h2 className="font-semibold text-foreground">{selectedNode.title}</h2>
+            <p className="text-sm text-muted">{selectedNode.description}</p>
           </div>
           <button
             onClick={() => setSelectedNode(null)}
-            className="p-1.5 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-1.5 hover:bg-hover rounded-lg transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -351,7 +351,7 @@ function GrandCentralRightPanel() {
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             
@@ -363,7 +363,7 @@ function GrandCentralRightPanel() {
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
             </div>
 
@@ -375,7 +375,7 @@ function GrandCentralRightPanel() {
                 type="text"
                 value={formData.provider}
                 onChange={(e) => setFormData(prev => ({ ...prev, provider: e.target.value }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled
               />
             </div>
@@ -388,7 +388,7 @@ function GrandCentralRightPanel() {
                 type="text"
                 value={formData.operation}
                 onChange={(e) => setFormData(prev => ({ ...prev, operation: e.target.value }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>

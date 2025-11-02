@@ -166,7 +166,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
   if (!record) {
     return (
       <div className="space-y-6">
-        <div className="text-center text-[var(--muted)]">No record data available</div>
+        <div className="text-center text-muted">No record data available</div>
       </div>
     );
   }
@@ -306,7 +306,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
       {/* Strategy Summary Header */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">Strategy Summary</h3>
+          <h3 className="text-lg font-semibold text-foreground">Strategy Summary</h3>
         </div>
         
         {/* Company Record Message */}
@@ -333,7 +333,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
         {isGeneratingStrategy ? (
           <StrategySkeleton />
         ) : (
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+          <div className="bg-background p-6 rounded-lg border border-border shadow-sm">
             {/* Three Column Layout with Intelligence Boxes */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <StrategySummaryCard
@@ -375,16 +375,16 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
 
       {/* Intelligence Profile */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Intelligence Profile</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Intelligence Profile</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Key Metrics Card */}
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+          <div className="bg-background p-6 rounded-lg border border-border shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-[var(--foreground)]">Key Metrics</h4>
+              <h4 className="font-semibold text-foreground">Key Metrics</h4>
             </div>
             <div className="space-y-3">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Influence Level:</span>
+                <span className="text-sm text-muted w-24">Influence Level:</span>
                 <InlineEditField
                   value={influenceLevel}
                   field="influenceLevel"
@@ -393,12 +393,12 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   placeholder="Enter influence level"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex flex-col items-start">
-                <span className="text-sm text-[var(--muted)] mb-2">Engagement Strategy:</span>
-                <div className="text-sm text-[var(--foreground)]">
+                <span className="text-sm text-muted mb-2">Engagement Strategy:</span>
+                <div className="text-sm text-foreground">
                   {engagementStrategy && engagementStrategy.length > 80 ? (
                     <div className="space-y-2">
                       {engagementStrategy.split(/[.!?]+/).filter(sentence => sentence.trim().length > 10).map((strategy, index) => (
@@ -409,22 +409,22 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                       ))}
                     </div>
                   ) : (
-                    <span className="text-sm font-medium text-[var(--foreground)]">{engagementStrategy}</span>
+                    <span className="text-sm font-medium text-foreground">{engagementStrategy}</span>
                   )}
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[var(--muted)]">Buyer Group Member:</span>
+                <span className="text-sm text-muted">Buyer Group Member:</span>
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   isBuyerGroupMember 
                     ? (recordType === 'speedrun' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800')
-                    : 'bg-[var(--hover)] text-gray-800'
+                    : 'bg-hover text-gray-800'
                 }`}>
                   {isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Seniority:</span>
+                <span className="text-sm text-muted w-24">Seniority:</span>
                 <InlineEditField
                   value={seniority}
                   field="seniority"
@@ -433,11 +433,11 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   placeholder="Enter seniority level"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Department:</span>
+                <span className="text-sm text-muted w-24">Department:</span>
                 <InlineEditField
                   value={department}
                   field="department"
@@ -446,39 +446,39 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   placeholder="Enter department"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Role & Influence Analysis Card */}
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+          <div className="bg-background p-6 rounded-lg border border-border shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-[var(--foreground)]">Role & Influence Analysis</h4>
+              <h4 className="font-semibold text-foreground">Role & Influence Analysis</h4>
             </div>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-[var(--muted)]">Primary Role</span>
-                  <span className="text-sm font-medium text-[var(--foreground)]">{buyerRole}</span>
+                  <span className="text-sm text-muted">Primary Role</span>
+                  <span className="text-sm font-medium text-foreground">{buyerRole}</span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-[var(--muted)]">Engagement Level</span>
-                  <span className="text-sm font-medium text-[var(--foreground)]">{engagementLevel || 'Medium'}</span>
+                  <span className="text-sm text-muted">Engagement Level</span>
+                  <span className="text-sm font-medium text-foreground">{engagementLevel || 'Medium'}</span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-[var(--muted)]">Influence Level</span>
+                  <span className="text-sm text-muted">Influence Level</span>
                   <span className={`text-sm font-semibold ${
-                    influence >= 80 ? 'text-green-600' : influence >= 60 ? 'text-yellow-600' : 'text-[var(--muted)]'
+                    influence >= 80 ? 'text-green-600' : influence >= 60 ? 'text-yellow-600' : 'text-muted'
                   }`}>
                     {influence >= 80 ? 'High' : influence >= 60 ? 'Moderate' : 'Limited'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-[var(--muted)]">Decision Authority</span>
+                  <span className="text-sm text-muted">Decision Authority</span>
                   <span className={`text-sm font-semibold ${
-                    decisionPower >= 80 ? 'text-purple-600' : decisionPower >= 60 ? 'text-blue-600' : 'text-[var(--muted)]'
+                    decisionPower >= 80 ? 'text-purple-600' : decisionPower >= 60 ? 'text-blue-600' : 'text-muted'
                   }`}>
                     {decisionPower >= 80 ? 'Strong' : decisionPower >= 60 ? 'Moderate' : 'Limited'}
                   </span>
@@ -486,23 +486,23 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
               </div>
               
               <div className="border-t pt-4">
-                <h5 className="text-sm font-medium text-[var(--foreground)] mb-2">Communication Profile</h5>
+                <h5 className="text-sm font-medium text-foreground mb-2">Communication Profile</h5>
                 <div className="space-y-1">
                   <div className="flex justify-between">
-                    <span className="text-xs text-[var(--muted)]">Style:</span>
-                    <span className="text-xs font-medium text-[var(--foreground)]">{communicationStyle}</span>
+                    <span className="text-xs text-muted">Style:</span>
+                    <span className="text-xs font-medium text-foreground">{communicationStyle}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-[var(--muted)]">Decision Making:</span>
-                    <span className="text-xs font-medium text-[var(--foreground)]">{decisionMaking || 'Data-driven'}</span>
+                    <span className="text-xs text-muted">Decision Making:</span>
+                    <span className="text-xs font-medium text-foreground">{decisionMaking || 'Data-driven'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-[var(--muted)]">Preferred Contact:</span>
-                    <span className="text-xs font-medium text-[var(--foreground)]">Email</span>
+                    <span className="text-xs text-muted">Preferred Contact:</span>
+                    <span className="text-xs font-medium text-foreground">Email</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-[var(--muted)]">Response Time:</span>
-                    <span className="text-xs font-medium text-[var(--foreground)]">24-48 hours</span>
+                    <span className="text-xs text-muted">Response Time:</span>
+                    <span className="text-xs font-medium text-foreground">24-48 hours</span>
                   </div>
                 </div>
               </div>
@@ -514,12 +514,12 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
 
       {/* Engagement Strategy */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Engagement Strategy</h3>
-        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Engagement Strategy</h3>
+        <div className="bg-background p-4 rounded-lg border border-border">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Approach</h4>
-              <p className="text-sm text-[var(--muted)]">
+              <h4 className="font-medium text-foreground mb-2">Approach</h4>
+              <p className="text-sm text-muted">
                 {buyerRole === 'Decision Maker' ? 'Direct, data-driven approach with ROI focus' :
                  buyerRole === 'Champion' ? 'Collaborative approach with solution benefits' :
                  buyerRole === 'Stakeholder' ? 'Educational approach with use cases' :
@@ -527,8 +527,8 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
               </p>
             </div>
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Key Messages</h4>
-              <p className="text-sm text-[var(--muted)]">
+              <h4 className="font-medium text-foreground mb-2">Key Messages</h4>
+              <p className="text-sm text-muted">
                 {buyerRole === 'Decision Maker' ? 'Focus on business impact and competitive advantage' :
                  buyerRole === 'Champion' ? 'Emphasize innovation and team success' :
                  buyerRole === 'Stakeholder' ? 'Highlight efficiency and process improvement' :
@@ -536,8 +536,8 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
               </p>
             </div>
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Next Steps</h4>
-              <p className="text-sm text-[var(--muted)]">
+              <h4 className="font-medium text-foreground mb-2">Next Steps</h4>
+              <p className="text-sm text-muted">
                 {(engagementLevel || 'Medium').includes('High') ? 'Schedule technical demo and stakeholder meeting' :
                  (engagementLevel || 'Medium').includes('Medium') ? 'Provide case studies and reference calls' :
                  (engagementLevel || 'Medium').includes('Low') ? 'Identify pain points and build urgency' :
@@ -550,55 +550,55 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
 
       {/* Role & Influence Analysis */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Role & Influence Analysis</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Role & Influence Analysis</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Role Analysis</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Role Analysis</h4>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Primary Role</span>
+                <span className="text-sm text-muted">Primary Role</span>
                 <span className={`px-4 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
                   buyerRole === 'Decision Maker' ? 'bg-red-100 text-red-800' :
                   buyerRole === 'Champion' ? 'bg-green-100 text-green-800' :
                   buyerRole === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                  'bg-[var(--hover)] text-gray-800'
+                  'bg-hover text-gray-800'
                 }`}>
                   {buyerRole}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Engagement Level</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{engagementLevel || 'Medium'}</span>
+                <span className="text-sm text-muted">Engagement Level</span>
+                <span className="text-sm font-medium text-foreground">{engagementLevel || 'Medium'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Influence Score</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{influence}%</span>
+                <span className="text-sm text-muted">Influence Score</span>
+                <span className="text-sm font-medium text-foreground">{influence}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Decision Power</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{decisionPower}%</span>
+                <span className="text-sm text-muted">Decision Power</span>
+                <span className="text-sm font-medium text-foreground">{decisionPower}%</span>
               </div>
             </div>
           </div>
           
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Communication Profile</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Communication Profile</h4>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Style</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{communicationStyle}</span>
+                <span className="text-sm text-muted">Style</span>
+                <span className="text-sm font-medium text-foreground">{communicationStyle}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Decision Making</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{decisionMaking || 'Data-driven'}</span>
+                <span className="text-sm text-muted">Decision Making</span>
+                <span className="text-sm font-medium text-foreground">{decisionMaking || 'Data-driven'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Preferred Contact</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">Email</span>
+                <span className="text-sm text-muted">Preferred Contact</span>
+                <span className="text-sm font-medium text-foreground">Email</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Response Time</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">24-48 hours</span>
+                <span className="text-sm text-muted">Response Time</span>
+                <span className="text-sm font-medium text-foreground">24-48 hours</span>
               </div>
             </div>
           </div>
@@ -607,12 +607,12 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
 
       {/* Pain Points & Interests */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Pain Points & Interests</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Pain Points & Interests</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Pain Points Card */}
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+          <div className="bg-background p-6 rounded-lg border border-border shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-[var(--foreground)]">Pain Points</h4>
+              <h4 className="font-semibold text-foreground">Pain Points</h4>
             </div>
             <div className="space-y-3">
               {insights.painPoints.map((point: string, index: number) => (
@@ -625,9 +625,9 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
           </div>
           
           {/* Interests Card */}
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+          <div className="bg-background p-6 rounded-lg border border-border shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-[var(--foreground)]">Interests</h4>
+              <h4 className="font-semibold text-foreground">Interests</h4>
             </div>
             <div className="space-y-3">
               {interests.length > 0 ? (
@@ -638,7 +638,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                   </div>
                 ))
               ) : (
-                <div className="text-sm text-[var(--muted)] italic">No specific interests identified</div>
+                <div className="text-sm text-muted italic">No specific interests identified</div>
               )}
             </div>
           </div>
@@ -647,10 +647,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
 
       {/* Goals & Objectives */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Goals & Objectives</h3>
-        <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Goals & Objectives</h3>
+        <div className="bg-background p-6 rounded-lg border border-border shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="font-semibold text-[var(--foreground)]">Professional Goals</h4>
+            <h4 className="font-semibold text-foreground">Professional Goals</h4>
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
               <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -670,10 +670,10 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
 
       {/* Challenges & Opportunities */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Challenges & Opportunities</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Challenges & Opportunities</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Current Challenges</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Current Challenges</h4>
             <div className="space-y-3">
               {insights.challenges.map((challenge: string, index: number) => (
                 <div key={index} className="flex items-start gap-3">
@@ -684,8 +684,8 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
             </div>
           </div>
           
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Strategic Opportunities</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Strategic Opportunities</h4>
             <div className="space-y-3">
               {insights.opportunities.map((opportunity: string, index: number) => (
                 <div key={index} className="flex items-start gap-3">
@@ -703,12 +703,12 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-[var(--foreground)]">Deep Value Reports</h3>
-            <p className="text-sm text-[var(--muted)] mt-1">AI-powered insights tailored to this contact</p>
+            <h3 className="text-xl font-bold text-foreground">Deep Value Reports</h3>
+            <p className="text-sm text-muted mt-1">AI-powered insights tailored to this contact</p>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-[var(--muted)]">Adrata Generated</span>
+            <span className="text-sm text-muted">Adrata Generated</span>
           </div>
         </div>
         
@@ -717,7 +717,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
               <div className="col-span-full flex items-center justify-center py-12">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto mb-4"></div>
-                  <div className="text-[var(--muted)]">Generating intelligent reports...</div>
+                  <div className="text-muted">Generating intelligent reports...</div>
                 </div>
               </div>
             ) : reports.length > 0 ? (
@@ -725,24 +725,24 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                 return (
                   <div
                     key={report.id}
-                    className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-md hover:border-[var(--border)] transition-all duration-200 group"
+                    className="bg-background p-6 rounded-lg border border-border cursor-pointer hover:shadow-md hover:border-border transition-all duration-200 group"
                     onClick={() => handleReportClick(report.id)}
                   >
                     <div className="flex items-start space-x-4">
-                      <div className="w-10 h-10 bg-[var(--hover)] rounded-lg flex items-center justify-center group-hover:bg-[var(--loading-bg)] transition-colors">
-                        <svg className="w-5 h-5 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-10 h-10 bg-hover rounded-lg flex items-center justify-center group-hover:bg-loading-bg transition-colors">
+                        <svg className="w-5 h-5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-[var(--foreground)] mb-2 group-hover:text-gray-700 transition-colors">
+                        <h4 className="font-medium text-foreground mb-2 group-hover:text-gray-700 transition-colors">
                           {report.title}
                         </h4>
-                        <p className="text-sm text-[var(--muted)] leading-relaxed mb-3">
+                        <p className="text-sm text-muted leading-relaxed mb-3">
                           {report.description}
                         </p>
                         <div className="flex items-center justify-end">
-                          <div className="text-[var(--muted)] group-hover:text-[var(--muted)] transition-colors">
+                          <div className="text-muted group-hover:text-muted transition-colors">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
@@ -754,7 +754,7 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
                     {report.isGenerating && (
                       <div className="mt-4 flex items-center space-x-2">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
-                        <span className="text-xs text-[var(--muted)] font-medium">Generating...</span>
+                        <span className="text-xs text-muted font-medium">Generating...</span>
                       </div>
                     )}
                   </div>
@@ -762,9 +762,9 @@ export function UniversalInsightsTab({ recordType, record: recordProp, onSave }:
               })
             ) : (
               <div className="col-span-full text-center py-12">
-                <div className="text-[var(--muted)] text-4xl mb-4">📊</div>
-                <div className="text-[var(--muted)] italic">No deep value reports available</div>
-                <div className="text-sm text-[var(--muted)] mt-2">Reports will appear here once generated</div>
+                <div className="text-muted text-4xl mb-4">📊</div>
+                <div className="text-muted italic">No deep value reports available</div>
+                <div className="text-sm text-muted mt-2">Reports will appear here once generated</div>
               </div>
             )}
         </div>

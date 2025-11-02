@@ -16,7 +16,7 @@ export const SearchResultsIndicator: React.FC<SearchResultsIndicatorProps> = ({
   return (
     <div className="mt-2 flex items-center gap-2">
       <SparklesIcon className="w-4 h-4 text-[#9B59B6]" />
-      <span className="text-sm text-[var(--muted)]">
+      <span className="text-sm text-muted">
         Showing AI search results for: {currentSearchResults.query}
       </span>
       <button

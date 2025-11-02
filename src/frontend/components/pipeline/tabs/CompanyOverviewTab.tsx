@@ -386,13 +386,13 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h2 className="text-xl font-semibold text-[var(--foreground)]">Overview</h2>
+          <h2 className="text-xl font-semibold text-foreground">Overview</h2>
         </div>
 
       {/* Company Summary */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)]">{companyName} Summary</h3>
-        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+        <h3 className="text-lg font-semibold text-foreground">{companyName} Summary</h3>
+        <div className="bg-background p-4 rounded-lg border border-border">
           <InlineEditField
             value={(() => {
               // Prioritize the longer, more detailed description for better seller context
@@ -417,7 +417,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             recordType="companies"
             onSuccess={handleSuccess}
             type="textarea"
-            className="text-sm text-[var(--foreground)] leading-relaxed font-medium"
+            className="text-sm text-foreground leading-relaxed font-medium"
             placeholder="Enter company description..."
           />
         </div>
@@ -425,37 +425,37 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
 
       {/* Key Metrics Dashboard */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)]">Key Metrics</h3>
+        <h3 className="text-lg font-semibold text-foreground">Key Metrics</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] flex flex-col justify-between">
+          <div className="bg-background p-4 rounded-lg border border-border flex flex-col justify-between">
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Revenue</h4>
+              <h4 className="font-medium text-foreground mb-2">Revenue</h4>
               <div className="text-2xl font-bold text-green-600">{formatRevenue(mergedRecord?.revenue)}</div>
             </div>
-            <div className="text-xs text-[var(--muted)] mt-2">Annual reported revenue</div>
+            <div className="text-xs text-muted mt-2">Annual reported revenue</div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] flex flex-col justify-between">
+          <div className="bg-background p-4 rounded-lg border border-border flex flex-col justify-between">
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Employees</h4>
+              <h4 className="font-medium text-foreground mb-2">Employees</h4>
               <div className="text-2xl font-bold text-blue-600">{formatEmptyValue(mergedRecord?.employeeCount)}</div>
             </div>
-            <div className="text-xs text-[var(--muted)] mt-2">Total employee count</div>
+            <div className="text-xs text-muted mt-2">Total employee count</div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] flex flex-col justify-between">
+          <div className="bg-background p-4 rounded-lg border border-border flex flex-col justify-between">
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">LinkedIn Followers</h4>
+              <h4 className="font-medium text-foreground mb-2">LinkedIn Followers</h4>
               <div className="text-2xl font-bold text-purple-600">
                 {mergedRecord?.linkedinFollowers ? `${(mergedRecord.linkedinFollowers).toLocaleString()}` : '-'}
               </div>
             </div>
-            <div className="text-xs text-[var(--muted)] mt-2">Social media reach</div>
+            <div className="text-xs text-muted mt-2">Social media reach</div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] flex flex-col justify-between">
+          <div className="bg-background p-4 rounded-lg border border-border flex flex-col justify-between">
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Tech Stack</h4>
+              <h4 className="font-medium text-foreground mb-2">Tech Stack</h4>
               <div className="text-2xl font-bold text-orange-600">{mergedRecord?.numTechnologiesUsed || mergedRecord?.technologiesUsed?.length || 0}</div>
             </div>
-            <div className="text-xs text-[var(--muted)] mt-2">Technologies identified</div>
+            <div className="text-xs text-muted mt-2">Technologies identified</div>
           </div>
         </div>
       </div>
@@ -464,10 +464,10 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Company Details */}
         <div className="space-y-6">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">Company Details</h3>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] space-y-3">
+          <h3 className="text-lg font-semibold text-foreground">Company Details</h3>
+          <div className="bg-background p-4 rounded-lg border border-border space-y-3">
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">Legal Name:</span>
+              <span className="text-sm text-muted w-32">Legal Name:</span>
               <InlineEditField
                 value={mergedRecord?.legalName || ''}
                 field="legalName"
@@ -475,11 +475,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">Industry:</span>
+              <span className="text-sm text-muted w-32">Industry:</span>
               <InlineEditField
                 value={mergedRecord?.industry || ''}
                 field="industry"
@@ -487,11 +487,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">Sector:</span>
+              <span className="text-sm text-muted w-32">Sector:</span>
               <InlineEditField
                 value={mergedRecord?.sector || ''}
                 field="sector"
@@ -499,11 +499,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">Founded Year:</span>
+              <span className="text-sm text-muted w-32">Founded Year:</span>
               <InlineEditField
                 value={mergedRecord?.foundedYear?.toString() || ''}
                 field="foundedYear"
@@ -512,11 +512,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordType="companies"
                 onSuccess={handleSuccess}
                 type="number"
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">Company Type:</span>
+              <span className="text-sm text-muted w-32">Company Type:</span>
               <InlineEditField
                 value={mergedRecord?.isPublic !== undefined ? (mergedRecord.isPublic ? 'Public' : 'Private') : ''}
                 field="isPublic"
@@ -529,12 +529,12 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                   { value: 'true', label: 'Public' },
                   { value: 'false', label: 'Private' }
                 ]}
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             {mergedRecord?.stockSymbol && (
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-32">Stock Symbol:</span>
+                <span className="text-sm text-muted w-32">Stock Symbol:</span>
                 <InlineEditField
                   value={mergedRecord.stockSymbol || ''}
                   field="stockSymbol"
@@ -542,7 +542,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                   recordId={companyId}
                   recordType="companies"
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             )}
@@ -551,10 +551,10 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
 
         {/* Contact & Location */}
         <div className="space-y-6">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">Contact & Location</h3>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] space-y-3">
+          <h3 className="text-lg font-semibold text-foreground">Contact & Location</h3>
+          <div className="bg-background p-4 rounded-lg border border-border space-y-3">
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">Website:</span>
+              <span className="text-sm text-muted w-32">Website:</span>
               <InlineEditField
                 value={formatUrlForDisplay(mergedRecord?.website || '', { maxLength: 40, preserveEnding: 10 })}
                 field="website"
@@ -567,7 +567,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               />
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">Email:</span>
+              <span className="text-sm text-muted w-32">Email:</span>
               <InlineEditField
                 value={mergedRecord?.email || ''}
                 field="email"
@@ -576,11 +576,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordType="companies"
                 onSuccess={handleSuccess}
                 type="email"
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">Phone:</span>
+              <span className="text-sm text-muted w-32">Phone:</span>
               <InlineEditField
                 value={mergedRecord?.phone || ''}
                 field="phone"
@@ -589,11 +589,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordType="companies"
                 onSuccess={handleSuccess}
                 type="text"
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">LinkedIn:</span>
+              <span className="text-sm text-muted w-32">LinkedIn:</span>
               <InlineEditField
                 value={formatUrlForDisplay(mergedRecord?.linkedinUrl || '', { maxLength: 40, preserveEnding: 10 })}
                 field="linkedinUrl"
@@ -606,7 +606,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               />
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">LinkedIn Navigator:</span>
+              <span className="text-sm text-muted w-32">LinkedIn Navigator:</span>
               <InlineEditField
                 value={formatUrlForDisplay(mergedRecord?.linkedinNavigatorUrl || '', { maxLength: 40, preserveEnding: 10 })}
                 field="linkedinNavigatorUrl"
@@ -619,7 +619,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               />
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-[var(--muted)] w-32">Headquarters:</span>
+              <span className="text-sm text-muted w-32">Headquarters:</span>
               <InlineEditField
                 value={mergedRecord?.hqFullAddress || `${mergedRecord?.hqCity || ''}${mergedRecord?.hqCity && mergedRecord?.hqState ? ', ' : ''}${mergedRecord?.hqState || ''}`}
                 field="hqFullAddress"
@@ -627,7 +627,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
           </div>
@@ -636,12 +636,12 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
 
       {/* Seller Intelligence */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)]">Seller Intelligence</h3>
+        <h3 className="text-lg font-semibold text-foreground">Seller Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] space-y-3">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Market & Growth</h4>
+          <div className="bg-background p-4 rounded-lg border border-border space-y-3">
+            <h4 className="font-medium text-foreground mb-2">Market & Growth</h4>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted)]">Market Position:</span>
+              <span className="text-sm text-muted">Market Position:</span>
               <InlineEditField
                 value={mergedRecord?.marketPosition || ''}
                 field="marketPosition"
@@ -649,17 +649,17 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted)]">Competitive Pressure:</span>
-              <span className="text-sm font-medium text-[var(--foreground)]">
+              <span className="text-sm text-muted">Competitive Pressure:</span>
+              <span className="text-sm font-medium text-foreground">
                 {(mergedRecord?.competitors?.length || 0) > 15 ? 'High' : (mergedRecord?.competitors?.length || 0) > 5 ? 'Medium' : 'Low'}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted)]">Hiring Activity:</span>
+              <span className="text-sm text-muted">Hiring Activity:</span>
               <InlineEditField
                 value={mergedRecord?.activeJobPostings?.toString() || ''}
                 field="activeJobPostings"
@@ -668,11 +668,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordType="companies"
                 onSuccess={handleSuccess}
                 type="number"
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted)]">Last Funding:</span>
+              <span className="text-sm text-muted">Last Funding:</span>
               <InlineEditField
                 value={mergedRecord?.lastFundingAmount?.toLocaleString() || ''}
                 field="lastFundingAmount"
@@ -681,11 +681,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordType="companies"
                 onSuccess={handleSuccess}
                 type="number"
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted)]">Funding Date:</span>
+              <span className="text-sm text-muted">Funding Date:</span>
               <InlineEditField
                 value={mergedRecord?.lastFundingDate ? new Date(mergedRecord.lastFundingDate).toISOString().split('T')[0] : ''}
                 field="lastFundingDate"
@@ -694,23 +694,23 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordType="companies"
                 onSuccess={handleSuccess}
                 variant="date"
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
           </div>
 
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] space-y-3">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Engagement & Strategy</h4>
+          <div className="bg-background p-4 rounded-lg border border-border space-y-3">
+            <h4 className="font-medium text-foreground mb-2">Engagement & Strategy</h4>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted)]">Engagement Level:</span>
-              <span className="text-sm font-medium text-[var(--foreground)]">{engagementData.engagementLevel}</span>
+              <span className="text-sm text-muted">Engagement Level:</span>
+              <span className="text-sm font-medium text-foreground">{engagementData.engagementLevel}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted)]">Decision Makers:</span>
-              <span className="text-sm font-medium text-[var(--foreground)]">{engagementData.decisionMakers}</span>
+              <span className="text-sm text-muted">Decision Makers:</span>
+              <span className="text-sm font-medium text-foreground">{engagementData.decisionMakers}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted)]">Next Action:</span>
+              <span className="text-sm text-muted">Next Action:</span>
               <InlineEditField
                 value={mergedRecord?.nextAction || engagementData.nextAction}
                 field="nextAction"
@@ -718,11 +718,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordId={companyId}
                 recordType="companies"
                 onSuccess={handleSuccess}
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted)]">Next Action Date:</span>
+              <span className="text-sm text-muted">Next Action Date:</span>
               <InlineEditField
                 value={mergedRecord?.nextActionDate ? new Date(mergedRecord.nextActionDate).toISOString().split('T')[0] : ''}
                 field="nextActionDate"
@@ -731,11 +731,11 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordType="companies"
                 onSuccess={handleSuccess}
                 variant="date"
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-[var(--muted)]">Digital Maturity:</span>
+              <span className="text-sm text-muted">Digital Maturity:</span>
               <InlineEditField
                 value={mergedRecord?.digitalMaturity?.toString() || ''}
                 field="digitalMaturity"
@@ -744,7 +744,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
                 recordType="companies"
                 onSuccess={handleSuccess}
                 type="number"
-                className="text-sm font-medium text-[var(--foreground)]"
+                className="text-sm font-medium text-foreground"
               />
             </div>
           </div>
@@ -753,22 +753,22 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
 
       {/* Recent Actions */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)]">Recent Actions</h3>
-        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+        <h3 className="text-lg font-semibold text-foreground">Recent Actions</h3>
+        <div className="bg-background p-4 rounded-lg border border-border">
           {actionsLoading ? (
             <div className="text-center py-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--accent)] mx-auto mb-2"></div>
-              <p className="text-sm text-[var(--muted)]">Loading actions...</p>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
+              <p className="text-sm text-muted">Loading actions...</p>
             </div>
           ) : actionsError ? (
             <div className="text-center py-4">
-              <p className="text-sm text-[var(--error)] mb-3">Error loading actions</p>
-              <p className="text-xs text-[var(--muted)]">{actionsError}</p>
+              <p className="text-sm text-error mb-3">Error loading actions</p>
+              <p className="text-xs text-muted">{actionsError}</p>
             </div>
           ) : actions.length > 0 ? (
             <ul className="space-y-2">
               {actions.map((action, index) => (
-                <li key={index} className="text-sm text-[var(--muted)] flex items-center gap-2">
+                <li key={index} className="text-sm text-muted flex items-center gap-2">
                   <span>•</span>
                   {action.type && (
                     <span className="px-2 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full">
@@ -781,8 +781,8 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
             </ul>
           ) : (
             <div className="text-center py-4">
-              <p className="text-sm text-[var(--muted)] mb-3">No actions logged yet</p>
-              <p className="text-xs text-[var(--muted)]">Actions will appear here when logged through the Actions tab</p>
+              <p className="text-sm text-muted mb-3">No actions logged yet</p>
+              <p className="text-xs text-muted">Actions will appear here when logged through the Actions tab</p>
             </div>
           )}
         </div>
@@ -790,10 +790,10 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
 
       {/* Notes & Tags */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)]">Notes & Tags</h3>
+        <h3 className="text-lg font-semibold text-foreground">Notes & Tags</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Internal Notes</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Internal Notes</h4>
             <InlineEditField
               value={mergedRecord?.notes || ''}
               field="notes"
@@ -802,12 +802,12 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               recordType="companies"
               onSuccess={handleSuccess}
               type="textarea"
-              className="text-sm text-[var(--foreground)] leading-relaxed"
+              className="text-sm text-foreground leading-relaxed"
               placeholder="Add internal notes about this company..."
             />
           </div>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Tags</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Tags</h4>
             <InlineEditField
               value={mergedRecord?.tags?.join(', ') || ''}
               field="tags"
@@ -815,7 +815,7 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
               recordId={companyId}
               recordType="companies"
               onSuccess={handleSuccess}
-              className="text-sm font-medium text-[var(--foreground)]"
+              className="text-sm font-medium text-foreground"
               placeholder="Enter tags separated by commas"
             />
           </div>
@@ -823,18 +823,18 @@ export function CompanyOverviewTab({ recordType, record: recordProp, onSave }: C
       </div>
 
       {/* Record Information */}
-      <div className="mt-8 pt-6 border-t border-[var(--border)]">
-        <h3 className="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-4">Record Information</h3>
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="text-sm font-medium text-muted uppercase tracking-wide mb-4">Record Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center space-x-3">
-            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Created:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(mergedRecord?.createdAt)}>
+            <span className="text-xs text-muted uppercase tracking-wide w-28">Created:</span>
+            <span className="text-sm text-foreground" title={formatFullDate(mergedRecord?.createdAt)}>
               {formatRelativeDate(mergedRecord?.createdAt)}
             </span>
           </div>
           <div className="flex items-center space-x-3">
-            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Last Updated:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(mergedRecord?.updatedAt)}>
+            <span className="text-xs text-muted uppercase tracking-wide w-28">Last Updated:</span>
+            <span className="text-sm text-foreground" title={formatFullDate(mergedRecord?.updatedAt)}>
               {formatRelativeDate(mergedRecord?.updatedAt)}
             </span>
           </div>

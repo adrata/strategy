@@ -71,10 +71,10 @@ function CustomDropdown({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] hover:bg-[var(--hover-bg)] transition-colors"
+        className="flex items-center justify-between w-full px-3 py-2 text-sm border border-border rounded-lg bg-background hover:bg-hover transition-colors"
       >
         <span
-          className={value ? "text-[var(--foreground)]" : "text-[var(--muted)]"}
+          className={value ? "text-foreground" : "text-muted"}
         >
           {value || placeholder}
         </span>
@@ -94,13 +94,13 @@ function CustomDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
+        <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-lg shadow-lg">
           <div className="py-1">
             {options.map((option) => (
               <button
                 key={option}
                 onClick={() => handleSelect(option)}
-                className="block w-full px-3 py-2 text-sm text-left hover:bg-[var(--hover-bg)] transition-colors"
+                className="block w-full px-3 py-2 text-sm text-left hover:bg-hover transition-colors"
               >
                 {option}
               </button>
@@ -589,23 +589,23 @@ export function MonacoContent({
   const getRoleIcon = (role: string) => {
     switch (role) {
       case "Decision Maker":
-        return <ShieldCheckIcon className="w-4 h-4 text-[var(--muted)]" />;
+        return <ShieldCheckIcon className="w-4 h-4 text-muted" />;
       case "Champion":
-        return <StarIcon className="w-4 h-4 text-[var(--muted)]" />;
+        return <StarIcon className="w-4 h-4 text-muted" />;
       case "Stakeholder":
-        return <UsersIcon className="w-4 h-4 text-[var(--muted)]" />;
+        return <UsersIcon className="w-4 h-4 text-muted" />;
       case "Blocker":
-        return <XMarkIcon className="w-4 h-4 text-[var(--muted)]" />;
+        return <XMarkIcon className="w-4 h-4 text-muted" />;
       case "Openers":
-        return <PlusIcon className="w-4 h-4 text-[var(--muted)]" />;
+        return <PlusIcon className="w-4 h-4 text-muted" />;
       default:
-        return <UsersIcon className="w-4 h-4 text-[var(--muted)]" />;
+        return <UsersIcon className="w-4 h-4 text-muted" />;
     }
   };
 
   // Get role color - all gray now
   const getRoleColor = (role: string) => {
-    return "bg-[var(--panel-background)] text-gray-700 border-[var(--border)]";
+    return "bg-panel-background text-gray-700 border-border";
   };
 
   // Render buyer group view
@@ -632,12 +632,12 @@ export function MonacoContent({
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
           >
             <ChevronLeftIcon className="w-4 h-4" />
             Back
           </button>
-          <div className="h-6 w-px bg-[var(--border)]"></div>
+          <div className="h-6 w-px bg-border"></div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-semibold text-lg">
@@ -645,10 +645,10 @@ export function MonacoContent({
               </span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-[var(--foreground)]">
+              <h1 className="text-xl font-bold text-foreground">
                 {selectedCompany.name} - Buyer Group
               </h1>
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 {buyerGroup?.length || 0} stakeholders mapped • {selectedCompany.industry}
               </p>
             </div>
@@ -657,57 +657,57 @@ export function MonacoContent({
 
         {/* Stats */}
         <div className="grid grid-cols-5 gap-4 mb-8">
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+          <div className="bg-background border border-border rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <StarIcon className="w-5 h-5 text-[var(--muted)]" />
-              <span className="text-sm font-semibold text-[var(--foreground)]">Champions</span>
+              <StarIcon className="w-5 h-5 text-muted" />
+              <span className="text-sm font-semibold text-foreground">Champions</span>
             </div>
-            <div className="text-2xl font-bold text-[var(--foreground)]">
+            <div className="text-2xl font-bold text-foreground">
               {champions?.length || 0}
             </div>
           </div>
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+          <div className="bg-background border border-border rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <ShieldCheckIcon className="w-5 h-5 text-[var(--muted)]" />
-              <span className="text-sm font-semibold text-[var(--foreground)]">Decision Makers</span>
+              <ShieldCheckIcon className="w-5 h-5 text-muted" />
+              <span className="text-sm font-semibold text-foreground">Decision Makers</span>
             </div>
-            <div className="text-2xl font-bold text-[var(--foreground)]">
+            <div className="text-2xl font-bold text-foreground">
               {decisionMakers?.length || 0}
             </div>
           </div>
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+          <div className="bg-background border border-border rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <UsersIcon className="w-5 h-5 text-[var(--muted)]" />
-              <span className="text-sm font-semibold text-[var(--foreground)]">Stakeholders</span>
+              <UsersIcon className="w-5 h-5 text-muted" />
+              <span className="text-sm font-semibold text-foreground">Stakeholders</span>
             </div>
-            <div className="text-2xl font-bold text-[var(--foreground)]">
+            <div className="text-2xl font-bold text-foreground">
               {stakeholders?.length || 0}
             </div>
           </div>
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+          <div className="bg-background border border-border rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
-              <span className="text-sm font-semibold text-[var(--foreground)]">Blockers</span>
+              <XMarkIcon className="w-5 h-5 text-muted" />
+              <span className="text-sm font-semibold text-foreground">Blockers</span>
             </div>
-            <div className="text-2xl font-bold text-[var(--foreground)]">
+            <div className="text-2xl font-bold text-foreground">
               {blockers?.length || 0}
             </div>
           </div>
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+          <div className="bg-background border border-border rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <PlusIcon className="w-5 h-5 text-[var(--muted)]" />
-              <span className="text-sm font-semibold text-[var(--foreground)]">Openers</span>
+              <PlusIcon className="w-5 h-5 text-muted" />
+              <span className="text-sm font-semibold text-foreground">Openers</span>
             </div>
-            <div className="text-2xl font-bold text-[var(--foreground)]">
+            <div className="text-2xl font-bold text-foreground">
               {openers?.length || 0}
             </div>
           </div>
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+          <div className="bg-background border border-border rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="w-5 h-5 bg-gradient-to-r from-blue-500 to-purple-500 rounded text-xs flex items-center justify-center text-white font-bold">%</span>
-              <span className="text-sm font-semibold text-[var(--foreground)]">Avg Engagement</span>
+              <span className="text-sm font-semibold text-foreground">Avg Engagement</span>
             </div>
-            <div className="text-2xl font-bold text-[var(--foreground)]">
+            <div className="text-2xl font-bold text-foreground">
               {(buyerGroup?.length || 0) > 0 ? Math.round((buyerGroup || []).reduce((sum, m) => sum + m.engagementScore, 0) / (buyerGroup?.length || 1)) : 0}%
             </div>
           </div>
@@ -715,7 +715,7 @@ export function MonacoContent({
 
         {/* Buyer Group Members */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-[var(--foreground)]">
+          <h2 className="text-lg font-semibold text-foreground">
             Buyer Group Members
           </h2>
           
@@ -723,7 +723,7 @@ export function MonacoContent({
             <div
               key={member.id}
               onClick={() => handlePersonClick(member)}
-              className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:border-[#2563EB] transition-all duration-200 cursor-pointer hover:shadow-sm"
+              className="bg-background border border-border rounded-lg p-6 hover:border-[#2563EB] transition-all duration-200 cursor-pointer hover:shadow-sm"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
@@ -733,7 +733,7 @@ export function MonacoContent({
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] hover:text-[#2563EB] transition-colors">
+                      <h3 className="text-lg font-semibold text-foreground hover:text-[#2563EB] transition-colors">
                         {member.name}
                       </h3>
                       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getRoleColor(member.buyerRole)}`}>
@@ -749,9 +749,9 @@ export function MonacoContent({
                       </span>
                     </div>
                     
-                    <p className="text-sm text-[var(--muted)] mb-3">{member.title}</p>
+                    <p className="text-sm text-muted mb-3">{member.title}</p>
                     
-                    <div className="flex items-center gap-6 text-sm text-[var(--muted)] mb-3">
+                    <div className="flex items-center gap-6 text-sm text-muted mb-3">
                       <span>{member.email}</span>
                       <span>•</span>
                       <span>{member.department}</span>
@@ -761,17 +761,17 @@ export function MonacoContent({
                     
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-[var(--foreground)]">
+                        <span className="text-sm font-medium text-foreground">
                           Engagement Score:
                         </span>
                         <div className="flex items-center gap-2">
-                          <div className="w-16 h-2 bg-[var(--border)] rounded-full overflow-hidden">
+                          <div className="w-16 h-2 bg-border rounded-full overflow-hidden">
                             <div 
                               className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
                               style={{ width: `${member.engagementScore}%` }}
                             />
                           </div>
-                          <span className="text-sm font-semibold text-[var(--foreground)]">
+                          <span className="text-sm font-semibold text-foreground">
                             {member.engagementScore}%
                           </span>
                         </div>
@@ -795,7 +795,7 @@ export function MonacoContent({
                       e.stopPropagation();
                       console.log(`Viewing ${member.name} profile`);
                     }}
-                    className="px-3 py-1 text-xs font-medium border border-[var(--border)] text-[var(--foreground)] rounded hover:bg-[var(--hover-bg)] transition-colors"
+                    className="px-3 py-1 text-xs font-medium border border-border text-foreground rounded hover:bg-hover transition-colors"
                   >
                     View Profile
                   </button>
@@ -822,7 +822,7 @@ export function MonacoContent({
               case "qualified": return "bg-green-100 text-green-800";
               case "contacted": return "bg-blue-100 text-blue-800";
               case "prospect": return "bg-yellow-100 text-yellow-800";
-              default: return "bg-[var(--hover)] text-gray-800";
+              default: return "bg-hover text-gray-800";
             }
           }}
           getRankNumber={(record: any) => 1}
@@ -846,7 +846,7 @@ export function MonacoContent({
   const getEmptyStateMessage = () => {
     if (searchQuery.trim()) {
       return {
-        icon: <MagnifyingGlassIcon className="h-16 w-16 text-[var(--muted)]" />,
+        icon: <MagnifyingGlassIcon className="h-16 w-16 text-muted" />,
         title: `No ${activeSection} found`,
         description: `No ${activeSection} match your search for "${searchQuery}". Try adjusting your search terms or filters.`,
       };
@@ -855,7 +855,7 @@ export function MonacoContent({
     switch (activeSection) {
       case "companies":
         return {
-          icon: <BuildingOfficeIcon className="h-16 w-16 text-[var(--muted)]" />,
+          icon: <BuildingOfficeIcon className="h-16 w-16 text-muted" />,
           title: "Loading Companies...",
           description:
             "Fetching company intelligence from your database. This may take a moment.",
@@ -863,7 +863,7 @@ export function MonacoContent({
         };
       case "people":
         return {
-          icon: <UsersIcon className="h-16 w-16 text-[var(--muted)]" />,
+          icon: <UsersIcon className="h-16 w-16 text-muted" />,
           title: "Loading People...",
           description:
             "Fetching contact intelligence from your database. This may take a moment.",
@@ -871,7 +871,7 @@ export function MonacoContent({
         };
       case "partners":
         return {
-          icon: <UserGroupIcon className="h-16 w-16 text-[var(--muted)]" />,
+          icon: <UserGroupIcon className="h-16 w-16 text-muted" />,
           title: "Loading Partners...",
           description:
             "Fetching partnership data from your database. This may take a moment.",
@@ -880,7 +880,7 @@ export function MonacoContent({
       default:
         if (isICPList) {
           return {
-            icon: <ArrowPathRoundedSquareIcon className="h-16 w-16 text-[var(--muted)]" />,
+            icon: <ArrowPathRoundedSquareIcon className="h-16 w-16 text-muted" />,
             title: `${currentList?.name} ICP`,
             description: `This ICP contains companies that match your ideal customer profile. ${(filteredData?.length || 0) > 0 ? `Found ${filteredData?.length || 0} matching companies.` : "Loading companies from your database..."}`,
           };
@@ -916,7 +916,7 @@ export function MonacoContent({
       )}
 
       {/* Search and Filter Bar */}
-      <div className="flex-shrink-0 p-6 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 p-6 border-b border-border">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search Input */}
           <div className="flex-1">
@@ -926,7 +926,7 @@ export function MonacoContent({
                 placeholder={`Search ${activeSection}...`}
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+                className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
               />
             </div>
           </div>
@@ -985,10 +985,10 @@ export function MonacoContent({
           <div className="flex items-center justify-center py-16">
             <div className="text-center max-w-md">
               <div className="text-6xl mb-4">⚠️</div>
-              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 Data Error
               </h2>
-              <p className="text-[var(--muted)] mb-6">{dataError}</p>
+              <p className="text-muted mb-6">{dataError}</p>
               <button
                 onClick={() => window.location.reload()}
                 className="px-6 py-3 bg-[#2563EB] text-white rounded-lg font-medium hover:bg-[#2563EB]/90 transition-colors"
@@ -1004,10 +1004,10 @@ export function MonacoContent({
           <div className="flex flex-col items-center justify-center py-16">
             <div className="text-center max-w-md">
               <div className="mb-4">{getEmptyStateMessage().icon}</div>
-              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 {getEmptyStateMessage().title}
               </h2>
-              <p className="text-[var(--muted)] mb-6">
+              <p className="text-muted mb-6">
                 {getEmptyStateMessage().description}
               </p>
               {!searchQuery && (
@@ -1029,7 +1029,7 @@ export function MonacoContent({
               {filteredData.map((record: any, index: number) => (
                 <div
                   key={record.id}
-                  className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 hover:border-[#2563EB] transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md"
+                  className="bg-background border border-border rounded-xl p-6 hover:border-[#2563EB] transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md"
                   onClick={() =>
                     activeSection.includes("people")
                       ? handlePersonClick(record)
@@ -1039,7 +1039,7 @@ export function MonacoContent({
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                        <h3 className="text-lg font-semibold text-foreground">
                           {record.name}
                         </h3>
                         {record['icpScore'] && (
@@ -1056,7 +1056,7 @@ export function MonacoContent({
                                   ? "bg-blue-100 text-blue-800"
                                   : record['status'] === "active"
                                     ? "bg-emerald-100 text-emerald-800"
-                                    : "bg-[var(--hover)] text-gray-800"
+                                    : "bg-hover text-gray-800"
                             }`}
                           >
                             {record.status.toUpperCase()}
@@ -1064,7 +1064,7 @@ export function MonacoContent({
                         )}
                       </div>
 
-                      <div className="space-y-1 text-sm text-[var(--muted)]">
+                      <div className="space-y-1 text-sm text-muted">
                         {activeSection === "companies" ||
                         ["icp1", "icp2", "icp3", "icp4"].includes(
                           activeSection,
@@ -1084,7 +1084,7 @@ export function MonacoContent({
                             <p>
                               {record.name}—{record.company}
                             </p>
-                            <p className="text-[var(--muted)]">
+                            <p className="text-muted">
                               {record.title}
                             </p>
                             <p>
@@ -1113,7 +1113,7 @@ export function MonacoContent({
                             handleRunPipeline(record);
                           }}
                           disabled={isCompanyPipelineRunning(record.id)}
-                          className="px-3 py-1 text-xs font-medium bg-[var(--hover)] text-gray-700 rounded hover:bg-[var(--loading-bg)] transition-colors disabled:opacity-50"
+                          className="px-3 py-1 text-xs font-medium bg-hover text-gray-700 rounded hover:bg-loading-bg transition-colors disabled:opacity-50"
                         >
                           {isCompanyPipelineRunning(record.id)
                             ? "Running..."
@@ -1127,7 +1127,7 @@ export function MonacoContent({
                             `Adding ${record.name} to Action Platform`,
                           );
                         }}
-                        className="px-3 py-1 rounded-lg text-xs font-medium bg-[var(--hover)] text-gray-700 hover:bg-[var(--loading-bg)] transition-colors"
+                        className="px-3 py-1 rounded-lg text-xs font-medium bg-hover text-gray-700 hover:bg-loading-bg transition-colors"
                       >
                         Add to Acquire
                       </button>

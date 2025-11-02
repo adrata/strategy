@@ -148,12 +148,12 @@ export const FindCompanyPipeline: React.FC = () => {
   }, [pipelineSteps.length]);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Back Button */}
-      <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)] px-6 py-3">
+      <div className="flex-shrink-0 border-b border-border bg-background px-6 py-3">
         <button
           onClick={() => window.history.back()}
-          className="flex items-center gap-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          className="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -165,7 +165,7 @@ export const FindCompanyPipeline: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Panel - Configuration */}
-        <div className="w-1/3 border-r border-[var(--border)] p-6">
+        <div className="w-1/3 border-r border-border p-6">
           <ContextSelector
             inputMode={inputMode}
             onInputModeChange={setInputMode}
@@ -189,17 +189,17 @@ export const FindCompanyPipeline: React.FC = () => {
 
       {/* Results Panel */}
       {results.length > 0 && (
-        <div className="flex-shrink-0 border-t border-[var(--border)] bg-[var(--background)] p-6">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+        <div className="flex-shrink-0 border-t border-border bg-background p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Discovery Results ({results.length} companies found)
           </h3>
           <div className="grid gap-4">
             {results.map((company, index) => (
-              <div key={index} className="bg-[var(--hover)] border border-[var(--border)] rounded-lg p-4">
+              <div key={index} className="bg-hover border border-border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold text-[var(--foreground)]">{company.companyName}</h4>
+                  <h4 className="font-semibold text-foreground">{company.companyName}</h4>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-[var(--muted)]">TCI Score:</span>
+                    <span className="text-sm text-muted">TCI Score:</span>
                     <span className={`px-2 py-1 rounded text-sm font-medium ${
                       company.tciScore >= 80 ? 'bg-green-100 text-green-800' :
                       company.tciScore >= 60 ? 'bg-yellow-100 text-yellow-800' :
@@ -211,20 +211,20 @@ export const FindCompanyPipeline: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-[var(--muted)]">Industry:</span> {company.industry}
+                    <span className="text-muted">Industry:</span> {company.industry}
                   </div>
                   <div>
-                    <span className="text-[var(--muted)]">Employees:</span> {company.employeeCount.toLocaleString()}
+                    <span className="text-muted">Employees:</span> {company.employeeCount.toLocaleString()}
                   </div>
                   <div>
-                    <span className="text-[var(--muted)]">Innovation Profile:</span> {company.innovationProfile}
+                    <span className="text-muted">Innovation Profile:</span> {company.innovationProfile}
                   </div>
                   <div>
-                    <span className="text-[var(--muted)]">Buyer Group Quality:</span> {company.buyerGroupQuality}%
+                    <span className="text-muted">Buyer Group Quality:</span> {company.buyerGroupQuality}%
                   </div>
                 </div>
                 <div className="mt-2">
-                  <span className="text-[var(--muted)] text-sm">Pain Signals:</span>
+                  <span className="text-muted text-sm">Pain Signals:</span>
                   <div className="flex gap-1 mt-1">
                     {company.painSignals.map((signal, idx) => (
                       <span key={idx} className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded">

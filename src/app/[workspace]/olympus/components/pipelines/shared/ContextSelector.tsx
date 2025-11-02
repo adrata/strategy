@@ -127,8 +127,8 @@ export const ContextSelector: React.FC<ContextSelectorProps> = ({
   };
 
   return (
-    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-      <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+    <div className="bg-background border border-border rounded-lg p-6">
+      <h2 className="text-lg font-semibold text-foreground mb-4">
         Configure {pipelineType.charAt(0).toUpperCase() + pipelineType.slice(1)} Discovery
       </h2>
 
@@ -174,21 +174,21 @@ export const ContextSelector: React.FC<ContextSelectorProps> = ({
       <form onSubmit={handleSubmit} className="space-y-4">
         {inputMode === 'prompt' ? (
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               AI Prompt
             </label>
             <textarea
               value={promptText}
               onChange={(e) => setPromptText(e.target.value)}
               placeholder="Describe what you're looking for..."
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               rows={4}
               required
             />
             
             {/* Prompt Suggestions */}
             <div className="mt-3">
-              <p className="text-xs text-[var(--muted)] mb-2">Try these prompts:</p>
+              <p className="text-xs text-muted mb-2">Try these prompts:</p>
               <div className="space-y-1">
                 {suggestions.map((suggestion, index) => (
                   <button
@@ -207,7 +207,7 @@ export const ContextSelector: React.FC<ContextSelectorProps> = ({
           <div className="space-y-4">
             {fields[inputMode]?.map((field) => (
               <div key={field.name}>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   {field.label}
                 </label>
                 {field.type === 'select' ? (
@@ -215,7 +215,7 @@ export const ContextSelector: React.FC<ContextSelectorProps> = ({
                     name={field.name}
                     value={formData[field.name] || ''}
                     onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select {field.label}</option>
                     {field.options?.map((option) => (
@@ -228,7 +228,7 @@ export const ContextSelector: React.FC<ContextSelectorProps> = ({
                     value={formData[field.name] || ''}
                     onChange={(e) => handleFieldChange(field.name, e.target.value)}
                     placeholder={field.placeholder}
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                     rows={3}
                   />
                 ) : (
@@ -238,7 +238,7 @@ export const ContextSelector: React.FC<ContextSelectorProps> = ({
                     value={formData[field.name] || ''}
                     onChange={(e) => handleFieldChange(field.name, e.target.value)}
                     placeholder={field.placeholder}
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 )}
               </div>

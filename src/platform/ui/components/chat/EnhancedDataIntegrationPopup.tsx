@@ -388,7 +388,7 @@ export function EnhancedDataIntegrationPopup({
       red: 'text-red-600 bg-red-50 border-red-200',
       orange: 'text-orange-600 bg-orange-50 border-orange-200',
       teal: 'text-teal-600 bg-teal-50 border-teal-200',
-      gray: 'text-[var(--muted)] bg-[var(--panel-background)] border-[var(--border)]'
+      gray: 'text-muted bg-panel-background border-border'
     };
     return colorMap[color as keyof typeof colorMap] || colorMap.gray;
   };
@@ -410,31 +410,31 @@ export function EnhancedDataIntegrationPopup({
       />
       
       {/* Enhanced popup */}
-      <div className="absolute left-0 bottom-12 bg-[var(--background)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg shadow-xl min-w-[500px] max-w-[700px] max-h-[600px] z-50 flex flex-col">
+      <div className="absolute left-0 bottom-12 bg-background border border-border dark:border-border rounded-lg shadow-xl min-w-[500px] max-w-[700px] max-h-[600px] z-50 flex flex-col">
         
         {/* Header */}
-        <div className="p-4 border-b border-[var(--border)] dark:border-[var(--border)]">
+        <div className="p-4 border-b border-border dark:border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <SparklesIcon className="w-5 h-5 text-blue-500" />
-              <h3 className="text-lg font-semibold text-[var(--foreground)] dark:text-[var(--foreground)]">
+              <h3 className="text-lg font-semibold text-foreground dark:text-foreground">
                 Add Context
               </h3>
             </div>
             <button
               onClick={onClose}
-              className="text-[var(--muted)] hover:text-[var(--muted)] dark:hover:text-gray-300"
+              className="text-muted hover:text-muted dark:hover:text-gray-300"
             >
               ×
             </button>
           </div>
-          <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)] mt-1">
+          <p className="text-sm text-muted dark:text-muted mt-1">
             Add files, leads, opportunities, and other data as context for AI analysis
           </p>
         </div>
 
         {/* Category tabs */}
-        <div className="flex overflow-x-auto border-b border-[var(--border)] dark:border-[var(--border)] bg-[var(--panel-background)] dark:bg-gray-750">
+        <div className="flex overflow-x-auto border-b border-border dark:border-border bg-panel-background dark:bg-gray-750">
           {DATA_CATEGORIES.map((category) => {
             const IconComponent = category.icon;
             const isActive = activeCategory === category.id;
@@ -448,8 +448,8 @@ export function EnhancedDataIntegrationPopup({
                 }}
                 className={`flex items-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
                   isActive
-                    ? `border-${category.color}-500 text-${category.color}-600 bg-[var(--background)]`
-                    : 'border-transparent text-[var(--muted)] hover:text-gray-700 dark:text-[var(--muted)] dark:hover:text-gray-300'
+                    ? `border-${category.color}-500 text-${category.color}-600 bg-background`
+                    : 'border-transparent text-muted hover:text-gray-700 dark:text-muted dark:hover:text-gray-300'
                 }`}
               >
                 <IconComponent className="w-4 h-4" />
@@ -464,14 +464,14 @@ export function EnhancedDataIntegrationPopup({
           
           {/* Search bar (for non-file categories) */}
           {activeCategory !== 'files' && (
-            <div className="p-4 border-b border-[var(--border)] dark:border-[var(--border)]">
+            <div className="p-4 border-b border-border dark:border-border">
               <div className="relative">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={activeTab?.searchPlaceholder || 'Search...'}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -495,12 +495,12 @@ export function EnhancedDataIntegrationPopup({
                           console.log('Cloud storage coming soon');
                         }
                       }}
-                      className="w-full px-4 py-3 text-left text-sm text-[var(--foreground)] dark:text-[var(--foreground)] hover:bg-[var(--panel-background)] flex items-center space-x-3 rounded-lg border border-[var(--border)] dark:border-[var(--border)] transition-colors"
+                      className="w-full px-4 py-3 text-left text-sm text-foreground dark:text-foreground hover:bg-panel-background flex items-center space-x-3 rounded-lg border border-border dark:border-border transition-colors"
                     >
-                      <IconComponent className="w-5 h-5 text-[var(--muted)]" />
+                      <IconComponent className="w-5 h-5 text-muted" />
                       <div className="flex-1">
                         <div className="font-medium">{option.label}</div>
-                        <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">{option.description}</div>
+                        <div className="text-xs text-muted dark:text-muted">{option.description}</div>
                       </div>
                     </button>
                   );
@@ -510,19 +510,19 @@ export function EnhancedDataIntegrationPopup({
               {/* Recent files */}
               {recentFiles.length > 0 && (
                 <div className="mt-6">
-                  <h4 className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)] mb-3">Recent Files</h4>
+                  <h4 className="text-sm font-medium text-foreground dark:text-foreground mb-3">Recent Files</h4>
                   <div className="space-y-2 max-h-40 overflow-y-auto">
                     {recentFiles.map((file) => (
                       <div
                         key={file.id}
-                        className="flex items-center space-x-3 p-2 rounded-lg hover:bg-[var(--panel-background)] cursor-pointer"
+                        className="flex items-center space-x-3 p-2 rounded-lg hover:bg-panel-background cursor-pointer"
                       >
-                        <DocumentIcon className="w-4 h-4 text-[var(--muted)]" />
+                        <DocumentIcon className="w-4 h-4 text-muted" />
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)] truncate">
+                          <div className="text-sm font-medium text-foreground dark:text-foreground truncate">
                             {file.name}
                           </div>
-                          <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">
+                          <div className="text-xs text-muted dark:text-muted">
                             {file.size ? `${(file.size / 1024).toFixed(1)} KB` : ''} • {new Date(file.uploadedAt).toLocaleDateString()}
                           </div>
                         </div>
@@ -553,17 +553,17 @@ export function EnhancedDataIntegrationPopup({
                         disabled={isSelected}
                         className={`w-full p-3 text-left rounded-lg border transition-colors ${
                           isSelected
-                            ? 'bg-[var(--hover)] border-[var(--border)] dark:border-[var(--border)] opacity-50 cursor-not-allowed'
-                            : 'hover:bg-[var(--panel-background)] border-[var(--border)] dark:border-[var(--border)]'
+                            ? 'bg-hover border-border dark:border-border opacity-50 cursor-not-allowed'
+                            : 'hover:bg-panel-background border-border dark:border-border'
                         }`}
                       >
                         <div className="flex items-start space-x-3">
                           <IconComponent className={`w-5 h-5 mt-0.5 ${getColorClasses(getItemColor(activeCategory)).split(' ')[0]}`} />
                           <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)] truncate">
+                            <div className="text-sm font-medium text-foreground dark:text-foreground truncate">
                               {getItemDisplayName(item, activeCategory)}
                             </div>
-                            <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)] mt-1">
+                            <div className="text-xs text-muted dark:text-muted mt-1">
                               {getItemDescription(item, activeCategory)}
                             </div>
                           </div>
@@ -578,13 +578,13 @@ export function EnhancedDataIntegrationPopup({
                   })}
                 </div>
               ) : searchQuery ? (
-                <div className="text-center py-8 text-[var(--muted)] dark:text-[var(--muted)]">
+                <div className="text-center py-8 text-muted dark:text-muted">
                   <MagnifyingGlassIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
                   <p>No results found for "{searchQuery}"</p>
                   <p className="text-xs mt-1">Try adjusting your search terms</p>
                 </div>
               ) : (
-                <div className="text-center py-8 text-[var(--muted)] dark:text-[var(--muted)]">
+                <div className="text-center py-8 text-muted dark:text-muted">
                   {activeTab?.icon && <activeTab.icon className="w-12 h-12 mx-auto mb-3 opacity-50" />}
                   <p>Start typing to search {activeTab?.label.toLowerCase()}</p>
                   <p className="text-xs mt-1">{activeTab?.description}</p>
@@ -596,14 +596,14 @@ export function EnhancedDataIntegrationPopup({
 
         {/* Selected items preview */}
         {selectedItems.length > 0 && (
-          <div className="border-t border-[var(--border)] dark:border-[var(--border)] p-4">
+          <div className="border-t border-border dark:border-border p-4">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)]">
+              <h4 className="text-sm font-medium text-foreground dark:text-foreground">
                 Selected Context ({selectedItems.length})
               </h4>
               <button
                 onClick={() => setSelectedItems([])}
-                className="text-xs text-[var(--muted)] hover:text-gray-700 dark:text-[var(--muted)] dark:hover:text-gray-300"
+                className="text-xs text-muted hover:text-gray-700 dark:text-muted dark:hover:text-gray-300"
               >
                 Clear all
               </button>

@@ -512,28 +512,28 @@ export default function OlympusPage() {
   }, [activeTool, saveToHistory]);
 
   return (
-    <div className="flex flex-col h-full bg-[var(--background)] overflow-hidden">
+    <div className="flex flex-col h-full bg-background overflow-hidden">
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)]">
+      <div className="flex-shrink-0 border-b border-border bg-background">
         <div className="px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[var(--background)] border border-[var(--border)] rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-background border border-border rounded-lg flex items-center justify-center">
                 <span className="text-gray-700 font-bold text-base">O</span>
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-[var(--foreground)]">Olympus</h1>
-                <p className="text-xs text-[var(--muted)]">CFO/CRO Discovery Pipeline</p>
+                <h1 className="text-xl font-semibold text-foreground">Olympus</h1>
+                <p className="text-xs text-muted">CFO/CRO Discovery Pipeline</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setIsCodeMode(!isCodeMode)}
-                className="px-4 py-1 bg-[var(--background)] text-[var(--muted)] text-sm font-medium rounded-lg border border-[var(--border)] hover:bg-[var(--panel-background)] transition-colors"
+                className="px-4 py-1 bg-background text-muted text-sm font-medium rounded-lg border border-border hover:bg-panel-background transition-colors"
               >
                 {isCodeMode ? 'Build' : 'Code'}
               </button>
-              <button className="px-4 py-1 bg-[var(--hover)] text-[var(--muted)] text-sm font-medium rounded-lg hover:bg-[var(--loading-bg)] transition-colors">
+              <button className="px-4 py-1 bg-hover text-muted text-sm font-medium rounded-lg hover:bg-loading-bg transition-colors">
                 Share
               </button>
               <button 
@@ -550,10 +550,10 @@ export default function OlympusPage() {
 
       {/* Main Content - CFO/CRO Discovery Pipeline Flow */}
       {isCodeMode ? (
-        <div className="flex-1 bg-[var(--background)] overflow-hidden">
+        <div className="flex-1 bg-background overflow-hidden">
           <div className="h-full flex">
             {/* Line Numbers */}
-            <div className="bg-[var(--background)] border-r border-[var(--border)] px-3 py-4 text-sm text-[var(--muted)] font-mono">
+            <div className="bg-background border-r border-border px-3 py-4 text-sm text-muted font-mono">
               {Array.from({ length: 20 }, (_, index) => (
                 <div key={index} className="leading-6">
                   {index + 1}
@@ -582,7 +582,7 @@ export default function OlympusPage() {
           </div>
         </div>
       ) : (
-        <div className="flex-1 bg-[var(--background)] overflow-hidden relative">
+        <div className="flex-1 bg-background overflow-hidden relative">
           <div 
             className={`absolute inset-0 flex items-center justify-center p-8 ${
               activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'
@@ -609,7 +609,7 @@ export default function OlympusPage() {
           {workflowSteps.map((step) => (
             <div
               key={step.id}
-              className={`absolute bg-[var(--background)] border rounded-lg p-3 shadow-sm transition-all duration-150 ${
+              className={`absolute bg-background border rounded-lg p-3 shadow-sm transition-all duration-150 ${
                 draggingStep === step.id ? 'scale-105 shadow-xl border-blue-300' : ''
               } ${activeTool === 'hand' ? 'cursor-grab' : 'cursor-default'} ${
                 draggingStep === step.id ? 'cursor-grabbing' : ''
@@ -618,7 +618,7 @@ export default function OlympusPage() {
                   ? 'border-green-500 bg-green-50' 
                   : step.isActive 
                     ? 'border-blue-500 bg-blue-50' 
-                    : 'border-gray-100 hover:border-[var(--border)]'
+                    : 'border-gray-100 hover:border-border'
               }`}
               style={{
                 transform: `translate(${step.position.x}px, ${step.position.y}px)`,
@@ -665,7 +665,7 @@ export default function OlympusPage() {
               {/* Connection Points - Only show closest one on hover */}
               {hoveredCard === step.id && closestConnectionPoint && (
                 <div
-                  className={`absolute w-4 h-4 bg-[var(--background)] border border-[var(--border)] rounded-full flex items-center justify-center transition-all duration-150 hover:border-blue-400 ${
+                  className={`absolute w-4 h-4 bg-background border border-border rounded-full flex items-center justify-center transition-all duration-150 hover:border-blue-400 ${
                     closestConnectionPoint === `${step.id}-right` ? '-right-2 top-1/2 transform -translate-y-1/2' :
                     closestConnectionPoint === `${step.id}-left` ? '-left-2 top-1/2 transform -translate-y-1/2' :
                     closestConnectionPoint === `${step.id}-top` ? '-top-2 left-1/2 transform -translate-x-1/2' :
@@ -677,7 +677,7 @@ export default function OlympusPage() {
                     handleConnectionPointClick(step.id, side);
                   }}
                 >
-                  <svg className="w-2 h-2 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-2 h-2 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                 </div>
@@ -689,22 +689,22 @@ export default function OlympusPage() {
                     isExecuting && currentStepIndex === workflowSteps.findIndex(s => s.id === step.id)
                       ? 'bg-green-500 text-white border-green-500'
                       : step.isActive 
-                        ? 'bg-[var(--loading-bg)] text-gray-800 border-gray-800' 
-                        : 'bg-[var(--background)] text-[var(--muted)] border-[var(--border)]'
+                        ? 'bg-loading-bg text-gray-800 border-gray-800' 
+                        : 'bg-background text-muted border-border'
                   }`}>
                     {workflowSteps.findIndex(s => s.id === step.id) + 1}
                   </div>
                   <div className="text-xs font-medium text-gray-700">{step.title}</div>
                 </div>
                 {/* Type indicator icon */}
-                <div className="w-5 h-5 border border-[var(--border)] rounded-md flex items-center justify-center">
+                <div className="w-5 h-5 border border-border rounded-md flex items-center justify-center">
                   {(() => {
                     const IconComponent = getTypeIcon(step.id);
-                    return <IconComponent className="w-3 h-3 text-[var(--muted)]" />;
+                    return <IconComponent className="w-3 h-3 text-muted" />;
                   })()}
                 </div>
               </div>
-              <div className="text-xs text-[var(--muted)] mt-1">{step.description}</div>
+              <div className="text-xs text-muted mt-1">{step.description}</div>
             </div>
           ))}
         </div>
@@ -714,14 +714,14 @@ export default function OlympusPage() {
 
       {/* Bottom Toolbar - Floating over dotted area */}
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="flex items-center gap-2 bg-[var(--background)] border border-[var(--border)] rounded-lg px-2 py-1.5 shadow-lg">
+        <div className="flex items-center gap-2 bg-background border border-border rounded-lg px-2 py-1.5 shadow-lg">
           {/* Cursor Pointer */}
           <button 
             onClick={() => handleToolClick('cursor')}
             className={`p-1.5 rounded transition-colors ${
               activeTool === 'cursor' 
                 ? 'text-blue-600 bg-blue-50' 
-                : 'text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)]'
+                : 'text-muted hover:text-gray-800 hover:bg-hover'
             }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -735,7 +735,7 @@ export default function OlympusPage() {
             className={`p-1.5 rounded transition-colors ${
               activeTool === 'hand' 
                 ? 'text-blue-600 bg-blue-50' 
-                : 'text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)]'
+                : 'text-muted hover:text-gray-800 hover:bg-hover'
             }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -749,8 +749,8 @@ export default function OlympusPage() {
             disabled={historyIndex <= 0}
             className={`p-1.5 transition-colors ${
               historyIndex > 0 
-                ? 'text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)]' 
-                : 'text-[var(--muted)] cursor-not-allowed'
+                ? 'text-muted hover:text-gray-800 hover:bg-hover' 
+                : 'text-muted cursor-not-allowed'
             }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -764,8 +764,8 @@ export default function OlympusPage() {
             disabled={historyIndex >= positionHistory.length - 1}
             className={`p-1.5 transition-colors ${
               historyIndex < positionHistory.length - 1 
-                ? 'text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)]' 
-                : 'text-[var(--muted)] cursor-not-allowed'
+                ? 'text-muted hover:text-gray-800 hover:bg-hover' 
+                : 'text-muted cursor-not-allowed'
             }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -777,7 +777,7 @@ export default function OlympusPage() {
           <div className="relative add-popup-container">
             <button 
               onClick={() => setShowAddPopup(!showAddPopup)}
-              className="p-1.5 text-[var(--muted)] hover:text-gray-800 hover:bg-[var(--hover)] transition-colors"
+              className="p-1.5 text-muted hover:text-gray-800 hover:bg-hover transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -786,27 +786,27 @@ export default function OlympusPage() {
             
             {/* Add Items Popup */}
             {showAddPopup && (
-              <div className="absolute bottom-full mb-4 left-1/2 transform -translate-x-1/2 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-md overflow-hidden min-w-[300px] max-h-[400px] overflow-y-auto">
+              <div className="absolute bottom-full mb-4 left-1/2 transform -translate-x-1/2 bg-background border border-border rounded-lg shadow-md overflow-hidden min-w-[300px] max-h-[400px] overflow-y-auto">
                 {workflowCategories.map((category) => (
                   <div key={category.category}>
-                    <div className="px-4 py-3 bg-[var(--panel-background)] border-b border-gray-100">
+                    <div className="px-4 py-3 bg-panel-background border-b border-gray-100">
                       <span className="text-sm font-semibold text-gray-800">{category.category}</span>
                     </div>
                     {category.items.map((item) => (
                       <button
                         key={item.id}
                         onClick={() => handleAddItem(item)}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[var(--panel-background)] transition-colors border-b border-gray-100 last:border-b-0"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-panel-background transition-colors border-b border-gray-100 last:border-b-0"
                       >
-                        <div className="w-5 h-5 border border-[var(--border)] rounded-md flex items-center justify-center">
+                        <div className="w-5 h-5 border border-border rounded-md flex items-center justify-center">
                           {(() => {
                             const IconComponent = getTypeIcon(item.id);
-                            return <IconComponent className="w-3 h-3 text-[var(--muted)]" />;
+                            return <IconComponent className="w-3 h-3 text-muted" />;
                           })()}
                         </div>
                         <div className="flex-1">
                           <div className="text-sm font-medium text-gray-800">{item.title}</div>
-                          <div className="text-xs text-[var(--muted)] mt-0.5">{item.description}</div>
+                          <div className="text-xs text-muted mt-0.5">{item.description}</div>
                         </div>
                       </button>
                     ))}
@@ -822,12 +822,12 @@ export default function OlympusPage() {
       {/* Context Menu */}
       {contextMenu && (
         <div
-          className="fixed bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg py-1 z-50 min-w-[160px]"
+          className="fixed bg-background border border-border rounded-lg shadow-lg py-1 z-50 min-w-[160px]"
           style={{ left: contextMenu.x, top: contextMenu.y }}
           onMouseLeave={() => setContextMenu(null)}
         >
           <button
-            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-[var(--hover)]"
+            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-hover"
             onClick={() => {
               const step = workflowSteps.find(s => s.id === contextMenu.stepId);
               if (step) setSelectedStep(step);
@@ -837,7 +837,7 @@ export default function OlympusPage() {
             Edit
           </button>
           <button
-            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-[var(--hover)]"
+            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-hover"
             onClick={() => {
               const step = workflowSteps.find(s => s.id === contextMenu.stepId);
               if (step) {
@@ -854,7 +854,7 @@ export default function OlympusPage() {
             Duplicate
           </button>
           <button
-            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-[var(--hover)]"
+            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-hover"
             onClick={() => {
               setWorkflowSteps(prev => prev.filter(s => s.id !== contextMenu.stepId));
               setContextMenu(null);

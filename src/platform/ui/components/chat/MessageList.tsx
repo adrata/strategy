@@ -113,7 +113,7 @@ const renderMarkdown = (content: string): React.ReactNode => {
     if (part.match(/^\*\*.*\*\*$/)) {
       const text = part.slice(2, -2);
       return (
-        <strong key={index} className="font-semibold text-[var(--foreground)]">
+        <strong key={index} className="font-semibold text-foreground">
           {text}
         </strong>
       );
@@ -123,7 +123,7 @@ const renderMarkdown = (content: string): React.ReactNode => {
     if (part.match(/^\*.*\*$/)) {
       const text = part.slice(1, -1);
       return (
-        <em key={index} className="italic text-[var(--foreground)]">
+        <em key={index} className="italic text-foreground">
           {text}
         </em>
       );
@@ -133,7 +133,7 @@ const renderMarkdown = (content: string): React.ReactNode => {
     if (part.match(/^`.*`$/)) {
       const text = part.slice(1, -1);
       return (
-        <code key={index} className="bg-[var(--muted)] px-1.5 py-0.5 rounded text-sm font-mono text-[var(--foreground)]">
+        <code key={index} className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-foreground">
           {text}
         </code>
       );
@@ -141,7 +141,7 @@ const renderMarkdown = (content: string): React.ReactNode => {
     
     // Regular text
     return (
-      <span key={index} className="text-[var(--foreground)]">
+      <span key={index} className="text-foreground">
         {part}
       </span>
     );
@@ -202,7 +202,7 @@ export function MessageList({
           style={{ marginBottom: '16px' }}
         >
           {message['type'] === 'user' ? (
-            <div className="bg-[var(--hover-bg)] rounded-lg px-3 py-2 w-full">
+            <div className="bg-hover rounded-lg px-3 py-2 w-full">
               {message.content}
             </div>
           ) : message['type'] === 'todos' ? (
@@ -215,13 +215,13 @@ export function MessageList({
             />
           ) : message['content'] === 'typing' ? (
             <div className="space-y-1">
-              <div className="text-base text-[var(--muted)]">
+              <div className="text-base text-muted">
                 <CyclingDots />
               </div>
             </div>
           ) : message['content'] === 'browsing' ? (
             <div className="space-y-1">
-              <div className="text-base text-[var(--muted)] flex items-center gap-2">
+              <div className="text-base text-muted flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 <span>Browsing the web...</span>
               </div>
@@ -400,14 +400,14 @@ export function MessageList({
                       {source.title}
                     </a>
                     {source.snippet && (
-                      <p className="text-[var(--muted)] text-xs mt-1 line-clamp-2">
+                      <p className="text-muted text-xs mt-1 line-clamp-2">
                         {source.snippet}
                       </p>
                     )}
                   </div>
                 ))}
                 {message.sources.length > 3 && (
-                  <p className="text-xs text-[var(--muted)]">
+                  <p className="text-xs text-muted">
                     +{message.sources.length - 3} more sources
                   </p>
                 )}

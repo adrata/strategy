@@ -81,8 +81,8 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     return (
       <div className="space-y-8">
         <div className="space-y-4">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
-            <div className="text-[var(--muted)]">No record data available</div>
+          <div className="bg-background p-4 rounded-lg border border-border text-center">
+            <div className="text-muted">No record data available</div>
           </div>
         </div>
       </div>
@@ -94,34 +94,34 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
       <div className="space-y-8">
         {/* Header skeleton */}
         <div className="flex items-center justify-between">
-          <div className="h-6 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-          <div className="h-6 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+          <div className="h-6 w-32 bg-loading-bg rounded animate-pulse"></div>
+          <div className="h-6 w-20 bg-loading-bg rounded animate-pulse"></div>
         </div>
 
         {/* News article skeletons */}
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, index) => (
-            <div key={index} className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+            <div key={index} className="bg-background p-4 rounded-lg border border-border">
               {/* Title skeleton */}
               <div className="flex items-start justify-between mb-2">
-                <div className="h-6 w-3/4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                <div className="h-4 w-16 bg-[var(--loading-bg)] rounded animate-pulse ml-2 flex-shrink-0"></div>
+                <div className="h-6 w-3/4 bg-loading-bg rounded animate-pulse"></div>
+                <div className="h-4 w-16 bg-loading-bg rounded animate-pulse ml-2 flex-shrink-0"></div>
               </div>
               
               {/* Source skeleton */}
               <div className="flex items-center mb-3">
-                <div className="h-4 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                <div className="h-4 w-20 bg-loading-bg rounded animate-pulse"></div>
               </div>
               
               {/* Description skeleton */}
               <div className="space-y-2 mb-3">
-                <div className="h-4 w-full bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                <div className="h-4 w-5/6 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                <div className="h-4 w-2/3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                <div className="h-4 w-full bg-loading-bg rounded animate-pulse"></div>
+                <div className="h-4 w-5/6 bg-loading-bg rounded animate-pulse"></div>
+                <div className="h-4 w-2/3 bg-loading-bg rounded animate-pulse"></div>
               </div>
               
               {/* Link skeleton */}
-              <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+              <div className="h-4 w-32 bg-loading-bg rounded animate-pulse"></div>
             </div>
           ))}
         </div>
@@ -133,7 +133,7 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
     return (
       <div className="space-y-8">
         <div className="space-y-4">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
+          <div className="bg-background p-4 rounded-lg border border-border text-center">
             <div className="text-red-600">Error loading news: {error}</div>
             <button 
               onClick={fetchCompanyNews}
@@ -168,9 +168,9 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
       <div className="space-y-8">
         {/* Data Source Indicator */}
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">Company News</h3>
+          <h3 className="text-lg font-semibold text-foreground">Company News</h3>
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-[var(--muted)]">Data Source:</span>
+            <span className="text-sm text-muted">Data Source:</span>
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
               dataSource === 'database_companyUpdates' 
                 ? 'bg-green-100 text-green-800' 
@@ -193,8 +193,8 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
 
         {newsArticles.length === 0 ? (
           <div className="space-y-4">
-            <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] text-center">
-              <div className="text-[var(--muted)]">
+            <div className="bg-background p-4 rounded-lg border border-border text-center">
+              <div className="text-muted">
                 <div className="text-lg font-medium mb-2">No Company News Available</div>
                 <div className="text-sm">No company news available at this time for {companyName}</div>
               </div>
@@ -203,23 +203,23 @@ export function UniversalNewsTab({ record, recordType }: UniversalNewsTabProps) 
         ) : (
           <div className="space-y-4">
             {newsArticles.map((article, index) => (
-              <div key={index} className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
+              <div key={index} className="bg-background p-4 rounded-lg border border-border">
                 <div className="flex items-start justify-between mb-2">
-                  <h4 className="text-lg font-semibold text-[var(--foreground)] line-clamp-2">
+                  <h4 className="text-lg font-semibold text-foreground line-clamp-2">
                     {article.title}
                   </h4>
-                  <span className="text-xs text-[var(--muted)] ml-2 flex-shrink-0">
+                  <span className="text-xs text-muted ml-2 flex-shrink-0">
                     {formatDate(article.publishedAt)}
                   </span>
                 </div>
                 
                 <div className="flex items-center mb-3">
-                  <span className="text-sm text-[var(--muted)] bg-[var(--hover)] px-2 py-1 rounded">
+                  <span className="text-sm text-muted bg-hover px-2 py-1 rounded">
                     {article.source}
                   </span>
                 </div>
                 
-                <p className="text-[var(--muted)] mb-3 line-clamp-3">
+                <p className="text-muted mb-3 line-clamp-3">
                   {article.description}
                 </p>
                 

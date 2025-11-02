@@ -48,14 +48,14 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         {/* Header Skeleton */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+        <div className="flex-shrink-0 px-6 py-4 border-b border-border">
           <div className="flex items-center justify-between">
             <div>
-              <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse mb-2"></div>
-              <div className="h-8 w-48 bg-[var(--loading-bg)] rounded animate-pulse mb-2"></div>
-              <div className="h-4 w-64 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+              <div className="h-4 w-24 bg-loading-bg rounded animate-pulse mb-2"></div>
+              <div className="h-8 w-48 bg-loading-bg rounded animate-pulse mb-2"></div>
+              <div className="h-4 w-64 bg-loading-bg rounded animate-pulse"></div>
             </div>
           </div>
         </div>
@@ -64,40 +64,40 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
         <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-6">
             {/* Model Info Skeleton */}
-            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
-              <div className="h-6 w-32 bg-[var(--loading-bg)] rounded animate-pulse mb-3"></div>
+            <div className="bg-panel-background border border-border rounded-lg p-4">
+              <div className="h-6 w-32 bg-loading-bg rounded animate-pulse mb-3"></div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {Array.from({ length: 4 }).map((_, index) => (
                   <div key={index}>
-                    <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse mb-1"></div>
-                    <div className="h-4 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                    <div className="h-4 w-24 bg-loading-bg rounded animate-pulse mb-1"></div>
+                    <div className="h-4 w-32 bg-loading-bg rounded animate-pulse"></div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Fields Skeleton */}
-            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
-              <div className="h-6 w-24 bg-[var(--loading-bg)] rounded animate-pulse mb-4"></div>
+            <div className="bg-panel-background border border-border rounded-lg p-4">
+              <div className="h-6 w-24 bg-loading-bg rounded animate-pulse mb-4"></div>
               <div className="space-y-3">
                 {Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className="border border-[var(--border)] rounded-lg p-3">
+                  <div key={index} className="border border-border rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <div className="h-5 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                        <div className="h-5 w-16 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                        <div className="h-5 w-24 bg-loading-bg rounded animate-pulse"></div>
+                        <div className="h-5 w-16 bg-loading-bg rounded animate-pulse"></div>
                       </div>
                       <div className="flex gap-1">
-                        <div className="h-5 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                        <div className="h-5 w-16 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                        <div className="h-5 w-20 bg-loading-bg rounded animate-pulse"></div>
+                        <div className="h-5 w-16 bg-loading-bg rounded animate-pulse"></div>
                       </div>
                     </div>
                     <div className="mt-2">
-                      <div className="h-3 w-20 bg-[var(--loading-bg)] rounded animate-pulse mb-1"></div>
+                      <div className="h-3 w-20 bg-loading-bg rounded animate-pulse mb-1"></div>
                       <div className="flex gap-1">
-                        <div className="h-4 w-12 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                        <div className="h-4 w-16 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                        <div className="h-4 w-14 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                        <div className="h-4 w-12 bg-loading-bg rounded animate-pulse"></div>
+                        <div className="h-4 w-16 bg-loading-bg rounded animate-pulse"></div>
+                        <div className="h-4 w-14 bg-loading-bg rounded animate-pulse"></div>
                       </div>
                     </div>
                   </div>
@@ -115,10 +115,10 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 mb-4">⚠️</div>
-          <p className="text-[var(--muted)] mb-4">{error}</p>
+          <p className="text-muted mb-4">{error}</p>
           <button
             onClick={() => router.back()}
-            className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] rounded hover:opacity-90 transition-opacity"
+            className="px-4 py-2 bg-foreground text-background rounded hover:opacity-90 transition-opacity"
           >
             Go Back
           </button>
@@ -131,14 +131,14 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <p className="text-[var(--muted)]">Model not found</p>
+          <p className="text-muted">Model not found</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Breadcrumb */}
       <Breadcrumb items={[
         { label: 'Database', onClick: () => window.location.href = window.location.pathname.split('/').slice(0, 3).join('/') },
@@ -147,11 +147,11 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
       ]} />
 
       {/* Header */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 px-6 py-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-[var(--foreground)]">{model.name}</h1>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <h1 className="text-2xl font-semibold text-foreground">{model.name}</h1>
+            <p className="text-sm text-muted mt-1">
               Database Model • {model.fields.length} fields • Table: {model.tableName}
             </p>
           </div>
@@ -162,42 +162,42 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
       <div className="flex-1 overflow-y-auto p-6">
         <div className="space-y-6">
           {/* Model Info */}
-          <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
-            <h3 className="font-medium text-[var(--foreground)] mb-3">Model Information</h3>
+          <div className="bg-panel-background border border-border rounded-lg p-4">
+            <h3 className="font-medium text-foreground mb-3">Model Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <span className="text-sm text-[var(--muted)]">Model Name:</span>
+                <span className="text-sm text-muted">Model Name:</span>
                 <p className="font-mono text-sm">{model.name}</p>
               </div>
               <div>
-                <span className="text-sm text-[var(--muted)]">Table Name:</span>
+                <span className="text-sm text-muted">Table Name:</span>
                 <p className="font-mono text-sm">{model.tableName}</p>
               </div>
               <div>
-                <span className="text-sm text-[var(--muted)]">Total Fields:</span>
+                <span className="text-sm text-muted">Total Fields:</span>
                 <p className="text-sm">{model.fields.length}</p>
               </div>
               <div>
-                <span className="text-sm text-[var(--muted)]">Relationships:</span>
+                <span className="text-sm text-muted">Relationships:</span>
                 <p className="text-sm">{model.relationships.length}</p>
               </div>
             </div>
           </div>
 
           {/* Fields */}
-          <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
-            <h3 className="font-medium text-[var(--foreground)] mb-4">Fields ({model.fields.length})</h3>
+          <div className="bg-panel-background border border-border rounded-lg p-4">
+            <h3 className="font-medium text-foreground mb-4">Fields ({model.fields.length})</h3>
             <div className="space-y-3">
               {model.fields.map((field) => (
-                <div key={field.name} className="border border-[var(--border)] rounded-lg p-3">
+                <div key={field.name} className="border border-border rounded-lg p-3">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-[var(--foreground)]">{field.name}</span>
+                      <span className="font-medium text-foreground">{field.name}</span>
                       <span className={`px-2 py-1 rounded text-xs ${
                         field.isPrimaryKey ? 'bg-blue-50 text-blue-600' :
                         field.isForeignKey ? 'bg-green-50 text-green-600' :
                         field.isUnique ? 'bg-purple-50 text-purple-600' :
-                        'bg-[var(--background)] text-[var(--muted)]'
+                        'bg-background text-muted'
                       }`}>
                         {field.type}
                       </span>
@@ -224,10 +224,10 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
                   
                   {field.attributes.length > 0 && (
                     <div className="mt-2">
-                      <span className="text-xs text-[var(--muted)]">Attributes:</span>
+                      <span className="text-xs text-muted">Attributes:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {field.attributes.map((attr) => (
-                          <span key={attr} className="text-xs text-[var(--muted)] bg-[var(--background)] px-2 py-1 rounded">
+                          <span key={attr} className="text-xs text-muted bg-background px-2 py-1 rounded">
                             {attr}
                           </span>
                         ))}
@@ -237,7 +237,7 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
                   
                   {field.defaultValue && (
                     <div className="mt-2">
-                      <span className="text-xs text-[var(--muted)]">Default:</span>
+                      <span className="text-xs text-muted">Default:</span>
                       <span className="text-xs font-mono ml-1">{field.defaultValue}</span>
                     </div>
                   )}
@@ -248,15 +248,15 @@ export function ModelDetailView({ modelName }: ModelDetailViewProps) {
 
           {/* Relationships */}
           {model.relationships.length > 0 && (
-            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
-              <h3 className="font-medium text-[var(--foreground)] mb-4">Relationships ({model.relationships.length})</h3>
+            <div className="bg-panel-background border border-border rounded-lg p-4">
+              <h3 className="font-medium text-foreground mb-4">Relationships ({model.relationships.length})</h3>
               <div className="space-y-3">
                 {model.relationships.map((rel, index) => (
-                  <div key={index} className="border border-[var(--border)] rounded-lg p-3">
+                  <div key={index} className="border border-border rounded-lg p-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="font-medium text-[var(--foreground)]">{rel.fieldName}</span>
-                        <span className="text-sm text-[var(--muted)] ml-2">→ {rel.targetModel}</span>
+                        <span className="font-medium text-foreground">{rel.fieldName}</span>
+                        <span className="text-sm text-muted ml-2">→ {rel.targetModel}</span>
                       </div>
                       <span className={`text-xs px-2 py-1 rounded ${
                         rel.type === 'one-to-one' ? 'bg-blue-50 text-blue-600' :

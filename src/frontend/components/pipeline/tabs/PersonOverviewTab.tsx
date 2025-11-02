@@ -118,7 +118,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
   };
 
   // Helper component for displaying values with proper empty state
-  const DisplayValue = ({ value, children, className = "text-sm font-medium text-[var(--foreground)]" }: { 
+  const DisplayValue = ({ value, children, className = "text-sm font-medium text-foreground" }: { 
     value: any, 
     children?: React.ReactNode, 
     className?: string 
@@ -126,7 +126,7 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     if (value) {
       return <span className={className}>{children || value}</span>;
     }
-    return <span className="text-sm text-[var(--muted)]">-</span>;
+    return <span className="text-sm text-muted">-</span>;
   };
 
   // Memoize data extraction to prevent expensive recalculations on every render
@@ -346,18 +346,18 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-[var(--foreground)]">Overview</h2>
+        <h2 className="text-xl font-semibold text-foreground">Overview</h2>
       </div>
 
       {/* Who are they */}
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Basic Information Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Name:</span>
+                <span className="text-sm text-muted w-24">Name:</span>
                 <InlineEditField
                   value={personData.name}
                   field="name"
@@ -365,11 +365,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Title:</span>
+                <span className="text-sm text-muted w-24">Title:</span>
                 <InlineEditField
                   value={personData.title}
                   field="title"
@@ -377,11 +377,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Company:</span>
+                <span className="text-sm text-muted w-24">Company:</span>
                 <InlineEditField
                   value={personData.company}
                   field="company"
@@ -391,11 +391,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordType={recordType}
                   companyId={record.companyId || (typeof record.company === 'object' && record.company?.id) || null}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Department:</span>
+                <span className="text-sm text-muted w-24">Department:</span>
                 <InlineEditField
                   value={personData.department}
                   field="department"
@@ -403,11 +403,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
+                <span className="text-sm text-muted w-24">Bio URL:</span>
                 <InlineEditField
                   value={formatEmptyValue(personData.bio)}
                   field="bio"
@@ -415,18 +415,18 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Intelligence Data Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Intelligence Profile</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Intelligence Profile</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Influence Level:</span>
+                <span className="text-sm text-muted w-24">Influence Level:</span>
                 <InlineEditField
                   value={personData.influenceLevel}
                   field="influenceLevel"
@@ -440,11 +440,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                     { value: 'Medium', label: 'Medium' },
                     { value: 'Low', label: 'Low' }
                   ]}
-                  className="text-sm font-medium text-[var(--foreground)] capitalize"
+                  className="text-sm font-medium text-foreground capitalize"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Engagement Strategy:</span>
+                <span className="text-sm text-muted w-24">Engagement Strategy:</span>
                 <InlineEditField
                   value={personData.engagementStrategy}
                   field="engagementStrategy"
@@ -452,34 +452,34 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)] capitalize"
+                  className="text-sm font-medium text-foreground capitalize"
                 />
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Buyer Group Member:</span>
+                <span className="text-sm text-muted">Buyer Group Member:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.isBuyerGroupMember ? 'bg-[var(--success-bg)] text-[var(--success-text)]' : 'bg-[var(--hover)] text-[var(--foreground)]'
+                  personData.isBuyerGroupMember ? 'bg-success-bg text-success-text' : 'bg-hover text-foreground'
                 }`}>
                   {personData.isBuyerGroupMember ? 'Yes' : 'No'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Buyer Group Optimized:</span>
+                <span className="text-sm text-muted">Buyer Group Optimized:</span>
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  personData.buyerGroupOptimized ? 'bg-[var(--success-bg)] text-[var(--success-text)]' : 'bg-[var(--hover)] text-[var(--foreground)]'
+                  personData.buyerGroupOptimized ? 'bg-success-bg text-success-text' : 'bg-hover text-foreground'
                 }`}>
                   {personData.buyerGroupOptimized ? 'Yes' : 'No'}
                 </span>
               </div>
               {personData.buyerGroupRole && (
                 <div className="flex justify-between">
-                  <span className="text-sm text-[var(--muted)]">Buyer Group Role:</span>
-                  <span className="text-sm font-medium text-[var(--foreground)] capitalize">{personData.buyerGroupRole}</span>
+                  <span className="text-sm text-muted">Buyer Group Role:</span>
+                  <span className="text-sm font-medium text-foreground capitalize">{personData.buyerGroupRole}</span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Seniority:</span>
-                <span className="text-sm font-medium text-[var(--foreground)] capitalize">{personData.seniority}</span>
+                <span className="text-sm text-muted">Seniority:</span>
+                <span className="text-sm font-medium text-foreground capitalize">{personData.seniority}</span>
               </div>
             </div>
           </div>
@@ -490,11 +490,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Information Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Contact Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Email:</span>
+                <span className="text-sm text-muted w-24">Email:</span>
                 <InlineEditField
                   value={personData.email}
                   field="email"
@@ -503,11 +503,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="email"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Phone:</span>
+                <span className="text-sm text-muted w-24">Phone:</span>
                 <InlineEditField
                   value={personData.phone}
                   field="phone"
@@ -516,11 +516,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="text"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <span className="text-sm text-muted w-24">LinkedIn:</span>
                 <InlineEditField
                   value={formatEmptyValue(personData.linkedin)}
                   field="linkedinUrl"
@@ -528,11 +528,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
+                <span className="text-sm text-muted w-24">LinkedIn Navigator:</span>
                 <InlineEditField
                   value={personData.linkedinNavigatorUrl || null}
                   field="linkedinNavigatorUrl"
@@ -540,11 +540,11 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Connection Date:</span>
+                <span className="text-sm text-muted w-24">LinkedIn Connection Date:</span>
                 <InlineEditField
                   value={personData.linkedinConnectionDate}
                   field="linkedinConnectionDate"
@@ -553,23 +553,23 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Engagement History Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement History</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Engagement History</h4>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Last Contact:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{formatRelativeDate(personData.lastContact)}</span>
+                <span className="text-sm text-muted">Last Contact:</span>
+                <span className="text-sm font-medium text-foreground">{formatRelativeDate(personData.lastContact)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-[var(--muted)]">Next Action:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{personData.nextAction}</span>
+                <span className="text-sm text-muted">Next Action:</span>
+                <span className="text-sm font-medium text-foreground">{personData.nextAction}</span>
               </div>
             </div>
           </div>
@@ -581,8 +581,8 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
 
       {/* What do they care about */}
       <div className="space-y-6">
-        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-          <h4 className="font-medium text-[var(--foreground)] mb-3">
+        <div className="bg-background p-4 rounded-lg border border-border">
+          <h4 className="font-medium text-foreground mb-3">
             Professional Insights: Based on their role as {personData.title} at {personData.company}, they likely care about:
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -590,8 +590,8 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               <h5 className="text-sm font-medium text-gray-700 mb-2">Wants</h5>
               <ul className="space-y-1">
                 {wants.map((want, index) => (
-                  <li key={index} className="text-sm text-[var(--muted)] flex items-start">
-                    <span className="text-[var(--muted)] mr-2">•</span>
+                  <li key={index} className="text-sm text-muted flex items-start">
+                    <span className="text-muted mr-2">•</span>
                     {want}
                   </li>
                 ))}
@@ -601,8 +601,8 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               <h5 className="text-sm font-medium text-gray-700 mb-2">Needs</h5>
               <ul className="space-y-1">
                 {needs.map((need, index) => (
-                  <li key={index} className="text-sm text-[var(--muted)] flex items-start">
-                    <span className="text-[var(--muted)] mr-2">•</span>
+                  <li key={index} className="text-sm text-muted flex items-start">
+                    <span className="text-muted mr-2">•</span>
                     {need}
                   </li>
                 ))}
@@ -614,23 +614,23 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
 
         {/* Last Actions */}
         <div className="space-y-6">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">What did I last do</h3>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Last Actions:</h4>
+          <h3 className="text-lg font-semibold text-foreground mb-4">What did I last do</h3>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Last Actions:</h4>
             {actionsLoading ? (
               <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--accent)] mx-auto mb-2"></div>
-                <p className="text-sm text-[var(--muted)]">Loading actions...</p>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
+                <p className="text-sm text-muted">Loading actions...</p>
               </div>
             ) : actionsError ? (
               <div className="text-center py-4">
-                <p className="text-sm text-[var(--error)] mb-3">Error loading actions</p>
-                <p className="text-xs text-[var(--muted)]">{actionsError}</p>
+                <p className="text-sm text-error mb-3">Error loading actions</p>
+                <p className="text-xs text-muted">{actionsError}</p>
               </div>
             ) : lastActions.length > 0 ? (
               <ul className="space-y-2">
                 {lastActions.map((action, index) => (
-                  <li key={index} className="text-sm text-[var(--muted)] flex items-center gap-2">
+                  <li key={index} className="text-sm text-muted flex items-center gap-2">
                     <span>•</span>
                     {action.type && (
                       <span className="px-2 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full">
@@ -643,8 +643,8 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
               </ul>
             ) : (
               <div className="text-center py-4">
-                <p className="text-sm text-[var(--muted)] mb-3">No actions logged yet</p>
-                <p className="text-xs text-[var(--muted)]">Actions will appear here when logged through the Actions tab</p>
+                <p className="text-sm text-muted mb-3">No actions logged yet</p>
+                <p className="text-xs text-muted">Actions will appear here when logged through the Actions tab</p>
               </div>
             )}
           </div>
@@ -652,19 +652,19 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
 
       {/* Notes on them */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Notes on them</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Notes on them</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Recent Notes Summary</h4>
-            <div className="text-sm text-[var(--muted)] leading-relaxed">
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Recent Notes Summary</h4>
+            <div className="text-sm text-muted leading-relaxed">
               {personData.notes && personData.notes !== 'No notes available' && personData.notes.trim() !== '' ? personData.notes : 
                 `—`
               }
             </div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement Strategy</h4>
-            <div className="text-sm text-[var(--muted)] leading-relaxed">
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Engagement Strategy</h4>
+            <div className="text-sm text-muted leading-relaxed">
               Focus on {(personData.engagementPriority || '').toLowerCase()} priority engagement. 
               Last contact was {formatRelativeDate(personData.lastContact)}. 
               Next action: {personData.nextAction}.
@@ -674,12 +674,12 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
       </div>
 
       {/* Record Information */}
-      <div className="mt-8 pt-6 border-t border-[var(--border)]">
-        <h3 className="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-4">Record Information</h3>
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="text-sm font-medium text-muted uppercase tracking-wide mb-4">Record Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center space-x-3">
-            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Created:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.createdAt)}>
+            <span className="text-xs text-muted uppercase tracking-wide w-28">Created:</span>
+            <span className="text-sm text-foreground" title={formatFullDate(record?.createdAt)}>
               {(() => {
                 console.log('🔍 [PERSON TAB] Date debugging for Created:', {
                   recordId: record?.id,
@@ -696,8 +696,8 @@ export function PersonOverviewTab({ recordType, record: recordProp, onSave }: Pe
             </span>
           </div>
           <div className="flex items-center space-x-3">
-            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Last Updated:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.updatedAt || record?.createdAt)}>
+            <span className="text-xs text-muted uppercase tracking-wide w-28">Last Updated:</span>
+            <span className="text-sm text-foreground" title={formatFullDate(record?.updatedAt || record?.createdAt)}>
               {(() => {
                 // Use createdAt as fallback if updatedAt is not available
                 const dateToUse = record?.updatedAt || record?.createdAt;

@@ -76,7 +76,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
       case "low":
         return "bg-green-100 text-green-800";
       default:
-        return "bg-[var(--hover)] text-gray-800";
+        return "bg-hover text-gray-800";
     }
   };
 
@@ -91,16 +91,16 @@ export function EnhancedContactView({ contact }: ContactProps) {
       case "gatekeeper":
         return "bg-orange-100 text-orange-800";
       case "end-user":
-        return "bg-[var(--hover)] text-gray-800";
+        return "bg-hover text-gray-800";
       default:
-        return "bg-[var(--hover)] text-gray-800";
+        return "bg-hover text-gray-800";
     }
   };
 
   return (
-    <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl shadow-sm max-w-4xl mx-auto">
+    <div className="bg-background border border-border rounded-xl shadow-sm max-w-4xl mx-auto">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-[var(--border)]">
+      <div className="px-8 py-6 border-b border-border">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">
@@ -110,11 +110,11 @@ export function EnhancedContactView({ contact }: ContactProps) {
                 .join("")}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)]">
+              <h1 className="text-2xl font-bold text-foreground">
                 {contact.name}
               </h1>
               <div className="flex items-center space-x-3 mt-1">
-                <span className="text-lg text-[var(--muted)]">{contact.title}</span>
+                <span className="text-lg text-muted">{contact.title}</span>
                 <span
                   className={`px-2 py-1 rounded-full text-xs font-medium ${getContactTypeColor(contact.contactType)}`}
                 >
@@ -126,7 +126,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                   {contact.buyingInfluence.toUpperCase()} INFLUENCE
                 </span>
               </div>
-              <p className="text-[var(--muted)] mt-1">{contact.company}</p>
+              <p className="text-muted mt-1">{contact.company}</p>
             </div>
           </div>
           <button
@@ -157,26 +157,26 @@ export function EnhancedContactView({ contact }: ContactProps) {
       </div>
 
       {/* Core Contact Information */}
-      <div className="px-8 py-6 border-b border-[var(--border)]">
+      <div className="px-8 py-6 border-b border-border">
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Phone
               </label>
-              <p className="text-[var(--foreground)]">{contact.phone}</p>
+              <p className="text-foreground">{contact.phone}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email
               </label>
-              <p className="text-[var(--foreground)]">{contact.email}</p>
+              <p className="text-foreground">{contact.email}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Role
               </label>
-              <p className="text-[var(--foreground)]">{contact.role}</p>
+              <p className="text-foreground">{contact.role}</p>
             </div>
           </div>
           <div className="space-y-4">
@@ -194,7 +194,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                   View Profile
                 </a>
               ) : (
-                <span className="text-[var(--muted)]">Not available</span>
+                <span className="text-muted">Not available</span>
               )}
             </div>
             <div>
@@ -209,7 +209,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                       ? "bg-yellow-100 text-yellow-800"
                       : contact['relationshipStrength'] === "weak"
                         ? "bg-red-100 text-red-800"
-                        : "bg-[var(--hover)] text-gray-800"
+                        : "bg-hover text-gray-800"
                 }`}
               >
                 {contact.relationshipStrength.toUpperCase()}
@@ -224,7 +224,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                   contact['status'] === "active"
                     ? "bg-green-100 text-green-800"
                     : contact['status'] === "inactive"
-                      ? "bg-[var(--hover)] text-gray-800"
+                      ? "bg-hover text-gray-800"
                       : contact['status'] === "bounced"
                         ? "bg-red-100 text-red-800"
                         : "bg-yellow-100 text-yellow-800"
@@ -238,17 +238,17 @@ export function EnhancedContactView({ contact }: ContactProps) {
       </div>
 
       {/* Notes */}
-      <div className="px-8 py-6 border-b border-[var(--border)]">
+      <div className="px-8 py-6 border-b border-border">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Notes
         </label>
-        <div className="bg-[var(--panel-background)] rounded-lg p-4">
-          <p className="text-[var(--foreground)] whitespace-pre-wrap">{contact.notes}</p>
+        <div className="bg-panel-background rounded-lg p-4">
+          <p className="text-foreground whitespace-pre-wrap">{contact.notes}</p>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-[var(--border)]">
+      <div className="border-b border-border">
         <nav className="flex space-x-8 px-8">
           {tabs.map((tab) => (
             <button
@@ -257,7 +257,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === tab.id
                   ? "border-gray-400 text-gray-700"
-                  : "border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]"
+                  : "border-transparent text-muted hover:text-gray-700 hover:border-border"
               }`}
             >
               {tab.label}
@@ -271,7 +271,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
         {activeTab === "overview" && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Contact Overview
               </h3>
               <div className="grid grid-cols-2 gap-6">
@@ -283,7 +283,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                     {contact.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-[var(--hover)] text-gray-700 rounded-md text-sm"
+                        className="px-2 py-1 bg-hover text-gray-700 rounded-md text-sm"
                       >
                         {tag}
                       </span>
@@ -294,13 +294,13 @@ export function EnhancedContactView({ contact }: ContactProps) {
                   <h4 className="text-sm font-medium text-gray-700 mb-2">
                     Source
                   </h4>
-                  <p className="text-[var(--foreground)]">{contact.source}</p>
+                  <p className="text-foreground">{contact.source}</p>
                 </div>
               </div>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-700 mb-2">Owner</h4>
-              <p className="text-[var(--foreground)]">{contact.owner}</p>
+              <p className="text-foreground">{contact.owner}</p>
             </div>
           </div>
         )}
@@ -308,7 +308,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
         {activeTab === "profile" && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Social Profiles
               </h3>
               <div className="space-y-3">
@@ -358,7 +358,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
 
         {activeTab === "career" && (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <h3 className="text-lg font-semibold text-foreground mb-4">
               Career History
             </h3>
             <div className="space-y-4">
@@ -368,7 +368,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                   className="border-l-4 border-blue-200 pl-4 py-2"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-[var(--foreground)]">{entry.title}</h4>
+                    <h4 className="font-medium text-foreground">{entry.title}</h4>
                     {entry['isCurrent'] && (
                       <span className="px-2 py-1 bg-green-100 text-green-800 rounded-md text-xs font-medium">
                         CURRENT
@@ -376,7 +376,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                     )}
                   </div>
                   <p className="text-blue-600 font-medium">{entry.company}</p>
-                  <p className="text-[var(--muted)] text-sm">
+                  <p className="text-muted text-sm">
                     {entry.startDate} - {entry.endDate || "Present"}
                   </p>
                   {entry['description'] && (
@@ -390,7 +390,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
 
         {activeTab === "workplace" && (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <h3 className="text-lg font-semibold text-foreground mb-4">
               Workplace Information
             </h3>
             <div className="grid grid-cols-2 gap-6">
@@ -399,7 +399,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                   <h4 className="text-sm font-medium text-gray-700 mb-1">
                     Department
                   </h4>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {contact.workplaceInfo.department}
                   </p>
                 </div>
@@ -407,7 +407,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                   <h4 className="text-sm font-medium text-gray-700 mb-1">
                     Location
                   </h4>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {contact.workplaceInfo.location}
                   </p>
                 </div>
@@ -415,7 +415,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                   <h4 className="text-sm font-medium text-gray-700 mb-1">
                     Manager
                   </h4>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {contact.workplaceInfo.manager || "Not specified"}
                   </p>
                 </div>
@@ -425,7 +425,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                   <h4 className="text-sm font-medium text-gray-700 mb-1">
                     Team Size
                   </h4>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {contact.workplaceInfo.teamSize || "Not specified"}
                   </p>
                 </div>
@@ -433,7 +433,7 @@ export function EnhancedContactView({ contact }: ContactProps) {
                   <h4 className="text-sm font-medium text-gray-700 mb-1">
                     Responsibilities
                   </h4>
-                  <ul className="text-[var(--foreground)] space-y-1">
+                  <ul className="text-foreground space-y-1">
                     {contact.workplaceInfo.responsibilities.map(
                       (resp, index) => (
                         <li key={index} className="text-sm">
@@ -450,10 +450,10 @@ export function EnhancedContactView({ contact }: ContactProps) {
 
         {activeTab === "timeline" && (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <h3 className="text-lg font-semibold text-foreground mb-4">
               Activity History
             </h3>
-            <div className="text-center py-12 text-[var(--muted)]">
+            <div className="text-center py-12 text-muted">
               <div className="text-4xl mb-4">📋</div>
               <p>Activity history will be displayed here</p>
               <p className="text-sm mt-2">

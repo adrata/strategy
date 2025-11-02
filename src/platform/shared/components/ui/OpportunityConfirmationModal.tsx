@@ -81,7 +81,7 @@ export const OpportunityConfirmationModal: React.FC<
       case "Medium":
         return "bg-blue-500 text-white";
       case "Low":
-        return "bg-[var(--panel-background)]0 text-white";
+        return "bg-panel-background0 text-white";
       default:
         return "bg-blue-500 text-white";
     }
@@ -91,12 +91,12 @@ export const OpportunityConfirmationModal: React.FC<
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--background)] rounded-2xl shadow-2xl border border-[var(--border)] w-full max-w-4xl max-h-[90vh] overflow-hidden">
+      <div className="bg-background rounded-2xl shadow-2xl border border-border w-full max-w-4xl max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-[var(--background)] bg-opacity-20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-background bg-opacity-20 rounded-lg flex items-center justify-center">
                 <svg
                   className="w-6 h-6 text-white"
                   fill="none"
@@ -131,7 +131,7 @@ export const OpportunityConfirmationModal: React.FC<
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-b border-[var(--border)]">
+        <div className="border-b border-border">
           <nav className="flex space-x-8 px-6">
             {["overview", "details", "insights"].map((tab) => (
               <button
@@ -140,7 +140,7 @@ export const OpportunityConfirmationModal: React.FC<
                 className={`py-4 px-2 border-b-2 font-medium text-sm capitalize transition-colors ${
                   activeTab === tab
                     ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]"
+                    : "border-transparent text-muted hover:text-gray-700 hover:border-border"
                 }`}
               >
                 {tab}
@@ -162,7 +162,7 @@ export const OpportunityConfirmationModal: React.FC<
                   type="text"
                   value={opportunityData.name}
                   onChange={(e) => handleFieldChange("name", e.target.value)}
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter opportunity name"
                 />
               </div>
@@ -180,10 +180,10 @@ export const OpportunityConfirmationModal: React.FC<
                     onChange={(e) =>
                       handleFieldChange("amount", parseInt(e.target.value) || 0)
                     }
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="0"
                   />
-                  <p className="text-xs text-[var(--muted)] mt-1">
+                  <p className="text-xs text-muted mt-1">
                     {formatCurrency(opportunityData.amount)}
                   </p>
                 </div>
@@ -199,9 +199,9 @@ export const OpportunityConfirmationModal: React.FC<
                     onChange={(e) =>
                       handleFieldChange("expectedCloseDate", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
-                  <p className="text-xs text-[var(--muted)] mt-1">
+                  <p className="text-xs text-muted mt-1">
                     {formatDate(opportunityData.expectedCloseDate)}
                   </p>
                 </div>
@@ -223,7 +223,7 @@ export const OpportunityConfirmationModal: React.FC<
                           parseInt(e.target.value),
                         )
                       }
-                      className="flex-1 h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
+                      className="flex-1 h-2 bg-loading-bg rounded-lg appearance-none cursor-pointer"
                     />
                     <span className="text-sm font-semibold text-purple-600">
                       {opportunityData.probability}%
@@ -243,7 +243,7 @@ export const OpportunityConfirmationModal: React.FC<
                     handleFieldChange("description", e.target.value)
                   }
                   rows={3}
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Brief description of the opportunity"
                 />
               </div>
@@ -262,7 +262,7 @@ export const OpportunityConfirmationModal: React.FC<
                   <select
                     value={opportunityData.stage}
                     onChange={(e) => handleFieldChange("stage", e.target.value)}
-                    className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="Discovery">Discovery</option>
                     <option value="Solution Validation">
@@ -294,7 +294,7 @@ export const OpportunityConfirmationModal: React.FC<
                     onChange={(e) =>
                       handleFieldChange("productCategory", e.target.value)
                     }
-                    className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="e.g., Pipeline Software, Sales Tools"
                   />
                 </div>
@@ -310,7 +310,7 @@ export const OpportunityConfirmationModal: React.FC<
                     onChange={(e) =>
                       handleFieldChange("useCase", e.target.value)
                     }
-                    className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="e.g., Sales Forecasting, Lead Management"
                   />
                 </div>
@@ -325,7 +325,7 @@ export const OpportunityConfirmationModal: React.FC<
                     onChange={(e) =>
                       handleFieldChange("actionPriority", e.target.value)
                     }
-                    className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
@@ -346,7 +346,7 @@ export const OpportunityConfirmationModal: React.FC<
                     handleFieldChange("nextBestAction", e.target.value)
                   }
                   rows={2}
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="What should be done next to advance this opportunity?"
                 />
               </div>
@@ -357,7 +357,7 @@ export const OpportunityConfirmationModal: React.FC<
             <div className="space-y-6">
               {/* AI Confidence */}
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   AI Analysis
                 </h3>
                 <div className="flex items-center space-x-4 mb-4">
@@ -377,14 +377,14 @@ export const OpportunityConfirmationModal: React.FC<
 
               {/* Recommended Actions */}
               <div>
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   Recommended Actions
                 </h3>
                 <div className="space-y-3">
                   {aiInsights.recommendedActions.map((action, index) => (
                     <div
                       key={index}
-                      className="flex items-start space-x-3 p-4 bg-[var(--panel-background)] rounded-lg"
+                      className="flex items-start space-x-3 p-4 bg-panel-background rounded-lg"
                     >
                       <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
                         {index + 1}
@@ -397,7 +397,7 @@ export const OpportunityConfirmationModal: React.FC<
 
               {/* Success Metrics */}
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border border-green-200">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                <h3 className="text-lg font-semibold text-foreground mb-3">
                   Success Indicators
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -472,17 +472,17 @@ export const OpportunityConfirmationModal: React.FC<
         </div>
 
         {/* Footer Actions */}
-        <div className="px-6 py-4 bg-[var(--panel-background)] border-t border-[var(--border)] flex justify-between items-center">
+        <div className="px-6 py-4 bg-panel-background border-t border-border flex justify-between items-center">
           <button
             onClick={onClose}
             disabled={isCreating}
-            className="px-6 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
+            className="px-6 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
           >
             Cancel
           </button>
 
           <div className="flex items-center space-x-4">
-            <div className="text-sm text-[var(--muted)]">
+            <div className="text-sm text-muted">
               Creating a {formatCurrency(opportunityData.amount)} opportunity
             </div>
             <button

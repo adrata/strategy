@@ -268,34 +268,34 @@ export default function WorkspacesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--panel-background)]">
+      <div className="min-h-screen bg-panel-background">
         <PipelineSkeleton message="Loading workspaces..." />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[var(--panel-background)]">
+    <div className="min-h-screen bg-panel-background">
       {/* Header */}
-      <div className="bg-[var(--background)] shadow-sm border-b">
+      <div className="bg-background shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => router.back()}
-                className="p-2 text-[var(--muted)] hover:text-[var(--muted)] rounded-lg hover:bg-[var(--hover)]"
+                className="p-2 text-muted hover:text-muted rounded-lg hover:bg-hover"
               >
                 <ArrowLeftIcon className="w-5 h-5" />
               </button>
               <div>
-                <h1 className="text-xl font-semibold text-[var(--foreground)]">Workspaces</h1>
-                <p className="text-sm text-[var(--muted)]">
+                <h1 className="text-xl font-semibold text-foreground">Workspaces</h1>
+                <p className="text-sm text-muted">
                   Choose which workspace to work in
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-loading-bg rounded-lg flex items-center justify-center">
                 <span className="text-sm font-medium text-gray-700">
                   {authUser?.name ? authUser.name.charAt(0).toUpperCase() : "U"}
                 </span>
@@ -313,35 +313,35 @@ export default function WorkspacesPage() {
             {workspaces.map((workspace) => (
               <div
                 key={workspace.id}
-                className={`bg-[var(--background)] rounded-lg border-2 p-6 cursor-pointer transition-all hover:shadow-md ${
+                className={`bg-background rounded-lg border-2 p-6 cursor-pointer transition-all hover:shadow-md ${
                   workspace.isActive
                     ? "border-blue-500 bg-blue-50"
-                    : "border-[var(--border)] hover:border-[var(--border)]"
+                    : "border-border hover:border-border"
                 }`}
                 onClick={() => !isSwitching && handleWorkspaceSelect(workspace)}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-[var(--hover)] rounded-lg flex items-center justify-center">
-                      <BuildingOffice2Icon className="w-6 h-6 text-[var(--muted)]" />
+                    <div className="w-12 h-12 bg-hover rounded-lg flex items-center justify-center">
+                      <BuildingOffice2Icon className="w-6 h-6 text-muted" />
                     </div>
                     <div>
                       <div className="flex items-center space-x-2">
-                        <h3 className="font-semibold text-[var(--foreground)]">
+                        <h3 className="font-semibold text-foreground">
                           {workspace.companyName || workspace.name}
                         </h3>
                         {workspace['isActive'] && (
                           <CheckIcon className="w-5 h-5 text-blue-600" />
                         )}
                       </div>
-                      <p className="text-sm text-[var(--muted)] mt-1">
+                      <p className="text-sm text-muted mt-1">
                         {workspace.name}
                       </p>
 
                     </div>
                   </div>
                   {!workspace['isActive'] && (
-                    <ChevronRightIcon className="w-5 h-5 text-[var(--muted)]" />
+                    <ChevronRightIcon className="w-5 h-5 text-muted" />
                   )}
                 </div>
 
@@ -358,11 +358,11 @@ export default function WorkspacesPage() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <UserIcon className="w-16 h-16 text-[var(--muted)] mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+            <UserIcon className="w-16 h-16 text-muted mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">
               No workspaces available
             </h3>
-            <p className="text-[var(--muted)] mb-6">
+            <p className="text-muted mb-6">
               Contact your administrator to get access to workspaces
             </p>
             <button
@@ -378,21 +378,21 @@ export default function WorkspacesPage() {
         )}
 
         {/* Info Section */}
-        <div className="mt-8 bg-[var(--background)] rounded-lg border p-6">
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-3">
+        <div className="mt-8 bg-background rounded-lg border p-6">
+          <h3 className="text-lg font-medium text-foreground mb-3">
             About Workspaces
           </h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Separate Data</h4>
-              <p className="text-sm text-[var(--muted)]">
+              <h4 className="font-medium text-foreground mb-2">Separate Data</h4>
+              <p className="text-sm text-muted">
                 Each workspace has its own leads, contacts, and company data.
                 Switching workspaces keeps your information organized.
               </p>
             </div>
             <div>
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Easy Switching</h4>
-              <p className="text-sm text-[var(--muted)]">
+              <h4 className="font-medium text-foreground mb-2">Easy Switching</h4>
+              <p className="text-sm text-muted">
                 You can switch between workspaces at any time from your profile
                 menu or this dedicated page.
               </p>

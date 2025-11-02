@@ -5,11 +5,11 @@ import Link from "next/link";
 
 export default function GrandCentralDashboard() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
-      <div className="bg-[var(--background)] rounded-xl shadow-lg p-8 w-full max-w-md border">
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="bg-background rounded-xl shadow-lg p-8 w-full max-w-md border">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-[var(--foreground)]">Grand Central</h1>
-          <p className="text-[var(--muted)] text-sm mt-2">Integration Hub</p>
+          <h1 className="text-3xl font-bold text-foreground">Grand Central</h1>
+          <p className="text-muted text-sm mt-2">Integration Hub</p>
         </div>
 
         <div className="text-center">
@@ -28,10 +28,10 @@ export default function GrandCentralDashboard() {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-[var(--foreground)]">
+          <h2 className="text-xl font-semibold text-foreground">
             Grand Central Integration Hub
           </h2>
-          <p className="text-[var(--muted)] mt-2">Coming soon in desktop edition</p>
+          <p className="text-muted mt-2">Coming soon in desktop edition</p>
         </div>
 
         <div className="mt-6 text-center">

@@ -20,12 +20,12 @@ export const PipelineRouter: React.FC<PipelineRouterProps> = ({ activeSection })
   // Add a simple fallback to ensure something always renders
   if (!activeSection) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             No Active Section
           </h2>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             activeSection is: {activeSection}
           </p>
         </div>
@@ -66,21 +66,21 @@ export const PipelineRouter: React.FC<PipelineRouterProps> = ({ activeSection })
   // If no action is selected, show the action cards
   if (!activeAction) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         {/* Main Header */}
-        <div className="flex-shrink-0 px-6 py-6 border-b border-[var(--border)]">
+        <div className="flex-shrink-0 px-6 py-6 border-b border-border">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-[var(--foreground)]">
+              <h1 className="text-2xl font-semibold text-foreground">
                 {activeSection.charAt(0).toUpperCase() + activeSection.slice(1).replace('-', ' ')} Intelligence
               </h1>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Choose an action to get started with your {activeSection.replace('-', ' ')} intelligence
               </p>
             </div>
             <div className="text-right">
-              <div className="text-xs text-[var(--muted)] mb-1">Available Actions</div>
-              <div className="text-lg font-semibold text-[var(--foreground)]">5</div>
+              <div className="text-xs text-muted mb-1">Available Actions</div>
+              <div className="text-lg font-semibold text-foreground">5</div>
             </div>
           </div>
         </div>
@@ -129,15 +129,15 @@ export const PipelineRouter: React.FC<PipelineRouterProps> = ({ activeSection })
     
     // For monitor actions and other entity types, we'll show placeholder components for now
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         {/* Breadcrumb Navigation */}
-        <div className="flex-shrink-0 px-6 py-3 bg-white border-b border-[var(--border)]">
+        <div className="flex-shrink-0 px-6 py-3 bg-white border-b border-border">
           <nav className="flex items-center space-x-2 text-sm">
-            <span className="text-[var(--foreground)]">Olympus</span>
-            <span className="text-[var(--foreground)]">/</span>
-            <span className="text-[var(--foreground)]">{activeSection.charAt(0).toUpperCase() + activeSection.slice(1).replace('-', ' ')}</span>
-            <span className="text-[var(--foreground)]">/</span>
-            <span className="text-[var(--foreground)] font-medium">
+            <span className="text-foreground">Olympus</span>
+            <span className="text-foreground">/</span>
+            <span className="text-foreground">{activeSection.charAt(0).toUpperCase() + activeSection.slice(1).replace('-', ' ')}</span>
+            <span className="text-foreground">/</span>
+            <span className="text-foreground font-medium">
               {activeAction.charAt(0).toUpperCase() + activeAction.slice(1)}
             </span>
           </nav>
@@ -146,8 +146,8 @@ export const PipelineRouter: React.FC<PipelineRouterProps> = ({ activeSection })
         {/* Main Content */}
         <div className="flex-1 flex items-center justify-center overflow-y-auto overflow-x-hidden scrollbar-hide">
           <div className="text-center max-w-md">
-            <div className="w-16 h-16 bg-white border border-[var(--border)] rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-16 h-16 bg-white border border-border rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {activeAction === 'enrich' ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 ) : activeAction === 'update' ? (
@@ -161,10 +161,10 @@ export const PipelineRouter: React.FC<PipelineRouterProps> = ({ activeSection })
                 )}
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+            <h2 className="text-xl font-semibold text-foreground mb-2">
               {activeAction.charAt(0).toUpperCase() + activeAction.slice(1)} {activeSection.charAt(0).toUpperCase() + activeSection.slice(1).replace('-', ' ')}
             </h2>
-            <p className="text-[var(--foreground)] mb-6">
+            <p className="text-foreground mb-6">
               This feature is coming soon! We're working on bringing you powerful {activeAction} capabilities for {activeSection.replace('-', ' ')} intelligence.
             </p>
             <div className="flex items-center gap-2">
@@ -175,7 +175,7 @@ export const PipelineRouter: React.FC<PipelineRouterProps> = ({ activeSection })
                   const newUrl = `/${workspaceId}/olympus/${activeSection}`;
                   window.history.pushState({}, '', newUrl);
                 }}
-                className="flex items-center gap-2 text-sm text-[var(--foreground)] hover:text-blue-600 transition-colors"
+                className="flex items-center gap-2 text-sm text-foreground hover:text-blue-600 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -194,12 +194,12 @@ export const PipelineRouter: React.FC<PipelineRouterProps> = ({ activeSection })
   // Fallback to ensure something always renders
   if (!component) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             Loading {activeSection}...
           </h2>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             Please wait while we load the {activeSection} interface.
           </p>
         </div>

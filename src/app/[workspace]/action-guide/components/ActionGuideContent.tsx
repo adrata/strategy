@@ -77,40 +77,40 @@ Ready to get started? Select a section from the left panel to begin your journey
   const renderMarkdown = (markdown: string) => {
     // Simple markdown rendering - in a real implementation, you'd use a markdown library
     return markdown
-      .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-[var(--foreground)] mb-4">$1</h1>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-[var(--foreground)] mb-3 mt-6">$1</h2>')
-      .replace(/^### (.*$)/gim, '<h3 class="text-lg font-medium text-[var(--foreground)] mb-2 mt-4">$1</h3>')
-      .replace(/^#### (.*$)/gim, '<h4 class="text-base font-medium text-[var(--foreground)] mb-2 mt-3">$1</h4>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-[var(--foreground)]">$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em class="italic text-[var(--foreground)]">$1</em>')
-      .replace(/`(.*?)`/g, '<code class="bg-[var(--panel-background)] px-1.5 py-0.5 rounded text-sm font-mono text-[var(--foreground)]">$1</code>')
+      .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-foreground mb-4">$1</h1>')
+      .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-foreground mb-3 mt-6">$1</h2>')
+      .replace(/^### (.*$)/gim, '<h3 class="text-lg font-medium text-foreground mb-2 mt-4">$1</h3>')
+      .replace(/^#### (.*$)/gim, '<h4 class="text-base font-medium text-foreground mb-2 mt-3">$1</h4>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em class="italic text-foreground">$1</em>')
+      .replace(/`(.*?)`/g, '<code class="bg-panel-background px-1.5 py-0.5 rounded text-sm font-mono text-foreground">$1</code>')
       .replace(/^\d+\. (.*$)/gim, '<li class="ml-4 mb-1">$1</li>')
       .replace(/^- (.*$)/gim, '<li class="ml-4 mb-1">$1</li>')
-      .replace(/\n\n/g, '</p><p class="mb-4 text-[var(--foreground)]">')
-      .replace(/^(?!<[h|l])/gm, '<p class="mb-4 text-[var(--foreground)]">')
+      .replace(/\n\n/g, '</p><p class="mb-4 text-foreground">')
+      .replace(/^(?!<[h|l])/gm, '<p class="mb-4 text-foreground">')
       .replace(/(<li.*<\/li>)/g, '<ul class="list-disc list-inside mb-4">$1</ul>');
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Content Header */}
       {selectedPage && (
-        <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)]">
+        <div className="flex-shrink-0 border-b border-border bg-background">
           <div className="px-6 py-4">
-            <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+            <h1 className="text-2xl font-bold text-foreground mb-2">
               {selectedPage.title}
             </h1>
-            <p className="text-[var(--muted)] mb-2">
+            <p className="text-muted mb-2">
               {selectedPage.description}
             </p>
-            <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
+            <div className="flex items-center gap-4 text-sm text-muted">
               <span>Last updated: {selectedPage.lastUpdated}</span>
               {selectedPage.tags && selectedPage.tags.length > 0 && (
                 <div className="flex gap-1">
                   {selectedPage.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-1 bg-[var(--panel-background)] rounded text-xs"
+                      className="px-2 py-1 bg-panel-background rounded text-xs"
                     >
                       {tag}
                     </span>

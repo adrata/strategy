@@ -136,23 +136,23 @@ export function MonacoCreateListModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-background border border-border rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-[var(--foreground)]">
+          <h2 className="text-xl font-bold text-foreground">
             Create Custom List
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-hover transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+            <XMarkIcon className="w-5 h-5 text-muted" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* List Name */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               List Name *
             </label>
             <input
@@ -160,14 +160,14 @@ export function MonacoCreateListModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., High-Growth SaaS Companies"
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
               required
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Description
             </label>
             <textarea
@@ -175,19 +175,19 @@ export function MonacoCreateListModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe what makes this list special and why these companies are targeted..."
               rows={3}
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent resize-none"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent resize-none"
             />
           </div>
 
           {/* Filters */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-[var(--foreground)]">
+            <h3 className="text-lg font-semibold text-foreground">
               Filters
             </h3>
 
             {Object.entries(filterOptions).map(([filterType, options]) => (
               <div key={filterType}>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2 capitalize">
+                <label className="block text-sm font-medium text-foreground mb-2 capitalize">
                   {filterType === "size" ? "Company Size" : filterType}
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -209,7 +209,7 @@ export function MonacoCreateListModal({
                         className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                           isSelected
                             ? "bg-[#2563EB] text-white"
-                            : "bg-[var(--hover-bg)] text-[var(--foreground)] hover:bg-[#2563EB]/10 hover:text-[#2563EB]"
+                            : "bg-hover text-foreground hover:bg-[#2563EB]/10 hover:text-[#2563EB]"
                         }`}
                       >
                         {option}
@@ -224,14 +224,14 @@ export function MonacoCreateListModal({
           {/* Estimated Results */}
           <div className="bg-[#2563EB]/10 border border-[#2563EB]/20 rounded-lg p-4">
             <div className="flex items-center justify-between">
-              <span className="text-[var(--foreground)] font-medium">
+              <span className="text-foreground font-medium">
                 Estimated Results:
               </span>
               <span className="text-[#2563EB] font-bold text-lg">
                 {estimatedCount} companies
               </span>
             </div>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               Based on your selected filters. Actual results may vary.
             </p>
           </div>
@@ -241,7 +241,7 @@ export function MonacoCreateListModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-[var(--border)] rounded-lg text-[var(--foreground)] hover:bg-[var(--hover-bg)] transition-colors"
+              className="flex-1 px-4 py-2 border border-border rounded-lg text-foreground hover:bg-hover transition-colors"
             >
               Cancel
             </button>
@@ -251,7 +251,7 @@ export function MonacoCreateListModal({
               className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
                 name.trim()
                   ? "bg-[#2563EB] text-white hover:bg-[#2563EB]/90"
-                  : "bg-gray-300 text-[var(--muted)] cursor-not-allowed"
+                  : "bg-gray-300 text-muted cursor-not-allowed"
               }`}
             >
               Create List

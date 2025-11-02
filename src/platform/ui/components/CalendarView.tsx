@@ -145,14 +145,14 @@ const TimeSlot = React.memo(function TimeSlot({
 
   return (
     <div
-      className="relative flex items-start border-b border-[var(--border)]"
+      className="relative flex items-start border-b border-border"
       style={{ minHeight: "60px" }}
       data-time-slot={time}
     >
       {/* Time label */}
       <div className="w-20 flex-shrink-0 pt-1">
         {isHourStart && (
-          <span className="text-xs font-medium text-[var(--muted)]">
+          <span className="text-xs font-medium text-muted">
             {hour === 12
               ? "12 PM"
               : hour > 12
@@ -166,8 +166,8 @@ const TimeSlot = React.memo(function TimeSlot({
       <div
         className={`flex-1 relative transition-colors ${
           isDragOver
-            ? "bg-blue-100/50 dark:bg-blue-900/20"
-            : "hover:bg-[var(--hover-bg)]/50"
+            ? "bg-info-bg/50"
+            : "hover:bg-hover/50"
         }`}
         onClick={(e) => {
           if (!isDragging) {
@@ -189,7 +189,7 @@ const TimeSlot = React.memo(function TimeSlot({
       >
         {/* Drop indicator line - enhanced visual feedback */}
         {isDragOver && (
-          <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500 z-30 rounded-full shadow-lg animate-pulse" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-info z-30 rounded-full shadow-lg animate-pulse" />
         )}
 
         {/* Inline creating event */}
@@ -200,7 +200,7 @@ const TimeSlot = React.memo(function TimeSlot({
               height: "52px", // Default 30-minute block height
             }}
           >
-            <div className="relative w-full h-full rounded-lg border-2 border-blue-500 bg-blue-50/50 dark:bg-blue-900/20 shadow-md animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="relative w-full h-full rounded-lg border-2 border-info bg-info-bg/50 shadow-md animate-in fade-in slide-in-from-top-2 duration-150">
               <input
                 ref={inlineInputRef}
                 type="text"
@@ -209,7 +209,7 @@ const TimeSlot = React.memo(function TimeSlot({
                 onKeyDown={onInlineKeyDown}
                 onBlur={onInlineBlur}
                 placeholder="Event title"
-                className="w-full h-full px-3 py-2 bg-transparent border-0 outline-none text-sm font-medium text-[var(--foreground)] placeholder:text-[var(--muted)] rounded-lg"
+                className="w-full h-full px-3 py-2 bg-transparent border-0 outline-none text-sm font-medium text-foreground placeholder:text-muted rounded-lg"
                 autoFocus
               />
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500/30 rounded-b-lg" />
@@ -1048,7 +1048,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
   const isToday = formatDate(currentDate) === formatDate(new Date());
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]" role="application" aria-label="Calendar">
+    <div className="h-full flex flex-col bg-background" role="application" aria-label="Calendar">
       {/* Screen reader announcements */}
       <div
         ref={announcementRef}
@@ -1059,14 +1059,14 @@ export function CalendarView({ onClose }: CalendarViewProps) {
       />
 
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)] px-4 py-2">
+      <div className="flex-shrink-0 border-b border-border bg-background px-4 py-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div>
-              <h1 className="text-xl font-semibold text-[var(--foreground)]" id="calendar-title">
+              <h1 className="text-xl font-semibold text-foreground" id="calendar-title">
                 Calendar
               </h1>
-              <p className="text-sm text-[var(--muted)]" aria-live="polite">
+              <p className="text-sm text-muted" aria-live="polite">
                 {formatDisplayDate(currentDate)}
               </p>
             </div>
@@ -1196,17 +1196,17 @@ export function CalendarView({ onClose }: CalendarViewProps) {
       <Dialog.Root open={showAddModal} onOpenChange={setShowAddModal}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/50 z-50" />
-          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-md shadow-xl z-50 focus:outline-none">
+          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background border border-border rounded-xl p-6 w-full max-w-md shadow-xl z-50 focus:outline-none">
             <div className="flex items-center justify-between mb-4">
-              <Dialog.Title className="text-lg font-semibold text-[var(--foreground)]">
+              <Dialog.Title className="text-lg font-semibold text-foreground">
                 {editingBlock ? "Edit Action Block" : "Add Action Block"}
               </Dialog.Title>
               <Dialog.Close asChild>
               <button
-                className="p-1 hover:bg-[var(--hover-bg)] rounded transition-colors"
+                className="p-1 hover:bg-hover rounded transition-colors"
                   aria-label="Close dialog"
               >
-                <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+                <XMarkIcon className="w-5 h-5 text-muted" />
               </button>
               </Dialog.Close>
             </div>
@@ -1215,7 +1215,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
               <div>
                 <label
                   htmlFor="event-title"
-                  className="block text-sm font-medium text-[var(--foreground)] mb-1"
+                  className="block text-sm font-medium text-foreground mb-1"
                 >
                   Title
                 </label>
@@ -1227,7 +1227,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
                     setNewBlock({ ...newBlock, title: e.target.value })
                   }
                   placeholder="Action title"
-                  className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   autoFocus
                   aria-required="true"
                 />
@@ -1237,7 +1237,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
                 <div>
                   <label
                     htmlFor="event-start-time"
-                    className="block text-sm font-medium text-[var(--foreground)] mb-1"
+                    className="block text-sm font-medium text-foreground mb-1"
                   >
                     Start Time
                   </label>
@@ -1248,14 +1248,14 @@ export function CalendarView({ onClose }: CalendarViewProps) {
                     onChange={(e) =>
                       setNewBlock({ ...newBlock, startTime: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     aria-required="true"
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="event-end-time"
-                    className="block text-sm font-medium text-[var(--foreground)] mb-1"
+                    className="block text-sm font-medium text-foreground mb-1"
                   >
                     End Time
                   </label>
@@ -1266,7 +1266,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
                     onChange={(e) =>
                       setNewBlock({ ...newBlock, endTime: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     aria-required="true"
                   />
                 </div>
@@ -1275,7 +1275,7 @@ export function CalendarView({ onClose }: CalendarViewProps) {
               <div>
                 <label
                   htmlFor="event-description"
-                  className="block text-sm font-medium text-[var(--foreground)] mb-1"
+                  className="block text-sm font-medium text-foreground mb-1"
                 >
                   Description (optional)
                 </label>
@@ -1287,14 +1287,14 @@ export function CalendarView({ onClose }: CalendarViewProps) {
                   }
                   placeholder="Add description..."
                   rows={3}
-                  className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none"
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none"
                 />
               </div>
 
               <div className="flex gap-2 pt-2">
                 <Dialog.Close asChild>
                 <button
-                    className="flex-1 px-4 py-2 bg-[var(--hover-bg)] text-[var(--foreground)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+                    className="flex-1 px-4 py-2 bg-hover text-foreground rounded-lg hover:bg-panel-background transition-colors"
                   onClick={() => {
                     setEditingBlock(null);
                     setNewBlock({

@@ -50,29 +50,29 @@ export function TableDetailView({ tableName }: TableDetailViewProps) {
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         {/* Header Skeleton */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+        <div className="flex-shrink-0 px-6 py-4 border-b border-border">
           <div className="flex items-center justify-between">
             <div>
-              <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse mb-2"></div>
-              <div className="h-8 w-48 bg-[var(--loading-bg)] rounded animate-pulse mb-2"></div>
-              <div className="h-4 w-64 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+              <div className="h-4 w-24 bg-loading-bg rounded animate-pulse mb-2"></div>
+              <div className="h-8 w-48 bg-loading-bg rounded animate-pulse mb-2"></div>
+              <div className="h-4 w-64 bg-loading-bg rounded animate-pulse"></div>
             </div>
           </div>
         </div>
 
         {/* Table Data Skeleton */}
         <div className="flex-1 overflow-auto p-6">
-          <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg overflow-hidden">
+          <div className="bg-panel-background border border-border rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
               <div className="w-full">
                 {/* Table Header Skeleton */}
-                <div className="bg-[var(--background)] border-b border-[var(--border)]">
+                <div className="bg-background border-b border-border">
                   <div className="flex">
                     {Array.from({ length: 5 }).map((_, index) => (
                       <div key={index} className="px-4 py-3 flex-1">
-                        <div className="h-4 w-20 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                        <div className="h-4 w-20 bg-loading-bg rounded animate-pulse"></div>
                       </div>
                     ))}
                   </div>
@@ -80,11 +80,11 @@ export function TableDetailView({ tableName }: TableDetailViewProps) {
                 
                 {/* Table Rows Skeleton */}
                 {Array.from({ length: 8 }).map((_, rowIndex) => (
-                  <div key={rowIndex} className="border-b border-[var(--border)] hover:bg-[var(--hover)]">
+                  <div key={rowIndex} className="border-b border-border hover:bg-hover">
                     <div className="flex">
                       {Array.from({ length: 5 }).map((_, colIndex) => (
                         <div key={colIndex} className="px-4 py-3 flex-1">
-                          <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                          <div className="h-4 w-24 bg-loading-bg rounded animate-pulse"></div>
                         </div>
                       ))}
                     </div>
@@ -103,10 +103,10 @@ export function TableDetailView({ tableName }: TableDetailViewProps) {
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 mb-4">⚠️</div>
-          <p className="text-[var(--muted)] mb-4">{error}</p>
+          <p className="text-muted mb-4">{error}</p>
           <button
             onClick={() => router.back()}
-            className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] rounded hover:opacity-90 transition-opacity"
+            className="px-4 py-2 bg-foreground text-background rounded hover:opacity-90 transition-opacity"
           >
             Go Back
           </button>
@@ -118,19 +118,19 @@ export function TableDetailView({ tableName }: TableDetailViewProps) {
   const columns = tableData.length > 0 ? Object.keys(tableData[0]) : [];
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 px-6 py-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div>
             <button
               onClick={() => router.back()}
-              className="text-[var(--muted)] hover:text-[var(--foreground)] mb-2"
+              className="text-muted hover:text-foreground mb-2"
             >
               ← Back to Tables
             </button>
-            <h1 className="text-2xl font-semibold text-[var(--foreground)]">{tableName}</h1>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <h1 className="text-2xl font-semibold text-foreground">{tableName}</h1>
+            <p className="text-sm text-muted mt-1">
               {tableData.length} records • {columns.length} columns
             </p>
           </div>
@@ -141,18 +141,18 @@ export function TableDetailView({ tableName }: TableDetailViewProps) {
       <div className="flex-1 overflow-auto p-6">
         {tableData.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-[var(--muted)]">No data found in this table</p>
+            <p className="text-muted">No data found in this table</p>
           </div>
         ) : (
-          <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg overflow-hidden">
+          <div className="bg-panel-background border border-border rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-[var(--background)] border-b border-[var(--border)]">
+                <thead className="bg-background border-b border-border">
                   <tr>
                     {columns.map((column) => (
                       <th
                         key={column}
-                        className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider"
                       >
                         {column}
                       </th>
@@ -161,11 +161,11 @@ export function TableDetailView({ tableName }: TableDetailViewProps) {
                 </thead>
                 <tbody className="divide-y divide-[var(--border)]">
                   {tableData.map((row, index) => (
-                    <tr key={index} className="hover:bg-[var(--hover)]">
+                    <tr key={index} className="hover:bg-hover">
                       {columns.map((column) => (
                         <td
                           key={column}
-                          className="px-4 py-3 text-sm text-[var(--foreground)]"
+                          className="px-4 py-3 text-sm text-foreground"
                         >
                           <div className="max-w-xs truncate">
                             {typeof row[column] === 'object' 

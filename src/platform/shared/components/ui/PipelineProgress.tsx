@@ -36,7 +36,7 @@ export function PipelineProgress({
   return (
     <div className={`w-full ${className}`}>
       {showHeader && (
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           {headerTitle}
         </h3>
       )}
@@ -63,7 +63,7 @@ export function PipelineProgress({
                     className={`text-xs font-medium ${
                       isCompleted || isCurrent
                         ? "text-blue-500"
-                        : "text-[var(--muted)]"
+                        : "text-muted"
                     }`}
                   >
                     {stage.name}
@@ -81,11 +81,11 @@ export function PipelineProgress({
       </div>
 
       {/* Directional Intelligence */}
-      <div className="bg-[var(--hover-bg)] rounded-lg p-3">
-        <div className="text-xs font-medium text-[var(--foreground)] mb-1">
+      <div className="bg-hover rounded-lg p-3">
+        <div className="text-xs font-medium text-foreground mb-1">
           Directional Intelligence:
         </div>
-        <div className="text-xs text-[var(--muted)] leading-relaxed">
+        <div className="text-xs text-muted leading-relaxed">
           {directionalIntelligence}
         </div>
       </div>

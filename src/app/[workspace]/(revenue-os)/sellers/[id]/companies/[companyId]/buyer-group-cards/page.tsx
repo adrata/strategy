@@ -253,7 +253,7 @@ export default function CompanyBuyerGroupCardsPage() {
       case "Opener":
         return "bg-purple-100 text-purple-800 border-purple-200";
       default:
-        return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
+        return "bg-hover text-gray-800 border-border";
     }
   };
 
@@ -314,8 +314,8 @@ export default function CompanyBuyerGroupCardsPage() {
                     <div className="flex items-center justify-center h-full">
                       <div className="text-center">
                         <div className="text-red-500 text-6xl mb-4">⚠️</div>
-                        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">Error</h1>
-                        <p className="text-[var(--muted)] mb-6">{error}</p>
+                        <h1 className="text-2xl font-bold text-foreground mb-2">Error</h1>
+                        <p className="text-muted mb-6">{error}</p>
                       </div>
                     </div>
                   }
@@ -347,44 +347,44 @@ export default function CompanyBuyerGroupCardsPage() {
                 middlePanel={
                   <div className="flex flex-col h-full">
                     {/* Breadcrumb */}
-                    <div className="border-b border-[var(--border)] px-6 py-3 bg-[var(--background)]">
+                    <div className="border-b border-border px-6 py-3 bg-background">
                       <nav className="flex items-center space-x-2 text-sm">
                         <button
                           onClick={() => router.push('/sellers')}
-                          className="flex items-center gap-1 text-[var(--muted)] hover:text-gray-700 transition-colors"
+                          className="flex items-center gap-1 text-muted hover:text-gray-700 transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                           </svg>
                           Sellers
                         </button>
-                        <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                         <button
                           onClick={() => router.push(`/sellers/${sellerId}/companies`)}
-                          className="text-[var(--muted)] hover:text-gray-700 transition-colors"
+                          className="text-muted hover:text-gray-700 transition-colors"
                         >
                           Companies
                         </button>
-                        <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
-                        <span className="text-[var(--foreground)] font-medium">Buyer Group</span>
+                        <span className="text-foreground font-medium">Buyer Group</span>
                       </nav>
                     </div>
 
                     {/* Header */}
-                    <div className="flex items-center justify-between p-6 border-b border-[var(--border)] bg-[var(--background)]">
+                    <div className="flex items-center justify-between p-6 border-b border-border bg-background">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-[var(--background)] border-2 border-[var(--border)] rounded-xl flex items-center justify-center">
+                        <div className="w-12 h-12 bg-background border-2 border-border rounded-xl flex items-center justify-center">
                           <span className="text-gray-700 font-bold text-xl">
                             {company.name.charAt(0)}
                           </span>
                         </div>
                         <div>
-                          <h1 className="text-2xl font-bold text-[var(--foreground)]">{company.name} - Buyer Group</h1>
-                          <p className="text-[var(--muted)]">{buyerGroupMembers.length} stakeholders mapped • {company.industry}</p>
+                          <h1 className="text-2xl font-bold text-foreground">{company.name} - Buyer Group</h1>
+                          <p className="text-muted">{buyerGroupMembers.length} stakeholders mapped • {company.industry}</p>
                         </div>
                       </div>
                       <button
@@ -399,37 +399,37 @@ export default function CompanyBuyerGroupCardsPage() {
                     </div>
 
                     {/* Role Summary Cards */}
-                    <div className="p-6 border-b border-[var(--border)] bg-[var(--background)]">
+                    <div className="p-6 border-b border-border bg-background">
                       <div className="flex gap-4">
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
+                        <div className="bg-background border border-border rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-foreground">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Decision Maker').length}
                           </div>
-                          <div className="text-sm text-[var(--muted)]">Decision Makers</div>
+                          <div className="text-sm text-muted">Decision Makers</div>
                         </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
+                        <div className="bg-background border border-border rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-foreground">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Champion').length}
                           </div>
-                          <div className="text-sm text-[var(--muted)]">Champions</div>
+                          <div className="text-sm text-muted">Champions</div>
                         </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
+                        <div className="bg-background border border-border rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-foreground">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Stakeholder').length}
                           </div>
-                          <div className="text-sm text-[var(--muted)]">Stakeholders</div>
+                          <div className="text-sm text-muted">Stakeholders</div>
                         </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
+                        <div className="bg-background border border-border rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-foreground">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Blocker').length}
                           </div>
-                          <div className="text-sm text-[var(--muted)]">Blockers</div>
+                          <div className="text-sm text-muted">Blockers</div>
                         </div>
-                        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 flex-1">
-                          <div className="text-2xl font-bold text-[var(--foreground)]">
+                        <div className="bg-background border border-border rounded-lg p-4 flex-1">
+                          <div className="text-2xl font-bold text-foreground">
                             {buyerGroupMembers.filter(m => m.buyerRole === 'Opener').length}
                           </div>
-                          <div className="text-sm text-[var(--muted)]">Openers</div>
+                          <div className="text-sm text-muted">Openers</div>
                         </div>
                       </div>
                     </div>
@@ -476,7 +476,7 @@ export default function CompanyBuyerGroupCardsPage() {
                               <div
                                 key={member.id}
                                 onClick={() => handleMemberClick(member)}
-                                className="group bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all duration-200"
+                                className="group bg-background border border-border rounded-lg p-4 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all duration-200"
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-3 flex-1">
@@ -487,23 +487,23 @@ export default function CompanyBuyerGroupCardsPage() {
                                     </div>
                                     <div className="flex-1">
                                       <div className="flex items-center gap-2 mb-1">
-                                        <h4 className="font-semibold text-[var(--foreground)] group-hover:text-blue-700 transition-colors">
+                                        <h4 className="font-semibold text-foreground group-hover:text-blue-700 transition-colors">
                                           {member.name}
                                         </h4>
                                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getRoleColor(role)}`}>
                                           {role}
                                         </span>
                                         {fallbackRole && (
-                                          <span className="px-2 py-1 bg-[var(--hover)] text-gray-800 text-xs font-medium rounded-full">
+                                          <span className="px-2 py-1 bg-hover text-gray-800 text-xs font-medium rounded-full">
                                             {fallbackRole}
                                           </span>
                                         )}
                                       </div>
-                                      <div className="text-sm text-[var(--muted)] mb-1">
+                                      <div className="text-sm text-muted mb-1">
                                         {title}
                                       </div>
                                       <div className="flex items-center gap-3">
-                                        <span className="text-sm text-[var(--muted)]">
+                                        <span className="text-sm text-muted">
                                           {status}
                                         </span>
                                         {riskStatus && (
@@ -522,8 +522,8 @@ export default function CompanyBuyerGroupCardsPage() {
                       ) : (
                         <div className="flex items-center justify-center h-64">
                           <div className="text-center">
-                            <div className="text-[var(--muted)] text-lg mb-2">No buyer group data available</div>
-                            <div className="text-[var(--muted)] text-sm">Company data is still loading...</div>
+                            <div className="text-muted text-lg mb-2">No buyer group data available</div>
+                            <div className="text-muted text-sm">Company data is still loading...</div>
                           </div>
                         </div>
                       )}

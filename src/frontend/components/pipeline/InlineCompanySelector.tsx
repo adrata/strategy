@@ -405,13 +405,13 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            className={`w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+            className={`w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
             autoFocus
           />
           
           {/* Search Results Dropdown */}
           {(searchResults.length > 0 || showAddForm || (editValue.trim() && !isSearching) || isSearching) && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[var(--border)] rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
               {isSearching ? (
                 <div className="px-3 py-3 text-sm text-gray-500 text-center">
                   <div className="flex items-center justify-center gap-2">
@@ -492,7 +492,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
                         <button
                           onClick={handleAddCompany}
                           disabled={isCreating || !newCompanyName.trim()}
-                          className="px-3 py-1 bg-[var(--button-background)] text-[var(--button-text)] text-xs rounded hover:bg-[var(--button-hover)] disabled:opacity-50"
+                          className="px-3 py-1 bg-button-background text-button-text text-xs rounded hover:bg-button-hover disabled:opacity-50"
                         >
                           {isCreating ? 'Creating...' : 'Add Company'}
                         </button>
@@ -503,7 +503,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
                             setNewCompanyWebsite('');
                             setCreateError('');
                           }}
-                          className="px-3 py-1 bg-[var(--panel-background)] text-[var(--foreground)] text-xs rounded hover:bg-[var(--hover)] border border-[var(--border)]"
+                          className="px-3 py-1 bg-panel-background text-foreground text-xs rounded hover:bg-hover border border-border"
                         >
                           Cancel
                         </button>
@@ -519,7 +519,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
         <button
           onClick={handleEditSave}
           disabled={isLoading}
-          className="p-1 text-[var(--success)] hover:text-[var(--success-text)] disabled:opacity-50"
+          className="p-1 text-success hover:text-success-text disabled:opacity-50"
           title="Save"
         >
           <CheckIcon className="h-4 w-4" />
@@ -528,7 +528,7 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
         <button
           onClick={handleEditCancel}
           disabled={isLoading}
-          className="p-1 text-[var(--error)] hover:text-[var(--error-text)] disabled:opacity-50"
+          className="p-1 text-error hover:text-error-text disabled:opacity-50"
           title="Cancel"
         >
           <XMarkIcon className="h-4 w-4" />
@@ -557,14 +557,14 @@ export const InlineCompanySelector: React.FC<InlineCompanySelectorProps> = ({
     <div className="group flex items-center gap-2">
       <button
         onClick={handleCompanyClick}
-        className={`${className} ${!getCurrentCompanyName() ? 'text-[var(--muted)]' : 'text-blue-600 hover:text-blue-700 hover:underline cursor-pointer'} transition-colors`}
+        className={`${className} ${!getCurrentCompanyName() ? 'text-muted' : 'text-blue-600 hover:text-blue-700 hover:underline cursor-pointer'} transition-colors`}
         title={getCurrentCompanyName() ? `View ${getCurrentCompanyName()} company details` : ''}
       >
         {getCurrentCompanyName() || '-'}
       </button>
       <button
         onClick={handleEditStart}
-        className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] opacity-0 group-hover:opacity-100 transition-opacity"
+        className="p-1 text-muted hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
         title="Edit"
       >
         <PencilIcon className="h-3 w-3" />

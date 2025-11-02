@@ -70,25 +70,25 @@ export function GrandCentralLeftPanel() {
   };
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header */}
         <div className="mx-2 mt-4 mb-2">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--background)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-border overflow-hidden" style={{ filter: 'none' }}>
               <span className="text-lg font-bold text-black">GC</span>
             </div>
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Grand Central</h2>
-              <p className="text-xs text-[var(--muted)]">Integration Hub</p>
+              <h2 className="text-base font-semibold text-foreground">Grand Central</h2>
+              <p className="text-xs text-muted">Integration Hub</p>
             </div>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="mx-2 mb-3 p-3 bg-[var(--panel-background)] rounded-lg">
-          <div className="text-xs text-[var(--muted)] space-y-1">
+        <div className="mx-2 mb-3 p-3 bg-panel-background rounded-lg">
+          <div className="text-xs text-muted space-y-1">
             <div className="flex justify-between">
               <span>APIs:</span>
               <span className="font-medium">16</span>
@@ -112,17 +112,17 @@ export function GrandCentralLeftPanel() {
           onClick={() => window.location.href = `/${workspace}/grand-central/apis`}
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
             currentTab === 'apis'
-              ? 'bg-[var(--hover)] text-[var(--foreground)]'
-              : 'hover:bg-[var(--panel-background)] text-gray-700'
+              ? 'bg-hover text-foreground'
+              : 'hover:bg-panel-background text-gray-700'
           }`}
         >
           <div className="flex items-center justify-between">
             <span className="font-medium text-sm">APIs</span>
-            <span className="text-sm text-[var(--muted)]">
+            <span className="text-sm text-muted">
               16
             </span>
           </div>
-          <div className="text-xs text-[var(--muted)] mt-1">
+          <div className="text-xs text-muted mt-1">
             REST and GraphQL endpoints
           </div>
         </button>
@@ -132,17 +132,17 @@ export function GrandCentralLeftPanel() {
           onClick={() => window.location.href = `/${workspace}/grand-central/mcps`}
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
             currentTab === 'mcps'
-              ? 'bg-[var(--hover)] text-[var(--foreground)]'
-              : 'hover:bg-[var(--panel-background)] text-gray-700'
+              ? 'bg-hover text-foreground'
+              : 'hover:bg-panel-background text-gray-700'
           }`}
         >
           <div className="flex items-center justify-between">
             <span className="font-medium text-sm">MCPs</span>
-            <span className="text-sm text-[var(--muted)]">
+            <span className="text-sm text-muted">
               0
             </span>
           </div>
-          <div className="text-xs text-[var(--muted)] mt-1">
+          <div className="text-xs text-muted mt-1">
             Model Context Protocol servers
           </div>
         </button>
@@ -152,17 +152,17 @@ export function GrandCentralLeftPanel() {
           onClick={() => window.location.href = `/${workspace}/grand-central/connectors`}
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
             currentTab === 'all-connectors'
-              ? 'bg-[var(--hover)] text-[var(--foreground)]'
-              : 'hover:bg-[var(--panel-background)] text-gray-700'
+              ? 'bg-hover text-foreground'
+              : 'hover:bg-panel-background text-gray-700'
           }`}
         >
           <div className="flex items-center justify-between">
             <span className="font-medium text-sm">All Connectors</span>
-            <span className="text-sm text-[var(--muted)]">
+            <span className="text-sm text-muted">
               500+
             </span>
           </div>
-          <div className="text-xs text-[var(--muted)] mt-1">
+          <div className="text-xs text-muted mt-1">
             Browse and manage integrations
           </div>
         </button>
@@ -171,15 +171,15 @@ export function GrandCentralLeftPanel() {
       {/* Fixed Bottom Section - Profile Button */}
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
         <button
-          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--hover)] transition-colors"
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-hover transition-colors"
           title="Profile"
         >
-          <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 bg-loading-bg rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-gray-700">{getInitial()}</span>
           </div>
           <div className="flex-1 text-left">
-            <div className="text-sm font-medium text-[var(--foreground)]">{getDisplayName()}</div>
-            <div className="text-xs text-[var(--muted)]">{typeof workspace === 'string' ? workspace : workspace?.name || authUser?.workspaces?.find(w => w.id === authUser.activeWorkspaceId)?.name || 'Workspace'}</div>
+            <div className="text-sm font-medium text-foreground">{getDisplayName()}</div>
+            <div className="text-xs text-muted">{typeof workspace === 'string' ? workspace : workspace?.name || authUser?.workspaces?.find(w => w.id === authUser.activeWorkspaceId)?.name || 'Workspace'}</div>
           </div>
         </button>
       </div>

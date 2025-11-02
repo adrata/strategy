@@ -192,7 +192,7 @@ export function UpdateModalV2({
             type="text"
             value={formData.name || ''}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           />
         </div>
@@ -204,7 +204,7 @@ export function UpdateModalV2({
             type="email"
             value={formData.email || ''}
             onChange={(e) => handleInputChange('email', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
       </div>
@@ -218,7 +218,7 @@ export function UpdateModalV2({
             type="tel"
             value={formData.phone || ''}
             onChange={(e) => handleInputChange('phone', e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
         <div>
@@ -253,7 +253,7 @@ export function UpdateModalV2({
           type="text"
           value={formData.title || formData.jobTitle || ''}
           onChange={(e) => handleInputChange('title', e.target.value)}
-          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
@@ -265,7 +265,7 @@ export function UpdateModalV2({
           value={formData.notes || formData.description || ''}
           onChange={(e) => handleInputChange('notes', e.target.value)}
           rows={4}
-          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
     </div>
@@ -275,15 +275,15 @@ export function UpdateModalV2({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+      <div className="bg-background rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
-          <h2 className="text-xl font-semibold text-[var(--foreground)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
+          <h2 className="text-xl font-semibold text-foreground">
             Edit {recordType.charAt(0).toUpperCase() + recordType.slice(1)}
           </h2>
           <button
             onClick={onClose}
-            className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
+            className="text-muted hover:text-muted transition-colors"
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -299,7 +299,7 @@ export function UpdateModalV2({
                 className={`pb-2 px-1 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]'
+                    : 'border-transparent text-muted hover:text-gray-700 hover:border-border'
                 }`}
               >
                 {tab.label}
@@ -314,18 +314,18 @@ export function UpdateModalV2({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end p-6 border-t border-[var(--border)]">
+        <div className="flex items-center justify-end p-6 border-t border-border">
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-[var(--muted)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+              className="px-4 py-2 text-muted border border-border rounded-lg hover:bg-panel-background transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="px-4 py-2 bg-[var(--button-background)] text-[var(--button-text)] rounded-lg hover:bg-[var(--button-hover)] transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover transition-colors disabled:opacity-50"
             >
               {isLoading ? 'Saving...' : 'Save Changes'}
             </button>
@@ -335,26 +335,26 @@ export function UpdateModalV2({
         {/* Error message */}
         {error && (
           <div className="px-6 pb-4">
-            <div className="bg-[var(--error-bg)] border border-[var(--error-border)] rounded-lg p-3">
-              <p className="text-sm text-[var(--error-text)]">{error}</p>
+            <div className="bg-error-bg border border-error-border rounded-lg p-3">
+              <p className="text-sm text-error-text">{error}</p>
             </div>
           </div>
         )}
 
         {/* Delete confirmation */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-[var(--overlay-bg)] bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-60">
-            <div className="bg-[var(--background)] rounded-lg shadow-xl p-6 max-w-md w-full mx-4 border border-[var(--border)]">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+          <div className="fixed inset-0 bg-overlay-bg bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-60">
+            <div className="bg-background rounded-lg shadow-xl p-6 max-w-md w-full mx-4 border border-border">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Confirm Delete
               </h3>
-              <p className="text-sm text-[var(--muted)] mb-4">
+              <p className="text-sm text-muted mb-4">
                 Are you sure you want to delete this {recordType}? This action cannot be undone.
               </p>
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="px-4 py-2 text-[var(--muted)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+                  className="px-4 py-2 text-muted border border-border rounded-lg hover:bg-panel-background transition-colors"
                 >
                   Cancel
                 </button>

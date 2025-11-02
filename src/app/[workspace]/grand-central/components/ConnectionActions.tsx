@@ -73,11 +73,11 @@ export function ConnectionActions({
   return (
     <div className="space-y-4">
       {/* Connection Status */}
-      <div className="flex items-center justify-between p-3 bg-[var(--panel-background)] rounded-lg">
+      <div className="flex items-center justify-between p-3 bg-panel-background rounded-lg">
         <div className="flex items-center gap-3">
           {getStatusIcon(connection.status)}
           <div>
-            <div className="text-sm font-medium text-[var(--foreground)]">
+            <div className="text-sm font-medium text-foreground">
               {connection.provider}
             </div>
             <div className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${getStatusColor(connection.status)}`}>
@@ -86,7 +86,7 @@ export function ConnectionActions({
           </div>
         </div>
         {connection.lastSyncAt && (
-          <div className="text-xs text-[var(--muted)]">
+          <div className="text-xs text-muted">
             Last sync: {new Date(connection.lastSyncAt).toLocaleTimeString()}
           </div>
         )}
@@ -99,7 +99,7 @@ export function ConnectionActions({
           disabled={isSyncing || connection.status !== 'active'}
           className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             isSyncing || connection.status !== 'active'
-              ? 'bg-[var(--hover)] text-[var(--muted)] cursor-not-allowed'
+              ? 'bg-hover text-muted cursor-not-allowed'
               : 'bg-blue-500 text-white hover:bg-blue-600'
           }`}
         >
@@ -109,7 +109,7 @@ export function ConnectionActions({
 
         <button
           onClick={() => onConfigure(connection.id)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] rounded-lg text-sm font-medium hover:bg-[var(--hover)] transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-background border border-border text-foreground rounded-lg text-sm font-medium hover:bg-hover transition-colors"
         >
           <Cog6ToothIcon className="w-4 h-4" />
           Configure
@@ -117,7 +117,7 @@ export function ConnectionActions({
       </div>
 
       {/* Disconnect Button */}
-      <div className="pt-2 border-t border-[var(--border)]">
+      <div className="pt-2 border-t border-border">
         {!showDisconnectConfirm ? (
           <button
             onClick={() => setShowDisconnectConfirm(true)}
@@ -128,7 +128,7 @@ export function ConnectionActions({
           </button>
         ) : (
           <div className="space-y-2">
-            <p className="text-sm text-[var(--muted)] text-center">
+            <p className="text-sm text-muted text-center">
               Are you sure you want to disconnect this integration?
             </p>
             <div className="flex gap-2">
@@ -141,7 +141,7 @@ export function ConnectionActions({
               </button>
               <button
                 onClick={() => setShowDisconnectConfirm(false)}
-                className="flex-1 px-4 py-2 bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] rounded-lg text-sm font-medium hover:bg-[var(--hover)] transition-colors"
+                className="flex-1 px-4 py-2 bg-background border border-border text-foreground rounded-lg text-sm font-medium hover:bg-hover transition-colors"
               >
                 Cancel
               </button>
@@ -151,17 +151,17 @@ export function ConnectionActions({
       </div>
 
       {/* Connection Info */}
-      <div className="p-3 bg-[var(--panel-background)] rounded-lg">
-        <div className="text-xs text-[var(--muted)] space-y-1">
+      <div className="p-3 bg-panel-background rounded-lg">
+        <div className="text-xs text-muted space-y-1">
           <div className="flex justify-between">
             <span>Connection ID:</span>
-            <span className="font-mono text-[var(--foreground)]">
+            <span className="font-mono text-foreground">
               {connection.nangoConnectionId.substring(0, 8)}...
             </span>
           </div>
           <div className="flex justify-between">
             <span>Provider:</span>
-            <span className="font-medium text-[var(--foreground)]">
+            <span className="font-medium text-foreground">
               {connection.provider}
             </span>
           </div>

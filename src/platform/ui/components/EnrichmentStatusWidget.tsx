@@ -239,7 +239,7 @@ export function EnrichmentStatusWidget({
       case "queued":
         return <ClockIcon className="w-4 h-4 text-yellow-500" />;
       default:
-        return <ClockIcon className="w-4 h-4 text-[var(--muted)]" />;
+        return <ClockIcon className="w-4 h-4 text-muted" />;
     }
   };
 
@@ -275,12 +275,12 @@ export function EnrichmentStatusWidget({
 
   return (
     <div
-      className={`bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 ${className}`}
+      className={`bg-background border border-border rounded-lg p-3 ${className}`}
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <CpuChipIcon className="w-4 h-4 text-purple-500" />
-          <span className="text-sm font-medium text-[var(--foreground)]">
+          <span className="text-sm font-medium text-foreground">
             Monaco Intelligence
           </span>
         </div>
@@ -288,7 +288,7 @@ export function EnrichmentStatusWidget({
           <div
             className={`w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-gray-400"}`}
           />
-          <span className="text-xs text-[var(--muted)]">
+          <span className="text-xs text-muted">
             {isConnected ? "Live" : "Offline"}
           </span>
         </div>
@@ -298,22 +298,22 @@ export function EnrichmentStatusWidget({
         {safeExecutions.map((execution) => (
           <div
             key={execution.executionId}
-            className="border border-[var(--border)] rounded-lg p-2"
+            className="border border-border rounded-lg p-2"
           >
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
                 {getStatusIcon(execution.status)}
-                <span className="text-xs font-medium text-[var(--foreground)]">
+                <span className="text-xs font-medium text-foreground">
                   {getTypeLabel(execution.type)} Enrichment
                 </span>
               </div>
-              <span className="text-xs text-[var(--muted)]">
+              <span className="text-xs text-muted">
                 {execution.progress.percentage}%
               </span>
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full bg-[var(--loading-bg)] rounded-full h-1.5 mb-1">
+            <div className="w-full bg-loading-bg rounded-full h-1.5 mb-1">
               <div
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   execution['status'] === "completed"
@@ -328,7 +328,7 @@ export function EnrichmentStatusWidget({
 
             {/* Details */}
             {showDetails && (
-              <div className="text-xs text-[var(--muted)] space-y-0.5">
+              <div className="text-xs text-muted space-y-0.5">
                 {execution['progress']['currentStepName'] && (
                   <div>Step: {execution.progress.currentStepName}</div>
                 )}
@@ -357,7 +357,7 @@ export function EnrichmentStatusWidget({
 
             {/* Simple status for non-detailed view */}
             {!showDetails && execution['progress']['currentStepName'] && (
-              <div className="text-xs text-[var(--muted)] truncate">
+              <div className="text-xs text-muted truncate">
                 {execution.progress.currentStepName}
                 {execution['estimatedTimeRemaining'] &&
                   execution['status'] === "running" && (

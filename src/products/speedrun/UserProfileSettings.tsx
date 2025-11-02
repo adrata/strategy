@@ -124,38 +124,38 @@ export function UserProfileSettings({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-background border border-border rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center">
               <UserIcon className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">
+              <h2 className="text-xl font-bold text-foreground">
                 Profile Settings
               </h2>
-              <p className="text-[var(--muted)] text-sm">
+              <p className="text-muted text-sm">
                 Customize your speedrun and calling preferences
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--foreground)]" />
+            <XMarkIcon className="w-5 h-5 text-foreground" />
           </button>
         </div>
 
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* User Info */}
-          <div className="bg-[var(--hover-bg)] rounded-xl p-4">
-            <h3 className="font-semibold text-[var(--foreground)] mb-2">
+          <div className="bg-hover rounded-xl p-4">
+            <h3 className="font-semibold text-foreground mb-2">
               User Information
             </h3>
-            <div className="text-sm text-[var(--muted)]">
+            <div className="text-sm text-muted">
               <p>
                 <span className="font-medium">Name:</span>{" "}
                 {user?.name || "Sales Rep"}
@@ -169,12 +169,12 @@ export function UserProfileSettings({
 
           {/* Role & Targets */}
           <div>
-            <h3 className="font-semibold text-[var(--foreground)] mb-3">
+            <h3 className="font-semibold text-foreground mb-3">
               Sales Role & Targets
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Role
                 </label>
                 <select
@@ -189,7 +189,7 @@ export function UserProfileSettings({
                         | "other",
                     })
                   }
-                  className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="SDR">SDR (Sales Development Rep)</option>
                   <option value="AE">AE (Account Executive)</option>
@@ -201,7 +201,7 @@ export function UserProfileSettings({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Daily Target
                   </label>
                   <input
@@ -212,12 +212,12 @@ export function UserProfileSettings({
                         dailyTarget: parseInt(e.target.value) || 40,
                       })
                     }
-                    className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Weekly Target
                   </label>
                   <input
@@ -228,7 +228,7 @@ export function UserProfileSettings({
                         weeklyTarget: parseInt(e.target.value) || 200,
                       })
                     }
-                    className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -237,13 +237,13 @@ export function UserProfileSettings({
 
           {/* Calling Preferences */}
           <div>
-            <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
               <PhoneIcon className="w-5 h-5" />
               Calling Preferences
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Phone Number (Optional)
                 </label>
                 <input
@@ -253,12 +253,12 @@ export function UserProfileSettings({
                     updateSettings({ phoneNumber: e.target.value })
                   }
                   placeholder="+1 (555) 123-4567"
-                  className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Calling Region
                 </label>
                 <select
@@ -266,7 +266,7 @@ export function UserProfileSettings({
                   onChange={(e) =>
                     updateSettings({ callingRegion: e.target.value })
                   }
-                  className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="US">United States</option>
                   <option value="CA">Canada</option>
@@ -277,7 +277,7 @@ export function UserProfileSettings({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Call Start Time
                   </label>
                   <input
@@ -291,12 +291,12 @@ export function UserProfileSettings({
                         },
                       })
                     }
-                    className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Call End Time
                   </label>
                   <input
@@ -310,7 +310,7 @@ export function UserProfileSettings({
                         },
                       })
                     }
-                    className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -319,17 +319,17 @@ export function UserProfileSettings({
 
           {/* Power Dialer Settings */}
           <div>
-            <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center gap-2">
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
               <CogIcon className="w-5 h-5" />
               Power Dialer Settings
             </h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="font-medium text-[var(--foreground)]">
+                  <div className="font-medium text-foreground">
                     Auto-advance to next contact
                   </div>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm text-muted">
                     Automatically move to the next contact after completing a
                     call
                   </div>
@@ -343,12 +343,12 @@ export function UserProfileSettings({
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-[var(--loading-bg)] peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--background)] after:border-[var(--border)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-[var(--border)] peer-checked:bg-blue-600"></div>
+                  <div className="w-11 h-6 bg-loading-bg peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-background after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-border peer-checked:bg-blue-600"></div>
                 </label>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Call Timeout (seconds)
                 </label>
                 <input
@@ -361,9 +361,9 @@ export function UserProfileSettings({
                   }
                   min="10"
                   max="120"
-                  className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <div className="text-xs text-[var(--muted)] mt-1">
+                <div className="text-xs text-muted mt-1">
                   How long to wait before automatically moving to the next
                   contact (10-120 seconds)
                 </div>
@@ -373,10 +373,10 @@ export function UserProfileSettings({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-6 border-t border-[var(--border)]">
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-border">
           <button
             onClick={onClose}
-            className="px-6 py-2 border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors"
+            className="px-6 py-2 border border-border bg-background text-foreground rounded-lg font-medium hover:bg-hover transition-colors"
           >
             Cancel
           </button>

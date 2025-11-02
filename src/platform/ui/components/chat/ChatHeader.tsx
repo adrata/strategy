@@ -40,16 +40,16 @@ export function ChatHeader({
   };
 
   return (
-    <div className="border-b border-[var(--border)] dark:border-[var(--border)] bg-[var(--background)]/80 dark:bg-[var(--foreground)]/80 backdrop-blur-sm">
+    <div className="border-b border-border dark:border-border bg-background/80 dark:bg-foreground/80 backdrop-blur-sm">
       <div className="flex items-center justify-between p-4">
         {/* Left side - Back button or current mode */}
         <div className="flex items-center space-x-3">
           {(viewMode === "conversations" || viewMode === "chat") && (
             <button
               onClick={handleBack}
-              className="p-1 rounded-full hover:bg-[var(--hover)] transition-colors"
+              className="p-1 rounded-full hover:bg-hover transition-colors"
             >
-              <ArrowLeftIcon className="h-4 w-4 text-[var(--muted)] dark:text-[var(--muted)]" />
+              <ArrowLeftIcon className="h-4 w-4 text-muted dark:text-muted" />
             </button>
           )}
 
@@ -59,7 +59,7 @@ export function ChatHeader({
                 <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
                   <span className="text-white text-xs font-bold">AI</span>
                 </div>
-                <span className="font-semibold text-[var(--foreground)] dark:text-white">
+                <span className="font-semibold text-foreground dark:text-white">
                   {currentSubApp?.name || "AI Assistant"}
                 </span>
               </>
@@ -70,7 +70,7 @@ export function ChatHeader({
                 <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
                   <span className="text-white text-xs font-bold">💬</span>
                 </div>
-                <span className="font-semibold text-[var(--foreground)] dark:text-white">
+                <span className="font-semibold text-foreground dark:text-white">
                   Conversations
                 </span>
                 {totalUnreadMessages > 0 && (
@@ -86,7 +86,7 @@ export function ChatHeader({
                 <div className="h-8 w-8 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
                   <span className="text-white text-xs font-bold">💬</span>
                 </div>
-                <span className="font-semibold text-[var(--foreground)] dark:text-white">
+                <span className="font-semibold text-foreground dark:text-white">
                   {selectedConversation === "ross-dan-real"
                     ? "Ross & Dan"
                     : "Chat"}
@@ -101,20 +101,20 @@ export function ChatHeader({
           <div className="relative">
             <button
               onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
-              className="flex items-center space-x-2 px-3 py-1.5 bg-[var(--hover)] rounded-lg hover:bg-[var(--loading-bg)] dark:hover:bg-gray-600 transition-colors"
+              className="flex items-center space-x-2 px-3 py-1.5 bg-hover rounded-lg hover:bg-loading-bg dark:hover:bg-gray-600 transition-colors"
             >
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {selectedModel}
               </span>
               <ChevronRightIcon
-                className={`h-4 w-4 text-[var(--muted)] transition-transform ${
+                className={`h-4 w-4 text-muted transition-transform ${
                   isModelDropdownOpen ? "rotate-90" : ""
                 }`}
               />
             </button>
 
             {isModelDropdownOpen && (
-              <div className="absolute right-0 top-full mt-1 w-32 bg-[var(--background)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg shadow-lg z-50">
+              <div className="absolute right-0 top-full mt-1 w-32 bg-background border border-border dark:border-border rounded-lg shadow-lg z-50">
                 {AI_MODELS.map((model) => (
                   <button
                     key={model}
@@ -122,7 +122,7 @@ export function ChatHeader({
                       setSelectedModel(model);
                       setIsModelDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 text-sm hover:bg-[var(--hover)] first:rounded-t-lg last:rounded-b-lg ${
+                    className={`w-full text-left px-3 py-2 text-sm hover:bg-hover first:rounded-t-lg last:rounded-b-lg ${
                       selectedModel === model
                         ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
                         : "text-gray-700 dark:text-gray-300"

@@ -85,15 +85,15 @@ export const SalesIntelligenceIndicator: React.FC<{ company: Company }> = ({
   const IconComponent = decisionInfo.icon;
 
   return (
-    <div className="flex items-center gap-2 p-2 bg-[var(--hover-bg)] rounded-lg border border-[var(--border)]">
+    <div className="flex items-center gap-2 p-2 bg-hover rounded-lg border border-border">
       <IconComponent className="w-4 h-4 text-[#9B59B6]" />
       <div className="flex flex-col">
-        <span className="text-xs font-medium text-[var(--foreground)]">
+        <span className="text-xs font-medium text-foreground">
           {decisionInfo['saleType'] === "decision-maker"
             ? "Decision Maker"
             : "Buyer Group"}
         </span>
-        <span className="text-xs text-[var(--muted)]">
+        <span className="text-xs text-muted">
           {decisionInfo.timeline}
         </span>
       </div>

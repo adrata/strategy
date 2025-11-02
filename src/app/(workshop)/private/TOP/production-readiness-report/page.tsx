@@ -7,9 +7,9 @@ import Link from 'next/link';
 export default function ProductionReadinessReportPage() {
   return (
     <PasswordProtection correctPassword="TOPEngineersPlus-2025">
-      <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
+      <div className="min-h-screen bg-background" style={{ overflowY: 'auto', height: '100vh' }}>
         {/* Header */}
-        <header className="border-b border-[var(--border)]">
+        <header className="border-b border-border">
           <div className="max-w-6xl mx-auto px-6 py-6">
             <div className="flex justify-between items-center">
               <h1 className="text-lg font-medium text-black">Adrata Intelligence</h1>
@@ -17,13 +17,13 @@ export default function ProductionReadinessReportPage() {
               <div className="flex items-center space-x-4">
                 <Link 
                   href="/private/TOP/summary" 
-                  className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+                  className="text-sm text-muted hover:text-black transition-colors"
                 >
                   ← Back to Summary
                 </Link>
                 <Link 
                   href="/" 
-                  className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+                  className="text-sm text-muted hover:text-black transition-colors"
                 >
                   Home
                 </Link>
@@ -45,7 +45,7 @@ export default function ProductionReadinessReportPage() {
             <h1 className="text-4xl font-bold text-black mb-4 leading-tight">
               Production Readiness Report
             </h1>
-            <p className="text-xl text-[var(--muted)] mb-8">
+            <p className="text-xl text-muted mb-8">
               Final System Status & Deployment Approval - December 19, 2024
             </p>
             
@@ -70,19 +70,19 @@ export default function ProductionReadinessReportPage() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="text-center p-4 bg-[var(--background)] border border-green-300">
+                <div className="text-center p-4 bg-background border border-green-300">
                   <div className="text-2xl font-bold text-green-600">14</div>
                   <div className="text-sm text-green-700">Systems Archived</div>
                 </div>
-                <div className="text-center p-4 bg-[var(--background)] border border-green-300">
+                <div className="text-center p-4 bg-background border border-green-300">
                   <div className="text-2xl font-bold text-blue-600">70%</div>
                   <div className="text-sm text-blue-700">Code Reduction</div>
                 </div>
-                <div className="text-center p-4 bg-[var(--background)] border border-green-300">
+                <div className="text-center p-4 bg-background border border-green-300">
                   <div className="text-2xl font-bold text-purple-600">4/4</div>
                   <div className="text-sm text-purple-700">Core APIs Working</div>
                 </div>
-                <div className="text-center p-4 bg-[var(--background)] border border-green-300">
+                <div className="text-center p-4 bg-background border border-green-300">
                   <div className="text-2xl font-bold text-orange-600">95.75%</div>
                   <div className="text-sm text-orange-700">Intelligence Confidence</div>
                 </div>
@@ -133,33 +133,33 @@ export default function ProductionReadinessReportPage() {
             <h2 className="text-2xl font-bold text-black mb-6">Core Production System</h2>
             
             <div className="space-y-6">
-              <div className="bg-[var(--panel-background)] p-6 border-l-4 border-green-500">
+              <div className="bg-panel-background p-6 border-l-4 border-green-500">
                 <h3 className="text-lg font-bold text-black mb-2">🧠 Intelligence Systems</h3>
                 <div className="space-y-3">
                   <div>
                     <div className="font-medium text-gray-800">Unified Enrichment System</div>
-                    <div className="text-sm text-[var(--muted)]">src/platform/services/unified-enrichment-system/index.ts</div>
+                    <div className="text-sm text-muted">src/platform/services/unified-enrichment-system/index.ts</div>
                     <div className="text-xs text-green-600">✅ Production Ready</div>
                   </div>
                   <div>
                     <div className="font-medium text-gray-800">Genius Intelligence Orchestrator</div>
-                    <div className="text-sm text-[var(--muted)]">src/platform/services/genius-level-intelligence-orchestrator.ts</div>
+                    <div className="text-sm text-muted">src/platform/services/genius-level-intelligence-orchestrator.ts</div>
                     <div className="text-xs text-green-600">✅ McKinsey Partner Level</div>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-[var(--panel-background)] p-6 border-l-4 border-blue-500">
+              <div className="bg-panel-background p-6 border-l-4 border-blue-500">
                 <h3 className="text-lg font-bold text-black mb-2">🔗 API Integration</h3>
                 <div className="space-y-3">
                   <div>
                     <div className="font-medium text-gray-800">Unified API Endpoint</div>
-                    <div className="text-sm text-[var(--muted)]">src/app/api/enrichment/unified/route.ts</div>
+                    <div className="text-sm text-muted">src/app/api/enrichment/unified/route.ts</div>
                     <div className="text-xs text-blue-600">✅ Single Entry Point</div>
                   </div>
                   <div>
                     <div className="font-medium text-gray-800">Professional Contact Validator</div>
-                    <div className="text-sm text-[var(--muted)]">src/platform/services/professional-contact-validator.ts</div>
+                    <div className="text-sm text-muted">src/platform/services/professional-contact-validator.ts</div>
                     <div className="text-xs text-blue-600">✅ Multi-Provider Validation</div>
                   </div>
                 </div>
@@ -201,9 +201,9 @@ export default function ProductionReadinessReportPage() {
           </section>
 
           {/* Footer */}
-          <footer className="border-t border-[var(--border)] pt-8">
+          <footer className="border-t border-border pt-8">
             <div className="flex justify-between items-center">
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 Production Readiness Confirmed: December 19, 2024 | Systems Consolidated: 14 → 4 Core Components | Deployment Status: ✅ APPROVED
               </p>
               <Link 

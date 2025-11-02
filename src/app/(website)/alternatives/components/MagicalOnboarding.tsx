@@ -176,7 +176,7 @@ export default function MagicalOnboarding() {
         <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
           ✨ Let&apos;s create your magical identity
         </h2>
-        <p className="text-[var(--muted)]">
+        <p className="text-muted">
           Every superhero needs a name. What&apos;s yours?
         </p>
       </div>
@@ -195,7 +195,7 @@ export default function MagicalOnboarding() {
                 userData: { ...prev.userData, firstName: e.target.value },
               }))
             }
-            className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
+            className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
             placeholder="Tony"
           />
         </div>
@@ -212,7 +212,7 @@ export default function MagicalOnboarding() {
                 userData: { ...prev.userData, lastName: e.target.value },
               }))
             }
-            className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
+            className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
             placeholder="Stark"
           />
         </div>
@@ -231,7 +231,7 @@ export default function MagicalOnboarding() {
               userData: { ...prev.userData, email: e.target.value },
             }))
           }
-          className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
+          className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
           placeholder="tony@starkindustries.com"
         />
       </div>
@@ -260,7 +260,7 @@ export default function MagicalOnboarding() {
         <h2 className="text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-4">
           🏢 Tell us about your company
         </h2>
-        <p className="text-[var(--muted)]">
+        <p className="text-muted">
           We&apos;ll customize everything for your organization
         </p>
       </div>
@@ -278,7 +278,7 @@ export default function MagicalOnboarding() {
               userData: { ...prev.userData, company: e.target.value },
             }))
           }
-          className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
+          className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
           placeholder="Stark Industries"
         />
       </div>
@@ -296,7 +296,7 @@ export default function MagicalOnboarding() {
                 userData: { ...prev.userData, companySize: e.target.value },
               }))
             }
-            className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500"
           >
             <option value="">Select size</option>
             <option value="1-10">1-10 employees</option>
@@ -318,7 +318,7 @@ export default function MagicalOnboarding() {
                 userData: { ...prev.userData, role: e.target.value },
               }))
             }
-            className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500"
           >
             <option value="">Select role</option>
             <option value="CEO">CEO/Founder</option>
@@ -340,7 +340,7 @@ export default function MagicalOnboarding() {
         <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
           🦸‍♂️ Choose your superhero username
         </h2>
-        <p className="text-[var(--muted)]">
+        <p className="text-muted">
           This is how you&apos;ll be known across the Adrata universe
         </p>
       </div>
@@ -358,7 +358,7 @@ export default function MagicalOnboarding() {
               userData: { ...prev.userData, username: e.target.value },
             }))
           }
-          className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
+          className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500 transition-all"
           placeholder="ironman"
         />
       </div>
@@ -400,7 +400,7 @@ export default function MagicalOnboarding() {
         <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent mb-4">
           🎯 What&apos;s your mission?
         </h2>
-        <p className="text-[var(--muted)]">
+        <p className="text-muted">
           We&apos;ll customize your experience for maximum impact
         </p>
       </div>
@@ -434,7 +434,7 @@ export default function MagicalOnboarding() {
               className={`block p-4 rounded-xl border cursor-pointer transition ${
                 onboarding['userData']['primaryGoal'] === goal.value
                   ? "border-yellow-500 bg-yellow-500/10"
-                  : "border-[var(--border)] hover:border-[var(--border)]"
+                  : "border-border hover:border-border"
               }`}
             >
               <input
@@ -467,7 +467,7 @@ export default function MagicalOnboarding() {
         <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-400 to-red-400 bg-clip-text text-transparent mb-4">
           🎨 Magical preferences
         </h2>
-        <p className="text-[var(--muted)]">Customize your experience to perfection</p>
+        <p className="text-muted">Customize your experience to perfection</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -483,7 +483,7 @@ export default function MagicalOnboarding() {
                 userData: { ...prev.userData, workingHours: e.target.value },
               }))
             }
-            className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500"
           >
             <option value="">Select hours</option>
             <option value="9-5">9 AM - 5 PM</option>
@@ -504,7 +504,7 @@ export default function MagicalOnboarding() {
                 userData: { ...prev.userData, aiPersonality: e.target.value },
               }))
             }
-            className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500"
           >
             <option value="">Select style</option>
             <option value="professional">Professional</option>
@@ -524,7 +524,7 @@ export default function MagicalOnboarding() {
         <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
           Magic is happening!
         </h2>
-        <p className="text-[var(--muted)] text-lg">
+        <p className="text-muted text-lg">
           Welcome to the future, {onboarding.userData.firstName}
         </p>
       </div>
@@ -535,25 +535,25 @@ export default function MagicalOnboarding() {
         </h3>
         <div className="space-y-4 text-left">
           <div className="flex justify-between">
-            <span className="text-[var(--muted)]">Name:</span>
+            <span className="text-muted">Name:</span>
             <span className="text-white font-semibold">
               {onboarding.userData.firstName} {onboarding.userData.lastName}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-[var(--muted)]">Username:</span>
+            <span className="text-muted">Username:</span>
             <span className="text-white font-semibold">
               @{onboarding.userData.username}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-[var(--muted)]">Company:</span>
+            <span className="text-muted">Company:</span>
             <span className="text-white font-semibold">
               {onboarding.userData.company}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-[var(--muted)]">Role:</span>
+            <span className="text-muted">Role:</span>
             <span className="text-white font-semibold">
               {onboarding.userData.role}
             </span>
@@ -568,10 +568,10 @@ export default function MagicalOnboarding() {
       <div className="w-full max-w-2xl">
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm text-[var(--muted)]">
+            <span className="text-sm text-muted">
               Step {onboarding.step} of {onboarding.totalSteps}
             </span>
-            <span className="text-sm text-[var(--muted)]">
+            <span className="text-sm text-muted">
               {Math.round(onboarding.progress)}% Complete
             </span>
           </div>
@@ -583,7 +583,7 @@ export default function MagicalOnboarding() {
           </div>
         </div>
 
-        <div className="bg-[var(--foreground)]/50 backdrop-blur border border-gray-800 rounded-2xl p-8">
+        <div className="bg-foreground/50 backdrop-blur border border-gray-800 rounded-2xl p-8">
           {renderStep()}
 
           <div className="flex justify-between mt-8">
@@ -597,7 +597,7 @@ export default function MagicalOnboarding() {
                 }))
               }
               disabled={onboarding['step'] === 1}
-              className="px-6 py-3 border border-[var(--border)] rounded-lg text-gray-300 hover:border-gray-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 border border-border rounded-lg text-gray-300 hover:border-gray-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               ← Back
             </button>
@@ -613,7 +613,7 @@ export default function MagicalOnboarding() {
           </div>
         </div>
 
-        <div className="text-center mt-6 text-[var(--muted)] text-sm">
+        <div className="text-center mt-6 text-muted text-sm">
           🛡️ Protected by quantum encryption • Screenshots disabled
         </div>
       </div>

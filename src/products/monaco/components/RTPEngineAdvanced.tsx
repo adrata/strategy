@@ -308,27 +308,27 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
   };
 
   const containerClass = isExpanded 
-    ? "fixed inset-0 bg-[var(--background)] z-50"
+    ? "fixed inset-0 bg-background z-50"
     : "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4";
 
   const contentClass = isExpanded
     ? "w-full h-full flex flex-col"
-    : "bg-[var(--background)] rounded-2xl border border-[var(--border)] shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden";
+    : "bg-background rounded-2xl border border-border shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden";
 
   return (
     <div className={containerClass}>
       <div className={contentClass}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)] bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
+        <div className="flex items-center justify-between p-6 border-b border-border bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center">
               <BoltIcon className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)]">
+              <h1 className="text-2xl font-bold text-foreground">
                 {isExpanded ? "RTP Engine - Advanced Configuration" : "RTP Engine Configuration"}
               </h1>
-              <p className="text-[var(--muted)] mt-1">
+              <p className="text-muted mt-1">
                 World-class real-time prioritization with AI-powered insights
               </p>
             </div>
@@ -337,7 +337,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
           <div className="flex items-center gap-3">
             <button
               onClick={() => setPreviewMode(!previewMode)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-[var(--border)] rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border rounded-lg hover:bg-hover transition-colors"
             >
               <EyeIcon className="w-4 h-4" />
               {previewMode ? "Exit Preview" : "Preview"}
@@ -345,28 +345,28 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
             
             <button
               onClick={onToggleExpanded}
-              className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+              className="p-2 hover:bg-hover rounded-lg transition-colors"
               title={isExpanded ? "Minimize" : "Expand"}
             >
               {isExpanded ? (
-                <ArrowsPointingInIcon className="w-5 h-5 text-[var(--muted)]" />
+                <ArrowsPointingInIcon className="w-5 h-5 text-muted" />
               ) : (
-                <ArrowsPointingOutIcon className="w-5 h-5 text-[var(--muted)]" />
+                <ArrowsPointingOutIcon className="w-5 h-5 text-muted" />
               )}
             </button>
             
             <button
               onClick={onClose}
-              className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+              className="p-2 hover:bg-hover rounded-lg transition-colors"
             >
-              <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+              <XMarkIcon className="w-5 h-5 text-muted" />
             </button>
           </div>
         </div>
 
         {/* AI Recommendations Bar */}
         {aiRecommendations.length > 0 && (
-          <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-b border-[var(--border)]">
+          <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-b border-border">
             <div className="flex items-center gap-3">
               <LightBulbIcon className="w-5 h-5 text-amber-600" />
               <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
@@ -383,7 +383,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
         )}
 
         {/* Navigation */}
-        <div className="flex border-b border-[var(--border)] overflow-x-auto">
+        <div className="flex border-b border-border overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -391,7 +391,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
               className={`flex items-center gap-2 px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                 activeTab === tab.id
                   ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50/50"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]"
+                  : "text-muted hover:text-foreground hover:bg-hover"
               }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -407,25 +407,25 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Current Performance */}
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-blue-200">
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                     <TrophyIcon className="w-5 h-5 text-blue-600" />
                     Performance Metrics
                   </h3>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-[var(--muted)]">Pipeline Quality Score</span>
+                      <span className="text-sm text-muted">Pipeline Quality Score</span>
                       <span className="text-2xl font-bold text-blue-600">94.2%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-[var(--muted)]">Avg Deal Velocity</span>
+                      <span className="text-sm text-muted">Avg Deal Velocity</span>
                       <span className="text-2xl font-bold text-green-600">47 days</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-[var(--muted)]">Win Rate</span>
+                      <span className="text-sm text-muted">Win Rate</span>
                       <span className="text-2xl font-bold text-purple-600">68%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-[var(--muted)]">Quota Attainment</span>
+                      <span className="text-sm text-muted">Quota Attainment</span>
                       <span className="text-2xl font-bold text-orange-600">{config.sellerProfile.quotaAttainment}%</span>
                     </div>
                   </div>
@@ -433,20 +433,20 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
 
                 {/* Real-time Insights */}
                 <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-6 border border-green-200">
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                     <FireIcon className="w-5 h-5 text-green-600" />
                     Live Priority Updates
                   </h3>
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 bg-[var(--background)]/50 rounded-lg">
+                    <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
                       <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                       <span className="text-sm">ZeroPoint raised priority (+25 points)</span>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-[var(--background)]/50 rounded-lg">
+                    <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                       <span className="text-sm">Microsoft engagement spike detected</span>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-[var(--background)]/50 rounded-lg">
+                    <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
                       <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                       <span className="text-sm">3 new decision makers identified</span>
                     </div>
@@ -455,7 +455,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
 
                 {/* Quick Actions */}
                 <div className="lg:col-span-2">
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Quick Configuration</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-4">Quick Configuration</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <button
                       onClick={() => setActiveTab("ai-engine")}
@@ -503,8 +503,8 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
             <div className="p-6 h-full overflow-y-auto">
               <div className="max-w-4xl mx-auto space-y-6">
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">AI-Powered Prioritization Engine</h2>
-                  <p className="text-[var(--muted)]">Advanced machine learning algorithms optimize your sales priorities in real-time</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">AI-Powered Prioritization Engine</h2>
+                  <p className="text-muted">Advanced machine learning algorithms optimize your sales priorities in real-time</p>
                 </div>
 
                 {/* AI Features Grid */}
@@ -524,18 +524,18 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                           }`}
                         >
                           <div
-                            className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
+                            className={`w-4 h-4 bg-background rounded-full absolute top-1 transition-transform ${
                               config.aiPredictiveScoring ? 'translate-x-6' : 'translate-x-1'
                             }`}
                           />
                         </button>
                       </div>
-                      <p className="text-sm text-[var(--muted)]">
+                      <p className="text-sm text-muted">
                         Uses historical data and buyer behavior patterns to predict deal closure probability with 94.2% accuracy.
                       </p>
                       {config['aiPredictiveScoring'] && (
-                        <div className="mt-4 p-3 bg-[var(--background)]/50 rounded-lg">
-                          <div className="text-xs text-[var(--muted)] mb-1">Current Model Performance:</div>
+                        <div className="mt-4 p-3 bg-background/50 rounded-lg">
+                          <div className="text-xs text-muted mb-1">Current Model Performance:</div>
                           <div className="flex justify-between text-sm">
                             <span>Accuracy:</span>
                             <span className="font-semibold text-purple-600">94.2%</span>
@@ -567,7 +567,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                             }`}
                           >
                             <div
-                              className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
+                              className={`w-4 h-4 bg-background rounded-full absolute top-1 transition-transform ${
                                 value ? 'translate-x-6' : 'translate-x-1'
                               }`}
                             />
@@ -586,11 +586,11 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                   </h3>
                   <div className="space-y-3">
                     {aiRecommendations.map((rec, index) => (
-                      <div key={index} className="p-4 bg-[var(--background)]/50 rounded-lg">
+                      <div key={index} className="p-4 bg-background/50 rounded-lg">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-[var(--foreground)]">{rec.title}</h4>
+                              <h4 className="font-medium text-foreground">{rec.title}</h4>
                               <span className={`text-xs px-2 py-1 rounded-full ${
                                 rec['impact'] === 'high' ? 'bg-red-100 text-red-800' :
                                 rec['impact'] === 'medium' ? 'bg-yellow-100 text-yellow-800' :
@@ -599,7 +599,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                                 {rec.impact} impact
                               </span>
                             </div>
-                            <p className="text-sm text-[var(--muted)]">{rec.description}</p>
+                            <p className="text-sm text-muted">{rec.description}</p>
                           </div>
                           <button className="ml-4 px-3 py-1 text-xs bg-amber-600 text-white rounded-lg hover:bg-amber-700">
                             Apply
@@ -617,23 +617,23 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
             <div className="p-6 h-full overflow-y-auto">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">Product-Specific Strategies</h2>
-                  <p className="text-[var(--muted)]">Customize prioritization for different products and solutions</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">Product-Specific Strategies</h2>
+                  <p className="text-muted">Customize prioritization for different products and solutions</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {Object.entries(config.productStrategies).map(([id, strategy]) => (
-                    <div key={id} className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
+                    <div key={id} className="bg-background border border-border rounded-xl p-6 shadow-sm">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                           <RocketLaunchIcon className="w-5 h-5 text-white" />
                         </div>
-                        <h3 className="text-lg font-semibold text-[var(--foreground)]">{strategy.name}</h3>
+                        <h3 className="text-lg font-semibold text-foreground">{strategy.name}</h3>
                       </div>
 
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                          <label className="block text-sm font-medium text-foreground mb-2">
                             Priority Multiplier
                           </label>
                           <input
@@ -643,9 +643,9 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                             step="0.1"
                             value={strategy.priorityMultiplier}
                             onChange={(e) => handleConfigChange(`productStrategies.${id}.priorityMultiplier`, parseFloat(e.target.value))}
-                            className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
+                            className="w-full h-2 bg-loading-bg rounded-lg appearance-none cursor-pointer"
                           />
-                          <div className="flex justify-between text-sm text-[var(--muted)] mt-1">
+                          <div className="flex justify-between text-sm text-muted mt-1">
                             <span>0.5x</span>
                             <span className="font-semibold">{strategy.priorityMultiplier}x</span>
                             <span>2.0x</span>
@@ -653,7 +653,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                          <label className="block text-sm font-medium text-foreground mb-2">
                             Deal Size Range
                           </label>
                           <div className="grid grid-cols-2 gap-2">
@@ -662,20 +662,20 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                               placeholder="Min"
                               value={strategy.dealSizeRange.min}
                               onChange={(e) => handleConfigChange(`productStrategies.${id}.dealSizeRange.min`, parseInt(e.target.value))}
-                              className="px-3 py-2 border border-[var(--border)] rounded-lg text-sm"
+                              className="px-3 py-2 border border-border rounded-lg text-sm"
                             />
                             <input
                               type="number"
                               placeholder="Max"
                               value={strategy.dealSizeRange.max}
                               onChange={(e) => handleConfigChange(`productStrategies.${id}.dealSizeRange.max`, parseInt(e.target.value))}
-                              className="px-3 py-2 border border-[var(--border)] rounded-lg text-sm"
+                              className="px-3 py-2 border border-border rounded-lg text-sm"
                             />
                           </div>
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                          <label className="block text-sm font-medium text-foreground mb-2">
                             Target Personas
                           </label>
                           <div className="flex flex-wrap gap-1">
@@ -688,7 +688,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                          <label className="block text-sm font-medium text-foreground mb-2">
                             Sales Cycle Weight
                           </label>
                           <input
@@ -698,9 +698,9 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                             step="0.1"
                             value={strategy.salesCycleWeight}
                             onChange={(e) => handleConfigChange(`productStrategies.${id}.salesCycleWeight`, parseFloat(e.target.value))}
-                            className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
+                            className="w-full h-2 bg-loading-bg rounded-lg appearance-none cursor-pointer"
                           />
-                          <div className="text-center text-sm text-[var(--muted)] mt-1">
+                          <div className="text-center text-sm text-muted mt-1">
                             {strategy.salesCycleWeight}x
                           </div>
                         </div>
@@ -724,20 +724,20 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
             <div className="p-6 h-full overflow-y-auto">
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">Behavioral Triggers</h2>
-                  <p className="text-[var(--muted)]">Configure how prospect behaviors impact their priority scores</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">Behavioral Triggers</h2>
+                  <p className="text-muted">Configure how prospect behaviors impact their priority scores</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {Object.entries(config.behavioralTriggers).map(([trigger, value]) => (
-                    <div key={trigger} className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                    <div key={trigger} className="bg-background border border-border rounded-xl p-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">
                         {trigger.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                       </h3>
                       
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                          <label className="block text-sm font-medium text-foreground mb-2">
                             Priority Impact: {value}%
                           </label>
                           <input
@@ -746,16 +746,16 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                             max="50"
                             value={value}
                             onChange={(e) => handleConfigChange(`behavioralTriggers.${trigger}`, parseInt(e.target.value))}
-                            className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
+                            className="w-full h-2 bg-loading-bg rounded-lg appearance-none cursor-pointer"
                           />
-                          <div className="flex justify-between text-sm text-[var(--muted)] mt-1">
+                          <div className="flex justify-between text-sm text-muted mt-1">
                             <span>0%</span>
                             <span>50%</span>
                           </div>
                         </div>
 
-                        <div className="p-3 bg-[var(--panel-background)] rounded-lg">
-                          <div className="text-sm text-[var(--muted)]">
+                        <div className="p-3 bg-panel-background rounded-lg">
+                          <div className="text-sm text-muted">
                             {trigger === 'emailEngagement' && 'Opens, clicks, and replies to your emails'}
                             {trigger === 'websiteActivity' && 'Page views, time on site, and content consumption'}
                             {trigger === 'contentDownloads' && 'Whitepapers, case studies, and resource downloads'}
@@ -775,15 +775,15 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
             <div className="p-6 h-full overflow-y-auto">
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">Risk Assessment</h2>
-                  <p className="text-[var(--muted)]">Configure risk factors that impact deal prioritization</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">Risk Assessment</h2>
+                  <p className="text-muted">Configure risk factors that impact deal prioritization</p>
                 </div>
 
                 <div className="space-y-6">
                   {Object.entries(config.riskFactors).map(([factor, value]) => (
                     <div key={factor} className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-6">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                        <h3 className="text-lg font-semibold text-foreground">
                           {factor.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                         </h3>
                         <div className="text-2xl font-bold text-red-600">{value}%</div>
@@ -795,10 +795,10 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                         max="50"
                         value={value}
                         onChange={(e) => handleConfigChange(`riskFactors.${factor}`, parseInt(e.target.value))}
-                        className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer mb-3"
+                        className="w-full h-2 bg-loading-bg rounded-lg appearance-none cursor-pointer mb-3"
                       />
                       
-                      <div className="text-sm text-[var(--muted)]">
+                      <div className="text-sm text-muted">
                         {factor === 'competitiveThreat' && 'Presence of competitors in the deal'}
                         {factor === 'championStrength' && 'Quality and influence of your internal champion'}
                         {factor === 'budgetConfirmation' && 'Clarity and confirmation of available budget'}
@@ -816,13 +816,13 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
             <div className="p-6 h-full overflow-y-auto">
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">Seller Profile & Personalization</h2>
-                  <p className="text-[var(--muted)]">Customize the RTP engine based on your selling style and expertise</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">Seller Profile & Personalization</h2>
+                  <p className="text-muted">Customize the RTP engine based on your selling style and expertise</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 border border-blue-200">
-                    <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Experience Level</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-4">Experience Level</h3>
                     <div className="space-y-2">
                       {(['junior', 'mid', 'senior', 'expert'] as const).map((level) => (
                         <label key={level} className="flex items-center space-x-3">
@@ -834,7 +834,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                             onChange={() => handleConfigChange('sellerProfile.experience', level)}
                             className="w-4 h-4 text-blue-600"
                           />
-                          <span className="text-sm font-medium text-[var(--foreground)]">
+                          <span className="text-sm font-medium text-foreground">
                             {level.charAt(0).toUpperCase() + level.slice(1)} ({level === 'junior' ? '0-2 years' : level === 'mid' ? '3-5 years' : level === 'senior' ? '6-10 years' : '10+ years'})
                           </span>
                         </label>
@@ -843,7 +843,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                   </div>
 
                   <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl p-6 border border-green-200">
-                    <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Quota Attainment</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-4">Quota Attainment</h3>
                     <div className="text-center mb-4">
                       <div className="text-3xl font-bold text-green-600">{config.sellerProfile.quotaAttainment}%</div>
                     </div>
@@ -853,33 +853,33 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                       max="200"
                       value={config.sellerProfile.quotaAttainment}
                       onChange={(e) => handleConfigChange('sellerProfile.quotaAttainment', parseInt(e.target.value))}
-                      className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
+                      className="w-full h-2 bg-loading-bg rounded-lg appearance-none cursor-pointer"
                     />
-                    <div className="flex justify-between text-sm text-[var(--muted)] mt-1">
+                    <div className="flex justify-between text-sm text-muted mt-1">
                       <span>0%</span>
                       <span>200%</span>
                     </div>
                   </div>
 
                   <div className="md:col-span-2 bg-gradient-to-br from-purple-50 to-pink-100 rounded-xl p-6 border border-purple-200">
-                    <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Preferred Deal Size Range</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-4">Preferred Deal Size Range</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--foreground)] mb-2">Minimum</label>
+                        <label className="block text-sm font-medium text-foreground mb-2">Minimum</label>
                         <input
                           type="number"
                           value={config.sellerProfile.preferredDealSize.min}
                           onChange={(e) => handleConfigChange('sellerProfile.preferredDealSize.min', parseInt(e.target.value))}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg"
+                          className="w-full px-3 py-2 border border-border rounded-lg"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--foreground)] mb-2">Maximum</label>
+                        <label className="block text-sm font-medium text-foreground mb-2">Maximum</label>
                         <input
                           type="number"
                           value={config.sellerProfile.preferredDealSize.max}
                           onChange={(e) => handleConfigChange('sellerProfile.preferredDealSize.max', parseInt(e.target.value))}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg"
+                          className="w-full px-3 py-2 border border-border rounded-lg"
                         />
                       </div>
                     </div>
@@ -893,8 +893,8 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
             <div className="p-6 h-full overflow-y-auto">
               <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">RTP Analytics & Performance</h2>
-                  <p className="text-[var(--muted)]">Real-time insights into your prioritization engine performance</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-2">RTP Analytics & Performance</h2>
+                  <p className="text-muted">Real-time insights into your prioritization engine performance</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -904,7 +904,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                       <h3 className="text-lg font-semibold">Priority Accuracy</h3>
                     </div>
                     <div className="text-3xl font-bold text-green-600 mb-2">94.2%</div>
-                    <div className="text-sm text-[var(--muted)]">Predictions match actual outcomes</div>
+                    <div className="text-sm text-muted">Predictions match actual outcomes</div>
                   </div>
 
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 border border-blue-200">
@@ -913,7 +913,7 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                       <h3 className="text-lg font-semibold">Avg Response Time</h3>
                     </div>
                     <div className="text-3xl font-bold text-blue-600 mb-2">1.2s</div>
-                    <div className="text-sm text-[var(--muted)]">Real-time priority updates</div>
+                    <div className="text-sm text-muted">Real-time priority updates</div>
                   </div>
 
                   <div className="bg-gradient-to-br from-purple-50 to-pink-100 rounded-xl p-6 border border-purple-200">
@@ -922,12 +922,12 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                       <h3 className="text-lg font-semibold">Hot Leads Today</h3>
                     </div>
                     <div className="text-3xl font-bold text-purple-600 mb-2">23</div>
-                    <div className="text-sm text-[var(--muted)]">Above 85% priority threshold</div>
+                    <div className="text-sm text-muted">Above 85% priority threshold</div>
                   </div>
                 </div>
 
-                <div className="mt-8 bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Recent Priority Changes</h3>
+                <div className="mt-8 bg-background border border-border rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">Recent Priority Changes</h3>
                   <div className="space-y-3">
                     {[
                       { company: "ZeroPoint", change: "+25", reason: "Budget approved", time: "2 min ago" },
@@ -935,17 +935,17 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
                       { company: "Apple", change: "-8", reason: "Competitor activity", time: "12 min ago" },
                       { company: "Nike", change: "+12", reason: "Website engagement", time: "18 min ago" },
                     ].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-[var(--panel-background)] rounded-lg">
+                      <div key={index} className="flex items-center justify-between p-3 bg-panel-background rounded-lg">
                         <div className="flex items-center gap-3">
                           <div className={`w-2 h-2 rounded-full ${item.change.startsWith('+') ? 'bg-green-500' : 'bg-red-500'}`}></div>
                           <span className="font-medium">{item.company}</span>
-                          <span className="text-sm text-[var(--muted)]">{item.reason}</span>
+                          <span className="text-sm text-muted">{item.reason}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className={`font-semibold ${item.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
                             {item.change}
                           </span>
-                          <span className="text-sm text-[var(--muted)]">{item.time}</span>
+                          <span className="text-sm text-muted">{item.time}</span>
                         </div>
                       </div>
                     ))}
@@ -957,9 +957,9 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-[var(--border)] bg-[var(--panel-background)] dark:bg-[var(--foreground)]/20">
+        <div className="flex items-center justify-between p-6 border-t border-border bg-panel-background dark:bg-foreground/20">
           <div className="flex items-center gap-4">
-            <div className="text-sm text-[var(--muted)]">
+            <div className="text-sm text-muted">
               Last updated: {new Date().toLocaleTimeString()}
             </div>
             <div className="flex items-center gap-2">
@@ -971,13 +971,13 @@ export const RTPEngineAdvanced: React.FC<RTPEngineAdvancedProps> = ({
           <div className="flex items-center gap-3">
             <button
               onClick={() => setConfig(DEFAULT_ADVANCED_CONFIG)}
-              className="px-4 py-2 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              className="px-4 py-2 text-sm font-medium text-muted hover:text-foreground transition-colors"
             >
               Reset to Defaults
             </button>
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              className="px-4 py-2 text-sm font-medium text-muted hover:text-foreground transition-colors"
             >
               Cancel
             </button>

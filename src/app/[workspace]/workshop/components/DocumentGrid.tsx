@@ -91,11 +91,25 @@ export function DocumentGrid() {
       const data = await apiFetch<{
         documents: WorkshopDocument[];
         pagination?: { total: number };
-      }>(`/api/v1/documents/documents?${params.toString()}`);
+      }>(
+        `/api/v1/documents/documents?${params.toString()}`,
+        {},
+        { documents: [], pagination: { total: 0 } }
+      );
       setDocuments(data.documents || []);
+      // Clear error if we got a successful response (even if it's a fallback)
+      setError(null);
     } catch (err) {
+      // Only set error if it's not an auth error (fallback should have handled it)
       const errorMessage = err instanceof Error ? err.message : 'Failed to load documents';
-      setError(errorMessage);
+      // If it's an auth error and we have fallback, don't set error
+      if (!errorMessage.includes('Authentication required')) {
+        setError(errorMessage);
+      } else {
+        // Auth error - use empty state
+        setDocuments([]);
+        setError(null);
+      }
       console.error('Error loading documents:', err);
     } finally {
       setIsLoading(false);
@@ -126,9 +140,9 @@ export function DocumentGrid() {
       case 'grid':
         return 'text-green-600 bg-green-100';
       case 'code':
-        return 'text-[var(--muted)] bg-[var(--hover)]';
+        return 'text-muted bg-hover';
       default:
-        return 'text-[var(--muted)] bg-[var(--hover)]';
+        return 'text-muted bg-hover';
     }
   };
 
@@ -139,21 +153,21 @@ export function DocumentGrid() {
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
   };
 
-  if (isLoading || error) {
+  if (isLoading) {
     return (
       <div className="p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+            <div key={i} className="bg-background border border-border rounded-lg p-4">
               <div className="space-y-3">
-                <div className="h-12 w-12 bg-[var(--loading-bg)] rounded-lg animate-pulse"></div>
+                <div className="h-12 w-12 bg-loading-bg rounded-lg animate-pulse"></div>
                 <div className="space-y-2">
-                  <div className="h-4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                  <div className="h-3 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse"></div>
+                  <div className="h-4 bg-loading-bg rounded animate-pulse"></div>
+                  <div className="h-3 bg-loading-bg rounded w-3/4 animate-pulse"></div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="h-3 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
-                  <div className="h-3 bg-[var(--loading-bg)] rounded w-12 animate-pulse"></div>
+                  <div className="h-3 bg-loading-bg rounded w-16 animate-pulse"></div>
+                  <div className="h-3 bg-loading-bg rounded w-12 animate-pulse"></div>
                 </div>
               </div>
             </div>
@@ -167,9 +181,9 @@ export function DocumentGrid() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <DocumentTextIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No documents found</h3>
-          <p className="text-[var(--muted)] mb-4">
+          <DocumentTextIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-2">No documents found</h3>
+          <p className="text-muted mb-4">
             {searchQuery 
               ? "No documents match your search criteria."
               : "Get started by creating or uploading your first document."
@@ -195,7 +209,7 @@ export function DocumentGrid() {
                 const workspaceSlug = workspace?.slug || 'default';
                 router.push(`/${workspaceSlug}/workbench/${slug}`);
               }}
-              className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
+              className="bg-background border border-border rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
             >
               {/* Document Header */}
               <div className="flex items-start justify-between mb-3">
@@ -203,37 +217,37 @@ export function DocumentGrid() {
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="p-1 hover:bg-[var(--hover)] rounded">
-                    <EyeIcon className="w-4 h-4 text-[var(--muted)]" />
+                  <button className="p-1 hover:bg-hover rounded">
+                    <EyeIcon className="w-4 h-4 text-muted" />
                   </button>
-                  <button className="p-1 hover:bg-[var(--hover)] rounded">
-                    <ShareIcon className="w-4 h-4 text-[var(--muted)]" />
+                  <button className="p-1 hover:bg-hover rounded">
+                    <ShareIcon className="w-4 h-4 text-muted" />
                   </button>
-                  <button className="p-1 hover:bg-[var(--hover)] rounded">
-                    <EllipsisVerticalIcon className="w-4 h-4 text-[var(--muted)]" />
+                  <button className="p-1 hover:bg-hover rounded">
+                    <EllipsisVerticalIcon className="w-4 h-4 text-muted" />
                   </button>
                 </div>
               </div>
 
               {/* Document Info */}
               <div className="space-y-2">
-                <h3 className="font-medium text-[var(--foreground)] line-clamp-2">
+                <h3 className="font-medium text-foreground line-clamp-2">
                   {document.title}
                 </h3>
                 {document.description && (
-                  <p className="text-sm text-[var(--muted)] line-clamp-2">
+                  <p className="text-sm text-muted line-clamp-2">
                     {document.description}
                   </p>
                 )}
                 
                 {/* Document Meta */}
-                <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+                <div className="flex items-center justify-between text-xs text-muted">
                   <span className="capitalize">{document.documentType}</span>
                   <span>{formatFileSize(document.fileSize)}</span>
                 </div>
 
                 {/* Owner and Date */}
-                <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+                <div className="flex items-center justify-between text-xs text-muted">
                   <span>{document.owner?.name}</span>
                   <span>{new Date(document.updatedAt).toLocaleDateString()}</span>
                 </div>
@@ -244,13 +258,13 @@ export function DocumentGrid() {
                     {document.tags.slice(0, 2).map((tag, index) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[var(--hover)] text-[var(--muted)]"
+                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-hover text-muted"
                       >
                         {tag}
                       </span>
                     ))}
                     {document.tags.length > 2 && (
-                      <span className="text-xs text-[var(--muted)]">
+                      <span className="text-xs text-muted">
                         +{document.tags.length - 2} more
                       </span>
                     )}

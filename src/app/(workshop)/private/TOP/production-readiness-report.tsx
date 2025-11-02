@@ -11,8 +11,8 @@ export default function ProductionReadinessReport() {
             </div>
 
             {/* Executive Summary */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📊 Executive Summary</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">📊 Executive Summary</h2>
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-center space-x-3 mb-3">
                         <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">✓</div>
@@ -44,8 +44,8 @@ export default function ProductionReadinessReport() {
             </div>
 
             {/* System Consolidation Results */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🗂️ System Consolidation Results</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">🗂️ System Consolidation Results</h2>
                 
                 <div className="space-y-6">
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -109,8 +109,8 @@ export default function ProductionReadinessReport() {
             </div>
 
             {/* Core Production System */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">⚡ Core Production System</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">⚡ Core Production System</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -174,8 +174,8 @@ export default function ProductionReadinessReport() {
             </div>
 
             {/* API Status */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibent text-[var(--foreground)] mb-4">🔗 API Status & Recommendations</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibent text-foreground mb-4">🔗 API Status & Recommendations</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -185,28 +185,28 @@ export default function ProductionReadinessReport() {
                                 <span>Perplexity Pro</span>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-green-600 font-medium">✅ CRITICAL</span>
-                                    <span className="text-xs text-[var(--muted)]">Real-time intelligence</span>
+                                    <span className="text-xs text-muted">Real-time intelligence</span>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span>Claude 3.5 Sonnet</span>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-green-600 font-medium">✅ CRITICAL</span>
-                                    <span className="text-xs text-[var(--muted)]">Strategic analysis</span>
+                                    <span className="text-xs text-muted">Strategic analysis</span>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span>CoreSignal</span>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-green-600 font-medium">✅ CRITICAL</span>
-                                    <span className="text-xs text-[var(--muted)]">B2B intelligence</span>
+                                    <span className="text-xs text-muted">B2B intelligence</span>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span>DropContact</span>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-green-600 font-medium">✅ HIGH</span>
-                                    <span className="text-xs text-[var(--muted)]">Email validation</span>
+                                    <span className="text-xs text-muted">Email validation</span>
                                 </div>
                             </div>
                         </div>
@@ -219,28 +219,28 @@ export default function ProductionReadinessReport() {
                                 <span>OpenAI GPT-4</span>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-yellow-600 font-medium">⚠️ HIGH</span>
-                                    <span className="text-xs text-[var(--muted)]">Key invalid</span>
+                                    <span className="text-xs text-muted">Key invalid</span>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span>Lusha</span>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-yellow-600 font-medium">⚠️ HIGH</span>
-                                    <span className="text-xs text-[var(--muted)]">Auth issue</span>
+                                    <span className="text-xs text-muted">Auth issue</span>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span>Hunter.io</span>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-yellow-600 font-medium">⚠️ HIGH</span>
-                                    <span className="text-xs text-[var(--muted)]">Key invalid</span>
+                                    <span className="text-xs text-muted">Key invalid</span>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span>Twilio</span>
                                 <div className="flex items-center space-x-2">
                                     <span className="text-yellow-600 font-medium">⚠️ HIGH</span>
-                                    <span className="text-xs text-[var(--muted)]">Credentials issue</span>
+                                    <span className="text-xs text-muted">Credentials issue</span>
                                 </div>
                             </div>
                         </div>
@@ -254,36 +254,36 @@ export default function ProductionReadinessReport() {
             </div>
 
             {/* Performance Metrics */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📈 Performance Metrics</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">📈 Performance Metrics</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="text-center p-4 bg-green-50 border border-green-200 rounded-lg">
                         <div className="text-3xl font-bold text-green-600">13-26s</div>
                         <div className="text-sm text-green-700">Response Time</div>
-                        <div className="text-xs text-[var(--muted)]">Complex multi-source analysis</div>
+                        <div className="text-xs text-muted">Complex multi-source analysis</div>
                     </div>
                     <div className="text-center p-4 bg-blue-50 border border-blue-200 rounded-lg">
                         <div className="text-3xl font-bold text-blue-600">95.75%</div>
                         <div className="text-sm text-blue-700">Confidence Score</div>
-                        <div className="text-xs text-[var(--muted)]">McKinsey Partner standard</div>
+                        <div className="text-xs text-muted">McKinsey Partner standard</div>
                     </div>
                     <div className="text-center p-4 bg-purple-50 border border-purple-200 rounded-lg">
                         <div className="text-3xl font-bold text-purple-600">4+</div>
                         <div className="text-sm text-purple-700">Sources per Analysis</div>
-                        <div className="text-xs text-[var(--muted)]">Multi-source validation</div>
+                        <div className="text-xs text-muted">Multi-source validation</div>
                     </div>
                     <div className="text-center p-4 bg-orange-50 border border-orange-200 rounded-lg">
                         <div className="text-3xl font-bold text-orange-600">100%</div>
                         <div className="text-sm text-orange-700">Success Rate</div>
-                        <div className="text-xs text-[var(--muted)]">All tests passed</div>
+                        <div className="text-xs text-muted">All tests passed</div>
                     </div>
                 </div>
             </div>
 
             {/* Production Deployment Checklist */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">✅ Production Deployment Checklist</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">✅ Production Deployment Checklist</h2>
                 
                 <div className="space-y-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -377,8 +377,8 @@ export default function ProductionReadinessReport() {
             </div>
 
             {/* Footer */}
-            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 text-center">
-                <p className="text-sm text-[var(--muted)]">
+            <div className="bg-panel-background border border-border rounded-lg p-4 text-center">
+                <p className="text-sm text-muted">
                     <strong>Production Readiness Confirmed:</strong> December 19, 2024 | 
                     <strong> Systems Consolidated:</strong> 14 → 4 Core Components | 
                     <strong> Deployment Status:</strong> ✅ APPROVED

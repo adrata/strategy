@@ -53,10 +53,10 @@ export default function ActionGuideLayout({ children }: ActionGuideLayoutProps) 
   // Don't render if not authenticated
   if (!authUser?.email) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Authentication Required</h2>
-          <p className="text-[var(--muted)]">Please log in to access the Action Guide.</p>
+          <h2 className="text-xl font-semibold text-foreground mb-2">Authentication Required</h2>
+          <p className="text-muted">Please log in to access the Action Guide.</p>
         </div>
       </div>
     );
@@ -66,10 +66,10 @@ export default function ActionGuideLayout({ children }: ActionGuideLayoutProps) 
   const isAuthorized = ['ross@adrata.com', 'todd@adrata.com', 'dan@adrata.com'].includes(authUser.email);
   if (!isAuthorized) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Access Denied</h2>
-          <p className="text-[var(--muted)]">Action Guide access is restricted to authorized users only.</p>
+          <h2 className="text-xl font-semibold text-foreground mb-2">Access Denied</h2>
+          <p className="text-muted">Action Guide access is restricted to authorized users only.</p>
         </div>
       </div>
     );

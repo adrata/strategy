@@ -81,30 +81,30 @@ export default function FindBuyerGroupPage() {
             
             <div className="space-y-6">
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-background rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Stakeholder Map</h3>
-                  <p className="text-[var(--muted)]">
+                  <p className="text-muted">
                     Complete view of all decision-makers and influencers.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-background rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Influence Analysis</h3>
-                  <p className="text-[var(--muted)]">
+                  <p className="text-muted">
                     Power dynamics and who really drives decisions.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-background rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Engagement Strategy</h3>
-                  <p className="text-[var(--muted)]">
+                  <p className="text-muted">
                     Personalized approach for each stakeholder.
                   </p>
                 </div>
@@ -114,11 +114,11 @@ export default function FindBuyerGroupPage() {
         </div>
 
         {/* Right Side - Opportunity Form */}
-        <div className="w-1/2 bg-[var(--background)] flex items-center justify-center p-8">
+        <div className="w-1/2 bg-background flex items-center justify-center p-8">
           <div className="w-full max-w-md">
             <form onSubmit={handleStep1Submit} className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-[var(--foreground)] mb-6">Tell Us About Your Opportunity</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-6">Tell Us About Your Opportunity</h3>
               </div>
 
               <div>
@@ -131,7 +131,7 @@ export default function FindBuyerGroupPage() {
                   value={formData.targetCompany}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                   placeholder="Company you're targeting"
                 />
               </div>
@@ -145,7 +145,7 @@ export default function FindBuyerGroupPage() {
                   value={formData.industry}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 >
                   <option value="">Select industry</option>
                   <option value="technology">Technology</option>
@@ -166,7 +166,7 @@ export default function FindBuyerGroupPage() {
                   name="dealSize"
                   value={formData.dealSize}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 >
                   <option value="">Select deal size</option>
                   <option value="<50k">Under $50K</option>
@@ -184,7 +184,7 @@ export default function FindBuyerGroupPage() {
                   name="timeframe"
                   value={formData.timeframe}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                 >
                   <option value="">Select timeframe</option>
                   <option value="immediate">This month</option>
@@ -203,7 +203,7 @@ export default function FindBuyerGroupPage() {
                   value={formData.currentChallenge}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                   placeholder="What's your biggest challenge with this buyer group?"
                 />
               </div>
@@ -247,30 +247,30 @@ export default function FindBuyerGroupPage() {
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-background rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Personalized Analysis</h3>
-                  <p className="text-[var(--muted)]">
+                  <p className="text-muted">
                     Tailored insights for your specific opportunity.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-background rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Expert Review</h3>
-                  <p className="text-[var(--muted)]">
+                  <p className="text-muted">
                     Our team will prepare custom recommendations.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
+                <div className="w-2 h-2 bg-background rounded-full mt-3 flex-shrink-0"></div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">Strategic Guidance</h3>
-                  <p className="text-[var(--muted)]">
+                  <p className="text-muted">
                     Next steps to engage your buyer group effectively.
                   </p>
                 </div>
@@ -280,7 +280,7 @@ export default function FindBuyerGroupPage() {
             <div className="mt-8 pt-8 border-t border-gray-800">
               <button
                 onClick={() => setStep(1)}
-                className="inline-flex items-center gap-2 text-[var(--muted)] hover:text-white transition-colors"
+                className="inline-flex items-center gap-2 text-muted hover:text-white transition-colors"
               >
                 ← Back to Opportunity Details
               </button>
@@ -289,11 +289,11 @@ export default function FindBuyerGroupPage() {
         </div>
 
         {/* Right Side - Contact Form */}
-        <div className="w-1/2 bg-[var(--background)] flex items-center justify-center p-8">
+        <div className="w-1/2 bg-background flex items-center justify-center p-8">
           <div className="w-full max-w-md">
             <form onSubmit={handleStep2Submit} className="space-y-6">
               <div>
-                <h3 className="text-2xl font-bold text-[var(--foreground)] mb-6">Your Contact Information</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-6">Your Contact Information</h3>
               </div>
 
               <div>
@@ -306,7 +306,7 @@ export default function FindBuyerGroupPage() {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                   placeholder="Full name"
                 />
               </div>
@@ -321,7 +321,7 @@ export default function FindBuyerGroupPage() {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                   placeholder="you@company.com"
                 />
               </div>
@@ -336,7 +336,7 @@ export default function FindBuyerGroupPage() {
                   value={formData.company}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-black focus:border-black"
                   placeholder="Your company name"
                 />
               </div>
@@ -348,7 +348,7 @@ export default function FindBuyerGroupPage() {
                 Continue to Scheduling →
               </button>
 
-              <p className="text-xs text-[var(--muted)] text-center">
+              <p className="text-xs text-muted text-center">
                 We'll analyze your buyer group and prepare insights for our meeting.
               </p>
             </form>
@@ -383,30 +383,30 @@ export default function FindBuyerGroupPage() {
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-background rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">30-Minute Review</h3>
-                <p className="text-[var(--muted)]">
+                <p className="text-muted">
                   Complete buyer group analysis and engagement strategy.
                 </p>
               </div>
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-background rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Actionable Insights</h3>
-                <p className="text-[var(--muted)]">
+                <p className="text-muted">
                   Specific recommendations for each stakeholder.
                 </p>
               </div>
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-2 h-2 bg-[var(--background)] rounded-full mt-3 flex-shrink-0"></div>
+              <div className="w-2 h-2 bg-background rounded-full mt-3 flex-shrink-0"></div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Platform Access</h3>
-                <p className="text-[var(--muted)]">
+                <p className="text-muted">
                   Learn how to use buyer group intelligence ongoing.
                 </p>
               </div>
@@ -416,7 +416,7 @@ export default function FindBuyerGroupPage() {
           <div className="mt-8 pt-8 border-t border-gray-800">
             <button
               onClick={() => setStep(2)}
-              className="inline-flex items-center gap-2 text-[var(--muted)] hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 text-muted hover:text-white transition-colors"
             >
               ← Back to Contact Info
             </button>
@@ -425,7 +425,7 @@ export default function FindBuyerGroupPage() {
       </div>
 
       {/* Right Side - Calendly Scheduling */}
-      <div className="w-1/2 bg-[var(--background)] flex items-center justify-center p-8">
+      <div className="w-1/2 bg-background flex items-center justify-center p-8">
         <div className="w-full max-w-full">
           {/* Calendly widget */}
           <CalendlyWidget 
@@ -441,11 +441,11 @@ export default function FindBuyerGroupPage() {
             }}
           />
           
-          <div className="mt-6 p-4 bg-[var(--panel-background)] rounded-lg">
-            <p className="text-sm text-[var(--muted)] mb-2">
+          <div className="mt-6 p-4 bg-panel-background rounded-lg">
+            <p className="text-sm text-muted mb-2">
               <strong>What happens next:</strong>
             </p>
-            <ol className="text-xs text-[var(--muted)] space-y-1">
+            <ol className="text-xs text-muted space-y-1">
               <li>1. We analyze {formData.targetCompany}'s buyer group</li>
               <li>2. You receive a preliminary report</li>
               <li>3. We review findings and discuss strategy</li>

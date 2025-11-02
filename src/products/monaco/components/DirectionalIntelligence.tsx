@@ -36,24 +36,24 @@ export function DirectionalIntelligenceComponent({
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case "critical":
-        return <ExclamationTriangleIcon className="w-5 h-5 text-[var(--muted)]" />;
+        return <ExclamationTriangleIcon className="w-5 h-5 text-muted" />;
       case "high":
-        return <InformationCircleIcon className="w-5 h-5 text-[var(--muted)]" />;
+        return <InformationCircleIcon className="w-5 h-5 text-muted" />;
       case "medium":
-        return <LightBulbIcon className="w-5 h-5 text-[var(--muted)]" />;
+        return <LightBulbIcon className="w-5 h-5 text-muted" />;
       default:
-        return <InformationCircleIcon className="w-5 h-5 text-[var(--muted)]" />;
+        return <InformationCircleIcon className="w-5 h-5 text-muted" />;
     }
   };
 
   const getPriorityColor = (priority: string) => {
     // Neutral colors for all priorities
-    return "border-l-gray-400 bg-[var(--panel-background)] dark:bg-[var(--foreground)]/20";
+    return "border-l-gray-400 bg-panel-background dark:bg-foreground/20";
   };
 
   const getPersonalityColor = (trait: string) => {
     // Neutral colors for all personality traits
-    return "bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300";
+    return "bg-hover text-gray-700 dark:bg-foreground/30 dark:text-gray-300";
   };
 
   const getConfidenceText = (confidence: number) => {
@@ -118,11 +118,11 @@ Provide a professional, actionable description that explains what this insight m
 
   if (!insights || insights['length'] === 0) {
     return (
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+      <div className="bg-background border border-border rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           🧠 Directional Intelligence
         </h3>
-        <p className="text-[var(--muted)]">
+        <p className="text-muted">
           Run the data pipeline to generate unique directional intelligence for{" "}
           {companyName}.
         </p>
@@ -133,12 +133,12 @@ Provide a professional, actionable description that explains what this insight m
   return (
     <div className="space-y-6">
       {/* Directional Intelligence Section */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">
+          <h3 className="text-lg font-semibold text-foreground">
             🧠 Directional Intelligence
           </h3>
-          <span className="text-sm text-[var(--muted)]">
+          <span className="text-sm text-muted">
             {insights.length} unique insights
           </span>
         </div>
@@ -154,60 +154,60 @@ Provide a professional, actionable description that explains what this insight m
                   {getPriorityIcon(insight.priority)}
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
+                      <span className="text-xs font-medium uppercase tracking-wider text-muted">
                         {insight.category.replace("-", " ")}
                       </span>
-                      <span className="text-xs px-2 py-1 rounded-full bg-[var(--background)] border border-[var(--border)]">
+                      <span className="text-xs px-2 py-1 rounded-full bg-background border border-border">
                         {insight.priority} priority
                       </span>
-                      <span className="text-xs px-2 py-1 rounded-full bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300">
+                      <span className="text-xs px-2 py-1 rounded-full bg-hover text-gray-700 dark:bg-foreground/30 dark:text-gray-300">
                         {Math.round(insight.confidence * 100)}% confidence
                       </span>
-                      <span className="text-xs px-2 py-1 rounded-full bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300">
+                      <span className="text-xs px-2 py-1 rounded-full bg-hover text-gray-700 dark:bg-foreground/30 dark:text-gray-300">
                         {insight.uniquenessScore}% unique
                       </span>
                     </div>
 
-                    <p className="text-[var(--foreground)] font-medium mb-2">
+                    <p className="text-foreground font-medium mb-2">
                       {insight.insight}
                     </p>
 
                     {/* AI Description */}
-                    <div className="mt-3 p-3 bg-[var(--hover-bg)] rounded-lg border border-[var(--border)]">
+                    <div className="mt-3 p-3 bg-hover rounded-lg border border-border">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs font-medium text-[var(--muted)]">🤖 AI Analysis</span>
+                        <span className="text-xs font-medium text-muted">🤖 AI Analysis</span>
                         {loadingDescriptions.has(`${index}`) && (
-                          <div className="w-3 h-3 border-2 border-[var(--border)] border-t-gray-600 rounded-full animate-spin"></div>
+                          <div className="w-3 h-3 border-2 border-border border-t-gray-600 rounded-full animate-spin"></div>
                         )}
                       </div>
                       {aiDescriptions[`${index}`] ? (
-                        <p className="text-sm text-[var(--foreground)] leading-relaxed">
+                        <p className="text-sm text-foreground leading-relaxed">
                           {aiDescriptions[`${index}`]}
                         </p>
                       ) : loadingDescriptions.has(`${index}`) ? (
-                        <p className="text-sm text-[var(--muted)] italic">
+                        <p className="text-sm text-muted italic">
                           Generating AI analysis...
                         </p>
                       ) : (
-                        <p className="text-sm text-[var(--muted)] italic">
+                        <p className="text-sm text-muted italic">
                           AI analysis unavailable
                         </p>
                       )}
                     </div>
 
                     {expandedInsight === `${index}` && (
-                      <div className="mt-4 p-4 bg-[var(--background)] border border-[var(--border)] rounded-lg">
-                        <h4 className="font-semibold text-[var(--foreground)] mb-2">
+                      <div className="mt-4 p-4 bg-background border border-border rounded-lg">
+                        <h4 className="font-semibold text-foreground mb-2">
                           🔍 Reasoning & Sources
                         </h4>
-                        <p className="text-[var(--muted)] mb-3">
+                        <p className="text-muted mb-3">
                           {insight.reasoning}
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {insight.sources.map((source, sourceIndex) => (
                             <span
                               key={sourceIndex}
-                              className="text-xs px-2 py-1 rounded-full bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300"
+                              className="text-xs px-2 py-1 rounded-full bg-hover text-gray-700 dark:bg-foreground/30 dark:text-gray-300"
                             >
                               📊 {source}
                             </span>
@@ -224,12 +224,12 @@ Provide a professional, actionable description that explains what this insight m
                       expandedInsight === `${index}` ? null : `${index}`,
                     )
                   }
-                  className="ml-2 p-1 rounded hover:bg-[var(--hover-bg)] transition-colors"
+                  className="ml-2 p-1 rounded hover:bg-hover transition-colors"
                 >
                   {expandedInsight === `${index}` ? (
-                    <ChevronUpIcon className="w-4 h-4 text-[var(--muted)]" />
+                    <ChevronUpIcon className="w-4 h-4 text-muted" />
                   ) : (
-                    <ChevronDownIcon className="w-4 h-4 text-[var(--muted)]" />
+                    <ChevronDownIcon className="w-4 h-4 text-muted" />
                   )}
                 </button>
               </div>
@@ -240,12 +240,12 @@ Provide a professional, actionable description that explains what this insight m
 
       {/* Personality Assessments Section */}
       {Object.keys(personalityAssessments).length > 0 && (
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+        <div className="bg-background border border-border rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-[var(--foreground)]">
+            <h3 className="text-lg font-semibold text-foreground">
               👤 Personality Intelligence
             </h3>
-            <span className="text-sm text-[var(--muted)]">
+            <span className="text-sm text-muted">
               {Object.keys(personalityAssessments).length} people analyzed
             </span>
           </div>
@@ -255,15 +255,15 @@ Provide a professional, actionable description that explains what this insight m
               ([personId, assessment]) => (
                 <div
                   key={personId}
-                  className="border border-[var(--border)] rounded-lg p-4"
+                  className="border border-border rounded-lg p-4"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="font-medium text-[var(--foreground)]">
+                        <span className="font-medium text-foreground">
                           Person {personId.slice(-3)}
                         </span>
-                        <span className="text-xs px-2 py-1 rounded-full bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300">
+                        <span className="text-xs px-2 py-1 rounded-full bg-hover text-gray-700 dark:bg-foreground/30 dark:text-gray-300">
                           {getConfidenceText(assessment.confidenceScore)}
                         </span>
                       </div>
@@ -279,7 +279,7 @@ Provide a professional, actionable description that explains what this insight m
                         ))}
                       </div>
 
-                      <p className="text-sm text-[var(--muted)] mb-2">
+                      <p className="text-sm text-muted mb-2">
                         {assessment.summary}
                       </p>
 
@@ -288,25 +288,25 @@ Provide a professional, actionable description that explains what this insight m
                           {assessment.primaryTraits.map((trait, traitIndex) => (
                             <div
                               key={traitIndex}
-                              className="p-3 bg-[var(--hover-bg)] rounded-lg"
+                              className="p-3 bg-hover rounded-lg"
                             >
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="font-semibold text-[var(--foreground)]">
+                                <span className="font-semibold text-foreground">
                                   {trait.level} {trait.trait}
                                 </span>
-                                <span className="text-xs px-2 py-1 rounded-full bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300">
+                                <span className="text-xs px-2 py-1 rounded-full bg-hover text-gray-700 dark:bg-foreground/30 dark:text-gray-300">
                                   {Math.round(trait.confidence * 100)}%
                                   confidence
                                 </span>
                               </div>
-                              <p className="text-sm text-[var(--muted)] mb-2">
+                              <p className="text-sm text-muted mb-2">
                                 {trait.reasoning}
                               </p>
                               <div className="flex flex-wrap gap-1">
                                 {trait.sources.map((source, sourceIndex) => (
                                   <span
                                     key={sourceIndex}
-                                    className="text-xs px-2 py-1 rounded bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-gray-300"
+                                    className="text-xs px-2 py-1 rounded bg-hover text-gray-700 dark:bg-foreground/30 dark:text-gray-300"
                                   >
                                     {source}
                                   </span>
@@ -324,12 +324,12 @@ Provide a professional, actionable description that explains what this insight m
                           expandedPersonality === personId ? null : personId,
                         )
                       }
-                      className="ml-2 p-1 rounded hover:bg-[var(--hover-bg)] transition-colors"
+                      className="ml-2 p-1 rounded hover:bg-hover transition-colors"
                     >
                       {expandedPersonality === personId ? (
-                        <ChevronUpIcon className="w-4 h-4 text-[var(--muted)]" />
+                        <ChevronUpIcon className="w-4 h-4 text-muted" />
                       ) : (
-                        <ChevronDownIcon className="w-4 h-4 text-[var(--muted)]" />
+                        <ChevronDownIcon className="w-4 h-4 text-muted" />
                       )}
                     </button>
                   </div>

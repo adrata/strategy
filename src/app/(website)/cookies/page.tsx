@@ -5,34 +5,34 @@ import Link from "next/link";
 
 export default function CookiePolicyPage() {
   return (
-    <div className="min-h-screen bg-[var(--background)]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-[var(--background)] border-b border-[var(--border)]">
+      <header className="bg-background border-b border-border">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-12">
-              <Link href="/" className="text-xl font-medium text-[var(--foreground)]">
+              <Link href="/" className="text-xl font-medium text-foreground">
                 Adrata
               </Link>
               
               <nav className="hidden md:flex space-x-6">
-                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Buyer Gap
                 </Link>
-                <Link href="/platform" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/platform" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Platform
                 </Link>
-                <Link href="/pricing" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/pricing" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Pricing
                 </Link>
-                <Link href="/company" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/company" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Company
                 </Link>
               </nav>
             </div>
 
             <div className="flex items-center space-x-4">
-              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                 Sign In
               </Link>
               <Link
@@ -47,13 +47,13 @@ export default function CookiePolicyPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-40 pb-20 bg-[var(--background)]">
+      <section className="pt-40 pb-20 bg-background">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl font-semibold text-[var(--foreground)] mb-6">
+            <h1 className="text-4xl sm:text-5xl font-semibold text-foreground mb-6">
               Cookie Policy
             </h1>
-            <p className="text-lg text-[var(--muted)] mb-8">
+            <p className="text-lg text-muted mb-8">
               Last updated: July 14, 2025
             </p>
           </div>
@@ -61,9 +61,9 @@ export default function CookiePolicyPage() {
       </section>
 
       {/* Cookie Policy Content */}
-      <section className="py-20 bg-[var(--panel-background)]">
+      <section className="py-20 bg-panel-background">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
-          <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+          <div className="bg-background p-8 rounded-xl border border-border">
             <div className="prose prose-lg max-w-none">
               <h2>What Are Cookies</h2>
               <p>
@@ -281,7 +281,7 @@ export default function CookiePolicyPage() {
           </div>
 
           {/* Security & Compliance */}
-          <div className="border-t border-[var(--border)] pt-8 mb-8">
+          <div className="border-t border-border pt-8 mb-8">
             <div className="flex flex-wrap items-center justify-center gap-8">
               <div className="flex items-center gap-2 text-gray-300">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -311,14 +311,14 @@ export default function CookiePolicyPage() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-[var(--border)] pt-8 flex flex-col md:flex-row justify-between items-center">
-            <div className="text-[var(--muted)] text-sm mb-4 md:mb-0">
+          <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center">
+            <div className="text-muted text-sm mb-4 md:mb-0">
               © 2025 Adrata. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm">
-              <Link href="/privacy" className="text-[var(--muted)] hover:text-white transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="text-[var(--muted)] hover:text-white transition-colors">Terms of Service</Link>
-              <Link href="/cookies" className="text-[var(--muted)] hover:text-white transition-colors">Cookie Policy</Link>
+              <Link href="/privacy" className="text-muted hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="text-muted hover:text-white transition-colors">Terms of Service</Link>
+              <Link href="/cookies" className="text-muted hover:text-white transition-colors">Cookie Policy</Link>
             </div>
           </div>
         </div>

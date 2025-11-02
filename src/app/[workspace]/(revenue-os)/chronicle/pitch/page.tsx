@@ -42,7 +42,7 @@ export default function PitchPage() {
       <div className="h-full w-full flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-[var(--muted)]">Loading pitch...</p>
+          <p className="text-muted">Loading pitch...</p>
         </div>
       </div>
     );
@@ -52,10 +52,10 @@ export default function PitchPage() {
     return (
       <div className="h-full w-full flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             Pitch Not Found
           </h2>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             The pitch document could not be loaded.
           </p>
         </div>

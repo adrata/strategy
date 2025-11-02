@@ -151,9 +151,10 @@ body:not(.website) {
   --muted: #888888;
   --muted-light: #bbbbbb;
   --accent: #000000;
-  --accent-hover: #333333;
+  /* Legacy variables - use --hover instead of --hover-bg, --accent.hover for accent-hover */
+  --accent-hover: #333333; /* Legacy: Use accent.hover Tailwind utility or var(--accent-hover) in style tags */
   --button-text: #ffffff;
-  --hover-bg: #f3f4f6;
+  --hover-bg: #f3f4f6; /* Legacy: Use --hover or bg-hover Tailwind utility instead */
   --badge-new-bg: #f3f4f6;
   --badge-new-text: #171717;
   --badge-contacted-bg: #e5e7eb;

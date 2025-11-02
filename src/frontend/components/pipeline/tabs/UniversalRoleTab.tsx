@@ -105,12 +105,12 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
     <div className="space-y-8">
       {/* Role Summary */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Role Summary</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Role Summary</h3>
         <div>
-          <div className="block text-sm font-medium text-[var(--muted)] mb-2">Professional Summary</div>
+          <div className="block text-sm font-medium text-muted mb-2">Professional Summary</div>
           <div className="text-lg font-semibold text-blue-600 mb-3">{generateRoleSummary()}</div>
-          <div className="block text-sm font-medium text-[var(--muted)] mb-2">Current Position</div>
-          <div className="text-sm text-[var(--foreground)] leading-relaxed whitespace-pre-wrap font-medium">
+          <div className="block text-sm font-medium text-muted mb-2">Current Position</div>
+          <div className="text-sm text-foreground leading-relaxed whitespace-pre-wrap font-medium">
             {roleData.jobTitle} in {roleData.department} with {roleData.seniority} seniority level. 
             Acts as a {roleData.buyerGroupRole} with {roleData.influenceLevel.toLowerCase()} influence in decision-making processes.
           </div>
@@ -119,10 +119,10 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
 
       {/* Role Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Role Information</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Role Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Job Title</label>
+            <label className="block text-sm font-medium text-muted mb-1">Job Title</label>
             <InlineEditField
               value={roleData.jobTitle}
               field="jobTitle"
@@ -134,7 +134,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Department</label>
+            <label className="block text-sm font-medium text-muted mb-1">Department</label>
             <InlineEditField
               value={roleData.department}
               field="department"
@@ -146,7 +146,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Seniority Level</label>
+            <label className="block text-sm font-medium text-muted mb-1">Seniority Level</label>
             <InlineEditField
               value={roleData.seniority}
               field="seniority"
@@ -158,7 +158,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Buyer Group Role</label>
+            <label className="block text-sm font-medium text-muted mb-1">Buyer Group Role</label>
             <InlineEditField
               value={roleData.buyerGroupRole}
               field="buyerGroupRole"
@@ -170,7 +170,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Influence Level</label>
+            <label className="block text-sm font-medium text-muted mb-1">Influence Level</label>
             <InlineEditField
               value={roleData.influenceLevel}
               field="influenceLevel"
@@ -182,7 +182,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Engagement Priority</label>
+            <label className="block text-sm font-medium text-muted mb-1">Engagement Priority</label>
             <InlineEditField
               value={roleData.engagementPriority}
               field="engagementPriority"
@@ -198,10 +198,10 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
 
       {/* Authority & Decision Making */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Authority & Decision Making</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Authority & Decision Making</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Decision Making Authority</label>
+            <label className="block text-sm font-medium text-muted mb-1">Decision Making Authority</label>
             <InlineEditField
               value={roleData.decisionMakingAuthority}
               field="decisionMakingAuthority"
@@ -213,7 +213,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Budget Authority</label>
+            <label className="block text-sm font-medium text-muted mb-1">Budget Authority</label>
             <InlineEditField
               value={roleData.budgetAuthority}
               field="budgetAuthority"
@@ -225,7 +225,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Technical Influence</label>
+            <label className="block text-sm font-medium text-muted mb-1">Technical Influence</label>
             <InlineEditField
               value={roleData.technicalInfluence}
               field="technicalInfluence"
@@ -237,7 +237,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Procurement Role</label>
+            <label className="block text-sm font-medium text-muted mb-1">Procurement Role</label>
             <InlineEditField
               value={roleData.procurementRole}
               field="procurementRole"
@@ -253,10 +253,10 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
 
       {/* Organizational Context */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Organizational Context</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Organizational Context</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Reporting Structure</label>
+            <label className="block text-sm font-medium text-muted mb-1">Reporting Structure</label>
             <InlineEditField
               value={roleData.reportingStructure}
               field="reportingStructure"
@@ -268,7 +268,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Team Size</label>
+            <label className="block text-sm font-medium text-muted mb-1">Team Size</label>
             <InlineEditField
               value={roleData.teamSize}
               field="teamSize"
@@ -280,7 +280,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Years in Role</label>
+            <label className="block text-sm font-medium text-muted mb-1">Years in Role</label>
             <InlineEditField
               value={roleData.yearsInRole}
               field="yearsInRole"
@@ -292,7 +292,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Years at Company</label>
+            <label className="block text-sm font-medium text-muted mb-1">Years at Company</label>
             <InlineEditField
               value={roleData.yearsAtCompany}
               field="yearsAtCompany"
@@ -308,7 +308,7 @@ export function UniversalRoleTab({ recordType, record: recordProp, onSave }: Uni
 
       {/* Role Insights */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Role Insights</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Role Insights</h3>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h4 className="text-blue-800 font-medium mb-2">Key Insights</h4>
           <ul className="text-blue-700 text-sm space-y-1">

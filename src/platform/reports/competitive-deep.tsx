@@ -60,14 +60,14 @@ export function CompetitiveDeepReport({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--background)] p-6">
+      <div className="min-h-screen bg-background p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">{title}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{title}</h1>
             {onBack && (
               <button
                 onClick={onBack}
-                className="flex items-center gap-2 px-4 py-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-muted hover:text-foreground transition-colors"
               >
                 ← Back to Reports
               </button>
@@ -76,9 +76,9 @@ export function CompetitiveDeepReport({
           
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--foreground)] mx-auto mb-4"></div>
-              <p className="text-[var(--muted)]">Generating comprehensive competitive analysis...</p>
-              <p className="text-sm text-[var(--muted)] mt-2">This may take a few moments</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-foreground mx-auto mb-4"></div>
+              <p className="text-muted">Generating comprehensive competitive analysis...</p>
+              <p className="text-sm text-muted mt-2">This may take a few moments</p>
             </div>
           </div>
         </div>
@@ -88,14 +88,14 @@ export function CompetitiveDeepReport({
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[var(--background)] p-6">
+      <div className="min-h-screen bg-background p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">{title}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{title}</h1>
             {onBack && (
               <button
                 onClick={onBack}
-                className="flex items-center gap-2 px-4 py-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-muted hover:text-foreground transition-colors"
               >
                 ← Back to Reports
               </button>
@@ -118,17 +118,17 @@ export function CompetitiveDeepReport({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">{title}</h1>
-            <p className="text-[var(--muted)] mt-1">Comprehensive competitive analysis for {company}</p>
+            <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+            <p className="text-muted mt-1">Comprehensive competitive analysis for {company}</p>
           </div>
           {onBack && (
             <button
               onClick={onBack}
-              className="flex items-center gap-2 px-4 py-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-muted hover:text-foreground transition-colors"
             >
               ← Back to Reports
             </button>
@@ -136,29 +136,29 @@ export function CompetitiveDeepReport({
         </div>
 
         {/* Company Overview */}
-        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)] mb-6">
-          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">Company Overview</h2>
+        <div className="bg-background rounded-lg p-6 border border-border dark:border-border mb-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Company Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <span className="text-sm text-[var(--muted)]">Company:</span>
-              <p className="font-medium text-[var(--foreground)]">{company}</p>
+              <span className="text-sm text-muted">Company:</span>
+              <p className="font-medium text-foreground">{company}</p>
             </div>
             <div>
-              <span className="text-sm text-[var(--muted)]">Industry:</span>
-              <p className="font-medium text-[var(--foreground)]">{industry || 'Manufacturing'}</p>
+              <span className="text-sm text-muted">Industry:</span>
+              <p className="font-medium text-foreground">{industry || 'Manufacturing'}</p>
             </div>
             <div>
-              <span className="text-sm text-[var(--muted)]">Size:</span>
-              <p className="font-medium text-[var(--foreground)]">{companySize || '501-1000 employees'}</p>
+              <span className="text-sm text-muted">Size:</span>
+              <p className="font-medium text-foreground">{companySize || '501-1000 employees'}</p>
             </div>
             <div>
-              <span className="text-sm text-[var(--muted)]">Type:</span>
-              <p className="font-medium text-[var(--foreground)]">{companyType || 'Public Company'}</p>
+              <span className="text-sm text-muted">Type:</span>
+              <p className="font-medium text-foreground">{companyType || 'Public Company'}</p>
             </div>
             {website && (
               <div>
-                <span className="text-sm text-[var(--muted)]">Website:</span>
-                <p className="font-medium text-[var(--foreground)]">
+                <span className="text-sm text-muted">Website:</span>
+                <p className="font-medium text-foreground">
                   <a href={website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
                     {website}
                   </a>
@@ -167,17 +167,17 @@ export function CompetitiveDeepReport({
             )}
             {location && (
               <div>
-                <span className="text-sm text-[var(--muted)]">Location:</span>
-                <p className="font-medium text-[var(--foreground)]">{location}</p>
+                <span className="text-sm text-muted">Location:</span>
+                <p className="font-medium text-foreground">{location}</p>
               </div>
             )}
           </div>
         </div>
 
         {/* AI Generated Report */}
-        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
+        <div className="bg-background rounded-lg p-6 border border-border dark:border-border">
           <div className="prose prose-gray dark:prose-invert max-w-none">
-            <div className="whitespace-pre-wrap text-[var(--foreground)]">
+            <div className="whitespace-pre-wrap text-foreground">
               {report}
             </div>
           </div>

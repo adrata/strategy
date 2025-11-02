@@ -7,13 +7,13 @@ export default function OnboardingPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="max-w-md w-full space-y-8 p-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-4">
+          <h1 className="text-3xl font-bold text-foreground mb-4">
             Welcome to Adrata
           </h1>
-          <p className="text-[var(--muted)] mb-8">
+          <p className="text-muted mb-8">
             Your complete enterprise operating system
           </p>
           <button

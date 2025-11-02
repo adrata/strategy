@@ -195,21 +195,21 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     switch (type) {
       case 'email':
       case 'email_conversation':
-        return 'bg-[var(--info-bg)] text-[var(--info-text)] border-[var(--info-border)]';
+        return 'bg-info-bg text-info-text border-info-border';
       case 'call':
       case 'phone_call':
-        return 'bg-[var(--success-bg)] text-[var(--success-text)] border-[var(--success-border)]';
+        return 'bg-success-bg text-success-text border-success-border';
       case 'meeting':
       case 'appointment':
-        return 'bg-[var(--panel-background)] text-[var(--foreground)] border-[var(--border)]';
+        return 'bg-panel-background text-foreground border-border';
       case 'note':
-        return 'bg-[var(--warning-bg)] text-[var(--warning-text)] border-[var(--warning-border)]';
+        return 'bg-warning-bg text-warning-text border-warning-border';
       case 'created':
-        return 'bg-[var(--hover)] text-[var(--foreground)] border-[var(--border)]';
+        return 'bg-hover text-foreground border-border';
       case 'status_change':
-        return 'bg-[var(--warning-bg)] text-[var(--warning-text)] border-[var(--warning-border)]';
+        return 'bg-warning-bg text-warning-text border-warning-border';
       default:
-        return 'bg-[var(--hover)] text-[var(--foreground)] border-[var(--border)]';
+        return 'bg-hover text-foreground border-border';
     }
   };
 
@@ -640,17 +640,17 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
     <div className="space-y-6">
       <div>
         <div className="flex items-center justify-between">
-          <div className="text-lg font-medium text-[var(--foreground)]">
+          <div className="text-lg font-medium text-foreground">
             All Actions
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-[var(--muted)]">
+            <span className="text-sm text-muted">
               {actionEvents.length} {actionEvents.length === 1 ? 'Action' : 'Actions'}
             </span>
             {!loading && actionEvents.length > 0 && (
               <div className="flex items-center gap-2">
                 {timePeriodsWithActions.map((timePeriod, index) => (
-                  <span key={timePeriod} className="text-xs text-[var(--muted)]">
+                  <span key={timePeriod} className="text-xs text-muted">
                     {groupedActions[timePeriod].length} {timePeriod.toLowerCase()}
                     {index < timePeriodsWithActions.length - 1 && ', '}
                   </span>
@@ -666,26 +666,26 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
         <div className="space-y-4">
           <div className="animate-pulse">
             <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-full"></div>
+              <div className="w-8 h-8 bg-loading-bg rounded-full"></div>
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4"></div>
-                <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2"></div>
-                <div className="h-3 bg-[var(--loading-bg)] rounded w-1/4"></div>
+                <div className="h-4 bg-loading-bg rounded w-3/4"></div>
+                <div className="h-3 bg-loading-bg rounded w-1/2"></div>
+                <div className="h-3 bg-loading-bg rounded w-1/4"></div>
               </div>
             </div>
             <div className="flex items-start gap-4 mt-4">
-              <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-full"></div>
+              <div className="w-8 h-8 bg-loading-bg rounded-full"></div>
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-2/3"></div>
-                <div className="h-3 bg-[var(--loading-bg)] rounded w-1/3"></div>
+                <div className="h-4 bg-loading-bg rounded w-2/3"></div>
+                <div className="h-3 bg-loading-bg rounded w-1/3"></div>
               </div>
             </div>
           </div>
         </div>
       ) : actionEvents.length === 0 ? (
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No actions yet</h3>
-          <p className="text-[var(--muted)]">Actions and activities will appear here when logged</p>
+          <h3 className="text-lg font-medium text-foreground mb-2">No actions yet</h3>
+          <p className="text-muted">Actions and activities will appear here when logged</p>
         </div>
       ) : (
         <div className="space-y-8">
@@ -693,10 +693,10 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
             <div key={timePeriod} className="space-y-4">
               {/* Time Period Header */}
               <div className="flex items-center gap-3">
-                <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                <h3 className="text-lg font-semibold text-foreground">
                   {timePeriod}
                 </h3>
-                <span className="text-sm text-[var(--muted)]">
+                <span className="text-sm text-muted">
                   ({groupedActions[timePeriod].length} {groupedActions[timePeriod].length === 1 ? 'action' : 'actions'})
                 </span>
               </div>
@@ -707,11 +707,11 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                   <div key={event.id} className="flex items-start gap-4">
                     {/* Action indicator */}
                     <div className="flex flex-col items-center pt-1">
-                      <div className="w-8 h-8 rounded bg-[var(--background)] border-2 border-[var(--border)] flex items-center justify-center">
+                      <div className="w-8 h-8 rounded bg-background border-2 border-border flex items-center justify-center">
                         {getEventIcon(event.type)}
                       </div>
                       {index < groupedActions[timePeriod].length - 1 && (
-                        <div className="w-px h-12 bg-[var(--loading-bg)] mt-2" />
+                        <div className="w-px h-12 bg-loading-bg mt-2" />
                       )}
                     </div>
 
@@ -739,7 +739,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                             <span className={`px-4 py-1 text-xs rounded-full whitespace-nowrap ${
                               event.metadata.status.toUpperCase() === 'COMPLETED' ? 'bg-green-100 text-green-800' :
                               event.metadata.status.toUpperCase() === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
-                              'bg-[var(--hover)] text-gray-800'
+                              'bg-hover text-gray-800'
                             }`}>
                               {event.metadata.status.toUpperCase()}
                             </span>
@@ -754,7 +754,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                       onSuccess={handleSuccess}
                       placeholder="Enter action description"
                       type="textarea"
-                      className="text-sm text-[var(--muted)] mb-2"
+                      className="text-sm text-muted mb-2"
                     />
                     
                     {/* Expandable content for emails and notes */}
@@ -773,7 +773,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                         </button>
                         
                         {expandedEvents.has(event.id) && (
-                          <div className="mt-2 p-3 bg-[var(--panel-background)] rounded-lg border">
+                          <div className="mt-2 p-3 bg-panel-background rounded-lg border">
                             <div className="text-sm text-gray-700 whitespace-pre-wrap">
                               {event.content}
                             </div>
@@ -784,7 +784,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                     
                     {/* Business Context */}
                     {event.metadata && (event.metadata.priority || (event.metadata.status && event.metadata.status !== 'completed')) && (
-                      <div className="bg-[var(--panel-background)] rounded-lg p-3 mb-2">
+                      <div className="bg-panel-background rounded-lg p-3 mb-2">
                         <div className="grid grid-cols-2 gap-4 text-xs">
                           {event.metadata.priority && (
                             <div>
@@ -802,7 +802,7 @@ export function UniversalActionsTab({ record, recordType, onSave }: UniversalAct
                       </div>
                     )}
                     
-                    <div className="flex items-center gap-4 text-xs text-[var(--muted)]">
+                    <div className="flex items-center gap-4 text-xs text-muted">
                       <span>{(() => {
                         try {
                           const eventDate = event.date instanceof Date ? event.date : new Date(event.date);

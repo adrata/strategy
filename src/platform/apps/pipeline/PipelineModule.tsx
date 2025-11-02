@@ -12,15 +12,15 @@ export function PipelineContentModule() {
   const renderContent = () => {
     switch (activeSection) {
       case "leads":
-        return <div className="p-4"><h3 className="text-lg font-semibold">Pipeline Leads</h3><p className="text-[var(--muted)]">Manage your sales pipeline leads</p></div>;
+        return <div className="p-4"><h3 className="text-lg font-semibold">Pipeline Leads</h3><p className="text-muted">Manage your sales pipeline leads</p></div>;
       case "opportunities":
-        return <div className="p-4"><h3 className="text-lg font-semibold">Opportunities</h3><p className="text-[var(--muted)]">Track sales opportunities</p></div>;
+        return <div className="p-4"><h3 className="text-lg font-semibold">Opportunities</h3><p className="text-muted">Track sales opportunities</p></div>;
       case "people":
-        return <div className="p-4"><h3 className="text-lg font-semibold">People</h3><p className="text-[var(--muted)]">Manage your people</p></div>;
+        return <div className="p-4"><h3 className="text-lg font-semibold">People</h3><p className="text-muted">Manage your people</p></div>;
       case "companies":
-        return <div className="p-4"><h3 className="text-lg font-semibold">Companies</h3><p className="text-[var(--muted)]">Manage your companies</p></div>;
+        return <div className="p-4"><h3 className="text-lg font-semibold">Companies</h3><p className="text-muted">Manage your companies</p></div>;
       default:
-        return <div className="p-4"><h3 className="text-lg font-semibold">Pipeline</h3><p className="text-[var(--muted)]">Your sales pipeline dashboard</p></div>;
+        return <div className="p-4"><h3 className="text-lg font-semibold">Pipeline</h3><p className="text-muted">Your sales pipeline dashboard</p></div>;
     }
   };
 

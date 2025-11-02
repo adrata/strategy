@@ -67,7 +67,7 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-        <span className="ml-2 text-[var(--muted)]">Loading companies...</span>
+        <span className="ml-2 text-muted">Loading companies...</span>
       </div>
     );
   }
@@ -76,13 +76,13 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
     <div className="space-y-6">
       {associatedCompanies['length'] === 0 ? (
         <div className="text-center py-12">
-          <div className="w-16 h-16 bg-[var(--hover)] rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 bg-hover rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
           </div>
-          <p className="text-[var(--muted)] font-medium">No companies assigned</p>
-          <p className="text-sm text-[var(--muted)] mt-1">This seller doesn't have any companies assigned yet</p>
+          <p className="text-muted font-medium">No companies assigned</p>
+          <p className="text-sm text-muted mt-1">This seller doesn't have any companies assigned yet</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -90,23 +90,23 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
             <div
               key={company.id}
               onClick={() => handleCompanyClick(company)}
-              className="group bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 hover:shadow-lg hover:border-blue-300 cursor-pointer transition-all duration-200"
+              className="group bg-background border border-border rounded-xl p-6 hover:shadow-lg hover:border-blue-300 cursor-pointer transition-all duration-200"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h4 className="font-semibold text-[var(--foreground)] text-lg mb-2 group-hover:text-blue-700 transition-colors">
+                  <h4 className="font-semibold text-foreground text-lg mb-2 group-hover:text-blue-700 transition-colors">
                     {company.name}
                   </h4>
-                  <div className="space-y-2 text-sm text-[var(--muted)]">
+                  <div className="space-y-2 text-sm text-muted">
                     {company['industry'] && (
                       <div className="flex items-center">
-                        <span className="font-medium text-[var(--muted)]">Industry:</span>
-                        <span className="ml-2 text-[var(--foreground)]">{company.industry}</span>
+                        <span className="font-medium text-muted">Industry:</span>
+                        <span className="ml-2 text-foreground">{company.industry}</span>
                       </div>
                     )}
                     {company['website'] && (
                       <div className="flex items-center">
-                        <span className="font-medium text-[var(--muted)]">Website:</span>
+                        <span className="font-medium text-muted">Website:</span>
                         <a 
                           href={company.website.startsWith('http') ? company.website : `https://${company.website}`}
                           target="_blank"
@@ -120,8 +120,8 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
                     )}
                     {company['size'] && (
                       <div className="flex items-center">
-                        <span className="font-medium text-[var(--muted)]">Size:</span>
-                        <span className="ml-2 text-[var(--foreground)]">{company.size}</span>
+                        <span className="font-medium text-muted">Size:</span>
+                        <span className="ml-2 text-foreground">{company.size}</span>
                       </div>
                     )}
                   </div>
@@ -137,8 +137,8 @@ export function UniversalSellerCompaniesTab({ record, recordType }: UniversalSel
               
               <div className="mt-4 pt-4 border-t border-gray-100">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-[var(--muted)]">View company details</span>
-                  <svg className="w-4 h-4 text-[var(--muted)] group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-xs text-muted">View company details</span>
+                  <svg className="w-4 h-4 text-muted group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>

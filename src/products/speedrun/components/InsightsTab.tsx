@@ -28,31 +28,31 @@ export function InsightsTab({ person, insightsData }: InsightsTabProps) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-[var(--foreground)]">
+      <h2 className="text-xl font-semibold text-foreground">
         Professional Insights
       </h2>
       
       {/* Decision Power and Influence - Match PersonDetailView style */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+        <div className="bg-background border border-border rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-3">
             Decision Power
           </h3>
-          <div className="text-3xl font-bold text-[var(--foreground)] mb-2">
+          <div className="text-3xl font-bold text-foreground mb-2">
             {decisionPower}/100
           </div>
-          <p className="text-sm text-[var(--muted)]">
+          <p className="text-sm text-muted">
             Influence level in purchasing decisions
           </p>
         </div>
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+        <div className="bg-background border border-border rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-3">
             Influence Level
           </h3>
-          <div className="text-2xl font-bold text-[var(--foreground)] mb-2">
+          <div className="text-2xl font-bold text-foreground mb-2">
             {influenceLevel}
           </div>
-          <p className="text-sm text-[var(--muted)]">
+          <p className="text-sm text-muted">
             Organizational influence rating
           </p>
         </div>
@@ -60,78 +60,78 @@ export function InsightsTab({ person, insightsData }: InsightsTabProps) {
 
       {/* AI Insights */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           AI Insights & Recommendations
         </h3>
         
         <div className="space-y-4">
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-            <h4 className="font-semibold text-[var(--foreground)] mb-2">
+          <div className="bg-background border border-border rounded-lg p-6">
+            <h4 className="font-semibold text-foreground mb-2">
               Next Best Move
             </h4>
-            <p className="text-[var(--foreground)]">{typeof insightsData.nextMove === 'string' ? insightsData.nextMove : (String(insightsData.nextMove) === '[object Object]' ? 'Data unavailable' : String(insightsData.nextMove))}</p>
+            <p className="text-foreground">{typeof insightsData.nextMove === 'string' ? insightsData.nextMove : (String(insightsData.nextMove) === '[object Object]' ? 'Data unavailable' : String(insightsData.nextMove))}</p>
           </div>
           
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-            <h4 className="font-semibold text-[var(--foreground)] mb-2">Persona</h4>
-            <p className="text-[var(--foreground)]">{typeof insightsData.persona === 'string' ? insightsData.persona : (String(insightsData.persona) === '[object Object]' ? 'Data unavailable' : String(insightsData.persona))}</p>
+          <div className="bg-background border border-border rounded-lg p-6">
+            <h4 className="font-semibold text-foreground mb-2">Persona</h4>
+            <p className="text-foreground">{typeof insightsData.persona === 'string' ? insightsData.persona : (String(insightsData.persona) === '[object Object]' ? 'Data unavailable' : String(insightsData.persona))}</p>
           </div>
           
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-            <h4 className="font-semibold text-[var(--foreground)] mb-3">
+          <div className="bg-background border border-border rounded-lg p-6">
+            <h4 className="font-semibold text-foreground mb-3">
               Buying Signals
             </h4>
             <ul className="space-y-2">
               {insightsData.buyingSignals.map((signal, idx) => (
                 <li key={idx} className="flex items-start">
                   <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span className="text-[var(--foreground)]">{typeof signal === 'string' ? signal : (String(signal) === '[object Object]' ? 'Data unavailable' : String(signal))}</span>
+                  <span className="text-foreground">{typeof signal === 'string' ? signal : (String(signal) === '[object Object]' ? 'Data unavailable' : String(signal))}</span>
                 </li>
               ))}
             </ul>
           </div>
           
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-            <h4 className="font-semibold text-[var(--foreground)] mb-3">
+          <div className="bg-background border border-border rounded-lg p-6">
+            <h4 className="font-semibold text-foreground mb-3">
               Potential Objections
             </h4>
             <ul className="space-y-2">
               {insightsData.objections.map((objection, idx) => (
                 <li key={idx} className="flex items-start">
                   <span className="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span className="text-[var(--foreground)]">{typeof objection === 'string' ? objection : (String(objection) === '[object Object]' ? 'Data unavailable' : String(objection))}</span>
+                  <span className="text-foreground">{typeof objection === 'string' ? objection : (String(objection) === '[object Object]' ? 'Data unavailable' : String(objection))}</span>
                 </li>
               ))}
             </ul>
           </div>
           
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-            <h4 className="font-semibold text-[var(--foreground)] mb-3">
+          <div className="bg-background border border-border rounded-lg p-6">
+            <h4 className="font-semibold text-foreground mb-3">
               Recommendations
             </h4>
             <ul className="space-y-2">
               {insightsData.recommendations.map((recommendation, idx) => (
                 <li key={idx} className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span className="text-[var(--foreground)]">{typeof recommendation === 'string' ? recommendation : (String(recommendation) === '[object Object]' ? 'Data unavailable' : String(recommendation))}</span>
+                  <span className="text-foreground">{typeof recommendation === 'string' ? recommendation : (String(recommendation) === '[object Object]' ? 'Data unavailable' : String(recommendation))}</span>
                 </li>
               ))}
             </ul>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h4 className="font-semibold text-[var(--foreground)] mb-2">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h4 className="font-semibold text-foreground mb-2">
                 Win/Loss Analysis
               </h4>
-              <p className="text-[var(--foreground)]">{typeof insightsData.winLoss === 'string' ? insightsData.winLoss : (String(insightsData.winLoss) === '[object Object]' ? 'Data unavailable' : String(insightsData.winLoss))}</p>
+              <p className="text-foreground">{typeof insightsData.winLoss === 'string' ? insightsData.winLoss : (String(insightsData.winLoss) === '[object Object]' ? 'Data unavailable' : String(insightsData.winLoss))}</p>
             </div>
             
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h4 className="font-semibold text-[var(--foreground)] mb-2">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h4 className="font-semibold text-foreground mb-2">
                 Competitive Intelligence
               </h4>
-              <p className="text-[var(--foreground)]">{typeof insightsData.competitive === 'string' ? insightsData.competitive : (String(insightsData.competitive) === '[object Object]' ? 'Data unavailable' : String(insightsData.competitive))}</p>
+              <p className="text-foreground">{typeof insightsData.competitive === 'string' ? insightsData.competitive : (String(insightsData.competitive) === '[object Object]' ? 'Data unavailable' : String(insightsData.competitive))}</p>
             </div>
           </div>
         </div>

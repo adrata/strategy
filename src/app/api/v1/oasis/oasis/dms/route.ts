@@ -144,16 +144,17 @@ export async function GET(request: NextRequest) {
         id: dm.id,
         participants: otherParticipants.map(p => ({
           id: p.user.id,
-          name: p.user.name,
+          name: p.user.name || p.user.username || p.user.email?.split('@')[0] || '',
           username: p.user.username,
+          email: p.user.email,
           workspaceName: (() => {
+            // Always show "Adrata" for Adrata users (Dan or Ross), regardless of workspace
+            if (p.user.email === 'dan@adrata.com' || p.user.email === 'ross@adrata.com') {
+              return 'Adrata';
+            }
             // If DM is in current workspace, show current workspace name
             if (dm.workspaceId === workspaceId) {
               return workspace?.name || 'Unknown Workspace';
-            }
-            // If participant is Adrata user (Dan or Ross), show "Adrata"
-            if (p.user.email === 'dan@adrata.com' || p.user.email === 'ross@adrata.com') {
-              return 'Adrata';
             }
             // For other cross-workspace DMs, show "External"
             return 'External';
@@ -162,7 +163,7 @@ export async function GET(request: NextRequest) {
         lastMessage: lastMessage ? {
           id: lastMessage.id,
           content: lastMessage.content,
-          senderName: lastMessage.sender.name,
+          senderName: lastMessage.sender.name || lastMessage.sender.username || lastMessage.sender.email?.split('@')[0] || '',
           createdAt: lastMessage.createdAt
         } : null,
         unreadCount,

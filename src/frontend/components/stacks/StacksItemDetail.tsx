@@ -22,11 +22,11 @@ interface StacksItemDetailProps {
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'todo': return 'bg-[var(--hover)] text-gray-800';
+    case 'todo': return 'bg-hover text-gray-800';
     case 'in-progress': return 'bg-blue-100 text-blue-800';
     case 'done': return 'bg-green-100 text-green-800';
     case 'idea': return 'bg-purple-100 text-purple-800';
-    default: return 'bg-[var(--hover)] text-gray-800';
+    default: return 'bg-hover text-gray-800';
   }
 };
 
@@ -35,7 +35,7 @@ const getPriorityColor = (priority: string) => {
     case 'low': return 'text-green-600 bg-green-50';
     case 'medium': return 'text-yellow-600 bg-yellow-50';
     case 'high': return 'text-red-600 bg-red-50';
-    default: return 'text-[var(--muted)] bg-[var(--hover)]';
+    default: return 'text-muted bg-hover';
   }
 };
 
@@ -62,25 +62,25 @@ const getTypeLabel = (type: string) => {
 export function StacksItemDetail({ item, onClose }: StacksItemDetailProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--background)] rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+      <div className="bg-background rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <span className="text-2xl">{getTypeIcon(item.type)}</span>
             <div>
-              <h1 className="text-xl font-bold text-[var(--foreground)]">
+              <h1 className="text-xl font-bold text-foreground">
                 {item.title}
               </h1>
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 {getTypeLabel(item.type)} • ID: {item.id}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
           >
-            <XMarkIcon className="h-5 w-5 text-[var(--muted)]" />
+            <XMarkIcon className="h-5 w-5 text-muted" />
           </button>
         </div>
 
@@ -89,13 +89,13 @@ export function StacksItemDetail({ item, onClose }: StacksItemDetailProps) {
           {/* Status and Priority */}
           <div className="flex items-center gap-4 mb-6">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-[var(--muted)]">Status:</span>
+              <span className="text-sm font-medium text-muted">Status:</span>
               <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(item.status)}`}>
                 {item.status.replace('-', ' ')}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-[var(--muted)]">Priority:</span>
+              <span className="text-sm font-medium text-muted">Priority:</span>
               <span className={`px-3 py-1 text-sm font-medium rounded-full ${getPriorityColor(item.priority)}`}>
                 {item.priority}
               </span>
@@ -104,9 +104,9 @@ export function StacksItemDetail({ item, onClose }: StacksItemDetailProps) {
 
           {/* Description */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">Description</h3>
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
-              <p className="text-[var(--foreground)] whitespace-pre-wrap">
+            <h3 className="text-lg font-semibold text-foreground mb-3">Description</h3>
+            <div className="bg-[var(--card)] border border-border rounded-lg p-4">
+              <p className="text-foreground whitespace-pre-wrap">
                 {item.description}
               </p>
             </div>
@@ -117,18 +117,18 @@ export function StacksItemDetail({ item, onClose }: StacksItemDetailProps) {
             {/* Assignee */}
             {item.assignee && (
               <div>
-                <h4 className="text-sm font-medium text-[var(--muted)] mb-2">Assignee</h4>
-                <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3">
-                  <p className="text-[var(--foreground)]">{item.assignee}</p>
+                <h4 className="text-sm font-medium text-muted mb-2">Assignee</h4>
+                <div className="bg-[var(--card)] border border-border rounded-lg p-3">
+                  <p className="text-foreground">{item.assignee}</p>
                 </div>
               </div>
             )}
 
             {/* Type */}
             <div>
-              <h4 className="text-sm font-medium text-[var(--muted)] mb-2">Type</h4>
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3">
-                <p className="text-[var(--foreground)] flex items-center gap-2">
+              <h4 className="text-sm font-medium text-muted mb-2">Type</h4>
+              <div className="bg-[var(--card)] border border-border rounded-lg p-3">
+                <p className="text-foreground flex items-center gap-2">
                   <span>{getTypeIcon(item.type)}</span>
                   {getTypeLabel(item.type)}
                 </p>
@@ -137,26 +137,26 @@ export function StacksItemDetail({ item, onClose }: StacksItemDetailProps) {
 
             {/* Created Date */}
             <div>
-              <h4 className="text-sm font-medium text-[var(--muted)] mb-2">Created</h4>
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3">
-                <p className="text-[var(--foreground)]">{item.createdAt}</p>
+              <h4 className="text-sm font-medium text-muted mb-2">Created</h4>
+              <div className="bg-[var(--card)] border border-border rounded-lg p-3">
+                <p className="text-foreground">{item.createdAt}</p>
               </div>
             </div>
 
             {/* Updated Date */}
             <div>
-              <h4 className="text-sm font-medium text-[var(--muted)] mb-2">Last Updated</h4>
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3">
-                <p className="text-[var(--foreground)]">{item.updatedAt}</p>
+              <h4 className="text-sm font-medium text-muted mb-2">Last Updated</h4>
+              <div className="bg-[var(--card)] border border-border rounded-lg p-3">
+                <p className="text-foreground">{item.updatedAt}</p>
               </div>
             </div>
           </div>
 
           {/* ID Section */}
-          <div className="mt-6 pt-6 border-t border-[var(--border)]">
-            <h4 className="text-sm font-medium text-[var(--muted)] mb-2">Item ID</h4>
-            <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3">
-              <code className="text-sm font-mono text-[var(--foreground)] break-all">
+          <div className="mt-6 pt-6 border-t border-border">
+            <h4 className="text-sm font-medium text-muted mb-2">Item ID</h4>
+            <div className="bg-[var(--card)] border border-border rounded-lg p-3">
+              <code className="text-sm font-mono text-foreground break-all">
                 {item.id}
               </code>
             </div>
@@ -164,10 +164,10 @@ export function StacksItemDetail({ item, onClose }: StacksItemDetailProps) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-6 border-t border-[var(--border)] bg-[var(--hover)]">
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-border bg-hover">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="px-4 py-2 text-muted hover:text-foreground transition-colors"
           >
             Close
           </button>

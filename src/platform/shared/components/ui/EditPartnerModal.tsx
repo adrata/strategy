@@ -120,16 +120,16 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--background)] rounded-xl shadow-2xl border border-[var(--border)] w-full max-w-2xl max-h-[90vh] overflow-hidden">
+      <div className="bg-background rounded-xl shadow-2xl border border-border w-full max-w-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border)]">
+        <div className="px-6 py-4 border-b border-border">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Edit Partner: {partner.name}
             </h2>
             <button
               onClick={onClose}
-              className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
+              className="text-muted hover:text-muted transition-colors"
             >
               <svg
                 className="w-6 h-6"
@@ -149,7 +149,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-[var(--border)]">
+        <div className="border-b border-border">
           <div className="flex space-x-8 px-6">
             {tabs.map((tab) => (
               <button
@@ -158,7 +158,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                 className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-[var(--muted)] hover:text-gray-700"
+                    : "border-transparent text-muted hover:text-gray-700"
                 }`}
               >
                 {tab.label}
@@ -179,7 +179,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter partner name"
                 />
               </div>
@@ -190,7 +190,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                 <select
                   value={formData.type}
                   onChange={(e) => handleInputChange("type", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select type</option>
                   {types.map((type) => (
@@ -208,7 +208,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="text"
                   value={formData.industry}
                   onChange={(e) => handleInputChange("industry", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter industry"
                 />
               </div>
@@ -219,7 +219,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                 <select
                   value={formData.status}
                   onChange={(e) => handleInputChange("status", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   {statuses.map((status) => (
                     <option key={status} value={status}>
@@ -236,7 +236,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="url"
                   value={formData.website}
                   onChange={(e) => handleInputChange("website", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="https://www.partner.com"
                 />
               </div>
@@ -253,7 +253,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="text"
                   value={formData.contactPerson}
                   onChange={(e) => handleInputChange("contactPerson", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter contact person name"
                 />
               </div>
@@ -265,7 +265,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="email"
                   value={formData.contactEmail}
                   onChange={(e) => handleInputChange("contactEmail", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter contact email"
                 />
               </div>
@@ -277,7 +277,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="tel"
                   value={formData.contactPhone}
                   onChange={(e) => handleInputChange("contactPhone", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter contact phone"
                 />
               </div>
@@ -289,7 +289,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="text"
                   value={formData.address}
                   onChange={(e) => handleInputChange("address", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter street address"
                 />
               </div>
@@ -302,7 +302,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                     type="text"
                     value={formData.city}
                     onChange={(e) => handleInputChange("city", e.target.value)}
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="City"
                   />
                 </div>
@@ -314,7 +314,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                     type="text"
                     value={formData.state}
                     onChange={(e) => handleInputChange("state", e.target.value)}
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="State"
                   />
                 </div>
@@ -326,7 +326,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                     type="text"
                     value={formData.country}
                     onChange={(e) => handleInputChange("country", e.target.value)}
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Country"
                   />
                 </div>
@@ -343,7 +343,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                 <select
                   value={formData.partnershipType}
                   onChange={(e) => handleInputChange("partnershipType", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select partnership type</option>
                   {partnershipTypes.map((type) => (
@@ -361,7 +361,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="text"
                   value={formData.revenue}
                   onChange={(e) => handleInputChange("revenue", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g., $10M, $100M+"
                 />
               </div>
@@ -373,7 +373,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="number"
                   value={formData.employees}
                   onChange={(e) => handleInputChange("employees", parseInt(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter number of employees"
                 />
               </div>
@@ -385,7 +385,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="date"
                   value={formData.lastContactDate}
                   onChange={(e) => handleInputChange("lastContactDate", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               <div>
@@ -396,7 +396,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="date"
                   value={formData.nextActionDate}
                   onChange={(e) => handleInputChange("nextActionDate", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
@@ -412,7 +412,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="text"
                   value={formData.lastContact}
                   onChange={(e) => handleInputChange("lastContact", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Describe last contact"
                 />
               </div>
@@ -424,7 +424,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   type="text"
                   value={formData.nextAction}
                   onChange={(e) => handleInputChange("nextAction", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Describe next action needed"
                 />
               </div>
@@ -436,7 +436,7 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
                   value={formData.notes}
                   onChange={(e) => handleInputChange("notes", e.target.value)}
                   rows={4}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Add detailed notes about this partner"
                 />
               </div>
@@ -445,11 +445,11 @@ export const EditPartnerModal: React.FC<EditPartnerModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border)] bg-[var(--panel-background)]">
+        <div className="px-6 py-4 border-t border-border bg-panel-background">
           <div className="flex justify-end space-x-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
             >
               Cancel
             </button>

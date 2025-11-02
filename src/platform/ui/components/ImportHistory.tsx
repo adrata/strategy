@@ -191,7 +191,7 @@ export function ImportHistory() {
       </CardHeader>
       <CardContent>
         {imports['length'] === 0 ? (
-          <div className="text-center py-8 text-[var(--muted)]">
+          <div className="text-center py-8 text-muted">
             <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>No data imports yet</p>
             <p className="text-sm">Your import history will appear here</p>
@@ -201,7 +201,7 @@ export function ImportHistory() {
             {imports.map((importLog) => (
               <div
                 key={importLog.id}
-                className="border rounded-lg p-4 hover:bg-[var(--panel-background)] dark:hover:bg-[var(--foreground)] transition-colors"
+                className="border rounded-lg p-4 hover:bg-panel-background dark:hover:bg-foreground transition-colors"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -219,7 +219,7 @@ export function ImportHistory() {
                       {getStatusBadge(importLog)}
                     </div>
 
-                    <div className="text-sm text-[var(--muted)] dark:text-[var(--muted)] space-y-1">
+                    <div className="text-sm text-muted dark:text-muted space-y-1">
                       <p>
                         <strong>{importLog.details.importedRecords}</strong> of{" "}
                         <strong>{importLog.details.totalRecords}</strong>{" "}

@@ -47,10 +47,10 @@ export default function DocsLayout({ children }: DocsLayoutProps) {
   // Don't render if not authorized
   if (authUser?.email && !isAdminUser) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Access Restricted</h2>
-          <p className="text-[var(--muted)]">This feature is currently in development.</p>
+          <h2 className="text-xl font-semibold text-foreground mb-2">Access Restricted</h2>
+          <p className="text-muted">This feature is currently in development.</p>
         </div>
       </div>
     );

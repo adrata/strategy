@@ -93,10 +93,10 @@ export function Kbd({
   const baseClasses = 'font-mono rounded border';
   
   const variantClasses = {
-    default: 'bg-[var(--hover)] text-gray-700 dark:text-gray-300',
+    default: 'bg-hover text-gray-700 dark:text-gray-300',
     green: 'bg-green-200 text-green-700',
     blue: 'bg-blue-100 text-blue-700',
-    gray: 'bg-[var(--loading-bg)] text-[var(--muted)]',
+    gray: 'bg-loading-bg text-muted',
   };
   
   const sizeClasses = {
@@ -150,7 +150,7 @@ export function ShortcutDisplay({
             {key}
           </Kbd>
           {index < keys.length - 1 && (
-            <span className="text-[var(--muted)] text-sm">+</span>
+            <span className="text-muted text-sm">+</span>
           )}
         </React.Fragment>
       ))}

@@ -196,18 +196,18 @@ export function AIEmailComposer({
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-[10000]">
-      <div className="bg-[var(--background)] rounded-xl w-[800px] max-w-[95vw] max-h-[95vh] overflow-y-auto border border-[var(--border)] shadow-2xl">
+      <div className="bg-background rounded-xl w-[800px] max-w-[95vw] max-h-[95vh] overflow-y-auto border border-border shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <SparklesIcon className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">
+              <h2 className="text-xl font-bold text-foreground">
                 AI Email Composer
               </h2>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Powered by your unique voice profile • Writing to {leadName} at{" "}
                 {leadCompany}
               </p>
@@ -215,15 +215,15 @@ export function AIEmailComposer({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+            <XMarkIcon className="w-5 h-5 text-muted" />
           </button>
         </div>
 
         {/* Voice Profile Status */}
         {isVoiceAnalyzing ? (
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border-b border-[var(--border)]">
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border-b border-border">
             <div className="flex items-center gap-3">
               <ArrowPathIcon className="w-5 h-5 text-blue-600 animate-spin" />
               <div>
@@ -239,7 +239,7 @@ export function AIEmailComposer({
           </div>
         ) : (
           voiceProfile && (
-            <div className="p-4 bg-green-50 dark:bg-green-900/20 border-b border-[var(--border)]">
+            <div className="p-4 bg-green-50 dark:bg-green-900/20 border-b border-border">
               <div className="flex items-center gap-3">
                 <MicrophoneIcon className="w-5 h-5 text-green-600" />
                 <div>
@@ -258,16 +258,16 @@ export function AIEmailComposer({
         )}
 
         {/* Email Configuration */}
-        <div className="p-6 border-b border-[var(--border)]">
+        <div className="p-6 border-b border-border">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Email Purpose
               </label>
               <select
                 value={emailPurpose}
                 onChange={(e) => setEmailPurpose(e.target.value as any)}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="introduction">Introduction</option>
                 <option value="follow-up">Follow-up</option>
@@ -276,13 +276,13 @@ export function AIEmailComposer({
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Tone Override
               </label>
               <select
                 value={emailTone}
                 onChange={(e) => setEmailTone(e.target.value as any)}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="professional">Professional</option>
                 <option value="friendly">Friendly</option>
@@ -292,7 +292,7 @@ export function AIEmailComposer({
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Custom Instructions (optional)
             </label>
             <input
@@ -300,7 +300,7 @@ export function AIEmailComposer({
               value={customInstructions}
               onChange={(e) => setCustomInstructions(e.target.value)}
               placeholder="e.g., Mention our recent product launch, Keep it under 100 words"
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
@@ -327,34 +327,34 @@ export function AIEmailComposer({
         {(emailSubject || emailBody) && (
           <div className="p-6">
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Subject Line
               </label>
               <input
                 type="text"
                 value={emailSubject}
                 onChange={(e) => setEmailSubject(e.target.value)}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Email subject..."
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Email Body
               </label>
               <textarea
                 value={emailBody}
                 onChange={(e) => setEmailBody(e.target.value)}
                 rows={12}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
                 placeholder="Email content will appear here..."
               />
             </div>
 
             {/* Quick Update Options */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Quick Updates
               </label>
               <div className="flex flex-wrap gap-2">
@@ -384,7 +384,7 @@ export function AIEmailComposer({
                 <input
                   type="text"
                   placeholder="Tell me how to update this email..."
-                  className="flex-1 px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   onKeyPress={(e) => {
                     if (e['key'] === "Enter") {
                       const input = e.target as HTMLInputElement;
@@ -417,7 +417,7 @@ export function AIEmailComposer({
             <div className="flex gap-3">
               <button
                 onClick={onClose}
-                className="flex-1 px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors"
+                className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg font-medium hover:bg-hover transition-colors"
               >
                 Cancel
               </button>

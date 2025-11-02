@@ -49,12 +49,12 @@ export function SpeedrunLeadDetailsHeader({
   getRoleColor,
 }: SpeedrunLeadDetailsHeaderProps) {
   return (
-    <div className="flex-shrink-0 bg-[var(--background)] border-b border-[var(--border)] p-4">
+    <div className="flex-shrink-0 bg-background border-b border-border p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <button
             onClick={onBack}
-            className="flex items-center space-x-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="flex items-center space-x-2 text-muted hover:text-foreground transition-colors"
           >
             <ChevronLeftIcon className="w-5 h-5" />
             <span>Back</span>
@@ -62,10 +62,10 @@ export function SpeedrunLeadDetailsHeader({
 
           <div className="flex items-center space-x-3">
             <div>
-              <h1 className="text-xl font-semibold text-[var(--foreground)]">
+              <h1 className="text-xl font-semibold text-foreground">
                 {person.name}
               </h1>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 {typeof person.company === 'object' ? person.company?.name : person.company}
               </p>
             </div>
@@ -81,7 +81,7 @@ export function SpeedrunLeadDetailsHeader({
         </div>
 
         <div className="flex items-center space-x-2">
-          <div className="text-sm text-[var(--muted)]">
+          <div className="text-sm text-muted">
             {personIndex + 1} of {totalPersons}
           </div>
 
@@ -89,14 +89,14 @@ export function SpeedrunLeadDetailsHeader({
             <button
               onClick={onNavigatePrevious}
               disabled={!canNavigatePrevious()}
-              className="p-2 rounded-lg hover:bg-[var(--accent)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 rounded-lg hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ChevronLeftIcon className="w-5 h-5" />
             </button>
             <button
               onClick={onNavigateNext}
               disabled={!canNavigateNext()}
-              className="p-2 rounded-lg hover:bg-[var(--accent)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 rounded-lg hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ChevronRightIcon className="w-5 h-5" />
             </button>
@@ -114,19 +114,19 @@ export function SpeedrunLeadDetailsHeader({
             <div className="relative">
               <button
                 onClick={() => onShowMoreActions(!showMoreActions)}
-                className="p-2 rounded-lg hover:bg-[var(--accent)] transition-colors"
+                className="p-2 rounded-lg hover:bg-primary transition-colors"
               >
                 <ChevronDownIcon className="w-5 h-5" />
               </button>
 
               {showMoreActions && (
-                <div className="absolute right-0 mt-2 w-48 bg-[var(--background)] rounded-md shadow-lg z-10 border border-[var(--border)]">
+                <div className="absolute right-0 mt-2 w-48 bg-background rounded-md shadow-lg z-10 border border-border">
                   <button
                     onClick={() => {
                       onShowSnoozeRemoveModal(true);
                       onShowMoreActions(false);
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] flex items-center space-x-2"
+                    className="w-full px-4 py-2 text-left hover:bg-panel-background flex items-center space-x-2"
                   >
                     <ClockIcon className="w-4 h-4" />
                     <span>Snooze</span>
@@ -136,7 +136,7 @@ export function SpeedrunLeadDetailsHeader({
                       onShowSnoozeRemoveModal(true);
                       onShowMoreActions(false);
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-[var(--panel-background)] flex items-center space-x-2 text-red-600"
+                    className="w-full px-4 py-2 text-left hover:bg-panel-background flex items-center space-x-2 text-red-600"
                   >
                     <TrashIcon className="w-4 h-4" />
                     <span>Remove</span>

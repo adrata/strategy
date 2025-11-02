@@ -131,7 +131,7 @@ export function ConversationHeader({
         {onToggleLeftPanel && (
           <button
             onClick={onToggleLeftPanel}
-            className="w-7 h-7 mr-3 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors flex items-center justify-center flex-shrink-0"
+            className="w-7 h-7 mr-3 text-muted cursor-pointer hover:text-foreground transition-colors flex items-center justify-center flex-shrink-0"
             title="Toggle Left Panel"
           >
             <Bars3Icon className="w-5 h-5" />
@@ -151,8 +151,8 @@ export function ConversationHeader({
                 onDragEnd={handleDragEnd}
                 className={`flex items-center px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
                   conv.isActive
-                    ? 'bg-[var(--panel-background)] text-[var(--foreground)]'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                    ? 'bg-panel-background text-foreground'
+                    : 'text-muted hover:text-foreground'
                 } ${
                   draggedConversation === conv.id ? 'opacity-50' : ''
                 }`}
@@ -167,7 +167,7 @@ export function ConversationHeader({
                   }}
                   className={`absolute top-0.5 right-0.5 w-4 h-4 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${
                     conv.isActive 
-                      ? 'bg-[var(--background)] text-gray-700 hover:bg-[var(--panel-background)]' 
+                      ? 'bg-background text-gray-700 hover:bg-panel-background' 
                       : 'bg-gray-600 text-white hover:bg-gray-700'
                   }`}
                 >
@@ -182,7 +182,7 @@ export function ConversationHeader({
           {/* New Chat Button (+ icon) */}
           <button
             onClick={onCreateNewConversation}
-            className="w-7 h-7 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors flex items-center justify-center"
+            className="w-7 h-7 text-muted cursor-pointer hover:text-foreground transition-colors flex items-center justify-center"
             title="New Chat"
           >
             <PlusIcon className="w-5 h-5" />
@@ -191,7 +191,7 @@ export function ConversationHeader({
           {/* Conversation History Button */}
           <button
             onClick={onToggleConversationHistory}
-            className="w-7 h-7 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors flex items-center justify-center"
+            className="w-7 h-7 text-muted cursor-pointer hover:text-foreground transition-colors flex items-center justify-center"
             title="Conversation History"
           >
             <ClockIcon className="w-5 h-5" />
@@ -201,7 +201,7 @@ export function ConversationHeader({
           {showChatIcon && hasOasis && onToggleDirectMessages && (
             <button
               onClick={onToggleDirectMessages}
-              className="w-7 h-7 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors flex items-center justify-center"
+              className="w-7 h-7 text-muted cursor-pointer hover:text-foreground transition-colors flex items-center justify-center"
               title="Direct Messages"
             >
               <ChatBubbleLeftIcon className="w-5 h-5" />
@@ -209,7 +209,7 @@ export function ConversationHeader({
           )}
           
           <XMarkIcon 
-            className="w-6 h-6 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors" 
+            className="w-6 h-6 text-muted cursor-pointer hover:text-foreground transition-colors" 
             title="Close" 
             onClick={onClosePanel} 
           />
@@ -218,22 +218,22 @@ export function ConversationHeader({
       
       {/* Conversation History Popup */}
       {showConversationHistory && (
-        <div ref={conversationHistoryRef} className="absolute top-16 right-4 bg-[var(--background)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg shadow-xl py-2 w-[240px] max-h-[400px] overflow-y-auto z-50">
-          <div className="px-4 py-2 text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)] border-b border-[var(--border)] dark:border-[var(--border)]">
+        <div ref={conversationHistoryRef} className="absolute top-16 right-4 bg-background border border-border rounded-lg shadow-xl py-2 w-[240px] max-h-[400px] overflow-y-auto z-50">
+          <div className="px-4 py-2 text-sm font-medium text-foreground border-b border-border">
             Conversation History
           </div>
           {conversations.map((conv) => (
             <button
               key={conv.id}
               onClick={() => onSwitchConversation(conv.id)}
-              className="w-full px-4 py-3 text-left hover:bg-[var(--panel-background)] border-b border-gray-100 dark:border-[var(--border)] last:border-b-0 transition-colors"
+              className="w-full px-4 py-3 text-left hover:bg-panel-background border-b border-border last:border-b-0 transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)] truncate">
+                  <div className="text-sm font-medium text-foreground truncate">
                     {conv.title}
                   </div>
-                  <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)] mt-1">
+                  <div className="text-xs text-muted mt-1">
                     {conv.messages.length} messages • {formatTimeAgo(conv.lastActivity)}
                   </div>
                 </div>

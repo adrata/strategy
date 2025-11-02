@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getSecureApiContext } from '@/platform/services/secure-api-helper';
+import { createErrorResponse } from '@/platform/services/secure-api-helper';
 
 /**
 // Required for static export (desktop build)
@@ -12,8 +12,17 @@ export const dynamic = 'force-static';
  */
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    // Use unified auth system
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: false
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -37,11 +46,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Get folders with document counts
-    const folders = await prisma.workshopFolder.findMany({
-      where,
-      orderBy: {
-        name: 'asc',
-      },
+    let folders;
+    try {
+      folders = await prisma.workshopFolder.findMany({
+        where,
+        orderBy: {
+          name: 'asc',
+        },
       include: {
         owner: {
           select: {
@@ -62,6 +73,14 @@ export async function GET(request: NextRequest) {
         },
       },
     });
+    } catch (error: any) {
+      // Handle case where table doesn't exist yet (migrations not run)
+      if (error?.code === 'P2021') {
+        console.error('⚠️ workshopFolder table does not exist. Please run database migrations: npx prisma migrate deploy');
+        return NextResponse.json({ error: 'Database migration required. Please contact support.' }, { status: 503 });
+      }
+      throw error;
+    }
 
     return NextResponse.json(folders);
   } catch (error) {
@@ -79,10 +98,21 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    // Use unified auth system
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: false
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const userId = context.userId;
 
     const body = await request.json();
     const {
@@ -117,13 +147,23 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if folder with same name already exists in the same parent
-    const existingFolder = await prisma.workshopFolder.findFirst({
-      where: {
-        name,
-        parentId: parentId || null,
-        workspaceId,
-      },
-    });
+    let existingFolder;
+    try {
+      existingFolder = await prisma.workshopFolder.findFirst({
+        where: {
+          name,
+          parentId: parentId || null,
+          workspaceId,
+        },
+      });
+    } catch (error: any) {
+      // Handle case where table doesn't exist yet (migrations not run)
+      if (error?.code === 'P2021') {
+        console.error('⚠️ workshopFolder table does not exist. Please run database migrations: npx prisma migrate deploy');
+        return NextResponse.json({ error: 'Database migration required. Please contact support.' }, { status: 503 });
+      }
+      throw error;
+    }
 
     if (existingFolder) {
       return NextResponse.json(
@@ -133,13 +173,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Create folder
-    const folder = await prisma.workshopFolder.create({
+    let folder;
+    try {
+      folder = await prisma.workshopFolder.create({
       data: {
         name,
         description,
         parentId,
         workspaceId,
-        ownerId: session.user.id,
+        ownerId: userId,
         color,
         icon,
       },
@@ -169,6 +211,14 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+    } catch (error: any) {
+      // Handle case where table doesn't exist yet (migrations not run)
+      if (error?.code === 'P2021') {
+        console.error('⚠️ workshopFolder table does not exist. Please run database migrations: npx prisma migrate deploy');
+        return NextResponse.json({ error: 'Database migration required. Please contact support.' }, { status: 503 });
+      }
+      throw error;
+    }
 
     return NextResponse.json(folder, { status: 201 });
   } catch (error) {

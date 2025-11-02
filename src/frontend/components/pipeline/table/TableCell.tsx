@@ -106,7 +106,7 @@ export function TableCell({
   if (!isFieldEditable) {
     return (
       <td className={`px-6 py-3 whitespace-nowrap text-sm ${className}`}>
-        <span className="text-[var(--foreground)]">{value || '-'}</span>
+        <span className="text-foreground">{value || '-'}</span>
       </td>
     );
   }
@@ -122,7 +122,7 @@ export function TableCell({
             onChange={(e) => setEditValue(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            className="w-full px-2 py-1 text-sm bg-[var(--background)] border border-[var(--border)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent"
+            className="w-full px-2 py-1 text-sm bg-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             disabled={isLoading}
             min={field === 'rank' || field === 'globalRank' ? 1 : undefined}
             max={field === 'rank' || field === 'globalRank' ? 999 : undefined}
@@ -130,7 +130,7 @@ export function TableCell({
           />
           {isLoading && (
             <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-              <div className="w-4 h-4 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
         </div>
@@ -140,12 +140,12 @@ export function TableCell({
 
   return (
     <td
-      className={`px-6 py-3 whitespace-nowrap text-sm cursor-pointer hover:bg-[var(--hover)] transition-colors ${className}`}
+      className={`px-6 py-3 whitespace-nowrap text-sm cursor-pointer hover:bg-hover transition-colors ${className}`}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
       title="Click to edit"
     >
-      <span className="text-[var(--foreground)]">{value || '-'}</span>
+      <span className="text-foreground">{value || '-'}</span>
     </td>
   );
 }

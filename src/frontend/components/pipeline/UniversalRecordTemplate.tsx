@@ -3454,7 +3454,7 @@ export function UniversalRecordTemplate({
           <button
             key={action.id}
             onClick={() => action.action(record)}
-            className="px-3 py-1.5 text-sm bg-[var(--hover)] text-gray-700 rounded-md hover:bg-[var(--loading-bg)] transition-colors"
+            className="px-3 py-1.5 text-sm bg-hover text-gray-700 rounded-md hover:bg-loading-bg transition-colors"
           >
             {action.label}
           </button>
@@ -3469,7 +3469,7 @@ export function UniversalRecordTemplate({
         <button
           key="add-company"
           onClick={() => setIsAddCompanyModalOpen(true)}
-          className="px-3 py-1.5 text-sm bg-[var(--background)] text-gray-700 border border-[var(--border)] rounded-md hover:bg-[var(--panel-background)] transition-colors"
+          className="px-3 py-1.5 text-sm bg-background text-gray-700 border border-border rounded-md hover:bg-panel-background transition-colors"
         >
           Add Company
         </button>
@@ -3490,7 +3490,7 @@ export function UniversalRecordTemplate({
       <button
         key="update-record"
         onClick={() => setIsUpdateModalOpen(true)}
-        className="px-3 py-1.5 text-sm bg-[var(--background)] text-gray-700 border border-[var(--border)] rounded-md hover:bg-[var(--panel-background)] transition-colors"
+        className="px-3 py-1.5 text-sm bg-background text-gray-700 border border-border rounded-md hover:bg-panel-background transition-colors"
       >
         {updateButtonText}
       </button>
@@ -3507,7 +3507,7 @@ export function UniversalRecordTemplate({
         <button
           key="add-person"
           onClick={() => setIsAddPersonModalOpen(true)}
-          className="px-3 py-1.5 text-sm bg-[var(--background)] text-gray-700 border border-[var(--border)] rounded-md hover:bg-[var(--panel-background)] transition-colors"
+          className="px-3 py-1.5 text-sm bg-background text-gray-700 border border-border rounded-md hover:bg-panel-background transition-colors"
         >
           Add Person
         </button>
@@ -3525,7 +3525,7 @@ export function UniversalRecordTemplate({
           <button
             key="add-action"
             onClick={() => setIsAddActionModalOpen(true)}
-            className="px-3 py-1.5 text-sm bg-[var(--success-bg)] text-[var(--success-text)] border border-[var(--success-border)] rounded-md hover:bg-[var(--success)] hover:text-[var(--button-text)] transition-colors flex items-center gap-1"
+            className="px-3 py-1.5 text-sm bg-success-bg text-success-text border border-success-border rounded-md hover:bg-success hover:text-button-text transition-colors flex items-center gap-1"
           >
             <span className="hidden xs:inline">Add Action ({getCommonShortcut('SUBMIT')})</span>
             <span className="xs:hidden">Add Action</span>
@@ -3547,7 +3547,7 @@ export function UniversalRecordTemplate({
                 router.push('/speedrun/sprint');
               }
             }}
-            className="px-3 py-1.5 text-sm bg-[var(--info-bg)] text-[var(--info-text)] border border-[var(--info-border)] rounded-md hover:bg-[var(--info)] hover:text-[var(--button-text)] transition-colors flex items-center gap-1"
+            className="px-3 py-1.5 text-sm bg-info-bg text-info-text border border-info-border rounded-md hover:bg-info hover:text-button-text transition-colors flex items-center gap-1"
           >
             <span className="hidden xs:inline">Start Speedrun ({getCommonShortcut('SUBMIT')})</span>
             <span className="xs:hidden">Start ({getCommonShortcut('SUBMIT')})</span>
@@ -3569,7 +3569,7 @@ export function UniversalRecordTemplate({
             <button
               key="advance-to-prospect"
               onClick={handleAdvanceToProspect}
-              className="px-3 py-1.5 text-sm bg-[var(--panel-background)] text-[var(--foreground)] border border-[var(--border)] rounded-md hover:bg-[var(--hover)] transition-colors"
+              className="px-3 py-1.5 text-sm bg-panel-background text-foreground border border-border rounded-md hover:bg-hover transition-colors"
             >
               Advance to Prospect
             </button>
@@ -3580,7 +3580,7 @@ export function UniversalRecordTemplate({
             <button
               key="advance-to-opportunity"
               onClick={handleAdvanceToOpportunity}
-              className="px-3 py-1.5 text-sm bg-[var(--info-bg)] text-[var(--info-text)] border border-[var(--info-border)] rounded-md hover:bg-[var(--info)] hover:text-[var(--button-text)] transition-colors"
+              className="px-3 py-1.5 text-sm bg-info-bg text-info-text border border-info-border rounded-md hover:bg-info hover:text-button-text transition-colors"
             >
               Advance to Opportunity
             </button>
@@ -3593,7 +3593,7 @@ export function UniversalRecordTemplate({
             <button
               key="advance-to-prospect"
               onClick={handleAdvanceToProspect}
-              className="px-3 py-1.5 text-sm bg-[var(--panel-background)] text-[var(--foreground)] border border-[var(--border)] rounded-md hover:bg-[var(--hover)] transition-colors"
+              className="px-3 py-1.5 text-sm bg-panel-background text-foreground border border-border rounded-md hover:bg-hover transition-colors"
             >
               Advance to Prospect
             </button>
@@ -3603,7 +3603,7 @@ export function UniversalRecordTemplate({
             <button
               key="advance-to-opportunity"
               onClick={handleAdvanceToOpportunity}
-              className="px-3 py-1.5 text-sm bg-[var(--info-bg)] text-[var(--info-text)] border border-[var(--info-border)] rounded-md hover:bg-[var(--info)] hover:text-[var(--button-text)] transition-colors"
+              className="px-3 py-1.5 text-sm bg-info-bg text-info-text border border-info-border rounded-md hover:bg-info hover:text-button-text transition-colors"
             >
               Advance to Opportunity
             </button>
@@ -3658,7 +3658,7 @@ export function UniversalRecordTemplate({
             <p className="text-yellow-600 text-sm">
               Record data is not available for this {activeTab} tab.
             </p>
-            <div className="mt-4 text-xs text-[var(--muted)]">
+            <div className="mt-4 text-xs text-muted">
               Record Type: {recordType} | Active Tab: {activeTab}
             </div>
           </div>
@@ -3978,7 +3978,7 @@ export function UniversalRecordTemplate({
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* URL Fixer - Automatically fixes malformed URLs */}
       <URLFixer />
       
@@ -3991,7 +3991,7 @@ export function UniversalRecordTemplate({
       />
 
       {/* Breadcrumb Header */}
-      <div className="flex-shrink-0 bg-[var(--background)] border-b border-[var(--border)] px-6 py-3">
+      <div className="flex-shrink-0 bg-background border-b border-border px-6 py-3">
         <div className="flex items-center justify-between">
           <HierarchicalBreadcrumb 
             record={localRecord}
@@ -4052,7 +4052,7 @@ export function UniversalRecordTemplate({
                     className={`p-2 rounded-md transition-all duration-200 ${
                       !safeRecordIndex || safeRecordIndex <= 1 || !safeTotalRecords
                         ? 'text-gray-300 cursor-not-allowed'
-                        : 'text-[var(--foreground)] hover:text-blue-600 hover:bg-[var(--panel-background)]'
+                        : 'text-foreground hover:text-blue-600 hover:bg-panel-background'
                     }`}
                     disabled={!safeRecordIndex || safeRecordIndex <= 1 || !safeTotalRecords}
                     title={!safeTotalRecords || safeTotalRecords <= 1 ? "No other records to navigate" : "Previous record"}
@@ -4081,7 +4081,7 @@ export function UniversalRecordTemplate({
                     className={`p-2 rounded-md transition-all duration-200 ${
                       !safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords
                         ? 'text-gray-300 cursor-not-allowed'
-                        : 'text-[var(--foreground)] hover:text-blue-600 hover:bg-[var(--panel-background)]'
+                        : 'text-foreground hover:text-blue-600 hover:bg-panel-background'
                     }`}
                     disabled={!safeRecordIndex || !safeTotalRecords || safeRecordIndex >= safeTotalRecords}
                     title={!safeTotalRecords || safeTotalRecords <= 1 ? "No other records to navigate" : "Next record"}
@@ -4098,13 +4098,13 @@ export function UniversalRecordTemplate({
       </div>
 
       {/* Main Header - Minimal Design */}
-      <div className="flex-shrink-0 border-b border-[var(--border)] px-6 py-6">
+      <div className="flex-shrink-0 border-b border-border px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             {/* Minimal Avatar with Rank */}
             <div className="relative group">
               <div 
-                className="w-10 h-10 bg-[var(--background)] border border-[var(--border)] rounded-xl flex items-center justify-center overflow-hidden relative cursor-pointer hover:border-[var(--primary)] transition-colors"
+                className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center overflow-hidden relative cursor-pointer hover:border-[var(--primary)] transition-colors"
                 onClick={handleProfileClick}
                 title="Click to open profile"
               >
@@ -4141,8 +4141,8 @@ export function UniversalRecordTemplate({
               */}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)] mb-1">{getDisplayName()}</h1>
-              <p className="text-sm text-[var(--muted)]">{getSubtitle()}</p>
+              <h1 className="text-2xl font-bold text-foreground mb-1">{getDisplayName()}</h1>
+              <p className="text-sm text-muted">{getSubtitle()}</p>
             </div>
           </div>
           
@@ -4171,8 +4171,8 @@ export function UniversalRecordTemplate({
               }}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                 activeTab === tab.id
-                  ? 'bg-[var(--panel-background)] text-[var(--foreground)] border border-[var(--border)]'
-                  : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                  ? 'bg-panel-background text-foreground border border-border'
+                  : 'text-muted hover:text-foreground'
               }`}
             >
               {tab.label}
@@ -4207,19 +4207,19 @@ export function UniversalRecordTemplate({
 
       {/* Add Note Modal */}
       {isAddNoteModalOpen && (
-        <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-[var(--background)] rounded-xl border border-gray-100 shadow-sm p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Add Note</h3>
+        <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-background rounded-xl border border-gray-100 shadow-sm p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Add Note</h3>
             <textarea
               placeholder="Enter your note here..."
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4 resize-none"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4 resize-none"
               rows={4}
               autoFocus
             />
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setIsAddNoteModalOpen(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
               >
                 Cancel
               </button>
@@ -4241,12 +4241,12 @@ export function UniversalRecordTemplate({
       {/* Delete Confirmation Popup */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--background)] rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Confirm Deletion</h3>
-            <p className="text-sm text-[var(--muted)] mb-4">
+          <div className="bg-background rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Confirm Deletion</h3>
+            <p className="text-sm text-muted mb-4">
               Are you sure you want to delete this record? This will move it to the trash where it can be restored later.
             </p>
-            <p className="text-sm text-[var(--muted)] mb-4">
+            <p className="text-sm text-muted mb-4">
               Please type <strong>{getDisplayName()}</strong> to confirm:
             </p>
             <input
@@ -4254,7 +4254,7 @@ export function UniversalRecordTemplate({
               value={deleteConfirmName}
               onChange={(e) => setDeleteConfirmName(e.target.value)}
               placeholder="Enter record name"
-              className="w-full p-3 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4"
+              className="w-full p-3 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4"
               autoFocus
             />
             <div className="flex justify-end gap-3">
@@ -4263,7 +4263,7 @@ export function UniversalRecordTemplate({
                   setShowDeleteConfirm(false);
                   setDeleteConfirmName('');
                 }}
-                className="px-4 py-2 text-sm bg-[var(--hover)] text-gray-700 rounded-md hover:bg-[var(--loading-bg)] transition-colors"
+                className="px-4 py-2 text-sm bg-hover text-gray-700 rounded-md hover:bg-loading-bg transition-colors"
               >
                 Back
               </button>
@@ -4272,7 +4272,7 @@ export function UniversalRecordTemplate({
                 disabled={loading || normalizeString(deleteConfirmName) !== normalizeString(getDisplayName())}
                 className={`px-4 py-2 text-sm rounded-md transition-colors ${
                   loading || normalizeString(deleteConfirmName) !== normalizeString(getDisplayName())
-                    ? 'bg-gray-300 text-[var(--muted)] cursor-not-allowed'
+                    ? 'bg-gray-300 text-muted cursor-not-allowed'
                     : 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100'
                 }`}
               >
@@ -4339,10 +4339,10 @@ export function UniversalRecordTemplate({
 
       {/* Edit Record Modal */}
       {isEditRecordModalOpen && (
-        <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-[var(--background)] rounded-xl border border-gray-100 shadow-sm p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto" data-edit-modal>
+        <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-background rounded-xl border border-gray-100 shadow-sm p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto" data-edit-modal>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">
+              <h3 className="text-lg font-semibold text-foreground">
                 {(() => {
                   // Check if this is a company-only record
                   const isCompanyRecord = (recordType === 'speedrun' && record?.recordType === 'company') ||
@@ -4365,7 +4365,7 @@ export function UniversalRecordTemplate({
               </h3>
               <button
                 onClick={() => setIsEditRecordModalOpen(false)}
-                className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
+                className="text-muted hover:text-muted transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -4374,7 +4374,7 @@ export function UniversalRecordTemplate({
             </div>
             
             {/* Tabs */}
-            <div className="border-b border-[var(--border)] mb-6">
+            <div className="border-b border-border mb-6">
               <nav className="-mb-px flex space-x-8">
                 {(recordType === 'companies' ? [
                   { id: 'overview', label: 'Overview' },
@@ -4398,7 +4398,7 @@ export function UniversalRecordTemplate({
                     className={`py-2 px-1 border-b-2 font-medium text-sm ${
                       activeEditTab === tab.id
                         ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]'
+                        : 'border-transparent text-muted hover:text-gray-700 hover:border-border'
                     }`}
                   >
                     {tab.label}
@@ -4415,7 +4415,7 @@ export function UniversalRecordTemplate({
                     <>
                       {/* Company Information */}
                       <div>
-                        <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Company Information</h4>
+                        <h4 className="text-sm font-medium text-foreground mb-3">Company Information</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
@@ -4423,7 +4423,7 @@ export function UniversalRecordTemplate({
                               type="text"
                               name="name"
                               defaultValue={formatFieldValue(record?.name || record?.companyName, '')}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="Enter company name"
                               required
                             />
@@ -4434,7 +4434,7 @@ export function UniversalRecordTemplate({
                               type="text"
                               name="legalName"
                               defaultValue={formatFieldValue(record?.legalName, '')}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="-"
                             />
                           </div>
@@ -4444,7 +4444,7 @@ export function UniversalRecordTemplate({
                               type="url"
                               name="website"
                               defaultValue={formatFieldValue(record?.website, '')}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="-"
                             />
                           </div>
@@ -4454,7 +4454,7 @@ export function UniversalRecordTemplate({
                               type="tel"
                               name="phone"
                               defaultValue={formatFieldValue(record?.phone, '')}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="-"
                             />
                           </div>
@@ -4465,7 +4465,7 @@ export function UniversalRecordTemplate({
                             name="description"
                             defaultValue={formatFieldValue(record?.description, '')}
                             rows={3}
-                            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="-"
                           />
                         </div>
@@ -4473,7 +4473,7 @@ export function UniversalRecordTemplate({
 
                       {/* Business Details */}
                       <div>
-                        <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Business Details</h4>
+                        <h4 className="text-sm font-medium text-foreground mb-3">Business Details</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
@@ -4481,7 +4481,7 @@ export function UniversalRecordTemplate({
                               type="text"
                               name="industry"
                               defaultValue={formatFieldValue(record?.industry, '')}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="-"
                             />
                           </div>
@@ -4490,7 +4490,7 @@ export function UniversalRecordTemplate({
                             <select
                               name="size"
                               defaultValue={record?.size || ''}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="">-</option>
                               <option value="1-10">1-10 employees</option>
@@ -4509,7 +4509,7 @@ export function UniversalRecordTemplate({
                               min="1800"
                               max="2024"
                               defaultValue={formatFieldValue(record?.foundedYear, '')}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="-"
                             />
                           </div>
@@ -4518,7 +4518,7 @@ export function UniversalRecordTemplate({
                             <select
                               name="status"
                               defaultValue={record?.status || 'ACTIVE'}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="ACTIVE">Active</option>
                               <option value="INACTIVE">Inactive</option>
@@ -4533,7 +4533,7 @@ export function UniversalRecordTemplate({
                     <>
                       {/* Basic Information */}
                       <div>
-                        <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
+                        <h4 className="text-sm font-medium text-foreground mb-3">Basic Information</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
@@ -4541,7 +4541,7 @@ export function UniversalRecordTemplate({
                               type="text"
                               name="firstName"
                               defaultValue={formatFieldValue(record?.firstName, '')}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder={formatFieldValue(record?.firstName) ? '' : '-'}
                             />
                           </div>
@@ -4551,7 +4551,7 @@ export function UniversalRecordTemplate({
                               type="text"
                               name="lastName"
                               defaultValue={formatFieldValue(record?.lastName, '')}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder={formatFieldValue(record?.lastName) ? '' : '-'}
                             />
                           </div>
@@ -4561,7 +4561,7 @@ export function UniversalRecordTemplate({
                               type="text"
                               name="jobTitle"
                               defaultValue={formatFieldValue(record?.title || record?.jobTitle, '')}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder={formatFieldValue(record?.title || record?.jobTitle) ? '' : '-'}
                             />
                           </div>
@@ -4583,7 +4583,7 @@ export function UniversalRecordTemplate({
                               type="text"
                               name="department"
                               defaultValue={formatFieldValue(record?.department, '')}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder={formatFieldValue(record?.department) ? '' : '-'}
                             />
                           </div>
@@ -4592,14 +4592,14 @@ export function UniversalRecordTemplate({
 
                       {/* Bio */}
                       <div>
-                        <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Bio</h4>
+                        <h4 className="text-sm font-medium text-foreground mb-3">Bio</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Current Status</label>
                             <select
                               name="status"
                               defaultValue={record?.status || 'active'}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="active">Active</option>
                               <option value="inactive">Inactive</option>
@@ -4612,7 +4612,7 @@ export function UniversalRecordTemplate({
                             <select
                               name="engagementLevel"
                               defaultValue={record?.engagementLevel || 'medium'}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="high">High</option>
                               <option value="medium">Medium</option>
@@ -4624,7 +4624,7 @@ export function UniversalRecordTemplate({
                             <select
                               name="influenceLevel"
                               defaultValue={record?.influenceLevel || 'medium'}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="high">High</option>
                               <option value="medium">Medium</option>
@@ -4636,7 +4636,7 @@ export function UniversalRecordTemplate({
                             <select
                               name="decisionPower"
                               defaultValue={record?.decisionPower || 'limited'}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="high">High</option>
                               <option value="moderate">Moderate</option>
@@ -4648,7 +4648,7 @@ export function UniversalRecordTemplate({
                             <select
                               name="priority"
                               defaultValue={record?.priority || 'medium'}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="high">High</option>
                               <option value="medium">Medium</option>
@@ -4660,7 +4660,7 @@ export function UniversalRecordTemplate({
                             <select
                               name="isBuyerGroupMember"
                               defaultValue={record?.isBuyerGroupMember ? 'yes' : 'no'}
-                              className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                               <option value="yes">Yes</option>
                               <option value="no">No</option>
@@ -4677,14 +4677,14 @@ export function UniversalRecordTemplate({
                 <div className="space-y-6">
                   {/* Intelligence Profile */}
                   <div>
-                    <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Intelligence Profile</h4>
+                    <h4 className="text-sm font-medium text-foreground mb-3">Intelligence Profile</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Strategy</label>
                         <select
                           name="engagementStrategy"
                           defaultValue={record?.engagementStrategy || 'standard'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="standard">Standard Outreach</option>
                           <option value="personalized">Personalized</option>
@@ -4697,7 +4697,7 @@ export function UniversalRecordTemplate({
                         <select
                           name="buyerGroupOptimized"
                           defaultValue={record?.buyerGroupOptimized ? 'yes' : 'no'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="yes">Yes</option>
                           <option value="no">No</option>
@@ -4708,7 +4708,7 @@ export function UniversalRecordTemplate({
                         <select
                           name="seniority"
                           defaultValue={record?.seniority || 'mid-level'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="executive">Executive</option>
                           <option value="senior">Senior</option>
@@ -4721,7 +4721,7 @@ export function UniversalRecordTemplate({
                         <select
                           name="communicationStyle"
                           defaultValue={record?.communicationStyle || 'professional'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="professional">Professional</option>
                           <option value="casual">Casual</option>
@@ -4734,7 +4734,7 @@ export function UniversalRecordTemplate({
 
                   {/* Key Metrics */}
                   <div>
-                    <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Key Metrics</h4>
+                    <h4 className="text-sm font-medium text-foreground mb-3">Key Metrics</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Engagement Score</label>
@@ -4744,7 +4744,7 @@ export function UniversalRecordTemplate({
                           min="0"
                           max="100"
                           defaultValue={record?.engagementScore || ''}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={record?.engagementScore ? '' : '-'}
                         />
                       </div>
@@ -4756,7 +4756,7 @@ export function UniversalRecordTemplate({
                           min="0"
                           max="100"
                           defaultValue={record?.influenceScore || ''}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={record?.influenceScore ? '' : '-'}
                         />
                       </div>
@@ -4768,7 +4768,7 @@ export function UniversalRecordTemplate({
                           min="0"
                           max="100"
                           defaultValue={record?.decisionPowerScore || ''}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={record?.decisionPowerScore ? '' : '-'}
                         />
                       </div>
@@ -4777,7 +4777,7 @@ export function UniversalRecordTemplate({
                         <select
                           name="relationshipWarmth"
                           defaultValue={record?.relationshipWarmth || 'cold'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="warm">Warm</option>
                           <option value="neutral">Neutral</option>
@@ -4793,7 +4793,7 @@ export function UniversalRecordTemplate({
                 <div className="space-y-6">
                   {/* Current Role */}
                   <div>
-                    <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Current Role</h4>
+                    <h4 className="text-sm font-medium text-foreground mb-3">Current Role</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
@@ -4801,7 +4801,7 @@ export function UniversalRecordTemplate({
                           type="text"
                           name="careerJobTitle"
                           defaultValue={formatFieldValue(record?.title || record?.jobTitle, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.title || record?.jobTitle) ? '' : '-'}
                         />
                       </div>
@@ -4823,7 +4823,7 @@ export function UniversalRecordTemplate({
                           type="text"
                           name="careerDepartment"
                           defaultValue={formatFieldValue(record?.department, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.department) ? '' : '-'}
                         />
                       </div>
@@ -4832,7 +4832,7 @@ export function UniversalRecordTemplate({
                         <input
                           type="text"
                           defaultValue={formatFieldValue(record?.industry, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.industry) ? '' : '-'}
                         />
                       </div>
@@ -4841,7 +4841,7 @@ export function UniversalRecordTemplate({
 
                   {/* Professional Background */}
                   <div>
-                    <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Professional Background</h4>
+                    <h4 className="text-sm font-medium text-foreground mb-3">Professional Background</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Years of Experience</label>
@@ -4850,7 +4850,7 @@ export function UniversalRecordTemplate({
                           min="0"
                           max="50"
                           defaultValue={record?.yearsExperience || ''}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={record?.yearsExperience ? '' : '-'}
                         />
                       </div>
@@ -4858,7 +4858,7 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Education Level</label>
                         <select
                           defaultValue={record?.educationLevel || ''}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="">{record?.educationLevel ? '' : '-'}</option>
                           <option value="high-school">High School</option>
@@ -4873,7 +4873,7 @@ export function UniversalRecordTemplate({
                         <input
                           type="text"
                           defaultValue={formatFieldValue(record?.skills, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.skills) ? '' : '-'}
                         />
                       </div>
@@ -4882,7 +4882,7 @@ export function UniversalRecordTemplate({
                         <input
                           type="text"
                           defaultValue={formatFieldValue(record?.certifications, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.certifications) ? '' : '-'}
                         />
                       </div>
@@ -4895,14 +4895,14 @@ export function UniversalRecordTemplate({
                 <div className="space-y-6">
                   {/* Contact Information */}
                   <div>
-                    <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
+                    <h4 className="text-sm font-medium text-foreground mb-3">Contact Information</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                         <input
                           type="email"
                           defaultValue={formatFieldValue(record?.email, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.email) ? '' : '-'}
                         />
                       </div>
@@ -4911,7 +4911,7 @@ export function UniversalRecordTemplate({
                         <input
                           type="tel"
                           defaultValue={formatFieldValue(record?.phone, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.phone) ? '' : '-'}
                         />
                       </div>
@@ -4920,7 +4920,7 @@ export function UniversalRecordTemplate({
                         <input
                           type="url"
                           defaultValue={formatFieldValue(record?.linkedinUrl || record?.linkedin, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.linkedinUrl || record?.linkedin) ? '' : '-'}
                         />
                       </div>
@@ -4929,7 +4929,7 @@ export function UniversalRecordTemplate({
                         <input
                           type="text"
                           defaultValue={formatFieldValue(record?.location || record?.city, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.location || record?.city) ? '' : '-'}
                         />
                       </div>
@@ -4938,14 +4938,14 @@ export function UniversalRecordTemplate({
 
                   {/* Engagement History */}
                   <div>
-                    <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Engagement History</h4>
+                    <h4 className="text-sm font-medium text-foreground mb-3">Engagement History</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Last Contact Date</label>
                         <input
                           type="date"
                           defaultValue={record?.lastContactDate ? new Date(record.lastContactDate).toISOString().split('T')[0] : ''}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
@@ -4953,7 +4953,7 @@ export function UniversalRecordTemplate({
                         <input
                           type="date"
                           defaultValue={record?.nextActionDate ? new Date(record.nextActionDate).toISOString().split('T')[0] : ''}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
@@ -4961,7 +4961,7 @@ export function UniversalRecordTemplate({
                         <input
                           type="text"
                           defaultValue={formatFieldValue(record?.nextAction, '')}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={formatFieldValue(record?.nextAction) ? '' : '-'}
                         />
                       </div>
@@ -4969,7 +4969,7 @@ export function UniversalRecordTemplate({
                         <label className="block text-sm font-medium text-gray-700 mb-1">Best Contact Time</label>
                         <select
                           defaultValue={record?.bestContactTime || 'morning'}
-                          className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="morning">Morning</option>
                           <option value="afternoon">Afternoon</option>
@@ -4984,17 +4984,17 @@ export function UniversalRecordTemplate({
 
               {activeEditTab === 'timeline' && (
                 <div className="space-y-6">
-                  <div className="text-center py-12 text-[var(--muted)]">
+                  <div className="text-center py-12 text-muted">
                     <div className="mb-4">
-                      <svg className="mx-auto h-12 w-12 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="mx-auto h-12 w-12 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Actions Yet</h3>
-                    <p className="text-sm text-[var(--muted)] mb-4">
+                    <h3 className="text-lg font-medium text-foreground mb-2">No Actions Yet</h3>
+                    <p className="text-sm text-muted mb-4">
                       Company timeline activities will appear here when available.
                     </p>
-                    <p className="text-xs text-[var(--muted)]">
+                    <p className="text-xs text-muted">
                       Actions, meetings, and other company-related activities will be displayed in this timeline.
                     </p>
                   </div>
@@ -5004,17 +5004,17 @@ export function UniversalRecordTemplate({
 
               {activeEditTab === 'buyer-groups' && (
                 <div className="space-y-6">
-                  <div className="text-center py-12 text-[var(--muted)]">
+                  <div className="text-center py-12 text-muted">
                     <div className="mb-4">
-                      <svg className="mx-auto h-12 w-12 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="mx-auto h-12 w-12 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Buyer Groups</h3>
-                    <p className="text-sm text-[var(--muted)] mb-4">
+                    <h3 className="text-lg font-medium text-foreground mb-2">No Buyer Groups</h3>
+                    <p className="text-sm text-muted mb-4">
                       Buyer group information will appear here when available.
                     </p>
-                    <p className="text-xs text-[var(--muted)]">
+                    <p className="text-xs text-muted">
                       Information about decision-making groups and key stakeholders will be displayed here.
                     </p>
                   </div>
@@ -5029,7 +5029,7 @@ export function UniversalRecordTemplate({
                     <textarea
                       rows={8}
                       defaultValue={formatFieldValue(record?.notes, '')}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                       placeholder={formatFieldValue(record?.notes) ? '' : '-'}
                     />
                   </div>
@@ -5040,7 +5040,7 @@ export function UniversalRecordTemplate({
                     <input
                       type="text"
                       defaultValue={formatArrayValue(record?.tags, '')}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder={formatArrayValue(record?.tags) ? '' : '-'}
                     />
                   </div>
@@ -5051,7 +5051,7 @@ export function UniversalRecordTemplate({
                     <input
                       type="text"
                       defaultValue={formatFieldValue(record?.valueDriver, '')}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder={formatFieldValue(record?.valueDriver) ? '' : '-'}
                     />
                   </div>
@@ -5061,10 +5061,10 @@ export function UniversalRecordTemplate({
               {activeEditTab === 'delete' && (
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+                    <h3 className="text-lg font-medium text-foreground mb-2">
                       Delete Record
                     </h3>
-                    <p className="text-sm text-[var(--muted)] mb-6">
+                    <p className="text-sm text-muted mb-6">
                       This action cannot be undone. This will soft delete the record and remove it from your active lists.
                     </p>
                   </div>
@@ -5098,7 +5098,7 @@ export function UniversalRecordTemplate({
                       type="text"
                       value={deleteConfirmName}
                       onChange={(e) => setDeleteConfirmName(e.target.value)}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                       placeholder={`Type "${getDisplayName()}" to confirm`}
                     />
                   </div>
@@ -5107,7 +5107,7 @@ export function UniversalRecordTemplate({
             </form>
 
             {/* Action Buttons */}
-            <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-[var(--border)]">
+            <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-border">
               {activeEditTab === 'delete' ? (
                 <>
                   <button
@@ -5115,7 +5115,7 @@ export function UniversalRecordTemplate({
                       setDeleteConfirmName('');
                       setActiveEditTab('overview');
                     }}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
                   >
                     Cancel
                   </button>
@@ -5131,13 +5131,13 @@ export function UniversalRecordTemplate({
                 <>
                   <button
                     onClick={() => setIsEditRecordModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSaveRecord}
-                    className="px-4 py-2 text-sm font-medium text-[var(--info-text)] bg-[var(--info-bg)] border border-[var(--info-border)] rounded-lg hover:bg-[var(--info)] hover:text-[var(--button-text)] transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-info-text bg-info-bg border border-info-border rounded-lg hover:bg-info hover:text-button-text transition-colors"
                   >
                     Complete ({getCommonShortcut('SUBMIT')})
                   </button>
@@ -5268,10 +5268,10 @@ function ActivityTab({ record, recordType }: { record: any; recordType: string }
     if (status === 'completed') {
       if (outcome === 'positive') return 'text-green-600 bg-green-50';
       if (outcome === 'negative' || outcome === 'no-answer') return 'text-red-600 bg-red-50';
-      return 'text-[var(--muted)] bg-[var(--panel-background)]';
+      return 'text-muted bg-panel-background';
     }
     if (status === 'planned' || status === 'scheduled') return 'text-blue-600 bg-blue-50';
-    return 'text-[var(--muted)] bg-[var(--panel-background)]';
+    return 'text-muted bg-panel-background';
   };
 
   const formatDate = (date: Date | string) => {
@@ -5291,52 +5291,52 @@ function ActivityTab({ record, recordType }: { record: any; recordType: string }
   return (
     <div className="p-6">
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2">
+        <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2">
           Recent Activity
         </h3>
         
         {activities['length'] === 0 ? (
           <div className="text-center py-8">
-            <div className="w-12 h-12 bg-[var(--hover)] rounded-full flex items-center justify-center mx-auto mb-3">
-              <svg className="w-6 h-6 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-hover rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg className="w-6 h-6 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <p className="text-sm text-[var(--muted)]">No activities recorded yet</p>
+            <p className="text-sm text-muted">No activities recorded yet</p>
           </div>
         ) : (
           <div className="space-y-3">
             {activities.map((activity) => (
-              <div key={activity.id} className="flex items-start space-x-3 p-3 border border-[var(--border)] rounded-lg">
+              <div key={activity.id} className="flex items-start space-x-3 p-3 border border-border rounded-lg">
                 <div className={`p-2 rounded ${getStatusColor(activity.status, activity.outcome)}`}>
                   {getActivityIcon(activity.type)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <span className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">
+                      <span className="text-xs font-medium text-muted uppercase tracking-wide">
                         {normalizeActivityType(activity.type)}
                       </span>
-                      <span className="text-sm font-medium text-[var(--foreground)]">{activity.subject}</span>
+                      <span className="text-sm font-medium text-foreground">{activity.subject}</span>
                     </div>
-                    <span className="text-xs text-[var(--muted)]">
+                    <span className="text-xs text-muted">
                       {formatDate(activity.completedAt || activity.createdAt)}
                     </span>
                   </div>
                   {activity['description'] && (
-                    <p className="text-sm text-[var(--muted)] mt-1">{activity.description}</p>
+                    <p className="text-sm text-muted mt-1">{activity.description}</p>
                   )}
                   <div className="flex items-center space-x-4 mt-2">
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status, activity.outcome)}`}>
                       {activity.status}
                     </span>
                     {activity['outcome'] && activity.outcome !== 'null' && (
-                      <span className="text-xs text-[var(--muted)]">
+                      <span className="text-xs text-muted">
                         {activity.outcome}
                       </span>
                     )}
                     {activity.duration !== null && activity.duration !== undefined && (
-                      <span className="text-xs text-[var(--muted)]">
+                      <span className="text-xs text-muted">
                         {activity.duration}min
                       </span>
                     )}
@@ -5348,7 +5348,7 @@ function ActivityTab({ record, recordType }: { record: any; recordType: string }
         )}
         
         {/* Add Activity Button */}
-        <button className="w-full mt-4 px-4 py-2 border border-[var(--border)] rounded-md text-sm font-medium text-gray-700 hover:bg-[var(--panel-background)] transition-colors">
+        <button className="w-full mt-4 px-4 py-2 border border-border rounded-md text-sm font-medium text-gray-700 hover:bg-panel-background transition-colors">
           Add Activity
         </button>
       </div>
@@ -5363,23 +5363,23 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
   };
 
   const getStatusColor = (status?: string): string => {
-    if (!status) return 'bg-[var(--hover)] text-[var(--foreground)]';
+    if (!status) return 'bg-hover text-foreground';
     const statusLower = status.toLowerCase();
-    if (['new', 'uncontacted'].includes(statusLower)) return 'bg-[var(--status-new-bg)] text-[var(--status-new-text)]';
-    if (['contacted', 'responded'].includes(statusLower)) return 'bg-[var(--status-contacted-bg)] text-[var(--status-contacted-text)]';
-    if (['qualified', 'hot'].includes(statusLower)) return 'bg-[var(--status-qualified-bg)] text-[var(--status-qualified-text)]';
-    if (['closed_won', 'won'].includes(statusLower)) return 'bg-[var(--status-won-bg)] text-[var(--status-won-text)]';
-    if (['closed_lost', 'lost'].includes(statusLower)) return 'bg-[var(--status-lost-bg)] text-[var(--status-lost-text)]';
-    return 'bg-[var(--hover)] text-[var(--foreground)]';
+    if (['new', 'uncontacted'].includes(statusLower)) return 'bg-status-new-bg text-status-new-text';
+    if (['contacted', 'responded'].includes(statusLower)) return 'bg-status-contacted-bg text-status-contacted-text';
+    if (['qualified', 'hot'].includes(statusLower)) return 'bg-status-qualified-bg text-status-qualified-text';
+    if (['closed_won', 'won'].includes(statusLower)) return 'bg-status-won-bg text-status-won-text';
+    if (['closed_lost', 'lost'].includes(statusLower)) return 'bg-status-lost-bg text-status-lost-text';
+    return 'bg-hover text-foreground';
   };
 
   const getPriorityColor = (priority?: string): string => {
-    if (!priority) return 'bg-[var(--hover)] text-[var(--foreground)]';
+    if (!priority) return 'bg-hover text-foreground';
     const priorityLower = priority.toLowerCase();
-    if (priorityLower === 'high') return 'bg-[var(--priority-high-bg)] text-[var(--priority-high-text)]';
-    if (priorityLower === 'medium') return 'bg-[var(--priority-medium-bg)] text-[var(--priority-medium-text)]';
-    if (priorityLower === 'low') return 'bg-[var(--priority-low-bg)] text-[var(--priority-low-text)]';
-    return 'bg-[var(--hover)] text-[var(--foreground)]';
+    if (priorityLower === 'high') return 'bg-priority-high-bg text-priority-high-text';
+    if (priorityLower === 'medium') return 'bg-priority-medium-bg text-priority-medium-text';
+    if (priorityLower === 'low') return 'bg-priority-low-bg text-priority-low-text';
+    return 'bg-hover text-foreground';
   };
 
   return (
@@ -5387,10 +5387,10 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Basic Information */}
         <div className="space-y-4">
-          <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2">Basic Information</h3>
+          <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2">Basic Information</h3>
           <div className="space-y-3">
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Stage</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Stage</label>
               <InlineEditField
                 value={record?.status || 'new'}
                 field="status"
@@ -5402,7 +5402,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Full Name</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Full Name</label>
               <InlineEditField
                 value={record?.fullName || record?.name || ''}
                 field="fullName"
@@ -5415,7 +5415,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs text-[var(--muted)] uppercase tracking-wide">First Name</label>
+                <label className="text-xs text-muted uppercase tracking-wide">First Name</label>
                 <InlineEditField
                   value={record?.firstName || ''}
                   field="firstName"
@@ -5427,7 +5427,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
                 />
               </div>
               <div>
-                <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Last Name</label>
+                <label className="text-xs text-muted uppercase tracking-wide">Last Name</label>
                 <InlineEditField
                   value={record?.lastName || ''}
                   field="lastName"
@@ -5440,7 +5440,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               </div>
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Title</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Title</label>
               <InlineEditField
                 value={record?.title || record?.jobTitle || ''}
                 field="title"
@@ -5452,7 +5452,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Department</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Department</label>
               <InlineEditField
                 value={record?.department || ''}
                 field="department"
@@ -5464,7 +5464,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Priority</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Priority</label>
               <InlineEditField
                 value={record?.priority || 'medium'}
                 field="priority"
@@ -5480,10 +5480,10 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
 
         {/* Contact Information */}
         <div className="space-y-4">
-          <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2">Contact Information</h3>
+          <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2">Contact Information</h3>
           <div className="space-y-3">
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Role</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Role</label>
               <InlineEditField
                 value={record?.role || ''}
                 field="role"
@@ -5504,7 +5504,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Email</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Email</label>
               <InlineEditField
                 value={record?.email || ''}
                 field="email"
@@ -5517,7 +5517,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Work Email</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Work Email</label>
               <InlineEditField
                 value={record?.workEmail || ''}
                 field="workEmail"
@@ -5530,7 +5530,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Personal Email</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Personal Email</label>
               <InlineEditField
                 value={record?.personalEmail || ''}
                 field="personalEmail"
@@ -5543,7 +5543,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Phone</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Phone</label>
               <InlineEditField
                 value={record?.phone || ''}
                 field="phone"
@@ -5556,7 +5556,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Mobile Phone</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Mobile Phone</label>
               <InlineEditField
                 value={record?.mobilePhone || ''}
                 field="mobilePhone"
@@ -5569,7 +5569,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">LinkedIn</label>
+              <label className="text-xs text-muted uppercase tracking-wide">LinkedIn</label>
               {console.log(`🔍 [LINKEDIN DEBUG] OverviewTab LinkedIn field:`, {
                 recordId: record?.id,
                 linkedinUrl: record?.linkedinUrl,
@@ -5593,10 +5593,10 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
 
         {/* Company Information */}
         <div className="space-y-4">
-          <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2">Company Information</h3>
+          <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2">Company Information</h3>
           <div className="space-y-3">
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Company</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Company</label>
               <InlineEditField
                 value={record?.name || record?.company || record?.companyName || ''}
                 field="name"
@@ -5608,7 +5608,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Company Domain</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Company Domain</label>
               <InlineEditField
                 value={record?.companyDomain || record?.domain || ''}
                 field="domain"
@@ -5621,7 +5621,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Industry</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Industry</label>
               <InlineEditField
                 value={record?.industry || ''}
                 field="industry"
@@ -5633,7 +5633,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Total Employees</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Total Employees</label>
               <InlineEditField
                 value={record?.employeeCount || record?.size || ''}
                 field="employeeCount"
@@ -5649,10 +5649,10 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
 
         {/* Location Information */}
         <div className="space-y-4">
-          <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2">Location Information</h3>
+          <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2">Location Information</h3>
           <div className="space-y-3">
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">City</label>
+              <label className="text-xs text-muted uppercase tracking-wide">City</label>
               <InlineEditField
                 value={record?.city || ''}
                 field="city"
@@ -5664,7 +5664,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Country</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Country</label>
               <InlineEditField
                 value={record?.country || ''}
                 field="country"
@@ -5676,7 +5676,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Address</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Address</label>
               <InlineEditField
                 value={record?.address || ''}
                 field="address"
@@ -5688,7 +5688,7 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
               />
             </div>
             <div>
-              <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Postal Code</label>
+              <label className="text-xs text-muted uppercase tracking-wide">Postal Code</label>
               <InlineEditField
                 value={record?.postalCode || ''}
                 field="postalCode"
@@ -5705,8 +5705,8 @@ function OverviewTab({ record, recordType, onSave }: { record: any; recordType: 
 
       {/* Notes & Description */}
       <div className="mt-8 space-y-4">
-        <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2">Notes & Description</h3>
-        <div className="bg-[var(--panel-background)] p-4 rounded-lg">
+        <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2">Notes & Description</h3>
+        <div className="bg-panel-background p-4 rounded-lg">
           <InlineEditField
             value={record?.notes || record?.description || ''}
             field="notes"
@@ -5727,8 +5727,8 @@ function CompanyTab({ record, recordType }: { record: any; recordType: string })
   return (
     <div className="p-6">
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide">Company Details</h3>
-        <div className="text-center py-12 text-[var(--muted)]">
+        <h3 className="text-sm font-medium text-foreground uppercase tracking-wide">Company Details</h3>
+        <div className="text-center py-12 text-muted">
           <p className="text-sm">Company enrichment data will appear here when available.</p>
         </div>
       </div>
@@ -6016,13 +6016,13 @@ export function NotesTab({ record, recordType, setPendingSaves, setLocalRecord, 
       </div>
 
       {/* Stats Footer */}
-      <div className="px-4 py-2 border-t border-[var(--border)] bg-[var(--background)]">
-        <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+      <div className="px-4 py-2 border-t border-border bg-background">
+        <div className="flex items-center justify-between text-xs text-muted">
           <div className="flex items-center gap-4">
             <span>{getWordCount(notes)} words</span>
             <span>{getCharacterCount(notes)} characters</span>
           </div>
-          <div className="text-[var(--muted)]">
+          <div className="text-muted">
             {getWordCount(notes) > 0 && (
               <span>
                 {Math.ceil(getWordCount(notes) / 200)} min read
@@ -6039,8 +6039,8 @@ function IndustryTab({ record, recordType }: { record: any; recordType: string }
   return (
     <div className="p-6">
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide">Industry Information</h3>
-        <div className="text-center py-12 text-[var(--muted)]">
+        <h3 className="text-sm font-medium text-foreground uppercase tracking-wide">Industry Information</h3>
+        <div className="text-center py-12 text-muted">
           <p className="text-sm">Industry data and insights will appear here when available.</p>
         </div>
       </div>
@@ -6052,8 +6052,8 @@ function CareerTab({ record, recordType }: { record: any; recordType: string }) 
   return (
     <div className="p-6">
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide">Career Information</h3>
-        <div className="text-center py-12 text-[var(--muted)]">
+        <h3 className="text-sm font-medium text-foreground uppercase tracking-wide">Career Information</h3>
+        <div className="text-center py-12 text-muted">
           <p className="text-sm">Career history and professional background will appear here when available.</p>
         </div>
       </div>
@@ -6065,8 +6065,8 @@ function LandminesTab({ record, recordType }: { record: any; recordType: string 
   return (
     <div className="p-6">
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide">Landmines</h3>
-        <div className="text-center py-12 text-[var(--muted)]">
+        <h3 className="text-sm font-medium text-foreground uppercase tracking-wide">Landmines</h3>
+        <div className="text-center py-12 text-muted">
           <p className="text-sm">Potential issues and red flags will appear here when available.</p>
         </div>
       </div>
@@ -6132,7 +6132,7 @@ function HistoryTab({ record, recordType }: { record: any; recordType: string })
   return (
     <div className="p-6">
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide">History</h3>
+        <h3 className="text-sm font-medium text-foreground uppercase tracking-wide">History</h3>
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader size="sm" />
@@ -6140,20 +6140,20 @@ function HistoryTab({ record, recordType }: { record: any; recordType: string })
         ) : activities.length > 0 ? (
           <div className="space-y-3">
             {activities.map((activity) => (
-              <div key={activity.id} className="bg-[var(--panel-background)] p-4 rounded-lg">
+              <div key={activity.id} className="bg-panel-background p-4 rounded-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h4 className="text-sm font-medium text-[var(--foreground)]">{activity.subject}</h4>
-                    <p className="text-sm text-[var(--muted)] mt-1">{activity.description}</p>
-                    <p className="text-xs text-[var(--muted)] mt-2">
+                    <h4 className="text-sm font-medium text-foreground">{activity.subject}</h4>
+                    <p className="text-sm text-muted mt-1">{activity.description}</p>
+                    <p className="text-xs text-muted mt-2">
                       {activity.completedAt.toLocaleDateString()} • {activity.type}
                     </p>
                   </div>
                   {activity['outcome'] && (
                     <span className={`text-xs px-2 py-1 rounded-full ${
-                      activity['outcome'] === 'positive' ? 'bg-[var(--success-bg)] text-[var(--success-text)]' :
-                      activity['outcome'] === 'negative' ? 'bg-[var(--error-bg)] text-[var(--error-text)]' :
-                      'bg-[var(--hover)] text-[var(--foreground)]'
+                      activity['outcome'] === 'positive' ? 'bg-success-bg text-success-text' :
+                      activity['outcome'] === 'negative' ? 'bg-error-bg text-error-text' :
+                      'bg-hover text-foreground'
                     }`}>
                       {activity.outcome}
                     </span>
@@ -6163,7 +6163,7 @@ function HistoryTab({ record, recordType }: { record: any; recordType: string })
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 text-[var(--muted)]">
+          <div className="text-center py-12 text-muted">
             <p className="text-sm">No history available yet.</p>
           </div>
         )}

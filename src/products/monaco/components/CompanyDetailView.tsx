@@ -128,22 +128,22 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={() => setSelectedPerson(null)}
-            className="p-2 rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+            className="p-2 rounded-lg hover:bg-hover transition-colors"
           >
-            <ChevronLeftIcon className="w-5 h-5 text-[var(--muted)]" />
+            <ChevronLeftIcon className="w-5 h-5 text-muted" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">
+            <h1 className="text-2xl font-bold text-foreground">
               {selectedPerson.name}
             </h1>
-            <p className="text-[var(--muted)]">
+            <p className="text-muted">
               {selectedPerson.title} at {selectedPerson.company}
             </p>
           </div>
         </div>
 
         {/* Person detail content here */}
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+        <div className="bg-background border border-border rounded-xl p-6">
           <div className="grid grid-cols-2 gap-6">
             <div>
               <h3 className="text-lg font-semibold mb-4">
@@ -151,30 +151,30 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
               </h3>
               <div className="space-y-3">
                 <div>
-                  <span className="text-sm font-medium text-[var(--muted)]">
+                  <span className="text-sm font-medium text-muted">
                     Email:
                   </span>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {selectedPerson.email}
                   </p>
                 </div>
                 {selectedPerson['phone'] && (
                   <div>
-                    <span className="text-sm font-medium text-[var(--muted)]">
+                    <span className="text-sm font-medium text-muted">
                       Phone:
                     </span>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {selectedPerson.phone}
                     </p>
                   </div>
                 )}
                 <div>
-                  <span className="text-sm font-medium text-[var(--muted)]">
+                  <span className="text-sm font-medium text-muted">
                     Location:
                   </span>
                   <div className="flex items-center gap-2">
                     <CountryFlag location={selectedPerson.location} />
-                    <span className="text-[var(--foreground)]">
+                    <span className="text-foreground">
                       {selectedPerson.location}
                     </span>
                   </div>
@@ -185,41 +185,41 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
               <h3 className="text-lg font-semibold mb-4">Role Information</h3>
               <div className="space-y-3">
                 <div>
-                  <span className="text-sm font-medium text-[var(--muted)]">
+                  <span className="text-sm font-medium text-muted">
                     Department:
                   </span>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {selectedPerson.department}
                   </p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-[var(--muted)]">
+                  <span className="text-sm font-medium text-muted">
                     Seniority:
                   </span>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {selectedPerson.seniority}
                   </p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-[var(--muted)]">
+                  <span className="text-sm font-medium text-muted">
                     Decision Maker:
                   </span>
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${
                       selectedPerson.isDecisionMaker
                         ? "bg-[#9B59B6] bg-opacity-10 text-[#9B59B6]"
-                        : "bg-[var(--hover)] text-[var(--muted)]"
+                        : "bg-hover text-muted"
                     }`}
                   >
                     {selectedPerson.isDecisionMaker ? "Yes" : "No"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-[var(--muted)]">
+                  <span className="text-sm font-medium text-muted">
                     Influence Score:
                   </span>
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-[var(--loading-bg)] rounded-full h-2">
+                    <div className="flex-1 bg-loading-bg rounded-full h-2">
                       <div
                         className="bg-[#9B59B6] h-2 rounded-full"
                         style={{ width: `${selectedPerson.influenceScore}%` }}
@@ -244,21 +244,21 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
       <div className="flex items-center gap-4 mb-6">
         <button
           onClick={onBack}
-          className="p-2 rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+          className="p-2 rounded-lg hover:bg-hover transition-colors"
         >
-          <ChevronLeftIcon className="w-5 h-5 text-[var(--muted)]" />
+          <ChevronLeftIcon className="w-5 h-5 text-muted" />
         </button>
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">
+            <h1 className="text-2xl font-bold text-foreground">
               {company.name}
             </h1>
             <CountryFlag location={company.location} size="md" />
           </div>
-          <p className="text-[var(--muted)]">{company.domain}</p>
+          <p className="text-muted">{company.domain}</p>
         </div>
         <div className="text-right">
-          <div className="text-sm text-[var(--muted)]">ICP Score</div>
+          <div className="text-sm text-muted">ICP Score</div>
           <div className="text-2xl font-bold text-[#9B59B6]">
             {company.icpScore}%
           </div>
@@ -266,7 +266,7 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
       </div>
 
       {/* Sales Intelligence Banner */}
-      <div className="mb-6 p-4 bg-[var(--hover-bg)] rounded-lg border border-[var(--border)]">
+      <div className="mb-6 p-4 bg-hover rounded-lg border border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#9B59B6] bg-opacity-10 flex items-center justify-center">
@@ -277,19 +277,19 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
               )}
             </div>
             <div>
-              <div className="font-semibold text-[var(--foreground)]">
+              <div className="font-semibold text-foreground">
                 {decisionInfo['saleType'] === "decision-maker"
                   ? "Decision Maker Sale"
                   : "Buyer Group Sale"}
               </div>
-              <div className="text-sm text-[var(--muted)]">
+              <div className="text-sm text-muted">
                 {decisionInfo.description}
               </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-sm text-[var(--muted)]">Timeline</div>
-            <div className="font-semibold text-[var(--foreground)]">
+            <div className="text-sm text-muted">Timeline</div>
+            <div className="font-semibold text-foreground">
               {decisionInfo.timeline}
             </div>
           </div>
@@ -297,14 +297,14 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-[var(--border)]">
+      <div className="flex gap-2 mb-6 border-b border-border">
         {tabs.map((tab) => (
           <button
             key={tab}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab
                 ? "border-[#9B59B6] text-[#9B59B6]"
-                : "border-transparent text-[var(--muted)] hover:text-[var(--foreground)]"
+                : "border-transparent text-muted hover:text-foreground"
             }`}
             onClick={() => setActiveTab(tab)}
           >
@@ -324,29 +324,29 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
             </h2>
 
             {/* People Table */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden">
+            <div className="bg-background border border-border rounded-xl overflow-hidden">
               <table className="w-full">
-                <thead className="bg-[var(--hover-bg)]">
+                <thead className="bg-hover">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Rank
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Title
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Department
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Decision Power
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Influence
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Status
                     </th>
                   </tr>
@@ -355,28 +355,28 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
                   {companyPeople.map((person, index) => (
                     <tr
                       key={person.id}
-                      className="border-b border-[var(--border)] hover:bg-[var(--hover-bg)] cursor-pointer transition-colors"
+                      className="border-b border-border hover:bg-hover cursor-pointer transition-colors"
                       onClick={() => setSelectedPerson(person)}
                     >
                       <td className="px-6 py-4">
-                        <div className="w-8 h-8 rounded-lg bg-[var(--hover)] flex items-center justify-center">
-                          <span className="text-sm font-bold text-[var(--muted)]">
+                        <div className="w-8 h-8 rounded-lg bg-hover flex items-center justify-center">
+                          <span className="text-sm font-bold text-muted">
                             {index + 1}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="font-medium text-[var(--foreground)]">
+                        <div className="font-medium text-foreground">
                           {person.name}
                         </div>
-                        <div className="text-sm text-[var(--muted)]">
+                        <div className="text-sm text-muted">
                           {person.email}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-[var(--foreground)]">
+                      <td className="px-6 py-4 text-foreground">
                         {person.title}
                       </td>
-                      <td className="px-6 py-4 text-[var(--muted)]">
+                      <td className="px-6 py-4 text-muted">
                         {person.department}
                       </td>
                       <td className="px-6 py-4">
@@ -385,20 +385,20 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
                             High
                           </span>
                         ) : (
-                          <span className="px-2 py-1 bg-[var(--hover)] text-[var(--muted)] rounded-full text-xs font-medium">
+                          <span className="px-2 py-1 bg-hover text-muted rounded-full text-xs font-medium">
                             Medium
                           </span>
                         )}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-[var(--loading-bg)] rounded-full h-1.5 max-w-[60px]">
+                          <div className="flex-1 bg-loading-bg rounded-full h-1.5 max-w-[60px]">
                             <div
                               className="bg-[#9B59B6] h-1.5 rounded-full"
                               style={{ width: `${person.influenceScore}%` }}
                             />
                           </div>
-                          <span className="text-xs text-[var(--muted)]">
+                          <span className="text-xs text-muted">
                             {person.influenceScore}%
                           </span>
                         </div>
@@ -410,7 +410,7 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
                               ? "bg-blue-100 text-blue-800"
                               : person['status'] === "qualified"
                                 ? "bg-green-100 text-green-800"
-                                : "bg-[var(--hover)] text-[var(--muted)]"
+                                : "bg-hover text-muted"
                           }`}
                         >
                           {person.status}
@@ -428,31 +428,31 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Company Information</h3>
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 space-y-3">
+              <div className="bg-background border border-border rounded-lg p-4 space-y-3">
                 <div className="flex items-center gap-2">
-                  <BuildingOffice2Icon className="w-5 h-5 text-[var(--muted)]" />
+                  <BuildingOffice2Icon className="w-5 h-5 text-muted" />
                   <span className="font-medium">Industry:</span>
-                  <span className="text-[var(--muted)]">
+                  <span className="text-muted">
                     {company.industry}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <UsersIcon className="w-5 h-5 text-[var(--muted)]" />
+                  <UsersIcon className="w-5 h-5 text-muted" />
                   <span className="font-medium">Employees:</span>
-                  <span className="text-[var(--muted)]">
+                  <span className="text-muted">
                     {company.employeeCount}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CurrencyDollarIcon className="w-5 h-5 text-[var(--muted)]" />
+                  <CurrencyDollarIcon className="w-5 h-5 text-muted" />
                   <span className="font-medium">Revenue:</span>
-                  <span className="text-[var(--muted)]">{company.revenue}</span>
+                  <span className="text-muted">{company.revenue}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <GlobeAltIcon className="w-5 h-5 text-[var(--muted)]" />
+                  <GlobeAltIcon className="w-5 h-5 text-muted" />
                   <CountryFlag location={company.location} />
                   <span className="font-medium">Location:</span>
-                  <span className="text-[var(--muted)]">
+                  <span className="text-muted">
                     {company.location}
                   </span>
                 </div>
@@ -461,28 +461,28 @@ export const CompanyDetailView: React.FC<CompanyDetailViewProps> = ({
 
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Sales Intelligence</h3>
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 space-y-3">
+              <div className="bg-background border border-border rounded-lg p-4 space-y-3">
                 <div>
                   <span className="font-medium">Sale Type:</span>
-                  <span className="ml-2 text-[var(--muted)]">
+                  <span className="ml-2 text-muted">
                     {decisionInfo.saleType}
                   </span>
                 </div>
                 <div>
                   <span className="font-medium">Strategy:</span>
-                  <span className="ml-2 text-[var(--muted)]">
+                  <span className="ml-2 text-muted">
                     {decisionInfo.strategy}
                   </span>
                 </div>
                 <div>
                   <span className="font-medium">Complexity:</span>
-                  <span className="ml-2 text-[var(--muted)]">
+                  <span className="ml-2 text-muted">
                     {decisionInfo.complexity}
                   </span>
                 </div>
                 <div>
                   <span className="font-medium">Est. Timeline:</span>
-                  <span className="ml-2 text-[var(--muted)]">
+                  <span className="ml-2 text-muted">
                     {decisionInfo.timeline}
                   </span>
                 </div>

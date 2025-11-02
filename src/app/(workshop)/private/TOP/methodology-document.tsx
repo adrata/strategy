@@ -11,8 +11,8 @@ export default function TOPMethodologyDocument() {
             </div>
 
             {/* Executive Overview */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🎯 Executive Overview</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">🎯 Executive Overview</h2>
                 <div className="prose max-w-none">
                     <p className="text-lg text-gray-700 mb-4">
                         This document provides a complete methodology for understanding how the unified enrichment system 
@@ -29,8 +29,8 @@ export default function TOPMethodologyDocument() {
             </div>
 
             {/* Data Foundation */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📊 Data Foundation</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">📊 Data Foundation</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -58,15 +58,15 @@ export default function TOPMethodologyDocument() {
             </div>
 
             {/* API Integration Architecture */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibent text-[var(--foreground)] mb-4">🔗 API Integration Architecture</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibent text-foreground mb-4">🔗 API Integration Architecture</h2>
                 
                 <div className="space-y-6">
-                    <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
+                    <div className="bg-panel-background border border-border rounded-lg p-4">
                         <h3 className="font-semibold text-gray-800 mb-3">Working APIs (Production Ready)</h3>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="bg-[var(--background)] border border-green-300 rounded-lg p-3">
+                            <div className="bg-background border border-green-300 rounded-lg p-3">
                                 <h4 className="font-medium text-green-800">✅ DropContact Email Validation</h4>
                                 <ul className="text-sm text-green-700 mt-2 space-y-1">
                                     <li>• <strong>Endpoint:</strong> https://api.dropcontact.io/batch</li>
@@ -77,7 +77,7 @@ export default function TOPMethodologyDocument() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-[var(--background)] border border-green-300 rounded-lg p-3">
+                            <div className="bg-background border border-green-300 rounded-lg p-3">
                                 <h4 className="font-medium text-green-800">✅ Perplexity Employment Verification</h4>
                                 <ul className="text-sm text-green-700 mt-2 space-y-1">
                                     <li>• <strong>Endpoint:</strong> https://api.perplexity.ai/chat/completions</li>
@@ -88,7 +88,7 @@ export default function TOPMethodologyDocument() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-[var(--background)] border border-green-300 rounded-lg p-3">
+                            <div className="bg-background border border-green-300 rounded-lg p-3">
                                 <h4 className="font-medium text-green-800">✅ CoreSignal Person Search</h4>
                                 <ul className="text-sm text-green-700 mt-2 space-y-1">
                                     <li>• <strong>Endpoint:</strong> https://api.coresignal.com/cdapi/v2/employee_multi_source/search/es_dsl</li>
@@ -99,7 +99,7 @@ export default function TOPMethodologyDocument() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-[var(--background)] border border-yellow-300 rounded-lg p-3">
+                            <div className="bg-background border border-yellow-300 rounded-lg p-3">
                                 <h4 className="font-medium text-yellow-800">⚠️ Twilio Phone Validation</h4>
                                 <ul className="text-sm text-yellow-700 mt-2 space-y-1">
                                     <li>• <strong>Endpoint:</strong> https://lookups.twilio.com/v2/PhoneNumbers/</li>
@@ -115,8 +115,8 @@ export default function TOPMethodologyDocument() {
             </div>
 
             {/* Zero Hallucination Methodology */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🚨 Zero Hallucination Methodology</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">🚨 Zero Hallucination Methodology</h2>
                 
                 <div className="space-y-4">
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -145,8 +145,8 @@ export default function TOPMethodologyDocument() {
             </div>
 
             {/* Use Case Methodology */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">📋 Use Case Execution Methodology</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">📋 Use Case Execution Methodology</h2>
                 
                 <div className="space-y-6">
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -156,7 +156,7 @@ export default function TOPMethodologyDocument() {
                         </p>
                         
                         <div className="space-y-3">
-                            <div className="bg-[var(--background)] border border-blue-300 rounded-lg p-3">
+                            <div className="bg-background border border-blue-300 rounded-lg p-3">
                                 <h4 className="font-medium text-blue-800">1. Utility Communications Buyer Group Research</h4>
                                 <ul className="text-sm text-blue-700 mt-1 space-y-1">
                                     <li>• <strong>Company:</strong> Idaho Power Company (✅ Real company in database)</li>
@@ -166,7 +166,7 @@ export default function TOPMethodologyDocument() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-[var(--background)] border border-blue-300 rounded-lg p-3">
+                            <div className="bg-background border border-blue-300 rounded-lg p-3">
                                 <h4 className="font-medium text-blue-800">2. Prospect Enrichment Research</h4>
                                 <ul className="text-sm text-blue-700 mt-1 space-y-1">
                                     <li>• <strong>Contact:</strong> Chris Mantle at Puget Sound Energy (✅ Real person)</li>
@@ -176,7 +176,7 @@ export default function TOPMethodologyDocument() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-[var(--background)] border border-blue-300 rounded-lg p-3">
+                            <div className="bg-background border border-blue-300 rounded-lg p-3">
                                 <h4 className="font-medium text-blue-800">3. Find Communications Engineer</h4>
                                 <ul className="text-sm text-blue-700 mt-1 space-y-1">
                                     <li>• <strong>Target:</strong> NV Energy SCADA engineer (✅ Real company)</li>
@@ -186,7 +186,7 @@ export default function TOPMethodologyDocument() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-[var(--background)] border border-blue-300 rounded-lg p-3">
+                            <div className="bg-background border border-blue-300 rounded-lg p-3">
                                 <h4 className="font-medium text-blue-800">4. Competitor Intelligence Research</h4>
                                 <ul className="text-sm text-blue-700 mt-1 space-y-1">
                                     <li>• <strong>Focus:</strong> Utility communications engineering market</li>
@@ -201,8 +201,8 @@ export default function TOPMethodologyDocument() {
             </div>
 
             {/* Quality Assurance Process */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🔍 Quality Assurance Process</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">🔍 Quality Assurance Process</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
@@ -232,17 +232,17 @@ export default function TOPMethodologyDocument() {
             </div>
 
             {/* Technical Implementation Details */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">⚙️ Technical Implementation Details</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">⚙️ Technical Implementation Details</h2>
                 
                 <div className="space-y-6">
-                    <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
+                    <div className="bg-panel-background border border-border rounded-lg p-4">
                         <h3 className="font-semibold text-gray-800 mb-3">System Architecture</h3>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3">
+                            <div className="bg-background border border-border rounded-lg p-3">
                                 <h4 className="font-medium text-gray-800">Database Layer</h4>
-                                <ul className="text-sm text-[var(--muted)] mt-2 space-y-1">
+                                <ul className="text-sm text-muted mt-2 space-y-1">
                                     <li>• PostgreSQL production database</li>
                                     <li>• Prisma ORM for type-safe queries</li>
                                     <li>• 1,342 real TOP contacts</li>
@@ -251,9 +251,9 @@ export default function TOPMethodologyDocument() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3">
+                            <div className="bg-background border border-border rounded-lg p-3">
                                 <h4 className="font-medium text-gray-800">API Integration</h4>
-                                <ul className="text-sm text-[var(--muted)] mt-2 space-y-1">
+                                <ul className="text-sm text-muted mt-2 space-y-1">
                                     <li>• Unified enrichment system</li>
                                     <li>• Multi-source data validation</li>
                                     <li>• Real-time API responses</li>
@@ -262,9 +262,9 @@ export default function TOPMethodologyDocument() {
                                 </ul>
                             </div>
                             
-                            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3">
+                            <div className="bg-background border border-border rounded-lg p-3">
                                 <h4 className="font-medium text-gray-800">Quality Control</h4>
-                                <ul className="text-sm text-[var(--muted)] mt-2 space-y-1">
+                                <ul className="text-sm text-muted mt-2 space-y-1">
                                     <li>• Zero hallucination validation</li>
                                     <li>• Complete source attribution</li>
                                     <li>• Confidence score tracking</li>
@@ -278,28 +278,28 @@ export default function TOPMethodologyDocument() {
             </div>
 
             {/* Seller Workflow Integration */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">👤 Seller Workflow Integration</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">👤 Seller Workflow Integration</h2>
                 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <h3 className="font-semibold text-blue-800 mb-3">How TOP Sellers Use the System</h3>
                     
                     <div className="space-y-4">
-                        <div className="bg-[var(--background)] border border-blue-300 rounded-lg p-3">
+                        <div className="bg-background border border-blue-300 rounded-lg p-3">
                             <h4 className="font-medium text-blue-800">1. AI Right Panel Interaction</h4>
                             <p className="text-sm text-blue-700 mt-1">
                                 Sellers ask natural language questions like "I'm working with Idaho Power Company and need to find their communications engineering buyer group"
                             </p>
                         </div>
                         
-                        <div className="bg-[var(--background)] border border-blue-300 rounded-lg p-3">
+                        <div className="bg-background border border-blue-300 rounded-lg p-3">
                             <h4 className="font-medium text-blue-800">2. Real-Time Enrichment</h4>
                             <p className="text-sm text-blue-700 mt-1">
                                 System queries production database, validates with external APIs, and returns enriched contact information with source attribution
                             </p>
                         </div>
                         
-                        <div className="bg-[var(--background)] border border-blue-300 rounded-lg p-3">
+                        <div className="bg-background border border-blue-300 rounded-lg p-3">
                             <h4 className="font-medium text-blue-800">3. Professional Output</h4>
                             <p className="text-sm text-blue-700 mt-1">
                                 Results include confidence scores, data sources, and utility-specific context suitable for client presentations
@@ -310,8 +310,8 @@ export default function TOPMethodologyDocument() {
             </div>
 
             {/* Future Enhancements */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-4">🚀 Future Enhancement Roadmap</h2>
+            <div className="bg-background border border-border rounded-lg p-6">
+                <h2 className="text-2xl font-semibold text-foreground mb-4">🚀 Future Enhancement Roadmap</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
@@ -352,8 +352,8 @@ export default function TOPMethodologyDocument() {
             </div>
 
             {/* Footer */}
-            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 text-center">
-                <p className="text-sm text-[var(--muted)]">
+            <div className="bg-panel-background border border-border rounded-lg p-4 text-center">
+                <p className="text-sm text-muted">
                     <strong>Methodology Document:</strong> December 19, 2024 | 
                     <strong> System Status:</strong> Production Ready | 
                     <strong> Zero Hallucination:</strong> ✅ Confirmed

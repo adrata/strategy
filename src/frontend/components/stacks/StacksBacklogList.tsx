@@ -223,11 +223,11 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Deep Backlog</h2>
-            <p className="text-sm text-[var(--muted)]">Long-term ideas and feedback capture</p>
+            <h2 className="text-lg font-semibold text-foreground">Deep Backlog</h2>
+            <p className="text-sm text-muted">Long-term ideas and feedback capture</p>
           </div>
           <button className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 border border-gray-200 rounded-md hover:bg-gray-200 transition-colors">
             <PlusIcon className="h-4 w-4" />
@@ -243,7 +243,7 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
               placeholder="Search deep backlog..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
             />
           </div>
           
@@ -251,7 +251,7 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-[var(--primary)]"
+              className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-[var(--primary)]"
             >
               <option value="all">All Status</option>
               <option value="todo">To Do</option>
@@ -263,7 +263,7 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-[var(--primary)]"
+              className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-[var(--primary)]"
             >
               <option value="rank">Sort by Rank</option>
               <option value="priority">Sort by Priority</option>
@@ -280,10 +280,10 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
         {filteredItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📋</div>
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               No deep backlog items found
             </h3>
-            <p className="text-[var(--muted)]">
+            <p className="text-muted">
               {searchQuery ? 'Try adjusting your search terms' : 'Create your first deep backlog item to get started'}
             </p>
           </div>
@@ -291,9 +291,9 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
           <div className="p-4">
             {/* Desktop Table View */}
             <div className="hidden lg:block">
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
+              <div className="bg-background border border-border rounded-lg overflow-hidden">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-[var(--border)]">
+                  <thead className="bg-gray-50 border-b border-border">
                     <tr>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Rank
@@ -395,7 +395,7 @@ export function StacksBacklogList({ onItemClick }: StacksBacklogListProps) {
                 return (
                   <div
                     key={item.id}
-                    className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-[var(--accent)] transition-colors cursor-pointer"
+                    className="bg-background border border-border rounded-lg p-4 hover:border-primary transition-colors cursor-pointer"
                     onClick={() => onItemClick?.(item)}
                     onContextMenu={(e) => handleContextMenu(e, item.id)}
                   >

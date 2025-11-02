@@ -205,14 +205,14 @@ export const AdminInviteUsers: React.FC = () => {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-[var(--border)]">
+      <div className="p-6 border-b border-border">
         <div className="flex items-center">
           <UserPlusIcon className="h-6 w-6 text-blue-600 mr-3" />
           <div>
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Invite Users
             </h2>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               Send invitations to new team members
             </p>
           </div>
@@ -222,8 +222,8 @@ export const AdminInviteUsers: React.FC = () => {
       <div className="flex-1 overflow-auto">
         <div className="p-6 space-y-8">
           {/* Invitation Form */}
-          <div className="bg-white rounded-lg border border-[var(--border)] p-6">
-            <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">
+          <div className="bg-white rounded-lg border border-border p-6">
+            <h3 className="text-lg font-medium text-foreground mb-4">
               Send Invitation
             </h3>
 
@@ -252,18 +252,18 @@ export const AdminInviteUsers: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">
                     Email Address *
                   </label>
                   <div className="relative">
-                    <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
+                    <EnvelopeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted" />
                     <input
                       type="email"
                       id="email"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full pl-10 pr-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="user@example.com"
                       required
                     />
@@ -271,17 +271,17 @@ export const AdminInviteUsers: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="workspaceId" className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                  <label htmlFor="workspaceId" className="block text-sm font-medium text-foreground mb-1">
                     Workspace *
                   </label>
                   <div className="relative">
-                    <BuildingOfficeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
+                    <BuildingOfficeIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted" />
                     <select
                       id="workspaceId"
                       name="workspaceId"
                       value={formData.workspaceId}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full pl-10 pr-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       required
                     >
                       {workspaces.map((workspace) => (
@@ -296,36 +296,36 @@ export const AdminInviteUsers: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                  <label htmlFor="firstName" className="block text-sm font-medium text-foreground mb-1">
                     First Name
                   </label>
                   <div className="relative">
-                    <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
+                    <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted" />
                     <input
                       type="text"
                       id="firstName"
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full pl-10 pr-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="John"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                  <label htmlFor="lastName" className="block text-sm font-medium text-foreground mb-1">
                     Last Name
                   </label>
                   <div className="relative">
-                    <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
+                    <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted" />
                     <input
                       type="text"
                       id="lastName"
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full pl-10 pr-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Doe"
                     />
                   </div>
@@ -333,17 +333,17 @@ export const AdminInviteUsers: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="role" className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                <label htmlFor="role" className="block text-sm font-medium text-foreground mb-1">
                   Role
                 </label>
                 <div className="relative">
-                  <ShieldCheckIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--muted)]" />
+                  <ShieldCheckIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted" />
                   <select
                     id="role"
                     name="role"
                     value={formData.role}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full pl-10 pr-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="VIEWER">Viewer - Read-only access</option>
                     <option value="SELLER">Seller - Manage own records</option>
@@ -376,12 +376,12 @@ export const AdminInviteUsers: React.FC = () => {
           </div>
 
           {/* Recent Invitations */}
-          <div className="bg-white rounded-lg border border-[var(--border)]">
-            <div className="p-6 border-b border-[var(--border)]">
-              <h3 className="text-lg font-medium text-[var(--foreground)]">
+          <div className="bg-white rounded-lg border border-border">
+            <div className="p-6 border-b border-border">
+              <h3 className="text-lg font-medium text-foreground">
                 Recent Invitations
               </h3>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Track the status of your invitations
               </p>
             </div>
@@ -390,32 +390,32 @@ export const AdminInviteUsers: React.FC = () => {
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="text-sm text-[var(--muted)] mt-2">Loading invitations...</p>
+                  <p className="text-sm text-muted mt-2">Loading invitations...</p>
                 </div>
               ) : invitations.length === 0 ? (
                 <div className="text-center py-8">
-                  <UserPlusIcon className="h-12 w-12 text-[var(--muted)] mx-auto mb-4" />
-                  <p className="text-sm text-[var(--muted)]">No invitations sent yet</p>
+                  <UserPlusIcon className="h-12 w-12 text-muted mx-auto mb-4" />
+                  <p className="text-sm text-muted">No invitations sent yet</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {invitations.map((invitation) => (
                     <div
                       key={invitation.id}
-                      className="flex items-center justify-between p-4 border border-[var(--border)] rounded-lg hover:bg-gray-50"
+                      className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-gray-50"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0">
                           {getStatusIcon(invitation.status)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-[var(--foreground)]">
+                          <p className="text-sm font-medium text-foreground">
                             {invitation.user.name || invitation.user.email}
                           </p>
-                          <p className="text-sm text-[var(--muted)]">
+                          <p className="text-sm text-muted">
                             {invitation.user.email}
                           </p>
-                          <p className="text-xs text-[var(--muted)]">
+                          <p className="text-xs text-muted">
                             {invitation.workspace?.name} • {invitation.role}
                           </p>
                         </div>
@@ -428,7 +428,7 @@ export const AdminInviteUsers: React.FC = () => {
                         >
                           {invitation.status}
                         </span>
-                        <span className="text-xs text-[var(--muted)]">
+                        <span className="text-xs text-muted">
                           {new Date(invitation.createdAt).toLocaleDateString()}
                         </span>
                       </div>

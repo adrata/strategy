@@ -452,7 +452,7 @@ export function CompleteActionModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-background border border-border rounded-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -472,10 +472,10 @@ export function CompleteActionModal({
                 </svg>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-[var(--foreground)]">
+                <h2 className="text-xl font-bold text-foreground">
                   {initialData ? '🔄 Undo Action' : 'Add Action'}
                 </h2>
-                <p className="text-sm text-[var(--muted)]">
+                <p className="text-sm text-muted">
                   {initialData 
                     ? `Resubmit your interaction with ${personName || 'selected person'} (undo mode - will resave to database)`
                     : companyName && !personName 
@@ -488,9 +488,9 @@ export function CompleteActionModal({
             <button
               onClick={handleClose}
               disabled={isLoading}
-              className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+              className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-hover transition-colors"
             >
-              <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -500,13 +500,13 @@ export function CompleteActionModal({
             {/* Person - Auto-filled or Search (hidden for company records) */}
             {personName && (
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Person * {!formData.person && <span className="text-xs font-normal text-[var(--muted)]">(Search and select a person to continue)</span>}
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Person * {!formData.person && <span className="text-xs font-normal text-muted">(Search and select a person to continue)</span>}
               </label>
               {formData.person ? (
                 // Show selected person
                 <div 
-                  className="px-3 py-2 border rounded-lg text-[var(--foreground)] text-sm"
+                  className="px-3 py-2 border rounded-lg text-foreground text-sm"
                   style={{ 
                     backgroundColor: categoryColors.bg,
                     borderColor: categoryColors.border
@@ -514,7 +514,7 @@ export function CompleteActionModal({
                 >
                   {formData.person}
                   {formData.company && (
-                    <div className="text-xs text-[var(--muted)] mt-1">
+                    <div className="text-xs text-muted mt-1">
                       {formData.company}
                     </div>
                   )}
@@ -528,7 +528,7 @@ export function CompleteActionModal({
                     value={personSearchQuery}
                     onChange={(e) => setPersonSearchQuery(e.target.value)}
                     placeholder="Search for person..."
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:border-transparent text-sm"
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:border-transparent text-sm"
                     style={{
                       '--tw-ring-color': categoryColors.primary
                     } as React.CSSProperties}
@@ -537,32 +537,32 @@ export function CompleteActionModal({
 
                   {/* Person Search Results */}
                   {(personSearchResults.length > 0 || (personSearchQuery.trim().length >= 2 && !isSearchingPeople)) && !showCreatePersonForm && (
-                    <div className="absolute z-20 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    <div className="absolute z-20 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
                       {isSearchingPeople ? (
                         <div className="px-4 py-3 text-center">
-                          <div className="text-sm text-[var(--muted)]">Searching...</div>
+                          <div className="text-sm text-muted">Searching...</div>
                         </div>
                       ) : personSearchResults.length > 0 ? (
                         personSearchResults.map((person) => (
                           <div
                             key={person.id}
                             onClick={() => handlePersonSelect(person)}
-                            className="px-4 py-2 hover:bg-[var(--panel-background)] cursor-pointer border-b border-gray-100 last:border-b-0"
+                            className="px-4 py-2 hover:bg-panel-background cursor-pointer border-b border-gray-100 last:border-b-0"
                           >
-                            <div className="font-medium text-[var(--foreground)]">
+                            <div className="font-medium text-foreground">
                               {person.fullName || `${person.firstName} ${person.lastName}`.trim()}
                             </div>
                             {person.jobTitle && (
-                              <div className="text-sm text-[var(--muted)]">{person.jobTitle}</div>
+                              <div className="text-sm text-muted">{person.jobTitle}</div>
                             )}
                             {person.company && (
-                              <div className="text-sm text-[var(--muted)]">{person.company.name}</div>
+                              <div className="text-sm text-muted">{person.company.name}</div>
                             )}
                           </div>
                         ))
                       ) : (
                         <div className="px-4 py-3 text-center">
-                          <div className="text-sm text-[var(--muted)] mb-2">
+                          <div className="text-sm text-muted mb-2">
                             No people found for "{personSearchQuery}"
                           </div>
                           <button
@@ -587,13 +587,13 @@ export function CompleteActionModal({
 
             {/* Create Person Form */}
             {personName && showCreatePersonForm && (
-              <div className="border border-[var(--border)] rounded-lg p-4 bg-[var(--panel-background)]">
+              <div className="border border-border rounded-lg p-4 bg-panel-background">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-medium text-[var(--foreground)]">Create New Person</h3>
+                  <h3 className="text-sm font-medium text-foreground">Create New Person</h3>
                   <button
                     type="button"
                     onClick={() => setShowCreatePersonForm(false)}
-                    className="text-[var(--muted)] hover:text-[var(--foreground)]"
+                    className="text-muted hover:text-foreground"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -603,7 +603,7 @@ export function CompleteActionModal({
                 <form onSubmit={handleCreatePerson} className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-[var(--foreground)] mb-1">
+                      <label className="block text-xs font-medium text-foreground mb-1">
                         First Name *
                       </label>
                       <input
@@ -611,21 +611,21 @@ export function CompleteActionModal({
                         type="text"
                         value={newPersonData.firstName}
                         onChange={(e) => setNewPersonData(prev => ({ ...prev, firstName: e.target.value }))}
-                        className="w-full px-2 py-1.5 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1"
+                        className="w-full px-2 py-1.5 text-sm border border-border rounded bg-background text-foreground focus:outline-none focus:ring-1"
                         placeholder="First name"
                         required
                         disabled={isCreatingPerson}
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[var(--foreground)] mb-1">
+                      <label className="block text-xs font-medium text-foreground mb-1">
                         Last Name *
                       </label>
                       <input
                         type="text"
                         value={newPersonData.lastName}
                         onChange={(e) => setNewPersonData(prev => ({ ...prev, lastName: e.target.value }))}
-                        className="w-full px-2 py-1.5 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1"
+                        className="w-full px-2 py-1.5 text-sm border border-border rounded bg-background text-foreground focus:outline-none focus:ring-1"
                         placeholder="Last name"
                         required
                         disabled={isCreatingPerson}
@@ -633,27 +633,27 @@ export function CompleteActionModal({
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[var(--foreground)] mb-1">
+                    <label className="block text-xs font-medium text-foreground mb-1">
                       Email
                     </label>
                     <input
                       type="email"
                       value={newPersonData.email}
                       onChange={(e) => setNewPersonData(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1"
+                      className="w-full px-2 py-1.5 text-sm border border-border rounded bg-background text-foreground focus:outline-none focus:ring-1"
                       placeholder="email@example.com"
                       disabled={isCreatingPerson}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[var(--foreground)] mb-1">
+                    <label className="block text-xs font-medium text-foreground mb-1">
                       Job Title
                     </label>
                     <input
                       type="text"
                       value={newPersonData.jobTitle}
                       onChange={(e) => setNewPersonData(prev => ({ ...prev, jobTitle: e.target.value }))}
-                      className="w-full px-2 py-1.5 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1"
+                      className="w-full px-2 py-1.5 text-sm border border-border rounded bg-background text-foreground focus:outline-none focus:ring-1"
                       placeholder="Job title"
                       disabled={isCreatingPerson}
                     />
@@ -662,7 +662,7 @@ export function CompleteActionModal({
                     <button
                       type="button"
                       onClick={() => setShowCreatePersonForm(false)}
-                      className="flex-1 px-3 py-1.5 text-xs text-[var(--muted)] bg-[var(--background)] border border-[var(--border)] rounded hover:bg-[var(--panel-background)] transition-colors"
+                      className="flex-1 px-3 py-1.5 text-xs text-muted bg-background border border-border rounded hover:bg-panel-background transition-colors"
                       disabled={isCreatingPerson}
                     >
                       Cancel
@@ -682,11 +682,11 @@ export function CompleteActionModal({
             {/* Company - Auto-filled if provided */}
             {formData.company && (
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Company
                 </label>
                 <div 
-                  className="px-3 py-2 border rounded-lg text-[var(--foreground)] text-sm"
+                  className="px-3 py-2 border rounded-lg text-foreground text-sm"
                   style={{ 
                     backgroundColor: categoryColors.bg,
                     borderColor: categoryColors.border
@@ -699,14 +699,14 @@ export function CompleteActionModal({
 
             {/* Type */}
             <div>
-              <label htmlFor="type" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label htmlFor="type" className="block text-sm font-medium text-foreground mb-2">
                 Type
               </label>
               <select
                 id="type"
                 value={formData.type}
                 onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as ActionLogData['type'] }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 bg-[var(--background)] text-[var(--foreground)] text-sm shadow-sm hover:border-gray-400 transition-colors"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 bg-background text-foreground text-sm shadow-sm hover:border-gray-400 transition-colors"
                 style={{
                   '--tw-ring-color': `${categoryColors.primary}30`,
                   '--tw-border-color': categoryColors.primary
@@ -720,14 +720,14 @@ export function CompleteActionModal({
                 <option value="Email">5. Email</option>
                 <option value="Meeting">6. Meeting</option>
               </select>
-              <p className="text-xs text-[var(--muted)] mt-1">
+              <p className="text-xs text-muted mt-1">
                 Press 1-6 to select, press same number to cycle through options
               </p>
             </div>
 
             {/* Notes */}
             <div>
-              <label htmlFor="action" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label htmlFor="action" className="block text-sm font-medium text-foreground mb-2">
                 Notes
               </label>
               <textarea
@@ -736,7 +736,7 @@ export function CompleteActionModal({
                 value={formData.action}
                 onChange={(e) => setFormData(prev => ({ ...prev, action: e.target.value }))}
                 rows={4}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-[var(--foreground)] bg-[var(--background)] resize-none text-sm"
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-foreground bg-background resize-none text-sm"
                 style={{
                   '--tw-ring-color': categoryColors.primary
                 } as React.CSSProperties}
@@ -758,7 +758,7 @@ export function CompleteActionModal({
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
+                className="flex-1 px-4 py-3 text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors font-medium text-sm"
               >
                 Cancel
               </button>

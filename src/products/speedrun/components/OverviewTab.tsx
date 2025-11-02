@@ -31,7 +31,7 @@ const getRoleColor = (role: string) => {
     case "Stakeholder":
       return "bg-purple-100 text-purple-800 border-purple-200";
     default:
-      return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
+      return "bg-hover text-gray-800 border-border";
   }
 };
 
@@ -102,10 +102,10 @@ export function OverviewTab({
     <div className="space-y-6">
       {/* Header - Outside the box like intelligence design */}
       <div>
-        <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+        <h2 className="text-2xl font-bold text-foreground mb-2">
           Lead Overview
         </h2>
-        <p className="text-[var(--muted)]">
+        <p className="text-muted">
           Comprehensive lead information and engagement insights
         </p>
       </div>
@@ -117,7 +117,7 @@ export function OverviewTab({
             // TODO: Implement update record functionality
             console.log('Update Record clicked for:', person.name);
           }}
-          className="px-4 py-2 bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors"
+          className="px-4 py-2 bg-background border border-border text-foreground rounded-lg font-medium hover:bg-hover transition-colors"
         >
           Update Record
         </button>
@@ -159,31 +159,31 @@ export function OverviewTab({
         <div className={`p-4 rounded-lg border ${
           activityContext?.priority === 'high' ? 'bg-red-50 border-red-200' :
           activityContext?.priority === 'medium' ? 'bg-orange-50 border-orange-200' :
-          'bg-[var(--panel-background)] border-[var(--border)]'
+          'bg-panel-background border-border'
         }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
                 activityContext?.priority === 'high' ? 'bg-red-100 text-red-800' :
                 activityContext?.priority === 'medium' ? 'bg-orange-100 text-orange-800' :
-                'bg-[var(--hover)] text-gray-800'
+                'bg-hover text-gray-800'
               }`}>
                 {activityContext?.activityType === 'email' ? '📧' : 
                  activityContext?.activityType === 'call' ? '📞' : 
                  activityContext?.activityType === 'meeting' ? '🤝' : '📱'}
               </div>
               <div>
-                <div className="font-semibold text-[var(--foreground)]">
+                <div className="font-semibold text-foreground">
                   {contextualInsight}
                 </div>
-                <div className="text-sm text-[var(--muted)]">
+                <div className="text-sm text-muted">
                   {activityContext?.nextAction || "Continue engagement"}
                 </div>
               </div>
             </div>
             {stageProgression && (
               <div className="text-right">
-                <div className="text-sm text-[var(--muted)]">Suggested</div>
+                <div className="text-sm text-muted">Suggested</div>
                 <div className="font-semibold text-green-600">
                   Progress to {stageProgression.toStage}
                 </div>
@@ -194,22 +194,22 @@ export function OverviewTab({
       )}
 
       {/* At a Glance - Now in a box */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+            <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
               At a Glance
             </h3>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               Key metrics and status information
             </p>
           </div>
         </div>
         
         <div className="flex flex-wrap gap-4">
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-            <div className="font-semibold text-[var(--muted)] mb-1">Role</div>
+          <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+            <div className="font-semibold text-muted mb-1">Role</div>
             <span
               className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getRoleColor(person.customFields?.monacoEnrichment?.buyerGroupAnalysis?.role || person.relationship || "Contact")}`}
             >
@@ -219,11 +219,11 @@ export function OverviewTab({
                 "Contact"}
             </span>
           </div>
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-            <div className="font-semibold text-[var(--muted)] mb-1">
+          <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+            <div className="font-semibold text-muted mb-1">
               Last Engagement
             </div>
-            <div className="text-lg text-[var(--foreground)]">
+            <div className="text-lg text-foreground">
               {(() => {
                 const monaco = person.customFields?.monacoEnrichment;
                 const recentActivity =
@@ -236,11 +236,11 @@ export function OverviewTab({
               })()}
             </div>
           </div>
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-            <div className="font-semibold text-[var(--muted)] mb-1">
+          <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+            <div className="font-semibold text-muted mb-1">
               Next Step
             </div>
-            <div className="text-lg text-[var(--foreground)]">
+            <div className="text-lg text-foreground">
               {(() => {
                 const monaco = person.customFields?.monacoEnrichment;
                 const nextBestAction =
@@ -249,8 +249,8 @@ export function OverviewTab({
               })()}
             </div>
           </div>
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-            <div className="font-semibold text-[var(--muted)] mb-1">
+          <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+            <div className="font-semibold text-muted mb-1">
               Rank
             </div>
             <div className="mt-1">
@@ -265,10 +265,10 @@ export function OverviewTab({
                   // Show state-based hierarchy
                   return (
                     <div className="space-y-1">
-                      <div className="text-lg text-[var(--foreground)] font-semibold">
+                      <div className="text-lg text-foreground font-semibold">
                         #{stateRank}-{companyRankInState}-{personRankInCompany}
                       </div>
-                      <div className="text-xs text-[var(--muted)]">
+                      <div className="text-xs text-muted">
                         State-Company-Person
                       </div>
                     </div>
@@ -288,7 +288,7 @@ export function OverviewTab({
                       inputType="number"
                       placeholder="Enter rank (1-999)"
                       onSave={handleSpeedrunInlineFieldSave}
-                      className="text-lg text-[var(--foreground)] font-semibold"
+                      className="text-lg text-foreground font-semibold"
                       min={1}
                       max={999}
                     />
@@ -302,21 +302,21 @@ export function OverviewTab({
 
       {/* Main info - Now in boxes */}
       <div className="grid grid-cols-2 gap-6">
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+        <div className="bg-background border border-border rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+              <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
                 <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                 Basic Information
               </h3>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Contact details and personal information
               </p>
             </div>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 Name
               </label>
               <div className="mt-1">
@@ -327,22 +327,22 @@ export function OverviewTab({
                   recordType="speedrun"
                   placeholder="Enter name"
                   onSave={handleSpeedrunInlineFieldSave}
-                  className="text-lg text-[var(--foreground)]"
+                  className="text-lg text-foreground"
                 />
               </div>
             </div>
             {/* TITLE FIELD TEMPORARILY HIDDEN
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 Title
               </label>
-              <p className="mt-1 text-lg text-[var(--foreground)]">
+              <p className="mt-1 text-lg text-foreground">
                 {person.title || "-"}
               </p>
             </div>
             */}
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 Email
               </label>
               <div className="mt-1">
@@ -354,12 +354,12 @@ export function OverviewTab({
                   inputType="email"
                   placeholder="Enter email"
                   onSave={handleSpeedrunInlineFieldSave}
-                  className="text-lg text-[var(--foreground)]"
+                  className="text-lg text-foreground"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 Phone
               </label>
               <div className="mt-1">
@@ -377,12 +377,12 @@ export function OverviewTab({
                   inputType="tel"
                   placeholder="Enter phone number"
                   onSave={handleSpeedrunInlineFieldSave}
-                  className="text-lg text-[var(--muted)]"
+                  className="text-lg text-muted"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 Vertical
               </label>
               <div className="mt-1">
@@ -406,12 +406,12 @@ export function OverviewTab({
                     { value: 'Other', label: 'Other' }
                   ]}
                   onSave={handleSpeedrunInlineFieldSave}
-                  className="text-lg text-[var(--foreground)]"
+                  className="text-lg text-foreground"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 State
               </label>
               <div className="mt-1">
@@ -422,12 +422,12 @@ export function OverviewTab({
                   recordType="speedrun"
                   placeholder="Enter state"
                   onSave={handleSpeedrunInlineFieldSave}
-                  className="text-lg text-[var(--foreground)]"
+                  className="text-lg text-foreground"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 LinkedIn Profile
               </label>
               {(() => {
@@ -496,15 +496,15 @@ export function OverviewTab({
                     View LinkedIn Profile
                   </button>
                 ) : (
-                  <p className="mt-1 text-lg text-[var(--muted)]">-</p>
+                  <p className="mt-1 text-lg text-muted">-</p>
                 );
               })()}
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 College
               </label>
-              <p className="mt-1 text-lg text-[var(--foreground)]">
+              <p className="mt-1 text-lg text-foreground">
                 {person.customFields?.monacoEnrichment?.enrichedProfiles?.education
                   ?.map(
                     (edu) => `${edu.degree} from ${edu.school} (${edu.year})`,
@@ -515,21 +515,21 @@ export function OverviewTab({
             </div>
           </div>
         </div>
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+        <div className="bg-background border border-border rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+              <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
                 <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
                 Lead Information
               </h3>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Lead status and engagement details
               </p>
             </div>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 Status
               </label>
               <span
@@ -542,20 +542,20 @@ export function OverviewTab({
                         ? "bg-[#EFF6FF] text-[#1E40AF] border border-[#93C5FD]"
                         : person['status'] === "New" || person['status'] === "Lead"
                           ? "bg-[#FFF7ED] text-[#9A3412] border border-[#FDBA74]"
-                          : "bg-[var(--hover)] text-gray-800"
+                          : "bg-hover text-gray-800"
                 }`}
               >
                 {person.status || "Lead"}
               </span>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 Source
               </label>
-              <p className="mt-1 text-lg text-[var(--foreground)]">Speedrun</p>
+              <p className="mt-1 text-lg text-foreground">Speedrun</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 Company
               </label>
               <button
@@ -566,10 +566,10 @@ export function OverviewTab({
               </button>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--muted)]">
+              <label className="block text-sm font-medium text-muted">
                 Created At
               </label>
-              <p className="mt-1 text-lg text-[var(--foreground)]">
+              <p className="mt-1 text-lg text-foreground">
                 {person.lastContact
                   ? formatRelativeDate(person.lastContact)
                   : "Recently added"}
@@ -580,14 +580,14 @@ export function OverviewTab({
       </div>
 
       {/* Wants and Needs - Now in a box */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+            <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
               <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
               Wants & Needs Analysis
             </h3>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               Personal motivations and requirements
             </p>
           </div>
@@ -595,20 +595,20 @@ export function OverviewTab({
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <div className="text-lg font-semibold text-[var(--foreground)] mb-2 flex items-center gap-2">
+            <div className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
               Wants
             </div>
-            <div className="text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+            <div className="text-foreground bg-background border border-border rounded-lg p-4">
               {generatePersonalWants(person)}
             </div>
           </div>
           <div className="space-y-2">
-            <div className="text-lg font-semibold text-[var(--foreground)] mb-2 flex items-center gap-2">
+            <div className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
               <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
               Needs
             </div>
-            <div className="text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+            <div className="text-foreground bg-background border border-border rounded-lg p-4">
               {generatePersonalNeeds(person)}
             </div>
           </div>
@@ -616,14 +616,14 @@ export function OverviewTab({
       </div>
 
       {/* Recent Notes - New section */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+            <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
               Recent Notes
             </h3>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               Personal notes and recent activity notes
             </p>
           </div>
@@ -632,19 +632,19 @@ export function OverviewTab({
         <div className="space-y-4">
           {/* Person's notes field */}
           {person.notes && person.notes.trim().length > 0 && (
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+            <div className="bg-background border border-border rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <div className="text-2xl flex-shrink-0 mt-1">📝</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold text-[var(--foreground)]">
+                    <span className="font-semibold text-foreground">
                       Personal Notes
                     </span>
-                    <span className="text-sm text-[var(--muted)]">
+                    <span className="text-sm text-muted">
                       Contact notes
                     </span>
                   </div>
-                  <p className="text-[var(--foreground)] text-sm leading-relaxed">
+                  <p className="text-foreground text-sm leading-relaxed">
                     {person.notes}
                   </p>
                 </div>
@@ -654,12 +654,12 @@ export function OverviewTab({
 
           {/* Recent action log notes */}
           {actionLogsLoading ? (
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+            <div className="bg-background border border-border rounded-lg p-4">
               <div className="animate-pulse flex items-center gap-3">
-                <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-full"></div>
+                <div className="w-8 h-8 bg-loading-bg rounded-full"></div>
                 <div className="flex-1">
-                  <div className="w-3/4 h-4 bg-[var(--loading-bg)] rounded mb-2"></div>
-                  <div className="w-1/2 h-3 bg-[var(--loading-bg)] rounded"></div>
+                  <div className="w-3/4 h-4 bg-loading-bg rounded mb-2"></div>
+                  <div className="w-1/2 h-3 bg-loading-bg rounded"></div>
                 </div>
               </div>
             </div>
@@ -668,7 +668,7 @@ export function OverviewTab({
               {recentActionLogsWithNotes.map((log) => (
                 <div
                   key={log.id}
-                  className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:shadow-sm transition-shadow"
+                  className="bg-background border border-border rounded-lg p-4 hover:shadow-sm transition-shadow"
                 >
                   <div className="flex items-start gap-3">
                     <div className="text-2xl flex-shrink-0 mt-1">
@@ -676,14 +676,14 @@ export function OverviewTab({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-[var(--foreground)] capitalize">
+                        <span className="font-semibold text-foreground capitalize">
                           {log.type}
                         </span>
-                        <span className="text-sm text-[var(--muted)]">
+                        <span className="text-sm text-muted">
                           {formatRelativeDate(log.timestamp.toISOString())}
                         </span>
                       </div>
-                      <p className="text-[var(--foreground)] text-sm leading-relaxed">
+                      <p className="text-foreground text-sm leading-relaxed">
                         {log.notes}
                       </p>
                     </div>
@@ -692,9 +692,9 @@ export function OverviewTab({
               ))}
             </div>
           ) : !person.notes && (
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 text-center">
-              <div className="text-[var(--muted)] mb-2">📝</div>
-              <p className="text-[var(--muted)] text-sm">
+            <div className="bg-background border border-border rounded-lg p-6 text-center">
+              <div className="text-muted mb-2">📝</div>
+              <p className="text-muted text-sm">
                 No notes available yet. Add notes in the Notes tab or complete actions to start tracking!
               </p>
             </div>
@@ -704,14 +704,14 @@ export function OverviewTab({
 
       {/* Deep Value Reports - Hidden for Dano's workspace */}
       {!isDanoWorkspace && (
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+        <div className="bg-background border border-border rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+              <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
                 <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
                 Deep Value Reports
               </h3>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 AI-generated personalized value propositions
               </p>
             </div>
@@ -719,7 +719,7 @@ export function OverviewTab({
           {isLoadingReports ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
-              <span className="ml-2 text-[var(--muted)]">
+              <span className="ml-2 text-muted">
                 Generating personalized reports...
               </span>
             </div>
@@ -728,14 +728,14 @@ export function OverviewTab({
               {dynamicReports.map((idea, index) => (
                 <div
                   key={index}
-                  className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 transition-all duration-200"
+                  className="bg-background border border-border rounded-lg p-4 transition-all duration-200"
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                    <h3 className="text-lg font-semibold text-foreground">
                       {idea.title}
                     </h3>
                   </div>
-                  <p className="text-sm text-[var(--muted)] mb-4">
+                  <p className="text-sm text-muted mb-4">
                     {idea.description}
                   </p>
                   <div className="flex gap-3">

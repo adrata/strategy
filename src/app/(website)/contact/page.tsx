@@ -64,34 +64,34 @@ function ContactPageContent() {
     }
   };
   return (
-    <div className="min-h-screen bg-[var(--background)]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-[var(--background)] border-b border-[var(--border)]">
+      <header className="bg-background border-b border-border">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-12">
-              <Link href="/" className="text-xl font-medium text-[var(--foreground)]">
+              <Link href="/" className="text-xl font-medium text-foreground">
                 Adrata
               </Link>
               
               <nav className="hidden md:flex space-x-6">
-                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/what-is-the-buyer-gap" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Buyer Gap
                 </Link>
-                <Link href="/platform" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/platform" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Platform
                 </Link>
-                <Link href="/pricing" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/pricing" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Pricing
                 </Link>
-                <Link href="/company" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+                <Link href="/company" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                   Company
                 </Link>
               </nav>
             </div>
 
             <div className="flex items-center space-x-4">
-              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors">
+              <Link href="/sign-in" className="text-sm text-gray-700 hover:text-foreground transition-colors">
                 Sign In
               </Link>
               <Link
@@ -106,13 +106,13 @@ function ContactPageContent() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-40 pb-20 bg-[var(--background)]">
+      <section className="pt-40 pb-20 bg-background">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl font-semibold text-[var(--foreground)] mb-6">
+            <h1 className="text-4xl sm:text-5xl font-semibold text-foreground mb-6">
               Get in Touch
             </h1>
-            <p className="text-xl text-[var(--muted)] mb-8 max-w-3xl mx-auto">
+            <p className="text-xl text-muted mb-8 max-w-3xl mx-auto">
               Ready to transform your enterprise sales with buyer group intelligence? We'd love to hear from you.
             </p>
           </div>
@@ -120,17 +120,17 @@ function ContactPageContent() {
       </section>
 
       {/* Contact Options */}
-      <section className="py-20 bg-[var(--panel-background)]">
+      <section className="py-20 bg-panel-background">
         <div className="max-w-[90rem] mx-auto px-8 sm:px-12 lg:px-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)] text-center">
-              <div className="w-12 h-12 bg-[var(--hover)] rounded-lg flex items-center justify-center mx-auto mb-6">
-                <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-background p-8 rounded-xl border border-border text-center">
+              <div className="w-12 h-12 bg-hover rounded-lg flex items-center justify-center mx-auto mb-6">
+                <svg className="w-6 h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Sales Demo</h3>
-              <p className="text-[var(--muted)] mb-6">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Sales Demo</h3>
+              <p className="text-muted mb-6">
                 See buyer group intelligence in action with a personalized demo
               </p>
               <Link
@@ -141,37 +141,37 @@ function ContactPageContent() {
               </Link>
             </div>
 
-            <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)] text-center">
-              <div className="w-12 h-12 bg-[var(--hover)] rounded-lg flex items-center justify-center mx-auto mb-6">
-                <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-background p-8 rounded-xl border border-border text-center">
+              <div className="w-12 h-12 bg-hover rounded-lg flex items-center justify-center mx-auto mb-6">
+                <svg className="w-6 h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Support</h3>
-              <p className="text-[var(--muted)] mb-6">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Support</h3>
+              <p className="text-muted mb-6">
                 Get help with your account, technical issues, or general questions
               </p>
               <Link
                 href="/support"
-                className="inline-block bg-[var(--background)] text-black border border-black px-6 py-3 rounded-lg font-medium hover:bg-[var(--panel-background)] transition-colors"
+                className="inline-block bg-background text-black border border-black px-6 py-3 rounded-lg font-medium hover:bg-panel-background transition-colors"
               >
                 Get Support
               </Link>
             </div>
 
-            <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)] text-center">
-              <div className="w-12 h-12 bg-[var(--hover)] rounded-lg flex items-center justify-center mx-auto mb-6">
-                <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-background p-8 rounded-xl border border-border text-center">
+              <div className="w-12 h-12 bg-hover rounded-lg flex items-center justify-center mx-auto mb-6">
+                <svg className="w-6 h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4">Careers</h3>
-              <p className="text-[var(--muted)] mb-6">
+              <h3 className="text-xl font-semibold text-foreground mb-4">Careers</h3>
+              <p className="text-muted mb-6">
                 Join our team and help build the future of buyer group intelligence
               </p>
               <Link
                 href="/careers"
-                className="inline-block bg-[var(--background)] text-black border border-black px-6 py-3 rounded-lg font-medium hover:bg-[var(--panel-background)] transition-colors"
+                className="inline-block bg-background text-black border border-black px-6 py-3 rounded-lg font-medium hover:bg-panel-background transition-colors"
               >
                 View Opportunities
               </Link>
@@ -180,10 +180,10 @@ function ContactPageContent() {
 
           {/* Contact Form */}
           <div className="max-w-3xl mx-auto">
-            <div className="bg-[var(--background)] p-8 rounded-xl border border-[var(--border)]">
+            <div className="bg-background p-8 rounded-xl border border-border">
               <div className="text-center mb-8">
-                <h2 className="text-2xl font-semibold text-[var(--foreground)] mb-2">Send us a message</h2>
-                <p className="text-[var(--muted)]">We'll get back to you within 24 hours</p>
+                <h2 className="text-2xl font-semibold text-foreground mb-2">Send us a message</h2>
+                <p className="text-muted">We'll get back to you within 24 hours</p>
               </div>
 
               {submitted ? (
@@ -193,8 +193,8 @@ function ContactPageContent() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">Message Sent!</h3>
-                  <p className="text-[var(--muted)]">
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Message Sent!</h3>
+                  <p className="text-muted">
                     Thank you for contacting us. We'll get back to you within 24 hours.
                   </p>
                 </div>
@@ -211,7 +211,7 @@ function ContactPageContent() {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                       placeholder="Your first name"
                     />
                   </div>
@@ -225,7 +225,7 @@ function ContactPageContent() {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                       placeholder="Your last name"
                     />
                   </div>
@@ -242,7 +242,7 @@ function ContactPageContent() {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                     placeholder="your.email@company.com"
                   />
                 </div>
@@ -257,7 +257,7 @@ function ContactPageContent() {
                     name="company"
                     value={formData.company}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                     placeholder="Your company name"
                   />
                 </div>
@@ -271,7 +271,7 @@ function ContactPageContent() {
                     name="subject"
                     value={formData.subject}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                   >
                     <option value="">Select a subject</option>
                     <option value="demo">Request a demo</option>
@@ -293,7 +293,7 @@ function ContactPageContent() {
                     value={formData.message}
                     onChange={handleInputChange}
                     rows={6}
-                    className="w-full px-4 py-3 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                     placeholder="Tell us about your needs, questions, or how we can help..."
                   ></textarea>
                 </div>
@@ -359,7 +359,7 @@ function ContactPageContent() {
           </div>
 
           {/* Security & Compliance */}
-          <div className="border-t border-[var(--border)] pt-8 mb-8">
+          <div className="border-t border-border pt-8 mb-8">
             <div className="flex flex-wrap items-center justify-center gap-8">
               <div className="flex items-center gap-2 text-gray-300">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -389,14 +389,14 @@ function ContactPageContent() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-[var(--border)] pt-8 flex flex-col md:flex-row justify-between items-center">
-            <div className="text-[var(--muted)] text-sm mb-4 md:mb-0">
+          <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center">
+            <div className="text-muted text-sm mb-4 md:mb-0">
               © 2025 Adrata. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm">
-              <Link href="/privacy" className="text-[var(--muted)] hover:text-white transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="text-[var(--muted)] hover:text-white transition-colors">Terms of Service</Link>
-              <Link href="/cookies" className="text-[var(--muted)] hover:text-white transition-colors">Cookie Policy</Link>
+              <Link href="/privacy" className="text-muted hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="text-muted hover:text-white transition-colors">Terms of Service</Link>
+              <Link href="/cookies" className="text-muted hover:text-white transition-colors">Cookie Policy</Link>
             </div>
           </div>
         </div>

@@ -54,8 +54,8 @@ export function TableRowRefactored({
 
   // Get row classes
   const getRowClasses = () => {
-    const baseClasses = 'border-b border-[var(--border)]';
-    const hoverClasses = isHoverable ? 'hover:bg-[var(--panel-background)]' : '';
+    const baseClasses = 'border-b border-border';
+    const hoverClasses = isHoverable ? 'hover:bg-panel-background' : '';
     const selectedClasses = isSelected ? 'bg-blue-50' : '';
     const clickableClasses = onClick ? 'cursor-pointer' : '';
     
@@ -73,7 +73,7 @@ export function TableRowRefactored({
         // Use custom render function if provided
         if (column.render) {
           return (
-            <td key={column.key} className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
+            <td key={column.key} className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
               {column.render(value, record)}
             </td>
           );

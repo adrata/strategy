@@ -351,24 +351,24 @@ export function MonacoFinder({
   };
 
   return (
-    <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 mb-4">
+    <div className="bg-background border border-border rounded-xl p-4 mb-4">
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
         <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
           <MagnifyingGlassIcon className="w-4 h-4 text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-[var(--foreground)]">
+          <h3 className="font-semibold text-foreground">
             Monaco Finder
           </h3>
-          <p className="text-xs text-[var(--muted)]">
+          <p className="text-xs text-muted">
             Find the best contact at any company
           </p>
         </div>
         {onMinimize && (
           <button
             onClick={onMinimize}
-            className="w-6 h-6 flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)] rounded-md transition-colors"
+            className="w-6 h-6 flex items-center justify-center text-muted hover:text-foreground hover:bg-hover rounded-md transition-colors"
             title="Minimize"
           >
             <MinusIcon className="w-4 h-4" />
@@ -387,12 +387,12 @@ export function MonacoFinder({
               setSearch((prev) => ({ ...prev, query: e.target.value }))
             }
             onKeyPress={(e) => e['key'] === "Enter" && handleSearch()}
-            className="flex-1 px-3 py-2 border border-[var(--border)] rounded-lg text-sm bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-3 py-2 border border-border rounded-lg text-sm bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             onClick={handleSearch}
             disabled={search.isLoading || !search.query.trim()}
-                            className="px-4 py-2 bg-[var(--foreground)] text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="px-4 py-2 bg-foreground text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {search.isLoading ? "..." : "Find"}
           </button>
@@ -403,7 +403,7 @@ export function MonacoFinder({
       {search['isLoading'] && (
         <div className="text-center py-8">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 mx-auto mb-2"></div>
-          <p className="text-xs text-[var(--muted)]">
+          <p className="text-xs text-muted">
             Analyzing company and finding contacts...
           </p>
         </div>
@@ -414,30 +414,30 @@ export function MonacoFinder({
         <div className="space-y-3">
           {search['suggestions']['length'] === 0 ? (
             <div className="text-center py-6">
-              <BuildingOfficeIcon className="w-8 h-8 text-[var(--muted)] mx-auto mb-2" />
-              <p className="text-sm text-[var(--muted)]">
+              <BuildingOfficeIcon className="w-8 h-8 text-muted mx-auto mb-2" />
+              <p className="text-sm text-muted">
                 No contacts found for {search.query}
               </p>
-              <p className="text-xs text-[var(--muted)] mt-1">
+              <p className="text-xs text-muted mt-1">
                 Try a different company name
               </p>
             </div>
           ) : (
             <>
-              <div className="text-xs text-[var(--muted)] mb-2">
+              <div className="text-xs text-muted mb-2">
                 Found {search.suggestions.length} potential contacts:
               </div>
               {search.suggestions.map((person, index) => (
                 <div
                   key={index}
-                  className="border border-[var(--border)] rounded-lg p-3"
+                  className="border border-border rounded-lg p-3"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
-                      <h4 className="font-medium text-[var(--foreground)] text-sm">
+                      <h4 className="font-medium text-foreground text-sm">
                         {person.name}
                       </h4>
-                      <p className="text-xs text-[var(--muted)]">
+                      <p className="text-xs text-muted">
                         {person.title} • {person.department}
                       </p>
                       {person['email'] && (
@@ -453,7 +453,7 @@ export function MonacoFinder({
                             ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                             : person['influence'] === "Medium"
                               ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                              : "bg-[var(--hover)] text-gray-700 dark:bg-[var(--foreground)]/30 dark:text-[var(--muted)]"
+                              : "bg-hover text-gray-700 dark:bg-foreground/30 dark:text-muted"
                         }`}
                       >
                         {person.confidence}% match
@@ -461,7 +461,7 @@ export function MonacoFinder({
                     </div>
                   </div>
 
-                  <div className="text-xs text-[var(--muted)] mb-3 leading-relaxed">
+                  <div className="text-xs text-muted mb-3 leading-relaxed">
                     <strong>Why this person:</strong> {person.reasoning}
                   </div>
 
@@ -477,7 +477,7 @@ export function MonacoFinder({
                         onClick={() =>
                           window.open(person.linkedinUrl, "_blank")
                         }
-                        className="text-xs text-[var(--muted)] hover:text-gray-700 hover:underline"
+                        className="text-xs text-muted hover:text-gray-700 hover:underline"
                       >
                         LinkedIn
                       </button>
@@ -500,7 +500,7 @@ export function MonacoFinder({
 
       {/* Help Text */}
       {!search['hasSearched'] && (
-        <div className="text-xs text-[var(--muted)] leading-relaxed">
+        <div className="text-xs text-muted leading-relaxed">
           💡 <strong>AI-powered contact discovery:</strong> Ask me to find the
           best person to contact at any company. I will analyze their org
           structure, identify decision makers, and explain why they are the

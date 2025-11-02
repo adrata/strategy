@@ -88,9 +88,9 @@ export default function ResetPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[var(--background)]">
-        <div className="bg-[var(--background)] rounded-xl shadow-lg p-8 w-full max-w-md border">
-          <h1 className="text-2xl font-bold mb-6 text-center text-[var(--foreground)]">
+      <div className="fixed inset-0 flex items-center justify-center bg-background">
+        <div className="bg-background rounded-xl shadow-lg p-8 w-full max-w-md border">
+          <h1 className="text-2xl font-bold mb-6 text-center text-foreground">
             Password Reset Successful
           </h1>
           
@@ -99,7 +99,7 @@ export default function ResetPasswordPage() {
               Your password has been successfully reset!
             </div>
             
-            <p className="text-sm text-[var(--muted)] mb-6">
+            <p className="text-sm text-muted mb-6">
               {resetUser ? `Welcome back, ${resetUser.name}! You're being logged in automatically...` : 'Your password has been successfully reset! You\'re being logged in automatically...'}
             </p>
             
@@ -112,7 +112,7 @@ export default function ResetPasswordPage() {
               </Link>
               <Link
                 href="/sign-in"
-                className="inline-flex items-center gap-2 text-[var(--muted)] hover:text-black transition-colors text-sm"
+                className="inline-flex items-center gap-2 text-muted hover:text-black transition-colors text-sm"
               >
                 ← Back to Sign In
               </Link>
@@ -125,9 +125,9 @@ export default function ResetPasswordPage() {
 
   if (!token) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[var(--background)]">
-        <div className="bg-[var(--background)] rounded-xl shadow-lg p-8 w-full max-w-md border">
-          <h1 className="text-2xl font-bold mb-6 text-center text-[var(--foreground)]">
+      <div className="fixed inset-0 flex items-center justify-center bg-background">
+        <div className="bg-background rounded-xl shadow-lg p-8 w-full max-w-md border">
+          <h1 className="text-2xl font-bold mb-6 text-center text-foreground">
             Invalid Reset Link
           </h1>
           
@@ -136,7 +136,7 @@ export default function ResetPasswordPage() {
               This password reset link is invalid or has expired.
             </div>
             
-            <p className="text-sm text-[var(--muted)] mb-6">
+            <p className="text-sm text-muted mb-6">
               Please request a new password reset link.
             </p>
             
@@ -153,13 +153,13 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[var(--background)]">
-      <div className="bg-[var(--background)] rounded-xl shadow-lg p-8 w-full max-w-md border">
-        <h1 className="text-2xl font-bold mb-6 text-center text-[var(--foreground)]">
+    <div className="fixed inset-0 flex items-center justify-center bg-background">
+      <div className="bg-background rounded-xl shadow-lg p-8 w-full max-w-md border">
+        <h1 className="text-2xl font-bold mb-6 text-center text-foreground">
           Reset Your Password
         </h1>
 
-        <p className="text-sm text-[var(--muted)] mb-6 text-center">
+        <p className="text-sm text-muted mb-6 text-center">
           Enter your new password below.
         </p>
 
@@ -180,7 +180,7 @@ export default function ResetPasswordPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-[var(--border)] rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none invalid:border-[var(--border)]"
+              className="w-full border border-border rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none invalid:border-border"
               placeholder="Enter your new password"
               required
               disabled={isLoading}
@@ -197,7 +197,7 @@ export default function ResetPasswordPage() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full border border-[var(--border)] rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none invalid:border-[var(--border)]"
+              className="w-full border border-border rounded px-4 py-2 focus:ring-2 focus:ring-[#2F6FDC] focus:border-[#2F6FDC] outline-none invalid:border-border"
               placeholder="Confirm your new password"
               required
               disabled={isLoading}
@@ -216,7 +216,7 @@ export default function ResetPasswordPage() {
         <div className="mt-6 text-center">
           <Link
             href="/sign-in"
-            className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+            className="text-sm text-muted hover:text-black transition-colors"
           >
             ← Back to Sign In
           </Link>

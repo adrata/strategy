@@ -51,11 +51,11 @@ export const AdminLeftPanel: React.FC<AdminLeftPanelProps> = ({
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-[var(--border)]">
-        <h2 className="text-lg font-semibold text-[var(--foreground)]">
+      <div className="p-6 border-b border-border">
+        <h2 className="text-lg font-semibold text-foreground">
           Administration
         </h2>
-        <p className="text-sm text-[var(--muted)] mt-1">
+        <p className="text-sm text-muted mt-1">
           Manage your team and workspaces
         </p>
       </div>
@@ -75,7 +75,7 @@ export const AdminLeftPanel: React.FC<AdminLeftPanelProps> = ({
                 ${
                   isActive
                     ? 'bg-blue-50 border border-blue-200 text-blue-900'
-                    : 'hover:bg-[var(--hover)] text-[var(--foreground)]'
+                    : 'hover:bg-hover text-foreground'
                 }
               `}
               aria-current={isActive ? 'page' : undefined}
@@ -83,7 +83,7 @@ export const AdminLeftPanel: React.FC<AdminLeftPanelProps> = ({
               <div className="flex-shrink-0 mr-3">
                 <Icon
                   className={`h-5 w-5 ${
-                    isActive ? 'text-blue-600' : 'text-[var(--muted)]'
+                    isActive ? 'text-blue-600' : 'text-muted'
                   }`}
                 />
               </div>
@@ -91,7 +91,7 @@ export const AdminLeftPanel: React.FC<AdminLeftPanelProps> = ({
                 <div className="flex items-center justify-between">
                   <p
                     className={`text-sm font-medium ${
-                      isActive ? 'text-blue-900' : 'text-[var(--foreground)]'
+                      isActive ? 'text-blue-900' : 'text-foreground'
                     }`}
                   >
                     {item.label}
@@ -113,7 +113,7 @@ export const AdminLeftPanel: React.FC<AdminLeftPanelProps> = ({
                 </div>
                 <p
                   className={`text-xs mt-1 ${
-                    isActive ? 'text-blue-700' : 'text-[var(--muted)]'
+                    isActive ? 'text-blue-700' : 'text-muted'
                   }`}
                 >
                   {item.description}
@@ -125,7 +125,7 @@ export const AdminLeftPanel: React.FC<AdminLeftPanelProps> = ({
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-[var(--border)]">
+      <div className="p-4 border-t border-border">
         <div className="bg-gray-50 rounded-lg p-3">
           <div className="flex items-center">
             <ChartBarIcon className="h-4 w-4 text-gray-500 mr-2" />

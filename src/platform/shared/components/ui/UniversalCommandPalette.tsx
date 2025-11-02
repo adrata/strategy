@@ -326,19 +326,19 @@ export default function UniversalCommandPalette({
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
       <div className="flex items-start justify-center pt-[20vh] px-4">
-        <div className="w-full max-w-2xl bg-[var(--background)] dark:bg-[var(--foreground)] rounded-xl shadow-2xl border border-[var(--border)] dark:border-[var(--border)] overflow-hidden">
+        <div className="w-full max-w-2xl bg-background dark:bg-foreground rounded-xl shadow-2xl border border-border dark:border-border overflow-hidden">
           {/* Search Input */}
-          <div className="flex items-center px-4 py-3 border-b border-[var(--border)] dark:border-[var(--border)]">
+          <div className="flex items-center px-4 py-3 border-b border-border dark:border-border">
             <input
               type="text"
               placeholder="Type a command or search..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-[var(--foreground)] placeholder-[var(--muted)] ml-3"
+              className="flex-1 bg-transparent outline-none text-foreground placeholder-[var(--muted)] ml-3"
               autoFocus
             />
-            <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
-              <kbd className="px-2 py-1 bg-[var(--hover)] rounded border">
+            <div className="flex items-center gap-1 text-xs text-muted">
+              <kbd className="px-2 py-1 bg-hover rounded border">
                 ↵
               </kbd>
               <span>to select</span>
@@ -348,7 +348,7 @@ export default function UniversalCommandPalette({
           {/* Commands List */}
           <div className="max-h-96 overflow-y-auto">
             {filteredCommands['length'] === 0 ? (
-              <div className="px-4 py-8 text-center text-[var(--muted)]">
+              <div className="px-4 py-8 text-center text-muted">
                 <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p>No commands found</p>
                 <p className="text-sm">Try a different search term</p>
@@ -359,18 +359,18 @@ export default function UniversalCommandPalette({
                   <button
                     key={command.id}
                     onClick={() => executeCommand(command)}
-                    className={`w-full flex items-center px-4 py-3 text-left hover:bg-[var(--panel-background)] transition-colors ${
+                    className={`w-full flex items-center px-4 py-3 text-left hover:bg-panel-background transition-colors ${
                       index === selectedIndex
                         ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
                         : ""
                     }`}
                   >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--hover)] mr-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-hover mr-3">
                       {command.icon}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-[var(--foreground)] dark:text-[var(--foreground)] truncate">
+                        <h3 className="font-medium text-foreground dark:text-foreground truncate">
                           {command.title}
                         </h3>
                         {recentCommands.includes(command.id) && (
@@ -379,16 +379,16 @@ export default function UniversalCommandPalette({
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)] truncate">
+                      <p className="text-sm text-muted dark:text-muted truncate">
                         {command.description}
                       </p>
                     </div>
                     {command['shortcut'] && (
-                      <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
+                      <div className="flex items-center gap-1 text-xs text-muted">
                         {command.shortcut.split("").map((key, i) => (
                           <kbd
                             key={i}
-                            className="px-2 py-1 bg-[var(--hover)] rounded border"
+                            className="px-2 py-1 bg-hover rounded border"
                           >
                             {key}
                           </kbd>
@@ -402,23 +402,23 @@ export default function UniversalCommandPalette({
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-2 bg-[var(--panel-background)] border-t border-[var(--border)] dark:border-[var(--border)]">
-            <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+          <div className="px-4 py-2 bg-panel-background border-t border-border dark:border-border">
+            <div className="flex items-center justify-between text-xs text-muted">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
-                  <kbd className="px-2 py-1 bg-[var(--background)] rounded border">
+                  <kbd className="px-2 py-1 bg-background rounded border">
                     ↑↓
                   </kbd>
                   <span>to navigate</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <kbd className="px-2 py-1 bg-[var(--background)] rounded border">
+                  <kbd className="px-2 py-1 bg-background rounded border">
                     esc
                   </kbd>
                   <span>to close</span>
                 </div>
               </div>
-              <div className="text-[var(--muted)]">
+              <div className="text-muted">
                 {filteredCommands.length} commands
               </div>
             </div>

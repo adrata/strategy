@@ -152,21 +152,21 @@ export function EnhancedFileManager({ isOpen, onClose, onFileSelect, onAddFiles 
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg shadow-xl w-[800px] h-[600px] flex flex-col">
+      <div className="bg-background dark:bg-foreground rounded-lg shadow-xl w-[800px] h-[600px] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border)] dark:border-[var(--border)]">
-          <h2 className="text-lg font-semibold text-[var(--foreground)] dark:text-[var(--foreground)]">Add Files</h2>
+        <div className="flex items-center justify-between p-4 border-b border-border dark:border-border">
+          <h2 className="text-lg font-semibold text-foreground dark:text-foreground">Add Files</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-hover transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)] dark:text-[var(--muted)]" />
+            <XMarkIcon className="w-5 h-5 text-muted dark:text-muted" />
           </button>
         </div>
 
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar */}
-          <div className="w-64 border-r border-[var(--border)] dark:border-[var(--border)] p-4">
+          <div className="w-64 border-r border-border dark:border-border p-4">
             {/* Source Selection */}
             <div className="mb-6">
               <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Source</div>
@@ -176,7 +176,7 @@ export function EnhancedFileManager({ isOpen, onClose, onFileSelect, onAddFiles 
                   className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                     selectedSource === 'computer'
                       ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-[var(--panel-background)]'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-panel-background'
                   }`}
                 >
                   <ComputerDesktopIcon className="w-4 h-4" />
@@ -187,7 +187,7 @@ export function EnhancedFileManager({ isOpen, onClose, onFileSelect, onAddFiles 
                   className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                     selectedSource === 'cloud'
                       ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-[var(--panel-background)]'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-panel-background'
                   }`}
                 >
                   <CloudIcon className="w-4 h-4" />
@@ -209,7 +209,7 @@ export function EnhancedFileManager({ isOpen, onClose, onFileSelect, onAddFiles 
                       className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                         selectedCategory === category.id
                           ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-[var(--panel-background)]'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-panel-background'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
@@ -224,20 +224,20 @@ export function EnhancedFileManager({ isOpen, onClose, onFileSelect, onAddFiles 
           {/* Main Content */}
           <div className="flex-1 flex flex-col">
             {/* Search Bar */}
-            <div className="p-4 border-b border-[var(--border)] dark:border-[var(--border)]">
+            <div className="p-4 border-b border-border dark:border-border">
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Search files..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
 
             {/* Browse Button */}
-            <div className="p-4 border-b border-[var(--border)] dark:border-[var(--border)]">
+            <div className="p-4 border-b border-border dark:border-border">
               <button
                 onClick={handleBrowseFiles}
                 className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
@@ -258,14 +258,14 @@ export function EnhancedFileManager({ isOpen, onClose, onFileSelect, onAddFiles 
                       return (
                         <div
                           key={file.id}
-                          className="flex items-center space-x-3 p-3 rounded-lg hover:bg-[var(--panel-background)] cursor-pointer transition-colors"
+                          className="flex items-center space-x-3 p-3 rounded-lg hover:bg-panel-background cursor-pointer transition-colors"
                         >
-                          <Icon className="w-5 h-5 text-[var(--muted)] dark:text-[var(--muted)] flex-shrink-0" />
+                          <Icon className="w-5 h-5 text-muted dark:text-muted flex-shrink-0" />
                           <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-[var(--foreground)] dark:text-[var(--foreground)] truncate">
+                            <div className="text-sm font-medium text-foreground dark:text-foreground truncate">
                               {file.name}
                             </div>
-                            <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)] flex items-center space-x-2">
+                            <div className="text-xs text-muted dark:text-muted flex items-center space-x-2">
                               <span>{file.size ? formatFileSize(file.size) : ''}</span>
                               <span>•</span>
                               <span>{file.modified ? formatTimeAgo(file.modified) : ''}</span>
@@ -277,7 +277,7 @@ export function EnhancedFileManager({ isOpen, onClose, onFileSelect, onAddFiles 
                   </div>
                 </>
               ) : (
-                <div className="flex flex-col items-center justify-center h-full text-[var(--muted)] dark:text-[var(--muted)]">
+                <div className="flex flex-col items-center justify-center h-full text-muted dark:text-muted">
                   <CloudIcon className="w-12 h-12 mb-4" />
                   <div className="text-lg font-medium mb-2">Cloud Storage</div>
                   <div className="text-sm text-center">

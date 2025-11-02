@@ -18,9 +18,9 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     console.error('Failed to access Stacks context:', error);
     // Return error UI if context is not available
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center">
-          <p className="text-[var(--muted)]">Failed to load Stacks. Please ensure StacksProvider is wrapping this component.</p>
+          <p className="text-muted">Failed to load Stacks. Please ensure StacksProvider is wrapping this component.</p>
         </div>
       </div>
     );

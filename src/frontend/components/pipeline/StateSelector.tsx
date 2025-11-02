@@ -143,7 +143,7 @@ export function StateSelector({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
         />
         
         {/* Clear button */}
@@ -151,7 +151,7 @@ export function StateSelector({
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-8 top-1/2 transform -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
+            className="absolute right-8 top-1/2 transform -translate-y-1/2 text-muted hover:text-foreground"
           >
             <XMarkIcon className="w-4 h-4" />
           </button>
@@ -162,7 +162,7 @@ export function StateSelector({
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           disabled={disabled}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted hover:text-foreground disabled:opacity-50"
         >
           <ChevronDownIcon className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
@@ -170,24 +170,24 @@ export function StateSelector({
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
           {filteredStates.length > 0 ? (
             filteredStates.map((state, index) => (
               <button
                 key={state}
                 type="button"
                 onClick={() => handleStateSelect(state)}
-                className={`w-full px-3 py-2 text-left text-sm hover:bg-[var(--hover)] transition-colors ${
-                  index === selectedIndex ? 'bg-[var(--hover)]' : ''
+                className={`w-full px-3 py-2 text-left text-sm hover:bg-hover transition-colors ${
+                  index === selectedIndex ? 'bg-hover' : ''
                 } ${
-                  value === state ? 'font-medium text-blue-600' : 'text-[var(--foreground)]'
+                  value === state ? 'font-medium text-blue-600' : 'text-foreground'
                 }`}
               >
                 {state}
               </button>
             ))
           ) : (
-            <div className="px-3 py-2 text-sm text-[var(--muted)]">
+            <div className="px-3 py-2 text-sm text-muted">
               No states found
             </div>
           )}

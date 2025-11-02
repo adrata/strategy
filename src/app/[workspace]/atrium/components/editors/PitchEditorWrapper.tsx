@@ -16,7 +16,7 @@ export function PitchEditorWrapper({ document, onSave, onAutoSave }: PitchEditor
   }, [onAutoSave]);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       <PitchEditor
         document={document}
         onSave={onSave}

@@ -128,31 +128,31 @@ export function PipelineContentRefactored({
 
   // Render loading skeleton
   const renderLoadingSkeleton = () => (
-    <div className="h-full flex flex-col bg-[var(--background)] max-w-full overflow-hidden">
+    <div className="h-full flex flex-col bg-background max-w-full overflow-hidden">
       {/* Top header skeleton */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 px-6 py-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
-            <div className="h-4 bg-[var(--loading-bg)] rounded w-48 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-32 animate-pulse"></div>
+            <div className="h-4 bg-loading-bg rounded w-48 animate-pulse"></div>
           </div>
           <div className="flex gap-2">
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-20 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-24 animate-pulse"></div>
           </div>
         </div>
       </div>
       
       {/* Search and filters skeleton */}
-      <div className="flex-shrink-0 px-6 py-3 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 px-6 py-3 border-b border-border">
         <div className="flex gap-4 items-center justify-between">
           <div className="flex gap-4 items-center">
-            <div className="h-10 bg-[var(--loading-bg)] rounded w-80 animate-pulse"></div>
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
+            <div className="h-10 bg-loading-bg rounded w-80 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-16 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-16 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-20 animate-pulse"></div>
           </div>
-          <div className="h-4 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
+          <div className="h-4 bg-loading-bg rounded w-24 animate-pulse"></div>
         </div>
       </div>
       
@@ -160,7 +160,7 @@ export function PipelineContentRefactored({
       <div className="flex-1 p-6 max-w-full overflow-hidden">
         <div className="space-y-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="h-16 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+            <div key={i} className="h-16 bg-loading-bg rounded animate-pulse"></div>
           ))}
         </div>
       </div>
@@ -195,16 +195,16 @@ export function PipelineContentRefactored({
     }
 
     return (
-      <div className="h-full flex flex-col bg-[var(--background)] max-w-full overflow-hidden">
+      <div className="h-full flex flex-col bg-background max-w-full overflow-hidden">
         {/* Top header */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+        <div className="flex-shrink-0 px-6 py-4 border-b border-border">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)]">
+              <h1 className="text-2xl font-bold text-foreground">
                 {title || config?.title || section.charAt(0).toUpperCase() + section.slice(1)}
               </h1>
               {(subtitle || config?.description) && (
-                <p className="text-sm text-[var(--muted)] mt-1">
+                <p className="text-sm text-muted mt-1">
                   {subtitle || config?.description}
                 </p>
               )}
@@ -215,7 +215,7 @@ export function PipelineContentRefactored({
                 <button
                   key={action.id}
                   onClick={() => handleCustomAction(action.id)}
-                  className="flex items-center space-x-2 px-3 py-2 text-sm bg-[var(--hover)] hover:bg-[var(--loading-bg)] rounded-lg transition-colors"
+                  className="flex items-center space-x-2 px-3 py-2 text-sm bg-hover hover:bg-loading-bg rounded-lg transition-colors"
                 >
                   {action.icon && <span>{action.icon}</span>}
                   <span>{action.label}</span>
@@ -237,7 +237,7 @@ export function PipelineContentRefactored({
         
         {/* Search and filters */}
         {(config?.showFilters || config?.showSearch) && (
-          <div className="flex-shrink-0 px-6 py-3 border-b border-[var(--border)]">
+          <div className="flex-shrink-0 px-6 py-3 border-b border-border">
             <PipelineFiltersRefactored
               section={section}
               totalCount={data.length}

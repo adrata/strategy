@@ -431,7 +431,7 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
     if (statType === 'deals' || statType === 'total-pipeline' || statType === 'deals-closed' || statType === 'avg-deal-size' || statType === 'pipeline-value-added') {
       const deal = activity as DealActivity;
       return (
-        <div key={deal.id} className={`group p-6 rounded-xl border ${config.borderColor} bg-[var(--background)] hover:shadow-md transition-all duration-200 hover:scale-[1.02]`}>
+        <div key={deal.id} className={`group p-6 rounded-xl border ${config.borderColor} bg-background hover:shadow-md transition-all duration-200 hover:scale-[1.02]`}>
           <div className="flex items-start space-x-4">
             <div className={`flex-shrink-0 w-12 h-12 ${config.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
               <Icon className={`w-6 h-6 ${config.iconColor}`} />
@@ -439,20 +439,20 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] group-hover:text-gray-700 transition-colors">
+                  <h3 className="text-lg font-semibold text-foreground group-hover:text-gray-700 transition-colors">
                     {deal.name}
                   </h3>
-                  <div className="mt-2 flex items-center space-x-4 text-sm text-[var(--muted)]">
+                  <div className="mt-2 flex items-center space-x-4 text-sm text-muted">
                     <span className="flex items-center space-x-1">
                       <CalendarIcon className="w-4 h-4" />
                       <span>{formatDate(deal.createdAt)}</span>
                     </span>
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800`}>
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-hover text-gray-800`}>
                       {deal.stage}
                     </span>
                   </div>
                   {(deal.accountName || deal.contactName) && (
-                    <div className="mt-2 flex items-center space-x-4 text-sm text-[var(--muted)]">
+                    <div className="mt-2 flex items-center space-x-4 text-sm text-muted">
                       {deal['accountName'] && (
                         <span className="flex items-center space-x-1">
                           <BuildingOfficeIcon className="w-4 h-4" />
@@ -469,7 +469,7 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
                   )}
                 </div>
                 <div className="ml-4 text-right">
-                  <div className="text-xl font-bold text-[var(--foreground)]">
+                  <div className="text-xl font-bold text-foreground">
                     {formatCurrency(deal.value)}
                   </div>
                 </div>
@@ -481,16 +481,16 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
     } else {
       const act = activity as Activity;
       return (
-        <div key={act.id} className={`group p-6 rounded-xl border ${config.borderColor} bg-[var(--background)] hover:shadow-md transition-all duration-200 hover:scale-[1.02]`}>
+        <div key={act.id} className={`group p-6 rounded-xl border ${config.borderColor} bg-background hover:shadow-md transition-all duration-200 hover:scale-[1.02]`}>
           <div className="flex items-start space-x-4">
             <div className={`flex-shrink-0 w-12 h-12 ${config.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
               <Icon className={`w-6 h-6 ${config.iconColor}`} />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] group-hover:text-gray-700 transition-colors">
+              <h3 className="text-lg font-semibold text-foreground group-hover:text-gray-700 transition-colors">
                 {act.subject || `${config.title} Activity`}
               </h3>
-              <div className="mt-2 flex items-center space-x-4 text-sm text-[var(--muted)]">
+              <div className="mt-2 flex items-center space-x-4 text-sm text-muted">
                 <span className="flex items-center space-x-1">
                   <CalendarIcon className="w-4 h-4" />
                   <span>{formatDate(act.createdAt)}</span>
@@ -499,14 +499,14 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
                   <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                     act['status'] === 'completed' ? 'bg-green-100 text-green-800' :
                     act['status'] === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-[var(--hover)] text-gray-800'
+                    'bg-hover text-gray-800'
                   }`}>
                     {act.status}
                   </span>
                 )}
               </div>
               {(act.contactName || act.opportunityName) && (
-                <div className="mt-2 flex items-center space-x-4 text-sm text-[var(--muted)]">
+                <div className="mt-2 flex items-center space-x-4 text-sm text-muted">
                   {act['contactName'] && (
                     <span className="flex items-center space-x-1">
                       <UserIcon className="w-4 h-4" />
@@ -542,14 +542,14 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
         />
       }
       middlePanel={
-        <div className="h-full bg-[var(--panel-background)]">
+        <div className="h-full bg-panel-background">
           {/* Modern Header */}
-          <div className="bg-[var(--background)] border-b border-[var(--border)]">
+          <div className="bg-background border-b border-border">
             <div className="px-8 py-6">
               <div className="flex items-center space-x-4 mb-6">
                 <button
                   onClick={handleBack}
-                  className="flex items-center space-x-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors group"
+                  className="flex items-center space-x-2 text-muted hover:text-foreground transition-colors group"
                 >
                   <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                   <span className="text-sm font-medium">Back to Dashboard</span>
@@ -560,8 +560,8 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
                   <config.icon className={`w-8 h-8 ${config.iconColor}`} />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-[var(--foreground)]">{config.title}</h1>
-                  <p className="text-[var(--muted)] mt-1">
+                  <h1 className="text-3xl font-bold text-foreground">{config.title}</h1>
+                  <p className="text-muted mt-1">
                     {statType === 'deals' || statType === 'total-pipeline' || statType === 'deals-closed' || statType === 'avg-deal-size' || statType === 'pipeline-value-added' 
                       ? 'Opportunities and deals from the last week' 
                       : 'Activities from the last week'}
@@ -577,7 +577,7 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
               <div className="flex items-center justify-center h-64">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="text-[var(--muted)] mt-4">Loading {config.title.toLowerCase()}...</p>
+                  <p className="text-muted mt-4">Loading {config.title.toLowerCase()}...</p>
                 </div>
               </div>
             ) : error ? (
@@ -586,8 +586,8 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
                   <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <ExclamationTriangleIcon className="w-8 h-8 text-red-600" />
                   </div>
-                  <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">Error Loading Data</h3>
-                  <p className="text-[var(--muted)]">{error}</p>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Error Loading Data</h3>
+                  <p className="text-muted">{error}</p>
                 </div>
               </div>
             ) : activities['length'] === 0 ? (
@@ -596,14 +596,14 @@ export function DashboardDetailPage({ statType }: DashboardDetailPageProps) {
                   <div className={`w-16 h-16 ${config.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
                     <config.icon className={`w-8 h-8 ${config.iconColor}`} />
                   </div>
-                  <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">{config.emptyMessage}</h3>
-                  <p className="text-[var(--muted)]">{config.emptyDescription}</p>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">{config.emptyMessage}</h3>
+                  <p className="text-muted">{config.emptyDescription}</p>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-semibold text-[var(--foreground)]">
+                  <h2 className="text-lg font-semibold text-foreground">
                     {activities.length} {activities['length'] === 1 ? 'Item' : 'Items'}
                   </h2>
                 </div>

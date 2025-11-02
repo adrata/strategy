@@ -36,38 +36,38 @@ export function AIActionsView({ actions, onBack }: AIActionsViewProps) {
       <div className="flex items-center space-x-3 mb-6">
         <button
           onClick={onBack}
-          className="w-8 h-8 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors flex items-center justify-center"
+          className="w-8 h-8 text-muted cursor-pointer hover:text-foreground transition-colors flex items-center justify-center"
           title="Back to Chat"
         >
           <ArrowLeftIcon className="w-5 h-5" />
         </button>
-        <h2 className="text-lg font-semibold text-[var(--foreground)]">Logs</h2>
+        <h2 className="text-lg font-semibold text-foreground">Logs</h2>
       </div>
       
       <div className="space-y-4 overflow-y-auto">
         {actions.map((action) => (
-          <div key={action.id} className="bg-[var(--hover-bg)] rounded-lg p-4">
+          <div key={action.id} className="bg-hover rounded-lg p-4">
             <div className="flex items-start justify-between mb-2">
-              <h3 className="font-medium text-[var(--foreground)]">{action.action}</h3>
+              <h3 className="font-medium text-foreground">{action.action}</h3>
               <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                 action['status'] === 'completed' 
                   ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                   : action['status'] === 'in_progress'
                   ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                  : 'bg-[var(--hover)] text-gray-800 dark:bg-[var(--foreground)] dark:text-gray-200'
+                  : 'bg-hover text-gray-800 dark:bg-foreground dark:text-gray-200'
               }`}>
                 {action.status.replace('_', ' ')}
               </span>
             </div>
-            <p className="text-sm text-[var(--muted)] mb-2">{action.details}</p>
-            <div className="text-xs text-[var(--muted)]">
+            <p className="text-sm text-muted mb-2">{action.details}</p>
+            <div className="text-xs text-muted">
               {formatTimeAgo(action.timestamp)}
             </div>
           </div>
         ))}
         
         {actions['length'] === 0 && (
-          <div className="text-center py-8 text-[var(--muted)]">
+          <div className="text-center py-8 text-muted">
             <p>No AI actions yet.</p>
             <p className="text-sm mt-2">Actions will appear here as the AI helps you.</p>
           </div>

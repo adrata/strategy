@@ -76,7 +76,7 @@ export default function DeepValueReportPage() {
               leftPanel={<LeftPanel activeSection="people" onSectionChange={() => {}} />}
               middlePanel={
                 <div className="flex items-center justify-center h-64">
-                  <div className="text-[var(--muted)]">Loading record...</div>
+                  <div className="text-muted">Loading record...</div>
                 </div>
               }
               rightPanel={<RightPanel />}

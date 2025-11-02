@@ -161,10 +161,10 @@ export function InstantNavigationProvider({
   
   if (!isInitialized) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--panel-background)]">
+      <div className="h-full flex items-center justify-center bg-panel-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <div className="text-[var(--muted)]">Initializing instant navigation...</div>
+          <div className="text-muted">Initializing instant navigation...</div>
         </div>
       </div>
     );

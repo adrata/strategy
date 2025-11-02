@@ -57,25 +57,25 @@ export function AddTaskModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] rounded-xl border border-gray-100 shadow-sm p-6 w-full max-w-md">
+    <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-background rounded-xl border border-gray-100 shadow-sm p-6 w-full max-w-md">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-[var(--foreground)] flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
             <CheckCircleIcon className="w-5 h-5 text-blue-600" />
             Add Task
           </h2>
           <button
             onClick={handleClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-hover transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+            <XMarkIcon className="w-5 h-5 text-muted" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Task Subject */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Task Subject *
             </label>
             <input
@@ -83,7 +83,7 @@ export function AddTaskModal({
               value={formData.subject}
               onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
               placeholder="Enter task subject"
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-[var(--accent)] transition-colors"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-primary transition-colors"
               required
               autoFocus
             />
@@ -91,7 +91,7 @@ export function AddTaskModal({
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Description
             </label>
             <textarea
@@ -99,19 +99,19 @@ export function AddTaskModal({
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="Enter task description (optional)"
               rows={3}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-[var(--accent)] transition-colors resize-none"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-primary transition-colors resize-none"
             />
           </div>
 
           {/* Priority */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Priority
             </label>
             <select
               value={formData.priority}
               onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as 'low' | 'normal' | 'high' }))}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-[var(--accent)] transition-colors"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-primary transition-colors"
             >
               <option value="low">Low</option>
               <option value="normal">Normal</option>
@@ -121,14 +121,14 @@ export function AddTaskModal({
 
           {/* Scheduled Date */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Due Date
             </label>
             <input
               type="date"
               value={formData.scheduledDate}
               onChange={(e) => setFormData(prev => ({ ...prev, scheduledDate: e.target.value }))}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-[var(--accent)] transition-colors"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-primary transition-colors"
             />
           </div>
 
@@ -138,7 +138,7 @@ export function AddTaskModal({
               type="button"
               onClick={handleClose}
               disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-panel-background transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>

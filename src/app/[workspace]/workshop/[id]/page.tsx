@@ -157,11 +157,11 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
       case 'grid':
         return <TableCellsIcon className="w-6 h-6 text-green-600" />;
       case 'code':
-        return <CodeBracketIcon className="w-6 h-6 text-[var(--muted)]" />;
+        return <CodeBracketIcon className="w-6 h-6 text-muted" />;
       case 'matrix':
         return <ChartBarIcon className="w-6 h-6 text-orange-600" />;
       default:
-        return <DocumentTextIcon className="w-6 h-6 text-[var(--muted)]" />;
+        return <DocumentTextIcon className="w-6 h-6 text-muted" />;
     }
   };
 
@@ -204,11 +204,11 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
         return <GridEditor {...editorProps} />;
       default:
         return (
-          <div className="h-full flex items-center justify-center bg-[var(--background)]">
+          <div className="h-full flex items-center justify-center bg-background">
             <div className="text-center">
               <ExclamationTriangleIcon className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Unknown Document Type</h3>
-              <p className="text-[var(--muted)]">This document type is not supported yet.</p>
+              <h3 className="text-lg font-medium text-foreground mb-2">Unknown Document Type</h3>
+              <p className="text-muted">This document type is not supported yet.</p>
             </div>
           </div>
         );
@@ -217,19 +217,19 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
-        <p className="text-[var(--muted)]">Loading document...</p>
+      <div className="h-full flex items-center justify-center bg-background">
+        <p className="text-muted">Loading document...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center">
           <ExclamationTriangleIcon className="w-16 h-16 text-red-600 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Error Loading Document</h3>
-          <p className="text-[var(--muted)] mb-4">{error}</p>
+          <h3 className="text-lg font-medium text-foreground mb-2">Error Loading Document</h3>
+          <p className="text-muted mb-4">{error}</p>
           <button
             onClick={() => router.back()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -243,11 +243,11 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
 
   if (!document) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center">
           <ExclamationTriangleIcon className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Document Not Found</h3>
-          <p className="text-[var(--muted)] mb-4">The document you're looking for doesn't exist or you don't have access to it.</p>
+          <h3 className="text-lg font-medium text-foreground mb-2">Document Not Found</h3>
+          <p className="text-muted mb-4">The document you're looking for doesn't exist or you don't have access to it.</p>
           <button
             onClick={() => router.back()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -260,12 +260,12 @@ export default function DocumentEditorPage({}: DocumentEditorPageProps) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Minimal Breadcrumb */}
-      <div className="flex items-center gap-2 px-6 py-2 border-b border-[var(--border)] bg-[var(--background)]">
+      <div className="flex items-center gap-2 px-6 py-2 border-b border-border bg-background">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          className="flex items-center gap-1 text-xs text-muted hover:text-foreground transition-colors"
         >
           <ArrowLeftIcon className="w-3 h-3" />
           <span>Back</span>

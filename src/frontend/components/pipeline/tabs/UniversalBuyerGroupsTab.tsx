@@ -647,16 +647,16 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       {loading && (
         <div className="space-y-4">
           <div className="animate-pulse">
-            <div className="h-4 bg-[var(--loading-bg)] rounded w-1/4 mb-4"></div>
+            <div className="h-4 bg-loading-bg rounded w-1/4 mb-4"></div>
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
-                  <div className="w-10 h-10 bg-[var(--loading-bg)] rounded-full"></div>
+                  <div className="w-10 h-10 bg-loading-bg rounded-full"></div>
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-[var(--loading-bg)] rounded w-1/3"></div>
-                    <div className="h-3 bg-[var(--loading-bg)] rounded w-1/4"></div>
+                    <div className="h-4 bg-loading-bg rounded w-1/3"></div>
+                    <div className="h-3 bg-loading-bg rounded w-1/4"></div>
                   </div>
-                  <div className="w-20 h-6 bg-[var(--loading-bg)] rounded"></div>
+                  <div className="w-20 h-6 bg-loading-bg rounded"></div>
                 </div>
               ))}
             </div>
@@ -667,11 +667,11 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       {/* Empty State */}
       {!loading && buyerGroups.length === 0 && (
         <div className="text-center py-12">
-          <BuildingOfficeIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+          <BuildingOfficeIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-2">
             No Buyer Group Members Found
           </h3>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             This person doesn't have any co-workers at their company yet.
           </p>
         </div>
@@ -680,23 +680,23 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       {/* Buyer Group Members */}
       {!loading && buyerGroups.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">Buyer Group Members</h3>
+          <h3 className="text-lg font-semibold text-foreground">Buyer Group Members</h3>
           <div className="space-y-3">
             {buyerGroups.map((member, index) => {
               const riskAssessment = riskAssessments[member.id] || calculatePersonRisk(member);
 
               return (
-                <div key={member.id || index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-[var(--panel-background)] cursor-pointer transition-colors" onClick={() => handleMemberClick(member)}>
+                <div key={member.id || index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-panel-background cursor-pointer transition-colors" onClick={() => handleMemberClick(member)}>
                   <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-[var(--loading-bg)] rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-[var(--muted)]">
+                    <div className="w-10 h-10 bg-loading-bg rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-muted">
                         {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                       </span>
                     </div>
                     <div>
-                      <div className="font-medium text-[var(--foreground)]">{member.name}</div>
-                      <div className="text-sm text-[var(--muted)]">{member.title}</div>
-                      <div className="text-xs text-[var(--muted)]">{member.email}</div>
+                      <div className="font-medium text-foreground">{member.name}</div>
+                      <div className="text-sm text-muted">{member.title}</div>
+                      <div className="text-xs text-muted">{member.email}</div>
                     </div>
                   </div>
                   
@@ -709,7 +709,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                       member.role === 'Champion' ? 'bg-green-100 text-green-800' :
                       member.role === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
                       member.role === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                      'bg-[var(--hover)] text-gray-800'
+                      'bg-hover text-gray-800'
                     }`}>
                       {member.role}
                     </span>
@@ -730,7 +730,7 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       member.influence === 'high' ? 'bg-purple-100 text-purple-800' :
                       member.influence === 'medium' ? 'bg-orange-100 text-orange-800' :
-                      'bg-[var(--hover)] text-gray-800'
+                      'bg-hover text-gray-800'
                     }`}>
                       {member.influence} influence
                     </span>
@@ -746,18 +746,18 @@ export function UniversalBuyerGroupsTab({ record, recordType, onSave }: Universa
       {/* Add Member Modal Placeholder */}
       {showAddMemberModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-[var(--background)]">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-background">
             <div className="mt-3 text-center">
-              <h3 className="text-lg font-medium text-[var(--foreground)]">Add Member</h3>
+              <h3 className="text-lg font-medium text-foreground">Add Member</h3>
               <div className="mt-2 px-7 py-3">
-                <p className="text-sm text-[var(--muted)]">
+                <p className="text-sm text-muted">
                   This feature is coming soon. You'll be able to add new members to the buyer group.
                 </p>
               </div>
               <div className="items-center px-4 py-3">
                 <button 
                   onClick={() => setShowAddMemberModal(false)}
-                  className="px-4 py-2 bg-[var(--panel-background)]0 text-white text-base font-medium rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="px-4 py-2 bg-panel-background0 text-white text-base font-medium rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 >
                   Close
                 </button>
