@@ -240,7 +240,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             {selectedChannel.type === 'dm' && (
               <div className="w-8 h-8 bg-white border border-[var(--border)] rounded flex items-center justify-center">
                 <span className="text-sm font-medium text-[var(--foreground)]">
-                  {selectedChannel.name.charAt(0)}
+                  {selectedChannel.name.charAt(0).toUpperCase()}
                 </span>
               </div>
             )}
@@ -306,7 +306,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
           >
             <div className="flex-shrink-0">
               <div className="w-10 h-10 bg-white border border-[var(--border)] rounded flex items-center justify-center">
-                <span className="text-base font-medium text-[var(--foreground)]">{message.senderName.charAt(0)}</span>
+                <span className="text-base font-medium text-[var(--foreground)]">{message.senderName.charAt(0).toUpperCase()}</span>
               </div>
             </div>
             

@@ -459,7 +459,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                   <div className="relative">
                     <div className="w-4 h-4 bg-white border border-[var(--border)] rounded flex items-center justify-center">
                       <span className="text-xs font-medium text-[var(--foreground)]">
-                        {dm.id === 'me-self-dm' ? (authUser?.name?.charAt(0) || 'M') : dm.name.charAt(0)}
+                        {(dm.id === 'me-self-dm' ? (authUser?.name?.charAt(0) || 'M') : dm.name.charAt(0)).toUpperCase()}
                       </span>
                     </div>
                     {dm.status === 'online' && (
