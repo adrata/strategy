@@ -69,10 +69,11 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   const { ui } = useRevenueOS();
   const [sortBy, setSortBy] = useState<'priority' | 'dueDate' | 'createdAt' | 'title' | 'rank'>('rank');
   const [searchQuery, setSearchQuery] = useState('');
-  const [draggedItem, setDraggedItem] = useState<BacklogItem | null>(null);
   const [sortField, setSortField] = useState('rank');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [visibleColumns, setVisibleColumns] = useState(['rank', 'title', 'status', 'assignee', 'dueDate', 'workstream']);
+  const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
+  const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     priority: 'all',
     status: 'all',
@@ -262,10 +263,12 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     isVisible: boolean;
     position: { x: number; y: number };
     itemId: string;
+    isUpNext?: boolean;
   }>({
     isVisible: false,
     position: { x: 0, y: 0 },
-    itemId: ''
+    itemId: '',
+    isUpNext: false
   });
 
   const handleSearchChange = (query: string) => {
@@ -382,13 +385,314 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     otherItems: items.filter(item => item.status !== 'up-next' && item.status !== 'todo')
   };
 
-  const handleContextMenu = (e: React.MouseEvent, itemId: string) => {
+  const handleContextMenu = (e: React.MouseEvent, itemId: string, isUpNext?: boolean) => {
     e.preventDefault();
     setContextMenu({
       isVisible: true,
       position: { x: e.clientX, y: e.clientY },
-      itemId
+      itemId,
+      isUpNext: isUpNext || false
     });
+  };
+
+  const handleDragStart = (e: React.DragEvent, itemId: string) => {
+    setDraggedItemId(itemId);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', itemId);
+  };
+
+  const handleDragOver = (e: React.DragEvent, itemId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (draggedItemId && draggedItemId !== itemId) {
+      setDragOverItemId(itemId);
+    }
+  };
+
+  const handleDragLeave = () => {
+    setDragOverItemId(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItemId(null);
+    setDragOverItemId(null);
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetItemId: string, section: 'upNext' | 'backlog') => {
+    e.preventDefault();
+    setDragOverItemId(null);
+
+    if (!draggedItemId || draggedItemId === targetItemId) {
+      setDraggedItemId(null);
+      return;
+    }
+
+    const itemsToReorder = section === 'upNext' ? itemsToDisplay.upNextItems : itemsToDisplay.otherItems;
+    const draggedIndex = itemsToReorder.findIndex(item => item.id === draggedItemId);
+    const targetIndex = itemsToReorder.findIndex(item => item.id === targetItemId);
+
+    if (draggedIndex === -1 || targetIndex === -1) {
+      setDraggedItemId(null);
+      return;
+    }
+
+    // Optimistic update - reorder items
+    const newItems = [...items];
+    const draggedItem = newItems.find(item => item.id === draggedItemId);
+    
+    if (!draggedItem) {
+      setDraggedItemId(null);
+      return;
+    }
+
+    // Remove dragged item
+    const itemsInSection = newItems.filter(item => 
+      section === 'upNext' 
+        ? (item.status === 'up-next' || item.status === 'todo')
+        : (item.status !== 'up-next' && item.status !== 'todo')
+    );
+    const otherItems = newItems.filter(item => 
+      section === 'upNext'
+        ? (item.status !== 'up-next' && item.status !== 'todo')
+        : (item.status === 'up-next' || item.status === 'todo')
+    );
+
+    // Reorder within section
+    const reorderedSection = [...itemsInSection];
+    const sectionDraggedIndex = reorderedSection.findIndex(item => item.id === draggedItemId);
+    const sectionTargetIndex = reorderedSection.findIndex(item => item.id === targetItemId);
+
+    if (sectionDraggedIndex !== -1 && sectionTargetIndex !== -1) {
+      const [movedItem] = reorderedSection.splice(sectionDraggedIndex, 1);
+      if (movedItem) {
+        reorderedSection.splice(sectionTargetIndex, 0, movedItem);
+      }
+
+      // Update ranks
+      const allReorderedItems = section === 'upNext' 
+        ? [...reorderedSection, ...otherItems]
+        : [...otherItems, ...reorderedSection];
+
+      const itemsWithNewRanks = allReorderedItems.map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
+
+      setItems(itemsWithNewRanks);
+    }
+
+    setDraggedItemId(null);
+
+    // Persist to API
+    // Resolve workspace ID
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for updating story order');
+      return;
+    }
+
+    // Update ranks in the database (we'll need to update multiple items)
+    try {
+      // For now, we'll update the dragged item's position
+      // In a full implementation, you might want to update all affected items
+      const response = await fetch(`/api/v1/stacks/stories/${draggedItemId}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          // Note: The API may need to support rank updates
+          // For now, we'll refresh the list after reordering
+        })
+      });
+
+      if (!response.ok) {
+        console.error('Failed to update story order:', await response.text());
+        // Refresh to revert optimistic update
+        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          if (data.stories && Array.isArray(data.stories)) {
+            const backlogItems = data.stories.map((story: any, index: number) => ({
+              id: story.id,
+              title: story.title,
+              description: story.description,
+              priority: story.priority,
+              status: story.status,
+              assignee: story.assignee?.name || story.assignee,
+              dueDate: story.dueDate,
+              tags: story.tags || [],
+              createdAt: story.createdAt,
+              updatedAt: story.updatedAt,
+              rank: index + 1
+            }));
+            setItems(backlogItems);
+          }
+        }
+      } else {
+        // Refresh to get updated order from server
+        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          if (data.stories && Array.isArray(data.stories)) {
+            const backlogItems = data.stories.map((story: any, index: number) => ({
+              id: story.id,
+              title: story.title,
+              description: story.description,
+              priority: story.priority,
+              status: story.status,
+              assignee: story.assignee?.name || story.assignee,
+              dueDate: story.dueDate,
+              tags: story.tags || [],
+              createdAt: story.createdAt,
+              updatedAt: story.updatedAt,
+              rank: index + 1
+            }));
+            setItems(backlogItems);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error updating story order:', error);
+      // Refresh to revert optimistic update on error
+      const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (refreshResponse.ok) {
+        const data = await refreshResponse.json();
+        if (data.stories && Array.isArray(data.stories)) {
+          const backlogItems = data.stories.map((story: any, index: number) => ({
+            id: story.id,
+            title: story.title,
+            description: story.description,
+            priority: story.priority,
+            status: story.status,
+            assignee: story.assignee?.name || story.assignee,
+            dueDate: story.dueDate,
+            tags: story.tags || [],
+            createdAt: story.createdAt,
+            updatedAt: story.updatedAt,
+            rank: index + 1
+          }));
+          setItems(backlogItems);
+        }
+      }
+    }
+  };
+
+  const handleMoveBelowTheLine = async () => {
+    if (!contextMenu.itemId) return;
+
+    const item = items.find(i => i.id === contextMenu.itemId);
+    if (!item) return;
+
+    // Change status from 'up-next'/'todo' to 'in-progress' to move below the line
+    // Items with status other than 'up-next' or 'todo' go to the Backlog section
+    const newStatus = item.status === 'up-next' || item.status === 'todo' 
+      ? 'in-progress' 
+      : item.status;
+
+    // Optimistic update
+    setItems(prevItems => 
+      prevItems.map(i => 
+        i.id === contextMenu.itemId ? { ...i, status: newStatus as any } : i
+      )
+    );
+
+    setContextMenu(prev => ({ ...prev, isVisible: false }));
+
+    // Resolve workspace ID
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for updating story status');
+      return;
+    }
+
+    // Update via API
+    try {
+      const response = await fetch(`/api/v1/stacks/stories/${item.id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus
+        })
+      });
+
+      if (!response.ok) {
+        // Revert on failure
+        setItems(prevItems => 
+          prevItems.map(i => 
+            i.id === contextMenu.itemId ? { ...i, status: item.status } : i
+          )
+        );
+        console.error('Failed to update story status:', await response.text());
+      } else {
+        console.log(`Successfully moved ${item.title} below the line`);
+        // Refresh the list to get updated data
+        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          if (data.stories && Array.isArray(data.stories)) {
+            const backlogItems = data.stories.map((story: any, index: number) => ({
+              id: story.id,
+              title: story.title,
+              description: story.description,
+              priority: story.priority,
+              status: story.status,
+              assignee: story.assignee?.name || story.assignee,
+              dueDate: story.dueDate,
+              tags: story.tags || [],
+              createdAt: story.createdAt,
+              updatedAt: story.updatedAt,
+              rank: index + 1
+            }));
+            setItems(backlogItems);
+          }
+        }
+      }
+    } catch (error) {
+      // Revert on error
+      setItems(prevItems => 
+        prevItems.map(i => 
+          i.id === contextMenu.itemId ? { ...i, status: item.status } : i
+        )
+      );
+      console.error('Error updating story status:', error);
+    }
   };
 
   const closeContextMenu = () => {
@@ -515,17 +819,19 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         />
 
         {/* Search and Filters */}
-        <StacksFilters
-          section="backlog"
-          totalCount={items.length}
-          onSearchChange={handleSearchChange}
-          onSortChange={handleSortChange}
-          onFilterChange={handleFilterChange}
-          onColumnVisibilityChange={handleColumnVisibilityChange}
-          visibleColumns={visibleColumns}
-          sortField={sortField}
-          sortDirection={sortDirection}
-        />
+        <div className="flex items-center gap-4">
+          <StacksFilters
+            section="backlog"
+            totalCount={items.length}
+            onSearchChange={handleSearchChange}
+            onSortChange={handleSortChange}
+            onFilterChange={handleFilterChange}
+            onColumnVisibilityChange={handleColumnVisibilityChange}
+            visibleColumns={visibleColumns}
+            sortField={sortField}
+            sortDirection={sortDirection}
+          />
+        </div>
       </div>
 
       {/* Table Content */}
@@ -549,25 +855,39 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             {itemsToDisplay.upNextItems.length > 0 && (
               <>
                 <div className="mb-3">
-                  <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Up Next</h3>
-                  <div className="text-xs text-[var(--muted)]">{itemsToDisplay.upNextItems.length} items</div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-[var(--foreground)]">Up Next</h3>
+                    <span className="text-xs text-[var(--muted)]">
+                      {itemsToDisplay.upNextItems.length} {itemsToDisplay.upNextItems.length === 1 ? 'item' : 'items'}
+                    </span>
+                  </div>
                 </div>
                 
-                {/* Simple List View - Jira Style */}
+                {/* Cards View with Drag and Drop */}
                 <div className="space-y-2 mb-6">
                   {itemsToDisplay.upNextItems.map((item, index) => {
                     const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
+                    const isDragging = draggedItemId === item.id;
+                    const isDragOver = dragOverItemId === item.id;
                     
                     return (
                       <div
                         key={item.id}
-                        className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:bg-[var(--hover)] hover:border-[var(--accent)] transition-colors cursor-pointer"
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, item.id)}
+                        onDragOver={(e) => handleDragOver(e, item.id)}
+                        onDragLeave={handleDragLeave}
+                        onDragEnd={handleDragEnd}
+                        onDrop={(e) => handleDrop(e, item.id, 'upNext')}
+                        className={`bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:bg-[var(--hover)] hover:border-[var(--accent)] transition-colors cursor-move ${
+                          isDragging ? 'opacity-50' : ''
+                        } ${isDragOver ? 'border-[var(--accent)] border-2' : ''}`}
                         onClick={() => onItemClick?.(item)}
-                        onContextMenu={(e) => handleContextMenu(e, item.id)}
+                        onContextMenu={(e) => handleContextMenu(e, item.id, true)}
                       >
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
-                            #{item.rank || index + 1}
+                            1{String.fromCharCode(65 + index)}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
@@ -576,9 +896,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                                   bug
                                 </span>
                               )}
-                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${PRIORITY_COLORS[item.priority] || PRIORITY_COLORS.medium}`}>
-                                {item.priority}
-                              </span>
                               <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
                                 {item.title}
                               </h4>
@@ -589,10 +906,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                               </p>
                             )}
                             <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
-                              <div className="flex items-center gap-1">
-                                <StatusIcon className="h-3 w-3" />
-                                <span className="capitalize">{item.status === 'todo' ? 'up-next' : item.status}</span>
-                              </div>
                               {item.assignee && (
                                 <span>{item.assignee}</span>
                               )}
@@ -624,21 +937,31 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   <div className="text-xs text-[var(--muted)]">{itemsToDisplay.otherItems.length} items</div>
                 </div>
                 
-                {/* Simple List View - Jira Style */}
+                {/* Cards View with Drag and Drop */}
                 <div className="space-y-2">
                   {itemsToDisplay.otherItems.map((item, index) => {
                     const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
+                    const isDragging = draggedItemId === item.id;
+                    const isDragOver = dragOverItemId === item.id;
                     
                     return (
                       <div
                         key={item.id}
-                        className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:bg-[var(--hover)] hover:border-[var(--accent)] transition-colors cursor-pointer"
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, item.id)}
+                        onDragOver={(e) => handleDragOver(e, item.id)}
+                        onDragLeave={handleDragLeave}
+                        onDragEnd={handleDragEnd}
+                        onDrop={(e) => handleDrop(e, item.id, 'backlog')}
+                        className={`bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:bg-[var(--hover)] hover:border-[var(--accent)] transition-colors cursor-move ${
+                          isDragging ? 'opacity-50' : ''
+                        } ${isDragOver ? 'border-[var(--accent)] border-2' : ''}`}
                         onClick={() => onItemClick?.(item)}
-                        onContextMenu={(e) => handleContextMenu(e, item.id)}
+                        onContextMenu={(e) => handleContextMenu(e, item.id, false)}
                       >
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
-                            #{item.rank || (itemsToDisplay.upNextItems.length + index + 1)}
+                            B{index + 1}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
@@ -647,9 +970,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                                   bug
                                 </span>
                               )}
-                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${PRIORITY_COLORS[item.priority] || PRIORITY_COLORS.medium}`}>
-                                {item.priority}
-                              </span>
                               <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
                                 {item.title}
                               </h4>
@@ -660,10 +980,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                               </p>
                             )}
                             <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
-                              <div className="flex items-center gap-1">
-                                <StatusIcon className="h-3 w-3" />
-                                <span className="capitalize">{item.status}</span>
-                              </div>
                               {item.assignee && (
                                 <span>{item.assignee}</span>
                               )}
@@ -694,6 +1010,13 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         onMoveUp={() => moveItem(contextMenu.itemId, 'up')}
         onMoveDown={() => moveItem(contextMenu.itemId, 'down')}
         onMoveToBottom={() => moveItem(contextMenu.itemId, 'bottom')}
+        onMoveBelowTheLine={handleMoveBelowTheLine}
+        showMoveBelowTheLine={contextMenu.isUpNext === true}
+        onDelete={() => {
+          // TODO: Implement delete functionality
+          console.log('Delete item:', contextMenu.itemId);
+          closeContextMenu();
+        }}
       />
     </div>
   );

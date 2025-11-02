@@ -6,7 +6,8 @@ import {
   ChevronDownIcon,
   ArrowUpIcon,
   ArrowDownIcon,
-  TrashIcon
+  TrashIcon,
+  ArrowDownCircleIcon
 } from '@heroicons/react/24/outline';
 
 interface StacksContextMenuProps {
@@ -17,7 +18,9 @@ interface StacksContextMenuProps {
   onMoveUp: () => void;
   onMoveDown: () => void;
   onMoveToBottom: () => void;
+  onMoveBelowTheLine?: () => void;
   onDelete: () => void;
+  showMoveBelowTheLine?: boolean;
 }
 
 export function StacksContextMenu({
@@ -28,7 +31,9 @@ export function StacksContextMenu({
   onMoveUp,
   onMoveDown,
   onMoveToBottom,
-  onDelete
+  onMoveBelowTheLine,
+  onDelete,
+  showMoveBelowTheLine = false
 }: StacksContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -83,6 +88,13 @@ export function StacksContextMenu({
       onClick: onMoveToBottom,
       className: 'text-[var(--foreground)] hover:bg-[var(--hover)]'
     },
+    ...(showMoveBelowTheLine && onMoveBelowTheLine ? [{
+      label: 'Move Below the Line',
+      icon: ArrowDownCircleIcon,
+      onClick: onMoveBelowTheLine,
+      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]',
+      showDivider: true
+    }] : []),
     {
       label: 'Delete',
       icon: TrashIcon,
@@ -103,9 +115,10 @@ export function StacksContextMenu({
       {menuItems.map((item, index) => {
         const Icon = item.icon;
         const isLast = index === menuItems.length - 1;
+        const showDivider = (item as any).showDivider || isLast;
         return (
           <React.Fragment key={index}>
-            {isLast && <div className="border-t border-[var(--border)] my-1" />}
+            {showDivider && <div className="border-t border-[var(--border)] my-1" />}
             <button
               onClick={() => {
                 item.onClick();
