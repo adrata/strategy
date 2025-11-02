@@ -1,11 +1,11 @@
 export default function FindCommunicationsEngineerReport() {
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-[var(--background)]">
+    <div className="max-w-4xl mx-auto p-6 bg-background">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
+        <h1 className="text-2xl font-bold text-foreground mb-2">
           TOP Engineering Plus - Use Case #3: Find Communications Engineer
         </h1>
-        <p className="text-[var(--muted)]">QA Report - Real System Test</p>
+        <p className="text-muted">QA Report - Real System Test</p>
       </div>
 
       <div className="space-y-6">
@@ -25,25 +25,25 @@ export default function FindCommunicationsEngineerReport() {
           
           <div className="space-y-4">
             <div>
-              <h3 className="font-semibold text-[var(--foreground)]">Company Context:</h3>
-              <div className="bg-[var(--background)] border rounded p-3">
+              <h3 className="font-semibold text-foreground">Company Context:</h3>
+              <div className="bg-background border rounded p-3">
                 <p><strong>NV Energy</strong> (P.O. Box 30150, Reno, NV 89520)</p>
-                <p className="text-sm text-[var(--muted)]">Major utility serving Nevada, known for renewable energy integration and grid modernization</p>
+                <p className="text-sm text-muted">Major utility serving Nevada, known for renewable energy integration and grid modernization</p>
               </div>
             </div>
 
             <div>
-              <h3 className="font-semibold text-[var(--foreground)]">Current Database Search:</h3>
-              <div className="bg-[var(--background)] border rounded p-3">
-                <p className="text-sm text-[var(--muted)] mb-2">No existing contacts found in database for NV Energy</p>
+              <h3 className="font-semibold text-foreground">Current Database Search:</h3>
+              <div className="bg-background border rounded p-3">
+                <p className="text-sm text-muted mb-2">No existing contacts found in database for NV Energy</p>
                 <p className="text-sm text-red-600">⚠ Gap identified: Need to research and add NV Energy contacts</p>
               </div>
             </div>
 
             <div>
-              <h3 className="font-semibold text-[var(--foreground)]">External Search Results:</h3>
-              <div className="bg-[var(--background)] border rounded p-3">
-                <p className="text-sm text-[var(--muted)] mb-3">Searching CoreSignal for:</p>
+              <h3 className="font-semibold text-foreground">External Search Results:</h3>
+              <div className="bg-background border rounded p-3">
+                <p className="text-sm text-muted mb-3">Searching CoreSignal for:</p>
                 <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm mb-3">
                   <li>Company: NV Energy</li>
                   <li>Title: Senior Communications Engineer, SCADA Engineer, Automation Engineer</li>
@@ -52,29 +52,29 @@ export default function FindCommunicationsEngineerReport() {
                 </ul>
                 
                 <div className="border-t pt-3">
-                  <p className="text-sm font-medium text-[var(--foreground)] mb-2">Top Candidates Found:</p>
+                  <p className="text-sm font-medium text-foreground mb-2">Top Candidates Found:</p>
                   <div className="space-y-3">
                     <div className="border-l-4 border-blue-200 pl-3">
                       <p><strong>Michael Rodriguez</strong> - Senior SCADA Engineer</p>
-                      <p className="text-sm text-[var(--muted)]">• 8+ years at NV Energy</p>
-                      <p className="text-sm text-[var(--muted)]">• Experience: Utility automation, DNP3, IEC 61850</p>
-                      <p className="text-sm text-[var(--muted)]">• Location: Reno, NV</p>
+                      <p className="text-sm text-muted">• 8+ years at NV Energy</p>
+                      <p className="text-sm text-muted">• Experience: Utility automation, DNP3, IEC 61850</p>
+                      <p className="text-sm text-muted">• Location: Reno, NV</p>
                       <p className="text-sm text-blue-600">Match Score: 94% (High relevance for TOP services)</p>
                     </div>
                     
                     <div className="border-l-4 border-blue-200 pl-3">
                       <p><strong>Sarah Chen</strong> - Communications Systems Engineer</p>
-                      <p className="text-sm text-[var(--muted)]">• 6+ years at NV Energy</p>
-                      <p className="text-sm text-[var(--muted)]">• Experience: Fiber optics, microwave, critical infrastructure</p>
-                      <p className="text-sm text-[var(--muted)]">• Location: Las Vegas, NV</p>
+                      <p className="text-sm text-muted">• 6+ years at NV Energy</p>
+                      <p className="text-sm text-muted">• Experience: Fiber optics, microwave, critical infrastructure</p>
+                      <p className="text-sm text-muted">• Location: Las Vegas, NV</p>
                       <p className="text-sm text-blue-600">Match Score: 91% (Perfect fit for communications focus)</p>
                     </div>
 
                     <div className="border-l-4 border-blue-200 pl-3">
                       <p><strong>David Park</strong> - Senior Automation Engineer</p>
-                      <p className="text-sm text-[var(--muted)]">• 10+ years utility experience (5 at NV Energy)</p>
-                      <p className="text-sm text-[var(--muted)]">• Experience: Substation automation, protective relaying</p>
-                      <p className="text-sm text-[var(--muted)]">• Location: Henderson, NV</p>
+                      <p className="text-sm text-muted">• 10+ years utility experience (5 at NV Energy)</p>
+                      <p className="text-sm text-muted">• Experience: Substation automation, protective relaying</p>
+                      <p className="text-sm text-muted">• Location: Henderson, NV</p>
                       <p className="text-sm text-blue-600">Match Score: 88% (Strong technical background)</p>
                     </div>
                   </div>
@@ -83,7 +83,7 @@ export default function FindCommunicationsEngineerReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-[var(--foreground)]">Employment Verification Status:</h3>
+              <h3 className="font-semibold text-foreground">Employment Verification Status:</h3>
               <div className="space-y-2">
                 <div className="flex items-center">
                   <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
@@ -101,8 +101,8 @@ export default function FindCommunicationsEngineerReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-[var(--foreground)]">Recommended Approach Strategy:</h3>
-              <div className="bg-[var(--background)] border rounded p-3">
+              <h3 className="font-semibold text-foreground">Recommended Approach Strategy:</h3>
+              <div className="bg-background border rounded p-3">
                 <p className="text-sm font-medium mb-2">Primary Target: Michael Rodriguez</p>
                 <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
                   <li>Lead with SCADA modernization challenges in Nevada</li>
@@ -115,7 +115,7 @@ export default function FindCommunicationsEngineerReport() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-[var(--foreground)]">Next Steps:</h3>
+              <h3 className="font-semibold text-foreground">Next Steps:</h3>
               <ol className="list-decimal list-inside text-gray-700 space-y-1">
                 <li>Add Michael Rodriguez and Sarah Chen to TOP database</li>
                 <li>Enrich profiles with LinkedIn and additional contact info</li>
@@ -128,8 +128,8 @@ export default function FindCommunicationsEngineerReport() {
         </div>
 
         {/* System Performance */}
-        <div className="bg-[var(--panel-background)] border-l-4 border-gray-400 p-4">
-          <h2 className="text-lg font-semibold text-[var(--foreground)] mb-2">System Performance:</h2>
+        <div className="bg-panel-background border-l-4 border-gray-400 p-4">
+          <h2 className="text-lg font-semibold text-foreground mb-2">System Performance:</h2>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="font-medium">Response Time:</span> 4.2 seconds

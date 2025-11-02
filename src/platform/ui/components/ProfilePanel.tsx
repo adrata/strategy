@@ -126,7 +126,7 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
   return (
     <div
       ref={itemRef}
-      className={`flex items-start gap-3 px-3 py-2 hover:bg-[var(--hover-bg)] rounded-md transition-all duration-300 ease-in-out ${
+      className={`flex items-start gap-3 px-3 py-2 hover:bg-hover rounded-md transition-all duration-300 ease-in-out ${
         isRemoving ? 'opacity-0 max-h-0 overflow-hidden' : 'opacity-100'
       }`}
       onMouseEnter={() => setIsHovered(true)}
@@ -149,17 +149,17 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
             onChange={(e) => setEditText(e.target.value)}
             onKeyDown={handleEditKeyDown}
             onBlur={handleSaveEdit}
-            className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+            className="w-full px-2 py-1 text-sm border border-border rounded bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
             aria-label="Edit item text"
           />
         ) : (
           <div 
             className={`text-sm transition-all duration-200 ${
               item.completed && item.itemType === 'custom'
-                ? 'line-through text-[var(--muted-foreground)]' 
+                ? 'line-through text-muted' 
                 : item.completed && item.itemType === 'preset'
-                ? 'text-[var(--foreground)] opacity-70'
-                : 'text-[var(--foreground)]'
+                ? 'text-foreground opacity-70'
+                : 'text-foreground'
             }`}
           >
             {item.text}
@@ -218,14 +218,14 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
       )}
       {item.itemType === 'preset' && (
         <div className="flex items-center">
-          <span className="text-xs text-[var(--muted-foreground)] px-2 py-0.5 rounded bg-[var(--hover-bg)]">
+          <span className="text-xs text-muted px-2 py-0.5 rounded bg-hover">
             Daily 100
           </span>
         </div>
       )}
       {item.itemType === 'custom' && (
         <div className="flex items-center">
-          <span className="text-xs text-[var(--muted-foreground)] px-2 py-0.5 rounded bg-[var(--hover-bg)]">
+          <span className="text-xs text-muted px-2 py-0.5 rounded bg-hover">
             Bonus
           </span>
         </div>
@@ -680,7 +680,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   return (
     <div 
       ref={panelRef}
-      className="h-full bg-[var(--background)] border-r border-[var(--border)] flex flex-col animate-in slide-in-from-left duration-200 relative"
+      className="h-full bg-background border-r border-border flex flex-col animate-in slide-in-from-left duration-200 relative"
       style={{ width: `${panelWidth}px` }}
     >
       {/* Resize Handle */}
@@ -695,7 +695,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
       </div>
 
       {/* Header with navigation buttons */}
-      <div className="px-4 border-b border-[var(--border)]" style={{ paddingTop: '15px', paddingBottom: '15px' }}>
+      <div className="px-4 border-b border-border" style={{ paddingTop: '15px', paddingBottom: '15px' }}>
         <div className="flex items-center justify-between gap-2">
           {/* Left: Profile icon (clickable to close) */}
           <button
@@ -703,16 +703,16 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             className="flex items-center gap-3 hover:opacity-80 transition-opacity group"
             title="Close panel"
           >
-            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--accent)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
+            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary border border-border overflow-hidden" style={{ filter: 'none' }}>
               <span className="text-lg font-bold text-white">
                 {(typeof workspace === 'string' ? workspace : (workspace as any)?.name || 'W').charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="flex-1">
-              <h3 className="text-base font-semibold text-[var(--foreground)] m-0 p-0 text-left leading-tight">
+              <h3 className="text-base font-semibold text-foreground m-0 p-0 text-left leading-tight">
                 {typeof workspace === 'string' ? workspace : (workspace as any)?.name || 'Workspace'}
               </h3>
-              <p className="text-xs text-[var(--muted-foreground)] m-0 p-0 text-left leading-tight" style={{ marginTop: '1px' }}>
+              <p className="text-xs text-muted m-0 p-0 text-left leading-tight" style={{ marginTop: '1px' }}>
                 Workspace
               </p>
             </div>
@@ -724,8 +724,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               onClick={handleHomeClick}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'main'
-                  ? 'bg-gray-100 text-[var(--foreground)]'
-                  : 'bg-transparent hover:bg-gray-50 text-[var(--foreground)]'
+                  ? 'bg-gray-100 text-foreground'
+                  : 'bg-transparent hover:bg-gray-50 text-foreground'
               }`}
               title="Home"
               aria-label="Go to home"
@@ -738,8 +738,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               }}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'calendar'
-                  ? 'bg-gray-100 text-[var(--foreground)]'
-                  : 'bg-transparent hover:bg-gray-50 text-[var(--foreground)]'
+                  ? 'bg-gray-100 text-foreground'
+                  : 'bg-transparent hover:bg-gray-50 text-foreground'
               }`}
               title="Calendar"
               aria-label="Calendar view"
@@ -752,8 +752,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               }}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'actionList'
-                  ? 'bg-gray-100 text-[var(--foreground)]'
-                  : 'bg-transparent hover:bg-gray-50 text-[var(--foreground)]'
+                  ? 'bg-gray-100 text-foreground'
+                  : 'bg-transparent hover:bg-gray-50 text-foreground'
               }`}
               title="Daily 100 Checklist"
               aria-label="Action list"
@@ -766,8 +766,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               }}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'notes'
-                  ? 'bg-gray-100 text-[var(--foreground)]'
-                  : 'bg-transparent hover:bg-gray-50 text-[var(--foreground)]'
+                  ? 'bg-gray-100 text-foreground'
+                  : 'bg-transparent hover:bg-gray-50 text-foreground'
               }`}
               title="Notes"
               aria-label="Notes"
@@ -777,7 +777,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             {!hideCloseButton && (
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-md bg-transparent hover:bg-gray-50 text-[var(--foreground)] transition-colors"
+                className="p-1.5 rounded-md bg-transparent hover:bg-gray-50 text-foreground transition-colors"
                 title="Hide profile panel"
                 aria-label="Hide profile panel"
               >
@@ -793,7 +793,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         {/* Get Started Section */}
         {viewMode === 'main' && (
           <div className="space-y-1">
-            <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider px-3">
+            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider px-3">
               Get Started
             </h4>
             <div className="space-y-0.5">
@@ -802,7 +802,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'revenueos' 
                   ? 'bg-slate-100 text-slate-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                  : 'text-foreground hover:bg-hover'
               }`}
               onClick={() => handleNavigation("/speedrun")}
             >
@@ -815,7 +815,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'workshop' 
                   ? 'bg-slate-100 text-slate-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                  : 'text-foreground hover:bg-hover'
               }`}
               onClick={() => handleNavigation("/workshop")}
             >
@@ -828,7 +828,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'adrata' 
                   ? 'bg-slate-100 text-slate-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                  : 'text-foreground hover:bg-hover'
               }`}
               onClick={() => handleNavigation("/adrata")}
             >
@@ -841,7 +841,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'stacks' 
                   ? 'bg-slate-100 text-slate-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                  : 'text-foreground hover:bg-hover'
               }`}
               onClick={() => handleNavigation("/stacks")}
             >
@@ -854,7 +854,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'oasis' 
                   ? 'bg-slate-100 text-slate-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                  : 'text-foreground hover:bg-hover'
               }`}
               onClick={() => handleNavigation("/oasis")}
             >
@@ -867,7 +867,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'grand-central' 
                   ? 'bg-slate-100 text-slate-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                  : 'text-foreground hover:bg-hover'
               }`}
               onClick={() => handleNavigation("/grand-central")}
             >
@@ -880,7 +880,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               className={`w-full flex items-center px-3 py-2.5 text-sm rounded-md transition-colors group ${
                 currentApp === 'settings' 
                   ? 'bg-slate-100 text-slate-700' 
-                  : 'text-[var(--foreground)] hover:bg-[var(--hover-bg)]'
+                  : 'text-foreground hover:bg-hover'
               }`}
               onClick={() => {
                 setIsSettingsOpen(true);
@@ -915,7 +915,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
           <div className="h-full flex flex-col flex-1 min-h-0">
             {/* Header with Notes title and status */}
             <div className="flex items-center justify-between mb-4 px-1 flex-shrink-0">
-              <h2 className="text-xl font-semibold text-[var(--foreground)]" style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
+              <h2 className="text-xl font-semibold text-foreground" style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
                 Notes
               </h2>
               <div className="flex items-center gap-2">
@@ -974,20 +974,20 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
           <div className="space-y-2 flex flex-col flex-1 min-h-0">
             <div className="flex items-center justify-between px-3">
               <div className="flex flex-col">
-                <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
+                <h4 className="text-xs font-semibold text-muted uppercase tracking-wider">
                   Action List
                 </h4>
               </div>
               <div className="flex flex-col items-end gap-1">
-                <div className="flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
+                <div className="flex items-center gap-3 text-xs text-muted">
                   {completedCount > 0 && (
                     <button
                       onClick={() => {
                         setShowOnlyCompleted(!showOnlyCompleted);
                         setShowAllItems(false);
                       }}
-                      className={`font-medium hover:text-[var(--foreground)] cursor-pointer transition-colors ${
-                        showOnlyCompleted ? 'text-[var(--foreground)]' : ''
+                      className={`font-medium hover:text-foreground cursor-pointer transition-colors ${
+                        showOnlyCompleted ? 'text-foreground' : ''
                       }`}
                       title={showOnlyCompleted ? "Show all items" : "Show only completed items"}
                     >
@@ -1001,7 +1001,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   )}
                 </div>
                 {lastResetDate && (
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <p className="text-xs text-muted">
                     Resets daily
                   </p>
                 )}
@@ -1010,7 +1010,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
             {/* Add Item Input - Fixed at top above scrollable area */}
             {!showOnlyCompleted && (
-              <div className="px-3 pb-3 flex-shrink-0 border-b border-[var(--border)]">
+              <div className="px-3 pb-3 flex-shrink-0 border-b border-border">
                 <div className="flex gap-2 items-center">
                   <input
                     ref={inputRef}
@@ -1028,7 +1028,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                       }
                     }}
                     placeholder="Add a task..."
-                    className="flex-1 px-4 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder:text-gray-500 focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors"
+                    className="flex-1 px-4 py-2 text-sm border border-border rounded-lg bg-background text-foreground placeholder:text-gray-500 focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors"
                     aria-label="Add action list item"
                     aria-describedby="action-list-input-help"
                   />
@@ -1064,30 +1064,30 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               aria-atomic="false"
             >
               {checklistLoading ? (
-                <div className="px-3 py-4 text-center text-xs text-[var(--muted-foreground)]">
+                <div className="px-3 py-4 text-center text-xs text-muted">
                   Loading action list...
                 </div>
               ) : remainingCount === 0 && completedCount === 0 ? (
                 <div className="px-3 py-12 text-center" role="status">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-xl border-2 border-[var(--border)] flex items-center justify-center bg-[var(--hover-bg)]">
-                    <ClipboardDocumentCheckIcon className="w-8 h-8 text-[var(--muted-foreground)] opacity-60" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-xl border-2 border-border flex items-center justify-center bg-hover">
+                    <ClipboardDocumentCheckIcon className="w-8 h-8 text-muted opacity-60" />
                   </div>
-                  <p className="text-sm font-semibold text-[var(--foreground)] mb-1.5">
+                  <p className="text-sm font-semibold text-foreground mb-1.5">
                     No action items yet
                   </p>
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <p className="text-xs text-muted">
                     Type above to add your first item
                   </p>
                 </div>
               ) : showOnlyCompleted && completedItems.length === 0 ? (
                 <div className="px-3 py-12 text-center" role="status">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-xl border-2 border-[var(--border)] flex items-center justify-center bg-[var(--hover-bg)]">
-                    <ClipboardDocumentCheckIcon className="w-8 h-8 text-[var(--muted-foreground)] opacity-60" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-xl border-2 border-border flex items-center justify-center bg-hover">
+                    <ClipboardDocumentCheckIcon className="w-8 h-8 text-muted opacity-60" />
                   </div>
-                  <p className="text-sm font-semibold text-[var(--foreground)] mb-1.5">
+                  <p className="text-sm font-semibold text-foreground mb-1.5">
                     No completed items
                   </p>
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <p className="text-xs text-muted">
                     Complete items to see them here
                   </p>
                 </div>
@@ -1129,9 +1129,9 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                         : customItems.filter(item => !item.completed);
                     
                     return itemsToShow.length > 0 ? (
-                      <div className={`space-y-1 ${presetItems.length > 0 ? 'mt-3 pt-3 border-t border-[var(--border)]' : ''}`}>
+                      <div className={`space-y-1 ${presetItems.length > 0 ? 'mt-3 pt-3 border-t border-border' : ''}`}>
                         {!showOnlyCompleted && (
-                          <p className="px-3 text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
+                          <p className="px-3 text-xs font-medium text-muted uppercase tracking-wider mb-1">
                             Bonus items
                           </p>
                         )}
@@ -1191,7 +1191,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
       {hasDesktopDownload && (
         <div className="p-3">
           <button
-            className="w-full flex items-center px-3 py-2.5 text-sm text-[var(--foreground)] rounded-md hover:bg-[var(--hover-bg)] transition-colors group"
+            className="w-full flex items-center px-3 py-2.5 text-sm text-foreground rounded-md hover:bg-hover transition-colors group"
             onClick={handleDownloadDesktopApp}
           >
             <PlatformIcon className="w-4 h-4 mr-3" />

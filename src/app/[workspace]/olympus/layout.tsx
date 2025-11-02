@@ -85,10 +85,10 @@ export default function OlympusLayout({ children }: OlympusLayoutProps) {
   // Don't render if not authorized
   if (authUser?.email && !isAdminUser) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">Access Restricted</h2>
-          <p className="text-[var(--muted)]">This feature is currently in development.</p>
+          <h2 className="text-xl font-semibold text-foreground mb-2">Access Restricted</h2>
+          <p className="text-muted">This feature is currently in development.</p>
         </div>
       </div>
     );
@@ -245,16 +245,16 @@ function OlympusRightPanel() {
 
   if (selectedStep) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
+      <div className="h-full flex flex-col bg-background border-l border-border">
         {/* Header with X button */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div>
-            <h2 className="font-semibold text-[var(--foreground)]">{selectedStep.title}</h2>
-            <p className="text-sm text-[var(--muted-foreground)]">{selectedStep.description}</p>
+            <h2 className="font-semibold text-foreground">{selectedStep.title}</h2>
+            <p className="text-sm text-muted">{selectedStep.description}</p>
           </div>
           <button
             onClick={() => setSelectedStep(null)}
-            className="p-1.5 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-1.5 hover:bg-hover rounded-lg transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -273,7 +273,7 @@ function OlympusRightPanel() {
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             
@@ -285,7 +285,7 @@ function OlympusRightPanel() {
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
             </div>
 
@@ -296,7 +296,7 @@ function OlympusRightPanel() {
               <select 
                 value={formData.status}
                 onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option>Not Started</option>
                 <option>In Progress</option>
@@ -312,7 +312,7 @@ function OlympusRightPanel() {
               <select 
                 value={formData.priority}
                 onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option>Low</option>
                 <option>Medium</option>
@@ -330,7 +330,7 @@ function OlympusRightPanel() {
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                 placeholder="Add any additional notes..."
                 rows={4}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
             </div>
           </div>

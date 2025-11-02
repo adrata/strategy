@@ -133,10 +133,10 @@ function ActivityMetric({
   };
   
   const getTrendColor = () => {
-    if (!trend) return 'text-[var(--muted)]';
+    if (!trend) return 'text-muted';
     if (trend > 0) return 'text-green-600';
     if (trend < 0) return 'text-red-600';
-    return 'text-[var(--muted)]';
+    return 'text-muted';
   };
 
   const getTrendIcon = () => {
@@ -148,11 +148,11 @@ function ActivityMetric({
 
   return (
     <div 
-      className={`bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] transition-all hover:shadow-sm ${onClick ? 'cursor-pointer hover:border-[var(--border)]' : ''}`}
+      className={`bg-background p-6 rounded-lg border border-border transition-all hover:shadow-sm ${onClick ? 'cursor-pointer hover:border-border' : ''}`}
       onClick={onClick}
     >
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-medium text-[var(--muted)]">{title}</h3>
+        <h3 className="text-sm font-medium text-muted">{title}</h3>
         {trend !== undefined && (
           <div className={`flex items-center text-sm font-medium ${getTrendColor()}`}>
             <span className="mr-1">{getTrendIcon()}</span>
@@ -161,23 +161,23 @@ function ActivityMetric({
         )}
       </div>
       
-      <div className="text-3xl font-bold text-[var(--foreground)] mb-1">
+      <div className="text-3xl font-bold text-foreground mb-1">
         {(value ?? 0).toLocaleString()}
       </div>
       
       {target && (
         <>
-          <div className="text-sm text-[var(--muted)] mb-3">
+          <div className="text-sm text-muted mb-3">
             of {(target ?? 0).toLocaleString()} target
           </div>
-          <div className="w-full bg-[var(--loading-bg)] rounded-full h-1.5">
+          <div className="w-full bg-loading-bg rounded-full h-1.5">
             <div 
               className={`h-1.5 rounded-full transition-all duration-500 ${getProgressBarColor()}`}
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
           {/* Smart performance indicator based on day of week */}
-          <div className="mt-2 text-xs text-[var(--muted)]">
+          <div className="mt-2 text-xs text-muted">
             {(() => {
               const now = new Date();
               const dayOfWeek = now.getDay();
@@ -608,7 +608,7 @@ export function Dashboard() {
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-[var(--muted)]">Processing dashboard data...</p>
+          <p className="text-muted">Processing dashboard data...</p>
         </div>
       </div>
     );
@@ -616,7 +616,7 @@ export function Dashboard() {
 
   if (error) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         <PipelineHeader
           section="dashboard"
           metrics={headerMetrics}
@@ -627,8 +627,8 @@ export function Dashboard() {
         />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Dashboard Error</h3>
-            <p className="text-[var(--muted)] mb-4">{error}</p>
+            <h3 className="text-lg font-semibold text-foreground mb-2">Dashboard Error</h3>
+            <p className="text-muted mb-4">{error}</p>
             <button
               onClick={handleRefresh}
               className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
@@ -684,7 +684,7 @@ export function Dashboard() {
   const dashboardData = shouldShowDefaultData ? defaultData : (activityData || defaultData);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header matching other pipeline pages */}
       <PipelineHeader
         section="dashboard"
@@ -700,13 +700,13 @@ export function Dashboard() {
         {isLoading && !activityData ? (
           <DashboardSkeleton />
         ) : (
-          <div className="p-6 bg-[var(--background)] min-h-full">
+          <div className="p-6 bg-background min-h-full">
             
 
 
             {/* Row 1: Weekly Activity Metrics */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">Weekly Performance</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Weekly Performance</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <ActivityMetric
                 title="LinkedIn"
@@ -741,86 +741,86 @@ export function Dashboard() {
 
           {/* Row 2: Monthly Performance */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">Monthly Performance</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Monthly Performance</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div 
-                className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-sm hover:border-[var(--border)] transition-all"
+                className="bg-background p-6 rounded-lg border border-border cursor-pointer hover:shadow-sm hover:border-border transition-all"
                 onClick={handleNewOpportunitiesClick}
               >
-                <h3 className="text-sm font-medium text-[var(--muted)] mb-2">New Clients</h3>
-                <div className="text-3xl font-bold text-[var(--foreground)]">{dashboardData.newOpportunities || 0}</div>
-                <div className="text-xs text-[var(--muted)] mt-1">This month</div>
+                <h3 className="text-sm font-medium text-muted mb-2">New Clients</h3>
+                <div className="text-3xl font-bold text-foreground">{dashboardData.newOpportunities || 0}</div>
+                <div className="text-xs text-muted mt-1">This month</div>
               </div>
               <div 
-                className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-sm hover:border-[var(--border)] transition-all"
+                className="bg-background p-6 rounded-lg border border-border cursor-pointer hover:shadow-sm hover:border-border transition-all"
                 onClick={handleTotalPipelineClick}
               >
-                <h3 className="text-sm font-medium text-[var(--muted)] mb-2">Pipeline Value</h3>
-                <div className="text-3xl font-bold text-[var(--foreground)]">
+                <h3 className="text-sm font-medium text-muted mb-2">Pipeline Value</h3>
+                <div className="text-3xl font-bold text-foreground">
                   ${((dashboardData.monthlyRevenue || 0) / 1000000).toFixed(1)}M
                 </div>
-                <div className="text-xs text-[var(--muted)] mt-1">This month</div>
+                <div className="text-xs text-muted mt-1">This month</div>
               </div>
               <div 
-                className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-sm hover:border-[var(--border)] transition-all"
+                className="bg-background p-6 rounded-lg border border-border cursor-pointer hover:shadow-sm hover:border-border transition-all"
                 onClick={handleLeadConversionClick}
               >
-                <h3 className="text-sm font-medium text-[var(--muted)] mb-2">Conversion Rate</h3>
-                <div className="text-3xl font-bold text-[var(--foreground)]">{Math.round(dashboardData.conversionRate || 0)}%</div>
-                <div className="text-xs text-[var(--muted)] mt-1">This month</div>
+                <h3 className="text-sm font-medium text-muted mb-2">Conversion Rate</h3>
+                <div className="text-3xl font-bold text-foreground">{Math.round(dashboardData.conversionRate || 0)}%</div>
+                <div className="text-xs text-muted mt-1">This month</div>
               </div>
               <div 
-                className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-sm hover:border-[var(--border)] transition-all"
+                className="bg-background p-6 rounded-lg border border-border cursor-pointer hover:shadow-sm hover:border-border transition-all"
                 onClick={handleOpportunitiesClosedClick}
               >
-                <h3 className="text-sm font-medium text-[var(--muted)] mb-2">Deals Closed</h3>
-                <div className="text-3xl font-bold text-[var(--foreground)]">{dashboardData.closedWonOpportunities || 0}</div>
-                <div className="text-xs text-[var(--muted)] mt-1">This month</div>
+                <h3 className="text-sm font-medium text-muted mb-2">Deals Closed</h3>
+                <div className="text-3xl font-bold text-foreground">{dashboardData.closedWonOpportunities || 0}</div>
+                <div className="text-xs text-muted mt-1">This month</div>
               </div>
             </div>
           </div>
 
           {/* Row 3: YTD Revenue Performance */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">YTD Revenue Performance</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">YTD Revenue Performance</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div 
-                className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-sm hover:border-[var(--border)] transition-all"
+                className="bg-background p-6 rounded-lg border border-border cursor-pointer hover:shadow-sm hover:border-border transition-all"
                 onClick={handleWeeklyRevenueClick}
               >
-                <h3 className="text-sm font-medium text-[var(--muted)] mb-2">YTD Revenue</h3>
-                <div className="text-3xl font-bold text-[var(--foreground)]">
+                <h3 className="text-sm font-medium text-muted mb-2">YTD Revenue</h3>
+                <div className="text-3xl font-bold text-foreground">
                   ${((dashboardData.ytdRevenue || 0) / 1000000).toFixed(1)}M
                 </div>
-                <div className="text-xs text-[var(--muted)] mt-1">Year to date</div>
+                <div className="text-xs text-muted mt-1">Year to date</div>
               </div>
               <div 
-                className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-sm hover:border-[var(--border)] transition-all"
+                className="bg-background p-6 rounded-lg border border-border cursor-pointer hover:shadow-sm hover:border-border transition-all"
                 onClick={handleAvgDealSizeClick}
               >
-                <h3 className="text-sm font-medium text-[var(--muted)] mb-2">Avg Deal Size</h3>
-                <div className="text-3xl font-bold text-[var(--foreground)]">
+                <h3 className="text-sm font-medium text-muted mb-2">Avg Deal Size</h3>
+                <div className="text-3xl font-bold text-foreground">
                   ${((dashboardData.avgDealSize || 0) / 1000).toFixed(0)}K
                 </div>
-                <div className="text-xs text-[var(--muted)] mt-1">Year to date</div>
+                <div className="text-xs text-muted mt-1">Year to date</div>
               </div>
               <div 
-                className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-sm hover:border-[var(--border)] transition-all"
+                className="bg-background p-6 rounded-lg border border-border cursor-pointer hover:shadow-sm hover:border-border transition-all"
                 onClick={handlePipelineValueAddedClick}
               >
-                <h3 className="text-sm font-medium text-[var(--muted)] mb-2">Win Rate</h3>
-                <div className="text-3xl font-bold text-[var(--foreground)]">
+                <h3 className="text-sm font-medium text-muted mb-2">Win Rate</h3>
+                <div className="text-3xl font-bold text-foreground">
                   {Math.round(dashboardData.conversionRate || 0)}%
                 </div>
-                <div className="text-xs text-[var(--muted)] mt-1">Year to date</div>
+                <div className="text-xs text-muted mt-1">Year to date</div>
               </div>
               <div 
-                className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] cursor-pointer hover:shadow-sm hover:border-[var(--border)] transition-all"
+                className="bg-background p-6 rounded-lg border border-border cursor-pointer hover:shadow-sm hover:border-border transition-all"
                 onClick={handleSalesCycleClick}
               >
-                <h3 className="text-sm font-medium text-[var(--muted)] mb-2">Sales Cycle</h3>
-                <div className="text-3xl font-bold text-[var(--foreground)]">{dashboardData.salesCycleLength || 0} days</div>
-                <div className="text-xs text-[var(--muted)] mt-1">Year to date</div>
+                <h3 className="text-sm font-medium text-muted mb-2">Sales Cycle</h3>
+                <div className="text-3xl font-bold text-foreground">{dashboardData.salesCycleLength || 0} days</div>
+                <div className="text-xs text-muted mt-1">Year to date</div>
               </div>
             </div>
           </div>

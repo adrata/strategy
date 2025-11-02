@@ -94,7 +94,7 @@ export default function VideoConference({
 
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur z-50 flex items-center justify-center p-4">
-      <div className="bg-[var(--foreground)] rounded-2xl w-full max-w-6xl h-[90vh] border border-[var(--border)] overflow-hidden flex flex-col">
+      <div className="bg-foreground rounded-2xl w-full max-w-6xl h-[90vh] border border-border overflow-hidden flex flex-col">
         <div className="flex justify-between items-center p-6 border-b border-gray-800">
           <div className="flex items-center space-x-4">
             <h2 className="text-2xl font-bold text-white">Meet with Adrata</h2>
@@ -109,7 +109,7 @@ export default function VideoConference({
           </div>
           <button
             onClick={onClose}
-            className="text-[var(--muted)] hover:text-white text-2xl"
+            className="text-muted hover:text-white text-2xl"
           >
             ×
           </button>
@@ -205,7 +205,7 @@ export default function VideoConference({
                     <span className="font-semibold text-sm text-blue-400">
                       {msg.sender}
                     </span>
-                    <span className="text-xs text-[var(--muted)]">{msg.time}</span>
+                    <span className="text-xs text-muted">{msg.time}</span>
                   </div>
                   <p className="text-gray-300 text-sm">{msg.message}</p>
                 </div>
@@ -220,7 +220,7 @@ export default function VideoConference({
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e['key'] === "Enter" && sendMessage()}
                   placeholder="Type a message..."
-                  className="flex-1 px-3 py-2 bg-gray-800 border border-[var(--border)] rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="flex-1 px-3 py-2 bg-gray-800 border border-border rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
                 />
                 <button
                   onClick={sendMessage}

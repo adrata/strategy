@@ -7,24 +7,24 @@ import Link from 'next/link';
 export default function WinningVariantPage() {
   return (
     <PasswordProtection correctPassword="WinningVariant-2025">
-      <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
+      <div className="min-h-screen bg-background" style={{ overflowY: 'auto', height: '100vh' }}>
         {/* Header */}
         <header className="border-b border-gray-100">
           <div className="max-w-6xl mx-auto px-6 py-4">
             <div className="flex justify-between items-center">
-              <h1 className="text-lg font-semibold text-[var(--foreground)]">Winning Variant Intelligence</h1>
+              <h1 className="text-lg font-semibold text-foreground">Winning Variant Intelligence</h1>
               
               {/* Navigation Links */}
               <div className="flex items-center space-x-6">
                 <Link 
                   href="/" 
-                  className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                  className="text-sm text-gray-700 hover:text-foreground transition-colors"
                 >
                   Home
                 </Link>
                 <Link 
                   href="/platform" 
-                  className="text-sm text-gray-700 hover:text-[var(--foreground)] transition-colors"
+                  className="text-sm text-gray-700 hover:text-foreground transition-colors"
                 >
                   Platform
                 </Link>
@@ -46,7 +46,7 @@ export default function WinningVariantPage() {
             <h1 className="text-4xl font-bold text-black mb-4 leading-tight">
               Winning Variant Buyer Group Intelligence
             </h1>
-            <p className="text-xl text-[var(--muted)] mb-8">
+            <p className="text-xl text-muted mb-8">
               Strategic Analysis for AI Impact Visibility Platform: Comprehensive Buyer Group Intelligence for Your Target Companies
             </p>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8">
@@ -92,7 +92,7 @@ export default function WinningVariantPage() {
               win rates.
             </p>
 
-            <div className="bg-[var(--panel-background)] border border-[var(--border)] p-6 rounded-lg mb-6">
+            <div className="bg-panel-background border border-border p-6 rounded-lg mb-6">
               <h3 className="text-lg font-semibold text-black mb-3">Strategic Intelligence Advantage</h3>
               <p className="text-gray-700 mb-4">
                 We've identified the exact buyer group structure for each of your target companies, saving you 
@@ -123,21 +123,21 @@ export default function WinningVariantPage() {
 
             {/* Strategic Insights */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
+              <div className="bg-panel-background p-4 rounded-lg text-center border border-border">
                 <div className="text-3xl font-bold text-black">40</div>
-                <div className="text-sm text-[var(--muted)]">Precision Buyer Group</div>
+                <div className="text-sm text-muted">Precision Buyer Group</div>
               </div>
-              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
+              <div className="bg-panel-background p-4 rounded-lg text-center border border-border">
                 <div className="text-3xl font-bold text-black">15,000+</div>
-                <div className="text-sm text-[var(--muted)]">Total Employees</div>
+                <div className="text-sm text-muted">Total Employees</div>
               </div>
-              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
+              <div className="bg-panel-background p-4 rounded-lg text-center border border-border">
                 <div className="text-3xl font-bold text-black">98%</div>
-                <div className="text-sm text-[var(--muted)]">Strategic Relevance</div>
+                <div className="text-sm text-muted">Strategic Relevance</div>
               </div>
-              <div className="bg-[var(--panel-background)] p-4 rounded-lg text-center border border-[var(--border)]">
+              <div className="bg-panel-background p-4 rounded-lg text-center border border-border">
                 <div className="text-3xl font-bold text-black">$15M+</div>
-                <div className="text-sm text-[var(--muted)]">Combined AI Budgets</div>
+                <div className="text-sm text-muted">Combined AI Budgets</div>
               </div>
             </div>
           </section>
@@ -354,7 +354,7 @@ export default function WinningVariantPage() {
           </section>
 
           {/* Call to Action */}
-          <section className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-8 text-center">
+          <section className="bg-panel-background border border-border rounded-lg p-8 text-center">
             <h3 className="text-2xl font-bold text-black mb-4">Ready to Accelerate Your Sales Process?</h3>
             <p className="text-gray-700 mb-6">
               This intelligence is just the beginning. Schedule a call with Dan to discuss how Adrata can 

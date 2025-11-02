@@ -121,15 +121,15 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="fixed inset-0 bg-[var(--panel-background)]0 bg-opacity-75 transition-opacity" onClick={onClose} />
+        <div className="fixed inset-0 bg-panel-background0 bg-opacity-75 transition-opacity" onClick={onClose} />
         
-        <div className="relative bg-[var(--background)] rounded-lg shadow-xl max-w-2xl w-full">
+        <div className="relative bg-background rounded-lg shadow-xl max-w-2xl w-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
-            <h3 className="text-lg font-semibold text-[var(--foreground)]">Upload Files</h3>
+          <div className="flex items-center justify-between p-6 border-b border-border">
+            <h3 className="text-lg font-semibold text-foreground">Upload Files</h3>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+              className="p-2 hover:bg-hover rounded-lg transition-colors"
             >
               <XMarkIcon className="w-5 h-5" />
             </button>
@@ -143,18 +143,18 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                   dragActive
                     ? 'border-blue-400 bg-blue-50'
-                    : 'border-[var(--border)] hover:border-gray-400'
+                    : 'border-border hover:border-gray-400'
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
               >
-                <CloudArrowUpIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-                <h4 className="text-lg font-medium text-[var(--foreground)] mb-2">
+                <CloudArrowUpIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+                <h4 className="text-lg font-medium text-foreground mb-2">
                   Drop files here or click to browse
                 </h4>
-                <p className="text-[var(--muted)] mb-4">
+                <p className="text-muted mb-4">
                   Upload documents, images, and other files up to 100MB each
                 </p>
                 <button
@@ -178,22 +178,22 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
                   {uploadedFiles.map((file, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-3 p-3 bg-[var(--panel-background)] rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-panel-background rounded-lg"
                     >
-                      <DocumentIcon className="w-8 h-8 text-[var(--muted)] flex-shrink-0" />
+                      <DocumentIcon className="w-8 h-8 text-muted flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-[var(--foreground)] truncate">
+                        <div className="font-medium text-foreground truncate">
                           {file.name}
                         </div>
-                        <div className="text-sm text-[var(--muted)]">
+                        <div className="text-sm text-muted">
                           {formatFileSize(file.size)}
                         </div>
                       </div>
                       <button
                         onClick={() => removeFile(index)}
-                        className="p-1 hover:bg-[var(--loading-bg)] rounded transition-colors"
+                        className="p-1 hover:bg-loading-bg rounded transition-colors"
                       >
-                        <XMarkIcon className="w-4 h-4 text-[var(--muted)]" />
+                        <XMarkIcon className="w-4 h-4 text-muted" />
                       </button>
                     </div>
                   ))}
@@ -203,10 +203,10 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
                 {uploading && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-[var(--muted)]">Uploading...</span>
-                      <span className="text-[var(--muted)]">{Math.round(uploadProgress)}%</span>
+                      <span className="text-muted">Uploading...</span>
+                      <span className="text-muted">{Math.round(uploadProgress)}%</span>
                     </div>
-                    <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+                    <div className="w-full bg-loading-bg rounded-full h-2">
                       <div
                         className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${uploadProgress}%` }}
@@ -227,7 +227,7 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
                 <div className="flex items-center justify-end gap-3 pt-4">
                   <button
                     onClick={onClose}
-                    className="px-4 py-2 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+                    className="px-4 py-2 text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
                   >
                     Cancel
                   </button>

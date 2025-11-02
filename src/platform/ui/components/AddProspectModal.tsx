@@ -279,9 +279,9 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
     <>
 
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-      <div className="bg-[var(--background)] rounded-2xl shadow-2xl w-full max-w-md mx-4">
+      <div className="bg-background rounded-2xl shadow-2xl w-full max-w-md mx-4">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
               <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -289,17 +289,17 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">
+              <h2 className="text-xl font-bold text-foreground">
                 {activeTab === 'person' ? 'Add New Person Prospect' : 'Add New Company Prospect'}
               </h2>
-              <p className="text-sm text-[var(--muted)]">Create a new prospect contact</p>
+              <p className="text-sm text-muted">Create a new prospect contact</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-hover transition-colors"
           >
-            <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
+            <XMarkIcon className="w-4.5 h-4.5 text-muted" />
           </button>
         </div>
 
@@ -307,20 +307,20 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Start Header */}
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-[var(--foreground)]">
+            <h3 className="text-sm font-semibold text-foreground">
               {activeTab === 'person' ? 'Person Details' : 'Company Details'}
             </h3>
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex gap-1 bg-[var(--panel-background)] rounded-lg p-1 -mt-3">
+          <div className="flex gap-1 bg-panel-background rounded-lg p-1 -mt-3">
             <button
               type="button"
               onClick={() => setActiveTab('company')}
               className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === 'company'
                   ? 'text-white shadow-sm'
-                  : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                  : 'text-muted hover:text-foreground hover:bg-hover'
               }`}
               style={{
                 backgroundColor: activeTab === 'company' ? colors.primary : 'transparent'
@@ -334,7 +334,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
               className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === 'person'
                   ? 'text-white shadow-sm'
-                  : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                  : 'text-muted hover:text-foreground hover:bg-hover'
               }`}
               style={{
                 backgroundColor: activeTab === 'person' ? colors.primary : 'transparent'
@@ -379,7 +379,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                     value={personFormData.firstName}
                     onChange={(e) => setPersonFormData(prev => ({ ...prev, firstName: e.target.value }))}
                     placeholder="Enter first name"
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors"
                     style={{
                       '--tw-ring-color': `${colors.primary}30`,
                       '--tw-border-color': colors.primary
@@ -396,7 +396,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                     value={personFormData.lastName}
                     onChange={(e) => setPersonFormData(prev => ({ ...prev, lastName: e.target.value }))}
                     placeholder="Enter last name"
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                     required
                   />
                 </div>
@@ -412,7 +412,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   value={personFormData.email}
                   onChange={(e) => setPersonFormData(prev => ({ ...prev, email: e.target.value }))}
                   placeholder="Enter email address"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 />
               </div>
 
@@ -426,7 +426,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   value={personFormData.phone}
                   onChange={(e) => setPersonFormData(prev => ({ ...prev, phone: e.target.value }))}
                   placeholder="Enter phone number"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 />
               </div>
 
@@ -440,7 +440,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   value={personFormData.jobTitle}
                   onChange={(e) => setPersonFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
                   placeholder="Enter job title"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 />
               </div>
 
@@ -454,7 +454,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   value={personFormData.linkedin}
                   onChange={(e) => setPersonFormData(prev => ({ ...prev, linkedin: e.target.value }))}
                   placeholder="linkedin.com/in/example"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 />
               </div>
 
@@ -500,7 +500,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   onChange={(e) => setPersonFormData(prev => ({ ...prev, notes: e.target.value }))}
                   placeholder="Additional notes about this person"
                   rows={3}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-green-500/30 focus:border-green-500 outline-none transition-colors"
                 />
               </div>
             </>
@@ -520,7 +520,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   value={companyFormData.name}
                   onChange={(e) => setCompanyFormData(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="Enter company name"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 outline-none transition-colors"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 outline-none transition-colors"
                   style={{
                     '--tw-ring-color': `${colors.primary}30`,
                     '--tw-border-color': colors.primary
@@ -539,7 +539,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   value={companyFormData.linkedin}
                   onChange={(e) => setCompanyFormData(prev => ({ ...prev, linkedin: e.target.value }))}
                   placeholder="linkedin.com/company/example"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
                 />
               </div>
 
@@ -553,7 +553,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   value={companyFormData.website}
                   onChange={(e) => setCompanyFormData(prev => ({ ...prev, website: e.target.value }))}
                   placeholder="example.com"
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
                 />
               </div>
 
@@ -568,7 +568,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                     value={companyFormData.state}
                     onChange={(e) => setCompanyFormData(prev => ({ ...prev, state: e.target.value }))}
                     placeholder="e.g., California, TX"
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
                   />
                 </div>
               )}
@@ -583,7 +583,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
                   onChange={(e) => setCompanyFormData(prev => ({ ...prev, notes: e.target.value }))}
                   placeholder="Additional notes about this company"
                   rows={3}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500 outline-none transition-colors"
                 />
               </div>
             </>
@@ -594,7 +594,7 @@ export function AddProspectModal({ isOpen, onClose, onProspectAdded, section = '
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-[var(--border)] text-gray-700 rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+              className="flex-1 px-4 py-2 border border-border text-gray-700 rounded-lg hover:bg-panel-background transition-colors"
             >
               Cancel
             </button>

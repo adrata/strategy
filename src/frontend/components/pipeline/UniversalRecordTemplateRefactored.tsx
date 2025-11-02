@@ -151,7 +151,7 @@ export function UniversalRecordTemplateRefactored({
     
     if (!TabComponent) {
       return (
-        <div className="p-6 text-center text-[var(--muted)]">
+        <div className="p-6 text-center text-muted">
           <p>Tab "{activeTab}" not found for record type "{recordType}"</p>
         </div>
       );
@@ -193,29 +193,29 @@ export function UniversalRecordTemplateRefactored({
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <div className="text-[var(--muted)] text-6xl mb-4">📄</div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Record Selected</h3>
-          <p className="text-[var(--muted)]">Select a record to view details</p>
+          <div className="text-muted text-6xl mb-4">📄</div>
+          <h3 className="text-lg font-medium text-foreground mb-2">No Record Selected</h3>
+          <p className="text-muted">Select a record to view details</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       <URLFixer />
       
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--background)]">
+      <div className="flex-shrink-0 border-b border-border bg-background">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
                 onClick={onBack}
-                className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+                className="p-2 hover:bg-hover rounded-lg transition-colors"
                 title="Go back"
               >
-                <XMarkIcon className="h-5 w-5 text-[var(--muted)]" />
+                <XMarkIcon className="h-5 w-5 text-muted" />
               </button>
               
               <div className="flex items-center space-x-3">
@@ -223,13 +223,13 @@ export function UniversalRecordTemplateRefactored({
                   {getRecordIcon()}
                 </div>
                 <div>
-                  <h1 className="text-xl font-semibold text-[var(--foreground)]">
+                  <h1 className="text-xl font-semibold text-foreground">
                     {getRecordName()}
                   </h1>
-                  <p className="text-sm text-[var(--muted)]">
+                  <p className="text-sm text-muted">
                     {recordType.charAt(0).toUpperCase() + recordType.slice(1)}
                     {recordIndex !== undefined && totalRecords && (
-                      <span className="ml-2 text-[var(--muted)]">
+                      <span className="ml-2 text-muted">
                         {recordIndex + 1} of {totalRecords}
                       </span>
                     )}
@@ -243,20 +243,20 @@ export function UniversalRecordTemplateRefactored({
               {onNavigatePrevious && (
                 <button
                   onClick={onNavigatePrevious}
-                  className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+                  className="p-2 hover:bg-hover rounded-lg transition-colors"
                   title="Previous record"
                 >
-                  <ChevronLeftIcon className="h-5 w-5 text-[var(--muted)]" />
+                  <ChevronLeftIcon className="h-5 w-5 text-muted" />
                 </button>
               )}
               
               {onNavigateNext && (
                 <button
                   onClick={onNavigateNext}
-                  className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+                  className="p-2 hover:bg-hover rounded-lg transition-colors"
                   title="Next record"
                 >
-                  <ChevronRightIcon className="h-5 w-5 text-[var(--muted)]" />
+                  <ChevronRightIcon className="h-5 w-5 text-muted" />
                 </button>
               )}
 
@@ -265,7 +265,7 @@ export function UniversalRecordTemplateRefactored({
                 <button
                   key={action.id}
                   onClick={action.action}
-                  className="px-3 py-2 text-sm bg-[var(--hover)] hover:bg-[var(--loading-bg)] rounded-lg transition-colors"
+                  className="px-3 py-2 text-sm bg-hover hover:bg-loading-bg rounded-lg transition-colors"
                 >
                   {action.icon && <span className="mr-1">{action.icon}</span>}
                   {action.label}
@@ -276,10 +276,10 @@ export function UniversalRecordTemplateRefactored({
               {showDialer && record.phone && (
                 <button
                   onClick={() => window.open(`tel:${record.phone}`)}
-                  className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+                  className="p-2 hover:bg-hover rounded-lg transition-colors"
                   title="Call"
                 >
-                  <PhoneIcon className="h-5 w-5 text-[var(--muted)]" />
+                  <PhoneIcon className="h-5 w-5 text-muted" />
                 </button>
               )}
 
@@ -287,10 +287,10 @@ export function UniversalRecordTemplateRefactored({
               {record.email && (
                 <button
                   onClick={() => window.open(`mailto:${record.email}`)}
-                  className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+                  className="p-2 hover:bg-hover rounded-lg transition-colors"
                   title="Email"
                 >
-                  <EnvelopeIcon className="h-5 w-5 text-[var(--muted)]" />
+                  <EnvelopeIcon className="h-5 w-5 text-muted" />
                 </button>
               )}
             </div>
@@ -307,7 +307,7 @@ export function UniversalRecordTemplateRefactored({
                 className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]'
+                    : 'border-transparent text-muted hover:text-gray-700 hover:border-border'
                 }`}
               >
                 <span className="flex items-center space-x-2">
@@ -341,7 +341,7 @@ export function UniversalRecordTemplateRefactored({
               <span className="text-sm font-medium">{successMessage}</span>
               <button
                 onClick={closeMessage}
-                className="ml-2 text-[var(--muted)] hover:text-[var(--muted)]"
+                className="ml-2 text-muted hover:text-muted"
               >
                 <XMarkIcon className="h-4 w-4" />
               </button>

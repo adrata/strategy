@@ -154,8 +154,8 @@ export function EnrichmentButton({
         ${isLoading ? "opacity-75 cursor-not-allowed" : "shadow-md hover:shadow-lg"}
       `,
       secondary: `
-        bg-[var(--hover)] text-gray-700 border border-[var(--border)]
-        hover:bg-[var(--loading-bg)] hover:border-[var(--border)]
+        bg-hover text-gray-700 border border-border
+        hover:bg-loading-bg hover:border-border
         focus:ring-gray-500
         ${isLoading ? "opacity-75 cursor-not-allowed" : ""}
       `,
@@ -166,8 +166,8 @@ export function EnrichmentButton({
         ${isLoading ? "opacity-75 cursor-not-allowed" : ""}
       `,
       ghost: `
-        text-[var(--muted)] bg-transparent
-        hover:bg-[var(--hover)] hover:text-gray-700
+        text-muted bg-transparent
+        hover:bg-hover hover:text-gray-700
         focus:ring-gray-500
         ${isLoading ? "opacity-75 cursor-not-allowed" : ""}
       `,
@@ -264,21 +264,21 @@ export function EnrichmentButton({
 
       {/* Progress indicator */}
       {showProgress && progress && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg p-3 z-10">
-          <div className="flex items-center justify-between text-xs text-[var(--muted)] mb-1">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-lg shadow-lg p-3 z-10">
+          <div className="flex items-center justify-between text-xs text-muted mb-1">
             <span>
               Step {progress.currentStep} of {progress.totalSteps}
             </span>
             <span>{progress.percentage}%</span>
           </div>
-          <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+          <div className="w-full bg-loading-bg rounded-full h-2">
             <div
               className="bg-blue-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress.percentage}%` }}
             />
           </div>
           {progress['estimatedTimeRemaining'] && (
-            <div className="text-xs text-[var(--muted)] mt-1">
+            <div className="text-xs text-muted mt-1">
               ~{Math.round(progress.estimatedTimeRemaining / 1000)}s remaining
             </div>
           )}
@@ -287,11 +287,11 @@ export function EnrichmentButton({
 
       {/* Results preview */}
       {showResults && singleLead['hasResults'] && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg p-3 z-10">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-lg shadow-lg p-3 z-10">
           <div className="text-xs font-medium text-gray-700 mb-1">
             Enrichment Complete
           </div>
-          <div className="text-xs text-[var(--muted)]">
+          <div className="text-xs text-muted">
             ✅ {singleLead.results?.companiesEnriched ?? 0} companies enriched
             <br />✅ {singleLead.results?.peopleEnriched ?? 0} people enriched
             {(singleLead.results?.buyerGroupsCreated ?? 0) > 0 && (

@@ -524,26 +524,26 @@ export function SpeedrunSprintView() {
   // Enhanced loading state with better skeletons
   if (loading && (!data || data['length'] === 0)) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         {/* Middle Panel Header Skeleton */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+        <div className="flex-shrink-0 px-6 py-4 border-b border-border">
           <div className="flex items-center justify-between mb-2">
-            <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+            <div className="h-8 w-32 bg-loading-bg rounded animate-pulse"></div>
             <div className="flex gap-2">
-              <div className="h-8 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-              <div className="h-8 w-32 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+              <div className="h-8 w-24 bg-loading-bg rounded animate-pulse"></div>
+              <div className="h-8 w-32 bg-loading-bg rounded animate-pulse"></div>
             </div>
           </div>
-          <div className="h-4 w-48 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+          <div className="h-4 w-48 bg-loading-bg rounded animate-pulse"></div>
         </div>
         
         {/* Middle Panel Content Skeleton */}
         <div className="flex-1 p-6">
           <div className="text-center max-w-md mx-auto">
-            <div className="w-16 h-16 bg-[var(--loading-bg)] rounded-full mx-auto mb-4 animate-pulse"></div>
-            <div className="h-6 w-48 bg-[var(--loading-bg)] rounded mx-auto mb-2 animate-pulse"></div>
-            <div className="h-4 w-64 bg-[var(--loading-bg)] rounded mx-auto mb-4 animate-pulse"></div>
-            <div className="h-10 w-32 bg-[var(--loading-bg)] rounded mx-auto animate-pulse"></div>
+            <div className="w-16 h-16 bg-loading-bg rounded-full mx-auto mb-4 animate-pulse"></div>
+            <div className="h-6 w-48 bg-loading-bg rounded mx-auto mb-2 animate-pulse"></div>
+            <div className="h-4 w-64 bg-loading-bg rounded mx-auto mb-4 animate-pulse"></div>
+            <div className="h-10 w-32 bg-loading-bg rounded mx-auto animate-pulse"></div>
           </div>
         </div>
       </div>
@@ -553,15 +553,15 @@ export function SpeedrunSprintView() {
   // Error state
   if (error) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center max-w-md">
           <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">⚠️</span>
           </div>
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+          <h3 className="text-lg font-semibold text-foreground mb-2">
             Error Loading Sprint
           </h3>
-          <p className="text-[var(--muted)] mb-4">{error && typeof error === 'object' && 'message' in error ? (error as Error).message : String(error)}</p>
+          <p className="text-muted mb-4">{error && typeof error === 'object' && 'message' in error ? (error as Error).message : String(error)}</p>
           <button
             onClick={refresh}
             className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
@@ -576,12 +576,12 @@ export function SpeedrunSprintView() {
   // Empty state
   if (!data || data['length'] === 0) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center max-w-md">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+          <h3 className="text-lg font-semibold text-foreground mb-2">
             No Sprint Data
           </h3>
-          <p className="text-[var(--muted)] mb-4">
+          <p className="text-muted mb-4">
             No speedrun records found. Add some prospects to your speedrun to get started.
           </p>
         </div>
@@ -592,12 +592,12 @@ export function SpeedrunSprintView() {
 
   // Sprint detail view for middle panel - using minimal UniversalRecordDetails
   const sprintDetailView = selectedRecord ? (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Loading overlay for action submission */}
       {isSubmittingAction && (
-        <div className="absolute inset-0 bg-[var(--background)] bg-opacity-75 flex items-center justify-center z-50">
-          <div className="flex items-center gap-3 bg-[var(--background)] rounded-lg shadow-lg px-6 py-4">
-            <div className="w-5 h-5 border-2 border-[var(--border)] border-t-blue-500 rounded-full animate-spin"></div>
+        <div className="absolute inset-0 bg-background bg-opacity-75 flex items-center justify-center z-50">
+          <div className="flex items-center gap-3 bg-background rounded-lg shadow-lg px-6 py-4">
+            <div className="w-5 h-5 border-2 border-border border-t-blue-500 rounded-full animate-spin"></div>
             <span className="text-sm font-medium text-gray-700">Saving action...</span>
           </div>
         </div>
@@ -671,22 +671,22 @@ export function SpeedrunSprintView() {
       />
     </div>
   ) : (
-    <div className="h-full flex items-center justify-center bg-[var(--background)]">
+    <div className="h-full flex items-center justify-center bg-background">
       <div className="text-center">
-        <div className="w-12 h-12 bg-[var(--hover)] rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-12 h-12 bg-hover rounded-full flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">👆</span>
         </div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+        <h3 className="text-lg font-semibold text-foreground mb-2">
           Select a Prospect
         </h3>
-        <p className="text-[var(--muted)] mb-3">
+        <p className="text-muted mb-3">
           Choose a prospect from the left panel to view their details.
         </p>
-        <div className="text-sm text-[var(--muted)] bg-[var(--panel-background)] rounded-lg px-3 py-2 border border-[var(--border)]">
+        <div className="text-sm text-muted bg-panel-background rounded-lg px-3 py-2 border border-border">
           <div className="font-medium mb-1">💡 Keyboard Shortcuts:</div>
           <div className="space-y-1 text-xs">
-            <div>• <kbd className="px-1.5 py-0.5 bg-[var(--background)] border border-[var(--border)] rounded font-mono">Tab</kbd> / <kbd className="px-1.5 py-0.5 bg-[var(--background)] border border-[var(--border)] rounded font-mono">Shift+Tab</kbd> - Navigate between records</div>
-            <div>• <kbd className="px-1.5 py-0.5 bg-[var(--background)] border border-[var(--border)] rounded font-mono">Esc</kbd> / <kbd className="px-1.5 py-0.5 bg-[var(--background)] border border-[var(--border)] rounded font-mono">⌘←</kbd> - Back to speedrun list</div>
+            <div>• <kbd className="px-1.5 py-0.5 bg-background border border-border rounded font-mono">Tab</kbd> / <kbd className="px-1.5 py-0.5 bg-background border border-border rounded font-mono">Shift+Tab</kbd> - Navigate between records</div>
+            <div>• <kbd className="px-1.5 py-0.5 bg-background border border-border rounded font-mono">Esc</kbd> / <kbd className="px-1.5 py-0.5 bg-background border border-border rounded font-mono">⌘←</kbd> - Back to speedrun list</div>
           </div>
         </div>
       </div>

@@ -57,14 +57,14 @@ export function TableDetail({ tableName }: TableDetailProps) {
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 mx-auto mb-4 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-          <p className="text-[var(--muted)]">Loading table details...</p>
+          <p className="text-muted">Loading table details...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Standardized Header */}
       <DatabaseHeader
           title={tableName}
@@ -85,15 +85,15 @@ export function TableDetail({ tableName }: TableDetailProps) {
           }
         >
           {/* Tabs */}
-          <div className="flex space-x-1 bg-[var(--hover)] p-1 rounded-lg w-fit">
+          <div className="flex space-x-1 bg-hover p-1 rounded-lg w-fit">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-[var(--background)] text-[var(--foreground)] shadow-sm'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted hover:text-foreground'
                 }`}
               >
                 {tab.name}

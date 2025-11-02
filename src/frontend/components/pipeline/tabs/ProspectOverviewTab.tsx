@@ -199,7 +199,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
   };
 
   // Helper component for displaying values with proper empty state
-  const DisplayValue = ({ value, children, className = "text-sm font-medium text-[var(--foreground)]" }: { 
+  const DisplayValue = ({ value, children, className = "text-sm font-medium text-foreground" }: { 
     value: any, 
     children?: React.ReactNode, 
     className?: string 
@@ -207,7 +207,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
     if (value) {
       return <span className={className}>{children || value}</span>;
     }
-    return <span className="text-sm text-[var(--muted)]">-</span>;
+    return <span className="text-sm text-muted">-</span>;
   };
 
   // Extract CoreSignal data from the correct location (same as PersonOverviewTab)
@@ -417,11 +417,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Basic Information Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Basic Information</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Basic Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Stage:</span>
+                <span className="text-sm text-muted w-24">Stage:</span>
                 <InlineEditField
                   value={prospectData.status || prospectData.stage || 'LEAD'}
                   field="status"
@@ -448,7 +448,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Name:</span>
+                <span className="text-sm text-muted w-24">Name:</span>
                 <InlineEditField
                   value={prospectData.name}
                   field="name"
@@ -456,11 +456,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Title:</span>
+                <span className="text-sm text-muted w-24">Title:</span>
                 <InlineEditField
                   value={prospectData.title}
                   field="title"
@@ -468,11 +468,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Company:</span>
+                <span className="text-sm text-muted w-24">Company:</span>
                 <InlineEditField
                   value={prospectData.company}
                   field="company"
@@ -481,11 +481,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Department:</span>
+                <span className="text-sm text-muted w-24">Department:</span>
                 <InlineEditField
                   value={prospectData.department}
                   field="department"
@@ -493,11 +493,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Bio URL:</span>
+                <span className="text-sm text-muted w-24">Bio URL:</span>
                 <InlineEditField
                   value={formatEmptyValue(prospectData.bio)}
                   field="bio"
@@ -505,18 +505,18 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Role & Influence Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Role & Influence</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Role & Influence</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Buyer Group Role:</span>
+                <span className="text-sm text-muted w-24">Buyer Group Role:</span>
                 <InlineEditField
                   value={prospectData.buyerGroupRole}
                   field="buyerGroupRole"
@@ -537,12 +537,12 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                     prospectData.buyerGroupRole === 'Champion' ? 'bg-green-100 text-green-800' :
                     prospectData.buyerGroupRole === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
                     prospectData.buyerGroupRole === '-' ? 'bg-gray-100 text-gray-800' :
-                    'bg-[var(--hover)] text-gray-800'
+                    'bg-hover text-gray-800'
                   }`}
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Influence Level:</span>
+                <span className="text-sm text-muted w-24">Influence Level:</span>
                 <InlineEditField
                   value={prospectData.influenceLevel}
                   field="influenceLevel"
@@ -556,11 +556,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                     { value: 'Medium', label: 'Medium' },
                     { value: 'Low', label: 'Low' }
                   ]}
-                  className="text-sm font-medium text-[var(--foreground)] capitalize"
+                  className="text-sm font-medium text-foreground capitalize"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Engagement Priority:</span>
+                <span className="text-sm text-muted w-24">Engagement Priority:</span>
                 <InlineEditField
                   value={prospectData.engagementPriority}
                   field="engagementPriority"
@@ -574,7 +574,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                     { value: 'MEDIUM', label: 'MEDIUM' },
                     { value: 'LOW', label: 'LOW' }
                   ]}
-                  className="text-sm font-medium text-[var(--foreground)] capitalize"
+                  className="text-sm font-medium text-foreground capitalize"
                 />
               </div>
             </div>
@@ -586,11 +586,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contact Information Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Contact Information</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Contact Information</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Email:</span>
+                <span className="text-sm text-muted w-24">Email:</span>
                 <InlineEditField
                   value={prospectData.email}
                   field="email"
@@ -599,11 +599,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="email"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Phone:</span>
+                <span className="text-sm text-muted w-24">Phone:</span>
                 <InlineEditField
                   value={prospectData.phone}
                   field="phone"
@@ -612,11 +612,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   type="text"
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn:</span>
+                <span className="text-sm text-muted w-24">LinkedIn:</span>
                 <InlineEditField
                   value={formatEmptyValue(prospectData.linkedin)}
                   field="linkedinUrl"
@@ -624,11 +624,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Navigator:</span>
+                <span className="text-sm text-muted w-24">LinkedIn Navigator:</span>
                 <InlineEditField
                   value={prospectData.linkedinNavigatorUrl || null}
                   field="linkedinNavigatorUrl"
@@ -636,11 +636,11 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">LinkedIn Connection Date:</span>
+                <span className="text-sm text-muted w-24">LinkedIn Connection Date:</span>
                 <InlineEditField
                   value={prospectData.linkedinConnectionDate}
                   field="linkedinConnectionDate"
@@ -649,22 +649,22 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
           </div>
 
           {/* Engagement History Card */}
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement History</h4>
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Engagement History</h4>
             <div className="space-y-2">
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Last Contact:</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">{formatRelativeDate(prospectData.lastContact)}</span>
+                <span className="text-sm text-muted w-24">Last Contact:</span>
+                <span className="text-sm font-medium text-foreground">{formatRelativeDate(prospectData.lastContact)}</span>
               </div>
               <div className="flex items-center">
-                <span className="text-sm text-[var(--muted)] w-24">Next Action:</span>
+                <span className="text-sm text-muted w-24">Next Action:</span>
                 <InlineEditField
                   value={prospectData.nextAction}
                   field="nextAction"
@@ -672,7 +672,7 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
                   recordId={record.id}
                   recordType={recordType}
                   onSuccess={handleSuccess}
-                  className="text-sm font-medium text-[var(--foreground)]"
+                  className="text-sm font-medium text-foreground"
                 />
               </div>
             </div>
@@ -682,8 +682,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
 
       {/* What do they care about */}
       <div className="space-y-6">
-        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-          <h4 className="font-medium text-[var(--foreground)] mb-3">
+        <div className="bg-background p-4 rounded-lg border border-border">
+          <h4 className="font-medium text-foreground mb-3">
             Wants & Needs: Based on their role as {prospectData.title} at {prospectData.company}, they likely care about:
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -691,8 +691,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
               <h5 className="text-sm font-medium text-gray-700 mb-2">Wants</h5>
               <ul className="space-y-1">
                 {wants.map((want, index) => (
-                  <li key={index} className="text-sm text-[var(--muted)] flex items-start">
-                    <span className="text-[var(--muted)] mr-2">•</span>
+                  <li key={index} className="text-sm text-muted flex items-start">
+                    <span className="text-muted mr-2">•</span>
                     {want}
                   </li>
                 ))}
@@ -702,8 +702,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
               <h5 className="text-sm font-medium text-gray-700 mb-2">Needs</h5>
               <ul className="space-y-1">
                 {needs.map((need, index) => (
-                  <li key={index} className="text-sm text-[var(--muted)] flex items-start">
-                    <span className="text-[var(--muted)] mr-2">•</span>
+                  <li key={index} className="text-sm text-muted flex items-start">
+                    <span className="text-muted mr-2">•</span>
                     {need}
                   </li>
                 ))}
@@ -715,23 +715,23 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
 
       {/* What did I last do */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">What did I last do</h3>
-        <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-          <h4 className="font-medium text-[var(--foreground)] mb-3">Last Actions:</h4>
+        <h3 className="text-lg font-semibold text-foreground mb-4">What did I last do</h3>
+        <div className="bg-background p-4 rounded-lg border border-border">
+          <h4 className="font-medium text-foreground mb-3">Last Actions:</h4>
           {actionsLoading ? (
             <div className="text-center py-4">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
-              <p className="text-sm text-[var(--muted)]">Loading actions...</p>
+              <p className="text-sm text-muted">Loading actions...</p>
             </div>
           ) : actionsError ? (
             <div className="text-center py-4">
               <p className="text-sm text-red-600 mb-3">Error loading actions</p>
-              <p className="text-xs text-[var(--muted)]">{actionsError}</p>
+              <p className="text-xs text-muted">{actionsError}</p>
             </div>
           ) : lastActions.length > 0 ? (
             <ul className="space-y-2">
               {lastActions.map((action, index) => (
-                <li key={index} className="text-sm text-[var(--muted)] flex items-center gap-2">
+                <li key={index} className="text-sm text-muted flex items-center gap-2">
                   <span>•</span>
                   {action.type && (
                     <span className="px-2 py-1 bg-[var(--accent-bg)] text-[var(--accent-text)] text-xs font-medium rounded-full">
@@ -744,8 +744,8 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
             </ul>
           ) : (
             <div className="text-center py-4">
-              <p className="text-sm text-[var(--muted)] mb-3">No actions logged yet</p>
-              <p className="text-xs text-[var(--muted)]">Actions will appear here when logged through the Actions tab</p>
+              <p className="text-sm text-muted mb-3">No actions logged yet</p>
+              <p className="text-xs text-muted">Actions will appear here when logged through the Actions tab</p>
             </div>
           )}
         </div>
@@ -753,19 +753,19 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
 
       {/* Notes on them */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Notes on them</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Notes on them</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Recent Notes Summary</h4>
-            <div className="text-sm text-[var(--muted)] leading-relaxed">
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Recent Notes Summary</h4>
+            <div className="text-sm text-muted leading-relaxed">
               {prospectData.notes && prospectData.notes !== 'No notes available' && prospectData.notes.trim() !== '' ? prospectData.notes : 
                 `—`
               }
             </div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Engagement Strategy</h4>
-            <div className="text-sm text-[var(--muted)] leading-relaxed">
+          <div className="bg-background p-4 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-3">Engagement Strategy</h4>
+            <div className="text-sm text-muted leading-relaxed">
               Focus on {(prospectData.engagementPriority || '').toLowerCase()} priority engagement. 
               Last contact was {formatRelativeDate(prospectData.lastContact)}. 
               Next action: {prospectData.nextAction}.
@@ -775,18 +775,18 @@ export function ProspectOverviewTab({ recordType, record: recordProp, onSave }: 
       </div>
 
       {/* Record Information */}
-      <div className="mt-8 pt-6 border-t border-[var(--border)]">
-        <h3 className="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-4">Record Information</h3>
+      <div className="mt-8 pt-6 border-t border-border">
+        <h3 className="text-sm font-medium text-muted uppercase tracking-wide mb-4">Record Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center space-x-3">
-            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Created:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.createdAt)}>
+            <span className="text-xs text-muted uppercase tracking-wide w-28">Created:</span>
+            <span className="text-sm text-foreground" title={formatFullDate(record?.createdAt)}>
               {formatRelativeDate(record?.createdAt)}
             </span>
           </div>
           <div className="flex items-center space-x-3">
-            <span className="text-xs text-[var(--muted)] uppercase tracking-wide w-28">Last Updated:</span>
-            <span className="text-sm text-[var(--foreground)]" title={formatFullDate(record?.updatedAt)}>
+            <span className="text-xs text-muted uppercase tracking-wide w-28">Last Updated:</span>
+            <span className="text-sm text-foreground" title={formatFullDate(record?.updatedAt)}>
               {formatRelativeDate(record?.updatedAt)}
             </span>
           </div>

@@ -1,97 +1,81 @@
 /**
  * Status and styling utility functions for pipeline components.
  * Handles color coding, status labels, and visual indicators.
+ * 
+ * Now uses unified color system with theme-driven CSS variables.
  */
+
+import { getStatusColorClass, getPriorityColorClass, getStageColorClass } from './color-utils';
 
 // -------- Types --------
 export type StatusType = 'status' | 'priority' | 'stage';
 export type StatusColor = string;
 
 // -------- Status Colors --------
+/**
+ * Get status color classes using unified color system
+ * @deprecated Consider using getStatusColorClass from color-utils directly
+ */
 export function getStatusColor(status?: string): StatusColor {
-  if (!status) return 'bg-[var(--hover)] text-gray-800';
-  
-  const statusLower = status.toLowerCase();
-  if (['active', 'qualified', 'hot', 'won'].includes(statusLower)) {
-    return 'bg-[var(--hover)] text-gray-800';
-  }
-  if (['new', 'discovery', 'proposal'].includes(statusLower)) {
-    return 'bg-orange-100 text-orange-800';
-  }
-  if (['cold', 'lost', 'closed'].includes(statusLower)) {
-    return 'bg-red-100 text-red-800';
-  }
-  return 'bg-[var(--hover)] text-gray-800';
+  return getStatusColorClass(status);
 }
 
 // -------- Priority Colors --------
+/**
+ * Get priority color classes using unified color system
+ * @deprecated Consider using getPriorityColorClass from color-utils directly
+ */
 export function getPriorityColor(priority?: string): StatusColor {
-  if (!priority) return 'bg-[var(--hover)] text-gray-800';
-  
-  const priorityLower = priority.toLowerCase();
-  if (priorityLower === 'high') return 'bg-red-100 text-red-800';
-  if (priorityLower === 'medium') return 'bg-orange-100 text-orange-800';
-  if (priorityLower === 'low') return 'bg-[var(--hover)] text-gray-800';
-  return 'bg-[var(--hover)] text-gray-800';
+  return getPriorityColorClass(priority);
 }
 
 // -------- Stage Colors --------
-export function getStageColor(stage?: string): StatusColor {
-  if (!stage) return 'bg-[var(--hover)] text-gray-800';
-  
-  const stageLower = stage.toLowerCase().replace(/\s+/g, '-');
-  
-  // Speedrun/Lead pipeline stages (priority over deal stages)
-  if (['lead', 'new'].includes(stageLower)) return 'bg-orange-100 text-orange-800 border border-orange-200';
-  if (['prospect', 'contacted', 'qualified'].includes(stageLower)) return 'bg-blue-100 text-blue-800 border border-blue-200';
-  if (['opportunity'].includes(stageLower)) return 'bg-indigo-100 text-indigo-800 border border-indigo-200';
-  if (['customer', 'client', 'superfan'].includes(stageLower)) return 'bg-green-100 text-green-800 border border-green-200';
-  
-  // Deal stages
-  if (['won', 'closed-won'].includes(stageLower)) return 'bg-green-100 text-green-800';
-  if (['lost', 'closed-lost'].includes(stageLower)) return 'bg-[var(--hover)] text-gray-800';
-  if (stageLower === 'closed-lost-to-competition') return 'bg-red-100 text-red-800 border border-red-200';
-  
-  // Active deal stages  
-  if (['proposal', 'proposal-price-quote'].includes(stageLower)) return 'bg-navy-100 text-navy-800';
-  if (['negotiation', 'negotiation-review'].includes(stageLower)) return 'bg-orange-100 text-orange-800';
-  if (['discovery', 'qualification', 'needs-analysis'].includes(stageLower)) return 'bg-[var(--hover)] text-gray-800';
-  
-  return 'bg-[var(--hover)] text-gray-800';
+/**
+ * Get stage color classes using unified color system
+ * @deprecated Consider using getStageColorClass from color-utils directly
+ */
+export function getStageColor(stage?: string, category?: string): StatusColor {
+  return getStageColorClass(stage, category);
 }
 
 // -------- Speedrun Status Colors --------
+/**
+ * Get speedrun status color classes using unified color system
+ * Uses error colors for high priority, warning for medium, hover for low
+ */
 export function getSpeedrunStatusColor(status?: string): StatusColor {
-  if (!status) return 'bg-[var(--hover)] text-gray-800';
+  if (!status) return 'bg-hover text-foreground';
   
   const statusLower = status.toLowerCase();
   
-  // High priority statuses
+  // High priority statuses - use error colors
   if (['hot', 'qualified', 'active'].includes(statusLower)) {
-    return 'bg-red-100 text-red-800 border border-red-200';
+    return 'bg-error-bg text-error-text border border-error-border';
   }
   
-  // Medium priority statuses
+  // Medium priority statuses - use warning colors
   if (['warm', 'new', 'discovery'].includes(statusLower)) {
-    return 'bg-orange-100 text-orange-800 border border-orange-200';
+    return 'bg-warning-bg text-warning-text border border-warning-border';
   }
   
-  // Low priority statuses
+  // Low priority statuses - use hover colors
   if (['cold', 'lost', 'closed'].includes(statusLower)) {
-    return 'bg-[var(--hover)] text-gray-800 border border-[var(--border)]';
+    return 'bg-hover text-foreground border border-border';
   }
   
-  return 'bg-[var(--hover)] text-gray-800';
+  return 'bg-hover text-foreground';
 }
 
 // -------- State Colors --------
+/**
+ * Get state color classes using unified color system
+ * Uses category color for people category (violet/purple theme)
+ */
 export function getStateColor(state?: string): StatusColor {
-  if (!state) return 'bg-[var(--hover)] text-gray-800';
+  if (!state) return 'bg-hover text-foreground';
   
-  const stateLower = state.toLowerCase();
-  
-  // Use purple theme for states (consistent with location styling)
-  return 'bg-purple-100 text-purple-800 border border-purple-200';
+  // Use people category colors for states (purple theme)
+  return 'bg-category-people-100 text-category-people-800 border border-category-people-200';
 }
 
 // -------- Speedrun Status Labels --------
@@ -117,37 +101,40 @@ export function getSpeedrunStatusLabel(status?: string): string {
 }
 
 // -------- Action Timing Colors --------
+/**
+ * Get action timing color classes using unified color system
+ */
 export function getStandardizedActionTimingColor(timing: string, isLastAction: boolean = false): StatusColor {
   const timingLower = timing.toLowerCase();
   
-  // Urgent timing
+  // Urgent timing - use error colors
   if (timingLower.includes('urgent') || timingLower.includes('asap')) {
-    return 'bg-red-100 text-red-800 border border-red-200';
+    return 'bg-error-bg text-error-text border border-error-border';
   }
   
-  // Today timing
+  // Today timing - use warning colors
   if (timingLower.includes('today') || timingLower.includes('same day')) {
-    return 'bg-orange-100 text-orange-800 border border-orange-200';
+    return 'bg-warning-bg text-warning-text border border-warning-border';
   }
   
-  // This week timing
+  // This week timing - use info colors (yellow alternative)
   if (timingLower.includes('this week') || timingLower.includes('within week')) {
-    return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
+    return 'bg-info-bg text-info-text border border-info-border';
   }
   
-  // Next week timing
+  // Next week timing - use navy colors
   if (timingLower.includes('next week') || timingLower.includes('following week')) {
     return 'bg-navy-100 text-navy-800 border border-navy-200';
   }
   
   // Default timing
-  return 'bg-[var(--hover)] text-gray-800 border border-[var(--border)]';
+  return 'bg-hover text-foreground border border-border';
 }
 
 // -------- Realtime Action Timing --------
 export function getRealtimeActionTiming(lastActionDate?: string | Date): { text: string; color: StatusColor } {
   if (!lastActionDate) {
-    return { text: 'Never', color: 'bg-[var(--hover)] text-gray-800' };
+    return { text: 'Never', color: 'bg-hover text-foreground' };
   }
   
   const now = new Date();
@@ -160,34 +147,34 @@ export function getRealtimeActionTiming(lastActionDate?: string | Date): { text:
   const diffMonths = Math.floor(diffDays / 30);
   const diffYears = Math.floor(diffDays / 365);
   
-  // Recent (within 1 hour) - Green
+  // Recent (within 1 hour) - Success/Green
   if (diffMinutes < 60) {
     if (diffMinutes < 1) {
-      return { text: 'Just now', color: 'bg-green-100 text-green-800' };
+      return { text: 'Just now', color: 'bg-success-bg text-success-text' };
     }
-    return { text: `${diffMinutes}m ago`, color: 'bg-green-100 text-green-800' };
+    return { text: `${diffMinutes}m ago`, color: 'bg-success-bg text-success-text' };
   }
   
-  // Today (within 24 hours) - Blue
+  // Today (within 24 hours) - Navy
   if (diffHours < 24) {
     return { text: `${diffHours}h ago`, color: 'bg-navy-100 text-navy-800' };
   }
   
-  // This week (within 7 days) - Yellow
+  // This week (within 7 days) - Warning/Yellow
   if (diffDays < 7) {
-    return { text: `${diffDays}d ago`, color: 'bg-yellow-100 text-yellow-800' };
+    return { text: `${diffDays}d ago`, color: 'bg-warning-bg text-warning-text' };
   }
   
-  // This month (within 30 days) - Orange
+  // This month (within 30 days) - Warning/Orange
   if (diffDays < 30) {
-    return { text: `${diffWeeks}w ago`, color: 'bg-orange-100 text-orange-800' };
+    return { text: `${diffWeeks}w ago`, color: 'bg-warning-bg text-warning-text' };
   }
   
-  // This year (within 365 days) - Red
+  // This year (within 365 days) - Error/Red
   if (diffDays < 365) {
-    return { text: `${diffMonths}mo ago`, color: 'bg-red-100 text-red-800' };
+    return { text: `${diffMonths}mo ago`, color: 'bg-error-bg text-error-text' };
   }
   
-  // Very old - Gray
-  return { text: `${diffYears}y ago`, color: 'bg-[var(--hover)] text-gray-800' };
+  // Very old - Hover/Gray
+  return { text: `${diffYears}y ago`, color: 'bg-hover text-foreground' };
 }

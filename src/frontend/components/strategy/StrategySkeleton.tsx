@@ -4,7 +4,7 @@ import React from 'react';
 
 export function StrategySkeleton() {
   return (
-    <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+    <div className="bg-background p-6 rounded-lg border border-border shadow-sm">
       {/* Three Column Layout */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Situation Skeleton */}

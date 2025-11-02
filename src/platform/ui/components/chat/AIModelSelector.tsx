@@ -51,11 +51,11 @@ export function AIModelSelector({ selectedModel, onModelChange, className = "" }
   return (
     <div className={`relative ${className}`}>
       <div
-        className="bg-[var(--background)] border border-[var(--border)] rounded-xl px-2 py-1 text-[var(--foreground)] font-normal text-base flex items-center gap-1.5"
+        className="bg-background border border-border rounded-xl px-2 py-1 text-foreground font-normal text-base flex items-center gap-1.5"
         style={{ marginLeft: '-2px', marginTop: '5px' }}
       >
         <span>{selectedModel.provider}</span>
-        <span className="text-xs text-[var(--muted)]">• Auto</span>
+        <span className="text-xs text-muted">• Auto</span>
       </div>
     </div>
   );

@@ -82,7 +82,7 @@ const SUMMARY_OPTIONS = [
     outcome: "not-interested" as CallOutcome,
     label: "Not Interested",
     description: "Contact politely declined",
-    color: "bg-[var(--panel-background)]0 hover:bg-gray-600",
+    color: "bg-panel-background0 hover:bg-gray-600",
     icon: XMarkIcon,
     category: "closure",
   },
@@ -98,7 +98,7 @@ const SUMMARY_OPTIONS = [
     outcome: "wrong-number" as CallOutcome,
     label: "Wrong Number",
     description: "Phone number was incorrect or invalid",
-    color: "bg-gray-400 hover:bg-[var(--panel-background)]0",
+    color: "bg-gray-400 hover:bg-panel-background0",
     icon: XMarkIcon,
     category: "closure",
   },
@@ -150,18 +150,18 @@ export function CallSummaryModal({
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center z-[10000] p-4">
-      <div className="bg-[var(--background)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border)]">
+      <div className="bg-background rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-border">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center">
               <PhoneIcon className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">
+              <h2 className="text-xl font-bold text-foreground">
                 Call Summary
               </h2>
-              <p className="text-[var(--muted)]">
+              <p className="text-muted">
                 How did the call go with{" "}
                 <span className="font-medium">{contactName}</span>?
               </p>
@@ -169,27 +169,27 @@ export function CallSummaryModal({
           </div>
           <button
             onClick={onClose}
-            className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors p-2 hover:bg-[var(--hover-bg)] rounded-lg"
+            className="text-muted hover:text-foreground transition-colors p-2 hover:bg-hover rounded-lg"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
         </div>
 
         {/* Contact Info */}
-        <div className="p-6 bg-[var(--hover-bg)] border-b border-[var(--border)]">
+        <div className="p-6 bg-hover border-b border-border">
           <div className="flex items-center gap-3">
             <div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">
+              <h3 className="text-lg font-semibold text-foreground">
                 {contactName}
               </h3>
-              <p className="text-[var(--muted)]">{contactCompany}</p>
+              <p className="text-muted">{contactCompany}</p>
             </div>
           </div>
         </div>
 
         {/* Summary Options */}
         <div className="p-6">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             What happened?
           </h3>
 
@@ -205,7 +205,7 @@ export function CallSummaryModal({
                   className={`relative p-4 rounded-xl border-2 transition-all text-left ${
                     isSelected
                       ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                      : "border-[var(--border)] hover:border-blue-300 hover:bg-[var(--hover-bg)]"
+                      : "border-border hover:border-blue-300 hover:bg-hover"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -215,17 +215,17 @@ export function CallSummaryModal({
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-medium text-[var(--foreground)] mb-1">
+                      <h4 className="font-medium text-foreground mb-1">
                         {option.label}
                       </h4>
-                      <p className="text-sm text-[var(--muted)]">
+                      <p className="text-sm text-muted">
                         {option.description}
                       </p>
                     </div>
                   </div>
                   {isSelected && (
                     <div className="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <div className="w-2 h-2 bg-[var(--background)] rounded-full"></div>
+                      <div className="w-2 h-2 bg-background rounded-full"></div>
                     </div>
                   )}
                 </button>
@@ -235,7 +235,7 @@ export function CallSummaryModal({
 
           {/* Notes Section */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Call Notes {selectedOutcome && "(Optional)"}
             </label>
             <textarea
@@ -247,7 +247,7 @@ export function CallSummaryModal({
                   : "Select an outcome first..."
               }
               disabled={!selectedOutcome}
-              className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full p-3 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               rows={3}
             />
           </div>
@@ -257,7 +257,7 @@ export function CallSummaryModal({
             <button
               onClick={onClose}
               disabled={isSubmitting}
-              className="flex-1 px-6 py-3 border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors disabled:opacity-50"
+              className="flex-1 px-6 py-3 border border-border text-foreground rounded-lg font-medium hover:bg-hover transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
@@ -275,7 +275,7 @@ export function CallSummaryModal({
                 <>
                   Save & Continue
                   {selectedOutcome && (
-                    <span className="ml-2 px-2 py-1 bg-[var(--background)]/20 rounded text-xs">
+                    <span className="ml-2 px-2 py-1 bg-background/20 rounded text-xs">
                       {selectedOption?.label}
                     </span>
                   )}

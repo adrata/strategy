@@ -124,7 +124,7 @@ export function FolderTree({ onFolderSelect }: FolderTreeProps) {
           className={`flex items-center gap-2 px-2 py-1.5 text-sm rounded-lg cursor-pointer transition-colors ${
             isSelected
               ? 'bg-blue-100 text-blue-700'
-              : 'text-gray-700 hover:bg-[var(--hover)]'
+              : 'text-gray-700 hover:bg-hover'
           }`}
           style={{ paddingLeft: `${level * 16 + 8}px` }}
         >
@@ -134,7 +134,7 @@ export function FolderTree({ onFolderSelect }: FolderTreeProps) {
                 e.stopPropagation();
                 toggleFolder(folder.id);
               }}
-              className="p-0.5 hover:bg-[var(--loading-bg)] rounded"
+              className="p-0.5 hover:bg-loading-bg rounded"
             >
               {isExpanded ? (
                 <ChevronDownIcon className="w-3 h-3" />
@@ -149,7 +149,7 @@ export function FolderTree({ onFolderSelect }: FolderTreeProps) {
           <FolderIcon className="w-4 h-4 flex-shrink-0" />
           <span className="truncate flex-1">{folder.name}</span>
           {folder._count?.documents > 0 && (
-            <span className="text-xs text-[var(--muted)] bg-[var(--loading-bg)] px-1.5 py-0.5 rounded">
+            <span className="text-xs text-muted bg-loading-bg px-1.5 py-0.5 rounded">
               {folder._count.documents}
             </span>
           )}
@@ -182,7 +182,7 @@ export function FolderTree({ onFolderSelect }: FolderTreeProps) {
         className={`flex items-center gap-2 px-2 py-1.5 text-sm rounded-lg cursor-pointer transition-colors ${
           selectedFolderId === null
             ? 'bg-blue-100 text-blue-700'
-            : 'text-gray-700 hover:bg-[var(--hover)]'
+            : 'text-gray-700 hover:bg-hover'
         }`}
       >
         <FolderIcon className="w-4 h-4" />

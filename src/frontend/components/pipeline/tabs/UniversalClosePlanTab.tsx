@@ -9,10 +9,10 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
     <div className="p-6 space-y-8">
       {/* Close Strategy */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Close Strategy</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Close Strategy</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Decision Process</h4>
+            <h4 className="font-medium text-foreground mb-3">Decision Process</h4>
             <div className="space-y-2 text-sm text-gray-700">
               {record?.decisionProcess ? (
                 <div className="text-gray-700">{JSON.stringify(record.decisionProcess)}</div>
@@ -28,23 +28,23 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
           </div>
 
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Key Players</h4>
+            <h4 className="font-medium text-foreground mb-3">Key Players</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Champion:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.champion || '-'}</span>
+                <span className="text-muted">Champion:</span>
+                <span className="font-medium text-foreground">{record?.champion || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Economic Buyer:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.economicBuyer || '-'}</span>
+                <span className="text-muted">Economic Buyer:</span>
+                <span className="font-medium text-foreground">{record?.economicBuyer || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Technical Buyer:</span>
-                <span className="font-medium text-[var(--foreground)]">-</span>
+                <span className="text-muted">Technical Buyer:</span>
+                <span className="font-medium text-foreground">-</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Influencers:</span>
-                <span className="font-medium text-[var(--foreground)]">
+                <span className="text-muted">Influencers:</span>
+                <span className="font-medium text-foreground">
                   {record?.stakeholders?.length || 0} identified
                 </span>
               </div>
@@ -55,17 +55,17 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
 
       {/* Decision Criteria */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Decision Criteria</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Decision Criteria</h3>
         <div className="space-y-4">
           {record?.decisionCriteria ? (
-            <div className="bg-[var(--panel-background)] rounded-lg p-4">
+            <div className="bg-panel-background rounded-lg p-4">
               <div className="text-sm text-gray-700">{JSON.stringify(record.decisionCriteria)}</div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-[var(--panel-background)] rounded-lg p-4">
-                <h4 className="font-medium text-[var(--foreground)] mb-2">Technical Criteria</h4>
-                <div className="space-y-1 text-sm text-[var(--muted)]">
+              <div className="bg-panel-background rounded-lg p-4">
+                <h4 className="font-medium text-foreground mb-2">Technical Criteria</h4>
+                <div className="space-y-1 text-sm text-muted">
                   <p>• Functionality and feature requirements</p>
                   <p>• Integration capabilities</p>
                   <p>• Security and compliance standards</p>
@@ -73,9 +73,9 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
                 </div>
               </div>
               
-              <div className="bg-[var(--panel-background)] rounded-lg p-4">
-                <h4 className="font-medium text-[var(--foreground)] mb-2">Business Criteria</h4>
-                <div className="space-y-1 text-sm text-[var(--muted)]">
+              <div className="bg-panel-background rounded-lg p-4">
+                <h4 className="font-medium text-foreground mb-2">Business Criteria</h4>
+                <div className="space-y-1 text-sm text-muted">
                   <p>• Total cost of ownership</p>
                   <p>• Return on investment timeline</p>
                   <p>• Vendor stability and support</p>
@@ -89,7 +89,7 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
 
       {/* Risk Assessment */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Risk Assessment</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Risk Assessment</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Risk Factors</label>
@@ -101,8 +101,8 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
                   </div>
                 ))
               ) : (
-                <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-3">
-                  <p className="text-[var(--muted)] text-sm">No risk factors identified</p>
+                <div className="bg-panel-background border border-border rounded-lg p-3">
+                  <p className="text-muted text-sm">No risk factors identified</p>
                 </div>
               )}
             </div>
@@ -118,8 +118,8 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
                   </div>
                 ))
               ) : (
-                <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-3">
-                  <p className="text-[var(--muted)] text-sm">No urgency factors identified</p>
+                <div className="bg-panel-background border border-border rounded-lg p-3">
+                  <p className="text-muted text-sm">No urgency factors identified</p>
                 </div>
               )}
             </div>
@@ -129,33 +129,33 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
 
       {/* Implementation Planning */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Implementation Intelligence</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Implementation Intelligence</h3>
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Implementation Readiness</h4>
+            <h4 className="font-medium text-foreground mb-2">Implementation Readiness</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-[var(--muted)]">Technical Readiness:</span>
-                <span className="ml-2 font-medium text-[var(--foreground)]">-</span>
+                <span className="text-muted">Technical Readiness:</span>
+                <span className="ml-2 font-medium text-foreground">-</span>
               </div>
               <div>
-                <span className="text-[var(--muted)]">Change Management:</span>
-                <span className="ml-2 font-medium text-[var(--foreground)]">-</span>
+                <span className="text-muted">Change Management:</span>
+                <span className="ml-2 font-medium text-foreground">-</span>
               </div>
               <div>
-                <span className="text-[var(--muted)]">Budget Allocation:</span>
-                <span className="ml-2 font-medium text-[var(--foreground)]">-</span>
+                <span className="text-muted">Budget Allocation:</span>
+                <span className="ml-2 font-medium text-foreground">-</span>
               </div>
               <div>
-                <span className="text-[var(--muted)]">Timeline Flexibility:</span>
-                <span className="ml-2 font-medium text-[var(--foreground)]">-</span>
+                <span className="text-muted">Timeline Flexibility:</span>
+                <span className="ml-2 font-medium text-foreground">-</span>
               </div>
             </div>
           </div>
 
           {record?.implementation && (
-            <div className="bg-[var(--panel-background)] rounded-lg p-4">
-              <h4 className="font-medium text-[var(--foreground)] mb-2">Implementation Details</h4>
+            <div className="bg-panel-background rounded-lg p-4">
+              <h4 className="font-medium text-foreground mb-2">Implementation Details</h4>
               <div className="text-sm text-gray-700">{JSON.stringify(record.implementation)}</div>
             </div>
           )}
@@ -164,9 +164,9 @@ export function UniversalClosePlanTab({ record, recordType, onSave }: UniversalC
 
       {/* Economic Impact */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Economic Impact</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Economic Impact</h3>
         <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
-          <h4 className="font-medium text-[var(--foreground)] mb-3">Value Proposition</h4>
+          <h4 className="font-medium text-foreground mb-3">Value Proposition</h4>
           {record?.economicImpact ? (
             <div className="text-sm text-gray-700">{JSON.stringify(record.economicImpact)}</div>
           ) : (

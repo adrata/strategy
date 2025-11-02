@@ -41,7 +41,7 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
       {/* Back button */}
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-[var(--muted)] hover:text-[var(--foreground)] mb-6 transition-colors"
+        className="flex items-center gap-2 text-muted hover:text-foreground mb-6 transition-colors"
       >
         <ChevronLeftIcon className="w-4 h-4" />
         Back
@@ -61,16 +61,16 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
                   </span>
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-[var(--foreground)]">
+                  <h1 className="text-3xl font-bold text-foreground">
                     {selectedRecord.name}
                   </h1>
-                  <p className="text-lg text-[var(--muted)]">
+                  <p className="text-lg text-muted">
                     {selectedRecord.domain}
                   </p>
                 </div>
               </div>
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-                <p className="text-[var(--foreground)]">
+                <p className="text-foreground">
                   {getRankingDescription(selectedRecord)}
                 </p>
               </div>
@@ -85,16 +85,16 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
                   </span>
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-[var(--foreground)]">
+                  <h1 className="text-3xl font-bold text-foreground">
                     {selectedRecord.name}
                   </h1>
-                  <p className="text-lg text-[var(--muted)]">
+                  <p className="text-lg text-muted">
                     {selectedRecord.domain}
                   </p>
                 </div>
               </div>
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
-                <p className="text-[var(--foreground)]">
+                <p className="text-foreground">
                   {getRankingDescription(selectedRecord)}
                 </p>
               </div>
@@ -103,7 +103,7 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
             // Basic person header (without intelligence)
             <div className="flex-1">
               <div className="flex items-center gap-6 mb-6">
-                <div className="w-24 h-24 rounded-xl bg-[var(--hover-bg)] flex items-center justify-center text-3xl font-semibold text-[var(--foreground)] border border-[var(--border)]">
+                <div className="w-24 h-24 rounded-xl bg-hover flex items-center justify-center text-3xl font-semibold text-foreground border border-border">
                   {getInitials(selectedRecord.name)}
                 </div>
                 <div className="flex-1">
@@ -114,19 +114,19 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
                       </span>
                     </div>
                     <div>
-                      <h1 className="text-3xl font-bold text-[var(--foreground)]">
+                      <h1 className="text-3xl font-bold text-foreground">
                         {selectedRecord.name}
                       </h1>
-                      <p className="text-lg text-[var(--muted)]">
+                      <p className="text-lg text-muted">
                         {(selectedRecord as Person).title}
                       </p>
-                      <p className="text-lg font-medium text-[var(--foreground)]">
+                      <p className="text-lg font-medium text-foreground">
                         {(selectedRecord as Person).company}
                       </p>
                     </div>
                   </div>
                   <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {getRankingDescription(selectedRecord)}
                     </p>
                   </div>
@@ -143,33 +143,33 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
             <>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">
                     Company Overview
                   </h3>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Industry:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Industry:</span>
+                      <span className="font-medium text-foreground">
                         {selectedRecord.industry}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">
+                      <span className="text-muted">
                         Total Employees:
                       </span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="font-medium text-foreground">
                         {selectedRecord.employeeCount}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Revenue:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Revenue:</span>
+                      <span className="font-medium text-foreground">
                         {selectedRecord.revenue}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Location:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Location:</span>
+                      <span className="font-medium text-foreground">
                         {selectedRecord.location}
                       </span>
                     </div>
@@ -178,18 +178,18 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
               </div>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">
                     Sales Intelligence
                   </h3>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">ICP Score:</span>
+                      <span className="text-muted">ICP Score:</span>
                       <span className="text-2xl font-bold text-[#9B59B6]">
                         {selectedRecord.icpScore}%
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Status:</span>
+                      <span className="text-muted">Status:</span>
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedRecord.status)}`}
                       >
@@ -197,8 +197,8 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Last Updated:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Last Updated:</span>
+                      <span className="font-medium text-foreground">
                         {new Date(
                           selectedRecord.lastUpdated,
                         ).toLocaleDateString()}
@@ -213,30 +213,30 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
             <>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">
                     Partnership Details
                   </h3>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Type:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Type:</span>
+                      <span className="font-medium text-foreground">
                         {selectedRecord.partnershipType}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Region:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Region:</span>
+                      <span className="font-medium text-foreground">
                         {selectedRecord.region}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Revenue:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Revenue:</span>
+                      <span className="font-medium text-foreground">
                         {selectedRecord.revenue}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Status:</span>
+                      <span className="text-muted">Status:</span>
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedRecord.status)}`}
                       >
@@ -248,13 +248,13 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
               </div>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">
                     Engagement
                   </h3>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Last Contact:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Last Contact:</span>
+                      <span className="font-medium text-foreground">
                         {new Date(
                           selectedRecord.lastContact,
                         ).toLocaleDateString()}
@@ -269,25 +269,25 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
             <>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">
                     Contact Information
                   </h3>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Email:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Email:</span>
+                      <span className="font-medium text-foreground">
                         {(selectedRecord as Person).email}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">LinkedIn:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">LinkedIn:</span>
+                      <span className="font-medium text-foreground">
                         {(selectedRecord as Person).linkedin}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Location:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Location:</span>
+                      <span className="font-medium text-foreground">
                         {(selectedRecord as Person).location}
                       </span>
                     </div>
@@ -296,24 +296,24 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
               </div>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">
                     Professional Details
                   </h3>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Department:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Department:</span>
+                      <span className="font-medium text-foreground">
                         {(selectedRecord as Person).department}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Seniority:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Seniority:</span>
+                      <span className="font-medium text-foreground">
                         {(selectedRecord as Person).seniority}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Status:</span>
+                      <span className="text-muted">Status:</span>
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedRecord.status)}`}
                       >
@@ -321,8 +321,8 @@ export const RecordDetailView: React.FC<RecordDetailViewProps> = ({
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Last Contact:</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Last Contact:</span>
+                      <span className="font-medium text-foreground">
                         {new Date(
                           (selectedRecord as Person).lastContact,
                         ).toLocaleDateString()}

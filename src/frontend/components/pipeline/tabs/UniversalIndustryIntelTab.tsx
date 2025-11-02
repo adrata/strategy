@@ -9,50 +9,50 @@ export function UniversalIndustryIntelTab({ record, recordType, onSave }: Univer
     <div className="space-y-6">
       {/* Industry Overview */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Industry Intelligence</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Industry Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Industry Profile</h4>
+            <h4 className="font-medium text-foreground mb-3">Industry Profile</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Industry:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.industry || '-'}</span>
+                <span className="text-muted">Industry:</span>
+                <span className="font-medium text-foreground">{record?.industry || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Vertical:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.vertical || '-'}</span>
+                <span className="text-muted">Vertical:</span>
+                <span className="font-medium text-foreground">{record?.vertical || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Company Size:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.companySize || '-'}</span>
+                <span className="text-muted">Company Size:</span>
+                <span className="font-medium text-foreground">{record?.companySize || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Sector:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.sector || '-'}</span>
+                <span className="text-muted">Sector:</span>
+                <span className="font-medium text-foreground">{record?.sector || '-'}</span>
               </div>
             </div>
           </div>
 
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Market Position</h4>
+            <h4 className="font-medium text-foreground mb-3">Market Position</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Revenue Range:</span>
-                <span className="font-medium text-[var(--foreground)]">
+                <span className="text-muted">Revenue Range:</span>
+                <span className="font-medium text-foreground">
                   {record?.revenue ? `$${record.revenue.toLocaleString()}` : '-'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Market Tier:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.tier || '-'}</span>
+                <span className="text-muted">Market Tier:</span>
+                <span className="font-medium text-foreground">{record?.tier || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Growth Stage:</span>
-                <span className="font-medium text-[var(--foreground)]">-</span>
+                <span className="text-muted">Growth Stage:</span>
+                <span className="font-medium text-foreground">-</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Competitive Position:</span>
-                <span className="font-medium text-[var(--foreground)]">-</span>
+                <span className="text-muted">Competitive Position:</span>
+                <span className="font-medium text-foreground">-</span>
               </div>
             </div>
           </div>
@@ -61,7 +61,7 @@ export function UniversalIndustryIntelTab({ record, recordType, onSave }: Univer
 
       {/* Industry Challenges */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Industry Challenges & Trends</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Industry Challenges & Trends</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Common Industry Pain Points</label>
@@ -103,9 +103,9 @@ export function UniversalIndustryIntelTab({ record, recordType, onSave }: Univer
 
       {/* Conversation Starters */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Industry-Specific Conversation Starters</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Industry-Specific Conversation Starters</h3>
         <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6">
-          <h4 className="font-medium text-[var(--foreground)] mb-3">Intelligent Talking Points</h4>
+          <h4 className="font-medium text-foreground mb-3">Intelligent Talking Points</h4>
           <div className="space-y-2 text-sm text-gray-700">
             <p>• "How is {record?.company || 'your company'} handling the recent changes in {record?.industry || 'your industry'} regulations?"</p>
             <p>• "What's your biggest challenge with {record?.industry || 'industry'}-specific compliance requirements?"</p>
@@ -118,27 +118,27 @@ export function UniversalIndustryIntelTab({ record, recordType, onSave }: Univer
 
       {/* Competitive Landscape */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Competitive Landscape</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Competitive Landscape</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Market Leaders</h4>
-            <div className="space-y-1 text-sm text-[var(--muted)]">
+          <div className="bg-panel-background rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-2">Market Leaders</h4>
+            <div className="space-y-1 text-sm text-muted">
               <p>Industry-specific leaders</p>
               <p>Based on {record?.industry || 'industry'} analysis</p>
             </div>
           </div>
           
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Emerging Players</h4>
-            <div className="space-y-1 text-sm text-[var(--muted)]">
+          <div className="bg-panel-background rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-2">Emerging Players</h4>
+            <div className="space-y-1 text-sm text-muted">
               <p>Disruptive technologies</p>
               <p>New market entrants</p>
             </div>
           </div>
           
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Solution Categories</h4>
-            <div className="space-y-1 text-sm text-[var(--muted)]">
+          <div className="bg-panel-background rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-2">Solution Categories</h4>
+            <div className="space-y-1 text-sm text-muted">
               <p>Technology stack</p>
               <p>Vendor ecosystem</p>
             </div>

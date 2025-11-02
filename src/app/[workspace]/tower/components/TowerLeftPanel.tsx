@@ -47,7 +47,7 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
       name: "Overview",
       description: "System health & status",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : "Live",
       visible: true
     },
@@ -56,7 +56,7 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
       name: "Performance",
       description: "Speed & efficiency",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : metrics?.performance?.score || "0",
       visible: true
     },
@@ -65,7 +65,7 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
       name: "Reliability",
       description: "Uptime & stability",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : metrics?.reliability?.uptime || "99.9%",
       visible: true
     },
@@ -74,7 +74,7 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
       name: "Security",
       description: "Threats & compliance",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : metrics?.security?.threats || "0",
       visible: true
     },
@@ -83,7 +83,7 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
       name: "Alerts",
       description: "Active notifications",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : metrics?.alerts?.active || "0",
       visible: true
     },
@@ -92,7 +92,7 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
       name: "Logs",
       description: "System activity",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : metrics?.logs?.today || "0",
       visible: true
     }
@@ -105,56 +105,56 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
   // Show loading state while auth is loading
   if (authLoading) {
     return (
-      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+      <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">
         <div className="p-4 text-center">
-          <div className="text-sm text-[var(--muted)]">Loading Tower...</div>
+          <div className="text-sm text-muted">Loading Tower...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header - matching Speedrun style */}
         <div className="mx-2 mt-4 mb-2">
           {/* Company Icon */}
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--background)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-border overflow-hidden" style={{ filter: 'none' }}>
               <span className="text-lg font-bold text-black">T</span>
             </div>
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Tower</h2>
-              <p className="text-xs text-[var(--muted)]">System Monitoring</p>
+              <h2 className="text-base font-semibold text-foreground">Tower</h2>
+              <p className="text-xs text-muted">System Monitoring</p>
             </div>
           </div>
         </div>
 
         {/* System Performance Dashboard */}
-        <div className="mx-2 mb-4 p-3 bg-[var(--hover)] rounded-lg border border-[var(--border)]">
+        <div className="mx-2 mb-4 p-3 bg-hover rounded-lg border border-border">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Uptime</span>
+              <span className="text-xs font-medium text-muted">Uptime</span>
               <span className="text-xs font-semibold text-black">
                 {loading ? (
-                  <div className="w-8 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : metrics?.reliability?.uptime || "99.9%"}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Performance</span>
+              <span className="text-xs font-medium text-muted">Performance</span>
               <span className="text-xs font-semibold text-black">
                 {loading ? (
-                  <div className="w-8 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : metrics?.performance?.score || "95"}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Alerts</span>
+              <span className="text-xs font-medium text-muted">Alerts</span>
               <span className="text-xs font-semibold text-black">
                 {loading ? (
-                  <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : metrics?.security?.threats || "0"}
               </span>
             </div>
@@ -170,17 +170,17 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
             onClick={() => handleSectionClick(section.id)}
             className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
               activeSection === section.id
-                ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                : 'hover:bg-[var(--panel-background)] text-gray-700'
+                ? 'bg-hover text-foreground'
+                : 'hover:bg-panel-background text-gray-700'
             }`}
           >
             <div className="flex items-center justify-between">
               <span className="font-medium text-sm">{section.name}</span>
-              <span className="text-sm text-[var(--muted)]">
+              <span className="text-sm text-muted">
                 {typeof section.count === 'number' ? section.count.toLocaleString() : section.count}
               </span>
             </div>
-            <div className="text-xs text-[var(--muted)] mt-1">
+            <div className="text-xs text-muted mt-1">
               {section.description}
             </div>
           </button>
@@ -190,19 +190,19 @@ export function TowerLeftPanel({ activeSection, onSectionChange }: TowerLeftPane
       {/* Fixed Bottom Section - Profile Button */}
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
         <button
-          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--hover)] transition-colors"
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-hover transition-colors"
           title="Profile"
         >
-          <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 bg-loading-bg rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-gray-700">
               {authUser?.name?.charAt(0)?.toUpperCase() || 'U'}
             </span>
           </div>
           <div className="flex-1 text-left">
-            <div className="text-sm font-medium text-[var(--foreground)]">
+            <div className="text-sm font-medium text-foreground">
               {authUser?.name || 'User'}
             </div>
-            <div className="text-xs text-[var(--muted)]">
+            <div className="text-xs text-muted">
               {acquisitionData?.auth?.authUser?.activeWorkspaceName || 'Workspace'}
             </div>
           </div>

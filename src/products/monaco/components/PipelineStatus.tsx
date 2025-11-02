@@ -34,7 +34,7 @@ export function PipelineStatus({
       case "failed":
         return <ExclamationCircleIcon className="w-5 h-5 text-red-500" />;
       default:
-        return <SparklesIcon className="w-5 h-5 text-[var(--muted)]" />;
+        return <SparklesIcon className="w-5 h-5 text-muted" />;
     }
   };
 
@@ -47,7 +47,7 @@ export function PipelineStatus({
       case "failed":
         return "border-red-200 bg-red-50 dark:bg-red-900/20";
       default:
-        return "border-[var(--border)] bg-[var(--panel-background)]/20";
+        return "border-border bg-panel-background/20";
     }
   };
 
@@ -72,11 +72,11 @@ export function PipelineStatus({
       <div className="flex items-center gap-3 mb-3">
         {getStatusIcon()}
         <div className="flex-1">
-          <p className="text-sm font-medium text-[var(--foreground)]">
+          <p className="text-sm font-medium text-foreground">
             {getStatusText()}
           </p>
           {executionTime && status === "completed" && (
-            <p className="text-xs text-[var(--muted)] mt-1">
+            <p className="text-xs text-muted mt-1">
               Completed in {Math.round(executionTime / 1000)}s
             </p>
           )}
@@ -89,13 +89,13 @@ export function PipelineStatus({
       {/* Progress bar for running pipelines */}
       {status === "running" && (
         <div className="space-y-2">
-          <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+          <div className="w-full bg-loading-bg rounded-full h-2">
             <div
               className="bg-blue-600 h-2 rounded-full transition-all duration-500"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
-          <div className="flex justify-between text-xs text-[var(--muted)]">
+          <div className="flex justify-between text-xs text-muted">
             <span>Step {completedSteps + 1}: Analyzing data...</span>
             <span>{progressPercentage}%</span>
           </div>
@@ -104,20 +104,20 @@ export function PipelineStatus({
 
       {/* Results summary for completed pipelines */}
       {status === "completed" && (
-        <div className="grid grid-cols-3 gap-4 text-center pt-3 border-t border-[var(--border)] dark:border-[var(--border)]">
+        <div className="grid grid-cols-3 gap-4 text-center pt-3 border-t border-border dark:border-border">
           <div>
-            <p className="text-xs text-[var(--muted)]">Intelligence Score</p>
-            <p className="text-sm font-semibold text-[var(--foreground)]">
+            <p className="text-xs text-muted">Intelligence Score</p>
+            <p className="text-sm font-semibold text-foreground">
               95/100
             </p>
           </div>
           <div>
-            <p className="text-xs text-[var(--muted)]">Key Insights</p>
-            <p className="text-sm font-semibold text-[var(--foreground)]">12</p>
+            <p className="text-xs text-muted">Key Insights</p>
+            <p className="text-sm font-semibold text-foreground">12</p>
           </div>
           <div>
-            <p className="text-xs text-[var(--muted)]">Action Items</p>
-            <p className="text-sm font-semibold text-[var(--foreground)]">8</p>
+            <p className="text-xs text-muted">Action Items</p>
+            <p className="text-sm font-semibold text-foreground">8</p>
           </div>
         </div>
       )}

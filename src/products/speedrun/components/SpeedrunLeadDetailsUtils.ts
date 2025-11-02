@@ -18,7 +18,7 @@ export const getRoleColor = (role: string): string => {
     case "Stakeholder":
       return "bg-purple-100 text-purple-800 border-purple-200";
     default:
-      return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
+      return "bg-hover text-gray-800 border-border";
   }
 };
 

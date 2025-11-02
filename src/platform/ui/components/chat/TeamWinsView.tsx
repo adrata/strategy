@@ -35,33 +35,33 @@ export function TeamWinsView({ wins, onBack }: TeamWinsViewProps) {
       <div className="flex items-center space-x-3 mb-6">
         <button
           onClick={onBack}
-          className="w-8 h-8 text-[var(--muted)] cursor-pointer hover:text-[var(--foreground)] transition-colors flex items-center justify-center"
+          className="w-8 h-8 text-muted cursor-pointer hover:text-foreground transition-colors flex items-center justify-center"
           title="Back to Chat"
         >
           <ArrowLeftIcon className="w-5 h-5" />
         </button>
-        <h2 className="text-lg font-semibold text-[var(--foreground)]">Wins</h2>
+        <h2 className="text-lg font-semibold text-foreground">Wins</h2>
       </div>
       
       <div className="space-y-4 overflow-y-auto">
         {wins.map((win) => (
-          <div key={win.id} className="bg-[var(--hover-bg)] rounded-lg p-4">
+          <div key={win.id} className="bg-hover rounded-lg p-4">
             <div className="flex items-start justify-between mb-2">
-              <h3 className="font-medium text-[var(--foreground)]">{win.achievement}</h3>
+              <h3 className="font-medium text-foreground">{win.achievement}</h3>
               {win['value'] && (
                 <div className="text-sm font-semibold text-green-600 dark:text-green-400">
                   {win.value}
                 </div>
               )}
             </div>
-            <div className="text-xs text-[var(--muted)]">
+            <div className="text-xs text-muted">
               {formatTimeAgo(win.timestamp)}
             </div>
           </div>
         ))}
         
         {wins['length'] === 0 && (
-          <div className="text-center py-8 text-[var(--muted)]">
+          <div className="text-center py-8 text-muted">
             <p>No team wins yet.</p>
             <p className="text-sm mt-2">Achievements will appear here as your team succeeds.</p>
           </div>

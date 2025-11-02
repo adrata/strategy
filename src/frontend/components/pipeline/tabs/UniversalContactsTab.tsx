@@ -42,46 +42,46 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
     <div className="space-y-8">
       {/* Add New Contact */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Add New Contact</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Add New Contact</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Name</label>
+            <label className="block text-sm font-medium text-muted mb-1">Name</label>
             <input
               type="text"
               value={newContact.name}
               onChange={(e) => setNewContact(prev => ({ ...prev, name: e.target.value }))}
               placeholder="Enter contact name"
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Email</label>
+            <label className="block text-sm font-medium text-muted mb-1">Email</label>
             <input
               type="email"
               value={newContact.email}
               onChange={(e) => setNewContact(prev => ({ ...prev, email: e.target.value }))}
               placeholder="Enter email address"
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Title</label>
+            <label className="block text-sm font-medium text-muted mb-1">Title</label>
             <input
               type="text"
               value={newContact.title}
               onChange={(e) => setNewContact(prev => ({ ...prev, title: e.target.value }))}
               placeholder="Enter job title"
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Phone</label>
+            <label className="block text-sm font-medium text-muted mb-1">Phone</label>
             <input
               type="tel"
               value={newContact.phone}
               onChange={(e) => setNewContact(prev => ({ ...prev, phone: e.target.value }))}
               placeholder="Enter phone number"
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         </div>
@@ -96,14 +96,14 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
 
       {/* Existing Contacts */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Associated Contacts</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Associated Contacts</h3>
         <div className="space-y-4">
           {record?.contacts && Array.isArray(record.contacts) && record.contacts.length > 0 ? (
             record.contacts.map((contact: any, index: number) => (
-              <div key={contact.id || index} className="p-4 bg-[var(--panel-background)] border border-[var(--border)] rounded-lg">
+              <div key={contact.id || index} className="p-4 bg-panel-background border border-border rounded-lg">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)] mb-1">Name</label>
+                    <label className="block text-sm font-medium text-muted mb-1">Name</label>
                     <InlineEditField
                       value={contact.name || ''}
                       field={`contacts.${index}.name`}
@@ -115,7 +115,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)] mb-1">Email</label>
+                    <label className="block text-sm font-medium text-muted mb-1">Email</label>
                     <InlineEditField
                       value={contact.email || ''}
                       field={`contacts.${index}.email`}
@@ -128,7 +128,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)] mb-1">Title</label>
+                    <label className="block text-sm font-medium text-muted mb-1">Title</label>
                     <InlineEditField
                       value={contact.title || ''}
                       field={`contacts.${index}.title`}
@@ -140,7 +140,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)] mb-1">Phone</label>
+                    <label className="block text-sm font-medium text-muted mb-1">Phone</label>
                     <InlineEditField
                       value={contact.phone || ''}
                       field={`contacts.${index}.phone`}
@@ -156,7 +156,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
               </div>
             ))
           ) : (
-            <div className="text-center py-8 text-[var(--muted)]">
+            <div className="text-center py-8 text-muted">
               <p className="text-sm">No contacts associated with this {recordType === 'companies' ? 'company' : recordType.slice(0, -1)} yet</p>
             </div>
           )}
@@ -165,10 +165,10 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
 
       {/* Contact Summary */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Contact Summary</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Contact Summary</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Primary Contact</label>
+            <label className="block text-sm font-medium text-muted mb-1">Primary Contact</label>
             <InlineEditField
               value={record?.primaryContact || ''}
               field="primaryContact"
@@ -180,7 +180,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Decision Maker</label>
+            <label className="block text-sm font-medium text-muted mb-1">Decision Maker</label>
             <InlineEditField
               value={record?.decisionMaker || ''}
               field="decisionMaker"
@@ -192,7 +192,7 @@ export function UniversalContactsTab({ record, recordType, onSave }: UniversalCo
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--muted)] mb-1">Influencer</label>
+            <label className="block text-sm font-medium text-muted mb-1">Influencer</label>
             <InlineEditField
               value={record?.influencer || ''}
               field="influencer"

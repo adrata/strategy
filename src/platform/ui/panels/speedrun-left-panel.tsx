@@ -559,10 +559,10 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-[var(--loading-bg)] text-[var(--foreground)] border border-[var(--border)]";
-      case "medium": return "bg-[var(--hover)] text-gray-800 border border-[var(--border)]";
-      case "low": return "bg-[var(--background)] text-gray-700 border border-[var(--border)]";
-      default: return "bg-[var(--hover)] text-gray-800 border border-[var(--border)]";
+      case "high": return "bg-loading-bg text-foreground border border-border";
+      case "medium": return "bg-hover text-gray-800 border border-border";
+      case "low": return "bg-background text-gray-700 border border-border";
+      default: return "bg-hover text-gray-800 border border-border";
     }
   };
 
@@ -587,32 +587,32 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
     }
     
     // Default fallback
-    return "bg-[var(--hover)] text-gray-800 border border-[var(--border)]";
+    return "bg-hover text-gray-800 border border-border";
   };
 
   const getStateColor = (state: string) => {
-    if (!state) return 'bg-[var(--hover)] text-gray-800';
+    if (!state) return 'bg-hover text-gray-800';
     return 'bg-purple-100 text-purple-800 border border-purple-200';
   };
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background border-r border-border flex flex-col h-full">
       
 
       {/* Stats Header */}
-      <div className="flex-shrink-0 p-3 border-b border-[var(--border)] bg-[var(--panel-background)]">
+      <div className="flex-shrink-0 p-3 border-b border-border bg-panel-background">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-red-600">{doneContacts.length}</span>
-            <span className="text-[var(--muted)]">/</span>
-            <span className="text-lg font-bold text-[var(--foreground)]">{activeContacts.length + doneContacts.length}</span>
+            <span className="text-muted">/</span>
+            <span className="text-lg font-bold text-foreground">{activeContacts.length + doneContacts.length}</span>
           </div>
           <div className="flex items-center gap-2">
             {/* View Dropdown */}
             <div className="relative dropdown-container">
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="flex items-center gap-1 px-2 py-1 bg-[var(--background)] border border-[var(--border)] text-xs font-medium rounded hover:bg-[var(--panel-background)] transition-colors"
+                className="flex items-center gap-1 px-2 py-1 bg-background border border-border text-xs font-medium rounded hover:bg-panel-background transition-colors"
               >
                 {React.createElement(getViewIcon(currentView), { className: "w-3 h-3" })}
                 <span>{getViewLabel(currentView)}</span>
@@ -620,15 +620,15 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
               </button>
               
               {showDropdown && (
-                <div className="absolute top-full left-0 mt-1 w-32 bg-[var(--background)] border border-[var(--border)] rounded-md shadow-lg z-50">
+                <div className="absolute top-full left-0 mt-1 w-32 bg-background border border-border rounded-md shadow-lg z-50">
                   {(['prospects', 'sales_actions', 'time'] as SpeedrunView[]).map((view) => {
                     const Icon = getViewIcon(view);
                     return (
                       <button
                         key={view}
                         onClick={() => handleViewChange(view)}
-                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-[var(--panel-background)] transition-colors ${
-                          currentView === view ? 'bg-[var(--hover)] font-medium' : ''
+                        className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left hover:bg-panel-background transition-colors ${
+                          currentView === view ? 'bg-hover font-medium' : ''
                         }`}
                       >
                         <Icon className="w-3 h-3" />
@@ -646,14 +646,14 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             </button>
           </div>
         </div>
-        <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+        <div className="flex items-center justify-between text-xs text-muted">
           <span>Daily Target</span>
           <span>{currentView === 'prospects' ? 'People' : currentView === 'sales_actions' ? 'Actions' : 'Time'}</span>
         </div>
       </div>
 
       {/* Header Section - Conditional Back Navigation Button */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 p-4 border-b border-border">
         {isStandaloneMode && (
           <button
             onClick={() => {
@@ -666,28 +666,28 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                 router.push('/monaco');
               }
             }}
-            className="flex items-center gap-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors text-sm mb-3"
+            className="flex items-center gap-2 text-muted hover:text-foreground transition-colors text-sm mb-3"
           >
             <ChevronLeftIcon className="w-4 h-4" />
             {isPipelineContext ? 'Back to Pipeline' : 'Back to Monaco'}
           </button>
         )}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white border border-[var(--border)] rounded-xl flex items-center justify-center">
-            <span className="text-lg font-bold text-[var(--foreground)]">A</span>
+          <div className="w-10 h-10 bg-white border border-border rounded-xl flex items-center justify-center">
+            <span className="text-lg font-bold text-foreground">A</span>
           </div>
           <div>
-            <h2 className="text-base font-semibold text-[var(--foreground)]">Adrata</h2>
-            <p className="text-xs text-[var(--muted)]">Pro Sales Acceleration</p>
+            <h2 className="text-base font-semibold text-foreground">Adrata</h2>
+            <p className="text-xs text-muted">Pro Sales Acceleration</p>
           </div>
         </div>
       </div>
 
       {/* Today Section */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 p-4 border-b border-border">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Today's Priority</h3>
-          <span className="text-xs text-[var(--muted)]">
+          <h3 className="text-xs font-medium text-muted uppercase tracking-wide">Today's Priority</h3>
+          <span className="text-xs text-muted">
             {activeContacts.length >= workspaceSettings.dailyTarget ? `${workspaceSettings.dailyTarget} of ${activeContacts.length}` : `${activeContacts.length}`} contacts
           </span>
         </div>
@@ -708,15 +708,15 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
               .slice(0, 3)
               .map(([company, count]) => (
                 <div key={company} className="flex items-center justify-between text-xs">
-                  <span className="text-[var(--muted)]">{company}</span>
-                  <span className="font-medium text-[var(--foreground)]">{count} people</span>
+                  <span className="text-muted">{company}</span>
+                  <span className="font-medium text-foreground">{count} people</span>
                 </div>
               ));
           })()}
         </div>
 
         {/* Pipeline Indicator */}
-        <div className="text-xs text-[var(--muted)] bg-[var(--panel-background)] rounded px-2 py-1">
+        <div className="text-xs text-muted bg-panel-background rounded px-2 py-1">
           {Math.max(0, (dynamicRtpProspects?.length || 0) - activeContacts.length)} more contacts in pipeline
         </div>
 
@@ -727,18 +727,18 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
         {currentView === 'prospects' && (
           <div className="space-y-2">
             {/* Progress Bar for Speedrun Goal */}
-            <div className="mb-4 p-3 bg-[var(--panel-background)] rounded-lg">
+            <div className="mb-4 p-3 bg-panel-background rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-medium text-gray-700">Daily Progress</span>
-                <span className="text-xs text-[var(--muted)]">{doneContacts.length}/{workspaceSettings.dailyTarget}</span>
+                <span className="text-xs text-muted">{doneContacts.length}/{workspaceSettings.dailyTarget}</span>
               </div>
-              <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+              <div className="w-full bg-loading-bg rounded-full h-2">
                 <div 
                   className="bg-red-600 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${Math.min(100, (doneContacts.length / workspaceSettings.dailyTarget) * 100)}%` }}
                 ></div>
               </div>
-              <div className="text-xs text-[var(--muted)] mt-1">
+              <div className="text-xs text-muted mt-1">
                 {workspaceSettings.dailyTarget - doneContacts.length} contacts remaining
               </div>
             </div>
@@ -754,8 +754,8 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                 onClick={() => handleContactClick(contact)}
                 className={`p-3 rounded-lg border transition-all cursor-pointer ${
                   selectedPerson?.id === contact.id 
-                    ? "border-gray-400 bg-[var(--hover)] shadow-sm" 
-                    : "border-[var(--border)] bg-[var(--background)] hover:bg-[var(--panel-background)] hover:border-[var(--border)]"
+                    ? "border-gray-400 bg-hover shadow-sm" 
+                    : "border-border bg-background hover:bg-panel-background hover:border-border"
                 }`}
               >
                 <div className="flex items-start justify-between mb-1">
@@ -768,9 +768,9 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                 </div>
                 
                 <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-[var(--foreground)] leading-tight">{contact.name}</h4>
-                  <p className="text-xs text-[var(--muted)]">{contact.title}</p>
-                  <p className="text-xs text-[var(--muted)]">{contact.company}</p>
+                  <h4 className="text-sm font-medium text-foreground leading-tight">{contact.name}</h4>
+                  <p className="text-xs text-muted">{contact.title}</p>
+                  <p className="text-xs text-muted">{contact.company}</p>
                   
                   <div className="flex items-center justify-between mt-2">
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(contact.status || 'prospect')}`}>
@@ -785,7 +785,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             
             {/* Show "more contacts" indicator when displaying limited view */}
             {activeContacts.length > workspaceSettings.dailyTarget && (
-              <div className="mt-3 p-2 text-center text-xs text-[var(--muted)] bg-[var(--panel-background)] rounded">
+              <div className="mt-3 p-2 text-center text-xs text-muted bg-panel-background rounded">
                 Showing {workspaceSettings.dailyTarget} of {activeContacts.length} contacts
                 <br />
                 <span className="text-xs font-medium">Complete contacts to see more in your daily queue</span>
@@ -803,24 +803,24 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             ) : (
               <>
                 {/* Daily Goals Summary */}
-                <div className="mb-4 p-3 bg-[var(--panel-background)] rounded-lg">
+                <div className="mb-4 p-3 bg-panel-background rounded-lg">
                   <h4 className="text-xs font-medium text-gray-700 mb-2">Today's Goals</h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="text-center">
-                      <div className="font-bold text-[var(--foreground)]">{workspaceSettings.dailyTarget}</div>
-                      <div className="text-[var(--muted)]">Contacts</div>
+                      <div className="font-bold text-foreground">{workspaceSettings.dailyTarget}</div>
+                      <div className="text-muted">Contacts</div>
                     </div>
                     <div className="text-center">
-                      <div className="font-bold text-[var(--foreground)]">4</div>
-                      <div className="text-[var(--muted)]">Meetings</div>
+                      <div className="font-bold text-foreground">4</div>
+                      <div className="text-muted">Meetings</div>
                     </div>
                     <div className="text-center">
-                      <div className="font-bold text-[var(--foreground)]">25</div>
-                      <div className="text-[var(--muted)]">Emails</div>
+                      <div className="font-bold text-foreground">25</div>
+                      <div className="text-muted">Emails</div>
                     </div>
                     <div className="text-center">
-                      <div className="font-bold text-[var(--foreground)]">15</div>
-                      <div className="text-[var(--muted)]">Calls</div>
+                      <div className="font-bold text-foreground">15</div>
+                      <div className="text-muted">Calls</div>
                     </div>
                   </div>
                 </div>
@@ -831,7 +831,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                     className={`p-3 rounded-lg border transition-all ${
                       action.isCompleted 
                         ? "border-green-200 bg-green-50" 
-                        : "border-[var(--border)] bg-[var(--background)]"
+                        : "border-border bg-background"
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
@@ -841,7 +841,7 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                           className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
                             action.isCompleted
                               ? "border-green-500 bg-green-500"
-                              : "border-[var(--border)] hover:border-gray-400"
+                              : "border-border hover:border-gray-400"
                           }`}
                         >
                           {action['isCompleted'] && (
@@ -852,31 +852,31 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                           action['priority'] === 'critical' ? 'bg-red-100 text-red-800' :
                           action['priority'] === 'high' ? 'bg-orange-100 text-orange-800' :
                           action['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-[var(--hover)] text-gray-800'
+                          'bg-hover text-gray-800'
                         }`}>
                           {action.priority}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
+                      <div className="flex items-center gap-1 text-xs text-muted">
                         <ClockIcon className="w-3 h-3" />
                         {action.estimatedTime}m
                       </div>
                     </div>
                     
                     <h4 className={`text-sm font-medium mb-1 ${
-                      action.isCompleted ? 'text-green-800 line-through' : 'text-[var(--foreground)]'
+                      action.isCompleted ? 'text-green-800 line-through' : 'text-foreground'
                     }`}>
                       {action.title}
                     </h4>
-                    <p className="text-xs text-[var(--muted)] mb-2">{action.description}</p>
+                    <p className="text-xs text-muted mb-2">{action.description}</p>
                     
                     {action['relatedCompany'] && (
-                      <div className="text-xs text-[var(--muted)]">
+                      <div className="text-xs text-muted">
                         Company: {action.relatedCompany}
                       </div>
                     )}
                     
-                    <div className="text-xs text-[var(--muted)] mt-1">
+                    <div className="text-xs text-muted mt-1">
                       Expected: {action.expectedOutcome}
                     </div>
                   </div>
@@ -884,8 +884,8 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
 
                 {salesActions['length'] === 0 && (
                   <div className="text-center py-8">
-                    <CheckCircleIcon className="w-8 h-8 text-[var(--muted)] mx-auto mb-2" />
-                    <p className="text-xs text-[var(--muted)]">No actions available</p>
+                    <CheckCircleIcon className="w-8 h-8 text-muted mx-auto mb-2" />
+                    <p className="text-xs text-muted">No actions available</p>
                   </div>
                 )}
               </>
@@ -902,16 +902,16 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
             ) : dailySchedule ? (
               <>
                 {/* Schedule Summary */}
-                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 mb-4">
+                <div className="bg-background border border-border rounded-lg p-4 mb-4">
                   <h4 className="text-xs font-medium text-gray-700 mb-2">Today's Schedule</h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="text-center">
-                      <div className="font-semibold text-[var(--foreground)]">{dailySchedule.events.length}</div>
-                      <div className="text-[var(--muted)]">Meetings</div>
+                      <div className="font-semibold text-foreground">{dailySchedule.events.length}</div>
+                      <div className="text-muted">Meetings</div>
                     </div>
                     <div className="text-center">
-                      <div className="font-semibold text-[var(--foreground)]">{Math.round(dailySchedule.availableTime / 60)}h</div>
-                      <div className="text-[var(--muted)]">Available</div>
+                      <div className="font-semibold text-foreground">{Math.round(dailySchedule.availableTime / 60)}h</div>
+                      <div className="text-muted">Available</div>
                     </div>
                   </div>
                 </div>
@@ -927,24 +927,24 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
                           className={`p-2 rounded border text-xs ${
                             event.isSpeedrunRelated
                               ? 'border-red-200 bg-red-50'
-                              : 'border-[var(--border)] bg-[var(--background)]'
+                              : 'border-border bg-background'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-1">
-                            <span className="font-medium text-[var(--foreground)]">
+                            <span className="font-medium text-foreground">
                               {event.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                               event['type'] === 'demo' ? 'bg-purple-100 text-purple-800' :
                               event['type'] === 'call' ? 'bg-green-100 text-green-800' :
-                              'bg-[var(--hover)] text-gray-800'
+                              'bg-hover text-gray-800'
                             }`}>
                               {event.type}
                             </span>
                           </div>
                           <div className="text-gray-700">{event.title}</div>
                           {event['relatedCompany'] && (
-                            <div className="text-[var(--muted)] mt-1">{event.relatedCompany}</div>
+                            <div className="text-muted mt-1">{event.relatedCompany}</div>
                           )}
                         </div>
                       ))}
@@ -954,8 +954,8 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
               </>
             ) : (
               <div className="text-center py-8">
-                <CalendarIcon className="w-8 h-8 text-[var(--muted)] mx-auto mb-2" />
-                <p className="text-xs text-[var(--muted)]">No schedule data available</p>
+                <CalendarIcon className="w-8 h-8 text-muted mx-auto mb-2" />
+                <p className="text-xs text-muted">No schedule data available</p>
               </div>
             )}
           </div>
@@ -965,8 +965,8 @@ export function SpeedrunLeftPanel({}: SpeedrunLeftPanelProps) {
 
       {/* DONE Section */}
       {doneContacts.length > 0 && (
-        <div className="flex-shrink-0 border-t border-[var(--border)] p-4 bg-gray-25">
-          <h3 className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide mb-2">
+        <div className="flex-shrink-0 border-t border-border p-4 bg-gray-25">
+          <h3 className="text-xs font-medium text-muted uppercase tracking-wide mb-2">
             DONE ({doneContacts.length})
           </h3>
           <div className="space-y-1 max-h-32 overflow-y-auto">

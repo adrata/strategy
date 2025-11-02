@@ -89,13 +89,13 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000]">
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg w-full max-w-md mx-4">
+      <div className="bg-background border border-border rounded-lg shadow-lg w-full max-w-md mx-4">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border)]">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">
+        <div className="px-6 py-4 border-b border-border">
+          <h3 className="text-lg font-semibold text-foreground">
             Log Action - {person.name}
           </h3>
-          <p className="text-sm text-[var(--muted)] mt-1">
+          <p className="text-sm text-muted mt-1">
             {person.title} at {typeof person.company === 'object' ? person.company?.name : person.company}
           </p>
         </div>
@@ -104,14 +104,14 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
         <div className="px-6 py-4 space-y-4">
           {/* Action Type Dropdown */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Action Type
             </label>
             <div className="relative">
               <select
                 value={actionType}
                 onChange={(e) => setActionType(e.target.value)}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
               >
                 {ACTION_TYPES.map((type) => (
                   <option key={type.value} value={type.value}>
@@ -120,7 +120,7 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
                 ))}
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
@@ -129,14 +129,14 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
 
           {/* Notes Textarea */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Notes
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder={`Describe the ${selectedAction?.label.toLowerCase()} outcome...`}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               rows={3}
               autoFocus
             />
@@ -145,7 +145,7 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
           {/* Quick outcome buttons for calls */}
           {actionType === 'call' && (
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Quick Actions
               </label>
               <div className="flex flex-wrap gap-2">
@@ -153,7 +153,7 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
                   <button
                     key={outcome}
                     onClick={() => setNotes(prev => prev + (prev ? ' • ' : '') + outcome)}
-                    className="px-3 py-1 text-xs bg-[var(--accent)]/10 text-[var(--accent)] rounded-full hover:bg-[var(--accent)]/20 transition-colors"
+                    className="px-3 py-1 text-xs bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors"
                   >
                     {outcome}
                   </button>
@@ -164,22 +164,22 @@ export function OutcomeTrackingPopup({ person, isOpen, onClose, onSave }: Outcom
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border)] flex justify-between items-center">
-          <div className="text-xs text-[var(--muted)]">
-            Press <kbd className="px-1 py-0.5 bg-[var(--accent)]/10 rounded text-[var(--accent)]">⌘+Enter</kbd> to save
+        <div className="px-6 py-4 border-t border-border flex justify-between items-center">
+          <div className="text-xs text-muted">
+            Press <kbd className="px-1 py-0.5 bg-primary/10 rounded text-primary">⌘+Enter</kbd> to save
           </div>
           <div className="flex gap-3">
             <button
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-muted hover:text-foreground transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={!notes.trim() || isSubmitting}
-              className="px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent)]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isSubmitting ? (
                 <>

@@ -416,7 +416,7 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
       red: 'text-red-600 bg-red-50 border-red-200',
       orange: 'text-orange-600 bg-orange-50 border-orange-200',
       teal: 'text-teal-600 bg-teal-50 border-teal-200',
-      gray: 'text-[var(--muted)] bg-[var(--panel-background)] border-[var(--border)]'
+      gray: 'text-muted bg-panel-background border-border'
     };
     return colorMap[color as keyof typeof colorMap] || colorMap.gray;
   };
@@ -436,7 +436,7 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
       />
       
       {/* Simple popup - matches Cursor's clean design */}
-      <div className="absolute left-0 bottom-12 bg-[var(--background)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg shadow-xl py-2 min-w-[320px] max-w-[400px] z-50">
+      <div className="absolute left-0 bottom-12 bg-background border border-border dark:border-border rounded-lg shadow-xl py-2 min-w-[320px] max-w-[400px] z-50">
         
         {/* File options */}
         <div className="space-y-1">
@@ -452,12 +452,12 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
                     // Show recent files
                   }
                 }}
-                className="w-full px-4 py-2.5 text-left text-sm text-[var(--foreground)] dark:text-[var(--foreground)] hover:bg-[var(--panel-background)] flex items-center space-x-3 transition-colors"
+                className="w-full px-4 py-2.5 text-left text-sm text-foreground dark:text-foreground hover:bg-panel-background flex items-center space-x-3 transition-colors"
               >
-                <IconComponent className="w-4 h-4 text-[var(--muted)]" />
+                <IconComponent className="w-4 h-4 text-muted" />
                 <div className="flex-1">
                   <div className="font-medium">{option.label}</div>
-                  <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">{option.description}</div>
+                  <div className="text-xs text-muted dark:text-muted">{option.description}</div>
                 </div>
               </button>
             );
@@ -465,11 +465,11 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
         </div>
 
         {/* Divider */}
-        <div className="border-t border-[var(--border)] dark:border-[var(--border)] my-2"></div>
+        <div className="border-t border-border dark:border-border my-2"></div>
 
         {/* Data context options */}
         <div className="px-4 py-1">
-          <div className="text-xs font-medium text-[var(--muted)] dark:text-[var(--muted)] uppercase tracking-wide mb-2">
+          <div className="text-xs font-medium text-muted dark:text-muted uppercase tracking-wide mb-2">
             Add Context
           </div>
         </div>
@@ -483,7 +483,7 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={`Search ${DATA_CATEGORIES.find(cat => cat['id'] === activeDataCategory)?.label.toLowerCase() || 'data'}...`}
-                className="w-full px-3 py-1.5 text-xs border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-1.5 text-xs border border-border rounded bg-background text-foreground placeholder-[var(--muted)] focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
@@ -503,14 +503,14 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
                   setSearchQuery('');
                   setSearchResults([]);
                 }}
-                className={`w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--panel-background)] flex items-center space-x-3 transition-colors ${
-                  isActive && showDataOptions ? 'bg-[var(--panel-background)]' : ''
+                className={`w-full px-4 py-2.5 text-left text-sm hover:bg-panel-background flex items-center space-x-3 transition-colors ${
+                  isActive && showDataOptions ? 'bg-panel-background' : ''
                 }`}
               >
-                <IconComponent className="w-4 h-4 text-[var(--muted)]" />
+                <IconComponent className="w-4 h-4 text-muted" />
                 <div className="flex-1">
-                  <div className="font-medium text-[var(--foreground)] dark:text-[var(--foreground)]">{category.label}</div>
-                  <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">{category.description}</div>
+                  <div className="font-medium text-foreground dark:text-foreground">{category.label}</div>
+                  <div className="text-xs text-muted dark:text-muted">{category.description}</div>
                 </div>
               </button>
             );
@@ -520,12 +520,12 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
         {/* Search results */}
         {showDataOptions && (
           <>
-            <div className="border-t border-[var(--border)] dark:border-[var(--border)] my-2"></div>
+            <div className="border-t border-border dark:border-border my-2"></div>
             <div className="max-h-48 overflow-y-auto">
               {isSearching ? (
                 <div className="flex items-center justify-center py-4">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
-                  <span className="ml-2 text-xs text-[var(--muted)]">Searching...</span>
+                  <span className="ml-2 text-xs text-muted">Searching...</span>
                 </div>
               ) : searchResults.length > 0 ? (
                 <div className="space-y-1">
@@ -539,17 +539,17 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
                         disabled={isSelected}
                         className={`w-full px-4 py-2 text-left text-sm transition-colors ${
                           isSelected
-                            ? 'bg-[var(--hover)] opacity-50 cursor-not-allowed'
-                            : 'hover:bg-[var(--panel-background)]'
+                            ? 'bg-hover opacity-50 cursor-not-allowed'
+                            : 'hover:bg-panel-background'
                         }`}
                       >
                         <div className="flex items-center space-x-3">
-                          <IconComponent className="w-4 h-4 text-[var(--muted)]" />
+                          <IconComponent className="w-4 h-4 text-muted" />
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-[var(--foreground)] dark:text-[var(--foreground)] truncate">
+                            <div className="font-medium text-foreground dark:text-foreground truncate">
                               {getItemDisplayName(item, activeDataCategory)}
                             </div>
-                            <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)] truncate">
+                            <div className="text-xs text-muted dark:text-muted truncate">
                               {getItemDescription(item, activeDataCategory)}
                             </div>
                           </div>
@@ -564,11 +564,11 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
                   })}
                 </div>
               ) : searchQuery ? (
-                <div className="text-center py-4 text-[var(--muted)] dark:text-[var(--muted)]">
+                <div className="text-center py-4 text-muted dark:text-muted">
                   <p className="text-xs">No results found</p>
                 </div>
               ) : (
-                <div className="text-center py-4 text-[var(--muted)] dark:text-[var(--muted)]">
+                <div className="text-center py-4 text-muted dark:text-muted">
                   <p className="text-xs">Start typing to search</p>
                 </div>
               )}
@@ -579,15 +579,15 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
         {/* Selected items */}
         {selectedItems.length > 0 && (
           <>
-            <div className="border-t border-[var(--border)] dark:border-[var(--border)] my-2"></div>
+            <div className="border-t border-border dark:border-border my-2"></div>
             <div className="px-4 py-2">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-[var(--foreground)] dark:text-[var(--foreground)]">
+                <span className="text-xs font-medium text-foreground dark:text-foreground">
                   Selected ({selectedItems.length})
                 </span>
                 <button
                   onClick={() => setSelectedItems([])}
-                  className="text-xs text-[var(--muted)] hover:text-red-500"
+                  className="text-xs text-muted hover:text-red-500"
                 >
                   Clear
                 </button>
@@ -598,7 +598,7 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
                   return (
                     <div
                       key={item.id}
-                      className="inline-flex items-center space-x-1 px-2 py-1 rounded text-xs bg-[var(--hover)] text-[var(--foreground)] dark:text-[var(--foreground)]"
+                      className="inline-flex items-center space-x-1 px-2 py-1 rounded text-xs bg-hover text-foreground dark:text-foreground"
                     >
                       <IconComponent className="w-3 h-3" />
                       <span className="truncate max-w-24">{item.name}</span>
@@ -625,8 +625,8 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
         {/* Recent files section */}
         {recentFiles.length > 0 && !showDataOptions && (
           <>
-            <div className="border-t border-[var(--border)] dark:border-[var(--border)] mt-2 pt-2">
-              <div className="px-4 py-1 text-xs font-medium text-[var(--muted)] dark:text-[var(--muted)] uppercase tracking-wide">
+            <div className="border-t border-border dark:border-border mt-2 pt-2">
+              <div className="px-4 py-1 text-xs font-medium text-muted dark:text-muted uppercase tracking-wide">
                 Recent Files
               </div>
             </div>
@@ -637,12 +637,12 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
                   <button
                     key={file.id}
                     onClick={() => handleRecentFileSelect(file)}
-                    className="w-full px-4 py-2 text-left text-sm text-[var(--foreground)] dark:text-[var(--foreground)] hover:bg-[var(--panel-background)] flex items-center space-x-3 transition-colors"
+                    className="w-full px-4 py-2 text-left text-sm text-foreground dark:text-foreground hover:bg-panel-background flex items-center space-x-3 transition-colors"
                   >
-                    <IconComponent className="w-4 h-4 text-[var(--muted)]" />
+                    <IconComponent className="w-4 h-4 text-muted" />
                     <div className="flex-1 min-w-0">
                       <div className="font-medium truncate">{file.name}</div>
-                      <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">
+                      <div className="text-xs text-muted dark:text-muted">
                         {formatFileSize(file.size)} • {formatTimeAgo(file.uploadedAt)}
                       </div>
                     </div>
@@ -655,7 +655,7 @@ export function AddFilesPopup({ isOpen, onClose, onFileSelect, onAddFiles }: Add
 
         {/* Loading state for recent files */}
         {isLoadingRecent && (
-          <div className="px-4 py-2 text-xs text-[var(--muted)] dark:text-[var(--muted)]">
+          <div className="px-4 py-2 text-xs text-muted dark:text-muted">
             Loading recent files...
           </div>
         )}

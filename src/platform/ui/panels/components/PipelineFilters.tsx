@@ -81,13 +81,13 @@ export function PipelineFilters({ activeSection }: PipelineFiltersProps) {
                 activeSection === 'clients' ? 'Search clients' :
                 'Search records'
               }
-              className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--muted)] hover:text-[var(--muted)]"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted hover:text-muted"
               >
                 ✕
               </button>

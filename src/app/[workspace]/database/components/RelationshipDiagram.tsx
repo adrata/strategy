@@ -53,7 +53,7 @@ export function RelationshipDiagram({ tableName, schema }: RelationshipDiagramPr
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 mx-auto mb-4 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-          <p className="text-[var(--muted)]">Loading relationships...</p>
+          <p className="text-muted">Loading relationships...</p>
         </div>
       </div>
     );
@@ -64,10 +64,10 @@ export function RelationshipDiagram({ tableName, schema }: RelationshipDiagramPr
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             Table Relationships: {tableName}
           </h2>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             Visual representation of how {tableName} connects to other tables in the database
           </p>
         </div>
@@ -92,14 +92,14 @@ export function RelationshipDiagram({ tableName, schema }: RelationshipDiagramPr
         {/* Relationships */}
         {schema.relationships.length > 0 ? (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-[var(--foreground)]">Direct Relationships</h3>
+            <h3 className="text-lg font-semibold text-foreground">Direct Relationships</h3>
             
             {schema.relationships.map((rel: any, index: number) => (
-              <div key={index} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+              <div key={index} className="bg-background border border-border rounded-lg p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <h4 className="text-lg font-medium text-[var(--foreground)]">{rel.relationName}</h4>
+                    <h4 className="text-lg font-medium text-foreground">{rel.relationName}</h4>
                     <span className={`px-3 py-1 text-sm rounded-full ${
                       rel.type === 'one-to-one' 
                         ? 'bg-blue-100 text-blue-600'
@@ -117,37 +117,37 @@ export function RelationshipDiagram({ tableName, schema }: RelationshipDiagramPr
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-4 bg-[var(--panel-background)] rounded-lg">
-                    <h5 className="font-medium text-[var(--foreground)] mb-2">Source ({tableName})</h5>
+                  <div className="p-4 bg-panel-background rounded-lg">
+                    <h5 className="font-medium text-foreground mb-2">Source ({tableName})</h5>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Column:</span>
+                        <span className="text-sm text-muted">Column:</span>
                         <span className="font-mono text-sm">{rel.sourceColumn}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Type:</span>
+                        <span className="text-sm text-muted">Type:</span>
                         <span className="text-sm">{rel.type === 'one-to-one' ? 'Single' : 'Multiple'}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-[var(--panel-background)] rounded-lg">
-                    <h5 className="font-medium text-[var(--foreground)] mb-2">Target ({rel.targetTable})</h5>
+                  <div className="p-4 bg-panel-background rounded-lg">
+                    <h5 className="font-medium text-foreground mb-2">Target ({rel.targetTable})</h5>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Column:</span>
+                        <span className="text-sm text-muted">Column:</span>
                         <span className="font-mono text-sm">{rel.targetColumn}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-[var(--muted)]">Relationship:</span>
+                        <span className="text-sm text-muted">Relationship:</span>
                         <span className="text-sm">{rel.type}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                  <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="flex items-center gap-4 text-sm text-muted">
                     <div>
                       <span className="font-medium">On Delete:</span> {rel.onDelete}
                     </div>
@@ -161,13 +161,13 @@ export function RelationshipDiagram({ tableName, schema }: RelationshipDiagramPr
           </div>
         ) : (
           <div className="text-center py-12">
-            <div className="w-16 h-16 mx-auto mb-4 bg-[var(--hover)] rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-16 h-16 mx-auto mb-4 bg-hover rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No relationships found</h3>
-            <p className="text-[var(--muted)]">
+            <h3 className="text-lg font-medium text-foreground mb-2">No relationships found</h3>
+            <p className="text-muted">
               This table doesn't have any direct relationships with other tables.
             </p>
           </div>
@@ -176,7 +176,7 @@ export function RelationshipDiagram({ tableName, schema }: RelationshipDiagramPr
         {/* Related Tables */}
         {relatedTables.length > 0 && (
           <div className="mt-8">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Related Tables</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">Related Tables</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {relatedTables
                 .filter(table => table.name !== tableName)
@@ -184,13 +184,13 @@ export function RelationshipDiagram({ tableName, schema }: RelationshipDiagramPr
                 <div
                   key={table.name}
                   onClick={() => handleTableClick(table.name)}
-                  className="p-4 border border-[var(--border)] rounded-lg hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+                  className="p-4 border border-border rounded-lg hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-[var(--foreground)]">{table.name}</h4>
-                    <span className="text-xs text-[var(--muted)] capitalize">{table.category}</span>
+                    <h4 className="font-medium text-foreground">{table.name}</h4>
+                    <span className="text-xs text-muted capitalize">{table.category}</span>
                   </div>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm text-muted">
                     <div className="flex justify-between">
                       <span>Records:</span>
                       <span>{table.rowCount.toLocaleString()}</span>
@@ -207,14 +207,14 @@ export function RelationshipDiagram({ tableName, schema }: RelationshipDiagramPr
         )}
 
         {/* Visual Diagram Placeholder */}
-        <div className="mt-8 bg-[var(--panel-background)] border-2 border-dashed border-[var(--border)] rounded-lg p-8 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-[var(--loading-bg)] rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="mt-8 bg-panel-background border-2 border-dashed border-border rounded-lg p-8 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-loading-bg rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Interactive ER Diagram</h3>
-          <p className="text-[var(--muted)] mb-4">
+          <h3 className="text-lg font-medium text-foreground mb-2">Interactive ER Diagram</h3>
+          <p className="text-muted mb-4">
             A visual diagram showing table relationships will be displayed here.
           </p>
           <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">

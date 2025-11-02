@@ -11,9 +11,9 @@ export function ColorPaletteDemo() {
   const categories = Object.keys(CATEGORY_COLORS);
 
   return (
-    <div className="p-8 bg-[var(--background)]">
+    <div className="p-8 bg-background">
       <h1 className="text-2xl font-bold mb-6">Adrata Category Color Palette</h1>
-      <p className="text-[var(--muted)] mb-8">
+      <p className="text-muted mb-8">
         Research-based color psychology for optimal user experience and business logic.
       </p>
       
@@ -23,7 +23,7 @@ export function ColorPaletteDemo() {
           const description = CATEGORY_DESCRIPTIONS[category as keyof typeof CATEGORY_DESCRIPTIONS];
           
           return (
-            <div key={category} className="border border-[var(--border)] rounded-lg p-4">
+            <div key={category} className="border border-border rounded-lg p-4">
               <div className="flex items-center gap-3 mb-4">
                 <div 
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -36,7 +36,7 @@ export function ColorPaletteDemo() {
                 </div>
                 <div>
                   <h3 className="font-semibold capitalize">{category}</h3>
-                  <p className="text-sm text-[var(--muted)]">{description}</p>
+                  <p className="text-sm text-muted">{description}</p>
                 </div>
               </div>
               

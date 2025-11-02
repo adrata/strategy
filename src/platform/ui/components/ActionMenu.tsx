@@ -485,7 +485,7 @@ export function ActionMenu({
       case 'complete':
         return 'text-green-600 hover:bg-green-50 hover:text-green-700';
       default:
-        return 'text-gray-700 hover:bg-[var(--panel-background)] hover:text-[var(--foreground)]';
+        return 'text-gray-700 hover:bg-panel-background hover:text-foreground';
     }
   };
 
@@ -500,20 +500,20 @@ export function ActionMenu({
       <button
         ref={buttonRef}
         onClick={handleMenuClick}
-        className="p-1 rounded-md hover:bg-[var(--hover)] transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 cursor-pointer"
+        className="p-1 rounded-md hover:bg-hover transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 cursor-pointer"
         title="More actions"
       >
-        <EllipsisVerticalIcon className="w-5 h-5 text-[var(--muted)]" />
+        <EllipsisVerticalIcon className="w-5 h-5 text-muted" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 w-56 bg-[var(--background)] rounded-md shadow-lg border border-[var(--border)] z-[9999] py-1 opacity-100">
+        <div className="absolute right-0 top-full mt-1 w-56 bg-background rounded-md shadow-lg border border-border z-[9999] py-1 opacity-100">
           {actions.map((action) => {
             if (action.separator) {
               return (
                 <div
                   key={action.id}
-                  className="border-t border-[var(--border)] my-1"
+                  className="border-t border-border my-1"
                 />
               );
             }
@@ -527,14 +527,14 @@ export function ActionMenu({
                 disabled={action.disabled}
                 className={`w-full px-4 py-2 text-left text-sm flex items-center gap-3 transition-colors ${
                   action.disabled 
-                    ? 'text-[var(--muted)] cursor-not-allowed' 
+                    ? 'text-muted cursor-not-allowed' 
                     : getActionVariantClasses(action.variant)
                 }`}
               >
                 <IconComponent className="w-4 h-4 flex-shrink-0" />
                 <span className="flex-1">{action.label}</span>
                 {action['shortcut'] && (
-                  <span className="text-xs text-[var(--muted)] font-mono">
+                  <span className="text-xs text-muted font-mono">
                     {action.shortcut}
                   </span>
                 )}

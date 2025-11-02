@@ -7,9 +7,9 @@ import Link from 'next/link';
 function GeniusLevelIntelligenceReportContent() {
   return (
     <PasswordProtection correctPassword="TOPEngineersPlus-2025">
-      <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
+      <div className="min-h-screen bg-background" style={{ overflowY: 'auto', height: '100vh' }}>
         {/* Header */}
-        <header className="border-b border-[var(--border)]">
+        <header className="border-b border-border">
           <div className="max-w-6xl mx-auto px-6 py-6">
             <div className="flex justify-between items-center">
               <h1 className="text-lg font-medium text-black">Adrata Intelligence</h1>
@@ -17,13 +17,13 @@ function GeniusLevelIntelligenceReportContent() {
               <div className="flex items-center space-x-4">
                 <Link 
                   href="/private/TOP/summary" 
-                  className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+                  className="text-sm text-muted hover:text-black transition-colors"
                 >
                   ← Back to Summary
                 </Link>
                 <Link 
                   href="/" 
-                  className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+                  className="text-sm text-muted hover:text-black transition-colors"
                 >
                   Home
                 </Link>
@@ -45,7 +45,7 @@ function GeniusLevelIntelligenceReportContent() {
             <h1 className="text-4xl font-bold text-black mb-4 leading-tight">
               Genius-Level Intelligence System
             </h1>
-            <p className="text-xl text-[var(--muted)] mb-8">
+            <p className="text-xl text-muted mb-8">
               McKinsey Partner-Level Analysis Capabilities - December 19, 2024
             </p>
             
@@ -70,19 +70,19 @@ function GeniusLevelIntelligenceReportContent() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="text-center p-4 bg-[var(--background)] border border-green-300">
+                <div className="text-center p-4 bg-background border border-green-300">
                   <div className="text-2xl font-bold text-green-600">100%</div>
                   <div className="text-sm text-green-700">Success Rate</div>
                 </div>
-                <div className="text-center p-4 bg-[var(--background)] border border-green-300">
+                <div className="text-center p-4 bg-background border border-green-300">
                   <div className="text-2xl font-bold text-purple-600">95.75%</div>
                   <div className="text-sm text-purple-700">Avg Confidence</div>
                 </div>
-                <div className="text-center p-4 bg-[var(--background)] border border-green-300">
+                <div className="text-center p-4 bg-background border border-green-300">
                   <div className="text-2xl font-bold text-blue-600">3/4</div>
                   <div className="text-sm text-blue-700">GENIUS Level</div>
                 </div>
-                <div className="text-center p-4 bg-[var(--background)] border border-green-300">
+                <div className="text-center p-4 bg-background border border-green-300">
                   <div className="text-2xl font-bold text-orange-600">15+</div>
                   <div className="text-sm text-orange-700">API Integrations</div>
                 </div>
@@ -95,7 +95,7 @@ function GeniusLevelIntelligenceReportContent() {
             <h2 className="text-2xl font-bold text-black mb-6">Intelligence Test Results</h2>
             
             <div className="space-y-6">
-              <div className="bg-[var(--panel-background)] p-6 border-l-4 border-green-500">
+              <div className="bg-panel-background p-6 border-l-4 border-green-500">
                 <h3 className="text-xl font-bold text-black mb-2">✅ Buyer Group Intelligence - GENIUS LEVEL</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
@@ -126,7 +126,7 @@ function GeniusLevelIntelligenceReportContent() {
                 </div>
               </div>
 
-              <div className="bg-[var(--panel-background)] p-6 border-l-4 border-green-500">
+              <div className="bg-panel-background p-6 border-l-4 border-green-500">
                 <h3 className="text-xl font-bold text-black mb-2">✅ Competitive Intelligence - GENIUS LEVEL</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
@@ -156,7 +156,7 @@ function GeniusLevelIntelligenceReportContent() {
                 </div>
               </div>
 
-              <div className="bg-[var(--panel-background)] p-6 border-l-4 border-blue-500">
+              <div className="bg-panel-background p-6 border-l-4 border-blue-500">
                 <h3 className="text-xl font-bold text-black mb-2">✅ Market Research - EXPERT LEVEL</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
@@ -186,7 +186,7 @@ function GeniusLevelIntelligenceReportContent() {
                 </div>
               </div>
 
-              <div className="bg-[var(--panel-background)] p-6 border-l-4 border-green-500">
+              <div className="bg-panel-background p-6 border-l-4 border-green-500">
                 <h3 className="text-xl font-bold text-black mb-2">✅ Contact Enrichment - GENIUS LEVEL</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
@@ -276,27 +276,27 @@ function GeniusLevelIntelligenceReportContent() {
           <section className="mb-16">
             <h2 className="text-2xl font-bold text-black mb-6">Performance Metrics</h2>
             
-            <div className="bg-[var(--panel-background)] p-8">
+            <div className="bg-panel-background p-8">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div className="text-center">
                   <div className="text-4xl font-bold text-green-600 mb-2">13-26s</div>
-                  <div className="text-sm text-[var(--muted)]">Response Time</div>
-                  <div className="text-xs text-[var(--muted)]">Complex multi-source analysis</div>
+                  <div className="text-sm text-muted">Response Time</div>
+                  <div className="text-xs text-muted">Complex multi-source analysis</div>
                 </div>
                 <div className="text-center">
                   <div className="text-4xl font-bold text-blue-600 mb-2">95.75%</div>
-                  <div className="text-sm text-[var(--muted)]">Avg Confidence</div>
-                  <div className="text-xs text-[var(--muted)]">McKinsey Partner standard</div>
+                  <div className="text-sm text-muted">Avg Confidence</div>
+                  <div className="text-xs text-muted">McKinsey Partner standard</div>
                 </div>
                 <div className="text-center">
                   <div className="text-4xl font-bold text-purple-600 mb-2">4+</div>
-                  <div className="text-sm text-[var(--muted)]">Sources per Analysis</div>
-                  <div className="text-xs text-[var(--muted)]">Multi-source validation</div>
+                  <div className="text-sm text-muted">Sources per Analysis</div>
+                  <div className="text-xs text-muted">Multi-source validation</div>
                 </div>
                 <div className="text-center">
                   <div className="text-4xl font-bold text-orange-600 mb-2">100%</div>
-                  <div className="text-sm text-[var(--muted)]">Success Rate</div>
-                  <div className="text-xs text-[var(--muted)]">All tests passed</div>
+                  <div className="text-sm text-muted">Success Rate</div>
+                  <div className="text-xs text-muted">All tests passed</div>
                 </div>
               </div>
             </div>
@@ -409,9 +409,9 @@ function GeniusLevelIntelligenceReportContent() {
           </section>
 
           {/* Footer */}
-          <footer className="border-t border-[var(--border)] pt-8">
+          <footer className="border-t border-border pt-8">
             <div className="flex justify-between items-center">
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 Genius-Level Intelligence Confirmed: December 19, 2024 | McKinsey Level: GENIUS | Ready for: Fortune 500 Strategic Analysis
               </p>
               <Link 
@@ -430,7 +430,7 @@ function GeniusLevelIntelligenceReportContent() {
 
 export default function GeniusLevelIntelligenceReportPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[var(--background)] flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
       <GeniusLevelIntelligenceReportContent />
     </Suspense>
   );

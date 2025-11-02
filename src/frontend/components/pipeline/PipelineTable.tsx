@@ -79,20 +79,20 @@ function getLastActionTiming(record: PipelineRecord) {
   if (lastActionTime) {
     // All timing pills now use light gray color
     if (lastActionTime === 'Never') {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     } else if (lastActionTime === 'Today') {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     } else if (lastActionTime === 'Yesterday') {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     } else {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     }
   }
   
   // Fallback: Calculate timing from date
   const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
   const timing = getRealtimeActionTiming(lastActionDate);
-  return { ...timing, color: 'bg-[var(--hover)] text-gray-800' };
+  return { ...timing, color: 'bg-hover text-gray-800' };
 }
 
 function getNextActionTiming(record: PipelineRecord) {
@@ -103,20 +103,20 @@ function getNextActionTiming(record: PipelineRecord) {
     if (nextActionTiming === 'Now') {
       return { text: nextActionTiming, color: 'bg-blue-100 text-blue-800' }; // Highlight "Now" differently
     } else if (nextActionTiming === 'Today') {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
     } else if (nextActionTiming === 'Due soon') {
       return { text: nextActionTiming, color: 'bg-orange-100 text-orange-800' };
     } else if (nextActionTiming === 'Overdue') {
       return { text: nextActionTiming, color: 'bg-red-100 text-red-800' };
     } else {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
     }
   }
   
   // Fallback: For next actions, we need to calculate timing based on when the next action should happen
   const nextActionDate = record['nextActionDate'] || record['nextContactDate'];
   if (!nextActionDate) {
-    return { text: 'No date set', color: 'bg-[var(--hover)] text-gray-800' };
+    return { text: 'No date set', color: 'bg-hover text-gray-800' };
   }
   
   const now = new Date();
@@ -127,17 +127,17 @@ function getNextActionTiming(record: PipelineRecord) {
   if (diffDays < 0) {
     return { text: 'Overdue', color: 'bg-red-100 text-red-800' };
   } else if (diffDays === 0) {
-    return { text: 'Today', color: 'bg-[var(--hover)] text-gray-800' };
+    return { text: 'Today', color: 'bg-hover text-gray-800' };
   } else if (diffDays === 1) {
-    return { text: 'Tomorrow', color: 'bg-[var(--hover)] text-gray-800' };
+    return { text: 'Tomorrow', color: 'bg-hover text-gray-800' };
   } else if (diffDays <= 7) {
-    return { text: 'This week', color: 'bg-[var(--hover)] text-gray-800' };
+    return { text: 'This week', color: 'bg-hover text-gray-800' };
   } else if (diffDays <= 14) {
-    return { text: 'Next week', color: 'bg-[var(--hover)] text-gray-800' };
+    return { text: 'Next week', color: 'bg-hover text-gray-800' };
   } else if (diffDays <= 30) {
-    return { text: 'This month', color: 'bg-[var(--hover)] text-gray-800' };
+    return { text: 'This month', color: 'bg-hover text-gray-800' };
   } else {
-    return { text: 'Future', color: 'bg-[var(--hover)] text-gray-800' };
+    return { text: 'Future', color: 'bg-hover text-gray-800' };
   }
 }
 
@@ -408,7 +408,7 @@ export function PipelineTable({
   return (
     <div 
       key={`pipeline-table-${section}-${visibleColumns?.join('-')}`} 
-      className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative rounded-md" 
+      className="bg-background border border-border flex flex-col relative rounded-md" 
       style={{ height: `${tableHeight}px` }}
     >
       {/* Table container */}

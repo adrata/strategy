@@ -115,16 +115,16 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--background)] rounded-xl shadow-2xl border border-[var(--border)] w-full max-w-2xl max-h-[90vh] overflow-hidden">
+      <div className="bg-background rounded-xl shadow-2xl border border-border w-full max-w-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border)]">
+        <div className="px-6 py-4 border-b border-border">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Edit Opportunity: {opportunity.name}
             </h2>
             <button
               onClick={onClose}
-              className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
+              className="text-muted hover:text-muted transition-colors"
             >
               <svg
                 className="w-6 h-6"
@@ -144,7 +144,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-[var(--border)]">
+        <div className="border-b border-border">
           <div className="flex space-x-8 px-6">
             {tabs.map((tab) => (
               <button
@@ -153,7 +153,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                 className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-[var(--muted)] hover:text-gray-700"
+                    : "border-transparent text-muted hover:text-gray-700"
                 }`}
               >
                 {tab.label}
@@ -174,7 +174,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter opportunity name"
                 />
               </div>
@@ -186,7 +186,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="text"
                   value={formData.company}
                   onChange={(e) => handleInputChange("company", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter company name"
                 />
               </div>
@@ -198,7 +198,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="text"
                   value={formData.type}
                   onChange={(e) => handleInputChange("type", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g., New Business, Upsell, Renewal"
                 />
               </div>
@@ -210,7 +210,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="text"
                   value={formData.industry}
                   onChange={(e) => handleInputChange("industry", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter industry"
                 />
               </div>
@@ -222,7 +222,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="text"
                   value={formData.region}
                   onChange={(e) => handleInputChange("region", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter region"
                 />
               </div>
@@ -239,7 +239,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="text"
                   value={formData.amount}
                   onChange={(e) => handleInputChange("amount", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g., $100,000"
                 />
               </div>
@@ -251,7 +251,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="date"
                   value={formData.expectedCloseDate}
                   onChange={(e) => handleInputChange("expectedCloseDate", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
@@ -266,7 +266,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                 <select
                   value={formData.stage}
                   onChange={(e) => handleInputChange("stage", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   {stages.map((stage) => (
                     <option key={stage} value={stage}>
@@ -282,7 +282,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                 <select
                   value={formData.probability}
                   onChange={(e) => handleInputChange("probability", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   {probabilities.map((prob) => (
                     <option key={prob} value={prob}>
@@ -299,7 +299,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="text"
                   value={formData.source}
                   onChange={(e) => handleInputChange("source", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g., Website, Referral, Cold Call"
                 />
               </div>
@@ -311,7 +311,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="text"
                   value={formData.owner}
                   onChange={(e) => handleInputChange("owner", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter owner name"
                 />
               </div>
@@ -328,7 +328,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="text"
                   value={formData.lastAction}
                   onChange={(e) => handleInputChange("lastAction", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Describe last action taken"
                 />
               </div>
@@ -340,7 +340,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   type="text"
                   value={formData.nextAction}
                   onChange={(e) => handleInputChange("nextAction", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Describe next action needed"
                 />
               </div>
@@ -352,7 +352,7 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
                   value={formData.notes}
                   onChange={(e) => handleInputChange("notes", e.target.value)}
                   rows={4}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Add detailed notes about this opportunity"
                 />
               </div>
@@ -361,11 +361,11 @@ export const EditOpportunityModal: React.FC<EditOpportunityModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border)] bg-[var(--panel-background)]">
+        <div className="px-6 py-4 border-t border-border bg-panel-background">
           <div className="flex justify-end space-x-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
             >
               Cancel
             </button>

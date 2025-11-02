@@ -59,26 +59,26 @@ function getLastActionTiming(record: PipelineRecord) {
   if (lastActionTime) {
     // All timing pills now use light gray color
     if (lastActionTime === 'Never') {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     } else if (lastActionTime === 'Today') {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     } else if (lastActionTime === 'Yesterday') {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     } else if (lastActionTime.includes('days ago') && parseInt(lastActionTime) <= 3) {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     } else if (lastActionTime.includes('days ago') && parseInt(lastActionTime) <= 7) {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     } else if (lastActionTime.includes('weeks ago') || lastActionTime.includes('months ago')) {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     } else {
-      return { text: lastActionTime, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: lastActionTime, color: 'bg-hover text-gray-800' };
     }
   }
   
   // Fallback: Calculate timing from date
   const lastActionDate = record['lastActionDate'] || record['lastContactDate'] || record['lastContact'];
   const timing = getRealtimeActionTiming(lastActionDate);
-  return { ...timing, color: 'bg-[var(--hover)] text-gray-800' };
+  return { ...timing, color: 'bg-hover text-gray-800' };
 }
 
 function getNextActionTiming(record: PipelineRecord) {
@@ -94,28 +94,28 @@ function getNextActionTiming(record: PipelineRecord) {
     } else if (nextActionTiming === 'Due soon') {
       return { text: nextActionTiming, color: 'bg-orange-100 text-orange-800' };
     } else if (nextActionTiming === 'Today') {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
     } else if (nextActionTiming === 'Tomorrow') {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
     } else if (nextActionTiming === 'This week') {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
     } else if (nextActionTiming === 'Next week') {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
     } else if (nextActionTiming === 'This month') {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
     } else if (nextActionTiming === 'Future') {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
     } else if (nextActionTiming === 'No date set') {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
     } else {
-      return { text: nextActionTiming, color: 'bg-[var(--hover)] text-gray-800' };
+      return { text: nextActionTiming, color: 'bg-hover text-gray-800' };
     }
   }
   
   // Fallback: For next actions, we need to calculate timing based on when the next action should happen
   const nextActionDate = record['nextActionDate'] || record['nextContactDate'];
   if (!nextActionDate) {
-    return { text: 'No date set', color: 'bg-[var(--hover)] text-gray-800' };
+    return { text: 'No date set', color: 'bg-hover text-gray-800' };
   }
   
   const now = new Date();
@@ -125,19 +125,19 @@ function getNextActionTiming(record: PipelineRecord) {
   
   let result;
   if (diffDays < 0) {
-    result = { text: 'Overdue', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'Overdue', color: 'bg-hover text-gray-800' };
   } else if (diffDays === 0) {
-    result = { text: 'Today', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'Today', color: 'bg-hover text-gray-800' };
   } else if (diffDays === 1) {
-    result = { text: 'Tomorrow', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'Tomorrow', color: 'bg-hover text-gray-800' };
   } else if (diffDays <= 7) {
-    result = { text: 'This week', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'This week', color: 'bg-hover text-gray-800' };
   } else if (diffDays <= 14) {
-    result = { text: 'Next week', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'Next week', color: 'bg-hover text-gray-800' };
   } else if (diffDays <= 30) {
-    result = { text: 'This month', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'This month', color: 'bg-hover text-gray-800' };
   } else {
-    result = { text: 'Future', color: 'bg-[var(--hover)] text-gray-800' };
+    result = { text: 'Future', color: 'bg-hover text-gray-800' };
   }
   
   return result;
@@ -367,7 +367,7 @@ export function PipelineTable({
   // Empty state - show table with "No data. Add a lead." in first row
   if (!data || data.length === 0) {
     return (
-      <div className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative rounded-md" style={{ height: `${tableHeight}px` }}>
+      <div className="bg-background border border-border flex flex-col relative rounded-md" style={{ height: `${tableHeight}px` }}>
         <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
           <table className="w-full">
             <TableHeader
@@ -377,9 +377,9 @@ export function PipelineTable({
               onColumnSort={onColumnSort}
             />
             <tbody>
-              <tr className="border-b border-[var(--border)] hover:bg-[var(--panel-background)]">
+              <tr className="border-b border-border hover:bg-panel-background">
                 <td colSpan={visibleColumns?.length || 6} className="px-6 py-16 text-center">
-                  <div className="text-[var(--muted)]">
+                  <div className="text-muted">
                     <div className="text-lg font-medium mb-2">No leads yet</div>
                     <div className="text-sm">
                       Get started by adding your first lead to the pipeline.
@@ -395,7 +395,7 @@ export function PipelineTable({
   }
   
   return (
-      <div className="bg-[var(--background)] border border-[var(--border)] flex flex-col relative rounded-md" style={{ height: `${tableHeight}px` }}>
+      <div className="bg-background border border-border flex flex-col relative rounded-md" style={{ height: `${tableHeight}px` }}>
       {/* Table */}
       <div className="flex-1 overflow-auto min-h-0 middle-panel-scroll">
         <table className="w-full">
@@ -423,7 +423,7 @@ export function PipelineTable({
               return (
                   <tr
                     key={record.id}
-                    className={`cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)] relative ${
+                    className={`cursor-pointer transition-colors hover:bg-panel-background h-table-row border-b border-border relative ${
                       isCompleted ? 'bg-green-50 border-green-200' : ''
                     }`}
                     onClick={() => onRecordClick(record)}
@@ -703,7 +703,7 @@ export function PipelineTable({
                     }
                     
                     return (
-                      <td key={headerIndex} className="px-6 py-3 text-sm text-[var(--foreground)]">
+                      <td key={headerIndex} className="px-6 py-3 text-sm text-foreground">
                         {(() => {
                           // Skip rendering if cellContent is null (for removed STATUS column in speedrun)
                           if (cellContent === null) {
@@ -723,15 +723,15 @@ export function PipelineTable({
                             if (isLastAction) {
                               // Use pre-formatted timing from API
                               const timingText = record['lastActionTime'] || 'Never';
-                              pillData = { text: timingText, color: 'bg-[var(--hover)] text-gray-800' };
+                              pillData = { text: timingText, color: 'bg-hover text-gray-800' };
                             } else if (isNextAction) {
                               // Use pre-formatted timing from API
                               const timingText = record['nextActionTiming'] || 'No date set';
-                              pillData = { text: timingText, color: 'bg-[var(--hover)] text-gray-800' };
+                              pillData = { text: timingText, color: 'bg-hover text-gray-800' };
                             } else if (isStatus) {
                               // Status pill styling - reverted to previous implementation
                               const personStatus = record['status'];
-                              let statusColor = 'bg-[var(--hover)] text-gray-800';
+                              let statusColor = 'bg-hover text-gray-800';
                               let statusIcon = '●';
                               
                               if (personStatus && typeof personStatus === 'string' && 
@@ -773,11 +773,11 @@ export function PipelineTable({
                                     statusColor = 'bg-yellow-100 text-yellow-800';
                                     statusIcon = '●';
                                   } else {
-                                    statusColor = 'bg-[var(--hover)] text-gray-800';
+                                    statusColor = 'bg-hover text-gray-800';
                                     statusIcon = '●';
                                   }
                                 } else {
-                                  statusColor = 'bg-[var(--hover)] text-gray-800';
+                                  statusColor = 'bg-hover text-gray-800';
                                   statusIcon = '●';
                                 }
                               }
@@ -785,7 +785,7 @@ export function PipelineTable({
                               pillData = { text: cellContent, color: statusColor, icon: statusIcon };
                             } else {
                               // Fallback - should never happen but satisfies TypeScript
-                              pillData = { text: cellContent, color: 'bg-[var(--hover)] text-gray-800', icon: '●' };
+                              pillData = { text: cellContent, color: 'bg-hover text-gray-800', icon: '●' };
                             }
                             
                             return (
@@ -800,7 +800,7 @@ export function PipelineTable({
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${pillData.color}`}>
                                       {pillData.text}
                                     </span>
-                                    <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                                    <span className="text-sm text-muted font-normal truncate max-w-32">
                                       {cellContent}
                                     </span>
                                   </>
@@ -811,7 +811,7 @@ export function PipelineTable({
                           
                           // Default rendering for non-pill columns
                           return (
-                            <div className="text-sm text-[var(--foreground)] truncate">
+                            <div className="text-sm text-foreground truncate">
                               {cellContent}
                             </div>
                           );

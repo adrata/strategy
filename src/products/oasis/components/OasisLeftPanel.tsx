@@ -68,14 +68,14 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     console.error('Failed to get Oasis context:', error);
     // Show skeleton loading state instead of error message
     return (
-      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
         {/* Header Skeleton */}
-        <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+        <div className="flex-shrink-0 p-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[var(--loading-bg)] rounded-xl animate-pulse" />
+            <div className="w-10 h-10 bg-loading-bg rounded-xl animate-pulse" />
             <div className="space-y-2">
-              <div className="h-5 bg-[var(--loading-bg)] rounded w-20 animate-pulse" />
-              <div className="h-3 bg-[var(--loading-bg)] rounded w-32 animate-pulse" />
+              <div className="h-5 bg-loading-bg rounded w-20 animate-pulse" />
+              <div className="h-3 bg-loading-bg rounded w-32 animate-pulse" />
             </div>
           </div>
         </div>
@@ -83,21 +83,21 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
         {/* Content Skeleton */}
         <div className="flex-1 overflow-y-auto p-2 space-y-4">
           <div className="space-y-2">
-            <div className="h-3 bg-[var(--loading-bg)] rounded w-16 animate-pulse mb-2" />
+            <div className="h-3 bg-loading-bg rounded w-16 animate-pulse mb-2" />
             {[...Array(4)].map((_, i) => (
               <div key={i} className="flex gap-2 px-2 py-1.5">
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-4 animate-pulse" />
-                <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded w-4 animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
               </div>
             ))}
           </div>
           
-          <div className="border-t border-[var(--border)] pt-2 space-y-2">
-            <div className="h-3 bg-[var(--loading-bg)] rounded w-24 animate-pulse mb-2" />
+          <div className="border-t border-border pt-2 space-y-2">
+            <div className="h-3 bg-loading-bg rounded w-24 animate-pulse mb-2" />
             {[...Array(3)].map((_, i) => (
               <div key={i} className="flex gap-2 px-2 py-1.5">
-                <div className="w-6 h-6 bg-[var(--loading-bg)] rounded-full animate-pulse" />
-                <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse" />
+                <div className="w-6 h-6 bg-loading-bg rounded-full animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
               </div>
             ))}
           </div>
@@ -180,9 +180,20 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
             hasInitialSelection.current = true;
             return;
           } else if (matchingDM) {
+            const participant = matchingDM.participants[0];
+            const getDisplayName = () => {
+              if (participant?.name && participant.name.trim()) return participant.name;
+              if (participant?.username && participant.username.trim()) return participant.username;
+              if (participant?.email) {
+                const emailPrefix = participant.email.split('@')[0];
+                if (emailPrefix) return emailPrefix;
+              }
+              return '';
+            };
+            
             const conversation = {
               id: matchingDM.id,
-              name: matchingDM.participants[0]?.name || 'Unknown User',
+              name: getDisplayName(),
               type: 'dm' as const,
               unread: 0,
               isActive: true,
@@ -367,14 +378,17 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
   const currentWorkspaceName = authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || 'Adrata';
 
   // Helper to get initials - prefer first letter of first name if name can be parsed
-  const getInitial = (name: string | undefined) => {
-    if (!name) return 'U';
+  const getInitial = (name: string | undefined | null) => {
+    if (!name || !name.trim()) return '?';
     // Parse name to get first letter of first name
     const nameParts = name.trim().split(' ');
-    if (nameParts.length > 0) {
+    if (nameParts.length > 0 && nameParts[0].length > 0) {
       return nameParts[0].charAt(0).toUpperCase();
     }
-    return name.charAt(0).toUpperCase();
+    if (name.trim().length > 0) {
+      return name.trim().charAt(0).toUpperCase();
+    }
+    return '?';
   };
 
   const dmConversations: Conversation[] = [
@@ -391,14 +405,39 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       isWorkspaceMember: true,
       workspaceName: currentWorkspaceName // Add workspace name for pill display
     },
-    // Add other DMs
-    ...dms.map(dm => ({
+    // Add other DMs - filter out DMs with no valid participant data
+    ...dms
+      .filter(dm => {
+        // Only include DMs that have at least one participant with valid data
+        const participant = dm.participants[0];
+        return participant && (participant.name || participant.username || participant.email);
+      })
+      .map(dm => {
+      // Get the first participant (excluding current user)
+      const participant = dm.participants[0];
+      
+      // Get display name with fallback: name -> username -> email prefix (never fallback to "User")
+      const getDisplayName = () => {
+        if (participant?.name && participant.name.trim()) {
+          return participant.name.charAt(0).toUpperCase() + participant.name.slice(1);
+        }
+        if (participant?.username && participant.username.trim()) {
+          return participant.username.charAt(0).toUpperCase() + participant.username.slice(1);
+        }
+        // Extract email prefix as last fallback
+        if (participant?.email) {
+          const emailPrefix = participant.email.split('@')[0];
+          if (emailPrefix && emailPrefix.trim()) {
+            return emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+          }
+        }
+        // If we truly have no data, return a placeholder (should not reach here due to filter above)
+        return 'Unknown';
+      };
+      
+      return {
       id: dm.id,
-      name: (() => {
-        const participantName = dm.participants[0]?.name || 'Unknown User';
-        // Capitalize first letter of name (Ross -> Ross, not ross)
-        return participantName.charAt(0).toUpperCase() + participantName.slice(1);
-      })(),
+      name: getDisplayName(),
       type: 'dm' as const,
       unread: dm.unreadCount || 0, // Use unread count from API
       isActive: selectedChannel?.id === dm.id,
@@ -406,28 +445,29 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       lastMessageTime: dm.lastMessage?.createdAt ? new Date(dm.lastMessage.createdAt).toLocaleTimeString() : 'now',
       status: 'online' as const,
       isWorkspaceMember: true,
-      workspaceName: dm.participants[0]?.workspaceName // Add workspace name for pill display
-    }))
+      workspaceName: participant?.workspaceName // Add workspace name for pill display
+      };
+    })
   ];
 
   // Show loading state while auth is loading
   if (authLoading) {
     return (
-      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
         <div className="p-4 text-center">
-          <div className="text-sm text-[var(--muted)]">Loading Oasis...</div>
+          <div className="text-sm text-muted">Loading Oasis...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">
       {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 p-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white border border-[var(--border)] rounded-xl flex items-center justify-center">
-            <span className="text-lg font-bold text-[var(--foreground)]">
+          <div className="w-10 h-10 bg-white border border-border rounded-xl flex items-center justify-center">
+            <span className="text-lg font-bold text-foreground">
               {(() => {
                 // Get workspace from auth user
                 const workspaceName = authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || "Adrata";
@@ -444,8 +484,8 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
             </span>
           </div>
           <div>
-            <h2 className="text-lg font-bold text-[var(--foreground)]">Oasis</h2>
-            <p className="text-xs text-[var(--muted)]">Communication Hub</p>
+            <h2 className="text-lg font-bold text-foreground">Oasis</h2>
+            <p className="text-xs text-muted">Communication Hub</p>
           </div>
         </div>
       </div>
@@ -455,10 +495,10 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
         {/* Channels Section */}
         <div className="p-2">
           <div className="flex items-center justify-between px-2 py-1 mb-2">
-            <h3 className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Channels</h3>
+            <h3 className="text-xs font-medium text-muted uppercase tracking-wide">Channels</h3>
             <button 
               onClick={handleAddChannel}
-              className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              className="text-muted hover:text-foreground transition-colors"
               title="Add Channel"
             >
               <PlusIcon className="w-4 h-4" />
@@ -469,13 +509,13 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
               <div className="space-y-1">
                 {[...Array(4)].map((_, i) => (
                   <div key={i} className="flex gap-2 px-2 py-1.5">
-                    <div className="h-4 bg-[var(--loading-bg)] rounded w-4 animate-pulse"></div>
-                    <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse"></div>
+                    <div className="h-4 bg-loading-bg rounded w-4 animate-pulse"></div>
+                    <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse"></div>
                   </div>
                 ))}
               </div>
             ) : channelConversations.length === 0 ? (
-              <div className="px-2 py-2 text-xs text-[var(--muted)] text-center">
+              <div className="px-2 py-2 text-xs text-muted text-center">
                 No channels yet. Click + to create one.
               </div>
             ) : (
@@ -489,12 +529,12 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                       : 'hover:bg-gray-100 text-gray-700'
                   }`}
                 >
-                  <HashtagIcon className="w-3 h-3 text-[var(--muted)]" />
+                  <HashtagIcon className="w-3 h-3 text-muted" />
                   <span className="text-sm font-medium truncate">#{channel.name}</span>
-                  {channel.isPrivate === true && (
-                    <LockClosedIcon className="w-3 h-3 text-[var(--muted)]" />
-                  )}
-                  {channel.unread > 0 && (
+                    {channel.isPrivate === true && (
+                     <LockClosedIcon className="w-3 h-3 text-muted" />
+                    )}
+                    {channel.unread > 0 && !channel.isActive && (
                     <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
                       {channel.unread}
                     </span>
@@ -506,12 +546,12 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
         </div>
 
         {/* Direct Messages Section */}
-        <div className="p-2 border-t border-[var(--border)]">
+        <div className="p-2 border-t border-border">
           <div className="flex items-center justify-between px-2 py-1 mb-2">
-            <h3 className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Direct Messages</h3>
+            <h3 className="text-xs font-medium text-muted uppercase tracking-wide">Direct Messages</h3>
             <button 
               onClick={handleAddDM}
-              className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              className="text-muted hover:text-foreground transition-colors"
               title="Add DM"
             >
               <PlusIcon className="w-4 h-4" />
@@ -522,8 +562,8 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
               <div className="space-y-1">
                 {[...Array(3)].map((_, i) => (
                   <div key={i} className="flex gap-2 px-2 py-1.5">
-                    <div className="h-4 bg-[var(--loading-bg)] rounded w-4 animate-pulse"></div>
-                    <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse"></div>
+                    <div className="h-4 bg-loading-bg rounded w-4 animate-pulse"></div>
+                    <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse"></div>
                   </div>
                 ))}
               </div>
@@ -539,8 +579,8 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                   }`}
                 >
                   <div className="relative">
-                    <div className="w-4 h-4 bg-white border border-[var(--border)] rounded flex items-center justify-center">
-                      <span className="text-xs font-medium text-[var(--foreground)]">
+                    <div className="w-4 h-4 bg-white border border-border rounded flex items-center justify-center">
+                      <span className="text-xs font-medium text-foreground">
                         {dm.id === 'me-self-dm' ? getInitial(authUser?.name) : getInitial(dm.name)}
                       </span>
                     </div>
@@ -563,7 +603,7 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                       return (
                         <span className={`px-1.5 py-0.5 ${pillClass} text-xs font-medium rounded-full whitespace-nowrap flex items-center gap-1`}>
                           <BuildingOfficeIcon className="w-3 h-3" />
-                          {dm.workspaceName === "Notary Everyday" ? "NE" : dm.workspaceName === "Adrata" ? "A" : dm.workspaceName}
+                          {dm.workspaceName === "Notary Everyday" ? "NE" : dm.workspaceName === "Adrata" ? "Adrata" : dm.workspaceName}
                         </span>
                       );
                     })()}
@@ -581,22 +621,22 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
       </div>
 
       {/* Profile Section */}
-      <div className="flex-shrink-0 p-2 border-t border-[var(--border)]" style={{ paddingBottom: '15px' }}>
+      <div className="flex-shrink-0 p-2 border-t border-border" style={{ paddingBottom: '15px' }}>
         <button
           onClick={handleProfileClick}
-          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--hover)] transition-colors"
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-hover transition-colors"
           title="Profile"
         >
-          <div className="w-8 h-8 bg-white border border-[var(--border)] rounded-xl flex items-center justify-center">
-            <span className="text-sm font-medium text-[var(--foreground)]">
+          <div className="w-8 h-8 bg-white border border-border rounded-xl flex items-center justify-center">
+            <span className="text-sm font-medium text-foreground">
               {getInitial(authUser?.name)}
             </span>
           </div>
           <div className="flex-1 text-left">
-            <div className="text-sm font-medium text-[var(--foreground)]">
+            <div className="text-sm font-medium text-foreground">
               {authUser?.name || 'User'}
             </div>
-            <div className="text-xs text-[var(--muted)]">
+            <div className="text-xs text-muted">
               {authUser?.email === 'ross@adrata.com' 
                 ? 'Adrata' 
                 : authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || 'Adrata'}

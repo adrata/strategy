@@ -57,7 +57,9 @@ export async function GET(request: NextRequest) {
           where: {
             createdAt: {
               gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
-            }
+            },
+            parentMessageId: null, // Only count top-level messages (not thread replies)
+            senderId: { not: userId } // Only count messages from other users (exclude current user's messages)
           },
           select: { id: true }
         }

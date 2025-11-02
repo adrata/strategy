@@ -32,9 +32,9 @@ export const PipelineVisualization: React.FC<PipelineVisualizationProps> = ({
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-[var(--foreground)]">Pipeline Progress</h3>
+        <h3 className="text-lg font-semibold text-foreground">Pipeline Progress</h3>
         {isExecuting && (
-          <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
+          <div className="flex items-center gap-2 text-sm text-muted">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             <span>Executing...</span>
           </div>
@@ -57,7 +57,7 @@ export const PipelineVisualization: React.FC<PipelineVisualizationProps> = ({
             <div key={step.id} className="relative">
               {/* Connection Line */}
               {index > 0 && (
-                <div className="absolute -top-2 left-8 w-0.5 h-4 bg-[var(--border)]"></div>
+                <div className="absolute -top-2 left-8 w-0.5 h-4 bg-border"></div>
               )}
               
               <PipelineStep
@@ -79,21 +79,21 @@ export const PipelineVisualization: React.FC<PipelineVisualizationProps> = ({
       </div>
 
       {/* Pipeline Summary */}
-      <div className="mt-6 p-4 bg-[var(--hover)] rounded-lg">
+      <div className="mt-6 p-4 bg-hover rounded-lg">
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div>
-            <div className="text-[var(--muted)]">Total Steps</div>
-            <div className="font-semibold text-[var(--foreground)]">{steps.length}</div>
+            <div className="text-muted">Total Steps</div>
+            <div className="font-semibold text-foreground">{steps.length}</div>
           </div>
           <div>
-            <div className="text-[var(--muted)]">Completed</div>
+            <div className="text-muted">Completed</div>
             <div className="font-semibold text-green-600">
               {steps.filter((_, index) => index < currentStepIndex).length}
             </div>
           </div>
           <div>
-            <div className="text-[var(--muted)]">Remaining</div>
-            <div className="font-semibold text-[var(--foreground)]">
+            <div className="text-muted">Remaining</div>
+            <div className="font-semibold text-foreground">
               {steps.length - Math.max(0, currentStepIndex)}
             </div>
           </div>

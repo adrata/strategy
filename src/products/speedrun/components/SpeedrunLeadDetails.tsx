@@ -393,7 +393,7 @@ export function SpeedrunLeadDetails({
 
           {/* Tabs */}
           <div
-            className="flex gap-2 mb-0 pb-2 border-b border-[var(--border)]"
+            className="flex gap-2 mb-0 pb-2 border-b border-border"
             style={{
               borderColor: "var(--border)",
               marginTop: "-18px",
@@ -406,8 +406,8 @@ export function SpeedrunLeadDetails({
                 className={`px-5 py-2 text-base font-semibold rounded-t-lg transition-colors focus:outline-none
                   ${
                     state['activeTab'] === tab
-                      ? "bg-[var(--background)] border-x border-t border-[var(--border)] text-[var(--foreground)] z-10"
-                      : "text-[var(--muted)] hover:text-[var(--foreground)] border border-transparent"
+                      ? "bg-background border-x border-t border-border text-foreground z-10"
+                      : "text-muted hover:text-foreground border border-transparent"
                   }
                 `}
                 style={{

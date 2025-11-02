@@ -47,7 +47,7 @@ export default function MCPsPage() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Standardized Header */}
       <StandardHeader
         title="MCPs"
@@ -76,19 +76,19 @@ export default function MCPsPage() {
               <div
                 key={mcp.id}
                 onClick={() => handleMCPClick(mcp.id)}
-                className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 hover:border-blue-300 transition-colors cursor-pointer"
+                className="bg-panel-background border border-border rounded-lg p-4 hover:border-blue-300 transition-colors cursor-pointer"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-[var(--foreground)] mb-1">{mcp.name}</h3>
-                    <p className="text-[var(--muted)] text-sm">{mcp.description}</p>
+                    <h3 className="font-semibold text-foreground mb-1">{mcp.name}</h3>
+                    <p className="text-muted text-sm">{mcp.description}</p>
                   </div>
                   <div className="flex items-center gap-1">
                     {getStatusIcon(mcp.status)}
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-[var(--muted)]">MCP Server</span>
+                  <span className="text-xs text-muted">MCP Server</span>
                   <span className={`text-xs font-medium ${getStatusColor(mcp.status)}`}>
                     {mcp.status}
                   </span>

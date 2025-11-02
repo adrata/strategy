@@ -74,26 +74,26 @@ export function StoryListView({ story }: StoryListViewProps) {
     <div className="h-full overflow-y-auto p-6">
       <div className="max-w-4xl mx-auto">
         <table className="w-full border-collapse">
-          <tbody className="bg-white rounded-lg border border-[var(--border)] overflow-hidden">
+          <tbody className="bg-white rounded-lg border border-border overflow-hidden">
             {fields.map((field, index) => {
               const Icon = field.icon;
               return (
                 <tr 
                   key={field.label}
-                  className={`border-b border-[var(--border)] last:border-b-0 ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-[var(--hover)]'
+                  className={`border-b border-border last:border-b-0 ${
+                    index % 2 === 0 ? 'bg-white' : 'bg-hover'
                   }`}
                 >
                   <td className="px-6 py-4 w-48">
                     <div className="flex items-center gap-2">
-                      <Icon className="w-4 h-4 text-[var(--muted)]" />
-                      <span className="text-sm font-medium text-[var(--foreground)]">
+                      <Icon className="w-4 h-4 text-muted" />
+                      <span className="text-sm font-medium text-foreground">
                         {field.label}
                       </span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm text-[var(--muted)] whitespace-pre-wrap">
+                    <span className="text-sm text-muted whitespace-pre-wrap">
                       {field.value}
                     </span>
                   </td>

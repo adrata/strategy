@@ -305,19 +305,19 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
 
   return (
     <div 
-      className="fixed inset-0 backdrop-blur-sm bg-[var(--overlay-bg)]/20 flex items-center justify-center z-50"
+      className="fixed inset-0 backdrop-blur-sm bg-overlay-bg/20 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div 
-        className="bg-[var(--background)] rounded-2xl shadow-2xl border border-[var(--border)] max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden flex"
+        className="bg-background rounded-2xl shadow-2xl border border-border max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden flex"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Left Sidebar Navigation */}
-        <div className="w-64 bg-[var(--background)] border-r border-[var(--border)] flex flex-col">
+        <div className="w-64 bg-background border-r border-border flex flex-col">
           {/* Header */}
-          <div className="p-6 border-b border-[var(--border)]">
+          <div className="p-6 border-b border-border">
             <div>
-              <h2 className="text-lg font-semibold text-[var(--foreground)]">Settings</h2>
+              <h2 className="text-lg font-semibold text-foreground">Settings</h2>
             </div>
           </div>
 
@@ -328,8 +328,8 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 onClick={() => setActiveTab('profile')}
                 className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === 'profile'
-                    ? 'bg-[var(--accent)] text-white'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                    ? 'bg-primary text-white'
+                    : 'text-muted hover:text-foreground hover:bg-hover'
                 }`}
               >
                 Profile
@@ -338,8 +338,8 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 onClick={() => setActiveTab('theme')}
                 className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === 'theme'
-                    ? 'bg-[var(--accent)] text-white'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                    ? 'bg-primary text-white'
+                    : 'text-muted hover:text-foreground hover:bg-hover'
                 }`}
               >
                 Theme
@@ -348,8 +348,8 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 onClick={() => setActiveTab('security')}
                 className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === 'security'
-                    ? 'bg-[var(--accent)] text-white'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                    ? 'bg-primary text-white'
+                    : 'text-muted hover:text-foreground hover:bg-hover'
                 }`}
               >
                 Security
@@ -358,8 +358,8 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 onClick={() => setActiveTab('notifications')}
                 className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === 'notifications'
-                    ? 'bg-[var(--accent)] text-white'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                    ? 'bg-primary text-white'
+                    : 'text-muted hover:text-foreground hover:bg-hover'
                 }`}
               >
                 Notifications
@@ -368,8 +368,8 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 onClick={() => setActiveTab('daily100')}
                 className={`w-full text-left px-3 py-3 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === 'daily100'
-                    ? 'bg-[var(--accent)] text-white'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
+                    ? 'bg-primary text-white'
+                    : 'text-muted hover:text-foreground hover:bg-hover'
                 }`}
               >
                 Daily 100
@@ -378,10 +378,10 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
           </div>
 
           {/* Close Button */}
-          <div className="p-4 border-t border-[var(--border)]">
+          <div className="p-4 border-t border-border">
             <button
               onClick={onClose}
-              className="w-full text-left px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] rounded-lg transition-colors"
+              className="w-full text-left px-3 py-2 text-sm text-muted hover:text-foreground hover:bg-hover rounded-lg transition-colors"
             >
               Close
             </button>
@@ -391,12 +391,12 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
         {/* Right Content Area */}
         <div className="flex-1 flex flex-col min-h-0">
           {/* Breadcrumb */}
-          <div className="px-6 py-4 border-b border-[var(--border)] bg-[var(--background)] flex-shrink-0">
+          <div className="px-6 py-4 border-b border-border bg-background flex-shrink-0">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
+              <div className="flex items-center gap-2 text-sm text-muted">
                 <span>Settings</span>
                 <span>›</span>
-                <span className="text-[var(--foreground)] font-medium">
+                <span className="text-foreground font-medium">
                   {activeTab === 'profile' && 'Profile'}
                   {activeTab === 'security' && 'Security'}
                   {activeTab === 'notifications' && 'Notifications'}
@@ -406,10 +406,10 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
               </div>
               <button
                 onClick={onClose}
-                className="p-1 hover:bg-[var(--hover)] rounded-md transition-colors"
+                className="p-1 hover:bg-hover rounded-md transition-colors"
                 title="Close settings"
               >
-                <XMarkIcon className="h-5 w-5 text-[var(--muted)]" />
+                <XMarkIcon className="h-5 w-5 text-muted" />
               </button>
             </div>
           </div>
@@ -421,58 +421,58 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
             <div className="space-y-6">
               {/* User Profile Information */}
               <div>
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                   <UserIcon className="w-5 h-5" />
                   Profile Information
                 </h3>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         First Name
                       </label>
                       <input
                         type="text"
                         value={userSettings.firstName}
                         onChange={(e) => setUserSettings(prev => ({ ...prev, firstName: e.target.value }))}
-                        className="w-full p-3 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)]"
+                        className="w-full p-3 border border-border rounded-md bg-background text-foreground"
                         placeholder="Enter first name"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         Last Name
                       </label>
                       <input
                         type="text"
                         value={userSettings.lastName}
                         onChange={(e) => setUserSettings(prev => ({ ...prev, lastName: e.target.value }))}
-                        className="w-full p-3 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)]"
+                        className="w-full p-3 border border-border rounded-md bg-background text-foreground"
                         placeholder="Enter last name"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         Title
                       </label>
                       <input
                         type="text"
                         value={userSettings.title}
                         onChange={(e) => setUserSettings(prev => ({ ...prev, title: e.target.value }))}
-                        className="w-full p-3 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)]"
+                        className="w-full p-3 border border-border rounded-md bg-background text-foreground"
                         placeholder="Account Executive"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         Department
                       </label>
                       <select
                         value={userSettings.department}
                         onChange={(e) => setUserSettings(prev => ({ ...prev, department: e.target.value }))}
-                        className="w-full p-3 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)]"
+                        className="w-full p-3 border border-border rounded-md bg-background text-foreground"
                       >
                         <option value="">Select department</option>
                         <option value="Sales">Sales</option>
@@ -485,26 +485,26 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                    <label className="block text-sm font-medium text-foreground mb-2">
                       Email
                     </label>
                     <input
                       type="email"
                       value={user?.email || ''}
                       disabled
-                      className="w-full p-3 border border-[var(--border)] rounded-md bg-[var(--panel-background)] text-[var(--muted)]"
+                      className="w-full p-3 border border-border rounded-md bg-panel-background text-muted"
                     />
-                    <p className="text-xs text-[var(--muted)] mt-1">Email cannot be changed</p>
+                    <p className="text-xs text-muted mt-1">Email cannot be changed</p>
                   </div>
                 </div>
               </div>
 
               {/* Save Button */}
-              <div className="flex justify-end pt-4 border-t border-[var(--border)]">
+              <div className="flex justify-end pt-4 border-t border-border">
                 <button
                   onClick={handleSaveUserSettings}
                   disabled={loading}
-                  className="px-4 py-2 bg-[var(--button-background)] text-[var(--button-text)] rounded-lg hover:bg-[var(--button-hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? 'Saving...' : 'Save Profile'}
                 </button>
@@ -514,17 +514,17 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
             <div className="space-y-6">
               {/* Password Change Section */}
               <div>
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                   <KeyIcon className="w-5 h-5" />
                   Change Password
                 </h3>
                 
                 {!showPasswordChange ? (
                   <div className="space-y-4">
-                    <p className="text-[var(--muted)]">Keep your account secure by updating your password regularly.</p>
+                    <p className="text-muted">Keep your account secure by updating your password regularly.</p>
                     <button
                       onClick={() => setShowPasswordChange(true)}
-                      className="px-4 py-2 bg-[var(--button-background)] text-[var(--button-text)] rounded-lg hover:bg-[var(--button-hover)] transition-colors"
+                      className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover transition-colors"
                     >
                       Change Password
                     </button>
@@ -533,7 +533,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                   <div className="space-y-4">
                     {/* Current Password */}
                     <div>
-                      <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         Current Password
                       </label>
                       <div className="relative">
@@ -541,7 +541,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                           type={showPasswords.current ? "text" : "password"}
                           value={passwordData.currentPassword}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                          className="w-full p-3 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] pr-10"
+                          className="w-full p-3 border border-border rounded-md bg-background text-foreground pr-10"
                           placeholder="Enter your current password"
                           required
                           disabled={loading}
@@ -549,7 +549,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('current')}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted hover:text-foreground"
                         >
                           {showPasswords.current ? (
                             <EyeSlashIcon className="w-5 h-5" />
@@ -562,7 +562,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
 
                     {/* New Password */}
                     <div>
-                      <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         New Password
                       </label>
                       <div className="relative">
@@ -570,7 +570,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                           type={showPasswords.new ? "text" : "password"}
                           value={passwordData.newPassword}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                          className="w-full p-3 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] pr-10"
+                          className="w-full p-3 border border-border rounded-md bg-background text-foreground pr-10"
                           placeholder="Enter your new password"
                           required
                           disabled={loading}
@@ -578,7 +578,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('new')}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted hover:text-foreground"
                         >
                           {showPasswords.new ? (
                             <EyeSlashIcon className="w-5 h-5" />
@@ -591,28 +591,28 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                       {/* Password Strength Indicator */}
                       {passwordData.newPassword && (
                         <div className="mt-2 space-y-1">
-                          <div className="text-xs text-[var(--muted)]">Password requirements:</div>
+                          <div className="text-xs text-muted">Password requirements:</div>
                           {(() => {
                             const validation = validatePasswordStrength(passwordData.newPassword);
                             return (
                               <div className="space-y-1">
-                                <div className={`flex items-center gap-2 text-xs ${validation.isLongEnough ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
+                                <div className={`flex items-center gap-2 text-xs ${validation.isLongEnough ? 'text-success' : 'text-error'}`}>
                                   {validation.isLongEnough ? <CheckCircleIcon className="w-3 h-3" /> : <ExclamationTriangleIcon className="w-3 h-3" />}
                                   At least 8 characters
                                 </div>
-                                <div className={`flex items-center gap-2 text-xs ${validation.hasUpperCase ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
+                                <div className={`flex items-center gap-2 text-xs ${validation.hasUpperCase ? 'text-success' : 'text-error'}`}>
                                   {validation.hasUpperCase ? <CheckCircleIcon className="w-3 h-3" /> : <ExclamationTriangleIcon className="w-3 h-3" />}
                                   One uppercase letter
                                 </div>
-                                <div className={`flex items-center gap-2 text-xs ${validation.hasLowerCase ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
+                                <div className={`flex items-center gap-2 text-xs ${validation.hasLowerCase ? 'text-success' : 'text-error'}`}>
                                   {validation.hasLowerCase ? <CheckCircleIcon className="w-3 h-3" /> : <ExclamationTriangleIcon className="w-3 h-3" />}
                                   One lowercase letter
                                 </div>
-                                <div className={`flex items-center gap-2 text-xs ${validation.hasNumbers ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
+                                <div className={`flex items-center gap-2 text-xs ${validation.hasNumbers ? 'text-success' : 'text-error'}`}>
                                   {validation.hasNumbers ? <CheckCircleIcon className="w-3 h-3" /> : <ExclamationTriangleIcon className="w-3 h-3" />}
                                   One number
                                 </div>
-                                <div className={`flex items-center gap-2 text-xs ${validation.hasSpecialChar ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
+                                <div className={`flex items-center gap-2 text-xs ${validation.hasSpecialChar ? 'text-success' : 'text-error'}`}>
                                   {validation.hasSpecialChar ? <CheckCircleIcon className="w-3 h-3" /> : <ExclamationTriangleIcon className="w-3 h-3" />}
                                   One special character
                                 </div>
@@ -625,7 +625,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
 
                     {/* Confirm Password */}
                     <div>
-                      <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         Confirm New Password
                       </label>
                       <div className="relative">
@@ -633,7 +633,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                           type={showPasswords.confirm ? "text" : "password"}
                           value={passwordData.confirmPassword}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                          className="w-full p-3 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] pr-10"
+                          className="w-full p-3 border border-border rounded-md bg-background text-foreground pr-10"
                           placeholder="Confirm your new password"
                           required
                           disabled={loading}
@@ -641,7 +641,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                         <button
                           type="button"
                           onClick={() => togglePasswordVisibility('confirm')}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted hover:text-foreground"
                         >
                           {showPasswords.confirm ? (
                             <EyeSlashIcon className="w-5 h-5" />
@@ -654,7 +654,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                       {/* Password Match Indicator */}
                       {passwordData.confirmPassword && (
                         <div className="mt-2">
-                          <div className={`flex items-center gap-2 text-xs ${passwordData.newPassword === passwordData.confirmPassword ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
+                          <div className={`flex items-center gap-2 text-xs ${passwordData.newPassword === passwordData.confirmPassword ? 'text-success' : 'text-error'}`}>
                             {passwordData.newPassword === passwordData.confirmPassword ? (
                               <CheckCircleIcon className="w-3 h-3" />
                             ) : (
@@ -670,8 +670,8 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                     {passwordMessage.type && (
                       <div className={`p-3 rounded-md flex items-center gap-2 ${
                         passwordMessage.type === 'success' 
-                          ? 'bg-[var(--success-bg)] border border-[var(--success-border)] text-[var(--success-text)]' 
-                          : 'bg-[var(--error-bg)] border border-[var(--error-border)] text-[var(--error-text)]'
+                          ? 'bg-success-bg border border-success-border text-success-text' 
+                          : 'bg-error-bg border border-error-border text-error-text'
                       }`}>
                         {passwordMessage.type === 'success' ? (
                           <CheckCircleIcon className="w-5 h-5" />
@@ -687,7 +687,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                       <button
                         onClick={handlePasswordChange}
                         disabled={loading || !passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword}
-                        className="px-4 py-2 bg-[var(--button-background)] text-[var(--button-text)] rounded-lg hover:bg-[var(--button-hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         {loading ? 'Changing Password...' : 'Change Password'}
                       </button>
@@ -697,7 +697,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                           setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
                           setPasswordMessage({ type: null, text: '' });
                         }}
-                        className="px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover)] transition-colors"
+                        className="px-4 py-2 border border-border text-foreground rounded-lg hover:bg-hover transition-colors"
                       >
                         Cancel
                       </button>
@@ -710,10 +710,10 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
             <div className="space-y-6">
               {/* Daily 100 Section */}
               <div>
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   Daily 100 Preset
                 </h3>
-                <p className="text-sm text-[var(--muted)] mb-6">
+                <p className="text-sm text-muted mb-6">
                   Choose your daily checklist template. Your preset items reset each day, while custom items persist.
                 </p>
                 
@@ -723,8 +723,8 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                       key={preset.id}
                       className={`flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
                         daily100Preset === preset.id
-                          ? 'border-[var(--accent)] bg-[var(--accent)]/5'
-                          : 'border-[var(--border)] hover:border-[var(--accent)]/50'
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:border-primary/50'
                       }`}
                     >
                       <input
@@ -733,26 +733,26 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                         value={preset.id}
                         checked={daily100Preset === preset.id}
                         onChange={() => setDaily100Preset(preset.id)}
-                        className="mt-1 w-4 h-4 border-[var(--border)] text-[var(--accent)] focus:ring-[var(--accent)] focus:ring-2"
+                        className="mt-1 w-4 h-4 border-border text-primary focus:ring-primary focus:ring-2"
                       />
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <h4 className="text-sm font-semibold text-[var(--foreground)]">
+                          <h4 className="text-sm font-semibold text-foreground">
                             {preset.name}
                           </h4>
                           {daily100Preset === preset.id && (
-                            <span className="text-xs px-2 py-0.5 rounded bg-[var(--accent)] text-white">
+                            <span className="text-xs px-2 py-0.5 rounded bg-primary text-white">
                               Active
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-[var(--muted)] mb-3">
+                        <p className="text-xs text-muted mb-3">
                           {preset.description}
                         </p>
                         {preset.items.length > 0 && (
                           <ul className="space-y-1.5 mt-2">
                             {preset.items.map((item) => (
-                              <li key={item.id} className="text-xs text-[var(--muted)] flex items-start gap-2">
+                              <li key={item.id} className="text-xs text-muted flex items-start gap-2">
                                 <span className="mt-0.5">•</span>
                                 <span>{item.text}</span>
                               </li>
@@ -760,7 +760,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                           </ul>
                         )}
                         {preset.items.length === 0 && (
-                          <p className="text-xs text-[var(--muted)] italic">
+                          <p className="text-xs text-muted italic">
                             Create your own daily items
                           </p>
                         )}
@@ -772,7 +772,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 <div className="mt-6 flex justify-end gap-3">
                   <button
                     onClick={saveDaily100Preset}
-                    className="px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+                    className="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
                   >
                     Save Preset
                   </button>
@@ -783,56 +783,56 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
             <div className="space-y-6">
               {/* Notifications Section */}
               <div>
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                   <BellIcon className="w-5 h-5" />
                   Notification Preferences
                 </h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <label className="text-sm font-medium text-[var(--foreground)]">Email Notifications</label>
-                      <p className="text-xs text-[var(--muted)]">Receive notifications via email</p>
+                      <label className="text-sm font-medium text-foreground">Email Notifications</label>
+                      <p className="text-xs text-muted">Receive notifications via email</p>
                     </div>
                     <input
                       type="checkbox"
                       checked={userSettings.emailNotifications}
                       onChange={(e) => setUserSettings(prev => ({ ...prev, emailNotifications: e.target.checked }))}
-                      className="rounded border-[var(--border)] bg-[var(--background)] text-[var(--accent)] focus:ring-[var(--focus-ring)] focus:ring-2"
+                      className="rounded border-border bg-background text-primary focus:ring-[var(--focus-ring)] focus:ring-2"
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <label className="text-sm font-medium text-[var(--foreground)]">Push Notifications</label>
-                      <p className="text-xs text-[var(--muted)]">Receive push notifications in browser</p>
+                      <label className="text-sm font-medium text-foreground">Push Notifications</label>
+                      <p className="text-xs text-muted">Receive push notifications in browser</p>
                     </div>
                     <input
                       type="checkbox"
                       checked={userSettings.pushNotifications}
                       onChange={(e) => setUserSettings(prev => ({ ...prev, pushNotifications: e.target.checked }))}
-                      className="rounded border-[var(--border)] bg-[var(--background)] text-[var(--accent)] focus:ring-[var(--focus-ring)] focus:ring-2"
+                      className="rounded border-border bg-background text-primary focus:ring-[var(--focus-ring)] focus:ring-2"
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <label className="text-sm font-medium text-[var(--foreground)]">Weekly Reports</label>
-                      <p className="text-xs text-[var(--muted)]">Receive weekly performance reports</p>
+                      <label className="text-sm font-medium text-foreground">Weekly Reports</label>
+                      <p className="text-xs text-muted">Receive weekly performance reports</p>
                     </div>
                     <input
                       type="checkbox"
                       checked={userSettings.weeklyReports}
                       onChange={(e) => setUserSettings(prev => ({ ...prev, weeklyReports: e.target.checked }))}
-                      className="rounded border-[var(--border)] bg-[var(--background)] text-[var(--accent)] focus:ring-[var(--focus-ring)] focus:ring-2"
+                      className="rounded border-border bg-background text-primary focus:ring-[var(--focus-ring)] focus:ring-2"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Save Button */}
-              <div className="flex justify-end pt-4 border-t border-[var(--border)]">
+              <div className="flex justify-end pt-4 border-t border-border">
                 <button
                   onClick={handleSaveUserSettings}
                   disabled={loading}
-                  className="px-4 py-2 bg-[var(--button-background)] text-[var(--button-text)] rounded-lg hover:bg-[var(--button-hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? 'Saving...' : 'Save Preferences'}
                 </button>
@@ -842,12 +842,12 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
             <div className="space-y-6">
               {/* Theme Section */}
               <div>
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                   <PaintBrushIcon className="w-5 h-5" />
                   Theme Preferences
                 </h3>
                 <div className="space-y-4">
-                  <p className="text-sm text-[var(--muted)]">
+                  <p className="text-sm text-muted">
                     Customize the appearance of your workspace. Choose between light and dark themes, or let the system decide.
                   </p>
                   <ThemePicker />

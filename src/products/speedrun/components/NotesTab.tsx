@@ -111,7 +111,7 @@ export function NotesTab({
   return (
     <div className="h-full flex flex-col">
       {/* Notes Header */}
-      <div className="flex items-center justify-end px-4 py-2 border-b border-[var(--border)] bg-[var(--background)]">
+      <div className="flex items-center justify-end px-4 py-2 border-b border-border bg-background">
         <div className="flex items-center gap-2">
           {saveStatus === 'saving' && (
             <span className="text-xs text-blue-600 flex items-center gap-1">
@@ -150,13 +150,13 @@ export function NotesTab({
       </div>
 
       {/* Stats Footer */}
-      <div className="px-4 py-2 border-t border-[var(--border)] bg-[var(--background)]">
-        <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+      <div className="px-4 py-2 border-t border-border bg-background">
+        <div className="flex items-center justify-between text-xs text-muted">
           <div className="flex items-center gap-4">
             <span>{getWordCount(notes)} words</span>
             <span>{getCharacterCount(notes)} characters</span>
           </div>
-          <div className="text-[var(--muted)]">
+          <div className="text-muted">
             {notes.length > 0 && (
               <span>
                 {Math.ceil(getWordCount(notes) / 200)} min read

@@ -688,7 +688,7 @@ function PipelineSections({
       name: "Dashboard",
       description: "Overview & Analytics",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : "Today",
       visible: false // Hidden for this release
     },
@@ -698,7 +698,7 @@ function PipelineSections({
       name: "Speedrun",
       description: "Drive revenue",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : (() => {
         const totalPeople = productionCounts.people || 0;
         const speedrunCount = productionCounts.speedrun || 0;
@@ -748,7 +748,7 @@ function PipelineSections({
       name: "News",
       description: "Stay informed",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : productionCounts.news || 0,
       visible: false // Hidden for now
     },
@@ -757,7 +757,7 @@ function PipelineSections({
       name: "Leads",
       description: "Cold relationships",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : productionCounts.leads,
       visible: allowedSections.includes('leads') && (isDemoMode ? demoModeVisibility.isLeadsVisible : (isLeadsVisible ?? true))
     },
@@ -766,7 +766,7 @@ function PipelineSections({
       name: "Prospects",
       description: "Warm relationships",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : (productionCounts.prospects || 0),
       visible: allowedSections.includes('prospects') && (isDemoMode ? demoModeVisibility.isProspectsVisible : (isProspectsVisible ?? true))
     },
@@ -775,7 +775,7 @@ function PipelineSections({
       name: "Opportunities",
       description: "Real Workstream",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : (() => {
         const opportunities = acquisitionData?.acquireData?.opportunities || [];
         const totalPeople = opportunities.reduce((sum: number, opp: any) => sum + (opp.peopleCount || 0), 0);
@@ -790,7 +790,7 @@ function PipelineSections({
       name: "Clients",
       description: "Earned Relationships",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : productionCounts.clients,
       visible: allowedSections.includes('clients') && shouldShowClients
     },
@@ -799,7 +799,7 @@ function PipelineSections({
       name: "People",
       description: "Individual entities",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : productionCounts.people,
       visible: allowedSections.includes('people') && true
     },
@@ -808,7 +808,7 @@ function PipelineSections({
       name: "Companies",
       description: "Business entities",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : productionCounts.companies,
       visible: allowedSections.includes('companies') && true
     },
@@ -817,7 +817,7 @@ function PipelineSections({
       name: "Partners",
       description: "Strategic Alliances",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : productionCounts.partners,
       visible: allowedSections.includes('partners') && shouldShowPartners
     },
@@ -856,7 +856,7 @@ function PipelineSections({
       name: "Sellers",
       description: "Sales Team",
       count: loading ? (
-        <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+        <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
       ) : productionCounts.sellers, // Use production counts like other sections
       visible: isDemoMode // Show only for demo workspace
     },
@@ -900,9 +900,9 @@ function PipelineSections({
     // Show loading state while acquisitionData is loading or auth is loading
     if (!acquisitionData || acquisitionData.data?.loading?.isLoading || authLoading) {
       return (
-        <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+        <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
           <div className="p-4 text-center">
-            <div className="text-sm text-[var(--muted)]">Loading workspace...</div>
+            <div className="text-sm text-muted">Loading workspace...</div>
           </div>
         </div>
       );
@@ -918,10 +918,10 @@ function PipelineSections({
     });
     // Don't show loading state if we don't have valid context
     return (
-      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
         <div className="p-4 text-center">
           <div className="text-sm text-red-500">Invalid workspace context</div>
-          <div className="text-xs text-[var(--muted)] mt-1">Please refresh the page</div>
+          <div className="text-xs text-muted mt-1">Please refresh the page</div>
         </div>
       </div>
     );
@@ -944,19 +944,19 @@ function PipelineSections({
           onClick={() => handleSectionClick(section.id)}
           className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                 activeSection === section.id
-                  ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                  : 'hover:bg-[var(--panel-background)] text-gray-700'
+                  ? 'bg-hover text-foreground'
+                  : 'hover:bg-panel-background text-gray-700'
           }`}
         >
           <div className="flex items-center justify-between">
             <span className="font-medium text-sm">{section.name}</span>
-            <span className="text-sm text-[var(--muted)]">
+            <span className="text-sm text-muted">
               {typeof section['count'] === 'number' ? section.count.toLocaleString() : 
                typeof section['count'] === 'string' && !isNaN(Number(section.count)) ? Number(section.count).toLocaleString() : 
                section.count}
             </span>
           </div>
-          <div className="text-xs text-[var(--muted)] mt-1">
+          <div className="text-xs text-muted mt-1">
             {section.description}
           </div>
         </button>
@@ -967,7 +967,7 @@ function PipelineSections({
         <>
           <button
             onClick={() => setIsMoreExpanded(!isMoreExpanded)}
-            className={`w-full text-left px-3 py-2 rounded-lg transition-colors hover:bg-[var(--panel-background)] text-gray-700`}
+            className={`w-full text-left px-3 py-2 rounded-lg transition-colors hover:bg-panel-background text-gray-700`}
           >
             <div className="flex items-center justify-between">
               <span className="font-medium text-sm">More</span>
@@ -977,7 +977,7 @@ function PipelineSections({
                 <ChevronRightIcon className="w-4 h-4" />
               )}
             </div>
-            <div className="text-xs text-[var(--muted)] mt-1">
+            <div className="text-xs text-muted mt-1">
               Additional sections
             </div>
           </button>
@@ -993,19 +993,19 @@ function PipelineSections({
               }}
               className={`w-full text-left px-3 py-2 pl-8 rounded-lg transition-colors ${
                     activeSection === section.id
-                      ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                      : 'hover:bg-[var(--panel-background)] text-gray-700'
+                      ? 'bg-hover text-foreground'
+                      : 'hover:bg-panel-background text-gray-700'
               }`}
             >
               <div className="flex items-center justify-between">
                 <span className="font-medium text-sm">{section.name}</span>
-                <span className="text-sm text-[var(--muted)]">
+                <span className="text-sm text-muted">
                   {typeof section['count'] === 'number' ? section.count.toLocaleString() : 
                    typeof section['count'] === 'string' && !isNaN(Number(section.count)) ? Number(section.count).toLocaleString() : 
                    section.count}
                 </span>
               </div>
-              <div className="text-xs text-[var(--muted)] mt-1">
+              <div className="text-xs text-muted mt-1">
                 {section.description}
               </div>
             </button>
@@ -1245,7 +1245,7 @@ export function PipelineLeftPanelStandalone({
   // No separate API call needed - uses acquisitionData from useRevenueOS hook
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header - matching Monaco style */}
@@ -1274,7 +1274,7 @@ export function PipelineLeftPanelStandalone({
                   RevenueOS
                 </h3>
               </div>
-              <div className="text-xs text-[var(--muted)] font-medium" style={{ marginTop: '-1px' }}>
+              <div className="text-xs text-muted font-medium" style={{ marginTop: '-1px' }}>
                 Sales Acceleration
               </div>
             </div>
@@ -1285,10 +1285,10 @@ export function PipelineLeftPanelStandalone({
         <div className="mx-2 mb-4 p-3 bg-white rounded-lg border border-gray-200">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Revenue</span>
+              <span className="text-xs font-medium text-muted">Revenue</span>
               <span className="text-xs font-semibold text-black">
                 {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
-                  <div className="w-8 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : (() => {
                   // Check if we're in demo mode
                   const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
@@ -1315,10 +1315,10 @@ export function PipelineLeftPanelStandalone({
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Workstream</span>
+              <span className="text-xs font-medium text-muted">Workstream</span>
               <span className="text-xs font-semibold text-black">
                 {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
-                  <div className="w-8 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="w-8 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : (() => {
                   // Check if we're in demo mode
                   const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
@@ -1348,10 +1348,10 @@ export function PipelineLeftPanelStandalone({
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Coverage</span>
+              <span className="text-xs font-medium text-muted">Coverage</span>
               <span className="text-xs font-semibold text-black">
                 {(acquisitionData?.isLoading || !minLoadingTimeElapsed) ? (
-                  <div className="w-6 h-3 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="w-6 h-3 bg-loading-bg rounded animate-pulse"></div>
                 ) : (() => {
                   // Check if we're in demo mode
                   const isDemoMode = (typeof window !== "undefined" && window.location.pathname.startsWith('/demo/')) ||
@@ -1409,21 +1409,21 @@ export function PipelineLeftPanelStandalone({
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
         <button
           onClick={handleProfileClick}
-          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--hover)] transition-colors"
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-hover transition-colors"
           title="Profile"
         >
-          <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 bg-loading-bg rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-gray-700">{user?.initial || (authUser?.name ? authUser.name.charAt(0).toUpperCase() : 'U')}</span>
           </div>
           <div className="flex-1 text-left">
-            <div className="text-sm font-medium text-[var(--foreground)]">
+            <div className="text-sm font-medium text-foreground">
               {user?.firstName && user?.lastName && user.firstName.trim() && user.lastName.trim()
                 ? `${user.firstName} ${user.lastName}` 
                 : user?.firstName && user.firstName.trim()
                 ? user.firstName
                 : user?.name ? (user.name.charAt(0).toUpperCase() + user.name.slice(1)) : authUser?.name || 'User'}
             </div>
-            <div className="text-xs text-[var(--muted)]">
+            <div className="text-xs text-muted">
               {(workspace?.name || authUser?.workspaces?.find(w => w['id'] === authUser.activeWorkspaceId)?.name || 'Adrata').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}
             </div>
           </div>

@@ -6,7 +6,7 @@ interface UniversalPainValueTabProps {
 
 export function UniversalPainValueTab({ record, recordType, onSave }: UniversalPainValueTabProps) {
   const getValueColor = (value: number | null) => {
-    if (!value) return 'text-[var(--muted)]';
+    if (!value) return 'text-muted';
     if (value >= 100000) return 'text-green-600';
     if (value >= 50000) return 'text-blue-600';
     return 'text-orange-600';
@@ -16,7 +16,7 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
     <div className="p-6 space-y-8">
       {/* Pain Points & Buying Signals */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Pain Points & Buying Signals</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Pain Points & Buying Signals</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Identified Pain Points</label>
@@ -28,9 +28,9 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
                   </div>
                 ))
               ) : (
-                <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-3">
-                  <p className="text-[var(--muted)] text-sm">No pain points identified yet</p>
-                  <p className="text-[var(--muted)] text-xs mt-1">Discover through qualification</p>
+                <div className="bg-panel-background border border-border rounded-lg p-3">
+                  <p className="text-muted text-sm">No pain points identified yet</p>
+                  <p className="text-muted text-xs mt-1">Discover through qualification</p>
                 </div>
               )}
             </div>
@@ -46,9 +46,9 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
                   </div>
                 ))
               ) : (
-                <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-3">
-                  <p className="text-[var(--muted)] text-sm">No buying signals detected</p>
-                  <p className="text-[var(--muted)] text-xs mt-1">Monitor engagement for signals</p>
+                <div className="bg-panel-background border border-border rounded-lg p-3">
+                  <p className="text-muted text-sm">No buying signals detected</p>
+                  <p className="text-muted text-xs mt-1">Monitor engagement for signals</p>
                 </div>
               )}
             </div>
@@ -58,34 +58,34 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
 
       {/* Value Proposition */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Value Proposition</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Value Proposition</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Estimated Value</h4>
+          <div className="bg-panel-background rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-2">Estimated Value</h4>
             <div className={`text-2xl font-bold ${getValueColor(record?.estimatedValue)}`}>
               {record?.estimatedValue ? `$${record.estimatedValue.toLocaleString()}` : '-'}
             </div>
-            <p className="text-sm text-[var(--muted)] mt-1">{record?.currency || 'USD'}</p>
+            <p className="text-sm text-muted mt-1">{record?.currency || 'USD'}</p>
           </div>
           
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Qualification</h4>
+          <div className="bg-panel-background rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-2">Qualification</h4>
             <div className="space-y-1">
               <div className={`text-xs px-2 py-1 rounded ${
-                record?.marketingQualified ? 'bg-green-100 text-green-800' : 'bg-[var(--hover)] text-[var(--muted)]'
+                record?.marketingQualified ? 'bg-green-100 text-green-800' : 'bg-hover text-muted'
               }`}>
                 MQL: {record?.marketingQualified ? 'Yes' : 'No'}
               </div>
               <div className={`text-xs px-2 py-1 rounded ${
-                record?.salesQualified ? 'bg-green-100 text-green-800' : 'bg-[var(--hover)] text-[var(--muted)]'
+                record?.salesQualified ? 'bg-green-100 text-green-800' : 'bg-hover text-muted'
               }`}>
                 SQL: {record?.salesQualified ? 'Yes' : 'No'}
               </div>
             </div>
           </div>
           
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Decision Criteria</h4>
+          <div className="bg-panel-background rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-2">Decision Criteria</h4>
             <div className="space-y-1 text-xs">
               <div>Budget: {record?.budget ? `$${record.budget.toLocaleString()}` : '-'}</div>
               <div>Authority: {record?.authority || '-'}</div>
@@ -98,9 +98,9 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
 
       {/* Business Impact */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Business Impact</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Business Impact</h3>
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
-          <h4 className="font-medium text-[var(--foreground)] mb-3">Tailored Value Proposition</h4>
+          <h4 className="font-medium text-foreground mb-3">Tailored Value Proposition</h4>
           <div className="space-y-2 text-sm text-gray-700">
             <p>• <strong>Role Impact:</strong> Help {record?.jobTitle || 'this role'} streamline operations and reduce manual work</p>
             <p>• <strong>Company Value:</strong> Enable {record?.company || 'the company'} to improve {record?.industry || 'industry'} competitiveness</p>
@@ -112,7 +112,7 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
 
       {/* Interests & Competitor Intelligence */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Intelligence</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Interests</label>
@@ -124,8 +124,8 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
                   </div>
                 ))
               ) : (
-                <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-3">
-                  <p className="text-[var(--muted)] text-sm">No interests captured</p>
+                <div className="bg-panel-background border border-border rounded-lg p-3">
+                  <p className="text-muted text-sm">No interests captured</p>
                 </div>
               )}
             </div>
@@ -141,8 +141,8 @@ export function UniversalPainValueTab({ record, recordType, onSave }: UniversalP
                   </div>
                 ))
               ) : (
-                <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-3">
-                  <p className="text-[var(--muted)] text-sm">No competitors mentioned</p>
+                <div className="bg-panel-background border border-border rounded-lg p-3">
+                  <p className="text-muted text-sm">No competitors mentioned</p>
                 </div>
               )}
             </div>

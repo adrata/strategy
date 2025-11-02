@@ -158,7 +158,7 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
 
   if (!showDetail || !selectedChat) {
     return (
-      <div className="flex-1 flex items-center justify-center text-[var(--muted)]">
+      <div className="flex-1 flex items-center justify-center text-muted">
         <div className="text-center">
           <h3 className="text-lg font-medium mb-2">Select a conversation</h3>
           <p className="text-sm">
@@ -170,16 +170,16 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-[var(--background)]">
+    <div className="flex-1 flex flex-col bg-background">
       {/* Chat header */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)] bg-[var(--background)]">
+      <div className="flex-shrink-0 px-6 py-4 border-b border-border bg-background">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-semibold text-[var(--foreground)]">
+            <h1 className="text-xl font-semibold text-foreground">
               {selectedChat['type'] === "channel" ? `#${selectedChat.name}` : getChatDisplayName(chats.find((c) => c['id'] === selectedChat.id))}
             </h1>
             {selectedChat['type'] === "channel" && (
-              <div className="text-sm text-[var(--muted)]">
+              <div className="text-sm text-muted">
                 {chats.find((c) => c['id'] === selectedChat.id)?.members?.length ||
                   0}{" "}
                 members
@@ -188,7 +188,7 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
           </div>
           <button
             onClick={() => setShowDetail(false)}
-            className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors lg:hidden"
+            className="text-muted hover:text-foreground transition-colors lg:hidden"
           >
             ×
           </button>
@@ -199,11 +199,11 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 invisible-scrollbar">
         {messagesLoading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="text-[var(--muted)]">Loading messages...</div>
+            <div className="text-muted">Loading messages...</div>
           </div>
         ) : messages['length'] === 0 ? (
           <div className="flex items-center justify-center py-8">
-            <div className="text-center text-[var(--muted)]">
+            <div className="text-center text-muted">
               <p className="text-xl font-medium mb-2">
                 {selectedChat['type'] === "channel"
                   ? "Welcome to the channel!"
@@ -231,7 +231,7 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
               <div key={message.id} className="flex gap-3 group relative">
                 <div className="flex-shrink-0">
                   {showAvatar ? (
-                    <div className="w-8 h-8 rounded-lg bg-[var(--hover-bg)] border border-[var(--border)] flex items-center justify-center text-sm font-medium text-[var(--foreground)]">
+                    <div className="w-8 h-8 rounded-lg bg-hover border border-border flex items-center justify-center text-sm font-medium text-foreground">
                       {getInitials(message.sender.name)}
                     </div>
                   ) : (
@@ -241,10 +241,10 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
                 <div className="flex-1 min-w-0">
                   {showAvatar && (
                     <div className="flex items-baseline gap-2 mb-1">
-                      <span className="font-medium text-[var(--foreground)] text-sm">
+                      <span className="font-medium text-foreground text-sm">
                         {getMessageSenderDisplayName(message.sender)}
                       </span>
-                      <span className="text-xs text-[var(--muted)]">
+                      <span className="text-xs text-muted">
                         {new Date(message.createdAt).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -263,11 +263,11 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
                         )}
                     </div>
                   )}
-                  <div className="text-[var(--foreground)] text-lg leading-relaxed whitespace-pre-wrap break-words">
+                  <div className="text-foreground text-lg leading-relaxed whitespace-pre-wrap break-words">
                     {isEditing ? (
                       <div className="flex flex-col gap-2">
                         <textarea
-                          className="w-full rounded border border-[var(--border)] p-2 text-sm"
+                          className="w-full rounded border border-border p-2 text-sm"
                           value={editContent}
                           onChange={(e) => setEditContent(e.target.value)}
                           rows={2}
@@ -282,7 +282,7 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
                             Save
                           </button>
                           <button
-                            className="px-2 py-1 text-xs bg-[var(--background)] border border-[var(--border)] rounded hover:bg-[var(--hover-bg)]"
+                            className="px-2 py-1 text-xs bg-background border border-border rounded hover:bg-hover"
                             onClick={handleEditCancel}
                             disabled={editLoading}
                           >
@@ -296,7 +296,7 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
                         {message['updatedAt'] &&
                           new Date(message.updatedAt).getTime() >
                             new Date(message.createdAt).getTime() && (
-                            <span className="ml-2 text-xs text-[var(--muted)]">
+                            <span className="ml-2 text-xs text-muted">
                               (updated)
                             </span>
                           )}
@@ -330,7 +330,7 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
                                 r['userId'] === currentUser.id,
                             )
                               ? "bg-blue-100 border-blue-200 text-blue-700"
-                              : "bg-[var(--background)] border-[var(--border)] text-[var(--foreground)]",
+                              : "bg-background border-border text-foreground",
                           )}
                         >
                           {emoji} {count}
@@ -341,13 +341,13 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
                   {isCurrentUser && !isEditing && (
                     <div className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 z-10">
                       <button
-                        className="px-2 py-1 text-xs bg-[var(--background)] border border-[var(--border)] rounded hover:bg-[var(--hover-bg)]"
+                        className="px-2 py-1 text-xs bg-background border border-border rounded hover:bg-hover"
                         onClick={() => handleEdit(message)}
                       >
                         <PencilIcon className="w-3 h-3" />
                       </button>
                       <button
-                        className="px-2 py-1 text-xs bg-[var(--background)] border border-[var(--border)] rounded hover:bg-[var(--hover-bg)]"
+                        className="px-2 py-1 text-xs bg-background border border-border rounded hover:bg-hover"
                         onClick={() => setShowEmojiPicker(message.id)}
                       >
                         😀
@@ -377,7 +377,7 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
           <div className="flex gap-3">
             <div className="flex-shrink-0 w-8 h-8" />
             <div className="flex-1">
-              <div className="text-sm text-[var(--muted)] italic">
+              <div className="text-sm text-muted italic">
                 {typingUsers['length'] === 1
                   ? `${typingUsers[0].name} is typing...`
                   : `${typingUsers
@@ -395,14 +395,14 @@ export const OasisChatInterface: React.FC<OasisChatInterfaceProps> = ({
       </div>
 
       {/* Message input */}
-      <div className="flex-shrink-0 px-6 py-4 border-t border-[var(--border)] bg-[var(--background)]">
+      <div className="flex-shrink-0 px-6 py-4 border-t border-border bg-background">
         <form onSubmit={onSendMessage} className="flex gap-3">
           <div className="flex-1 relative">
             <textarea
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               placeholder={`Message ${selectedChat['type'] === "channel" ? "#" + selectedChat.name : getChatDisplayName(chats.find((c) => c['id'] === selectedChat.id))}`}
-              className="w-full resize-none rounded-lg border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full resize-none rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder-[var(--muted)] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               rows={1}
               style={{ minHeight: "44px", maxHeight: "120px" }}
               onKeyDown={(e) => {

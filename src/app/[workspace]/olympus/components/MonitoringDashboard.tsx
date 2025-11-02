@@ -13,8 +13,8 @@ export default function MonitoringDashboard({ execution }: MonitoringDashboardPr
       case 'running': return 'text-blue-600 bg-blue-50';
       case 'completed': return 'text-green-600 bg-green-50';
       case 'failed': return 'text-red-600 bg-red-50';
-      case 'cancelled': return 'text-[var(--muted)] bg-[var(--panel-background)]';
-      default: return 'text-[var(--muted)] bg-[var(--panel-background)]';
+      case 'cancelled': return 'text-muted bg-panel-background';
+      default: return 'text-muted bg-panel-background';
     }
   };
 
@@ -57,13 +57,13 @@ export default function MonitoringDashboard({ execution }: MonitoringDashboardPr
   ];
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="p-4 border-b border-[var(--border)]">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">Pipeline Execution Monitor</h2>
-            <p className="text-sm text-[var(--muted)]">Real-time monitoring of CFO/CRO discovery pipeline</p>
+            <h2 className="text-lg font-semibold text-foreground">Pipeline Execution Monitor</h2>
+            <p className="text-sm text-muted">Real-time monitoring of CFO/CRO discovery pipeline</p>
           </div>
           <div className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(execution.status)}`}>
             {getStatusIcon(execution.status)} {execution.status.toUpperCase()}
@@ -72,12 +72,12 @@ export default function MonitoringDashboard({ execution }: MonitoringDashboardPr
       </div>
 
       {/* Progress Bar */}
-      <div className="p-4 border-b border-[var(--border)]">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-700">Overall Progress</span>
-          <span className="text-sm text-[var(--muted)]">{Math.round(execution.progress)}%</span>
+          <span className="text-sm text-muted">{Math.round(execution.progress)}%</span>
         </div>
-        <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+        <div className="w-full bg-loading-bg rounded-full h-2">
           <div 
             className="bg-blue-500 h-2 rounded-full transition-all duration-300"
             style={{ width: `${execution.progress}%` }}
@@ -86,54 +86,54 @@ export default function MonitoringDashboard({ execution }: MonitoringDashboardPr
       </div>
 
       {/* Metrics Grid */}
-      <div className="p-4 border-b border-[var(--border)]">
+      <div className="p-4 border-b border-border">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-[var(--panel-background)] p-3 rounded-lg">
-            <div className="text-2xl font-bold text-[var(--foreground)]">${execution.totalCost.toFixed(2)}</div>
-            <div className="text-sm text-[var(--muted)]">Total Cost</div>
+          <div className="bg-panel-background p-3 rounded-lg">
+            <div className="text-2xl font-bold text-foreground">${execution.totalCost.toFixed(2)}</div>
+            <div className="text-sm text-muted">Total Cost</div>
           </div>
-          <div className="bg-[var(--panel-background)] p-3 rounded-lg">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{execution.successRate.toFixed(1)}%</div>
-            <div className="text-sm text-[var(--muted)]">Success Rate</div>
+          <div className="bg-panel-background p-3 rounded-lg">
+            <div className="text-2xl font-bold text-foreground">{execution.successRate.toFixed(1)}%</div>
+            <div className="text-sm text-muted">Success Rate</div>
           </div>
-          <div className="bg-[var(--panel-background)] p-3 rounded-lg">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{formatDuration(execution.startTime, execution.endTime)}</div>
-            <div className="text-sm text-[var(--muted)]">Duration</div>
+          <div className="bg-panel-background p-3 rounded-lg">
+            <div className="text-2xl font-bold text-foreground">{formatDuration(execution.startTime, execution.endTime)}</div>
+            <div className="text-sm text-muted">Duration</div>
           </div>
-          <div className="bg-[var(--panel-background)] p-3 rounded-lg">
-            <div className="text-2xl font-bold text-[var(--foreground)]">{execution.errors.length}</div>
-            <div className="text-sm text-[var(--muted)]">Errors</div>
+          <div className="bg-panel-background p-3 rounded-lg">
+            <div className="text-2xl font-bold text-foreground">{execution.errors.length}</div>
+            <div className="text-sm text-muted">Errors</div>
           </div>
         </div>
       </div>
 
       {/* Step Progress */}
       <div className="flex-1 p-4 overflow-y-auto">
-        <h3 className="text-md font-semibold text-[var(--foreground)] mb-4">Step Progress</h3>
+        <h3 className="text-md font-semibold text-foreground mb-4">Step Progress</h3>
         <div className="space-y-3">
           {steps.map((step, index) => {
             const stepStatus = getStepStatus(step.id);
             const result = execution.results[step.id];
             
             return (
-              <div key={step.id} className="flex items-center gap-3 p-3 bg-[var(--panel-background)] rounded-lg">
+              <div key={step.id} className="flex items-center gap-3 p-3 bg-panel-background rounded-lg">
                 <div className="flex-shrink-0">
                   <span className="text-lg">{stepStatus.icon}</span>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-[var(--foreground)]">{step.name}</span>
+                    <span className="font-medium text-foreground">{step.name}</span>
                     {result?.executionTime && (
-                      <span className="text-sm text-[var(--muted)]">{result.executionTime}ms</span>
+                      <span className="text-sm text-muted">{result.executionTime}ms</span>
                     )}
                   </div>
                   {result?.status && (
-                    <div className="text-sm text-[var(--muted)] capitalize">{result.status}</div>
+                    <div className="text-sm text-muted capitalize">{result.status}</div>
                   )}
                 </div>
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 rounded-full bg-[var(--background)] border-2 border-[var(--border)] flex items-center justify-center">
-                    <span className="text-xs font-bold text-[var(--muted)]">{index + 1}</span>
+                  <div className="w-8 h-8 rounded-full bg-background border-2 border-border flex items-center justify-center">
+                    <span className="text-xs font-bold text-muted">{index + 1}</span>
                   </div>
                 </div>
               </div>
@@ -144,7 +144,7 @@ export default function MonitoringDashboard({ execution }: MonitoringDashboardPr
 
       {/* Errors */}
       {execution.errors.length > 0 && (
-        <div className="p-4 border-t border-[var(--border)]">
+        <div className="p-4 border-t border-border">
           <h3 className="text-md font-semibold text-red-600 mb-2">Errors</h3>
           <div className="space-y-2">
             {execution.errors.map((error, index) => (
@@ -158,7 +158,7 @@ export default function MonitoringDashboard({ execution }: MonitoringDashboardPr
 
       {/* Results Summary */}
       {execution.status === 'completed' && (
-        <div className="p-4 border-t border-[var(--border)] bg-green-50">
+        <div className="p-4 border-t border-border bg-green-50">
           <h3 className="text-md font-semibold text-green-800 mb-2">Execution Complete</h3>
           <div className="text-sm text-green-700">
             <p>Pipeline executed successfully in {formatDuration(execution.startTime, execution.endTime)}</p>

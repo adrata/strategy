@@ -206,9 +206,9 @@ export function EnhancedEngagementGrid({
   if (!userId) {
     return (
       <div
-        className={`p-6 border border-[var(--border)] rounded-lg ${className}`}
+        className={`p-6 border border-border rounded-lg ${className}`}
       >
-        <div className="text-center text-[var(--muted)]">
+        <div className="text-center text-muted">
           <p>👤 Please log in to view engagement data</p>
         </div>
       </div>
@@ -288,7 +288,7 @@ export function EnhancedEngagementGrid({
             <div className="text-lg font-medium text-gray-700 dark:text-gray-300">
               Most Used:
             </div>
-            <div className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
+            <div className="text-sm text-muted dark:text-muted">
               {topActivities.length > 0 && topActivities[0]
                 ? topActivities[0].name
                 : "No activity yet"}
@@ -349,19 +349,19 @@ export function EnhancedEngagementGrid({
       </div>
 
       {/* 📈 Original Engagement Grid with Enhanced Data */}
-      <div className="bg-[var(--background)] dark:bg-[var(--foreground)] p-6 rounded-lg border border-[var(--border)]">
-        <h4 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+      <div className="bg-background dark:bg-foreground p-6 rounded-lg border border-border">
+        <h4 className="text-lg font-semibold text-foreground mb-4">
           📈 5-Level Engagement Heatmap
         </h4>
 
         {/* 🎨 5-Level Legend */}
-        <div className="mb-4 p-4 bg-[var(--panel-background)] rounded-lg">
-          <div className="text-sm font-medium text-[var(--foreground)] mb-2">
+        <div className="mb-4 p-4 bg-panel-background rounded-lg">
+          <div className="text-sm font-medium text-foreground mb-2">
             5-Level System:
           </div>
           <div className="flex items-center space-x-4 text-xs">
             <div className="flex items-center space-x-1">
-              <div className="w-3 h-3 bg-[var(--hover)] rounded-sm"></div>
+              <div className="w-3 h-3 bg-hover rounded-sm"></div>
               <span>Level 0: No activity</span>
             </div>
             <div className="flex items-center space-x-1">

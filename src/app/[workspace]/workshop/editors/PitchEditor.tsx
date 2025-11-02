@@ -117,47 +117,47 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => handleContentChange('cover', { ...data, title: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Subtitle
               </label>
               <input
                 type="text"
                 value={data.subtitle || ''}
                 onChange={(e) => handleContentChange('cover', { ...data, subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Date
               </label>
               <input
                 type="text"
                 value={data.date || ''}
                 onChange={(e) => handleContentChange('cover', { ...data, date: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Presenter
               </label>
               <input
                 type="text"
                 value={data.presenter || ''}
                 onChange={(e) => handleContentChange('cover', { ...data, presenter: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -168,36 +168,36 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => handleContentChange('purpose', { ...data, title: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Content
               </label>
               <textarea
                 value={data.content || ''}
                 onChange={(e) => handleContentChange('purpose', { ...data, content: e.target.value })}
                 rows={3}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Description
               </label>
               <textarea
                 value={data.description || ''}
                 onChange={(e) => handleContentChange('purpose', { ...data, description: e.target.value })}
                 rows={4}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -208,23 +208,23 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => handleContentChange('mission', { ...data, title: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Targets
               </label>
               <div className="space-y-3">
                 {(data.targets || []).map((target: any, index: number) => (
-                  <div key={index} className="p-3 border border-[var(--border)] rounded-md space-y-2">
+                  <div key={index} className="p-3 border border-border rounded-md space-y-2">
                     <input
                       type="text"
                       placeholder="Label"
@@ -234,7 +234,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                         newTargets[index] = { ...target, label: e.target.value };
                         handleContentChange('mission', { ...data, targets: newTargets });
                       }}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
                       type="text"
@@ -245,10 +245,10 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                         newTargets[index] = { ...target, value: e.target.value };
                         handleContentChange('mission', { ...data, targets: newTargets });
                       }}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <div className="flex items-center gap-2">
-                      <label className="text-sm text-[var(--muted)]">Progress:</label>
+                      <label className="text-sm text-muted">Progress:</label>
                       <input
                         type="number"
                         min="0"
@@ -259,9 +259,9 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                           newTargets[index] = { ...target, progress: parseInt(e.target.value) || 0 };
                           handleContentChange('mission', { ...data, targets: newTargets });
                         }}
-                        className="w-20 px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-20 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      <span className="text-sm text-[var(--muted)]">%</span>
+                      <span className="text-sm text-muted">%</span>
                       {(data.targets || []).length > 1 && (
                         <button
                           onClick={() => {
@@ -281,7 +281,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                     const newTargets = [...(data.targets || []), { label: '', value: '', progress: 0 }];
                     handleContentChange('mission', { ...data, targets: newTargets });
                   }}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-[var(--foreground)] hover:bg-[var(--hover)] flex items-center justify-center gap-2"
+                  className="w-full px-3 py-2 border border-border rounded-md text-foreground hover:bg-hover flex items-center justify-center gap-2"
                 >
                   <PlusIcon className="w-4 h-4" />
                   Add Target
@@ -296,23 +296,23 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => handleContentChange('values', { ...data, title: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Values
               </label>
               <div className="space-y-3">
                 {(data.values || []).map((value: any, index: number) => (
-                  <div key={index} className="p-3 border border-[var(--border)] rounded-md space-y-2">
+                  <div key={index} className="p-3 border border-border rounded-md space-y-2">
                     <input
                       type="text"
                       placeholder="Name"
@@ -322,7 +322,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                         newValues[index] = { ...value, name: e.target.value };
                         handleContentChange('values', { ...data, values: newValues });
                       }}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <textarea
                       placeholder="Description"
@@ -333,7 +333,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                         handleContentChange('values', { ...data, values: newValues });
                       }}
                       rows={2}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {(data.values || []).length > 1 && (
                       <button
@@ -353,7 +353,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                     const newValues = [...(data.values || []), { name: '', description: '' }];
                     handleContentChange('values', { ...data, values: newValues });
                   }}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-[var(--foreground)] hover:bg-[var(--hover)] flex items-center justify-center gap-2"
+                  className="w-full px-3 py-2 border border-border rounded-md text-foreground hover:bg-hover flex items-center justify-center gap-2"
                 >
                   <PlusIcon className="w-4 h-4" />
                   Add Value
@@ -368,23 +368,23 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => handleContentChange('progress', { ...data, title: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Metrics
               </label>
               <div className="space-y-3">
                 {(data.metrics || []).map((metric: any, index: number) => (
-                  <div key={index} className="p-3 border border-[var(--border)] rounded-md space-y-2">
+                  <div key={index} className="p-3 border border-border rounded-md space-y-2">
                     <input
                       type="text"
                       placeholder="Label"
@@ -394,7 +394,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                         newMetrics[index] = { ...metric, label: e.target.value };
                         handleContentChange('progress', { ...data, metrics: newMetrics });
                       }}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <div className="flex gap-2">
                       <input
@@ -406,7 +406,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                           newMetrics[index] = { ...metric, value: e.target.value };
                           handleContentChange('progress', { ...data, metrics: newMetrics });
                         }}
-                        className="flex-1 px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <input
                         type="text"
@@ -417,7 +417,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                           newMetrics[index] = { ...metric, change: e.target.value };
                           handleContentChange('progress', { ...data, metrics: newMetrics });
                         }}
-                        className="flex-1 px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     {(data.metrics || []).length > 1 && (
@@ -438,7 +438,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                     const newMetrics = [...(data.metrics || []), { label: '', value: '', change: '' }];
                     handleContentChange('progress', { ...data, metrics: newMetrics });
                   }}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-[var(--foreground)] hover:bg-[var(--hover)] flex items-center justify-center gap-2"
+                  className="w-full px-3 py-2 border border-border rounded-md text-foreground hover:bg-hover flex items-center justify-center gap-2"
                 >
                   <PlusIcon className="w-4 h-4" />
                   Add Metric
@@ -453,18 +453,18 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => handleContentChange('stories', { ...data, title: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Stories
               </label>
               <div className="space-y-2">
@@ -478,7 +478,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                         handleContentChange('stories', { ...data, stories: newStories });
                       }}
                       rows={2}
-                      className="flex-1 px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {(data.stories || []).length > 1 && (
                       <button
@@ -498,7 +498,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                     const newStories = [...(data.stories || []), ''];
                     handleContentChange('stories', { ...data, stories: newStories });
                   }}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-[var(--foreground)] hover:bg-[var(--hover)] flex items-center justify-center gap-2"
+                  className="w-full px-3 py-2 border border-border rounded-md text-foreground hover:bg-hover flex items-center justify-center gap-2"
                 >
                   <PlusIcon className="w-4 h-4" />
                   Add Story
@@ -513,18 +513,18 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => handleContentChange('understanding', { ...data, title: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Insights
               </label>
               <div className="space-y-2">
@@ -538,7 +538,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                         handleContentChange('understanding', { ...data, insights: newInsights });
                       }}
                       rows={2}
-                      className="flex-1 px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {(data.insights || []).length > 1 && (
                       <button
@@ -558,7 +558,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                     const newInsights = [...(data.insights || []), ''];
                     handleContentChange('understanding', { ...data, insights: newInsights });
                   }}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-[var(--foreground)] hover:bg-[var(--hover)] flex items-center justify-center gap-2"
+                  className="w-full px-3 py-2 border border-border rounded-md text-foreground hover:bg-hover flex items-center justify-center gap-2"
                 >
                   <PlusIcon className="w-4 h-4" />
                   Add Insight
@@ -573,23 +573,23 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => handleContentChange('frameworks', { ...data, title: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Departments
               </label>
               <div className="space-y-3">
                 {(data.departments || []).map((dept: any, index: number) => (
-                  <div key={index} className="p-3 border border-[var(--border)] rounded-md space-y-2">
+                  <div key={index} className="p-3 border border-border rounded-md space-y-2">
                     <input
                       type="text"
                       placeholder="Department Name"
@@ -599,7 +599,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                         newDepts[index] = { ...dept, name: e.target.value };
                         handleContentChange('frameworks', { ...data, departments: newDepts });
                       }}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <textarea
                       placeholder="Framework"
@@ -610,7 +610,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                         handleContentChange('frameworks', { ...data, departments: newDepts });
                       }}
                       rows={2}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {(data.departments || []).length > 1 && (
                       <button
@@ -630,7 +630,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                     const newDepts = [...(data.departments || []), { name: '', framework: '' }];
                     handleContentChange('frameworks', { ...data, departments: newDepts });
                   }}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-[var(--foreground)] hover:bg-[var(--hover)] flex items-center justify-center gap-2"
+                  className="w-full px-3 py-2 border border-border rounded-md text-foreground hover:bg-hover flex items-center justify-center gap-2"
                 >
                   <PlusIcon className="w-4 h-4" />
                   Add Department
@@ -645,24 +645,24 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => handleContentChange('direction', { ...data, title: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Priorities
               </label>
               <div className="space-y-2">
                 {(data.priorities || []).map((priority: string, index: number) => (
                   <div key={index} className="flex gap-2">
-                    <span className="flex-shrink-0 w-6 h-6 bg-[var(--muted)] text-white rounded-full flex items-center justify-center text-xs">
+                    <span className="flex-shrink-0 w-6 h-6 bg-muted text-white rounded-full flex items-center justify-center text-xs">
                       {index + 1}
                     </span>
                     <textarea
@@ -673,7 +673,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                         handleContentChange('direction', { ...data, priorities: newPriorities });
                       }}
                       rows={2}
-                      className="flex-1 px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {(data.priorities || []).length > 1 && (
                       <button
@@ -693,7 +693,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
                     const newPriorities = [...(data.priorities || []), ''];
                     handleContentChange('direction', { ...data, priorities: newPriorities });
                   }}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md text-[var(--foreground)] hover:bg-[var(--hover)] flex items-center justify-center gap-2"
+                  className="w-full px-3 py-2 border border-border rounded-md text-foreground hover:bg-hover flex items-center justify-center gap-2"
                 >
                   <PlusIcon className="w-4 h-4" />
                   Add Priority
@@ -708,47 +708,47 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={data.title || ''}
                 onChange={(e) => handleContentChange('outro', { ...data, title: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Quote
               </label>
               <textarea
                 value={data.quote || ''}
                 onChange={(e) => handleContentChange('outro', { ...data, quote: e.target.value })}
                 rows={2}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Author
               </label>
               <input
                 type="text"
                 value={data.author || ''}
                 onChange={(e) => handleContentChange('outro', { ...data, author: e.target.value })}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Message
               </label>
               <textarea
                 value={data.message || ''}
                 onChange={(e) => handleContentChange('outro', { ...data, message: e.target.value })}
                 rows={4}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -775,10 +775,10 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border)] bg-[var(--background)]">
-        <div className="text-sm text-[var(--muted)]">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-background">
+        <div className="text-sm text-muted">
           {hasUnsavedChanges.current && <span className="text-orange-500">Unsaved changes</span>}
         </div>
         <button
@@ -792,7 +792,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
       {/* Split Pane Layout */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left: Preview */}
-        <div className="w-1/2 border-r border-[var(--border)] overflow-y-auto bg-gray-50 p-6">
+        <div className="w-1/2 border-r border-border overflow-y-auto bg-gray-50 p-6">
           <div className="space-y-12">
             {slideConfig.map(({ key, title }) => {
               const slideData = content.slides[key as keyof typeof content.slides];
@@ -809,7 +809,7 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
         </div>
 
         {/* Right: Editor */}
-        <div className="w-1/2 overflow-y-auto bg-[var(--background)]">
+        <div className="w-1/2 overflow-y-auto bg-background">
           <div className="p-6 space-y-6">
             {slideConfig.map(({ key, title }) => {
               const slideData = content.slides[key as keyof typeof content.slides];
@@ -818,16 +818,16 @@ export function PitchEditor({ document, onSave, onAutoSave }: PitchEditorProps) 
               const isExpanded = expandedSlides.has(key);
 
               return (
-                <div key={key} className="border border-[var(--border)] rounded-lg overflow-hidden">
+                <div key={key} className="border border-border rounded-lg overflow-hidden">
                   <button
                     onClick={() => toggleSlideExpansion(key)}
-                    className="w-full px-4 py-3 flex items-center justify-between bg-[var(--hover)] hover:bg-[var(--hover)] transition-colors"
+                    className="w-full px-4 py-3 flex items-center justify-between bg-hover hover:bg-hover transition-colors"
                   >
-                    <span className="font-medium text-[var(--foreground)]">{title}</span>
+                    <span className="font-medium text-foreground">{title}</span>
                     {isExpanded ? (
-                      <ChevronUpIcon className="w-5 h-5 text-[var(--muted)]" />
+                      <ChevronUpIcon className="w-5 h-5 text-muted" />
                     ) : (
-                      <ChevronDownIcon className="w-5 h-5 text-[var(--muted)]" />
+                      <ChevronDownIcon className="w-5 h-5 text-muted" />
                     )}
                   </button>
                   {isExpanded && (

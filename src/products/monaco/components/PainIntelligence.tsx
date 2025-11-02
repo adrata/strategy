@@ -75,7 +75,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
       case "strategic":
         return <LightBulbIcon className="w-5 h-5 text-blue-500" />;
       default:
-        return <ExclamationTriangleIcon className="w-5 h-5 text-[var(--muted)]" />;
+        return <ExclamationTriangleIcon className="w-5 h-5 text-muted" />;
     }
   };
 
@@ -92,7 +92,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
       case "strategic":
         return "border-l-blue-500 bg-blue-50 dark:bg-blue-900/20";
       default:
-        return "border-l-gray-500 bg-[var(--panel-background)] dark:bg-[var(--foreground)]/20";
+        return "border-l-gray-500 bg-panel-background dark:bg-foreground/20";
     }
   };
 
@@ -107,7 +107,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
       case "low":
         return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
       default:
-        return "bg-[var(--hover)] text-gray-800 dark:bg-[var(--foreground)]/30 dark:text-gray-300";
+        return "bg-hover text-gray-800 dark:bg-foreground/30 dark:text-gray-300";
     }
   };
 
@@ -127,15 +127,15 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
   );
 
   return (
-    <div className={`bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 ${className}`}>
+    <div className={`bg-background border border-border rounded-xl p-6 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-semibold text-[var(--foreground)] flex items-center gap-2">
+          <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
             <ExclamationTriangleIcon className="w-6 h-6 text-red-500" />
             Pain Intelligence
           </h3>
-          <p className="text-sm text-[var(--muted)] mt-1">
+          <p className="text-sm text-muted mt-1">
             Directional intelligence based on {painData.externalDataPercentage}% external sources, {painData.discoveryDataPercentage}% seller discovery
           </p>
         </div>
@@ -143,7 +143,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
           <div className="text-2xl font-bold text-red-600">
             {totalQuantifiedPain > 0 ? formatCurrency(totalQuantifiedPain) : "TBD"}
           </div>
-          <div className="text-xs text-[var(--muted)]">Quantified Impact</div>
+          <div className="text-xs text-muted">Quantified Impact</div>
         </div>
       </div>
 
@@ -154,7 +154,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
             {painData.externalDataPercentage}%
           </div>
           <div className="text-xs text-blue-600 dark:text-blue-400">External Sources</div>
-          <div className="text-xs text-[var(--muted)] mt-1">
+          <div className="text-xs text-muted mt-1">
             Market research, financial reports, job postings, tech stack analysis
           </div>
         </div>
@@ -163,7 +163,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
             {painData.discoveryDataPercentage}%
           </div>
           <div className="text-xs text-green-600 dark:text-green-400">Seller Discovery</div>
-          <div className="text-xs text-[var(--muted)] mt-1">
+          <div className="text-xs text-muted mt-1">
             Call notes, meeting insights, stakeholder feedback
           </div>
         </div>
@@ -172,7 +172,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
             {painData.confidenceScore}%
           </div>
           <div className="text-xs text-purple-600 dark:text-purple-400">Confidence</div>
-          <div className="text-xs text-[var(--muted)] mt-1">
+          <div className="text-xs text-muted mt-1">
             Data validation & cross-verification
           </div>
         </div>
@@ -180,7 +180,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
 
       {/* Tab Navigation */}
       {showDetailedView && (
-        <div className="flex gap-1 mb-4 border-b border-[var(--border)]">
+        <div className="flex gap-1 mb-4 border-b border-border">
           {[
             { id: "overview", label: "Overview" },
             { id: "detailed", label: "Detailed Analysis" },
@@ -191,7 +191,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? "border-[#9B59B6] text-[#9B59B6]"
-                  : "border-transparent text-[var(--muted)] hover:text-[var(--foreground)]"
+                  : "border-transparent text-muted hover:text-foreground"
               }`}
               onClick={() => setActiveTab(tab.id as any)}
             >
@@ -216,19 +216,19 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         {getPainCategoryIcon(pain.category)}
-                        <h4 className="font-semibold text-[var(--foreground)]">
+                        <h4 className="font-semibold text-foreground">
                           {pain.title}
                         </h4>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getUrgencyColor(pain.urgency)}`}>
                           {pain.urgency}
                         </span>
                       </div>
-                      <p className="text-sm text-[var(--foreground)] mb-2">
+                      <p className="text-sm text-foreground mb-2">
                         {pain.description}
                       </p>
                       
                       {/* Quick Impact & Timeline */}
-                      <div className="flex items-center gap-4 text-xs text-[var(--muted)]">
+                      <div className="flex items-center gap-4 text-xs text-muted">
                         {pain['quantifiedImpact'] && (
                           <span className="flex items-center gap-1">
                             <CurrencyDollarIcon className="w-3 h-3" />
@@ -249,7 +249,7 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
                     {showDetailedView && (
                       <button
                         onClick={() => setExpandedPain(expandedPain === pain.id ? null : pain.id)}
-                        className="ml-4 p-1 hover:bg-[var(--hover-bg)] rounded"
+                        className="ml-4 p-1 hover:bg-hover rounded"
                       >
                         {expandedPain === pain.id ? (
                           <ChevronUpIcon className="w-4 h-4" />
@@ -262,15 +262,15 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
 
                   {/* Expanded Details */}
                   {expandedPain === pain['id'] && (
-                    <div className="mt-4 pt-4 border-t border-[var(--border)]">
+                    <div className="mt-4 pt-4 border-t border-border">
                       {/* Evidence */}
                       {pain.evidence.length > 0 && (
                         <div className="mb-3">
-                          <h5 className="font-medium text-[var(--foreground)] mb-2">Evidence:</h5>
+                          <h5 className="font-medium text-foreground mb-2">Evidence:</h5>
                           <ul className="space-y-1">
                             {pain.evidence.map((evidence, index) => (
-                              <li key={index} className="text-sm text-[var(--muted)] flex items-start gap-2">
-                                <span className="w-1 h-1 bg-[var(--muted)] rounded-full mt-2 flex-shrink-0"></span>
+                              <li key={index} className="text-sm text-muted flex items-start gap-2">
+                                <span className="w-1 h-1 bg-muted rounded-full mt-2 flex-shrink-0"></span>
                                 {evidence}
                               </li>
                             ))}
@@ -281,10 +281,10 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
                       {/* Consequences */}
                       {pain.consequences.length > 0 && (
                         <div className="mb-3">
-                          <h5 className="font-medium text-[var(--foreground)] mb-2">Consequences of Inaction:</h5>
+                          <h5 className="font-medium text-foreground mb-2">Consequences of Inaction:</h5>
                           <ul className="space-y-1">
                             {pain.consequences.map((consequence, index) => (
-                              <li key={index} className="text-sm text-[var(--muted)] flex items-start gap-2">
+                              <li key={index} className="text-sm text-muted flex items-start gap-2">
                                 <span className="w-1 h-1 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
                                 {consequence}
                               </li>
@@ -295,20 +295,20 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
 
                       {/* Data Sources for this pain */}
                       <div>
-                        <h5 className="font-medium text-[var(--foreground)] mb-2">Data Sources:</h5>
+                        <h5 className="font-medium text-foreground mb-2">Data Sources:</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {pain.sources.map((source, index) => (
-                            <div key={index} className="bg-[var(--background)] border border-[var(--border)] rounded p-2">
+                            <div key={index} className="bg-background border border-border rounded p-2">
                               <div className="flex items-center gap-2 mb-1">
                                 <span className={`w-2 h-2 rounded-full ${
                                   source['type'] === "external" ? "bg-blue-500" : "bg-green-500"
                                 }`}></span>
                                 <span className="text-xs font-medium">{source.source}</span>
-                                <span className="text-xs text-[var(--muted)]">
+                                <span className="text-xs text-muted">
                                   {source.confidence}% confidence
                                 </span>
                               </div>
-                              <p className="text-xs text-[var(--muted)]">{source.data}</p>
+                              <p className="text-xs text-muted">{source.data}</p>
                             </div>
                           ))}
                         </div>
@@ -325,8 +325,8 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Pain Categories Breakdown */}
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                <h4 className="font-semibold text-[var(--foreground)] mb-3">Pain Categories</h4>
+              <div className="bg-background border border-border rounded-lg p-4">
+                <h4 className="font-semibold text-foreground mb-3">Pain Categories</h4>
                 <div className="space-y-2">
                   {[
                     { category: "financial", count: painData.criticalPainPoints.filter(p => p['category'] === "financial").length },
@@ -347,8 +347,8 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
               </div>
 
               {/* Urgency Distribution */}
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                <h4 className="font-semibold text-[var(--foreground)] mb-3">Urgency Distribution</h4>
+              <div className="bg-background border border-border rounded-lg p-4">
+                <h4 className="font-semibold text-foreground mb-3">Urgency Distribution</h4>
                 <div className="space-y-2">
                   {[
                     { urgency: "critical", count: painData.criticalPainPoints.filter(p => p['urgency'] === "critical").length },
@@ -368,9 +368,9 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
             </div>
 
             {/* Analysis Timeline */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-              <h4 className="font-semibold text-[var(--foreground)] mb-3">Analysis Timeline</h4>
-              <div className="text-sm text-[var(--muted)]">
+            <div className="bg-background border border-border rounded-lg p-4">
+              <h4 className="font-semibold text-foreground mb-3">Analysis Timeline</h4>
+              <div className="text-sm text-muted">
                 <p>Last analyzed: {painData.lastAnalyzed}</p>
                 <p>Total pain points identified: {painData.totalPainPoints}</p>
                 <p>Critical pain points: {painData.criticalPainPoints.length}</p>
@@ -390,15 +390,15 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
                 {painData.criticalPainPoints
                   .flatMap(pain => pain.sources.filter(s => s['type'] === "external"))
                   .map((source, index) => (
-                    <div key={index} className="bg-[var(--background)] border border-blue-200 dark:border-blue-700 rounded p-3">
+                    <div key={index} className="bg-background border border-blue-200 dark:border-blue-700 rounded p-3">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-sm">{source.source}</span>
                         <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded">
                           {source.confidence}%
                         </span>
                       </div>
-                      <p className="text-xs text-[var(--muted)]">{source.data}</p>
-                      <p className="text-xs text-[var(--muted)] mt-1">Updated: {source.lastUpdated}</p>
+                      <p className="text-xs text-muted">{source.data}</p>
+                      <p className="text-xs text-muted mt-1">Updated: {source.lastUpdated}</p>
                     </div>
                   ))}
               </div>
@@ -413,15 +413,15 @@ export const PainIntelligence: React.FC<PainIntelligenceProps> = ({
                 {painData.criticalPainPoints
                   .flatMap(pain => pain.sources.filter(s => s['type'] === "discovery"))
                   .map((source, index) => (
-                    <div key={index} className="bg-[var(--background)] border border-green-200 dark:border-green-700 rounded p-3">
+                    <div key={index} className="bg-background border border-green-200 dark:border-green-700 rounded p-3">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-sm">{source.source}</span>
                         <span className="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded">
                           {source.confidence}%
                         </span>
                       </div>
-                      <p className="text-xs text-[var(--muted)]">{source.data}</p>
-                      <p className="text-xs text-[var(--muted)] mt-1">Updated: {source.lastUpdated}</p>
+                      <p className="text-xs text-muted">{source.data}</p>
+                      <p className="text-xs text-muted mt-1">Updated: {source.lastUpdated}</p>
                     </div>
                   ))}
               </div>

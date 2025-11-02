@@ -1,12 +1,12 @@
 export default function PipelineValidationChecklistReport() {
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-[var(--background)]">
+    <div className="max-w-6xl mx-auto p-6 bg-background">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">
+        <h1 className="text-3xl font-bold text-foreground mb-2">
           TOP Engineering Plus - Pipeline Validation Checklist
         </h1>
-        <p className="text-[var(--muted)]">End-to-End System Validation with Real API Data</p>
-        <div className="mt-2 text-sm text-[var(--muted)]">
+        <p className="text-muted">End-to-End System Validation with Real API Data</p>
+        <div className="mt-2 text-sm text-muted">
           Generated: {new Date().toLocaleDateString()} | Workspace: 01K5D01YCQJ9TJ7CT4DZDE79T1
         </div>
       </div>
@@ -29,7 +29,7 @@ export default function PipelineValidationChecklistReport() {
       {/* Pipeline Steps Checklist */}
       <div className="space-y-6">
         {/* 1. Database Connection & Data Validation */}
-        <div className="bg-[var(--background)] border rounded-lg p-6">
+        <div className="bg-background border rounded-lg p-6">
           <div className="flex items-start">
             <div className="flex-shrink-0 mt-1">
               <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -39,10 +39,10 @@ export default function PipelineValidationChecklistReport() {
               </div>
             </div>
             <div className="ml-4 flex-1">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">1. Database Connection & TOP Data</h3>
-              <p className="text-[var(--muted)] mb-3">Verify database connectivity and TOP data availability</p>
+              <h3 className="text-lg font-semibold text-foreground">1. Database Connection & TOP Data</h3>
+              <p className="text-muted mb-3">Verify database connectivity and TOP data availability</p>
               
-              <div className="bg-[var(--panel-background)] rounded p-3">
+              <div className="bg-panel-background rounded p-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center">
                     <span className="text-green-600 mr-2">✅</span>
@@ -63,7 +63,7 @@ export default function PipelineValidationChecklistReport() {
                 </div>
                 
                 <div className="mt-3 pt-3 border-t">
-                  <p className="text-xs text-[var(--muted)] mb-2">Key Data Validation:</p>
+                  <p className="text-xs text-muted mb-2">Key Data Validation:</p>
                   <ul className="text-xs text-gray-700 space-y-1">
                     <li>• Chris Mantle (PSE): ✅ Found with phone (425) 248-5632</li>
                     <li>• Greg Frankamp (Idaho Power): ✅ Found with engagement data</li>
@@ -77,7 +77,7 @@ export default function PipelineValidationChecklistReport() {
         </div>
 
         {/* 2. CoreSignal API Integration */}
-        <div className="bg-[var(--background)] border rounded-lg p-6">
+        <div className="bg-background border rounded-lg p-6">
           <div className="flex items-start">
             <div className="flex-shrink-0 mt-1">
               <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -87,10 +87,10 @@ export default function PipelineValidationChecklistReport() {
               </div>
             </div>
             <div className="ml-4 flex-1">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">2. CoreSignal API Integration</h3>
-              <p className="text-[var(--muted)] mb-3">Test person and company search with real API calls</p>
+              <h3 className="text-lg font-semibold text-foreground">2. CoreSignal API Integration</h3>
+              <p className="text-muted mb-3">Test person and company search with real API calls</p>
               
-              <div className="bg-[var(--panel-background)] rounded p-3">
+              <div className="bg-panel-background rounded p-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center">
                     <span className="text-green-600 mr-2">✅</span>
@@ -111,7 +111,7 @@ export default function PipelineValidationChecklistReport() {
                 </div>
                 
                 <div className="mt-3 pt-3 border-t">
-                  <p className="text-xs text-[var(--muted)] mb-2">Real API Test Results:</p>
+                  <p className="text-xs text-muted mb-2">Real API Test Results:</p>
                   <ul className="text-xs text-gray-700 space-y-1">
                     <li>• Person Search (Idaho Power Engineers): ✅ 12 results returned</li>
                     <li>• Company Search (Puget Sound Energy): ✅ Profile data retrieved</li>
@@ -125,7 +125,7 @@ export default function PipelineValidationChecklistReport() {
         </div>
 
         {/* 3. Perplexity AI Integration */}
-        <div className="bg-[var(--background)] border rounded-lg p-6">
+        <div className="bg-background border rounded-lg p-6">
           <div className="flex items-start">
             <div className="flex-shrink-0 mt-1">
               <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -135,10 +135,10 @@ export default function PipelineValidationChecklistReport() {
               </div>
             </div>
             <div className="ml-4 flex-1">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">3. Perplexity AI Integration</h3>
-              <p className="text-[var(--muted)] mb-3">Test employment verification with real AI calls</p>
+              <h3 className="text-lg font-semibold text-foreground">3. Perplexity AI Integration</h3>
+              <p className="text-muted mb-3">Test employment verification with real AI calls</p>
               
-              <div className="bg-[var(--panel-background)] rounded p-3">
+              <div className="bg-panel-background rounded p-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center">
                     <span className="text-green-600 mr-2">✅</span>
@@ -159,7 +159,7 @@ export default function PipelineValidationChecklistReport() {
                 </div>
                 
                 <div className="mt-3 pt-3 border-t">
-                  <p className="text-xs text-[var(--muted)] mb-2">Employment Verification Tests:</p>
+                  <p className="text-xs text-muted mb-2">Employment Verification Tests:</p>
                   <ul className="text-xs text-gray-700 space-y-1">
                     <li>• Chris Mantle @ PSE: ✅ Verified current (September 2025)</li>
                     <li>• Greg Frankamp @ Idaho Power: ✅ Verified current</li>
@@ -173,7 +173,7 @@ export default function PipelineValidationChecklistReport() {
         </div>
 
         {/* 4. Unified Enrichment API */}
-        <div className="bg-[var(--background)] border rounded-lg p-6">
+        <div className="bg-background border rounded-lg p-6">
           <div className="flex items-start">
             <div className="flex-shrink-0 mt-1">
               <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -183,10 +183,10 @@ export default function PipelineValidationChecklistReport() {
               </div>
             </div>
             <div className="ml-4 flex-1">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">4. Unified Enrichment API</h3>
-              <p className="text-[var(--muted)] mb-3">Test main API endpoint with authentication</p>
+              <h3 className="text-lg font-semibold text-foreground">4. Unified Enrichment API</h3>
+              <p className="text-muted mb-3">Test main API endpoint with authentication</p>
               
-              <div className="bg-[var(--panel-background)] rounded p-3">
+              <div className="bg-panel-background rounded p-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center">
                     <span className="text-green-600 mr-2">✅</span>
@@ -207,7 +207,7 @@ export default function PipelineValidationChecklistReport() {
                 </div>
                 
                 <div className="mt-3 pt-3 border-t">
-                  <p className="text-xs text-[var(--muted)] mb-2">API Endpoint Tests:</p>
+                  <p className="text-xs text-muted mb-2">API Endpoint Tests:</p>
                   <ul className="text-xs text-gray-700 space-y-1">
                     <li>• /api/enrichment/unified: ✅ Responding correctly</li>
                     <li>• Buyer Group Research: ✅ Generating results</li>
@@ -221,7 +221,7 @@ export default function PipelineValidationChecklistReport() {
         </div>
 
         {/* 5. Buyer Group Pipeline */}
-        <div className="bg-[var(--background)] border rounded-lg p-6">
+        <div className="bg-background border rounded-lg p-6">
           <div className="flex items-start">
             <div className="flex-shrink-0 mt-1">
               <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -231,10 +231,10 @@ export default function PipelineValidationChecklistReport() {
               </div>
             </div>
             <div className="ml-4 flex-1">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">5. Buyer Group Generation Pipeline</h3>
-              <p className="text-[var(--muted)] mb-3">Test buyer group identification and mapping</p>
+              <h3 className="text-lg font-semibold text-foreground">5. Buyer Group Generation Pipeline</h3>
+              <p className="text-muted mb-3">Test buyer group identification and mapping</p>
               
-              <div className="bg-[var(--panel-background)] rounded p-3">
+              <div className="bg-panel-background rounded p-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center">
                     <span className="text-green-600 mr-2">✅</span>
@@ -255,7 +255,7 @@ export default function PipelineValidationChecklistReport() {
                 </div>
                 
                 <div className="mt-3 pt-3 border-t">
-                  <p className="text-xs text-[var(--muted)] mb-2">Buyer Group Test Results:</p>
+                  <p className="text-xs text-muted mb-2">Buyer Group Test Results:</p>
                   <ul className="text-xs text-gray-700 space-y-1">
                     <li>• Idaho Power Buyer Group: ✅ 3 contacts mapped, 4 roles identified</li>
                     <li>• Tri-State Generation: ✅ 8 contacts, complete decision chain</li>
@@ -269,7 +269,7 @@ export default function PipelineValidationChecklistReport() {
         </div>
 
         {/* 6. Employment Verification Pipeline */}
-        <div className="bg-[var(--background)] border rounded-lg p-6">
+        <div className="bg-background border rounded-lg p-6">
           <div className="flex items-start">
             <div className="flex-shrink-0 mt-1">
               <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -279,10 +279,10 @@ export default function PipelineValidationChecklistReport() {
               </div>
             </div>
             <div className="ml-4 flex-1">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">6. Employment Verification Pipeline</h3>
-              <p className="text-[var(--muted)] mb-3">Test current employment status validation</p>
+              <h3 className="text-lg font-semibold text-foreground">6. Employment Verification Pipeline</h3>
+              <p className="text-muted mb-3">Test current employment status validation</p>
               
-              <div className="bg-[var(--panel-background)] rounded p-3">
+              <div className="bg-panel-background rounded p-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center">
                     <span className="text-green-600 mr-2">✅</span>
@@ -303,7 +303,7 @@ export default function PipelineValidationChecklistReport() {
                 </div>
                 
                 <div className="mt-3 pt-3 border-t">
-                  <p className="text-xs text-[var(--muted)] mb-2">Employment Verification Results:</p>
+                  <p className="text-xs text-muted mb-2">Employment Verification Results:</p>
                   <ul className="text-xs text-gray-700 space-y-1">
                     <li>• Verification Success Rate: ✅ 94% accuracy</li>
                     <li>• Current Employment Detection: ✅ Real-time validation</li>
@@ -317,7 +317,7 @@ export default function PipelineValidationChecklistReport() {
         </div>
 
         {/* 7. Technology Search Engine */}
-        <div className="bg-[var(--background)] border rounded-lg p-6">
+        <div className="bg-background border rounded-lg p-6">
           <div className="flex items-start">
             <div className="flex-shrink-0 mt-1">
               <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -327,10 +327,10 @@ export default function PipelineValidationChecklistReport() {
               </div>
             </div>
             <div className="ml-4 flex-1">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">7. Technology Role Search</h3>
-              <p className="text-[var(--muted)] mb-3">Test technical skill matching and candidate discovery</p>
+              <h3 className="text-lg font-semibold text-foreground">7. Technology Role Search</h3>
+              <p className="text-muted mb-3">Test technical skill matching and candidate discovery</p>
               
-              <div className="bg-[var(--panel-background)] rounded p-3">
+              <div className="bg-panel-background rounded p-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center">
                     <span className="text-green-600 mr-2">✅</span>
@@ -351,7 +351,7 @@ export default function PipelineValidationChecklistReport() {
                 </div>
                 
                 <div className="mt-3 pt-3 border-t">
-                  <p className="text-xs text-[var(--muted)] mb-2">Technology Search Results:</p>
+                  <p className="text-xs text-muted mb-2">Technology Search Results:</p>
                   <ul className="text-xs text-gray-700 space-y-1">
                     <li>• SCADA Engineer Search: ✅ 3 high-quality matches (91% avg score)</li>
                     <li>• DNP3/IEC 61850 Skills: ✅ Properly filtered and ranked</li>
@@ -365,7 +365,7 @@ export default function PipelineValidationChecklistReport() {
         </div>
 
         {/* 8. Data Quality & Performance */}
-        <div className="bg-[var(--background)] border rounded-lg p-6">
+        <div className="bg-background border rounded-lg p-6">
           <div className="flex items-start">
             <div className="flex-shrink-0 mt-1">
               <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -375,10 +375,10 @@ export default function PipelineValidationChecklistReport() {
               </div>
             </div>
             <div className="ml-4 flex-1">
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">8. Data Quality & Performance</h3>
-              <p className="text-[var(--muted)] mb-3">Validate data freshness, accuracy, and system performance</p>
+              <h3 className="text-lg font-semibold text-foreground">8. Data Quality & Performance</h3>
+              <p className="text-muted mb-3">Validate data freshness, accuracy, and system performance</p>
               
-              <div className="bg-[var(--panel-background)] rounded p-3">
+              <div className="bg-panel-background rounded p-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center">
                     <span className="text-green-600 mr-2">✅</span>
@@ -399,7 +399,7 @@ export default function PipelineValidationChecklistReport() {
                 </div>
                 
                 <div className="mt-3 pt-3 border-t">
-                  <p className="text-xs text-[var(--muted)] mb-2">Performance Metrics:</p>
+                  <p className="text-xs text-muted mb-2">Performance Metrics:</p>
                   <ul className="text-xs text-gray-700 space-y-1">
                     <li>• Average API Response: ✅ 2.8 seconds</li>
                     <li>• Database Query Time: ✅ &lt;500ms</li>
@@ -414,25 +414,25 @@ export default function PipelineValidationChecklistReport() {
       </div>
 
       {/* Summary Dashboard */}
-      <div className="mt-8 bg-[var(--panel-background)] rounded-lg p-6">
-        <h2 className="text-xl font-bold text-[var(--foreground)] mb-4">Pipeline Validation Summary</h2>
+      <div className="mt-8 bg-panel-background rounded-lg p-6">
+        <h2 className="text-xl font-bold text-foreground mb-4">Pipeline Validation Summary</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-[var(--background)] p-4 rounded border text-center">
+          <div className="bg-background p-4 rounded border text-center">
             <div className="text-3xl font-bold text-green-600">8/8</div>
-            <div className="text-sm text-[var(--muted)]">Pipeline Steps Passed</div>
+            <div className="text-sm text-muted">Pipeline Steps Passed</div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded border text-center">
+          <div className="bg-background p-4 rounded border text-center">
             <div className="text-3xl font-bold text-blue-600">100%</div>
-            <div className="text-sm text-[var(--muted)]">Success Rate</div>
+            <div className="text-sm text-muted">Success Rate</div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded border text-center">
+          <div className="bg-background p-4 rounded border text-center">
             <div className="text-3xl font-bold text-purple-600">5</div>
-            <div className="text-sm text-[var(--muted)]">API Integrations</div>
+            <div className="text-sm text-muted">API Integrations</div>
           </div>
-          <div className="bg-[var(--background)] p-4 rounded border text-center">
+          <div className="bg-background p-4 rounded border text-center">
             <div className="text-3xl font-bold text-orange-600">2.8s</div>
-            <div className="text-sm text-[var(--muted)]">Avg Response Time</div>
+            <div className="text-sm text-muted">Avg Response Time</div>
           </div>
         </div>
 
@@ -446,8 +446,8 @@ export default function PipelineValidationChecklistReport() {
         </div>
 
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-[var(--background)] border rounded p-3">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">✅ Validated Components</h4>
+          <div className="bg-background border rounded p-3">
+            <h4 className="font-medium text-foreground mb-2">✅ Validated Components</h4>
             <ul className="text-sm text-gray-700 space-y-1">
               <li>• Database connectivity & data integrity</li>
               <li>• CoreSignal API for contact discovery</li>
@@ -460,8 +460,8 @@ export default function PipelineValidationChecklistReport() {
             </ul>
           </div>
           
-          <div className="bg-[var(--background)] border rounded p-3">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">📊 Real Data Validation</h4>
+          <div className="bg-background border rounded p-3">
+            <h4 className="font-medium text-foreground mb-2">📊 Real Data Validation</h4>
             <ul className="text-sm text-gray-700 space-y-1">
               <li>• 451 utility companies in database</li>
               <li>• 1,342 verified contacts</li>

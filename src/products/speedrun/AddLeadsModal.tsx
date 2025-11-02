@@ -38,7 +38,7 @@ export function AddLeadsModal({
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-[10000]">
-      <div className="bg-[var(--background)] rounded-lg p-6 w-96 max-w-[90vw] border border-[var(--border)] max-h-[80vh] overflow-y-auto">
+      <div className="bg-background rounded-lg p-6 w-96 max-w-[90vw] border border-border max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -47,26 +47,26 @@ export function AddLeadsModal({
               </svg>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-foreground">
                 Add More Leads
               </h3>
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 Add new leads to your speedrun
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-hover transition-colors"
           >
-            <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
+            <XMarkIcon className="w-4.5 h-4.5 text-muted" />
           </button>
         </div>
 
         <div className="space-y-6">
           {/* Lead Count Selection */}
           <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-3">
+            <label className="block text-sm font-medium text-foreground mb-3">
               How many leads would you like to add?
             </label>
             <div className="grid grid-cols-2 gap-3 mb-4">
@@ -77,18 +77,18 @@ export function AddLeadsModal({
                   className={`p-3 rounded-lg border-2 transition-colors ${
                     leadCount === count
                       ? "border-[#2563EB] bg-[#2563EB]/5 text-[#2563EB]"
-                      : "border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--hover-bg)]"
+                      : "border-border text-foreground hover:bg-hover"
                   }`}
                 >
                   <div className="text-2xl font-bold">{count}</div>
-                  <div className="text-xs text-[var(--muted)]">leads</div>
+                  <div className="text-xs text-muted">leads</div>
                 </button>
               ))}
             </div>
 
             {/* Custom Amount */}
             <div className="flex items-center gap-2">
-              <label className="text-sm text-[var(--muted)]">Custom:</label>
+              <label className="text-sm text-muted">Custom:</label>
               <input
                 type="number"
                 min="1"
@@ -99,18 +99,18 @@ export function AddLeadsModal({
                     Math.max(1, Math.min(100, parseInt(e.target.value) || 1)),
                   )
                 }
-                className="flex-1 px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
           {/* Lead Source Info */}
-          <div className="bg-[var(--hover-bg)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2 flex items-center gap-2">
+          <div className="bg-hover rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
               <PlusIcon className="w-4 h-4" />
               What you&apos;ll get:
             </h4>
-            <ul className="text-sm text-[var(--muted)] space-y-1">
+            <ul className="text-sm text-muted space-y-1">
               <li>• SmartRank-scored leads from production database</li>
               <li>• Real contact information (email, phone, LinkedIn)</li>
               <li>• Company intelligence and buying signals</li>
@@ -139,7 +139,7 @@ export function AddLeadsModal({
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm disabled:opacity-50"
+            className="flex-1 px-4 py-3 text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors font-medium text-sm disabled:opacity-50"
           >
             Cancel
           </button>

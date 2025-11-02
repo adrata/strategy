@@ -282,10 +282,10 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
           <TrophyIcon className="w-8 h-8 text-yellow-600" />
-          <h2 className="text-2xl font-bold text-[var(--foreground)]">Competitive Intelligence Engine</h2>
+          <h2 className="text-2xl font-bold text-foreground">Competitive Intelligence Engine</h2>
           <TrophyIcon className="w-8 h-8 text-yellow-600" />
         </div>
-        <p className="text-[var(--muted)] max-w-4xl mx-auto">
+        <p className="text-muted max-w-4xl mx-auto">
           Advanced prioritization capabilities that outperform 6Sense and MadKudu through proactive pain identification, 
           quantified business impact, and integrated MEDDPICC methodology.
         </p>
@@ -327,12 +327,12 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
       </div>
 
       {/* Pain Quantification Engine */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <CurrencyDollarIcon className="w-7 h-7 text-green-600" />
           <div>
-            <h3 className="text-xl font-semibold text-[var(--foreground)]">Pain Quantification Engine</h3>
-            <p className="text-sm text-[var(--muted)]">Quantify prospect pain in dollars - not just qualitative scores like 6Sense</p>
+            <h3 className="text-xl font-semibold text-foreground">Pain Quantification Engine</h3>
+            <p className="text-sm text-muted">Quantify prospect pain in dollars - not just qualitative scores like 6Sense</p>
           </div>
           <div className="ml-auto">
             <button
@@ -342,7 +342,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               }`}
             >
               <div
-                className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
+                className={`w-4 h-4 bg-background rounded-full absolute top-1 transition-transform ${
                   painEngine.enabled ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
@@ -360,7 +360,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               </h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {Object.entries(painEngine.painIdentificationSources).map(([source, enabled]) => (
-                  <label key={source} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[var(--panel-background)]">
+                  <label key={source} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-panel-background">
                     <input
                       type="checkbox"
                       checked={enabled}
@@ -406,7 +406,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                       }`}
                     >
                       <div
-                        className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
+                        className={`w-4 h-4 bg-background rounded-full absolute top-1 transition-transform ${
                           enabled ? 'translate-x-6' : 'translate-x-1'
                         }`}
                       />
@@ -435,7 +435,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                         criticalPain: parseInt(e.target.value)
                       }
                     }))}
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg"
+                    className="w-full px-3 py-2 border border-border rounded-lg"
                   />
                 </div>
                 <div>
@@ -450,7 +450,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                         moderatePain: parseInt(e.target.value)
                       }
                     }))}
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg"
+                    className="w-full px-3 py-2 border border-border rounded-lg"
                   />
                 </div>
                 <div>
@@ -465,7 +465,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                         minViablePain: parseInt(e.target.value)
                       }
                     }))}
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg"
+                    className="w-full px-3 py-2 border border-border rounded-lg"
                   />
                 </div>
               </div>
@@ -475,12 +475,12 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
       </div>
 
       {/* MEDDPICC Framework Integration */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <DocumentTextIcon className="w-7 h-7 text-purple-600" />
           <div>
-            <h3 className="text-xl font-semibold text-[var(--foreground)]">MEDDPICC Framework Integration</h3>
-            <p className="text-sm text-[var(--muted)]">Native sales methodology integration - not available in 6Sense or MadKudu</p>
+            <h3 className="text-xl font-semibold text-foreground">MEDDPICC Framework Integration</h3>
+            <p className="text-sm text-muted">Native sales methodology integration - not available in 6Sense or MadKudu</p>
           </div>
           <div className="ml-auto">
             <button
@@ -490,7 +490,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               }`}
             >
               <div
-                className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
+                className={`w-4 h-4 bg-background rounded-full absolute top-1 transition-transform ${
                   meddpiccConfig.enabled ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
@@ -504,10 +504,10 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               {Object.entries(meddpiccConfig.dataPoints).map(([key, dataPoint]) => (
                 <div key={key} className="border rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-medium text-[var(--foreground)]">
+                    <h4 className="font-medium text-foreground">
                       {key.toUpperCase().replace(/([A-Z])/g, ' $1').trim()}
                     </h4>
-                    <span className="text-sm text-[var(--muted)]">Weight: {dataPoint.weight}%</span>
+                    <span className="text-sm text-muted">Weight: {dataPoint.weight}%</span>
                   </div>
                   
                   <div className="space-y-2">
@@ -543,7 +543,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                     </label>
                     
                     <div>
-                      <label className="block text-xs text-[var(--muted)] mb-1">Priority Weight (%)</label>
+                      <label className="block text-xs text-muted mb-1">Priority Weight (%)</label>
                       <input
                         type="range"
                         min="0"
@@ -559,7 +559,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                             }
                           }
                         }))}
-                        className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-2 bg-loading-bg rounded-lg appearance-none cursor-pointer"
                       />
                     </div>
                   </div>
@@ -576,7 +576,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                     ...prev,
                     scoringMethod: e.target.value as any
                   }))}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg"
+                  className="w-full px-3 py-2 border border-border rounded-lg"
                 >
                   <option value="weighted">Weighted Scoring</option>
                   <option value="boolean">Boolean (Pass/Fail)</option>
@@ -594,7 +594,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                     ...prev,
                     minimumViableScore: parseInt(e.target.value)
                   }))}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg"
+                  className="w-full px-3 py-2 border border-border rounded-lg"
                 />
               </div>
               <div className="flex items-end">
@@ -602,7 +602,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                   <div className="text-2xl font-bold text-purple-600">
                     {Object.values(meddpiccConfig.dataPoints).reduce((sum, dp) => sum + dp.weight, 0)}%
                   </div>
-                  <div className="text-xs text-[var(--muted)]">Total Weight</div>
+                  <div className="text-xs text-muted">Total Weight</div>
                 </div>
               </div>
             </div>
@@ -611,12 +611,12 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
       </div>
 
       {/* Proactive Pain Detection */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <FireIcon className="w-7 h-7 text-red-600" />
           <div>
-            <h3 className="text-xl font-semibold text-[var(--foreground)]">Proactive Pain Detection</h3>
-            <p className="text-sm text-[var(--muted)]">Identify pain 90 days before competitors - beyond reactive scoring</p>
+            <h3 className="text-xl font-semibold text-foreground">Proactive Pain Detection</h3>
+            <p className="text-sm text-muted">Identify pain 90 days before competitors - beyond reactive scoring</p>
           </div>
           <div className="ml-auto">
             <button
@@ -626,7 +626,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               }`}
             >
               <div
-                className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
+                className={`w-4 h-4 bg-background rounded-full absolute top-1 transition-transform ${
                   proactivePain.enabled ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
@@ -638,7 +638,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
           <div className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {Object.entries(proactivePain.detectionMethods).map(([method, enabled]) => (
-                <label key={method} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[var(--panel-background)]">
+                <label key={method} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-panel-background">
                   <input
                     type="checkbox"
                     checked={enabled}
@@ -683,7 +683,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                             }
                           }
                         }))}
-                        className="w-full px-3 py-2 border border-[var(--border)] rounded-lg"
+                        className="w-full px-3 py-2 border border-border rounded-lg"
                       />
                     </div>
                   ))}
@@ -695,12 +695,12 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
       </div>
 
       {/* Seller-Account Matching */}
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <UserGroupIcon className="w-7 h-7 text-blue-600" />
           <div>
-            <h3 className="text-xl font-semibold text-[var(--foreground)]">AI-Powered Seller-Account Matching</h3>
-            <p className="text-sm text-[var(--muted)]">Match sellers to optimal accounts for 40% higher win rates</p>
+            <h3 className="text-xl font-semibold text-foreground">AI-Powered Seller-Account Matching</h3>
+            <p className="text-sm text-muted">Match sellers to optimal accounts for 40% higher win rates</p>
           </div>
           <div className="ml-auto">
             <button
@@ -710,7 +710,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
               }`}
             >
               <div
-                className={`w-4 h-4 bg-[var(--background)] rounded-full absolute top-1 transition-transform ${
+                className={`w-4 h-4 bg-background rounded-full absolute top-1 transition-transform ${
                   sellerMatching.enabled ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
@@ -732,7 +732,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                       <label className="text-sm font-medium">
                         {criteria.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                       </label>
-                      <span className="text-sm text-[var(--muted)]">{weight}%</span>
+                      <span className="text-sm text-muted">{weight}%</span>
                     </div>
                     <input
                       type="range"
@@ -746,7 +746,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                           [criteria]: parseInt(e.target.value)
                         }
                       }))}
-                      className="w-full h-2 bg-[var(--loading-bg)] rounded-lg appearance-none cursor-pointer"
+                      className="w-full h-2 bg-loading-bg rounded-lg appearance-none cursor-pointer"
                     />
                   </div>
                 ))}
@@ -762,7 +762,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
                     ...prev,
                     algorithmType: e.target.value as any
                   }))}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg"
+                  className="w-full px-3 py-2 border border-border rounded-lg"
                 >
                   <option value="ml_powered">ML-Powered (Recommended)</option>
                   <option value="rule_based">Rule-Based</option>
@@ -788,7 +788,7 @@ export const RTPEngineCompetitiveIntelligence: React.FC<CompetitiveIntelligenceP
 
       {/* Competitive Summary */}
       <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-6">
-        <h3 className="text-xl font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+        <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
           <TrophyIcon className="w-6 h-6 text-yellow-600" />
           Competitive Advantage Summary
         </h3>

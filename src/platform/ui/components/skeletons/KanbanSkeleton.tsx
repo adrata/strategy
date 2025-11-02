@@ -4,17 +4,17 @@ import React from 'react';
 
 export function KanbanSkeleton() {
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header Skeleton */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 px-6 py-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
-            <div className="h-6 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-32 animate-pulse"></div>
+            <div className="h-6 bg-loading-bg rounded w-20 animate-pulse"></div>
           </div>
           <div className="flex items-center space-x-3">
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
-            <div className="h-8 bg-[var(--loading-bg)] rounded w-28 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-24 animate-pulse"></div>
+            <div className="h-8 bg-loading-bg rounded w-28 animate-pulse"></div>
           </div>
         </div>
       </div>
@@ -22,10 +22,10 @@ export function KanbanSkeleton() {
       {/* Filters Skeleton */}
       <div className="flex-shrink-0 px-6 py-3 border-b border-gray-100">
         <div className="flex items-center space-x-4">
-          <div className="h-8 bg-[var(--loading-bg)] rounded w-64 animate-pulse"></div>
-          <div className="h-8 bg-[var(--loading-bg)] rounded w-32 animate-pulse"></div>
-          <div className="h-8 bg-[var(--loading-bg)] rounded w-28 animate-pulse"></div>
-          <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse"></div>
+          <div className="h-8 bg-loading-bg rounded w-64 animate-pulse"></div>
+          <div className="h-8 bg-loading-bg rounded w-32 animate-pulse"></div>
+          <div className="h-8 bg-loading-bg rounded w-28 animate-pulse"></div>
+          <div className="h-8 bg-loading-bg rounded w-24 animate-pulse"></div>
         </div>
       </div>
 
@@ -38,38 +38,38 @@ export function KanbanSkeleton() {
               {/* Stage Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
-                  <div className="h-5 bg-[var(--loading-bg)] rounded w-4 animate-pulse"></div>
-                  <div className="h-5 bg-[var(--loading-bg)] rounded w-20 animate-pulse"></div>
+                  <div className="h-5 bg-loading-bg rounded w-4 animate-pulse"></div>
+                  <div className="h-5 bg-loading-bg rounded w-20 animate-pulse"></div>
                 </div>
-                <div className="h-5 bg-[var(--loading-bg)] rounded w-6 animate-pulse"></div>
+                <div className="h-5 bg-loading-bg rounded w-6 animate-pulse"></div>
               </div>
 
               {/* Stage Cards */}
               <div className="space-y-3">
                 {[...Array(stageIndex === 0 ? 4 : stageIndex === 1 ? 3 : stageIndex === 2 ? 2 : stageIndex === 3 ? 1 : 0)].map((_, cardIndex) => (
-                  <div key={cardIndex} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 shadow-sm">
+                  <div key={cardIndex} className="bg-background border border-border rounded-lg p-4 shadow-sm">
                     {/* Card Header */}
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
-                        <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 mb-2 animate-pulse"></div>
-                        <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse"></div>
+                        <div className="h-4 bg-loading-bg rounded w-3/4 mb-2 animate-pulse"></div>
+                        <div className="h-3 bg-loading-bg rounded w-1/2 animate-pulse"></div>
                       </div>
-                      <div className="h-6 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
+                      <div className="h-6 bg-loading-bg rounded w-16 animate-pulse"></div>
                     </div>
 
                     {/* Card Content */}
                     <div className="space-y-2 mb-3">
-                      <div className="h-3 bg-[var(--loading-bg)] rounded w-full animate-pulse"></div>
-                      <div className="h-3 bg-[var(--loading-bg)] rounded w-2/3 animate-pulse"></div>
+                      <div className="h-3 bg-loading-bg rounded w-full animate-pulse"></div>
+                      <div className="h-3 bg-loading-bg rounded w-2/3 animate-pulse"></div>
                     </div>
 
                     {/* Card Footer */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <div className="h-6 w-6 bg-[var(--loading-bg)] rounded-full animate-pulse"></div>
-                        <div className="h-3 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
+                        <div className="h-6 w-6 bg-loading-bg rounded-full animate-pulse"></div>
+                        <div className="h-3 bg-loading-bg rounded w-16 animate-pulse"></div>
                       </div>
-                      <div className="h-3 bg-[var(--loading-bg)] rounded w-12 animate-pulse"></div>
+                      <div className="h-3 bg-loading-bg rounded w-12 animate-pulse"></div>
                     </div>
                   </div>
                 ))}

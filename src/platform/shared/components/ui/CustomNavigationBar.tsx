@@ -105,7 +105,7 @@ function LayoutButton({
       className={`p-1.5 rounded-md transition-colors ${
         active
           ? "bg-blue-100 text-blue-600"
-          : "text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--foreground)]"
+          : "text-muted hover:bg-hover hover:text-foreground"
       }`}
       onClick={onClick}
       title={label}
@@ -187,7 +187,7 @@ export function CustomNavigationBar({
   return (
     <div
       className={`
-        flex items-center justify-between h-12 bg-[var(--background)] border-b border-[var(--border)] 
+        flex items-center justify-between h-12 bg-background border-b border-border 
         select-none relative z-50 ${className}
       `}
       style={
@@ -226,7 +226,7 @@ export function CustomNavigationBar({
         {/* App Title */}
         <div className="flex items-center space-x-3 px-2 min-w-0" style={{ marginTop: '1px' }}>
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-[var(--background)] rounded-md flex items-center justify-center overflow-hidden border border-[var(--border)]">
+            <div className="w-8 h-8 bg-background rounded-md flex items-center justify-center overflow-hidden border border-border">
               <img 
                 src="/favicon.ico" 
                 alt="Sales Acceleration Logo" 
@@ -235,14 +235,14 @@ export function CustomNavigationBar({
             </div>
             <div className="flex flex-col">
               <div className="flex items-center space-x-2">
-                <span className="font-semibold text-[var(--foreground)] truncate leading-tight text-xl">
+                <span className="font-semibold text-foreground truncate leading-tight text-xl">
                   {title}
                 </span>
-                <span className="bg-[var(--panel-background)]0 text-white text-xs font-medium px-2 py-0.5 rounded-full">
+                <span className="bg-panel-background0 text-white text-xs font-medium px-2 py-0.5 rounded-full">
                   Pro
                 </span>
               </div>
-              <span className="text-sm text-[var(--muted)] leading-tight">
+              <span className="text-sm text-muted leading-tight">
                 Sales Acceleration
               </span>
             </div>
@@ -288,7 +288,7 @@ export function CustomNavigationBar({
             <input
               type="text"
               placeholder="Search across all apps..."
-              className="block w-full px-3 py-1.5 border border-[var(--border)] rounded-md leading-5 bg-[var(--background)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              className="block w-full px-3 py-1.5 border border-border rounded-md leading-5 bg-background placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setIsSearchFocused(true)}
@@ -302,7 +302,7 @@ export function CustomNavigationBar({
           {/* Notifications */}
           <div className="relative">
             <button
-              className="p-1.5 rounded-md text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--foreground)] transition-colors"
+              className="p-1.5 rounded-md text-muted hover:bg-hover hover:text-foreground transition-colors"
               onClick={() => {
                 console.log(
                   "🔔 Notification button clicked, current count:",
@@ -334,7 +334,7 @@ export function CustomNavigationBar({
 
           {/* Command Palette */}
           <button
-            className="p-1.5 rounded-md text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--foreground)] transition-colors"
+            className="p-1.5 rounded-md text-muted hover:bg-hover hover:text-foreground transition-colors"
             title="Command Palette (⌘K)"
           >
             <CommandLineIcon className="w-4 h-4" />
@@ -342,7 +342,7 @@ export function CustomNavigationBar({
 
           {/* Settings */}
           <button
-            className="p-1.5 rounded-md text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--foreground)] transition-colors"
+            className="p-1.5 rounded-md text-muted hover:bg-hover hover:text-foreground transition-colors"
             title="Settings"
           >
             <CogIcon className="w-4 h-4" />
@@ -350,7 +350,7 @@ export function CustomNavigationBar({
 
           {/* Help */}
           <button
-            className="p-1.5 rounded-md text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--foreground)] transition-colors"
+            className="p-1.5 rounded-md text-muted hover:bg-hover hover:text-foreground transition-colors"
             title="Help & Support"
           >
             <QuestionMarkCircleIcon className="w-4 h-4" />
@@ -358,7 +358,7 @@ export function CustomNavigationBar({
 
           {/* User Profile */}
           <button
-            className="p-1.5 rounded-md text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--foreground)] transition-colors"
+            className="p-1.5 rounded-md text-muted hover:bg-hover hover:text-foreground transition-colors"
             title="User Profile"
           >
             <UserCircleIcon className="w-4 h-4" />
@@ -368,51 +368,51 @@ export function CustomNavigationBar({
 
       {/* Notifications Dropdown */}
       {showNotifications && (
-        <div className="absolute top-full right-4 mt-1 w-80 bg-[var(--background)] rounded-lg shadow-lg border border-[var(--border)] z-50">
+        <div className="absolute top-full right-4 mt-1 w-80 bg-background rounded-lg shadow-lg border border-border z-50">
           <div className="p-4 border-b border-gray-100">
-            <h3 className="font-semibold text-[var(--foreground)]">Notifications</h3>
+            <h3 className="font-semibold text-foreground">Notifications</h3>
           </div>
           <div className="max-h-96 overflow-y-auto">
             {/* Sample notifications */}
-            <div className="p-4 border-b border-gray-50 hover:bg-[var(--panel-background)]">
+            <div className="p-4 border-b border-gray-50 hover:bg-panel-background">
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[var(--foreground)]">
+                  <p className="text-sm font-medium text-foreground">
                     New strategic analysis available
                   </p>
-                  <p className="text-xs text-[var(--muted)] mt-1">
+                  <p className="text-xs text-muted mt-1">
                     Monaco pipeline completed for TechCorp
                   </p>
-                  <p className="text-xs text-[var(--muted)] mt-1">2 minutes ago</p>
+                  <p className="text-xs text-muted mt-1">2 minutes ago</p>
                 </div>
               </div>
             </div>
-            <div className="p-4 border-b border-gray-50 hover:bg-[var(--panel-background)]">
+            <div className="p-4 border-b border-gray-50 hover:bg-panel-background">
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[var(--foreground)]">
+                  <p className="text-sm font-medium text-foreground">
                     Flight risk alert resolved
                   </p>
-                  <p className="text-xs text-[var(--muted)] mt-1">
+                  <p className="text-xs text-muted mt-1">
                     Sarah Johnson risk level decreased to STABLE
                   </p>
-                  <p className="text-xs text-[var(--muted)] mt-1">15 minutes ago</p>
+                  <p className="text-xs text-muted mt-1">15 minutes ago</p>
                 </div>
               </div>
             </div>
-            <div className="p-4 hover:bg-[var(--panel-background)]">
+            <div className="p-4 hover:bg-panel-background">
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[var(--foreground)]">
+                  <p className="text-sm font-medium text-foreground">
                     Speedrun campaign needs review
                   </p>
-                  <p className="text-xs text-[var(--muted)] mt-1">
+                  <p className="text-xs text-muted mt-1">
                     Q1 Enterprise outreach ready for approval
                   </p>
-                  <p className="text-xs text-[var(--muted)] mt-1">1 hour ago</p>
+                  <p className="text-xs text-muted mt-1">1 hour ago</p>
                 </div>
               </div>
             </div>

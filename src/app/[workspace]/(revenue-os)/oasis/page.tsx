@@ -88,33 +88,33 @@ function OasisRedirectContent() {
 
   // Show skeleton UI while redirecting
   return (
-    <div className="h-full bg-[var(--background)] flex">
+    <div className="h-full bg-background flex">
       {/* Left Panel Skeleton */}
-      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
-        <div className="p-4 border-b border-[var(--border)]">
-          <div className="h-6 bg-[var(--loading-bg)] rounded animate-pulse mb-2" />
-          <div className="h-4 bg-[var(--loading-bg)] rounded w-2/3 animate-pulse" />
+      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
+        <div className="p-4 border-b border-border">
+          <div className="h-6 bg-loading-bg rounded animate-pulse mb-2" />
+          <div className="h-4 bg-loading-bg rounded w-2/3 animate-pulse" />
         </div>
         
         <div className="p-4">
-          <div className="h-4 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse mb-3" />
+          <div className="h-4 bg-loading-bg rounded w-1/2 animate-pulse mb-3" />
           <div className="space-y-2">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-[var(--loading-bg)] rounded animate-pulse" />
-                <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse" />
+                <div className="w-4 h-4 bg-loading-bg rounded animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
               </div>
             ))}
           </div>
         </div>
         
-        <div className="p-4 border-t border-[var(--border)]">
-          <div className="h-4 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse mb-3" />
+        <div className="p-4 border-t border-border">
+          <div className="h-4 bg-loading-bg rounded w-1/2 animate-pulse mb-3" />
           <div className="space-y-2">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-[var(--loading-bg)] rounded-full animate-pulse" />
-                <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse" />
+                <div className="w-6 h-6 bg-loading-bg rounded-full animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded flex-1 animate-pulse" />
               </div>
             ))}
           </div>
@@ -124,15 +124,15 @@ function OasisRedirectContent() {
       {/* Main Content Skeleton */}
       <div className="flex-1 flex flex-col">
         {/* Header Skeleton */}
-        <div className="p-4 border-b border-[var(--border)] bg-[var(--background)]">
+        <div className="p-4 border-b border-border bg-background">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-4 h-4 bg-[var(--loading-bg)] rounded animate-pulse" />
-              <div className="h-6 bg-[var(--loading-bg)] rounded w-32 animate-pulse" />
+              <div className="w-4 h-4 bg-loading-bg rounded animate-pulse" />
+              <div className="h-6 bg-loading-bg rounded w-32 animate-pulse" />
             </div>
             <div className="flex gap-2">
-              <div className="h-8 bg-[var(--loading-bg)] rounded w-20 animate-pulse" />
-              <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse" />
+              <div className="h-8 bg-loading-bg rounded w-20 animate-pulse" />
+              <div className="h-8 bg-loading-bg rounded w-24 animate-pulse" />
             </div>
           </div>
         </div>
@@ -141,19 +141,19 @@ function OasisRedirectContent() {
         <div className="flex-1 overflow-y-auto p-3 space-y-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex gap-3 px-2">
-              <div className="w-10 h-10 bg-[var(--loading-bg)] rounded animate-pulse" />
+              <div className="w-10 h-10 bg-loading-bg rounded animate-pulse" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-1/4 animate-pulse" />
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse" />
-                <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded w-1/4 animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded w-3/4 animate-pulse" />
+                <div className="h-3 bg-loading-bg rounded w-1/2 animate-pulse" />
               </div>
             </div>
           ))}
         </div>
         
         {/* Input Skeleton */}
-        <div className="p-4 border-t border-[var(--border)]">
-          <div className="h-12 bg-[var(--loading-bg)] rounded-lg animate-pulse" />
+        <div className="p-4 border-t border-border">
+          <div className="h-12 bg-loading-bg rounded-lg animate-pulse" />
         </div>
       </div>
     </div>

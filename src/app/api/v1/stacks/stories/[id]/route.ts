@@ -205,7 +205,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { status, product, section } = body;
+    const { title, description, priority, status, product, section } = body;
 
     // Verify story belongs to workspace
     const existingStory = await prisma.stacksStory.findFirst({
@@ -222,13 +222,30 @@ export async function PATCH(
     }
 
     // Update story
-    // Build update data
+    // Build update data - handle all editable fields
     const updateData: any = {
-      ...(status && { status }),
-      ...(product !== undefined && { product }),
-      ...(section !== undefined && { section }),
       updatedAt: new Date()
     };
+
+    // Add fields to update if they are provided
+    if (title !== undefined) {
+      updateData.title = title;
+    }
+    if (description !== undefined) {
+      updateData.description = description;
+    }
+    if (priority !== undefined) {
+      updateData.priority = priority;
+    }
+    if (status !== undefined) {
+      updateData.status = status;
+    }
+    if (product !== undefined) {
+      updateData.product = product;
+    }
+    if (section !== undefined) {
+      updateData.section = section;
+    }
 
     const story = await prisma.stacksStory.update({
       where: { id: storyId },

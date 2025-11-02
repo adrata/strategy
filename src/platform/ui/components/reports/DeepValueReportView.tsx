@@ -103,10 +103,10 @@ function Placeholder({ hasContent }: { hasContent: boolean }) {
 
 function ToolbarPlugin({ onShare }: { onShare: () => void }) {
   return (
-    <div className="flex items-center justify-between p-3 border-b border-[var(--border)] bg-[var(--background)]">
+    <div className="flex items-center justify-between p-3 border-b border-border bg-background">
       <div className="flex items-center gap-2">
-        <DocumentTextIcon className="w-5 h-5 text-[var(--muted)]" />
-        <span className="text-sm text-[var(--muted)]">Deep Value Report</span>
+        <DocumentTextIcon className="w-5 h-5 text-muted" />
+        <span className="text-sm text-muted">Deep Value Report</span>
       </div>
       <button
         onClick={onShare}
@@ -293,27 +293,27 @@ export function DeepValueReportView({
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-[var(--border)] bg-[var(--background)]">
+      <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-background">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="p-1.5 text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-1.5 text-muted hover:text-foreground hover:bg-hover rounded-lg transition-colors"
           >
             <ArrowLeftIcon className="w-4 h-4" />
           </button>
-          <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
-            <span className="text-[var(--foreground)] font-medium">{getBreadcrumb()}</span>
+          <div className="flex items-center gap-2 text-sm text-muted">
+            <span className="text-foreground font-medium">{getBreadcrumb()}</span>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
           {isSaving && (
-            <span className="text-xs text-[var(--muted)]">Saving...</span>
+            <span className="text-xs text-muted">Saving...</span>
           )}
           {isGenerating && (
-            <span className="text-xs text-[var(--muted)]">Generating...</span>
+            <span className="text-xs text-muted">Generating...</span>
           )}
           <button
             onClick={handleShare}
@@ -327,14 +327,14 @@ export function DeepValueReportView({
 
       {/* AI Edit Section */}
       {!isGenerating && content && (
-        <div className="px-6 py-3 border-b border-[var(--border)] bg-[var(--panel-background)]">
+        <div className="px-6 py-3 border-b border-border bg-panel-background">
           <div className="flex items-center gap-3">
             <input
               type="text"
               value={editInstruction}
               onChange={(e) => setEditInstruction(e.target.value)}
               placeholder="Ask Adrata to edit the report (e.g., 'Make this more concise', 'Add a section on...')"
-              className="flex-1 px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               disabled={isEditingWithAI}
             />
             <button
@@ -354,7 +354,7 @@ export function DeepValueReportView({
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-[var(--muted)]">Generating your deep value report...</p>
+              <p className="text-muted">Generating your deep value report...</p>
             </div>
           </div>
         ) : (

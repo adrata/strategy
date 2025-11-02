@@ -191,7 +191,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            className={`flex-1 px-2 py-1 border border-[var(--border)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] bg-[var(--background)] text-[var(--foreground)] ${className}`}
+            className={`flex-1 px-2 py-1 border border-border rounded focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] bg-background text-foreground ${className}`}
             placeholder={placeholder}
             rows={3}
             autoFocus
@@ -200,7 +200,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
           <select
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
-            className={`flex-1 px-2 py-1 border border-[var(--border)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] bg-[var(--background)] text-[var(--foreground)] ${className}`}
+            className={`flex-1 px-2 py-1 border border-border rounded focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] bg-background text-foreground ${className}`}
             autoFocus
           >
             {options.map((option) => (
@@ -215,7 +215,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            className={`flex-1 px-2 py-1 border border-[var(--border)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] bg-[var(--background)] text-[var(--foreground)] ${className}`}
+            className={`flex-1 px-2 py-1 border border-border rounded focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] bg-background text-foreground ${className}`}
             placeholder={placeholder}
             autoFocus
           />
@@ -223,14 +223,14 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
         <button
           onClick={handleEditSave}
           disabled={isLoading}
-          className="p-1 text-[var(--success)] hover:text-[var(--success-text)] disabled:opacity-50"
+          className="p-1 text-success hover:text-success-text disabled:opacity-50"
         >
           <CheckIcon className="w-4 h-4" />
         </button>
         <button
           onClick={handleEditCancel}
           disabled={isLoading}
-          className="p-1 text-[var(--error)] hover:text-[var(--error-text)] disabled:opacity-50"
+          className="p-1 text-error hover:text-error-text disabled:opacity-50"
         >
           <XMarkIcon className="w-4 h-4" />
         </button>
@@ -288,18 +288,18 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
       );
     }
     return (
-      <span className={`${className} ${!value || (typeof value === 'string' && (value.trim() === '' || value === '-')) ? 'text-[var(--muted)]' : ''}`}>
+      <span className={`${className} ${!value || (typeof value === 'string' && (value.trim() === '' || value === '-')) ? 'text-muted' : ''}`}>
         {getDisplayValue()}
       </span>
     );
   };
 
   return (
-    <div className="group flex flex-1 items-center gap-2 cursor-pointer p-1 rounded hover:bg-[var(--panel-background)] transition-colors min-w-0">
+    <div className="group flex flex-1 items-center gap-2 cursor-pointer p-1 rounded hover:bg-panel-background transition-colors min-w-0">
       {renderUrlContent()}
       <button
         onClick={handleEditStart}
-        className="opacity-0 group-hover:opacity-100 p-1 text-[var(--muted)] hover:text-[var(--accent)] transition-all duration-200 hover:bg-[var(--hover)] rounded"
+        className="opacity-0 group-hover:opacity-100 p-1 text-muted hover:text-primary transition-all duration-200 hover:bg-hover rounded"
         title="Click to edit"
       >
         <PencilIcon className="w-4 h-4" />
@@ -307,7 +307,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
       {isCopyableField() && value && typeof value === 'string' && value.trim() !== '' && value !== '-' && (
         <button
           onClick={handleCopy}
-          className="opacity-0 group-hover:opacity-100 p-1 text-[var(--muted)] hover:text-[var(--accent)] transition-all duration-200 hover:bg-[var(--hover)] rounded"
+          className="opacity-0 group-hover:opacity-100 p-1 text-muted hover:text-primary transition-all duration-200 hover:bg-hover rounded"
           title={copySuccess ? "Copied!" : "Copy to clipboard"}
         >
           {copySuccess ? (
@@ -322,7 +322,7 @@ export const InlineEditField: React.FC<InlineEditFieldProps> = ({
           href={value}
           target="_blank"
           rel="noopener noreferrer"
-          className="opacity-0 group-hover:opacity-100 p-1 text-[var(--muted)] hover:text-[var(--accent)] transition-all duration-200 hover:bg-[var(--hover)] rounded"
+          className="opacity-0 group-hover:opacity-100 p-1 text-muted hover:text-primary transition-all duration-200 hover:bg-hover rounded"
           title="Open in new tab"
           onClick={(e) => e.stopPropagation()}
         >
@@ -474,17 +474,17 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
         <div 
           data-date-modal
           tabIndex={-1}
-          className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-xl p-6 w-full max-w-md mx-4 focus:outline-none"
+          className="bg-background border border-border rounded-lg shadow-xl p-6 w-full max-w-md mx-4 focus:outline-none"
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-[var(--foreground)]">
+            <h3 className="text-lg font-semibold text-foreground">
               Edit {field.charAt(0).toUpperCase() + field.slice(1)}
             </h3>
             <button
               onClick={handleEditCancel}
               disabled={isLoading}
-              className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] disabled:opacity-50"
+              className="p-1 text-muted hover:text-foreground disabled:opacity-50"
               title="Close"
             >
               <XMarkIcon className="h-5 w-5" />
@@ -493,7 +493,7 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
 
           {/* Date picker */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               Select Date
             </label>
             <div className="relative">
@@ -505,7 +505,7 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
                 inModal={true}
               />
             </div>
-            <p className="text-xs text-[var(--muted)] mt-1">
+            <p className="text-xs text-muted mt-1">
               Type directly (e.g., "10242025" → "10/24/2025") or click the calendar icon
             </p>
           </div>
@@ -540,7 +540,7 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
             <button
               onClick={handleEditCancel}
               disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium text-[var(--muted)] bg-[var(--panel-background)] border border-[var(--border)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-muted bg-panel-background border border-border rounded-md hover:bg-hover disabled:opacity-50 transition-colors"
             >
               Cancel
             </button>
@@ -572,12 +572,12 @@ const InlineDateSelector: React.FC<InlineDateSelectorProps> = ({
 
   return (
     <div className="group flex items-center gap-2">
-      <span className={`${className} ${!getCurrentDate() ? 'text-[var(--muted)]' : ''}`}>
+      <span className={`${className} ${!getCurrentDate() ? 'text-muted' : ''}`}>
         {getCurrentDate() || '-'}
       </span>
       <button
         onClick={handleEditStart}
-        className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] opacity-0 group-hover:opacity-100 transition-opacity"
+        className="p-1 text-muted hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
         title="Edit"
       >
         <PencilIcon className="h-3 w-3" />

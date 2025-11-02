@@ -119,7 +119,7 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
       />
       
       {/* Modal */}
-      <div className="relative bg-[var(--background)] rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
+      <div className="relative bg-background rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -129,15 +129,15 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">Add Note</h3>
-              <p className="text-sm text-[var(--muted)]">Add a note to a contact</p>
+              <h3 className="text-lg font-semibold text-foreground">Add Note</h3>
+              <p className="text-sm text-muted">Add a note to a contact</p>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover)] transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-hover transition-colors"
           >
-            <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
+            <XMarkIcon className="w-4.5 h-4.5 text-muted" />
           </button>
         </div>
 
@@ -152,30 +152,30 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name, company, or email..."
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               autoFocus
             />
           </div>
 
           {/* Search Results */}
           {searchResults.length > 0 && (
-            <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
+            <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
               {searchResults.map((contact) => (
                 <button
                   key={contact.id}
                   onClick={() => handleContactSelect(contact)}
-                  className="w-full text-left px-4 py-2 hover:bg-[var(--panel-background)] border-b last:border-b-0"
+                  className="w-full text-left px-4 py-2 hover:bg-panel-background border-b last:border-b-0"
                 >
-                  <div className="font-medium text-[var(--foreground)]">{contact.name}</div>
-                  <div className="text-sm text-[var(--muted)]">{contact.title} at {contact.company}</div>
-                  <div className="text-xs text-[var(--muted)]">{contact.email}</div>
+                  <div className="font-medium text-foreground">{contact.name}</div>
+                  <div className="text-sm text-muted">{contact.title} at {contact.company}</div>
+                  <div className="text-xs text-muted">{contact.email}</div>
                 </button>
               ))}
             </div>
           )}
 
           {isLoading && (
-            <div className="text-center py-3 text-[var(--muted)]">
+            <div className="text-center py-3 text-muted">
               <div className="flex items-center justify-center gap-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[var(--primary)]"></div>
                 <span>Searching contacts...</span>
@@ -184,7 +184,7 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
           )}
 
           {searchQuery.length >= 2 && searchResults.length === 0 && !isLoading && (
-            <div className="text-center py-4 text-[var(--muted)]">
+            <div className="text-center py-4 text-muted">
               <p className="text-sm">No contacts found matching "{searchQuery}"</p>
               <p className="text-xs mt-1 opacity-75">Try a different search term</p>
             </div>
@@ -209,7 +209,7 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
             onChange={(e) => setNoteContent(e.target.value)}
             placeholder="Enter your note..."
             rows={4}
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             disabled={!selectedContact}
           />
         </div>
@@ -218,7 +218,7 @@ export function AddNoteModal({ isOpen, onClose, workspaceId, userId }: AddNoteMo
         <div className="flex gap-3">
           <button
             onClick={handleClose}
-            className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
+            className="flex-1 px-4 py-3 text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors font-medium text-sm"
           >
             Cancel
           </button>

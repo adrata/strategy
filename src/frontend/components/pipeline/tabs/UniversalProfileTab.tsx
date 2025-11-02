@@ -25,7 +25,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
   if (!record) {
     return (
       <div className="p-6">
-        <div className="text-center text-[var(--muted)]">No record data available</div>
+        <div className="text-center text-muted">No record data available</div>
       </div>
     );
   }
@@ -78,10 +78,10 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
     <div className="p-6 space-y-8">
       {/* Personal Information */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Personal Information</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Personal Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-4">Contact Details</h4>
+          <div className="bg-background p-6 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-4">Contact Details</h4>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -90,7 +90,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">Email</div>
+                  <div className="text-sm font-medium text-foreground">Email</div>
                   <InlineEditField
                     value={profileData.personalInfo.email}
                     field="email"
@@ -99,7 +99,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                     recordType={recordType}
                     onSuccess={handleSuccess}
                     placeholder="Enter email address"
-                    className="text-sm text-[var(--muted)]"
+                    className="text-sm text-muted"
                   />
                 </div>
               </div>
@@ -111,7 +111,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">Phone</div>
+                  <div className="text-sm font-medium text-foreground">Phone</div>
                   <InlineEditField
                     value={profileData.personalInfo.phone}
                     field="phone"
@@ -120,7 +120,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                     recordType={recordType}
                     onSuccess={handleSuccess}
                     placeholder="Enter phone number"
-                    className="text-sm text-[var(--muted)]"
+                    className="text-sm text-muted"
                   />
                 </div>
               </div>
@@ -132,7 +132,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">LinkedIn</div>
+                  <div className="text-sm font-medium text-foreground">LinkedIn</div>
                   <InlineEditField
                     value={profileData.personalInfo.linkedin}
                     field="linkedinUrl"
@@ -141,7 +141,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                     recordType={recordType}
                     onSuccess={handleSuccess}
                     placeholder="Enter LinkedIn URL"
-                    className="text-sm text-[var(--muted)]"
+                    className="text-sm text-muted"
                   />
                 </div>
               </div>
@@ -153,7 +153,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">LinkedIn Navigator</div>
+                  <div className="text-sm font-medium text-foreground">LinkedIn Navigator</div>
                   <InlineEditField
                     value={profileData.personalInfo.linkedinNavigatorUrl}
                     field="linkedinNavigatorUrl"
@@ -162,7 +162,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                     recordType={recordType}
                     onSuccess={handleSuccess}
                     placeholder="Enter LinkedIn Navigator URL"
-                    className="text-sm text-[var(--muted)]"
+                    className="text-sm text-muted"
                   />
                 </div>
               </div>
@@ -174,7 +174,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">Bio URL</div>
+                  <div className="text-sm font-medium text-foreground">Bio URL</div>
                   <InlineEditField
                     value={profileData.personalInfo.bio}
                     field="bio"
@@ -183,15 +183,15 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                     recordType={recordType}
                     onSuccess={handleSuccess}
                     placeholder="Enter bio URL"
-                    className="text-sm text-[var(--muted)]"
+                    className="text-sm text-muted"
                   />
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-4">Location & Timezone</h4>
+          <div className="bg-background p-6 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-4">Location & Timezone</h4>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -201,7 +201,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">Location</div>
+                  <div className="text-sm font-medium text-foreground">Location</div>
                   <InlineEditField
                     value={profileData.personalInfo.location}
                     field="location"
@@ -210,7 +210,7 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                     recordType={recordType}
                     onSuccess={handleSuccess}
                     placeholder="Enter location"
-                    className="text-sm text-[var(--muted)]"
+                    className="text-sm text-muted"
                   />
                 </div>
               </div>
@@ -222,8 +222,8 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">Timezone</div>
-                  <div className="text-sm text-[var(--muted)]">EST (UTC-5)</div>
+                  <div className="text-sm font-medium text-foreground">Timezone</div>
+                  <div className="text-sm text-muted">EST (UTC-5)</div>
                 </div>
               </div>
               
@@ -234,8 +234,8 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">Preferred Contact Time</div>
-                  <div className="text-sm text-[var(--muted)]">9:00 AM - 5:00 PM EST</div>
+                  <div className="text-sm font-medium text-foreground">Preferred Contact Time</div>
+                  <div className="text-sm text-muted">9:00 AM - 5:00 PM EST</div>
                 </div>
               </div>
             </div>
@@ -245,13 +245,13 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
       
       {/* Professional Information */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Professional Information</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Professional Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-4">Role & Responsibilities</h4>
+          <div className="bg-background p-6 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-4">Role & Responsibilities</h4>
             <div className="space-y-4">
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Job Title</div>
+                <div className="text-sm font-medium text-foreground mb-1">Job Title</div>
                 <InlineEditField
                   value={profileData.personalInfo.title}
                   field="title"
@@ -260,12 +260,12 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   placeholder="Enter job title"
-                  className="text-sm text-[var(--muted)]"
+                  className="text-sm text-muted"
                 />
               </div>
               
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Department</div>
+                <div className="text-sm font-medium text-foreground mb-1">Department</div>
                 <InlineEditField
                   value={profileData.professionalInfo.department}
                   field="department"
@@ -274,12 +274,12 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   placeholder="Enter department"
-                  className="text-sm text-[var(--muted)]"
+                  className="text-sm text-muted"
                 />
               </div>
               
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Seniority Level</div>
+                <div className="text-sm font-medium text-foreground mb-1">Seniority Level</div>
                 <InlineEditField
                   value={profileData.professionalInfo.seniority}
                   field="seniority"
@@ -288,12 +288,12 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   placeholder="Enter seniority level"
-                  className="text-sm text-[var(--muted)]"
+                  className="text-sm text-muted"
                 />
               </div>
               
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Company</div>
+                <div className="text-sm font-medium text-foreground mb-1">Company</div>
                 <InlineEditField
                   value={profileData.personalInfo.company}
                   field="company"
@@ -303,17 +303,17 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   placeholder="Enter company name"
-                  className="text-sm text-[var(--muted)]"
+                  className="text-sm text-muted"
                 />
               </div>
             </div>
           </div>
           
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-4">Communication Preferences</h4>
+          <div className="bg-background p-6 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-4">Communication Preferences</h4>
             <div className="space-y-4">
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Communication Style</div>
+                <div className="text-sm font-medium text-foreground mb-1">Communication Style</div>
                 <InlineEditField
                   value={profileData.communication.style}
                   field="communicationStyle"
@@ -322,12 +322,12 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   placeholder="Enter communication style"
-                  className="text-sm text-[var(--muted)]"
+                  className="text-sm text-muted"
                 />
               </div>
               
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Decision Making Style</div>
+                <div className="text-sm font-medium text-foreground mb-1">Decision Making Style</div>
                 <InlineEditField
                   value={profileData.communication.decisionMaking}
                   field="decisionMakingStyle"
@@ -336,18 +336,18 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   recordType={recordType}
                   onSuccess={handleSuccess}
                   placeholder="Enter decision making style"
-                  className="text-sm text-[var(--muted)]"
+                  className="text-sm text-muted"
                 />
               </div>
               
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Preferred Communication Method</div>
-                <div className="text-sm text-[var(--muted)]">{profileData.communication.preferredMethod}</div>
+                <div className="text-sm font-medium text-foreground mb-1">Preferred Communication Method</div>
+                <div className="text-sm text-muted">{profileData.communication.preferredMethod}</div>
               </div>
               
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)] mb-1">Response Time</div>
-                <div className="text-sm text-[var(--muted)]">{profileData.communication.responseTime}</div>
+                <div className="text-sm font-medium text-foreground mb-1">Response Time</div>
+                <div className="text-sm text-muted">{profileData.communication.responseTime}</div>
               </div>
             </div>
           </div>
@@ -356,10 +356,10 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
       
       {/* Contact History */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Contact History</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Contact History</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-4">Recent Activity</h4>
+          <div className="bg-background p-6 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-4">Recent Activity</h4>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
@@ -368,8 +368,8 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">Last Contact</div>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm font-medium text-foreground">Last Contact</div>
+                  <div className="text-sm text-muted">
                     {new Date(profileData.contactHistory.lastContact).toLocaleDateString()} at {new Date(profileData.contactHistory.lastContact).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -382,8 +382,8 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">Next Follow-up</div>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm font-medium text-foreground">Next Follow-up</div>
+                  <div className="text-sm text-muted">
                     {new Date(profileData.contactHistory.nextFollowUp).toLocaleDateString()} at {new Date(profileData.contactHistory.nextFollowUp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -396,42 +396,42 @@ export function UniversalProfileTab({ recordType, record: recordProp, onSave }: 
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">Total Interactions</div>
-                  <div className="text-sm text-[var(--muted)]">{profileData.contactHistory.totalInteractions} interactions this quarter</div>
+                  <div className="text-sm font-medium text-foreground">Total Interactions</div>
+                  <div className="text-sm text-muted">{profileData.contactHistory.totalInteractions} interactions this quarter</div>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)]">
-            <h4 className="font-medium text-[var(--foreground)] mb-4">Engagement Metrics</h4>
+          <div className="bg-background p-6 rounded-lg border border-border">
+            <h4 className="font-medium text-foreground mb-4">Engagement Metrics</h4>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <div className="text-sm font-medium text-[var(--foreground)]">Email Response Rate</div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">{profileData.contactHistory.emailResponseRate}%</div>
+                  <div className="text-sm font-medium text-foreground">Email Response Rate</div>
+                  <div className="text-sm font-medium text-foreground">{profileData.contactHistory.emailResponseRate}%</div>
                 </div>
-                <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+                <div className="w-full bg-loading-bg rounded-full h-2">
                   <div className="bg-green-600 h-2 rounded-full" style={{ width: `${profileData.contactHistory.emailResponseRate}%` }}></div>
                 </div>
               </div>
               
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <div className="text-sm font-medium text-[var(--foreground)]">Meeting Attendance</div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">{profileData.contactHistory.meetingAttendance}%</div>
+                  <div className="text-sm font-medium text-foreground">Meeting Attendance</div>
+                  <div className="text-sm font-medium text-foreground">{profileData.contactHistory.meetingAttendance}%</div>
                 </div>
-                <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+                <div className="w-full bg-loading-bg rounded-full h-2">
                   <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${profileData.contactHistory.meetingAttendance}%` }}></div>
                 </div>
               </div>
               
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <div className="text-sm font-medium text-[var(--foreground)]">Engagement Score</div>
-                  <div className="text-sm font-medium text-[var(--foreground)]">{profileData.contactHistory.engagementScore}/5</div>
+                  <div className="text-sm font-medium text-foreground">Engagement Score</div>
+                  <div className="text-sm font-medium text-foreground">{profileData.contactHistory.engagementScore}/5</div>
                 </div>
-                <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+                <div className="w-full bg-loading-bg rounded-full h-2">
                   <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${(profileData.contactHistory.engagementScore / 5) * 100}%` }}></div>
                 </div>
               </div>

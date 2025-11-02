@@ -11,7 +11,7 @@ interface ChartProps {
 }
 
 export const Chart = ({ type, data }: ChartProps) => (
-  <div className="w-full h-32 bg-[var(--background-secondary)] flex items-center justify-center text-[var(--muted)]">
+  <div className="w-full h-32 bg-[var(--background-secondary)] flex items-center justify-center text-muted">
     [Chart: {type}]
     <pre className="text-xs mt-2">{JSON.stringify(data, null, 2)}</pre>
   </div>

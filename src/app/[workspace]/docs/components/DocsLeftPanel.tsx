@@ -77,14 +77,14 @@ export function DocsLeftPanel() {
 
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header - matching Speedrun style */}
         <div className="mx-2 mt-4 mb-2">
           {/* Company Icon */}
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--background)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-border overflow-hidden" style={{ filter: 'none' }}>
               <BookOpenIcon className="w-5 h-5 text-black" />
             </div>
             <div className="flex-1">
@@ -92,11 +92,11 @@ export function DocsLeftPanel() {
                 <h3 className="text-lg font-bold leading-tight" style={{ margin: 0, padding: 0 }}>
                   Documentation
                 </h3>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-hover text-gray-800">
                   Docs
                 </span>
               </div>
-              <div className="text-xs text-[var(--muted)] font-medium" style={{ marginTop: '-1px' }}>
+              <div className="text-xs text-muted font-medium" style={{ marginTop: '-1px' }}>
                 Knowledge Base
               </div>
             </div>
@@ -104,22 +104,22 @@ export function DocsLeftPanel() {
         </div>
 
         {/* Documentation Stats */}
-        <div className="mx-2 mb-4 p-3 bg-[var(--hover)] rounded-lg border border-[var(--border)]">
+        <div className="mx-2 mb-4 p-3 bg-hover rounded-lg border border-border">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Documents</span>
+              <span className="text-xs font-medium text-muted">Documents</span>
               <span className="text-xs font-semibold text-black">
                 {totalDocuments}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Sections</span>
+              <span className="text-xs font-medium text-muted">Sections</span>
               <span className="text-xs font-semibold text-black">
                 {docsContent.sections.length}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--muted)]">Updated</span>
+              <span className="text-xs font-medium text-muted">Updated</span>
               <span className="text-xs font-semibold text-black">
                 Today
               </span>
@@ -144,14 +144,14 @@ export function DocsLeftPanel() {
                   }}
                   className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                      : 'hover:bg-[var(--panel-background)] text-gray-700'
+                      ? 'bg-hover text-foreground'
+                      : 'hover:bg-panel-background text-gray-700'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-sm">{section.name}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-[var(--muted)]">{section.count}</span>
+                      <span className="text-sm text-muted">{section.count}</span>
                       {isExpanded ? (
                         <ChevronDownIcon className="w-4 h-4" />
                       ) : (
@@ -159,7 +159,7 @@ export function DocsLeftPanel() {
                       )}
                     </div>
                   </div>
-                  <div className="text-xs text-[var(--muted)] mt-1">
+                  <div className="text-xs text-muted mt-1">
                     {section.description}
                   </div>
                 </button>
@@ -178,7 +178,7 @@ export function DocsLeftPanel() {
                             className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${
                               isPageActive
                                 ? 'bg-[var(--button-info)] text-white'
-                                : 'text-[var(--muted-foreground)] hover:bg-[var(--hover)] hover:text-[var(--foreground)]'
+                                : 'text-muted hover:bg-hover hover:text-foreground'
                             }`}
                           >
                             {page.title}
@@ -196,16 +196,16 @@ export function DocsLeftPanel() {
       {/* Fixed Bottom Section - User Info */}
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
         <div className="w-full flex items-center gap-3 p-2 rounded-lg">
-          <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 bg-loading-bg rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-gray-700">
               {authUser?.name?.charAt(0)?.toUpperCase() || 'U'}
             </span>
           </div>
           <div className="flex-1 text-left">
-            <div className="text-sm font-medium text-[var(--foreground)]">
+            <div className="text-sm font-medium text-foreground">
               {authUser?.name || 'User'}
             </div>
-            <div className="text-xs text-[var(--muted)]">Documentation</div>
+            <div className="text-xs text-muted">Documentation</div>
           </div>
         </div>
       </div>

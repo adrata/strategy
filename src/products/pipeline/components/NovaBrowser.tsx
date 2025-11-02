@@ -97,14 +97,14 @@ export function NovaBrowser() {
 
   if (!isDesktop) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)] items-center justify-center p-8">
+      <div className="h-full flex flex-col bg-background items-center justify-center p-8">
         <div className="text-center">
           <div className="text-6xl mb-4">🌌</div>
-          <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">Nova Browser</h2>
-          <p className="text-[var(--muted-foreground)] mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Nova Browser</h2>
+          <p className="text-muted mb-6">
             Nova Browser is only available in the desktop app.
           </p>
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-muted">
             Please use the desktop version to access the native browser.
           </p>
         </div>
@@ -113,9 +113,9 @@ export function NovaBrowser() {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Browser Header */}
-      <div className="flex-shrink-0 bg-[var(--panel-background)] border-b border-[var(--border)] px-4 py-2">
+      <div className="flex-shrink-0 bg-panel-background border-b border-border px-4 py-2">
         <div className="flex items-center gap-2">
           {/* Address Bar */}
           <form onSubmit={handleAddressBarSubmit} className="flex-1">
@@ -124,7 +124,7 @@ export function NovaBrowser() {
               value={addressBar}
               onChange={(e) => setAddressBar(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="w-full px-3 py-1.5 bg-[var(--background)] border border-[var(--border)] rounded-md text-sm text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent"
+              className="w-full px-3 py-1.5 bg-background border border-border rounded-md text-sm text-foreground placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Enter URL or search..."
             />
           </form>
@@ -133,7 +133,7 @@ export function NovaBrowser() {
           <button
             onClick={() => navigateToUrl(addressBar)}
             disabled={isLoading}
-            className="px-4 py-1.5 bg-[var(--accent)] text-white rounded-md text-sm font-medium hover:bg-[var(--accent)]/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-1.5 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Opening...' : 'Open Browser'}
           </button>
@@ -149,8 +149,8 @@ export function NovaBrowser() {
           {/* Welcome Section */}
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">🌌</div>
-            <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">Nova Browser</h1>
-            <p className="text-[var(--muted-foreground)] mb-6">
+            <h1 className="text-3xl font-bold text-foreground mb-2">Nova Browser</h1>
+            <p className="text-muted mb-6">
               Native web browser that can load any website, including LinkedIn and other restricted sites.
             </p>
           </div>
@@ -159,68 +159,68 @@ export function NovaBrowser() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
             <button
               onClick={() => openPopularSite('https://www.linkedin.com')}
-              className="p-4 bg-[var(--panel-background)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors text-left"
+              className="p-4 bg-panel-background border border-border rounded-lg hover:bg-hover transition-colors text-left"
             >
               <div className="text-2xl mb-2">💼</div>
-              <div className="font-medium text-[var(--foreground)]">LinkedIn</div>
-              <div className="text-sm text-[var(--muted-foreground)]">Professional network</div>
+              <div className="font-medium text-foreground">LinkedIn</div>
+              <div className="text-sm text-muted">Professional network</div>
             </button>
 
             <button
               onClick={() => openPopularSite('https://www.google.com')}
-              className="p-4 bg-[var(--panel-background)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors text-left"
+              className="p-4 bg-panel-background border border-border rounded-lg hover:bg-hover transition-colors text-left"
             >
               <div className="text-2xl mb-2">🔍</div>
-              <div className="font-medium text-[var(--foreground)]">Google</div>
-              <div className="text-sm text-[var(--muted-foreground)]">Search engine</div>
+              <div className="font-medium text-foreground">Google</div>
+              <div className="text-sm text-muted">Search engine</div>
             </button>
 
             <button
               onClick={() => openPopularSite('https://www.github.com')}
-              className="p-4 bg-[var(--panel-background)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors text-left"
+              className="p-4 bg-panel-background border border-border rounded-lg hover:bg-hover transition-colors text-left"
             >
               <div className="text-2xl mb-2">🐙</div>
-              <div className="font-medium text-[var(--foreground)]">GitHub</div>
-              <div className="text-sm text-[var(--muted-foreground)]">Code repository</div>
+              <div className="font-medium text-foreground">GitHub</div>
+              <div className="text-sm text-muted">Code repository</div>
             </button>
 
             <button
               onClick={() => openPopularSite('https://www.twitter.com')}
-              className="p-4 bg-[var(--panel-background)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors text-left"
+              className="p-4 bg-panel-background border border-border rounded-lg hover:bg-hover transition-colors text-left"
             >
               <div className="text-2xl mb-2">🐦</div>
-              <div className="font-medium text-[var(--foreground)]">Twitter</div>
-              <div className="text-sm text-[var(--muted-foreground)]">Social media</div>
+              <div className="font-medium text-foreground">Twitter</div>
+              <div className="text-sm text-muted">Social media</div>
             </button>
 
             <button
               onClick={() => openPopularSite('https://www.youtube.com')}
-              className="p-4 bg-[var(--panel-background)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors text-left"
+              className="p-4 bg-panel-background border border-border rounded-lg hover:bg-hover transition-colors text-left"
             >
               <div className="text-2xl mb-2">📺</div>
-              <div className="font-medium text-[var(--foreground)]">YouTube</div>
-              <div className="text-sm text-[var(--muted-foreground)]">Video platform</div>
+              <div className="font-medium text-foreground">YouTube</div>
+              <div className="text-sm text-muted">Video platform</div>
             </button>
 
             <button
               onClick={() => openPopularSite('https://www.reddit.com')}
-              className="p-4 bg-[var(--panel-background)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors text-left"
+              className="p-4 bg-panel-background border border-border rounded-lg hover:bg-hover transition-colors text-left"
             >
               <div className="text-2xl mb-2">🤖</div>
-              <div className="font-medium text-[var(--foreground)]">Reddit</div>
-              <div className="text-sm text-[var(--muted-foreground)]">Discussion forum</div>
+              <div className="font-medium text-foreground">Reddit</div>
+              <div className="text-sm text-muted">Discussion forum</div>
             </button>
           </div>
 
           {/* Active Browser Windows */}
           {browserWindows.length > 0 && (
-            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4">
-              <h3 className="font-medium text-[var(--foreground)] mb-3">Active Browser Windows</h3>
+            <div className="bg-panel-background border border-border rounded-lg p-4">
+              <h3 className="font-medium text-foreground mb-3">Active Browser Windows</h3>
               <div className="space-y-2">
                 {browserWindows.map((windowId, index) => (
-                  <div key={windowId} className="flex items-center justify-between p-2 bg-[var(--background)] rounded">
-                    <span className="text-sm text-[var(--foreground)]">Browser Window {index + 1}</span>
-                    <span className="text-xs text-[var(--muted-foreground)]">{windowId}</span>
+                  <div key={windowId} className="flex items-center justify-between p-2 bg-background rounded">
+                    <span className="text-sm text-foreground">Browser Window {index + 1}</span>
+                    <span className="text-xs text-muted">{windowId}</span>
                   </div>
                 ))}
               </div>
@@ -229,7 +229,7 @@ export function NovaBrowser() {
 
           {/* Instructions */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-[var(--muted-foreground)]">
+            <p className="text-sm text-muted">
               Click any site above or enter a URL to open it in a new browser window.
             </p>
           </div>

@@ -178,7 +178,7 @@ export function RecordTemplateV2({
     if (!TabComponent) {
       console.warn(`No component found for tab: ${activeTab} in record type: ${recordType}`);
       return (
-        <div className="p-6 text-center text-[var(--muted)]">
+        <div className="p-6 text-center text-muted">
           <p>Tab content not available</p>
         </div>
       );
@@ -228,12 +228,12 @@ export function RecordTemplateV2({
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header - identical to original */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 px-6 py-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[var(--loading-bg)] rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-loading-bg rounded-full flex items-center justify-center">
               {record?.avatar ? (
                 <img 
                   src={record.avatar} 
@@ -241,16 +241,16 @@ export function RecordTemplateV2({
                   className="w-12 h-12 rounded-full object-cover"
                 />
               ) : (
-                <span className="text-lg font-semibold text-[var(--muted)]">
+                <span className="text-lg font-semibold text-muted">
                   {record?.name?.charAt(0) || '?'}
                 </span>
               )}
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-[var(--foreground)]">
+              <h1 className="text-xl font-semibold text-foreground">
                 {record?.name || record?.fullName || 'Unknown Name'}
               </h1>
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 {getRecordTitle(record, recordType)}
               </p>
             </div>
@@ -258,7 +258,7 @@ export function RecordTemplateV2({
           <div className="flex gap-2">
             <button
               onClick={onBack}
-              className="px-4 py-2 bg-[var(--hover)] text-gray-700 rounded-lg hover:bg-[var(--loading-bg)] transition-colors"
+              className="px-4 py-2 bg-hover text-gray-700 rounded-lg hover:bg-loading-bg transition-colors"
             >
               Back
             </button>
@@ -282,7 +282,7 @@ export function RecordTemplateV2({
               className={`pb-2 px-1 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]'
+                  : 'border-transparent text-muted hover:text-gray-700 hover:border-border'
               }`}
             >
               {tab.label}

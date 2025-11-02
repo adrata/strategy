@@ -15,10 +15,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   const lineCount = lines.length;
 
   return (
-    <div className="flex-1 bg-[var(--background)] overflow-hidden">
+    <div className="flex-1 bg-background overflow-hidden">
       <div className="h-full flex">
         {/* Line Numbers */}
-        <div className="bg-[var(--panel-background)] text-[var(--muted)] font-mono text-sm select-none flex-shrink-0" style={{ width: '50px' }}>
+        <div className="bg-panel-background text-muted font-mono text-sm select-none flex-shrink-0" style={{ width: '50px' }}>
           {lines.map((_, index) => (
             <div 
               key={index} 

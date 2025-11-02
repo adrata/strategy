@@ -46,22 +46,22 @@ export function NewsLeftPanel({ onTabChange }: NewsLeftPanelProps) {
   };
 
   return (
-    <div className="w-64 bg-[var(--background)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-64 bg-background border-r border-border flex flex-col h-full">
       {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
-        <h2 className="text-lg font-semibold text-[var(--foreground)] mb-2">News</h2>
-        <p className="text-sm text-[var(--muted)]">Stay informed</p>
+      <div className="flex-shrink-0 p-4 border-b border-border">
+        <h2 className="text-lg font-semibold text-foreground mb-2">News</h2>
+        <p className="text-sm text-muted">Stay informed</p>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 p-4 border-b border-border">
         <div className="space-y-1">
           <button
             onClick={() => handleTabClick('overview')}
             className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
               viewState.activeTab === 'overview'
-                ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                : 'text-[var(--muted)] hover:bg-[var(--panel-background)]'
+                ? 'bg-hover text-foreground'
+                : 'text-muted hover:bg-panel-background'
             }`}
           >
             <div className="font-medium text-sm">Overview</div>
@@ -72,8 +72,8 @@ export function NewsLeftPanel({ onTabChange }: NewsLeftPanelProps) {
             onClick={() => handleTabClick('top3')}
             className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
               viewState.activeTab === 'top3'
-                ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                : 'text-[var(--muted)] hover:bg-[var(--panel-background)]'
+                ? 'bg-hover text-foreground'
+                : 'text-muted hover:bg-panel-background'
             }`}
           >
             <div className="font-medium text-sm">Top 3 Articles</div>
@@ -84,8 +84,8 @@ export function NewsLeftPanel({ onTabChange }: NewsLeftPanelProps) {
             onClick={() => handleTabClick('all')}
             className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
               viewState.activeTab === 'all'
-                ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                : 'text-[var(--muted)] hover:bg-[var(--panel-background)]'
+                ? 'bg-hover text-foreground'
+                : 'text-muted hover:bg-panel-background'
             }`}
           >
             <div className="font-medium text-sm">All Articles</div>
@@ -99,14 +99,14 @@ export function NewsLeftPanel({ onTabChange }: NewsLeftPanelProps) {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Category Filter */}
           <div>
-            <h3 className="text-sm font-medium text-[var(--foreground)] mb-2">Category</h3>
+            <h3 className="text-sm font-medium text-foreground mb-2">Category</h3>
             <div className="space-y-1">
               <button
                 onClick={() => handleCategoryFilter('all')}
                 className={`w-full text-left px-3 py-2 rounded-lg transition-colors text-sm ${
                   viewState.filters.category === 'all'
-                    ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                    : 'text-[var(--muted)] hover:bg-[var(--panel-background)]'
+                    ? 'bg-hover text-foreground'
+                    : 'text-muted hover:bg-panel-background'
                 }`}
               >
                 All Categories
@@ -117,8 +117,8 @@ export function NewsLeftPanel({ onTabChange }: NewsLeftPanelProps) {
                   onClick={() => handleCategoryFilter(category.id)}
                   className={`w-full text-left px-3 py-2 rounded-lg transition-colors text-sm flex items-center gap-2 ${
                     viewState.filters.category === category.id
-                      ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                      : 'text-[var(--muted)] hover:bg-[var(--panel-background)]'
+                      ? 'bg-hover text-foreground'
+                      : 'text-muted hover:bg-panel-background'
                   }`}
                 >
                   <span className={`w-2 h-2 rounded-full ${category.bgColor}`}></span>
@@ -130,7 +130,7 @@ export function NewsLeftPanel({ onTabChange }: NewsLeftPanelProps) {
 
           {/* Sort Options */}
           <div>
-            <h3 className="text-sm font-medium text-[var(--foreground)] mb-2">Sort By</h3>
+            <h3 className="text-sm font-medium text-foreground mb-2">Sort By</h3>
             <div className="space-y-1">
               {[
                 { value: 'relevance', label: 'Relevance' },
@@ -142,8 +142,8 @@ export function NewsLeftPanel({ onTabChange }: NewsLeftPanelProps) {
                   onClick={() => handleSortChange(option.value as any)}
                   className={`w-full text-left px-3 py-2 rounded-lg transition-colors text-sm ${
                     viewState.filters.sortBy === option.value
-                      ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                      : 'text-[var(--muted)] hover:bg-[var(--panel-background)]'
+                      ? 'bg-hover text-foreground'
+                      : 'text-muted hover:bg-panel-background'
                   }`}
                 >
                   {option.label}
@@ -154,14 +154,14 @@ export function NewsLeftPanel({ onTabChange }: NewsLeftPanelProps) {
 
           {/* Quick Filters */}
           <div>
-            <h3 className="text-sm font-medium text-[var(--foreground)] mb-2">Quick Filters</h3>
+            <h3 className="text-sm font-medium text-foreground mb-2">Quick Filters</h3>
             <div className="space-y-1">
               <button
                 onClick={handleUnreadToggle}
                 className={`w-full text-left px-3 py-2 rounded-lg transition-colors text-sm flex items-center gap-2 ${
                   viewState.filters.unreadOnly
-                    ? 'bg-[var(--hover)] text-[var(--foreground)]'
-                    : 'text-[var(--muted)] hover:bg-[var(--panel-background)]'
+                    ? 'bg-hover text-foreground'
+                    : 'text-muted hover:bg-panel-background'
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +175,7 @@ export function NewsLeftPanel({ onTabChange }: NewsLeftPanelProps) {
       )}
 
       {/* Actions */}
-      <div className="flex-shrink-0 p-4 border-t border-[var(--border)] space-y-2">
+      <div className="flex-shrink-0 p-4 border-t border-border space-y-2">
         <button
           onClick={handleRefresh}
           disabled={isRefreshing}
@@ -186,7 +186,7 @@ export function NewsLeftPanel({ onTabChange }: NewsLeftPanelProps) {
         
         <button
           onClick={handleMarkAllRead}
-          className="w-full px-3 py-2 bg-[var(--hover)] text-[var(--foreground)] rounded-lg hover:bg-[var(--panel-background)] transition-colors text-sm font-medium"
+          className="w-full px-3 py-2 bg-hover text-foreground rounded-lg hover:bg-panel-background transition-colors text-sm font-medium"
         >
           Mark All Read
         </button>

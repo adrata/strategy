@@ -290,7 +290,7 @@ export function DataUploadComponent({
             value={userIntent}
             onChange={handleUserIntentChange}
             placeholder="e.g., 'Find CFOs at the first 10 companies' or 'Get executives from largest companies, limit to 20'"
-            className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {isParsingIntent && (
             <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-950 rounded-md">
@@ -352,7 +352,7 @@ export function DataUploadComponent({
                 {parsedRequest['prioritization'] && (
                   <span className="ml-2 text-purple-600">Method: {parsedRequest.prioritization}</span>
                 )}
-                <span className="ml-2 text-[var(--muted)]">Confidence: {Math.round(parsedRequest.confidence * 100)}%</span>
+                <span className="ml-2 text-muted">Confidence: {Math.round(parsedRequest.confidence * 100)}%</span>
               </div>
             </div>
           )}
@@ -374,7 +374,7 @@ export function DataUploadComponent({
 
         {/* Advanced Options */}
         {showAdvancedOptions && (
-          <div className="space-y-4 p-4 bg-[var(--panel-background)] dark:bg-[var(--foreground)] rounded-lg">
+          <div className="space-y-4 p-4 bg-panel-background dark:bg-foreground rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Processing Limit</label>
@@ -385,9 +385,9 @@ export function DataUploadComponent({
                   placeholder="e.g., 10"
                   min="1"
                   max="1000"
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <p className="text-xs text-[var(--muted)] mt-1">Maximum number of companies to process</p>
+                <p className="text-xs text-muted mt-1">Maximum number of companies to process</p>
               </div>
               
               <div>
@@ -395,7 +395,7 @@ export function DataUploadComponent({
                 <select
                   value={prioritizationMethod}
                   onChange={(e) => setPrioritizationMethod(e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="first">First (as listed)</option>
                   <option value="largest">Largest companies</option>
@@ -441,18 +441,18 @@ export function DataUploadComponent({
           className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
             dragActive
               ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
-              : "border-[var(--border)] dark:border-[var(--border)] hover:border-gray-400"
+              : "border-border dark:border-border hover:border-gray-400"
           }`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
         >
-          <FileText className="mx-auto h-12 w-12 text-[var(--muted)] mb-4" />
+          <FileText className="mx-auto h-12 w-12 text-muted mb-4" />
           <div className="space-y-2">
             <p className="text-lg font-medium">
               {file ? file.name : "Drop your CSV file here"}
             </p>
-            <p className="text-sm text-[var(--muted)]">
+            <p className="text-sm text-muted">
               or{" "}
               <label className="text-blue-600 hover:text-blue-500 cursor-pointer">
                 browse to upload
@@ -476,10 +476,10 @@ export function DataUploadComponent({
             <textarea
               value={csvData}
               onChange={handleCsvTextChange}
-              className="w-full h-40 p-3 border border-[var(--border)] rounded-lg font-mono text-sm"
+              className="w-full h-40 p-3 border border-border rounded-lg font-mono text-sm"
               placeholder="Paste your CSV data here..."
             />
-            <p className="text-xs text-[var(--muted)] mt-1">
+            <p className="text-xs text-muted mt-1">
               Expected columns: company, name, Title, role, Person Linkedin Url,
               Email, Mobile Phone, etc.
             </p>
@@ -553,9 +553,9 @@ export function DataUploadComponent({
         </div>
 
         {/* Format Help */}
-        <div className="bg-[var(--panel-background)] dark:bg-[var(--foreground)] rounded-lg p-4">
+        <div className="bg-panel-background dark:bg-foreground rounded-lg p-4">
           <h4 className="font-medium mb-2">CSV Format Requirements:</h4>
-          <ul className="text-sm space-y-1 text-[var(--muted)] dark:text-[var(--muted)]">
+          <ul className="text-sm space-y-1 text-muted dark:text-muted">
             <li>• First row should contain column headers</li>
             <li>
               • Required: name and at least one contact method (email/phone)

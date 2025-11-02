@@ -238,14 +238,14 @@ hello()`;
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <CodeBracketIcon className="w-6 h-6 text-[var(--muted)]" />
+          <CodeBracketIcon className="w-6 h-6 text-muted" />
           <div>
-            <h1 className="text-lg font-semibold text-[var(--foreground)]">{document.title}</h1>
-            <p className="text-sm text-[var(--muted)]">Code Document</p>
+            <h1 className="text-lg font-semibold text-foreground">{document.title}</h1>
+            <p className="text-sm text-muted">Code Document</p>
           </div>
         </div>
         
@@ -254,7 +254,7 @@ hello()`;
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="px-3 py-1 border border-[var(--border)] rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 py-1 border border-border rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {Object.entries(languageMap).map(([key, value]) => (
               <option key={key} value={value}>
@@ -267,7 +267,7 @@ hello()`;
           <select
             value={theme}
             onChange={(e) => setTheme(e.target.value as any)}
-            className="px-3 py-1 border border-[var(--border)] rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 py-1 border border-border rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="vs-light">Light</option>
             <option value="vs-dark">Dark</option>
@@ -300,14 +300,14 @@ hello()`;
           <div className="flex items-center gap-2">
             <button
               onClick={handleFormat}
-              className="px-3 py-1 text-sm bg-[var(--hover)] text-gray-700 rounded hover:bg-[var(--loading-bg)] transition-colors"
+              className="px-3 py-1 text-sm bg-hover text-gray-700 rounded hover:bg-loading-bg transition-colors"
               title="Format Code"
             >
               Format
             </button>
             <button
               onClick={handleCopy}
-              className="px-3 py-1 text-sm bg-[var(--hover)] text-gray-700 rounded hover:bg-[var(--loading-bg)] transition-colors"
+              className="px-3 py-1 text-sm bg-hover text-gray-700 rounded hover:bg-loading-bg transition-colors"
               title="Copy Code"
             >
               <ClipboardDocumentIcon className="w-4 h-4" />
@@ -378,8 +378,8 @@ hello()`;
           
           {/* Output Panel */}
           {output && (
-            <div className="h-32 border-t border-[var(--border)] bg-[var(--panel-background)]">
-              <div className="p-3 border-b border-[var(--border)] bg-[var(--hover)]">
+            <div className="h-32 border-t border-border bg-panel-background">
+              <div className="p-3 border-b border-border bg-hover">
                 <h3 className="text-sm font-medium text-gray-700">Output</h3>
               </div>
               <div className="p-3 h-full overflow-auto">

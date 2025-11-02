@@ -817,7 +817,7 @@ export function AdrataChatPanel() {
   };
 
   return (
-    <div className="bg-[var(--background)] flex flex-col h-full overflow-hidden">
+    <div className="bg-background flex flex-col h-full overflow-hidden">
       {/* Conversation Header */}
       <ConversationHeader
         conversations={conversations}

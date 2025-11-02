@@ -176,12 +176,12 @@ export const ErrorFallback: React.FC<ErrorFallbackProps & { className?: string }
       </div>
 
       {/* Error Title */}
-      <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">
+      <h2 className="text-2xl font-bold text-foreground mb-4">
         {isLastRetry ? 'Something went wrong' : 'Oops! Something went wrong'}
       </h2>
 
       {/* Error Message */}
-      <p className="text-[var(--muted)] mb-6 max-w-md">
+      <p className="text-muted mb-6 max-w-md">
         {isLastRetry 
           ? 'We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.'
           : 'We encountered an error while loading this content. Let\'s try again.'
@@ -209,7 +209,7 @@ export const ErrorFallback: React.FC<ErrorFallbackProps & { className?: string }
           >
             Refresh Page
           </button>
-          <p className="text-sm text-[var(--muted)]">
+          <p className="text-sm text-muted">
             If the problem persists, please contact support
           </p>
         </div>
@@ -218,10 +218,10 @@ export const ErrorFallback: React.FC<ErrorFallbackProps & { className?: string }
       {/* Error Details (Development only) */}
       {showDetails && error && (
         <details className="mt-8 text-left max-w-2xl w-full">
-          <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-[var(--foreground)]">
+          <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-foreground">
             Error Details (Development)
           </summary>
-          <div className="mt-4 p-4 bg-[var(--hover)] rounded-lg text-xs font-mono text-gray-800 overflow-auto">
+          <div className="mt-4 p-4 bg-hover rounded-lg text-xs font-mono text-gray-800 overflow-auto">
             <div className="mb-4">
               <strong>Error:</strong>
               <pre className="whitespace-pre-wrap mt-1">{error.message}</pre>
@@ -271,7 +271,7 @@ export const SilentErrorBoundary: React.FC<AdrataErrorBoundaryProps> = ({ childr
   <AdrataErrorBoundary
     onError={onError}
     fallback={
-      <div className="p-4 text-center text-[var(--muted)] text-sm">
+      <div className="p-4 text-center text-muted text-sm">
         <p>This component is temporarily unavailable</p>
       </div>
     }

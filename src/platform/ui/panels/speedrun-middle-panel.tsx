@@ -347,7 +347,7 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
     };
 
     return (
-      <div className="h-full overflow-hidden bg-[var(--background)] text-[var(--foreground)]">
+      <div className="h-full overflow-hidden bg-background text-foreground">
         <SpeedrunLeadDetails
           key={`lead-${convertedPerson.id}`}
           person={convertedPerson}
@@ -375,24 +375,24 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
           {!loadingActions ? (
             <>
               {/* Daily Goals Summary */}
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 mb-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Today's Goals</h3>
+              <div className="bg-background border border-border rounded-lg p-6 mb-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Today's Goals</h3>
                 <div className="grid grid-cols-4 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[var(--foreground)]">50</div>
-                    <div className="text-sm text-[var(--muted)]">Contacts</div>
+                    <div className="text-2xl font-bold text-foreground">50</div>
+                    <div className="text-sm text-muted">Contacts</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[var(--foreground)]">4</div>
-                    <div className="text-sm text-[var(--muted)]">Meetings</div>
+                    <div className="text-2xl font-bold text-foreground">4</div>
+                    <div className="text-sm text-muted">Meetings</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[var(--foreground)]">25</div>
-                    <div className="text-sm text-[var(--muted)]">Emails</div>
+                    <div className="text-2xl font-bold text-foreground">25</div>
+                    <div className="text-sm text-muted">Emails</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[var(--foreground)]">15</div>
-                    <div className="text-sm text-[var(--muted)]">Calls</div>
+                    <div className="text-2xl font-bold text-foreground">15</div>
+                    <div className="text-sm text-muted">Calls</div>
                   </div>
                 </div>
               </div>
@@ -400,7 +400,7 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
               {salesActions.map((action) => (
                 <div
                   key={action.id}
-                  className={`bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 transition-all ${
+                  className={`bg-background border border-border rounded-lg p-6 transition-all ${
                     action.isCompleted ? "border-green-200 bg-green-50" : "hover:border-blue-300"
                   }`}
                 >
@@ -411,7 +411,7 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
                         className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
                           action.isCompleted
                             ? "border-green-500 bg-green-500"
-                            : "border-[var(--border)] hover:border-gray-400"
+                            : "border-border hover:border-gray-400"
                         }`}
                       >
                         {action['isCompleted'] && (
@@ -422,31 +422,31 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
                         action['priority'] === 'critical' ? 'bg-red-100 text-red-800' :
                         action['priority'] === 'high' ? 'bg-orange-100 text-orange-800' :
                         action['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-[var(--hover)] text-gray-800'
+                        'bg-hover text-gray-800'
                           }`}>
                             {action.priority}
                           </span>
                         </div>
-                        <div className="flex items-center gap-1 text-sm text-[var(--muted)]">
+                        <div className="flex items-center gap-1 text-sm text-muted">
                           <ClockIcon className="w-4 h-4" />
                           {action.estimatedTime}m
                         </div>
                       </div>
                       
                       <h4 className={`text-lg font-semibold mb-2 ${
-                        action.isCompleted ? 'text-green-800 line-through' : 'text-[var(--foreground)]'
+                        action.isCompleted ? 'text-green-800 line-through' : 'text-foreground'
                       }`}>
                         {action.title}
                       </h4>
-                      <p className="text-[var(--muted)] mb-3">{action.description}</p>
+                      <p className="text-muted mb-3">{action.description}</p>
                       
                       {action['relatedCompany'] && (
-                        <div className="text-sm text-[var(--muted)] mb-2">
+                        <div className="text-sm text-muted mb-2">
                           Company: {action.relatedCompany}
                         </div>
                       )}
                       
-                      <div className="text-sm text-[var(--muted)]">
+                      <div className="text-sm text-muted">
                         Expected: {action.expectedOutcome}
                       </div>
                     </div>
@@ -454,15 +454,15 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
 
                   {salesActions['length'] === 0 && (
                     <div className="text-center py-12">
-                      <CheckCircleIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-                      <p className="text-[var(--muted)]">No actions available</p>
+                      <CheckCircleIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+                      <p className="text-muted">No actions available</p>
                     </div>
                   )}
                 </>
               ) : (
                 <div className="text-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="text-[var(--muted)] mt-4">Loading actions...</p>
+                  <p className="text-muted mt-4">Loading actions...</p>
                 </div>
               )}
             </div>
@@ -476,7 +476,7 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
                     <FlagIcon className="w-12 h-12 text-white" />
                   </div>
                   <h1 className="text-4xl font-bold mb-4">Ready for Speedrun</h1>
-                  <p className="text-xl text-[var(--muted)] mb-8">
+                  <p className="text-xl text-muted mb-8">
                     No prospects ready for outreach. Add leads or import data to get started.
                   </p>
                   <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
@@ -488,7 +488,7 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
                   <div
                     key={prospect.id}
                     onClick={() => setSelectedRecord(prospect)}
-                    className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+                    className="bg-background border border-border rounded-lg p-6 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -496,10 +496,10 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
                           <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
                             {String.fromCharCode(65 + index)}
                           </span>
-                          <h3 className="text-lg font-semibold text-[var(--foreground)]">{prospect.name}</h3>
+                          <h3 className="text-lg font-semibold text-foreground">{prospect.name}</h3>
                         </div>
-                        <p className="text-sm text-[var(--muted)] mb-1">{prospect.title}</p>
-                        <p className="text-sm text-[var(--muted)] mb-3">{prospect.company}</p>
+                        <p className="text-sm text-muted mb-1">{prospect.title}</p>
+                        <p className="text-sm text-muted mb-3">{prospect.company}</p>
                         
                         {/* Pain Point */}
                         {prospect['pain'] && (
@@ -535,7 +535,7 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
                     }`}>
                       {prospect.priority || 'Medium'}
                     </span>
-                    <span className="text-xs text-[var(--muted)]">
+                    <span className="text-xs text-muted">
                       {prospect.buyerRole || 'Stakeholder'}
                     </span>
                   </div>
@@ -558,24 +558,24 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
             {!loadingSchedule && dailySchedule ? (
               <>
                 {/* Schedule Summary */}
-                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 mb-6">
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Today's Schedule</h3>
+                <div className="bg-background border border-border rounded-lg p-6 mb-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">Today's Schedule</h3>
                   <div className="grid grid-cols-4 gap-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-[var(--foreground)]">{dailySchedule.events.length}</div>
-                      <div className="text-sm text-[var(--muted)]">Meetings</div>
+                      <div className="text-2xl font-bold text-foreground">{dailySchedule.events.length}</div>
+                      <div className="text-sm text-muted">Meetings</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-[var(--foreground)]">{Math.round(dailySchedule.availableTime / 60)}h</div>
-                      <div className="text-sm text-[var(--muted)]">Available</div>
+                      <div className="text-2xl font-bold text-foreground">{Math.round(dailySchedule.availableTime / 60)}h</div>
+                      <div className="text-sm text-muted">Available</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-[var(--foreground)]">{dailySchedule.focusBlocks.length}</div>
-                      <div className="text-sm text-[var(--muted)]">Focus Blocks</div>
+                      <div className="text-2xl font-bold text-foreground">{dailySchedule.focusBlocks.length}</div>
+                      <div className="text-sm text-muted">Focus Blocks</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-[var(--foreground)]">{Math.round(dailySchedule.totalMeetingTime / 60)}h</div>
-                      <div className="text-sm text-[var(--muted)]">In Meetings</div>
+                      <div className="text-2xl font-bold text-foreground">{Math.round(dailySchedule.totalMeetingTime / 60)}h</div>
+                      <div className="text-sm text-muted">In Meetings</div>
                     </div>
                   </div>
                 </div>
@@ -585,22 +585,22 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
                   {dailySchedule.timeBlocks.map((block) => (
                     <div
                       key={block.id}
-                      className={`bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 ${
+                      className={`bg-background border border-border rounded-lg p-4 ${
                         block['type'] === 'focus' && block.isAvailable
                           ? 'border-blue-200 bg-blue-50'
                           : block['type'] === 'work'
-                          ? 'border-[var(--border)] bg-[var(--panel-background)]'
-                          : 'border-[var(--border)] bg-[var(--background)]'
+                          ? 'border-border bg-panel-background'
+                          : 'border-border bg-background'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-[var(--foreground)]">
+                        <span className="font-medium text-foreground">
                           {block.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
                           {block.endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           block['type'] === 'focus' ? 'bg-blue-100 text-blue-800' :
-                          block['type'] === 'work' ? 'bg-[var(--hover)] text-gray-800' :
+                          block['type'] === 'work' ? 'bg-hover text-gray-800' :
                           'bg-green-100 text-green-800'
                         }`}>
                           {block.type}
@@ -614,32 +614,32 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
                 {/* Events */}
                 {dailySchedule.events.length > 0 && (
                   <div className="mt-6">
-                    <h4 className="text-lg font-semibold text-[var(--foreground)] mb-4">Meetings</h4>
+                    <h4 className="text-lg font-semibold text-foreground mb-4">Meetings</h4>
                     <div className="space-y-3">
                       {dailySchedule.events.map((event) => (
                         <div
                           key={event.id}
-                          className={`bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 ${
+                          className={`bg-background border border-border rounded-lg p-4 ${
                             event.isSpeedrunRelated
                               ? 'border-red-200 bg-red-50'
-                              : 'border-[var(--border)] bg-[var(--background)]'
+                              : 'border-border bg-background'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-[var(--foreground)]">
+                            <span className="font-medium text-foreground">
                               {event.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               event['type'] === 'demo' ? 'bg-purple-100 text-purple-800' :
                               event['type'] === 'call' ? 'bg-green-100 text-green-800' :
-                              'bg-[var(--hover)] text-gray-800'
+                              'bg-hover text-gray-800'
                             }`}>
                               {event.type}
                             </span>
                           </div>
                           <div className="text-gray-700">{event.title}</div>
                           {event['relatedCompany'] && (
-                            <div className="text-[var(--muted)] text-sm mt-1">{event.relatedCompany}</div>
+                            <div className="text-muted text-sm mt-1">{event.relatedCompany}</div>
                           )}
                         </div>
                       ))}
@@ -649,8 +649,8 @@ export function SpeedrunMiddlePanel({ selectedFolder: propSelectedFolder }: Spee
               </>
             ) : (
               <div className="text-center py-12">
-                <CalendarIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-                <p className="text-[var(--muted)]">No schedule data available</p>
+                <CalendarIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+                <p className="text-muted">No schedule data available</p>
               </div>
             )}
           </div>

@@ -27,7 +27,7 @@ export default function APIsPage() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Standardized Header */}
       <StandardHeader
         title="APIs"
@@ -56,17 +56,17 @@ export default function APIsPage() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 animate-pulse">
+                  <div key={index} className="bg-panel-background border border-border rounded-lg p-4 animate-pulse">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
-                        <div className="h-5 bg-[var(--loading-bg)] rounded mb-2"></div>
-                        <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4"></div>
+                        <div className="h-5 bg-loading-bg rounded mb-2"></div>
+                        <div className="h-4 bg-loading-bg rounded w-3/4"></div>
                       </div>
-                      <div className="h-5 w-5 bg-[var(--loading-bg)] rounded"></div>
+                      <div className="h-5 w-5 bg-loading-bg rounded"></div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="h-3 bg-[var(--loading-bg)] rounded w-1/3"></div>
-                      <div className="h-3 bg-[var(--loading-bg)] rounded w-1/4"></div>
+                      <div className="h-3 bg-loading-bg rounded w-1/3"></div>
+                      <div className="h-3 bg-loading-bg rounded w-1/4"></div>
                     </div>
                   </div>
                 ))}
@@ -84,12 +84,12 @@ export default function APIsPage() {
                     <div
                       key={api.id}
                       onClick={() => handleAPIClick(api.id)}
-                      className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-4 hover:border-blue-300 transition-colors cursor-pointer"
+                      className="bg-panel-background border border-border rounded-lg p-4 hover:border-blue-300 transition-colors cursor-pointer"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-[var(--foreground)] mb-1">{api.name}</h3>
-                          <p className="text-[var(--muted)] text-sm">{api.description}</p>
+                          <h3 className="font-semibold text-foreground mb-1">{api.name}</h3>
+                          <p className="text-muted text-sm">{api.description}</p>
                         </div>
                         <div className="flex items-center gap-1">
                           {status?.status === 'configured' ? (
@@ -100,7 +100,7 @@ export default function APIsPage() {
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-[var(--muted)] capitalize">
+                        <span className="text-xs text-muted capitalize">
                           {api.category.replace('-', ' ')}
                         </span>
                         <span className={`text-xs font-medium ${

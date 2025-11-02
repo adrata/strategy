@@ -339,40 +339,40 @@ export const EnlightenBuyerGroupPipeline: React.FC = () => {
   }, [pipelineSteps.length]);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Breadcrumb Navigation */}
-      <div className="flex-shrink-0 px-6 py-3 bg-white border-b border-[var(--border)]">
+      <div className="flex-shrink-0 px-6 py-3 bg-white border-b border-border">
         <nav className="flex items-center space-x-2 text-sm">
-          <span className="text-[var(--foreground)]">Olympus</span>
-          <span className="text-[var(--foreground)]">/</span>
-          <span className="text-[var(--foreground)]">Buyer Group</span>
-          <span className="text-[var(--foreground)]">/</span>
-          <span className="text-[var(--foreground)] font-medium">Enlighten</span>
+          <span className="text-foreground">Olympus</span>
+          <span className="text-foreground">/</span>
+          <span className="text-foreground">Buyer Group</span>
+          <span className="text-foreground">/</span>
+          <span className="text-foreground font-medium">Enlighten</span>
         </nav>
       </div>
 
       {/* Header - Lead Record Style */}
-      <div className="flex-shrink-0 px-6 py-4 border-b border-[var(--border)] bg-white">
+      <div className="flex-shrink-0 px-6 py-4 border-b border-border bg-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white border border-[var(--border)] rounded-xl flex items-center justify-center">
-              <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-white border border-border rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             </div>
             <div>
-              <h1 className="text-2xl font-semibold text-[var(--foreground)]">Enlighten Buyer Group</h1>
-              <p className="text-sm text-[var(--foreground)]">Complete buyer group intelligence workflow</p>
+              <h1 className="text-2xl font-semibold text-foreground">Enlighten Buyer Group</h1>
+              <p className="text-sm text-foreground">Complete buyer group intelligence workflow</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <div className="text-xs text-[var(--foreground)]">Status</div>
+              <div className="text-xs text-foreground">Status</div>
               <div className="text-sm font-medium text-green-600">Ready</div>
             </div>
             <button
               onClick={() => window.history.back()}
-              className="flex items-center gap-2 text-sm text-[var(--foreground)] hover:text-blue-600 transition-colors"
+              className="flex items-center gap-2 text-sm text-foreground hover:text-blue-600 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -386,11 +386,11 @@ export const EnlightenBuyerGroupPipeline: React.FC = () => {
       {/* Main Content - Lead Record Style */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Panel - Configuration */}
-        <div className="w-1/3 border-r border-[var(--border)] bg-white overflow-y-auto overflow-x-hidden scrollbar-hide">
+        <div className="w-1/3 border-r border-border bg-white overflow-y-auto overflow-x-hidden scrollbar-hide">
           <div className="p-6">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Configuration</h3>
-              <p className="text-sm text-[var(--foreground)]">Set up your comprehensive buyer group intelligence workflow</p>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Configuration</h3>
+              <p className="text-sm text-foreground">Set up your comprehensive buyer group intelligence workflow</p>
             </div>
             <ContextSelector
               inputMode={inputMode}
@@ -406,8 +406,8 @@ export const EnlightenBuyerGroupPipeline: React.FC = () => {
         <div className="flex-1 bg-white overflow-y-auto overflow-x-hidden scrollbar-hide">
           <div className="p-6">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Pipeline Progress</h3>
-              <p className="text-sm text-[var(--foreground)]">Track the execution of your comprehensive buyer group intelligence</p>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Pipeline Progress</h3>
+              <p className="text-sm text-foreground">Track the execution of your comprehensive buyer group intelligence</p>
             </div>
             <PipelineVisualization
               steps={pipelineSteps}
@@ -422,14 +422,14 @@ export const EnlightenBuyerGroupPipeline: React.FC = () => {
 
       {/* Results Panel */}
       {results.length > 0 ? (
-        <div className="flex-shrink-0 border-t border-[var(--border)] bg-white p-6 max-h-96 overflow-y-auto overflow-x-hidden scrollbar-hide">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+        <div className="flex-shrink-0 border-t border-border bg-white p-6 max-h-96 overflow-y-auto overflow-x-hidden scrollbar-hide">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Comprehensive Buyer Group Intelligence
           </h3>
           <div className="space-y-6">
             {results.map((result, index) => (
-              <div key={index} className="bg-[var(--hover)] border border-[var(--border)] rounded-lg p-4">
-                <h4 className="font-semibold text-[var(--foreground)] mb-4">{result.companyName}</h4>
+              <div key={index} className="bg-hover border border-border rounded-lg p-4">
+                <h4 className="font-semibold text-foreground mb-4">{result.companyName}</h4>
                 
                 {/* Insights Section */}
                 <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -445,23 +445,23 @@ export const EnlightenBuyerGroupPipeline: React.FC = () => {
                 {/* Buying Committees */}
                 <div className="space-y-4">
                   {result.buyingCommittees.map((committee, committeeIndex) => (
-                    <div key={committeeIndex} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                      <h5 className="font-medium text-[var(--foreground)] mb-3">{committee.name}</h5>
+                    <div key={committeeIndex} className="bg-background border border-border rounded-lg p-4">
+                      <h5 className="font-medium text-foreground mb-3">{committee.name}</h5>
                       <div className="space-y-2">
                         {committee.members.map((member, memberIndex) => (
-                          <div key={memberIndex} className="flex items-center justify-between p-3 bg-[var(--hover)] rounded">
+                          <div key={memberIndex} className="flex items-center justify-between p-3 bg-hover rounded">
                             <div className="flex-1">
-                              <div className="font-medium text-[var(--foreground)]">{member.name}</div>
-                              <div className="text-sm text-[var(--muted)]">{member.title}</div>
-                              <div className="text-xs text-[var(--muted)]">{member.email} • {member.phone}</div>
-                              <div className="text-xs text-[var(--muted)]">LinkedIn: {member.linkedin}</div>
+                              <div className="font-medium text-foreground">{member.name}</div>
+                              <div className="text-sm text-muted">{member.title}</div>
+                              <div className="text-xs text-muted">{member.email} • {member.phone}</div>
+                              <div className="text-xs text-muted">LinkedIn: {member.linkedin}</div>
                             </div>
                             <div className="flex items-center gap-3">
                               <div className="text-right">
-                                <div className="text-sm font-medium text-[var(--foreground)]">{member.role}</div>
-                                <div className="text-xs text-[var(--muted)]">Influence: {member.influenceScore}</div>
-                                <div className="text-xs text-[var(--muted)]">Engagement: {member.engagementScore}</div>
-                                <div className="text-xs text-[var(--muted)]">Prefers: {member.communicationPreference}</div>
+                                <div className="text-sm font-medium text-foreground">{member.role}</div>
+                                <div className="text-xs text-muted">Influence: {member.influenceScore}</div>
+                                <div className="text-xs text-muted">Engagement: {member.engagementScore}</div>
+                                <div className="text-xs text-muted">Prefers: {member.communicationPreference}</div>
                               </div>
                               <div className="flex flex-col gap-1">
                                 <div className={`w-3 h-3 rounded-full ${
@@ -487,8 +487,8 @@ export const EnlightenBuyerGroupPipeline: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div className="flex-shrink-0 border-t border-[var(--border)] bg-white p-6 max-h-96 overflow-y-auto overflow-x-hidden scrollbar-hide">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+        <div className="flex-shrink-0 border-t border-border bg-white p-6 max-h-96 overflow-y-auto overflow-x-hidden scrollbar-hide">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Comprehensive Buyer Group Intelligence
           </h3>
           <div className="text-center py-8">

@@ -98,7 +98,7 @@ export function MonacoContainer() {
   });
 
   return (
-    <div className="h-full flex bg-[var(--background)]">
+    <div className="h-full flex bg-background">
       {/* Left Panel - Core Sections Only */}
       <MonacoLeftPanel />
 

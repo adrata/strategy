@@ -72,9 +72,9 @@ function getSortIcon(sortField: string | null, field: string, sortDirection?: 'a
   
   // Show appropriate icon for current sort state
   if (sortDirection === 'asc') {
-    return <ChevronUpIcon className="w-4 h-4 text-[var(--muted)]" />;
+    return <ChevronUpIcon className="w-4 h-4 text-muted" />;
   } else if (sortDirection === 'desc') {
-    return <ChevronDownIcon className="w-4 h-4 text-[var(--muted)]" />;
+    return <ChevronDownIcon className="w-4 h-4 text-muted" />;
   } else {
     // Unsorted state - show neutral icon
     return <ChevronUpIcon className="w-4 h-4 text-gray-300" />;
@@ -112,8 +112,8 @@ export function TableHeader({
           return (
             <th 
               key={header}
-              className={`px-6 py-1 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider bg-[var(--panel-background)] h-8 border-b border-[var(--border)] ${
-                onColumnSort ? 'cursor-pointer hover:bg-[var(--hover)] transition-colors group' : ''
+              className={`px-6 py-1 text-left text-xs font-medium text-muted uppercase tracking-wider bg-panel-background h-8 border-b border-border ${
+                onColumnSort ? 'cursor-pointer hover:bg-hover transition-colors group' : ''
               }`}
               style={{ 
                 width: columnWidthFn(index),

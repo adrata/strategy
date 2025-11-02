@@ -255,7 +255,7 @@ export function AppLayout({
   };
 
   return (
-    <div className="h-screen flex flex-col bg-[var(--panel-background)]">
+    <div className="h-screen flex flex-col bg-panel-background">
       {/* Custom Navigation Bar */}
       {showFullNavigation && (
         <CustomNavigationBar
@@ -275,9 +275,9 @@ export function AppLayout({
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar (conditionally visible) */}
         {sidebarVisible && (
-          <div className="w-64 bg-[var(--background)] border-r border-[var(--border)] flex-shrink-0">
+          <div className="w-64 bg-background border-r border-border flex-shrink-0">
             <div className="p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-4">Navigation</h3>
+              <h3 className="font-semibold text-foreground mb-4">Navigation</h3>
 
               {/* App Navigation */}
               <nav className="space-y-2">
@@ -332,7 +332,7 @@ export function AppLayout({
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                       currentApp === app.id
                         ? "bg-blue-100 text-blue-900 font-medium"
-                        : "text-gray-700 hover:bg-[var(--hover)]"
+                        : "text-gray-700 hover:bg-hover"
                     }`}
                     onClick={() => setCurrentApp(app.id)}
                   >
@@ -340,7 +340,7 @@ export function AppLayout({
                       <span>{app.icon}</span>
                       <span>{app.name}</span>
                     </div>
-                    <span className="text-xs text-[var(--muted)]">
+                    <span className="text-xs text-muted">
                       {app.shortcut}
                     </span>
                   </button>
@@ -363,7 +363,7 @@ export function AppLayout({
                       className={`p-2 rounded text-center text-xs transition-colors ${
                         currentLayout === layout.id
                           ? "bg-blue-100 text-blue-900"
-                          : "text-[var(--muted)] hover:bg-[var(--hover)]"
+                          : "text-muted hover:bg-hover"
                       }`}
                       onClick={() => handleLayoutChange(layout.id)}
                       title={layout.name}
@@ -381,16 +381,16 @@ export function AppLayout({
                   Quick Actions
                 </h4>
                 <div className="space-y-1">
-                  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-[var(--hover)] rounded">
+                  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-hover rounded">
                     🔍 Command Palette
                   </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-[var(--hover)] rounded">
+                  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-hover rounded">
                     🤖 AI Assistant
                   </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-[var(--hover)] rounded">
+                  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-hover rounded">
                     ⚙️ Settings
                   </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-[var(--hover)] rounded">
+                  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-hover rounded">
                     ❓ Help
                   </button>
                 </div>

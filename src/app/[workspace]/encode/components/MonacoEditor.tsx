@@ -269,10 +269,10 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
 
   if (!activeFile) {
     return (
-      <div className={`flex-1 flex items-center justify-center bg-[var(--background)] ${className}`}>
+      <div className={`flex-1 flex items-center justify-center bg-background ${className}`}>
         <div className="text-center">
-          <div className="text-lg font-medium text-[var(--muted)] mb-2">No file selected</div>
-          <div className="text-sm text-[var(--muted)]">
+          <div className="text-lg font-medium text-muted mb-2">No file selected</div>
+          <div className="text-sm text-muted">
             Open a file from the file tree to start editing
           </div>
         </div>
@@ -281,12 +281,12 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
   }
 
   return (
-    <div className={`flex flex-col h-full bg-[var(--background)] ${className}`}>
+    <div className={`flex flex-col h-full bg-background ${className}`}>
       {/* Editor Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border)] bg-[var(--panel-background)]">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-panel-background">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-[var(--foreground)]">
+            <span className="text-sm font-medium text-foreground">
               {activeFile.name}
             </span>
             {isDirty && (
@@ -295,7 +295,7 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
             {getSaveStatusIcon()}
           </div>
           
-          <div className="flex items-center gap-2 text-xs text-[var(--muted)]">
+          <div className="flex items-center gap-2 text-xs text-muted">
             <span>{language}</span>
             <span>•</span>
             <span>UTF-8</span>
@@ -307,7 +307,7 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
         <div className="flex items-center gap-2">
           <button
             onClick={handleCopy}
-            className="p-1.5 hover:bg-[var(--hover)] rounded transition-colors"
+            className="p-1.5 hover:bg-hover rounded transition-colors"
             title="Copy"
           >
             <ClipboardDocumentIcon className="w-4 h-4" />
@@ -315,7 +315,7 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
           
           <button
             onClick={handleDuplicate}
-            className="p-1.5 hover:bg-[var(--hover)] rounded transition-colors"
+            className="p-1.5 hover:bg-hover rounded transition-colors"
             title="Duplicate"
           >
             <DocumentDuplicateIcon className="w-4 h-4" />
@@ -323,7 +323,7 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
           
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="p-1.5 hover:bg-[var(--hover)] rounded transition-colors"
+            className="p-1.5 hover:bg-hover rounded transition-colors"
             title="Settings"
           >
             <Cog6ToothIcon className="w-4 h-4" />
@@ -353,16 +353,16 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
 
       {/* Settings Panel */}
       {showSettings && (
-        <div className="px-4 py-3 border-b border-[var(--border)] bg-[var(--panel-background)]">
+        <div className="px-4 py-3 border-b border-border bg-panel-background">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-[var(--muted)] mb-1">
+              <label className="block text-xs font-medium text-muted mb-1">
                 Theme
               </label>
               <select
                 value={theme}
                 onChange={(e) => setTheme(e.target.value as any)}
-                className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded bg-[var(--background)]"
+                className="w-full px-2 py-1 text-sm border border-border rounded bg-background"
               >
                 <option value="vs-dark">Dark</option>
                 <option value="vs-light">Light</option>
@@ -371,27 +371,27 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
             </div>
             
             <div>
-              <label className="block text-xs font-medium text-[var(--muted)] mb-1">
+              <label className="block text-xs font-medium text-muted mb-1">
                 Font Size
               </label>
               <input
                 type="number"
                 value={fontSize}
                 onChange={(e) => setFontSize(parseInt(e.target.value))}
-                className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded bg-[var(--background)]"
+                className="w-full px-2 py-1 text-sm border border-border rounded bg-background"
                 min="8"
                 max="24"
               />
             </div>
             
             <div>
-              <label className="block text-xs font-medium text-[var(--muted)] mb-1">
+              <label className="block text-xs font-medium text-muted mb-1">
                 Word Wrap
               </label>
               <select
                 value={wordWrap}
                 onChange={(e) => setWordWrap(e.target.value as any)}
-                className="w-full px-2 py-1 text-sm border border-[var(--border)] rounded bg-[var(--background)]"
+                className="w-full px-2 py-1 text-sm border border-border rounded bg-background"
               >
                 <option value="on">On</option>
                 <option value="off">Off</option>
@@ -408,7 +408,7 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
                 onChange={(e) => setMinimap(e.target.checked)}
                 className="rounded"
               />
-              <label htmlFor="minimap" className="text-xs font-medium text-[var(--muted)]">
+              <label htmlFor="minimap" className="text-xs font-medium text-muted">
                 Minimap
               </label>
             </div>
@@ -464,12 +464,12 @@ export function MonacoEditor({ className = "" }: MonacoEditorProps) {
 
       {/* Output Panel */}
       {output && (
-        <div className="border-t border-[var(--border)] bg-[var(--panel-background)]">
-          <div className="px-4 py-2 border-b border-[var(--border)]">
-            <h3 className="text-sm font-medium text-[var(--foreground)]">Output</h3>
+        <div className="border-t border-border bg-panel-background">
+          <div className="px-4 py-2 border-b border-border">
+            <h3 className="text-sm font-medium text-foreground">Output</h3>
           </div>
           <div className="p-4">
-            <pre className="text-sm font-mono text-[var(--foreground)] whitespace-pre-wrap">
+            <pre className="text-sm font-mono text-foreground whitespace-pre-wrap">
               {output}
             </pre>
           </div>
