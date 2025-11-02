@@ -201,14 +201,14 @@ export function CodeEditor({ document, onSave, onAutoSave }: CodeEditorProps) {
     // Default content based on language
     switch (language) {
       case 'javascript':
-        return `// Welcome to Workshop Code Editor
+        return `// Welcome to Workbench Code Editor
 function hello() {
   console.log("Hello, World!");
 }
 
 hello();`;
       case 'python':
-        return `# Welcome to Workshop Code Editor
+        return `# Welcome to Workbench Code Editor
 def hello():
     print("Hello, World!")
 
@@ -232,7 +232,7 @@ hello()`;
   "description": "A sample JSON file"
 }`;
       default:
-        return `// Welcome to Workshop Code Editor
+        return `// Welcome to Workbench Code Editor
 // Start coding here...`;
     }
   };

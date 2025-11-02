@@ -87,7 +87,7 @@ export function getDefaultPitchContent(): PitchContent {
     slides: {
       cover: {
         title: 'New Presentation',
-        subtitle: 'Workshop Document',
+        subtitle: 'Workbench Document',
         date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
         presenter: ''
       },

@@ -29,7 +29,8 @@ import {
   ArchiveBoxIcon, 
   Cog6ToothIcon,
   PlusIcon,
-  BuildingOfficeIcon
+  BuildingOfficeIcon,
+  LockClosedIcon
 } from '@heroicons/react/24/outline';
 
 interface Conversation {
@@ -47,6 +48,7 @@ interface Conversation {
   status?: 'online' | 'away' | 'offline';
   isWorkspaceMember?: boolean;
   workspaceName?: string; // Add workspace name for pill display
+  isPrivate?: boolean; // Channel visibility
 }
 
 // Mock data will be replaced with real data from hooks
@@ -104,7 +106,8 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     );
   }
   
-  const { selectedChannel, setSelectedChannel } = oasisContext;
+  // Get selectedChannel from OasisLayoutContext, not OasisProvider
+  const { selectedChannel, setSelectedChannel } = useOasisLayout();
   const { setIsProfilePanelVisible } = useProfilePanel();
   const params = useParams();
   
@@ -306,9 +309,9 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     setShowAddChannelModal(true);
   };
 
-  const handleChannelConfirm = async (name: string, description?: string) => {
+  const handleChannelConfirm = async (name: string, description?: string, isPrivate?: boolean) => {
     try {
-      const newChannel = await createChannel(name, description);
+      const newChannel = await createChannel(name, description, isPrivate);
       console.log('Channel created:', newChannel);
     } catch (error) {
       console.error('Failed to create channel:', error);
@@ -344,7 +347,8 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     isActive: selectedChannel?.id === channel.id,
     lastMessage: 'Channel created',
     lastMessageTime: 'now',
-    isWorkspaceMember: true
+    isWorkspaceMember: true,
+    isPrivate: channel.isPrivate === true
   }));
 
   // Log channel conversion for debugging
@@ -487,6 +491,9 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                 >
                   <HashtagIcon className="w-3 h-3 text-[var(--muted)]" />
                   <span className="text-sm font-medium truncate">#{channel.name}</span>
+                  {channel.isPrivate === true && (
+                    <LockClosedIcon className="w-3 h-3 text-[var(--muted)]" />
+                  )}
                   {channel.unread > 0 && (
                     <span className="ml-auto px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full min-w-[1.25rem] h-5 flex items-center justify-center">
                       {channel.unread}
@@ -590,7 +597,9 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
               {authUser?.name || 'User'}
             </div>
             <div className="text-xs text-[var(--muted)]">
-              {authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || 'Adrata'}
+              {authUser?.email === 'ross@adrata.com' 
+                ? 'Adrata' 
+                : authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || 'Adrata'}
             </div>
           </div>
         </button>

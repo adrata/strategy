@@ -41,8 +41,8 @@ interface WorkshopContextType {
   setIsEditMode: (editMode: boolean) => void;
   
   // Active tabs
-  activeTab: 'my-documents' | 'shared-with-me' | 'recent' | 'starred' | 'trash';
-  setActiveTab: (tab: 'my-documents' | 'shared-with-me' | 'recent' | 'starred' | 'trash') => void;
+  activeTab: 'my-documents' | 'shared-with-me' | 'recent' | 'starred' | 'trash' | 'stats' | 'folders';
+  setActiveTab: (tab: 'my-documents' | 'shared-with-me' | 'recent' | 'starred' | 'trash' | 'stats' | 'folders') => void;
   
   // View mode
   viewMode: 'grid' | 'list';
@@ -86,7 +86,7 @@ export default function WorkshopLayout({ children }: WorkshopLayoutProps) {
   const [selectedFolder, setSelectedFolder] = useState<WorkshopFolder | null>(null);
   const [viewingDocument, setViewingDocument] = useState<WorkshopDocument | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [activeTab, setActiveTab] = useState<'my-documents' | 'shared-with-me' | 'recent' | 'starred' | 'trash'>('my-documents');
+  const [activeTab, setActiveTab] = useState<'my-documents' | 'shared-with-me' | 'recent' | 'starred' | 'trash' | 'stats' | 'folders'>('my-documents');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDocumentType, setSelectedDocumentType] = useState<string | null>(null);
@@ -181,7 +181,7 @@ function WorkshopLayoutContent({ children }: { children: React.ReactNode }) {
           isOpen={isProfilePanelVisible}
           onClose={() => setIsProfilePanelVisible(false)}
           username={username}
-          currentApp="workshop"
+          currentApp="workbench"
           onToggleLeftPanel={ui.toggleLeftPanel}
         />
       }

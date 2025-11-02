@@ -11,7 +11,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  ArrowLeftIcon
+  ArrowLeftIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import { useRouter, usePathname } from 'next/navigation';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
@@ -23,6 +24,35 @@ interface StoryDetailViewProps {
   onClose?: () => void;
 }
 
+// Helper function to get the next status in the workflow
+const getNextStatus = (currentStatus: string): string | null => {
+  const workflow: Record<string, string> = {
+    'up-next': 'in-progress',
+    'todo': 'in-progress',
+    'in-progress': 'built',
+    'built': 'qa1',
+    'qa1': 'qa2',
+    'qa2': 'shipped'
+  };
+  
+  return workflow[currentStatus] || null;
+};
+
+// Helper function to format status label
+const formatStatusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    'up-next': 'Up Next',
+    'todo': 'Up Next',
+    'in-progress': 'In Progress',
+    'built': 'Built',
+    'qa1': 'QA1',
+    'qa2': 'QA2',
+    'shipped': 'Shipped'
+  };
+  
+  return labels[status] || status;
+};
+
 export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -30,6 +60,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   const [story, setStory] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [hasRedirected, setHasRedirected] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Fetch story data and redirect to slugged URL if needed
   useEffect(() => {
@@ -118,6 +149,60 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
     }
   };
 
+  const handleUpdate = async () => {
+    // This will trigger a save of any pending inline edits
+    // The inline edit fields handle their own saves, so this button
+    // could be used for manual save triggers or other update actions
+    console.log('Update clicked for story:', story?.id);
+  };
+
+  const handleAdvanceStatus = async () => {
+    if (!story || isUpdating) return;
+    
+    const nextStatus = getNextStatus(story.status);
+    if (!nextStatus) {
+      console.warn('Already at final status or invalid status');
+      return;
+    }
+
+    try {
+      setIsUpdating(true);
+      const response = await fetch(`/api/v1/stacks/stories/${story.id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: nextStatus
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStory(data.story);
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Failed to advance status:', errorData);
+      }
+    } catch (error) {
+      console.error('Error advancing status:', error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Determine section name from pathname
+  const getSectionName = () => {
+    const pathParts = pathname.split('/').filter(Boolean);
+    if (pathParts.includes('backlog')) return 'Backlog';
+    if (pathParts.includes('workstream')) return 'Workstream';
+    return 'Stacks';
+  };
+
+  const nextStatus = story ? getNextStatus(story.status) : null;
+  const nextStatusLabel = nextStatus ? formatStatusLabel(nextStatus) : null;
+
   // Removed view buttons - always use main view
 
   if (loading) {
@@ -146,14 +231,23 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
     <div className="h-full flex flex-col bg-[var(--background)]">
       {/* Header */}
       <div className="flex-shrink-0 px-6 py-6 border-b border-[var(--border)]">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 mb-4 text-sm">
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+          >
+            <ArrowLeftIcon className="h-4 w-4" />
+            <span>All {getSectionName()}</span>
+          </button>
+          <ChevronRightIcon className="h-4 w-4 text-[var(--muted)]" />
+          <span className="font-medium text-[var(--foreground)]">
+            {story.title || 'Untitled Story'}
+          </span>
+        </div>
+        
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button
-              onClick={handleBack}
-              className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
-            >
-              <ArrowLeftIcon className="h-5 w-5 text-[var(--muted)]" />
-            </button>
             <div>
               <h1 className="text-2xl font-bold text-[var(--foreground)]">
                 {story.title || 'Untitled Story'}
@@ -162,6 +256,25 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
                 {story.status || 'No status'} • {story.priority || 'No priority'}
               </p>
             </div>
+          </div>
+          
+          {/* Action Buttons */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleUpdate}
+              className="px-4 py-2 text-sm font-medium text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors"
+            >
+              Update
+            </button>
+            {nextStatus && nextStatusLabel && (
+              <button
+                onClick={handleAdvanceStatus}
+                disabled={isUpdating}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isUpdating ? 'Updating...' : `Advance to ${nextStatusLabel}`}
+              </button>
+            )}
           </div>
         </div>
       </div>
