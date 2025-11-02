@@ -179,12 +179,12 @@ export function StacksFilters({
   const hasActiveFilters = Object.values(filters).some(value => value !== 'all') || searchQuery;
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4 w-full">
       {/* Search */}
-      <div className="relative flex-1">
+      <div className="relative flex-1 min-w-0">
         <input
           type="text"
-          placeholder="Search stacks..."
+          placeholder="Search backlog..."
           value={searchQuery}
           onChange={handleSearchChange}
           className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"

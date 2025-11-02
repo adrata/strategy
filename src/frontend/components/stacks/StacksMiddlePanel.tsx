@@ -427,7 +427,7 @@ export function StacksMiddlePanel({
     switch (activeSubSection) {
       case 'workstream':
         return {
-          title: 'Workstream',
+          title: 'Workstreams',
           description: 'Visual task management board'
         };
       case 'backlog':

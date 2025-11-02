@@ -30,7 +30,7 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     // Check for story detail page pattern: /workspace/stacks/{storyId}
     // This must be checked BEFORE the catch-all to prevent routing to default section
     const pathParts = pathname.split('/').filter(Boolean);
-    const knownSections = ['workstream', 'backlog', 'metrics', 'deep-backlog', 'pipeline', 'sell', 'build'];
+    const knownSections = ['workstream', 'workstreams', 'backlog', 'metrics', 'deep-backlog', 'pipeline', 'sell', 'build'];
     
     // Check if this looks like a story detail page (has a storyId in the path)
     if (pathParts.length >= 3 && pathParts[1] === 'stacks') {
@@ -52,7 +52,7 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     }
     
     // New URL structure: /stacks/{category}/{section}
-    if (pathname.includes('/stacks/workstream')) {
+    if (pathname.includes('/stacks/workstreams')) {
       console.log('✅ [StacksContainer] Setting: workstream');
       onSubSectionChange('workstream');
     } else if (pathname.includes('/stacks/metrics')) {

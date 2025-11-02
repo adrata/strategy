@@ -36,7 +36,7 @@ export function StacksContent({ section }: StacksContentProps) {
   useEffect(() => {
     if (pathname.includes('/chronicle')) {
       setActiveSubSection('chronicle');
-    } else if (pathname.includes('/workstream')) {
+    } else if (pathname.includes('/workstreams')) {
       setActiveSubSection('workstream');
     } else if (pathname.includes('/metrics')) {
       setActiveSubSection('metrics');

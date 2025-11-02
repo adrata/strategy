@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   PlusIcon,
   MagnifyingGlassIcon,
@@ -16,8 +16,29 @@ import {
   TagIcon,
   ChevronUpIcon,
   ChevronDownIcon,
-  PaperAirplaneIcon
+  PaperAirplaneIcon,
+  Bars3Icon
 } from '@heroicons/react/24/outline';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+  DragOverEvent,
+  DragOverlay,
+  DragStartEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { StacksContextMenu } from './StacksContextMenu';
 import { StacksFilters } from './StacksFilters';
 import { AddStacksModal } from './AddStacksModal';
@@ -64,6 +85,114 @@ const STATUS_ICONS = {
   built: CheckCircleIcon
 };
 
+// Sortable Item Component with drag handle
+interface SortableItemProps {
+  item: BacklogItem;
+  index: number;
+  isUpNext?: boolean;
+  isDragging: boolean;
+  isOver: boolean;
+  onItemClick?: (item: BacklogItem) => void;
+  onContextMenu: (e: React.MouseEvent, itemId: string, isUpNext?: boolean) => void;
+  isBug: (item: BacklogItem) => boolean;
+}
+
+function SortableItem({
+  item,
+  index,
+  isUpNext = false,
+  isDragging,
+  isOver,
+  onItemClick,
+  onContextMenu,
+  isBug,
+}: SortableItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging: isSortableDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isSortableDragging ? 0.5 : 1,
+  };
+
+  const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
+  const itemIsBug = isBug(item);
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`group relative bg-[var(--background)] border rounded-lg p-3 hover:bg-[var(--hover)] transition-all duration-200 ${
+        isSortableDragging
+          ? 'opacity-50 scale-95 shadow-lg z-50'
+          : ''
+      } ${
+        isOver && !isSortableDragging
+          ? 'border-[var(--accent)] border-2 bg-[var(--accent)]/5'
+          : 'border-[var(--border)] hover:border-[var(--accent)]'
+      }`}
+      onClick={() => onItemClick?.(item)}
+      onContextMenu={(e) => onContextMenu(e, item.id, isUpNext)}
+    >
+      {/* Drop indicator line - shows above item when dragging over */}
+      {isOver && !isSortableDragging && (
+        <div className="absolute -top-1 left-0 right-0 h-0.5 bg-[var(--accent)] rounded-full z-10" />
+      )}
+      
+      <div className="flex items-start gap-3">
+        {/* Drag Handle */}
+        <div
+          {...attributes}
+          {...listeners}
+          className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] cursor-grab active:cursor-grabbing transition-colors opacity-0 group-hover:opacity-100"
+          title="Drag to reorder"
+        >
+          <Bars3Icon className="w-5 h-5" />
+        </div>
+
+        {/* Item Number/Letter */}
+        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
+          {isUpNext ? `1${String.fromCharCode(65 + index)}` : `B${index + 1}`}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            {itemIsBug && (
+              <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                bug
+              </span>
+            )}
+            <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
+              {item.title}
+            </h4>
+          </div>
+          {item.description && (
+            <p className="text-xs text-[var(--muted)] line-clamp-2 mb-2">
+              {item.description}
+            </p>
+          )}
+          <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
+            {item.assignee && <span>{item.assignee}</span>}
+            {item.tags && item.tags.length > 0 && (
+              <span className="bg-[var(--panel-background)] px-2 py-0.5 rounded">
+                {item.tags[0]}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   const { user: authUser } = useUnifiedAuth();
   const { ui } = useRevenueOS();
@@ -72,14 +201,26 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   const [sortField, setSortField] = useState('rank');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [visibleColumns, setVisibleColumns] = useState(['rank', 'title', 'status', 'assignee', 'dueDate', 'workstream']);
-  const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
-  const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     priority: 'all',
     status: 'all',
     workstream: 'all',
     assignee: 'all'
   });
+
+  // Configure dnd-kit sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
   
   // Check if we're in Notary Everyday workspace (check by workspace slug 'ne')
   const workspaceSlug = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
@@ -395,96 +536,95 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     });
   };
 
-  const handleDragStart = (e: React.DragEvent, itemId: string) => {
-    setDraggedItemId(itemId);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', itemId);
+  // Get active item for drag overlay
+  const activeItem = useMemo(() => {
+    if (!activeId) return null;
+    return items.find(item => item.id === activeId);
+  }, [activeId, items]);
+
+  // dnd-kit drag handlers
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
   };
 
-  const handleDragOver = (e: React.DragEvent, itemId: string) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    if (draggedItemId && draggedItemId !== itemId) {
-      setDragOverItemId(itemId);
-    }
+  const handleDragOver = (event: DragOverEvent) => {
+    setOverId(event.over?.id as string | null);
   };
 
-  const handleDragLeave = () => {
-    setDragOverItemId(null);
+  const handleDragCancel = () => {
+    setActiveId(null);
+    setOverId(null);
   };
 
-  const handleDragEnd = () => {
-    setDraggedItemId(null);
-    setDragOverItemId(null);
-  };
-
-  const handleDrop = async (e: React.DragEvent, targetItemId: string, section: 'upNext' | 'backlog') => {
-    e.preventDefault();
-    setDragOverItemId(null);
-
-    if (!draggedItemId || draggedItemId === targetItemId) {
-      setDraggedItemId(null);
-      return;
-    }
-
-    const itemsToReorder = section === 'upNext' ? itemsToDisplay.upNextItems : itemsToDisplay.otherItems;
-    const draggedIndex = itemsToReorder.findIndex(item => item.id === draggedItemId);
-    const targetIndex = itemsToReorder.findIndex(item => item.id === targetItemId);
-
-    if (draggedIndex === -1 || targetIndex === -1) {
-      setDraggedItemId(null);
-      return;
-    }
-
-    // Optimistic update - reorder items
-    const newItems = [...items];
-    const draggedItem = newItems.find(item => item.id === draggedItemId);
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
     
-    if (!draggedItem) {
-      setDraggedItemId(null);
+    setActiveId(null);
+    setOverId(null);
+
+    if (!over || active.id === over.id) {
       return;
     }
 
-    // Remove dragged item
-    const itemsInSection = newItems.filter(item => 
+    const activeIdStr = active.id as string;
+    const overIdStr = over.id as string;
+
+    // Determine which section the items belong to
+    const activeItem = items.find(item => item.id === activeIdStr);
+    const overItem = items.find(item => item.id === overIdStr);
+
+    if (!activeItem || !overItem) {
+      return;
+    }
+
+    const activeIsUpNext = activeItem.status === 'up-next' || activeItem.status === 'todo';
+    const overIsUpNext = overItem.status === 'up-next' || overItem.status === 'todo';
+
+    // Only allow reordering within the same section
+    if (activeIsUpNext !== overIsUpNext) {
+      return;
+    }
+
+    const section = activeIsUpNext ? 'upNext' : 'backlog';
+    
+    // Get current items in the section (from items array, not filtered)
+    const itemsToReorder = items.filter(item => 
       section === 'upNext' 
         ? (item.status === 'up-next' || item.status === 'todo')
         : (item.status !== 'up-next' && item.status !== 'todo')
     );
-    const otherItems = newItems.filter(item => 
+    
+    const oldIndex = itemsToReorder.findIndex(item => item.id === activeIdStr);
+    const newIndex = itemsToReorder.findIndex(item => item.id === overIdStr);
+
+    if (oldIndex === -1 || newIndex === -1) {
+      return;
+    }
+
+    // Reorder items within the section
+    const reorderedSection = arrayMove(itemsToReorder, oldIndex, newIndex);
+
+    // Get other items (items not in the reordered section)
+    const otherItems = items.filter(item => 
       section === 'upNext'
         ? (item.status !== 'up-next' && item.status !== 'todo')
         : (item.status === 'up-next' || item.status === 'todo')
     );
 
-    // Reorder within section
-    const reorderedSection = [...itemsInSection];
-    const sectionDraggedIndex = reorderedSection.findIndex(item => item.id === draggedItemId);
-    const sectionTargetIndex = reorderedSection.findIndex(item => item.id === targetItemId);
+    // Merge sections back together
+    const allReorderedItems = section === 'upNext' 
+      ? [...reorderedSection, ...otherItems]
+      : [...otherItems, ...reorderedSection];
 
-    if (sectionDraggedIndex !== -1 && sectionTargetIndex !== -1) {
-      const [movedItem] = reorderedSection.splice(sectionDraggedIndex, 1);
-      if (movedItem) {
-        reorderedSection.splice(sectionTargetIndex, 0, movedItem);
-      }
+    // Update ranks
+    const itemsWithNewRanks = allReorderedItems.map((item, index) => ({
+      ...item,
+      rank: index + 1
+    }));
 
-      // Update ranks
-      const allReorderedItems = section === 'upNext' 
-        ? [...reorderedSection, ...otherItems]
-        : [...otherItems, ...reorderedSection];
-
-      const itemsWithNewRanks = allReorderedItems.map((item, index) => ({
-        ...item,
-        rank: index + 1
-      }));
-
-      setItems(itemsWithNewRanks);
-    }
-
-    setDraggedItemId(null);
+    setItems(itemsWithNewRanks);
 
     // Persist to API
-    // Resolve workspace ID
     let workspaceId = ui.activeWorkspace?.id;
     if (!workspaceId && workspaceSlug) {
       const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
@@ -501,19 +641,21 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       return;
     }
 
-    // Update ranks in the database (we'll need to update multiple items)
+    // Update ranks via API
     try {
-      // For now, we'll update the dragged item's position
-      // In a full implementation, you might want to update all affected items
-      const response = await fetch(`/api/v1/stacks/stories/${draggedItemId}`, {
+      // Batch update all affected items
+      const response = await fetch(`/api/v1/stacks/stories/batch-update`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          // Note: The API may need to support rank updates
-          // For now, we'll refresh the list after reordering
+          workspaceId,
+          updates: itemsWithNewRanks.map(item => ({
+            id: item.id,
+            rank: item.rank
+          }))
         })
       });
 
@@ -544,7 +686,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           }
         }
       } else {
-        // Refresh to get updated order from server
+        // Success - refresh to get server-confirmed order
         const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
@@ -864,63 +1006,51 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                 </div>
                 
                 {/* Cards View with Drag and Drop */}
-                <div className="space-y-2 mb-6">
-                  {itemsToDisplay.upNextItems.map((item, index) => {
-                    const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
-                    const isDragging = draggedItemId === item.id;
-                    const isDragOver = dragOverItemId === item.id;
-                    
-                    return (
-                      <div
-                        key={item.id}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, item.id)}
-                        onDragOver={(e) => handleDragOver(e, item.id)}
-                        onDragLeave={handleDragLeave}
-                        onDragEnd={handleDragEnd}
-                        onDrop={(e) => handleDrop(e, item.id, 'upNext')}
-                        className={`bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:bg-[var(--hover)] hover:border-[var(--accent)] transition-colors cursor-move ${
-                          isDragging ? 'opacity-50' : ''
-                        } ${isDragOver ? 'border-[var(--accent)] border-2' : ''}`}
-                        onClick={() => onItemClick?.(item)}
-                        onContextMenu={(e) => handleContextMenu(e, item.id, true)}
-                      >
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={handleDragStart}
+                  onDragOver={handleDragOver}
+                  onDragEnd={handleDragEnd}
+                  onDragCancel={handleDragCancel}
+                >
+                  <SortableContext
+                    items={itemsToDisplay.upNextItems.map(item => item.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-2 mb-6">
+                      {itemsToDisplay.upNextItems.map((item, index) => (
+                        <SortableItem
+                          key={item.id}
+                          item={item}
+                          index={index}
+                          isUpNext={true}
+                          isDragging={activeId === item.id}
+                          isOver={overId === item.id}
+                          onItemClick={onItemClick}
+                          onContextMenu={handleContextMenu}
+                          isBug={isBug}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                  <DragOverlay>
+                    {activeItem && (activeItem.status === 'up-next' || activeItem.status === 'todo') ? (
+                      <div className="bg-[var(--background)] border-2 border-[var(--accent)] rounded-lg p-3 shadow-xl opacity-90 rotate-2">
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
-                            1{String.fromCharCode(65 + index)}
+                            {String.fromCharCode(65 + itemsToDisplay.upNextItems.findIndex(i => i.id === activeItem.id))}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              {isBug(item) && (
-                                <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
-                                  bug
-                                </span>
-                              )}
-                              <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
-                                {item.title}
-                              </h4>
-                            </div>
-                            {item.description && (
-                              <p className="text-xs text-[var(--muted)] line-clamp-2 mb-2">
-                                {item.description}
-                              </p>
-                            )}
-                            <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
-                              {item.assignee && (
-                                <span>{item.assignee}</span>
-                              )}
-                              {item.tags && item.tags.length > 0 && (
-                                <span className="bg-[var(--panel-background)] px-2 py-0.5 rounded">
-                                  {item.tags[0]}
-                                </span>
-                              )}
-                            </div>
+                            <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
+                              {activeItem.title}
+                            </h4>
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
+                    ) : null}
+                  </DragOverlay>
+                </DndContext>
               </>
             )}
 
@@ -938,63 +1068,51 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                 </div>
                 
                 {/* Cards View with Drag and Drop */}
-                <div className="space-y-2">
-                  {itemsToDisplay.otherItems.map((item, index) => {
-                    const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
-                    const isDragging = draggedItemId === item.id;
-                    const isDragOver = dragOverItemId === item.id;
-                    
-                    return (
-                      <div
-                        key={item.id}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, item.id)}
-                        onDragOver={(e) => handleDragOver(e, item.id)}
-                        onDragLeave={handleDragLeave}
-                        onDragEnd={handleDragEnd}
-                        onDrop={(e) => handleDrop(e, item.id, 'backlog')}
-                        className={`bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:bg-[var(--hover)] hover:border-[var(--accent)] transition-colors cursor-move ${
-                          isDragging ? 'opacity-50' : ''
-                        } ${isDragOver ? 'border-[var(--accent)] border-2' : ''}`}
-                        onClick={() => onItemClick?.(item)}
-                        onContextMenu={(e) => handleContextMenu(e, item.id, false)}
-                      >
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={handleDragStart}
+                  onDragOver={handleDragOver}
+                  onDragEnd={handleDragEnd}
+                  onDragCancel={handleDragCancel}
+                >
+                  <SortableContext
+                    items={itemsToDisplay.otherItems.map(item => item.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-2">
+                      {itemsToDisplay.otherItems.map((item, index) => (
+                        <SortableItem
+                          key={item.id}
+                          item={item}
+                          index={index}
+                          isUpNext={false}
+                          isDragging={activeId === item.id}
+                          isOver={overId === item.id}
+                          onItemClick={onItemClick}
+                          onContextMenu={handleContextMenu}
+                          isBug={isBug}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                  <DragOverlay>
+                    {activeItem && activeItem.status !== 'up-next' && activeItem.status !== 'todo' ? (
+                      <div className="bg-[var(--background)] border-2 border-[var(--accent)] rounded-lg p-3 shadow-xl opacity-90 rotate-2">
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
-                            B{index + 1}
+                            B{itemsToDisplay.otherItems.findIndex(i => i.id === activeItem.id) + 1}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              {isBug(item) && (
-                                <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
-                                  bug
-                                </span>
-                              )}
-                              <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
-                                {item.title}
-                              </h4>
-                            </div>
-                            {item.description && (
-                              <p className="text-xs text-[var(--muted)] line-clamp-2 mb-2">
-                                {item.description}
-                              </p>
-                            )}
-                            <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
-                              {item.assignee && (
-                                <span>{item.assignee}</span>
-                              )}
-                              {item.tags && item.tags.length > 0 && (
-                                <span className="bg-[var(--panel-background)] px-2 py-0.5 rounded">
-                                  {item.tags[0]}
-                                </span>
-                              )}
-                            </div>
+                            <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
+                              {activeItem.title}
+                            </h4>
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
+                    ) : null}
+                  </DragOverlay>
+                </DndContext>
               </>
             )}
           </div>
