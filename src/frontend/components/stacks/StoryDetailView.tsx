@@ -97,8 +97,24 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
     if (onClose) {
       onClose();
     } else {
-      // Use browser history for smooth navigation without page reload
-      router.back();
+      // Check if we came from backlog section
+      const referrer = typeof window !== 'undefined' ? document.referrer : '';
+      const currentPath = pathname;
+      const workspaceSlug = currentPath.split('/')[1];
+      
+      // Check if referrer or current path indicates we came from backlog
+      const cameFromBacklog = referrer.includes('/backlog') || 
+                             (typeof window !== 'undefined' && 
+                              (sessionStorage.getItem('stacks-navigation-source') === 'backlog' ||
+                               sessionStorage.getItem('stacks-navigation-source') === 'up-next'));
+      
+      if (cameFromBacklog && workspaceSlug) {
+        // Navigate back to backlog
+        router.push(`/${workspaceSlug}/stacks/backlog`);
+      } else {
+        // Use browser history for smooth navigation without page reload
+        router.back();
+      }
     }
   };
 

@@ -88,12 +88,24 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     } else if (pathname.includes('/stacks/backlog') && !pathname.includes('/stacks/sell/backlog') && !pathname.includes('/stacks/build/backlog')) {
       console.log('✅ [StacksContainer] Setting: backlog');
       onSubSectionChange('backlog');
+      // Clear navigation source when returning to backlog
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('stacks-navigation-source');
+      }
     } else if (pathname.includes('/stacks/sell/backlog')) {
       console.log('✅ [StacksContainer] Setting: backlog');
       onSubSectionChange('backlog');
+      // Clear navigation source when returning to backlog
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('stacks-navigation-source');
+      }
     } else if (pathname.includes('/stacks/build/backlog')) {
       console.log('✅ [StacksContainer] Setting: backlog-build');
       onSubSectionChange('backlog-build');
+      // Clear navigation source when returning to backlog
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('stacks-navigation-source');
+      }
     } else if (pathname.includes('/stacks/sell/pipeline')) {
       console.log('✅ [StacksContainer] Setting: stacks');
       onSubSectionChange('stacks');
@@ -112,6 +124,13 @@ export function StacksContainer({ storyId }: StacksContainerProps) {
     setShowDetail(true);
     
     if (!item?.id) return;
+    
+    // Store navigation source if coming from backlog or up-next section
+    if (activeSubSection === 'backlog' || pathname.includes('/backlog')) {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('stacks-navigation-source', 'backlog');
+      }
+    }
     
     const workspaceSlug = pathname.split('/')[1];
     

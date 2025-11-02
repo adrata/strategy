@@ -6,6 +6,7 @@ type AuthUser = {
   email: string;
   name?: string;
   workspaceId?: string;
+  activeWorkspaceId?: string;
 };
 
 /**
@@ -103,11 +104,14 @@ export async function getUnifiedAuthUser(
         const decoded = decodeJWT(actualToken);
         if (decoded) {
           logger.auth.success(`Valid token for: ${decoded.email}`);
+          // Extract workspace info - prioritize activeWorkspaceId if available
+          const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
           return {
-            id: decoded.userId || decoded.id,
+            id: decoded.userId || decoded.id || decoded.sub,
             email: decoded.email,
             name: decoded.name,
-            workspaceId: decoded.workspaceId || "local-workspace",
+            workspaceId: workspaceId,
+            activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
           };
         } else {
           logger.auth.error("JWT verification failed");
@@ -127,11 +131,14 @@ export async function getUnifiedAuthUser(
       const decoded = decodeJWT(token);
       if (decoded) {
         logger.auth.success(`Valid bearer token for: ${decoded.email}`);
+        // Extract workspace info - prioritize activeWorkspaceId if available
+        const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
         return {
-          id: decoded.userId || decoded.id,
+          id: decoded.userId || decoded.id || decoded.sub,
           email: decoded.email,
           name: decoded.name,
-          workspaceId: decoded.workspaceId || "local-workspace",
+          workspaceId: workspaceId,
+          activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
         };
       } else {
         logger.auth.error("Bearer token verification failed");

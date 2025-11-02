@@ -7,6 +7,7 @@ type AuthUser = {
   email: string;
   name?: string;
   workspaceId?: string;
+  activeWorkspaceId?: string;
 };
 
 /**
@@ -23,11 +24,13 @@ export async function getV1AuthUser(req: NextRequest): Promise<AuthUser | null> 
 
     if (nextAuthToken) {
       console.log("✅ V1 Auth: NextAuth token found for:", nextAuthToken.email);
+      const workspaceId = (nextAuthToken as any)['activeWorkspaceId'] || (nextAuthToken as any)['workspaceId'] || "local-workspace";
       return {
         id: nextAuthToken.sub || (nextAuthToken as any)['userId'] || '',
         email: nextAuthToken.email || '',
         name: nextAuthToken.name || undefined,
-        workspaceId: (nextAuthToken as any)['workspaceId'] || "local-workspace",
+        workspaceId: workspaceId,
+        activeWorkspaceId: (nextAuthToken as any)['activeWorkspaceId'] || (nextAuthToken as any)['workspaceId'],
       };
     }
 
@@ -48,11 +51,13 @@ export async function getV1AuthUser(req: NextRequest): Promise<AuthUser | null> 
         const decoded = decodeJWT(token);
         if (decoded) {
           console.log("✅ V1 Auth: auth-token cookie found for:", decoded.email);
+          const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
           return {
-            id: decoded.userId || decoded.id,
+            id: decoded.userId || decoded.id || decoded.sub,
             email: decoded.email,
             name: decoded.name,
-            workspaceId: decoded.workspaceId || "local-workspace",
+            workspaceId: workspaceId,
+            activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
           };
         }
       }
@@ -69,11 +74,13 @@ export async function getV1AuthUser(req: NextRequest): Promise<AuthUser | null> 
       const decoded = decodeJWT(token);
       if (decoded) {
         console.log("✅ V1 Auth: Custom JWT token found for:", decoded.email);
+        const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
         return {
-          id: decoded.userId || decoded.id,
+          id: decoded.userId || decoded.id || decoded.sub,
           email: decoded.email,
           name: decoded.name,
-          workspaceId: decoded.workspaceId || "local-workspace",
+          workspaceId: workspaceId,
+          activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
         };
       }
     }

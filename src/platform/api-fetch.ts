@@ -49,11 +49,27 @@ export async function apiFetch<T = any>(
     if (!response.ok) {
       // Handle authentication errors
       if (response.status === 401) {
-        console.warn('🔐 Authentication required for API call:', url);
+        // Enhanced diagnostics for 401 errors
+        const cookieHeader = typeof window !== 'undefined' ? document.cookie : 'N/A (server-side)';
+        const hasAuthCookie = cookieHeader.includes('auth-token') || cookieHeader.includes('next-auth.session-token');
+        
+        console.warn('🔐 Authentication required for API call:', {
+          url,
+          status: response.status,
+          statusText: response.statusText,
+          hasCookies: typeof window !== 'undefined' && document.cookie.length > 0,
+          hasAuthCookie,
+          cookieHeader: process.env.NODE_ENV === 'development' ? cookieHeader.substring(0, 100) : 'hidden',
+          fallbackAvailable: finalFallback !== undefined
+        });
+        
         if (finalFallback !== undefined) {
+          console.log('🔄 Using fallback response for 401 error:', url);
           return finalFallback;
         }
-        throw new Error('Authentication required');
+        
+        // Throw error with more context
+        throw new Error(`Authentication required (401): ${response.statusText || 'Unauthorized'}`);
       }
 
       // Handle rate limiting

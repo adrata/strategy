@@ -83,7 +83,17 @@ export function useFastCounts(): UseFastCountsReturn {
     setError(null);
 
     try {
-      // console.log('🚀 [FAST COUNTS] Loading counts for workspace:', workspaceId);
+      // Debug authentication context in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 [FAST COUNTS] Auth context:', {
+          hasAuthUser: !!authUser,
+          userId,
+          workspaceId,
+          hasCookies: typeof window !== 'undefined' && document.cookie.length > 0,
+          cookieCount: typeof window !== 'undefined' ? document.cookie.split(';').length : 0,
+          hasAuthToken: typeof window !== 'undefined' ? document.cookie.includes('auth-token') : false
+        });
+      }
       
       // 🚀 PERFORMANCE: Use the unified counts API for all counts including speedrun
       const countsResponse = await fetch(`/api/data/counts${forceRefresh ? `?t=${Date.now()}` : ''}`, {

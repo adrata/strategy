@@ -490,10 +490,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
 
     // Set HTTP-only cookie for additional security
+    // Note: sameSite: "lax" allows cookies to be sent with same-origin requests (including API calls)
+    // This is the correct setting for our use case where API routes are on the same domain
     response.cookies.set("auth-token", token, {
       httpOnly: true,
       secure: process['env']['NODE_ENV'] === "production",
       sameSite: "lax",
+      path: "/", // Explicitly set path to root to ensure cookie is available for all routes
       maxAge: cookieMaxAge,
     });
 

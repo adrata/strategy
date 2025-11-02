@@ -196,13 +196,23 @@ export function useFastSectionData(section: string, limit: number = 30): UseFast
       }
       
       console.log(`🔗 [FAST SECTION DATA] Making authenticated request to:`, url);
-      console.log(`🔍 [FAST SECTION DATA] Request context:`, {
+      
+      // Enhanced debugging for authentication issues
+      const authDebugInfo = {
         section,
         url,
         workspaceId,
         userId,
-        hasCredentials: typeof window !== 'undefined' && document.cookie.length > 0
-      });
+        hasCredentials: typeof window !== 'undefined' && document.cookie.length > 0,
+        cookieCount: typeof window !== 'undefined' ? document.cookie.split(';').length : 0,
+        hasAuthToken: typeof window !== 'undefined' ? document.cookie.includes('auth-token') : false,
+        hasNextAuthToken: typeof window !== 'undefined' ? document.cookie.includes('next-auth.session-token') : false,
+        cookiePreview: process.env.NODE_ENV === 'development' && typeof window !== 'undefined' 
+          ? document.cookie.substring(0, 200) 
+          : 'hidden'
+      };
+      
+      console.log(`🔍 [FAST SECTION DATA] Request context:`, authDebugInfo);
       
       // Use direct fetch with credentials instead of authFetch with problematic fallback
       const response = await fetch(url, { credentials: 'include' });

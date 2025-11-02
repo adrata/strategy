@@ -73,10 +73,12 @@ export async function getSecureApiContext(
     }
 
     // 3. Build context
+    // Prioritize activeWorkspaceId over workspaceId if available
+    const workspaceId = (authUser as any).activeWorkspaceId || authUser.workspaceId || '';
     const context: SecureApiContext = {
       userId: authUser.id,
       userEmail: authUser.email,
-      workspaceId: authUser.workspaceId || '',
+      workspaceId: workspaceId,
       userName: authUser.name
     };
 

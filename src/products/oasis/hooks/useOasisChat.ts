@@ -45,6 +45,7 @@ export function useOasisChat() {
     try {
       const response = await fetch(`/api/v1/collaboration/chat/chats?workspaceId=${user.activeWorkspaceId}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -66,6 +67,7 @@ export function useOasisChat() {
     try {
       const response = await fetch(`/api/v1/collaboration/chat/messages?chatId=${chatId}`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -91,6 +93,7 @@ export function useOasisChat() {
     try {
       const response = await fetch('/api/v1/collaboration/chat/messages', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -119,6 +122,7 @@ export function useOasisChat() {
     try {
       const response = await fetch('/api/v1/collaboration/chat/messages', {
         method: 'PATCH',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -146,6 +150,7 @@ export function useOasisChat() {
     try {
       const response = await fetch('/api/v1/collaboration/chat/messages', {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -172,6 +177,7 @@ export function useOasisChat() {
     try {
       const response = await fetch('/api/v1/collaboration/chat/reactions', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -199,6 +205,7 @@ export function useOasisChat() {
     try {
       const response = await fetch('/api/v1/collaboration/chat/reactions', {
         method: 'DELETE',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -226,6 +233,7 @@ export function useOasisChat() {
     try {
       await fetch('/api/v1/collaboration/chat/typing', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -249,6 +257,7 @@ export function useOasisChat() {
     try {
       await fetch('/api/v1/collaboration/chat/typing', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
