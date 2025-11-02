@@ -11,27 +11,28 @@ export interface AppTheme {
 
 export const APP_THEMES: Record<string, AppTheme> = {
   // Revenue-OS (revenue-os grouping: speedrun, leads, partners, companies, etc.)
+  // Professional sales/revenue platform - Blue for trust and business
   'revenue-os': {
     letter: 'R',
     color: '#dbeafe', // blue-100 (light blue background)
     name: 'Revenue-OS'
   },
-  // Stacks
+  // Stacks - Development backlog and issue management - Orange for technical tools
   'stacks': {
     letter: 'S',
-    color: '#bfdbfe', // blue-200 (light blue variant)
+    color: '#fed7aa', // orange-200 (light orange background)
     name: 'Stacks'
   },
-  // Oasis
+  // Oasis - Communication/collaboration hub - Cyan/Teal for communication
   'oasis': {
     letter: 'O',
-    color: '#93c5fd', // blue-300 (light blue variant)
+    color: '#cffafe', // cyan-100 (light cyan background)
     name: 'Oasis'
   },
-  // Workbench (workshop)
+  // Workbench (workshop) - Document management and creative work - Purple for creativity
   'workbench': {
     letter: 'W',
-    color: '#60a5fa', // blue-400 (light blue variant)
+    color: '#ede9fe', // violet-100 (light purple background)
     name: 'Workbench'
   },
   // Legacy: RevenueOS (pipeline apps) - keeping for backwards compatibility
@@ -52,10 +53,10 @@ export const APP_THEMES: Record<string, AppTheme> = {
     color: '#d1fae5', // emerald-100 (light green background)
     name: 'Database'
   },
-  // Grand Central
+  // Grand Central - Integration hub and workflow builder - Amber for connectivity and energy
   'grand-central': {
     letter: 'G',
-    color: '#fed7aa', // orange-200 (light orange background)
+    color: '#fef3c7', // amber-100 (light amber background)
     name: 'Grand Central'
   },
   // Olympus
@@ -70,7 +71,7 @@ export const APP_THEMES: Record<string, AppTheme> = {
     color: '#fce7f3', // pink-100 (light pink background)
     name: 'Tower'
   },
-  // Default fallback
+  // Adrata - Main platform dashboard - Indigo for premium/main platform
   'default': {
     letter: 'A',
     color: '#e0e7ff', // indigo-100 (light indigo background)
@@ -83,16 +84,17 @@ export const APP_THEMES: Record<string, AppTheme> = {
  */
 function getTextColorForBackground(backgroundColor: string): string {
   const colorMap: Record<string, string> = {
-    '#dbeafe': '#1e40af', // blue-100 -> blue-800
-    '#bfdbfe': '#1e3a8a', // blue-200 -> blue-900
-    '#93c5fd': '#1e3a8a', // blue-300 -> blue-900
-    '#60a5fa': '#1e3a8a', // blue-400 -> blue-900
-    '#ede9fe': '#5b21b6', // violet-100 -> violet-800
+    '#dbeafe': '#1e40af', // blue-100 -> blue-800 (Revenue-OS)
+    '#fed7aa': '#c2410c', // orange-200 -> orange-800 (Stacks)
+    '#cffafe': '#155e75', // cyan-100 -> cyan-800 (Oasis)
+    '#ede9fe': '#5b21b6', // violet-100 -> violet-800 (Workbench)
+    '#fef3c7': '#92400e', // amber-100 -> amber-800 (Grand Central)
+    '#e0e7ff': '#3730a3', // indigo-100 -> indigo-800 (Adrata)
+    '#bfdbfe': '#1e3a8a', // blue-200 -> blue-900 (legacy)
+    '#93c5fd': '#1e3a8a', // blue-300 -> blue-900 (legacy)
+    '#60a5fa': '#1e3a8a', // blue-400 -> blue-900 (legacy)
     '#d1fae5': '#065f46', // emerald-100 -> emerald-800
-    '#fed7aa': '#c2410c', // orange-200 -> orange-800
-    '#cffafe': '#155e75', // cyan-100 -> cyan-800
     '#fce7f3': '#be185d', // pink-100 -> rose-700
-    '#e0e7ff': '#3730a3', // indigo-100 -> indigo-800
   };
   
   return colorMap[backgroundColor] || '#374151'; // fallback to gray-700
