@@ -154,8 +154,10 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
         ) : (
           <div 
             className={`text-sm transition-all duration-200 ${
-              item.completed 
+              item.completed && item.itemType === 'custom'
                 ? 'line-through text-[var(--muted-foreground)]' 
+                : item.completed && item.itemType === 'preset'
+                ? 'text-[var(--foreground)] opacity-70'
                 : 'text-[var(--foreground)]'
             }`}
           >
@@ -220,6 +222,13 @@ const ChecklistItemComponent: React.FC<ChecklistItemComponentProps> = ({
           </span>
         </div>
       )}
+      {item.itemType === 'custom' && (
+        <div className="flex items-center">
+          <span className="text-xs text-[var(--muted-foreground)] px-2 py-0.5 rounded bg-[var(--hover-bg)]">
+            Bonus
+          </span>
+        </div>
+      )}
     </div>
   );
 };
@@ -280,7 +289,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
   // Get userId and workspaceId for action list
   const userId = authUser?.id;
-  const workspaceId = authUser?.activeWorkspaceId || (typeof workspace === 'string' ? undefined : workspace?.id);
+  const workspaceId = authUser?.activeWorkspaceId || (typeof workspace === 'string' ? undefined : (workspace as any)?.id);
 
   // Action list hook
   const {
@@ -294,7 +303,8 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     isLoading: checklistLoading,
     error: checklistError,
     currentPreset,
-    lastResetDate
+    lastResetDate,
+    streak
   } = useChecklist(userId, workspaceId);
 
   // Automatically detect current app from pathname if not provided
@@ -443,12 +453,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const remainingCount = activeItems.length;
   const completedCount = completedItems.length;
 
-  // Auto-focus input when switching to actionList view
-  useEffect(() => {
-    if (viewMode === 'actionList' && isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
-  }, [viewMode, isOpen]);
+  // Auto-focus removed - user requested no auto-focus on page load
 
   // Load notes when component mounts or workspace/user changes
   useEffect(() => {
@@ -653,22 +658,24 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
       </div>
 
       {/* Header with navigation buttons */}
-      <div className="px-4 py-2 border-b border-[var(--border)]">
+      <div className="px-4 border-b border-[var(--border)]" style={{ paddingTop: '15px', paddingBottom: '15px' }}>
         <div className="flex items-center justify-between gap-2">
           {/* Left: Profile icon (clickable to close) */}
           <button
             onClick={onClose}
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity group"
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity group"
             title="Close panel"
           >
-            <div className="w-8 h-8 bg-[var(--accent)] rounded-full flex items-center justify-center text-white font-semibold text-sm group-hover:bg-[var(--accent)]/90">
-              {(typeof workspace === 'string' ? workspace : workspace?.name || 'W').charAt(0).toUpperCase()}
+            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--accent)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
+              <span className="text-lg font-bold text-white">
+                {(typeof workspace === 'string' ? workspace : (workspace as any)?.name || 'W').charAt(0).toUpperCase()}
+              </span>
             </div>
-            <div>
-              <h3 className="text-sm font-semibold text-[var(--foreground)] m-0">
-                {typeof workspace === 'string' ? workspace : workspace?.name || 'Workspace'}
+            <div className="flex-1">
+              <h3 className="text-base font-semibold text-[var(--foreground)] m-0 p-0 text-left leading-tight">
+                {typeof workspace === 'string' ? workspace : (workspace as any)?.name || 'Workspace'}
               </h3>
-              <p className="text-xs text-[var(--muted-foreground)] m-0">
+              <p className="text-xs text-[var(--muted-foreground)] m-0 p-0 text-left leading-tight" style={{ marginTop: '1px' }}>
                 Workspace
               </p>
             </div>
@@ -705,7 +712,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <button
               onClick={() => {
                 setViewMode('actionList');
-                setTimeout(() => inputRef.current?.focus(), 100);
               }}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'actionList'
@@ -896,7 +902,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             </div>
             
             {/* Search Bar - Below Notes header and status */}
-            <div className="flex-shrink-0 px-1 pb-3 mb-2">
+            <div className="flex-shrink-0 px-1 pb-3 mb-1">
               <input
                 type="text"
                 value={notesSearchQuery}
@@ -932,14 +938,6 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                 <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
                   Action List
                 </h4>
-                {currentPreset !== 'custom-only' && (() => {
-                  const preset = getPresetTemplate(currentPreset);
-                  return preset ? (
-                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
-                      {preset.name}
-                    </p>
-                  ) : null;
-                })()}
               </div>
               <div className="flex flex-col items-end gap-1">
                 <div className="flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
@@ -954,7 +952,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                       }`}
                       title={showOnlyCompleted ? "Show all items" : "Show only completed items"}
                     >
-                      {completedCount} {showOnlyCompleted ? 'all time completed' : 'completed'}
+                      {showOnlyCompleted ? 'Back' : `${completedCount} completed`}
                     </button>
                   )}
                   {!showOnlyCompleted && remainingCount > 0 && (
@@ -991,14 +989,14 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                       }
                     }}
                     placeholder="Add a task..."
-                    className="flex-1 px-4 py-3 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/50 focus:border-[var(--accent)] transition-all shadow-sm hover:shadow-md"
+                    className="flex-1 px-4 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder:text-gray-500 focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors"
                     aria-label="Add action list item"
                     aria-describedby="action-list-input-help"
                   />
                   <button
                     onClick={handleAddItem}
                     disabled={!newItemText.trim()}
-                    className="p-3 bg-[var(--accent)] text-white rounded-lg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center shadow-sm hover:shadow-md disabled:shadow-none"
+                    className="p-2 bg-gray-500 text-white rounded-lg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center disabled:shadow-none"
                     aria-label="Add item to action list"
                     title="Add item (Enter)"
                   >
@@ -1058,7 +1056,18 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                 <>
                   {/* Preset Items Section */}
                   {!showOnlyCompleted && presetItems.length > 0 && (
-                    <div className="space-y-1">
+                    <div className="space-y-1 pt-[7px]">
+                      {/* Streak Message */}
+                      {presetItems.every(item => item.completed) && streak > 0 && (
+                        <div className="px-3 py-2 mb-2 bg-green-50 border border-green-200 rounded-lg">
+                          <p className="text-sm font-semibold text-green-800">
+                            🔥 {streak} day streak!
+                          </p>
+                          <p className="text-xs text-green-700 mt-0.5">
+                            Keep it going! You've completed all Daily 100 items for {streak} consecutive day{streak !== 1 ? 's' : ''}.
+                          </p>
+                        </div>
+                      )}
                       {presetItems.map((item) => (
                         <ChecklistItemComponent
                           key={item.id}
@@ -1073,19 +1082,38 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   )}
                   
                   {/* Custom Items Section */}
-                  {customItems.length > 0 && (
-                    <div className={`space-y-1 ${presetItems.length > 0 ? 'mt-3 pt-3 border-t border-[var(--border)]' : ''}`}>
-                      {!showOnlyCompleted && (
-                        <p className="px-3 text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
-                          Custom Items
-                        </p>
-                      )}
-                      {(showOnlyCompleted 
-                        ? customItems.filter(item => item.completed)
-                        : showAllItems 
-                          ? customItems 
-                          : customItems.filter(item => !item.completed)
-                      ).map((item) => (
+                  {customItems.length > 0 && (() => {
+                    const itemsToShow = showOnlyCompleted 
+                      ? customItems.filter(item => item.completed)
+                      : showAllItems 
+                        ? customItems 
+                        : customItems.filter(item => !item.completed);
+                    
+                    return itemsToShow.length > 0 ? (
+                      <div className={`space-y-1 ${presetItems.length > 0 ? 'mt-3 pt-3 border-t border-[var(--border)]' : ''}`}>
+                        {!showOnlyCompleted && (
+                          <p className="px-3 text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider mb-1">
+                            Bonus items
+                          </p>
+                        )}
+                        {itemsToShow.map((item) => (
+                          <ChecklistItemComponent
+                            key={item.id}
+                            item={item}
+                            onToggle={handleToggleItem}
+                            onDelete={handleDeleteItem}
+                            onEdit={handleEditItem}
+                            isRemoving={removingItemIds.has(item.id)}
+                          />
+                        ))}
+                      </div>
+                    ) : null;
+                  })()}
+                  
+                  {/* Custom Items when showing only completed */}
+                  {showOnlyCompleted && customItems.length > 0 && (
+                    <div className="space-y-1">
+                      {customItems.filter(item => item.completed).map((item) => (
                         <ChecklistItemComponent
                           key={item.id}
                           item={item}
