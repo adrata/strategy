@@ -11,6 +11,7 @@ export interface OasisChannel {
   id: string;
   name: string;
   description: string | null;
+  isPrivate?: boolean;
   createdAt: string;
   memberCount: number;
   recentMessageCount: number;
@@ -65,7 +66,7 @@ export function useOasisChannels(workspaceId: string) {
   };
 
   // Create new channel
-  const createChannel = async (name: string, description?: string) => {
+  const createChannel = async (name: string, description?: string, isPrivate?: boolean) => {
     try {
       const response = await fetch('/api/v1/oasis/oasis/channels', {
         method: 'POST',
@@ -75,7 +76,8 @@ export function useOasisChannels(workspaceId: string) {
         body: JSON.stringify({
           workspaceId,
           name,
-          description
+          description,
+          isPrivate: isPrivate || false
         }),
       });
 

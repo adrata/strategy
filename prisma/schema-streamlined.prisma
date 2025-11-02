@@ -148,6 +148,7 @@ model users {
   OasisExternalConnection_OasisExternalConnection_userIdTousers         OasisExternalConnection[]   @relation("OasisExternalConnection_userIdTousers")
   oasis_messages                                                        OasisMessage[]
   oasis_reactions                                                       OasisReaction[]
+  oasis_read_receipts                                                   OasisReadReceipt[]
   stacks_story_assignees                                                StacksStory[]
   stacks_task_assignees                                                 StacksTask[]
   assigned_actions                                                      actions[]                   @relation("AssignedActions")
@@ -834,6 +835,7 @@ model OasisChannel {
   workspaceId String               @db.VarChar(30)
   name        String               @db.VarChar(100)
   description String?              @db.VarChar(500)
+  isPrivate   Boolean              @default(false)
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
   workspace   workspaces           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -897,6 +899,7 @@ model OasisMessage {
   other_OasisMessage OasisMessage[]      @relation("OasisMessageToOasisMessage")
   sender             users               @relation(fields: [senderId], references: [id], onDelete: Cascade)
   reactions          OasisReaction[]
+  readReceipts       OasisReadReceipt[]
 
   @@index([channelId])
   @@index([dmId])
@@ -917,6 +920,20 @@ model OasisReaction {
   @@unique([messageId, userId, emoji])
   @@index([messageId])
   @@index([userId])
+}
+
+model OasisReadReceipt {
+  id        String       @id @default(cuid())
+  userId    String       @db.VarChar(30)
+  messageId String
+  readAt    DateTime     @default(now())
+  message   OasisMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, messageId])
+  @@index([userId])
+  @@index([messageId])
+  @@index([readAt])
 }
 
 /// Stacks - Project Management (Jira-like)

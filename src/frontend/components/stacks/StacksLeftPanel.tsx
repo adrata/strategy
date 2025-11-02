@@ -28,7 +28,7 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<any>;
   description: string;
-  getCount?: (stats: { total: number; active: number; completed: number }) => number | React.ReactNode;
+  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number }) => number | React.ReactNode;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -37,14 +37,14 @@ const navigationItems: NavigationItem[] = [
     label: 'Workstream',
     icon: QueueListIcon,
     description: 'Visual task management',
-    getCount: (stats) => stats.active
+    getCount: (stats) => stats.upNextCount // Workstream shows "Up Next" items
   },
   {
     id: 'backlog',
     label: 'Backlog',
     icon: ClipboardDocumentListIcon,
     description: 'Prioritized work queue',
-    getCount: (stats) => stats.active // Backlog shows only active items (excludes done/shipped)
+    getCount: (stats) => stats.backlogCount // Backlog shows only backlog items (excludes up-next, done, shipped)
   },
   {
     id: 'metrics',
@@ -69,7 +69,9 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   const [stats, setStats] = useState({
     total: 0,
     active: 0,
-    completed: 0
+    completed: 0,
+    upNextCount: 0,
+    backlogCount: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
   
@@ -166,13 +168,27 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           item.status === 'done' || item.status === 'shipped'
         ).length;
 
-        console.log('📊 [StacksLeftPanel] Counts:', { total, active, completed, stories: stories.length, tasks: tasks.length });
+        // Up Next = items with status 'up-next' or 'todo'
+        const upNextCount = allItems.filter((item: any) => 
+          item.status === 'up-next' || item.status === 'todo'
+        ).length;
 
-        setStats({ total, active, completed });
+        // Backlog = items with other statuses (excluding 'done', 'shipped', 'up-next', and 'todo')
+        const backlogCount = allItems.filter((item: any) => 
+          item.status && 
+          item.status !== 'done' && 
+          item.status !== 'shipped' && 
+          item.status !== 'up-next' && 
+          item.status !== 'todo'
+        ).length;
+
+        console.log('📊 [StacksLeftPanel] Counts:', { total, active, completed, upNextCount, backlogCount, stories: stories.length, tasks: tasks.length });
+
+        setStats({ total, active, completed, upNextCount, backlogCount });
       } catch (error) {
         console.error('Failed to fetch story/task counts:', error);
         // Reset stats to 0 on error to show that data is unavailable
-        setStats({ total: 0, active: 0, completed: 0 });
+        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0 });
       } finally {
         setStatsLoading(false);
       }

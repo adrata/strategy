@@ -6,21 +6,10 @@ import { useWorkshop } from "../layout";
 import { useUnifiedAuth } from "@/platform/auth";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useProfilePanel } from "@/platform/ui/components/ProfilePanelContext";
-import { 
-  DocumentTextIcon,
-  ClockIcon,
-  PlusIcon,
-  CloudArrowUpIcon,
-} from "@heroicons/react/24/outline";
+import { apiFetch } from "@/platform/api-fetch";
+import { DocumentExplorer } from "./DocumentExplorer";
 
 export function WorkshopLeftPanel() {
-  const {
-    activeTab,
-    setActiveTab,
-    setIsUploadModalOpen,
-    setIsCreateModalOpen,
-  } = useWorkshop();
-
   const { user: authUser, isLoading: authLoading } = useUnifiedAuth();
   const { ui } = useRevenueOS();
   const pathname = usePathname();
@@ -74,18 +63,27 @@ export function WorkshopLeftPanel() {
       
       try {
         // Fetch total documents count
-        const docsResponse = await fetch(`/api/v1/documents/documents?workspaceId=${workspaceId}&limit=1&status=active`);
-        const docsData = await docsResponse.json();
+        const docsData = await apiFetch<{
+          documents?: any[];
+          pagination?: { total: number };
+        }>(`/api/v1/documents/documents?workspaceId=${workspaceId}&limit=1&status=active`, {}, {
+          documents: [],
+          pagination: { total: 0 }
+        });
         const totalDocuments = docsData?.pagination?.total || 0;
         
         // Fetch my documents count
-        const myDocsResponse = await fetch(`/api/v1/documents/documents?workspaceId=${workspaceId}&ownerId=${authUser.id}&limit=1&status=active`);
-        const myDocsData = await myDocsResponse.json();
+        const myDocsData = await apiFetch<{
+          documents?: any[];
+          pagination?: { total: number };
+        }>(`/api/v1/documents/documents?workspaceId=${workspaceId}&ownerId=${authUser.id}&limit=1&status=active`, {}, {
+          documents: [],
+          pagination: { total: 0 }
+        });
         const myDocuments = myDocsData?.pagination?.total || 0;
         
         // Fetch folders count
-        const foldersResponse = await fetch(`/api/v1/documents/folders?workspaceId=${workspaceId}`);
-        const foldersData = await foldersResponse.json();
+        const foldersData = await apiFetch<any[]>(`/api/v1/documents/folders?workspaceId=${workspaceId}`, {}, []);
         const totalFolders = Array.isArray(foldersData) ? foldersData.length : 0;
         
         setStats({
@@ -130,7 +128,7 @@ export function WorkshopLeftPanel() {
         <div className="mx-2 mt-4 mb-2">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--background)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
-              <DocumentTextIcon className="w-5 h-5 text-[var(--foreground)]" />
+              <span className="text-base font-bold text-[var(--foreground)]">W</span>
             </div>
             <div>
               <h2 className="text-base font-semibold text-[var(--foreground)]">Workbench</h2>
@@ -138,53 +136,35 @@ export function WorkshopLeftPanel() {
             </div>
           </div>
         </div>
+
+        {/* Stats Box */}
+        <div className="mx-2 mb-3 p-3 bg-[var(--hover)] rounded-lg border border-[var(--border)]">
+          <div className="text-xs text-[var(--muted)] space-y-1">
+            <div className="flex justify-between">
+              <span>Total:</span>
+              <span className="font-medium text-[var(--foreground)]">
+                {stats ? stats.totalDocuments.toLocaleString() : '...'}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>My Docs:</span>
+              <span className="font-medium text-[var(--foreground)]">
+                {stats ? stats.myDocuments.toLocaleString() : '...'}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>Folders:</span>
+              <span className="font-medium text-[var(--foreground)]">
+                {stats ? stats.totalFolders.toLocaleString() : '...'}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-1">
-        {/* My Documents */}
-        <button
-          onClick={() => setActiveTab('my-documents')}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-            activeTab === 'my-documents'
-              ? 'bg-[var(--hover)] text-[var(--foreground)]'
-              : 'hover:bg-[var(--panel-background)] text-[var(--foreground)]'
-          }`}
-        >
-          <DocumentTextIcon className="w-4 h-4" />
-          <span className="text-sm font-medium">My Documents</span>
-        </button>
-
-        {/* Recent */}
-        <button
-          onClick={() => setActiveTab('recent')}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-            activeTab === 'recent'
-              ? 'bg-[var(--hover)] text-[var(--foreground)]'
-              : 'hover:bg-[var(--panel-background)] text-[var(--foreground)]'
-          }`}
-        >
-          <ClockIcon className="w-4 h-4" />
-          <span className="text-sm font-medium">Recent</span>
-        </button>
-
-        {/* Quick Actions */}
-        <div className="pt-4 space-y-1">
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-          >
-            <PlusIcon className="w-4 h-4" />
-            <span className="text-sm font-medium">New</span>
-          </button>
-          <button
-            onClick={() => setIsUploadModalOpen(true)}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[var(--panel-background)] text-[var(--foreground)] transition-colors border border-[var(--border)]"
-          >
-            <CloudArrowUpIcon className="w-4 h-4" />
-            <span className="text-sm font-medium">Upload</span>
-          </button>
-        </div>
+      {/* File Explorer - VS Code Style */}
+      <div className="flex-1 overflow-y-auto">
+        <DocumentExplorer />
       </div>
 
       {/* Fixed Bottom Section - Profile Button */}

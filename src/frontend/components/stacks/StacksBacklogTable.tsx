@@ -549,49 +549,85 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     const activeIsUpNext = activeItem.status === 'up-next' || activeItem.status === 'todo';
     const overIsUpNext = overItem.status === 'up-next' || overItem.status === 'todo';
 
-    // Only allow reordering within the same section
-    if (activeIsUpNext !== overIsUpNext) {
-      return;
-    }
-
-    const section = activeIsUpNext ? 'upNext' : 'backlog';
+    // Determine target section (where the item is being dropped)
+    const targetSection = overIsUpNext ? 'upNext' : 'backlog';
+    const sourceSection = activeIsUpNext ? 'upNext' : 'backlog';
     
-    // Get current items in the section
-    const itemsToReorder = items.filter(item => 
-      section === 'upNext' 
+    // If moving between sections, update the status
+    const isCrossSectionMove = activeIsUpNext !== overIsUpNext;
+    const newStatus = isCrossSectionMove 
+      ? (overIsUpNext ? 'up-next' : 'in-progress') 
+      : activeItem.status;
+    
+    // Get items in the target section (where we're dropping)
+    const targetSectionItems = items.filter(item => 
+      targetSection === 'upNext' 
         ? (item.status === 'up-next' || item.status === 'todo')
         : (item.status !== 'up-next' && item.status !== 'todo')
     );
     
-    const oldIndex = itemsToReorder.findIndex(item => item.id === activeIdStr);
-    const newIndex = itemsToReorder.findIndex(item => item.id === overIdStr);
+    // Find the drop position in the target section
+    const dropIndex = targetSectionItems.findIndex(item => item.id === overIdStr);
+    
+    let itemsWithNewRanks: BacklogItem[];
+    
+    // If dropping an item from another section, add it to target section
+    if (isCrossSectionMove) {
+      // Remove item from source section
+      const sourceSectionItems = items.filter(item => 
+        sourceSection === 'upNext'
+          ? (item.status === 'up-next' || item.status === 'todo')
+          : (item.status !== 'up-next' && item.status !== 'todo')
+      ).filter(item => item.id !== activeIdStr);
+      
+      // Insert item into target section at the drop position
+      const updatedTargetItems = [...targetSectionItems];
+      updatedTargetItems.splice(dropIndex, 0, { ...activeItem, status: newStatus as BacklogItem['status'] });
+      
+      // Merge sections back together
+      const allReorderedItems = targetSection === 'upNext' 
+        ? [...updatedTargetItems, ...sourceSectionItems]
+        : [...sourceSectionItems, ...updatedTargetItems];
+      
+      // Update ranks
+      itemsWithNewRanks = allReorderedItems.map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
+      
+      setItems(itemsWithNewRanks);
+    } else {
+      // Same section reordering (existing logic)
+      const oldIndex = targetSectionItems.findIndex(item => item.id === activeIdStr);
+      const newIndex = targetSectionItems.findIndex(item => item.id === overIdStr);
 
-    if (oldIndex === -1 || newIndex === -1) {
-      return;
+      if (oldIndex === -1 || newIndex === -1) {
+        return;
+      }
+
+      // Reorder items within the section
+      const reorderedSection = arrayMove(targetSectionItems, oldIndex, newIndex);
+
+      // Get other items (items not in the reordered section)
+      const otherItems = items.filter(item => 
+        targetSection === 'upNext'
+          ? (item.status !== 'up-next' && item.status !== 'todo')
+          : (item.status === 'up-next' || item.status === 'todo')
+      );
+
+      // Merge sections back together
+      const allReorderedItems = targetSection === 'upNext' 
+        ? [...reorderedSection, ...otherItems]
+        : [...otherItems, ...reorderedSection];
+
+      // Update ranks
+      itemsWithNewRanks = allReorderedItems.map((item, index) => ({
+        ...item,
+        rank: index + 1
+      }));
+
+      setItems(itemsWithNewRanks);
     }
-
-    // Reorder items within the section
-    const reorderedSection = arrayMove(itemsToReorder, oldIndex, newIndex);
-
-    // Get other items (items not in the reordered section)
-    const otherItems = items.filter(item => 
-      section === 'upNext'
-        ? (item.status !== 'up-next' && item.status !== 'todo')
-        : (item.status === 'up-next' || item.status === 'todo')
-    );
-
-    // Merge sections back together
-    const allReorderedItems = section === 'upNext' 
-      ? [...reorderedSection, ...otherItems]
-      : [...otherItems, ...reorderedSection];
-
-    // Update ranks
-    const itemsWithNewRanks = allReorderedItems.map((item, index) => ({
-      ...item,
-      rank: index + 1
-    }));
-
-    setItems(itemsWithNewRanks);
 
     // Persist to API
     let workspaceId = ui.activeWorkspace?.id;
@@ -610,20 +646,25 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
       return;
     }
 
-    // Update ranks via API
+    // Update ranks and status via API
     try {
-      const updatePromises = itemsWithNewRanks.map(item =>
-        fetch(`/api/v1/stacks/stories/${item.id}`, {
+      const updatePromises = itemsWithNewRanks.map(item => {
+        const updatePayload: any = { rank: item.rank };
+        
+        // If this is the moved item and it's a cross-section move, also update status
+        if (isCrossSectionMove && item.id === activeIdStr) {
+          updatePayload.status = newStatus;
+        }
+        
+        return fetch(`/api/v1/stacks/stories/${item.id}`, {
           method: 'PATCH',
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            rank: item.rank
-          })
-        })
-      );
+          body: JSON.stringify(updatePayload)
+        });
+      });
 
       const responses = await Promise.all(updatePromises);
       const failedUpdates = responses.filter(r => !r.ok);
@@ -900,6 +941,104 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!contextMenu.itemId) return;
+
+    const item = items.find(i => i.id === contextMenu.itemId);
+    if (!item) return;
+
+    // Show confirmation dialog
+    if (!window.confirm(`Are you sure you want to delete "${item.title}"?`)) {
+      setContextMenu(prev => ({ ...prev, isVisible: false }));
+      return;
+    }
+
+    // Optimistic update - remove item from UI
+    setItems(prevItems => prevItems.filter(i => i.id !== contextMenu.itemId));
+    setContextMenu(prev => ({ ...prev, isVisible: false }));
+
+    // Resolve workspace ID
+    let workspaceId = ui.activeWorkspace?.id;
+    if (!workspaceId && workspaceSlug) {
+      const urlWorkspaceId = getWorkspaceIdBySlug(workspaceSlug);
+      if (urlWorkspaceId) {
+        workspaceId = urlWorkspaceId;
+      }
+    }
+    if (!workspaceId && authUser?.activeWorkspaceId) {
+      workspaceId = authUser.activeWorkspaceId;
+    }
+
+    if (!workspaceId) {
+      console.error('No workspace ID available for deleting story');
+      // Revert on error
+      setItems(prevItems => {
+        const index = prevItems.findIndex(i => i.status === item.status);
+        const newItems = [...prevItems];
+        newItems.splice(index, 0, item);
+        return newItems;
+      });
+      return;
+    }
+
+    // Delete via API
+    try {
+      const response = await fetch(`/api/v1/stacks/stories/${item.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        // Revert on failure
+        setItems(prevItems => {
+          const index = prevItems.findIndex(i => i.status === item.status);
+          const newItems = [...prevItems];
+          newItems.splice(index, 0, item);
+          return newItems;
+        });
+        console.error('Failed to delete story:', await response.text());
+      } else {
+        console.log(`Successfully deleted story "${item.title}"`);
+        // Refresh the list to get updated data
+        const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (refreshResponse.ok) {
+          const data = await refreshResponse.json();
+          if (data.stories && Array.isArray(data.stories)) {
+            const backlogItems = data.stories.map((story: any, index: number) => ({
+              id: story.id,
+              title: story.title,
+              description: story.description,
+              priority: story.priority,
+              status: story.status,
+              assignee: story.assignee?.name || story.assignee,
+              dueDate: story.dueDate,
+              tags: story.tags || [],
+              createdAt: story.createdAt,
+              updatedAt: story.updatedAt,
+              rank: index + 1
+            }));
+            setItems(backlogItems);
+          }
+        }
+      }
+    } catch (error) {
+      // Revert on error
+      setItems(prevItems => {
+        const index = prevItems.findIndex(i => i.status === item.status);
+        const newItems = [...prevItems];
+        newItems.splice(index, 0, item);
+        return newItems;
+      });
+      console.error('Error deleting story:', error);
+    }
+  };
+
   const closeContextMenu = () => {
     setContextMenu(prev => ({ ...prev, isVisible: false }));
   };
@@ -1041,7 +1180,52 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
       {/* Table Content */}
       <div className="flex-1 overflow-y-auto invisible-scrollbar">
-        {itemsToDisplay.upNextItems.length === 0 && itemsToDisplay.otherItems.length === 0 ? (
+        {loading ? (
+          <div className="p-4">
+            {/* Up Next Section Skeleton */}
+            <div className="mb-6">
+              <div className="mb-3">
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-16 animate-pulse mb-1"></div>
+                <div className="h-3 bg-[var(--loading-bg)] rounded w-12 animate-pulse"></div>
+              </div>
+              <div className="space-y-2">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse"></div>
+                        <div className="h-3 bg-[var(--loading-bg)] rounded w-full animate-pulse"></div>
+                        <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Backlog Section Skeleton */}
+            <div className="mb-6">
+              <div className="mb-3">
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-20 animate-pulse mb-1"></div>
+                <div className="h-3 bg-[var(--loading-bg)] rounded w-12 animate-pulse"></div>
+              </div>
+              <div className="space-y-2">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse"></div>
+                        <div className="h-3 bg-[var(--loading-bg)] rounded w-full animate-pulse"></div>
+                        <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : itemsToDisplay.upNextItems.length === 0 && itemsToDisplay.otherItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📋</div>
             <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
@@ -1056,29 +1240,30 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
           </div>
         ) : (
           <div className="p-4">
-            {/* Up Next Section */}
-            {itemsToDisplay.upNextItems.length > 0 && (
-              <>
-                <div className="mb-3">
-                  <div className="flex items-end gap-2" style={{ paddingBottom: '2px' }}>
-                    <h3 className="text-sm font-semibold text-[var(--foreground)]">Up Next</h3>
-                    <span className="text-xs text-[var(--muted)]">
-                      {itemsToDisplay.upNextItems.length} {itemsToDisplay.upNextItems.length === 1 ? 'item' : 'items'}
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Cards View with Simple Drag and Drop */}
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragStart={handleDragStart}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={itemsToDisplay.upNextItems.map(item => item.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
+            {/* Single DndContext wrapping both sections for cross-section dragging */}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              {/* Combined SortableContext with all items for cross-section dragging */}
+              <SortableContext
+                items={[...itemsToDisplay.upNextItems, ...itemsToDisplay.otherItems].map(item => item.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {/* Up Next Section */}
+                {itemsToDisplay.upNextItems.length > 0 && (
+                  <>
+                    <div className="mb-3">
+                      <div className="flex items-end gap-2" style={{ paddingBottom: '2px' }}>
+                        <h3 className="text-sm font-semibold text-[var(--foreground)]">Up Next</h3>
+                        <span className="text-xs text-[var(--muted)]">
+                          {itemsToDisplay.upNextItems.length} {itemsToDisplay.upNextItems.length === 1 ? 'item' : 'items'}
+                        </span>
+                      </div>
+                    </div>
+                    
                     <div className="space-y-2 mb-6">
                       {itemsToDisplay.upNextItems.map((item, index) => (
                         <BacklogItemComponent
@@ -1092,58 +1277,29 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                         />
                       ))}
                     </div>
-                  </SortableContext>
-                  <DragOverlay>
-                    {activeItem && (activeItem.status === 'up-next' || activeItem.status === 'todo') ? (
-                      <div className="bg-[var(--background)] border-2 border-[var(--accent)] rounded-lg p-3 shadow-xl opacity-90">
-                        <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
-                            {String.fromCharCode(65 + itemsToDisplay.upNextItems.findIndex(i => i.id === activeItem.id))}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
-                              {activeItem.title}
-                            </h4>
-                          </div>
-                        </div>
-                      </div>
-                    ) : null}
-                  </DragOverlay>
-                </DndContext>
-              </>
-            )}
+                  </>
+                )}
 
-            {/* Divider Line */}
-            {itemsToDisplay.upNextItems.length > 0 && itemsToDisplay.otherItems.length > 0 && (
-              <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[var(--border)]"></div>
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-[var(--background)] px-2 text-xs text-[var(--muted)]">Below the Line</span>
-                </div>
-              </div>
-            )}
+                {/* Divider Line */}
+                {itemsToDisplay.upNextItems.length > 0 && itemsToDisplay.otherItems.length > 0 && (
+                  <div className="relative my-8">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-[var(--border)]"></div>
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-[var(--background)] px-2 text-xs text-[var(--muted)]">Below the Line</span>
+                    </div>
+                  </div>
+                )}
 
-            {/* Backlog Section */}
-            {itemsToDisplay.otherItems.length > 0 && (
-              <>
-                <div className="mb-3">
-                  <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Backlog</h3>
-                  <div className="text-xs text-[var(--muted)]">{itemsToDisplay.otherItems.length} items</div>
-                </div>
-                
-                {/* Cards View with Simple Drag and Drop */}
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragStart={handleDragStart}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={itemsToDisplay.otherItems.map(item => item.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
+                {/* Backlog Section */}
+                {itemsToDisplay.otherItems.length > 0 && (
+                  <>
+                    <div className="mb-3">
+                      <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Backlog</h3>
+                      <div className="text-xs text-[var(--muted)]">{itemsToDisplay.otherItems.length} items</div>
+                    </div>
+                    
                     <div className="space-y-2">
                       {itemsToDisplay.otherItems.map((item, index) => (
                         <BacklogItemComponent
@@ -1157,26 +1313,34 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                         />
                       ))}
                     </div>
-                  </SortableContext>
-                  <DragOverlay>
-                    {activeItem && activeItem.status !== 'up-next' && activeItem.status !== 'todo' ? (
-                      <div className="bg-[var(--background)] border-2 border-[var(--accent)] rounded-lg p-3 shadow-xl opacity-90">
-                        <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
-                            B{itemsToDisplay.otherItems.findIndex(i => i.id === activeItem.id) + 1}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
-                              {activeItem.title}
-                            </h4>
-                          </div>
+                  </>
+                )}
+              </SortableContext>
+              
+              {/* Single DragOverlay for all items */}
+              <DragOverlay>
+                {activeId && (() => {
+                  const activeItem = items.find(item => item.id === activeId);
+                  if (!activeItem) return null;
+                  return (
+                    <div className="bg-[var(--background)] border-2 border-[var(--accent)] rounded-lg p-3 shadow-xl opacity-90">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
+                          {(activeItem.status === 'up-next' || activeItem.status === 'todo')
+                            ? String.fromCharCode(65 + itemsToDisplay.upNextItems.findIndex(i => i.id === activeItem.id))
+                            : `B${itemsToDisplay.otherItems.findIndex(i => i.id === activeItem.id) + 1}`}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
+                            {activeItem.title}
+                          </h4>
                         </div>
                       </div>
-                    ) : null}
-                  </DragOverlay>
-                </DndContext>
-              </>
-            )}
+                    </div>
+                  );
+                })()}
+              </DragOverlay>
+            </DndContext>
           </div>
         )}
       </div>
@@ -1194,11 +1358,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         showMoveBelowTheLine={contextMenu.isUpNext === true}
         onMoveToDeepBacklog={handleMoveToDeepBacklog}
         showMoveToDeepBacklog={contextMenu.isUpNext === false}
-        onDelete={() => {
-          // TODO: Implement delete functionality
-          console.log('Delete item:', contextMenu.itemId);
-          closeContextMenu();
-        }}
+        onDelete={handleDelete}
       />
     </div>
   );

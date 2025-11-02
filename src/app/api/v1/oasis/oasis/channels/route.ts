@@ -69,6 +69,7 @@ export async function GET(request: NextRequest) {
       id: channel.id,
       name: channel.name,
       description: channel.description,
+      isPrivate: channel.isPrivate,
       createdAt: channel.createdAt,
       memberCount: channel.members.length,
       recentMessageCount: channel.messages.length,
@@ -114,7 +115,8 @@ export async function GET(request: NextRequest) {
           data: {
             workspaceId,
             name: channelData.name,
-            description: channelData.description
+            description: channelData.description,
+            isPrivate: false // Default channels are public
           }
         });
 
@@ -156,6 +158,7 @@ export async function GET(request: NextRequest) {
         id: channel.id,
         name: channel.name,
         description: channel.description,
+        isPrivate: channel.isPrivate,
         createdAt: channel.createdAt,
         memberCount: channel.members.length,
         recentMessageCount: channel.messages.length,
@@ -198,7 +201,7 @@ export async function POST(request: NextRequest) {
     const userId = authUser.id;
 
     const body = await request.json();
-    const { workspaceId, name, description } = body;
+    const { workspaceId, name, description, isPrivate } = body;
 
     if (!workspaceId || !name) {
       return NextResponse.json(
@@ -240,7 +243,8 @@ export async function POST(request: NextRequest) {
       data: {
         workspaceId,
         name: name.toLowerCase(),
-        description: description || null
+        description: description || null,
+        isPrivate: isPrivate === true
       }
     });
 
@@ -273,6 +277,7 @@ export async function POST(request: NextRequest) {
         id: channel.id,
         name: channel.name,
         description: channel.description,
+        isPrivate: channel.isPrivate,
         createdAt: channel.createdAt,
         memberCount: 1,
         recentMessageCount: 0,
