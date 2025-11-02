@@ -46,7 +46,7 @@ export function DynamicFavicon({ isWebsite = false, defaultColor = '#6366f1' }: 
       const color = appTheme.name === 'Adrata' ? defaultColor : appTheme.color;
       
       // Apps that should always use app initials instead of workspace initials
-      const appsWithAppInitials = ['Revenue-OS', 'Stacks', 'Oasis', 'Workbench'];
+      const appsWithAppInitials = ['Revenue-OS', 'Stacks', 'Oasis', 'Workbench', 'Grand Central', 'Adrata'];
       
       // Determine favicon text: use app letter for specific apps, otherwise use workspace initials
       let faviconText = appTheme.letter; // Fallback to app letter
