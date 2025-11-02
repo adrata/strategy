@@ -729,51 +729,28 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
     <>
       <style>{`
         .stacks-kanban-container {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(288px, 1fr));
+          display: flex;
+          flex-wrap: nowrap;
           gap: 1.5rem;
           padding: 0.5rem;
           height: 100%;
-          overflow-y: auto;
+          overflow-x: auto;
+          overflow-y: hidden;
         }
         
-        /* At wider screens, show all in one row with horizontal scroll */
-        @media (min-width: 1920px) {
-          .stacks-kanban-container {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            overflow-y: hidden;
-          }
-        }
-        
-        /* At medium screens, allow 2 rows */
-        @media (min-width: 1400px) and (max-width: 1919px) {
-          .stacks-kanban-container {
-            grid-template-columns: repeat(3, 288px);
-          }
-        }
-        
-        /* At smaller screens, allow wrapping to 2 rows */
-        @media (max-width: 1399px) {
-          .stacks-kanban-container {
-            grid-template-columns: repeat(2, 288px);
-          }
-        }
-        
-        /* Very small screens - single column */
-        @media (max-width: 640px) {
-          .stacks-kanban-container {
-            grid-template-columns: 1fr;
-          }
-        }
-        
+        /* Show horizontal scrollbar */
         .stacks-kanban-container::-webkit-scrollbar {
-          display: none;
+          height: 8px;
         }
-        .stacks-kanban-container {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
+        .stacks-kanban-container::-webkit-scrollbar-track {
+          background: var(--background);
+        }
+        .stacks-kanban-container::-webkit-scrollbar-thumb {
+          background: var(--border);
+          border-radius: 4px;
+        }
+        .stacks-kanban-container::-webkit-scrollbar-thumb:hover {
+          background: var(--muted);
         }
         
         .stacks-column-content::-webkit-scrollbar {
@@ -787,10 +764,6 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       <div 
         ref={setScrollContainer}
         className="stacks-kanban-container"
-        style={{
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}
       >
       {STACK_COLUMNS.map((column, columnIndex) => {
         const cards = groupedCards[column.key] || [];

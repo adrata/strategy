@@ -12,7 +12,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeftIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  ChevronLeftIcon
 } from '@heroicons/react/24/outline';
 import { useRouter, usePathname } from 'next/navigation';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
@@ -61,6 +62,36 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   const [loading, setLoading] = useState(true);
   const [hasRedirected, setHasRedirected] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [stories, setStories] = useState<any[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+
+  // Fetch stories list for navigation
+  useEffect(() => {
+    const fetchStories = async () => {
+      if (!ui.activeWorkspace?.id) return;
+
+      try {
+        const response = await fetch(
+          `/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`,
+          { credentials: 'include' }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.stories) {
+            setStories(data.stories);
+            // Find current story index
+            const index = data.stories.findIndex((s: any) => s.id === storyId);
+            setCurrentIndex(index >= 0 ? index : null);
+          }
+        }
+      } catch (error) {
+        console.error('❌ [StoryDetailView] Error fetching stories:', error);
+      }
+    };
+
+    fetchStories();
+  }, [storyId, ui.activeWorkspace?.id]);
 
   // Fetch story data and redirect to slugged URL if needed
   useEffect(() => {
@@ -200,6 +231,29 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
     return 'Stacks';
   };
 
+  // Navigation handlers
+  const handleNavigatePrevious = () => {
+    if (currentIndex === null || currentIndex <= 0 || !stories.length) return;
+    
+    const previousStory = stories[currentIndex - 1];
+    if (previousStory) {
+      const workspaceSlug = pathname.split('/').filter(Boolean)[0];
+      const slug = generateSlug(previousStory.title || 'Untitled Story', previousStory.id);
+      router.push(`/${workspaceSlug}/stacks/${slug}`);
+    }
+  };
+
+  const handleNavigateNext = () => {
+    if (currentIndex === null || currentIndex >= stories.length - 1 || !stories.length) return;
+    
+    const nextStory = stories[currentIndex + 1];
+    if (nextStory) {
+      const workspaceSlug = pathname.split('/').filter(Boolean)[0];
+      const slug = generateSlug(nextStory.title || 'Untitled Story', nextStory.id);
+      router.push(`/${workspaceSlug}/stacks/${slug}`);
+    }
+  };
+
   const nextStatus = story ? getNextStatus(story.status) : null;
   const nextStatusLabel = nextStatus ? formatStatusLabel(nextStatus) : null;
 
@@ -229,23 +283,56 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
 
   return (
     <div className="h-full flex flex-col bg-[var(--background)]">
-      {/* Header */}
-      <div className="flex-shrink-0 px-6 py-6 border-b border-[var(--border)]">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 mb-4 text-sm">
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-          >
-            <ArrowLeftIcon className="h-4 w-4" />
-            <span>All {getSectionName()}</span>
-          </button>
-          <ChevronRightIcon className="h-4 w-4 text-[var(--muted)]" />
-          <span className="font-medium text-[var(--foreground)]">
-            {story.title || 'Untitled Story'}
-          </span>
+      {/* Breadcrumb Header */}
+      <div className="flex-shrink-0 bg-[var(--background)] border-b border-[var(--border)] px-6 py-3">
+        <div className="flex items-center justify-between">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-sm">
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            >
+              <ArrowLeftIcon className="h-4 w-4" />
+              <span>All {getSectionName()}</span>
+            </button>
+            <ChevronRightIcon className="h-4 w-4 text-[var(--muted)]" />
+            <span className="font-medium text-[var(--foreground)]">
+              {story.title || 'Untitled Story'}
+            </span>
+          </div>
+          
+          {/* Navigation Arrows */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleNavigatePrevious}
+              disabled={currentIndex === null || currentIndex <= 0 || !stories.length}
+              className={`p-2 rounded-md transition-all duration-200 ${
+                currentIndex === null || currentIndex <= 0 || !stories.length
+                  ? 'text-gray-300 cursor-not-allowed'
+                  : 'text-[var(--foreground)] hover:text-blue-600 hover:bg-[var(--panel-background)]'
+              }`}
+              title="Previous story"
+            >
+              <ChevronLeftIcon className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleNavigateNext}
+              disabled={currentIndex === null || currentIndex >= stories.length - 1 || !stories.length}
+              className={`p-2 rounded-md transition-all duration-200 ${
+                currentIndex === null || currentIndex >= stories.length - 1 || !stories.length
+                  ? 'text-gray-300 cursor-not-allowed'
+                  : 'text-[var(--foreground)] hover:text-blue-600 hover:bg-[var(--panel-background)]'
+              }`}
+              title="Next story"
+            >
+              <ChevronRightIcon className="w-5 h-5" />
+            </button>
+          </div>
         </div>
-        
+      </div>
+
+      {/* Main Header */}
+      <div className="flex-shrink-0 border-b border-[var(--border)] px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div>
@@ -270,7 +357,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
               <button
                 onClick={handleAdvanceStatus}
                 disabled={isUpdating}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isUpdating ? 'Updating...' : `Advance to ${nextStatusLabel}`}
               </button>

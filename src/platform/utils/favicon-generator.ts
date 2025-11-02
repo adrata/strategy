@@ -139,26 +139,65 @@ export function generateFavicon(text: string, color: string, size: number = 32):
   canvas.width = size;
   canvas.height = size;
 
-  // Draw squircle background (rounded square)
+  // Enable anti-aliasing for smoother edges
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+
+  // Clip the drawing area first to ensure nothing goes outside canvas bounds
+  ctx.beginPath();
+  ctx.rect(0, 0, size, size);
+  ctx.clip();
+  
+  // Draw squircle background (perfect superellipse)
+  // A squircle is a superellipse with n=4: |x/a|^4 + |y/b|^4 = 1
   ctx.fillStyle = color;
   ctx.beginPath();
   
-  // Create a squircle using rounded rectangle with high corner radius
-  const cornerRadius = size * 0.25; // 25% of size for nice squircle effect
-  const x = 0;
-  const y = 0;
-  const width = size;
-  const height = size;
+  // Calculate squircle points using parametric formula
+  // For squircle: x = a * sign(cos(t)) * |cos(t)|^(2/n), y = b * sign(sin(t)) * |sin(t)|^(2/n)
+  // With n=4, this simplifies to: x = a * sign(cos(t)) * sqrt(|cos(t)|), y = b * sign(sin(t)) * sqrt(|sin(t)|)
+  const center = size / 2;
+  // Add minimal padding (1.5 pixels) to prevent clipping while maximizing size
+  // This accounts for anti-aliasing and sub-pixel rendering
+  const padding = 1.5;
+  const a = size / 2 - padding; // Half-width with minimal padding to prevent clipping
+  const b = size / 2 - padding; // Half-height with minimal padding to prevent clipping
+  const n = 4; // Squircle exponent
   
-  ctx.moveTo(x + cornerRadius, y);
-  ctx.lineTo(x + width - cornerRadius, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + cornerRadius);
-  ctx.lineTo(x + width, y + height - cornerRadius);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - cornerRadius, y + height);
-  ctx.lineTo(x + cornerRadius, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - cornerRadius);
-  ctx.lineTo(x, y + cornerRadius);
-  ctx.quadraticCurveTo(x, y, x + cornerRadius, y);
+  // Draw squircle using parametric equation
+  // Sample enough points for perfectly smooth curve (64 points is sufficient for 32x32 favicons)
+  const numPoints = 64;
+  
+  // Helper function to calculate squircle point at angle t
+  const getSquirclePoint = (t: number): [number, number] => {
+    const cosT = Math.cos(t);
+    const sinT = Math.sin(t);
+    
+    // Squircle parametric equation (n=4)
+    // x = a * sign(cos(t)) * |cos(t)|^(2/n), y = b * sign(sin(t)) * |sin(t)|^(2/n)
+    const signX = cosT >= 0 ? 1 : -1;
+    const signY = sinT >= 0 ? 1 : -1;
+    const absCos = Math.abs(cosT);
+    const absSin = Math.abs(sinT);
+    
+    const x = center + a * signX * Math.pow(absCos, 2 / n);
+    const y = center + b * signY * Math.pow(absSin, 2 / n);
+    
+    return [x, y];
+  };
+  
+  // Start at rightmost point (t=0)
+  const [startX, startY] = getSquirclePoint(0);
+  ctx.moveTo(startX, startY);
+  
+  // Draw smooth curve by connecting points
+  // With 64 points, the line segments are small enough to appear perfectly smooth
+  for (let i = 1; i <= numPoints; i++) {
+    const t = (i / numPoints) * 2 * Math.PI;
+    const [x, y] = getSquirclePoint(t);
+    ctx.lineTo(x, y);
+  }
+  
   ctx.closePath();
   ctx.fill();
 
@@ -167,19 +206,20 @@ export function generateFavicon(text: string, color: string, size: number = 32):
   ctx.fillStyle = textColor;
   
   // Adjust font size based on text length and character width
+  // Increased font sizes by ~15% to make letters bigger
   const isWideLetter = ['G', 'O', 'Q', 'W', 'M'].includes(text);
   const isTwoCharacters = text.length === 2;
   
   let fontSize: number;
   if (isTwoCharacters) {
-    // Smaller font for 2 characters to fit better
-    fontSize = Math.floor(size * 0.35);
+    // Bigger font for 2 characters (increased from 0.35 to 0.40)
+    fontSize = Math.floor(size * 0.40);
   } else if (isWideLetter) {
-    // Smaller font for wide single characters
-    fontSize = Math.floor(size * 0.35);
+    // Bigger font for wide single characters (increased from 0.35 to 0.40)
+    fontSize = Math.floor(size * 0.40);
   } else {
-    // Standard font size for single characters
-    fontSize = Math.floor(size * 0.45);
+    // Bigger standard font size for single characters (increased from 0.45 to 0.52)
+    fontSize = Math.floor(size * 0.52);
   }
   
   ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
