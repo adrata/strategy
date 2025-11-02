@@ -69,6 +69,21 @@ export async function GET(request: NextRequest) {
       userEmail: context.user?.email || 'no email'
     });
     
+    // Validate workspaceId is not empty before building queries
+    if (!context.workspaceId || context.workspaceId.trim() === '') {
+      console.error('❌ [V1 PEOPLE API] Empty workspaceId in context:', {
+        hasWorkspaceId: !!context.workspaceId,
+        workspaceIdValue: context.workspaceId,
+        userId: context.userId,
+        userEmail: context.userEmail
+      });
+      return createErrorResponse(
+        'Workspace ID is required but was not found in authentication context',
+        'WORKSPACE_ID_REQUIRED',
+        400
+      );
+    }
+    
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '100'); // Default 100, no cap

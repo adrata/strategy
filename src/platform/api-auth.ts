@@ -104,6 +104,14 @@ export async function getUnifiedAuthUser(
         const decoded = decodeJWT(actualToken);
         if (decoded) {
           logger.auth.success(`Valid token for: ${decoded.email}`);
+          // Log JWT workspace fields for debugging
+          console.log('🔍 [API AUTH] Decoded token workspace fields:', {
+            activeWorkspaceId: decoded.activeWorkspaceId,
+            workspaceId: decoded.workspaceId,
+            userId: decoded.userId || decoded.id || decoded.sub,
+            hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
+            email: decoded.email
+          });
           // Extract workspace info - prioritize activeWorkspaceId if available
           const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
           return {
@@ -131,6 +139,14 @@ export async function getUnifiedAuthUser(
       const decoded = decodeJWT(token);
       if (decoded) {
         logger.auth.success(`Valid bearer token for: ${decoded.email}`);
+        // Log JWT workspace fields for debugging
+        console.log('🔍 [API AUTH] Decoded bearer token workspace fields:', {
+          activeWorkspaceId: decoded.activeWorkspaceId,
+          workspaceId: decoded.workspaceId,
+          userId: decoded.userId || decoded.id || decoded.sub,
+          hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
+          email: decoded.email
+        });
         // Extract workspace info - prioritize activeWorkspaceId if available
         const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
         return {

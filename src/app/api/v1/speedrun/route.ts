@@ -41,6 +41,21 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
 
+    // Validate workspaceId is not empty before building queries
+    if (!context.workspaceId || context.workspaceId.trim() === '') {
+      console.error('❌ [SPEEDRUN API] Empty workspaceId in context:', {
+        hasWorkspaceId: !!context.workspaceId,
+        workspaceIdValue: context.workspaceId,
+        userId: context.userId,
+        userEmail: context.userEmail
+      });
+      return createErrorResponse(
+        'Workspace ID is required but was not found in authentication context',
+        'WORKSPACE_ID_REQUIRED',
+        400
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100); // Cap at 100, default 50
     const offset = Math.max(parseInt(searchParams.get('offset') || '0'), 0); // Default 0, minimum 0

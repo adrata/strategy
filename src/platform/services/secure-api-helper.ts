@@ -74,11 +74,25 @@ export async function getSecureApiContext(
 
     // 3. Build context
     // Prioritize activeWorkspaceId over workspaceId if available
-    const workspaceId = (authUser as any).activeWorkspaceId || authUser.workspaceId || '';
+    const workspaceId = (authUser as any).activeWorkspaceId || authUser.workspaceId;
+    
+    // Validate workspace ID is present if workspace access is required
+    if (requireWorkspaceAccess && !workspaceId) {
+      console.error('❌ [SECURE API] Missing workspaceId - activeWorkspaceId:', (authUser as any).activeWorkspaceId, 'workspaceId:', authUser.workspaceId, 'userId:', authUser.id);
+      return {
+        context: null,
+        response: NextResponse.json({
+          success: false,
+          error: 'Workspace context is required but not found in authentication token',
+          code: 'WORKSPACE_CONTEXT_MISSING'
+        }, { status: 400 })
+      };
+    }
+    
     const context: SecureApiContext = {
       userId: authUser.id,
       userEmail: authUser.email,
-      workspaceId: workspaceId,
+      workspaceId: workspaceId || '',
       userName: authUser.name
     };
 
