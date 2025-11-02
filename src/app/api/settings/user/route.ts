@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       }, { status: 401 });
     }
     
-    // Get user with profile information
+    // Get user with profile information (streamlined schema only has basic fields)
     const user = await prisma.users.findUnique({
       where: { id: userId },
       select: {
@@ -25,16 +25,7 @@ export async function GET(request: NextRequest) {
         name: true,
         firstName: true,
         lastName: true,
-        title: true,
-        department: true,
-        phoneNumber: true,
-        linkedinUrl: true,
-        timezone: true,
-        communicationStyle: true,
-        preferredDetailLevel: true,
-        quota: true,
-        territory: true,
-        dashboardConfig: true
+        timezone: true
       }
     });
 
@@ -57,26 +48,25 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    const dashboardConfig = user.dashboardConfig as any || {};
-
+    // Streamlined schema doesn't have these fields, return defaults
     const userSettings = {
       // Profile Information
       firstName: user.firstName || '',
       lastName: user.lastName || '',
-      title: user.title || '',
-      department: user.department || '',
-      phoneNumber: user.phoneNumber || '',
-      linkedinUrl: user.linkedinUrl || '',
+      title: '', // Not in streamlined schema
+      department: '', // Not in streamlined schema
+      phoneNumber: '', // Not in streamlined schema
+      linkedinUrl: '', // Not in streamlined schema
       
       // AI Context Preferences
       timezone: user.timezone || 'America/New_York',
-      communicationStyle: user.communicationStyle || 'consultative',
-      preferredDetailLevel: user.preferredDetailLevel || 'detailed',
+      communicationStyle: 'consultative', // Not in streamlined schema
+      preferredDetailLevel: 'detailed', // Not in streamlined schema
       
       // Performance Settings
-      quota: Number(user.quota) || 1000000,
-      territory: user.territory || '',
-      dailyActivityTarget: dashboardConfig.dailyActivityTarget || 25
+      quota: 1000000, // Not in streamlined schema
+      territory: '', // Not in streamlined schema
+      dailyActivityTarget: 25 // Not in streamlined schema
     };
 
     const workspaceContext = {
@@ -112,28 +102,21 @@ export async function PUT(request: NextRequest) {
     const { workspaceId, userId } = await WorkspaceDataRouter.getWorkspaceContext(request);
     const settings = await request.json();
 
-    // Update user table
+    // Update user table (streamlined schema only supports basic fields)
     await prisma.users.update({
       where: { id: userId },
       data: {
         firstName: settings.firstName,
         lastName: settings.lastName,
         name: `${settings.firstName} ${settings.lastName}`.trim(),
-        title: settings.title,
-        department: settings.department,
-        phoneNumber: settings.phoneNumber,
-        linkedinUrl: settings.linkedinUrl,
         timezone: settings.timezone,
-        communicationStyle: settings.communicationStyle,
-        preferredDetailLevel: settings.preferredDetailLevel,
-        quota: settings.quota ? String(settings.quota) : null,
-        territory: settings.territory,
-        dashboardConfig: {
-          dailyActivityTarget: settings.dailyActivityTarget
-        },
         updatedAt: new Date()
       }
     });
+    
+    // Note: title, department, phoneNumber, linkedinUrl, communicationStyle, 
+    // preferredDetailLevel, quota, territory, and dashboardConfig are not 
+    // supported in the streamlined schema and are ignored
 
     return NextResponse.json({
       success: true,

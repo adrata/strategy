@@ -7,9 +7,6 @@ import { findOrCreateCompany } from '@/platform/services/company-linking-service
 import { addBusinessDays } from '@/platform/utils/actionUtils';
 
 // 🚀 PERFORMANCE: Enhanced caching with Redis
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
-
 const PARTNERS_CACHE_TTL = 2 * 60 * 1000; // 2 minutes for partners
 
 /**
@@ -39,6 +36,15 @@ export async function GET(request: NextRequest) {
 
     if (!context) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+    
+    // CRITICAL FIX: Log warning if using fallback workspaceId, but allow query to proceed
+    // secure-api-helper.ts now provides "local-workspace" fallback, so this should rarely be empty
+    if (context.workspaceId === 'local-workspace') {
+      console.warn('⚠️ [V1 PARTNERS API] Using fallback workspaceId - queries may return empty results:', {
+        workspaceId: context.workspaceId,
+        userId: context.userId
+      });
     }
     
     const { searchParams } = new URL(request.url);

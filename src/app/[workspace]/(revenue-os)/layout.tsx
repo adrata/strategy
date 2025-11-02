@@ -256,6 +256,7 @@ function PipelineLayoutInner({
 export default function PipelineLayout({ children }: PipelineLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const { user: authUser } = useUnifiedAuth();
   
   // Extract the current section from the pathname
   const getCurrentSection = () => {
@@ -280,13 +281,19 @@ export default function PipelineLayout({ children }: PipelineLayoutProps) {
     finalSection: isNovaActive ? "nova" : currentSection
   });
   
+  // Get workspace name to determine initial visibility
+  const activeWorkspace = authUser?.workspaces?.find(w => w['id'] === authUser.activeWorkspaceId);
+  const workspaceName = activeWorkspace?.name || "";
+  const isTopWorkspace = workspaceName?.toLowerCase().includes('top') || false;
+  
   // State for left panel visibility controls
   const [isSpeedrunVisible, setIsSpeedrunVisible] = useState(true);
   const [isOpportunitiesVisible, setIsOpportunitiesVisible] = useState(true);
   const [isProspectsVisible, setIsProspectsVisible] = useState(true);
   const [isLeadsVisible, setIsLeadsVisible] = useState(true);
   const [isCustomersVisible, setIsCustomersVisible] = useState(false);
-  const [isPartnersVisible, setIsPartnersVisible] = useState(true);
+  // Hide partners for TOP workspaces by default
+  const [isPartnersVisible, setIsPartnersVisible] = useState(!isTopWorkspace);
 
 
   // Oasis context state

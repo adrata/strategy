@@ -38,7 +38,11 @@ export function useOasisChat() {
   const { user } = useUnifiedAuth();
 
   const fetchChats = useCallback(async (): Promise<Chat[]> => {
-    if (!user?.activeWorkspaceId) {
+    if (!user) {
+      throw new Error('Authentication required - please sign in');
+    }
+    
+    if (!user.activeWorkspaceId) {
       throw new Error('No workspace ID available');
     }
 
@@ -52,6 +56,9 @@ export function useOasisChat() {
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication required - please sign in');
+        }
         throw new Error(`Failed to fetch chats: ${response.statusText}`);
       }
 

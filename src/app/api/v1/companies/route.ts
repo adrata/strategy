@@ -6,9 +6,6 @@ import { IntelligentNextActionService } from '@/platform/services/IntelligentNex
 import { addBusinessDays } from '@/platform/utils/actionUtils';
 
 /**
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
-
  * Clean and normalize website URL
  * Handles various input formats: example.com, www.example.com, https://example.com, https//:example.com, etc.
  */
@@ -124,21 +121,6 @@ export async function GET(request: NextRequest) {
       userEmail: context.user?.email || 'no email'
     });
 
-    // Validate workspaceId is not empty before building queries
-    if (!context.workspaceId || context.workspaceId.trim() === '') {
-      console.error('❌ [V1 COMPANIES API] Empty workspaceId in context:', {
-        hasWorkspaceId: !!context.workspaceId,
-        workspaceIdValue: context.workspaceId,
-        userId: context.userId,
-        userEmail: context.userEmail
-      });
-      return createErrorResponse(
-        'Workspace ID is required but was not found in authentication context',
-        'WORKSPACE_ID_REQUIRED',
-        400
-      );
-    }
-
     console.log(`📋 [V1 COMPANIES API] Parsing query parameters...`);
     
     const { searchParams } = new URL(request.url);
@@ -167,20 +149,6 @@ export async function GET(request: NextRequest) {
     if (queryWorkspaceId) {
       finalWorkspaceId = queryWorkspaceId;
       console.log(`🔧 [V1 COMPANIES API] Overriding workspace ID from query param: ${context.workspaceId} -> ${finalWorkspaceId}`);
-    }
-    
-    // Validate final workspace ID is not empty after potential override
-    if (!finalWorkspaceId || finalWorkspaceId.trim() === '') {
-      console.error('❌ [V1 COMPANIES API] Empty finalWorkspaceId after override:', {
-        contextWorkspaceId: context.workspaceId,
-        queryWorkspaceId: queryWorkspaceId,
-        finalWorkspaceId: finalWorkspaceId
-      });
-      return createErrorResponse(
-        'Workspace ID is required but was not found in authentication context or query parameters',
-        'WORKSPACE_ID_REQUIRED',
-        400
-      );
     }
     
     // Check cache first (skip if force refresh)

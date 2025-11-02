@@ -115,12 +115,15 @@ function PipelineSections({
   const isPinpointWorkspace = workspaceName?.toLowerCase() === 'pinpoint' || 
                               workspaceId === '01K90EQWJCCN2JDMRQF12F49GN';
   
+  // Check if we're in TOP workspace
+  const isTopWorkspace = workspaceName?.toLowerCase().includes('top') || false;
+  
   // Override feature access hooks with user restrictions (synchronous check)
   const shouldShowChronicle = hasChronicle && (!userRestrictions.hasRestrictions || 
     !userRestrictions.disabledFeatures.includes('CHRONICLE'));
   const shouldShowMetrics = hasMetrics && (!userRestrictions.hasRestrictions || 
     !userRestrictions.disabledFeatures.includes('METRICS'));
-  const shouldShowPartners = !isPinpointWorkspace && (!userRestrictions.hasRestrictions || 
+  const shouldShowPartners = !isPinpointWorkspace && !isTopWorkspace && (!userRestrictions.hasRestrictions || 
     (userRestrictions.allowedSections['pipeline']?.includes('partners') ?? false));
   const shouldShowClients = !userRestrictions.hasRestrictions || 
     (userRestrictions.allowedSections['pipeline']?.includes('clients') ?? false);
@@ -701,8 +704,17 @@ function PipelineSections({
         const speedrunCount = productionCounts.speedrun || 0;
         const speedrunReadyCount = productionCounts.speedrunReady || 0;
         
+        // Debug logging
+        console.log('🔍 [SPEEDRUN COUNT] Display logic:', {
+          speedrunCount,
+          speedrunReadyCount,
+          totalPeople,
+          productionCounts
+        });
+        
         // If there are speedrun records with no meaningful actions, show Ready
         if (speedrunReadyCount > 0) {
+          console.log('✅ [SPEEDRUN COUNT] Showing Ready pill - speedrunReadyCount:', speedrunReadyCount);
           return (
             <div className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
               <span className="text-xs font-semibold">Ready</span>
@@ -712,6 +724,7 @@ function PipelineSections({
         
         // If speedrun count > 0 but all have actions, show the count number
         if (speedrunCount > 0) {
+          console.log('📊 [SPEEDRUN COUNT] Showing count number - speedrunCount:', speedrunCount, 'speedrunReadyCount:', speedrunReadyCount);
           return speedrunCount;
         }
         

@@ -45,8 +45,12 @@ export function useWorkspaceUsers() {
         return;
       }
 
-      // 🔐 AUTH: Check if user is authenticated
+      // 🔐 AUTH: Check if user is authenticated (wait for auth to load first)
+      // Note: This check should happen after workspaceId check, but we check user here
+      // because workspaceId might be available but user might not be authenticated
       if (!user) {
+        // Only set error if we're sure auth has finished loading
+        // We can't easily detect this here, so we'll set a clear error
         console.log('🔐 [useWorkspaceUsers] No authenticated user - skipping fetch');
         setUsers([]);
         setError('Authentication required - please sign in');

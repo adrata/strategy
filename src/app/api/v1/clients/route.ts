@@ -41,6 +41,15 @@ export async function GET(request: NextRequest) {
       return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
     }
     
+    // CRITICAL FIX: Log warning if using fallback workspaceId, but allow query to proceed
+    // secure-api-helper.ts now provides "local-workspace" fallback, so this should rarely be empty
+    if (context.workspaceId === 'local-workspace') {
+      console.warn('⚠️ [V1 CLIENTS API] Using fallback workspaceId - queries may return empty results:', {
+        workspaceId: context.workspaceId,
+        userId: context.userId
+      });
+    }
+    
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '100'); // Default 100, no cap

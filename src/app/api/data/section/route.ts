@@ -90,7 +90,35 @@ export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
   try {
-    const context = await getOptimizedWorkspaceContext(request);
+    let context;
+    try {
+      context = await getOptimizedWorkspaceContext(request);
+    } catch (error) {
+      // CRITICAL FIX: If workspace context fails, try using getSecureApiContext as fallback
+      console.warn('⚠️ [SECTION API] Failed to get optimized workspace context, trying secure API context:', error);
+      const secureContext = await getSecureApiContext(request, {
+        requireAuth: true,
+        requireWorkspaceAccess: true
+      });
+      
+      if (secureContext.response || !secureContext.context) {
+        return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+      }
+      
+      context = {
+        workspaceId: secureContext.context.workspaceId,
+        userId: secureContext.context.userId
+      };
+      
+      // Log warning if using fallback workspaceId
+      if (context.workspaceId === 'local-workspace') {
+        console.warn('⚠️ [SECTION API] Using fallback workspaceId - queries may return empty results:', {
+          workspaceId: context.workspaceId,
+          userId: context.userId
+        });
+      }
+    }
+    
     const { workspaceId, userId } = context;
     
     const url = new URL(request.url);

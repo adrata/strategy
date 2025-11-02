@@ -49,6 +49,16 @@ export async function GET(request: NextRequest) {
       console.error('❌ [STACKS API] No workspace ID available (query param or context)');
       return createErrorResponse('Workspace ID required', 'WORKSPACE_REQUIRED', 400);
     }
+    
+    // CRITICAL FIX: Log warning if using fallback workspaceId, but allow query to proceed
+    if (workspaceId === 'local-workspace') {
+      console.warn('⚠️ [STACKS API] Using fallback workspaceId - queries may return empty results:', {
+        workspaceId,
+        queryWorkspaceId,
+        contextWorkspaceId,
+        userId
+      });
+    }
 
     // Security check: if both are provided, ensure they match (user should only access their workspace)
     if (queryWorkspaceId && contextWorkspaceId && queryWorkspaceId !== contextWorkspaceId) {

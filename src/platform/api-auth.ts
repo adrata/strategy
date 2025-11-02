@@ -18,17 +18,44 @@ function decodeJWT(token: string): any | null {
   try {
     const secret = process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || "dev-secret-key-change-in-production";
     
+    if (!secret) {
+      console.error("❌ [JWT] No JWT secret found in environment variables");
+      return null;
+    }
+    
     // Verify the JWT signature and decode the payload
     const decoded = jwt.verify(token, secret);
     
     // Check if token is expired
     if (decoded && typeof decoded === 'object' && 'exp' in decoded && decoded.exp && decoded.exp < Date.now() / 1000) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn("⚠️ [JWT] Token expired:", {
+          expiredAt: new Date((decoded.exp as number) * 1000).toISOString(),
+          currentTime: new Date().toISOString()
+        });
+      }
       return null;
     }
     
     return decoded;
   } catch (error) {
-    console.warn("⚠️ JWT verification failed:", error instanceof Error ? error.message : 'Unknown error');
+    // Enhanced error logging for JWT verification
+    if (process.env.NODE_ENV === 'development') {
+      const errorDetails = error instanceof Error ? {
+        message: error.message,
+        name: error.name
+      } : { message: String(error) };
+      
+      console.warn("⚠️ [JWT] Verification failed:", {
+        ...errorDetails,
+        tokenLength: token.length,
+        tokenPrefix: token.substring(0, 30) + '...',
+        hasSecret: !!process.env.NEXTAUTH_SECRET || !!process.env.JWT_SECRET
+      });
+    } else {
+      // Production: minimal logging
+      console.warn("⚠️ [JWT] Verification failed:", error instanceof Error ? error.name : 'Unknown error');
+    }
     return null;
   }
 }
@@ -71,6 +98,17 @@ export async function getUnifiedAuthUser(
   try {
     // 1. Try JWT token from cookie (web auth)
     const cookieHeader = req.headers.get("cookie");
+    
+    // Enhanced cookie diagnostics (without logging actual values)
+    const hasCookies = !!cookieHeader;
+    const cookieCount = cookieHeader ? cookieHeader.split(";").length : 0;
+    const cookieNames = cookieHeader ? cookieHeader.split(";").map(c => c.trim().split("=")[0]).filter(Boolean) : [];
+    
+    if (!hasCookies) {
+      logger.api.auth("No cookies found in request");
+      return null;
+    }
+    
     if (cookieHeader) {
       const cookies = cookieHeader.split(";").reduce(
         (acc, cookie) => {
@@ -89,22 +127,43 @@ export async function getUnifiedAuthUser(
 
       // Try different cookie names
       const token = cookies["auth-token"] || cookies["adrata_unified_session"];
-      if (token) {
-        // If it's the unified session cookie, it might be JSON encoded
-        let actualToken = token;
-        try {
-          const sessionData = JSON.parse(token);
-          if (sessionData.accessToken) {
-            actualToken = sessionData.accessToken;
-          }
-        } catch (e) {
-          // Not JSON, use as-is
+      
+      if (!token) {
+        // No auth token found - log available cookie names for debugging
+        const hasAuthCookie = cookieNames.some(name => 
+          name.includes('auth') || name.includes('session') || name.includes('token')
+        );
+        
+        logger.api.auth(`No auth token cookie found. Available cookies: ${cookieNames.length > 0 ? cookieNames.join(', ') : 'none'}`);
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('🔍 [API AUTH] Cookie diagnostics:', {
+            cookieCount,
+            cookieNames: cookieNames.slice(0, 10), // First 10 cookie names
+            hasAuthCookie,
+            lookingFor: ['auth-token', 'adrata_unified_session']
+          });
         }
         
-        const decoded = decodeJWT(actualToken);
-        if (decoded) {
-          logger.auth.success(`Valid token for: ${decoded.email}`);
-          // Log JWT workspace fields for debugging
+        return null;
+      }
+      
+      // If it's the unified session cookie, it might be JSON encoded
+      let actualToken = token;
+      try {
+        const sessionData = JSON.parse(token);
+        if (sessionData.accessToken) {
+          actualToken = sessionData.accessToken;
+        }
+      } catch (e) {
+        // Not JSON, use as-is
+      }
+      
+      const decoded = decodeJWT(actualToken);
+      if (decoded) {
+        logger.auth.success(`Valid token for: ${decoded.email}`);
+        // Log JWT workspace fields for debugging
+        if (process.env.NODE_ENV === 'development') {
           console.log('🔍 [API AUTH] Decoded token workspace fields:', {
             activeWorkspaceId: decoded.activeWorkspaceId,
             workspaceId: decoded.workspaceId,
@@ -112,17 +171,31 @@ export async function getUnifiedAuthUser(
             hasWorkspace: !!(decoded.activeWorkspaceId || decoded.workspaceId),
             email: decoded.email
           });
-          // Extract workspace info - prioritize activeWorkspaceId if available
-          const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
-          return {
-            id: decoded.userId || decoded.id || decoded.sub,
-            email: decoded.email,
-            name: decoded.name,
-            workspaceId: workspaceId,
-            activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
-          };
-        } else {
-          logger.auth.error("JWT verification failed");
+        }
+        // Extract workspace info - prioritize activeWorkspaceId if available
+        const workspaceId = decoded.activeWorkspaceId || decoded.workspaceId || "local-workspace";
+        return {
+          id: decoded.userId || decoded.id || decoded.sub,
+          email: decoded.email,
+          name: decoded.name,
+          workspaceId: workspaceId,
+          activeWorkspaceId: decoded.activeWorkspaceId || decoded.workspaceId,
+        };
+      } else {
+        logger.auth.error("JWT verification failed");
+        
+        // Enhanced error logging for JWT verification failures
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('⚠️ [API AUTH] JWT verification failed:', {
+            tokenLength: actualToken.length,
+            tokenPrefix: actualToken.substring(0, 20) + '...',
+            possibleCauses: [
+              'Token expired',
+              'Invalid signature',
+              'Invalid token format',
+              'Missing JWT secret'
+            ]
+          });
         }
       }
     }
@@ -162,9 +235,29 @@ export async function getUnifiedAuthUser(
     }
 
     logger.api.auth("No valid authentication found");
+    
+    // Enhanced diagnostics when no auth found
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('🔍 [API AUTH] Authentication check complete - no valid auth found:', {
+        hasCookieHeader: !!cookieHeader,
+        cookieCount: cookieHeader ? cookieHeader.split(";").length : 0,
+        hasAuthHeader: !!req.headers.get("authorization")
+      });
+    }
+    
     return null;
   } catch (error) {
     logger.auth.error("Error during authentication check:", error);
+    
+    // Enhanced error logging
+    if (process.env.NODE_ENV === 'development') {
+      console.error('❌ [API AUTH] Error during authentication check:', {
+        error: error instanceof Error ? error.message : String(error),
+        errorType: error instanceof Error ? error.name : typeof error,
+        stack: error instanceof Error ? error.stack : undefined
+      });
+    }
+    
     return null;
   }
 }

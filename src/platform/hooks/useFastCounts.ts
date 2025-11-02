@@ -65,8 +65,35 @@ export function useFastCounts(): UseFastCountsReturn {
   const SPEEDRUN_LIMIT = 50; // This could be made configurable via settings
 
   const fetchCounts = useCallback(async (forceRefresh = false) => {
-    if (!workspaceId || !userId || authLoading || !authUser) {
-      console.log('🚀 [FAST COUNTS] Skipping fetch - missing auth data:', {
+    // Enhanced auth state checking - wait for auth to be fully loaded
+    if (authLoading) {
+      // Still loading auth, don't attempt fetch yet
+      return;
+    }
+    
+    if (!authUser) {
+      // No authenticated user - clear counts and set error
+      setCounts({
+        leads: 0,
+        prospects: 0,
+        opportunities: 0,
+        companies: 0,
+        people: 0,
+        clients: 0,
+        partners: 0,
+        sellers: 0,
+        speedrun: 0,
+        speedrunReady: 0,
+        metrics: 0,
+        chronicle: 0
+      });
+      setError('Authentication required - please sign in');
+      setLoading(false);
+      return;
+    }
+    
+    if (!workspaceId || !userId) {
+      console.log('🚀 [FAST COUNTS] Skipping fetch - missing workspace/user ID:', {
         workspaceId: !!workspaceId,
         userId: !!userId,
         authLoading,
@@ -153,8 +180,31 @@ export function useFastCounts(): UseFastCountsReturn {
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch counts';
-      console.error('❌ [FAST COUNTS] Error:', errorMessage);
-      setError(errorMessage);
+      
+      // Check if this is an authentication error
+      if (errorMessage.includes('401') || errorMessage.includes('Authentication') || errorMessage.includes('Unauthorized')) {
+        // Authentication failure - clear counts and set user-friendly error
+        setCounts({
+          leads: 0,
+          prospects: 0,
+          opportunities: 0,
+          companies: 0,
+          people: 0,
+          clients: 0,
+          partners: 0,
+          sellers: 0,
+          speedrun: 0,
+          speedrunReady: 0,
+          metrics: 0,
+          chronicle: 0
+        });
+        setError('Authentication required - please sign in');
+        console.warn('🔐 [FAST COUNTS] Authentication required');
+      } else {
+        // Other errors - log but don't clear data
+        console.error('❌ [FAST COUNTS] Error:', errorMessage);
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -162,7 +212,14 @@ export function useFastCounts(): UseFastCountsReturn {
 
   // 🚀 PERFORMANCE: Load counts when workspace/user is available
   useEffect(() => {
-    if (!workspaceId || !userId || authLoading) return;
+    // Wait for auth to fully load before attempting fetch
+    if (authLoading) return;
+    
+    // If no auth user after loading completes, don't fetch
+    if (!authUser || !workspaceId || !userId) {
+      setLoading(false);
+      return;
+    }
 
     // 🔄 WORKSPACE CHANGE DETECTION: Clear counts if workspace changed
     if (lastWorkspaceId && lastWorkspaceId !== workspaceId) {

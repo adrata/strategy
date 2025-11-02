@@ -11,9 +11,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse } from '@/platform/services/secure-api-helper';
 
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
-
 // 🚀 PERFORMANCE: Ultra-aggressive caching for counts
 const COUNTS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const countsCache = new Map<string, { data: any; timestamp: number }>();
@@ -69,6 +66,17 @@ export async function GET(request: NextRequest) {
     // Use authenticated user's workspace and ID
     const workspaceId = context.workspaceId;
     const userId = context.userId;
+    
+    // CRITICAL FIX: Defensive check - log warning if workspaceId is fallback value
+    // But allow query to proceed - Prisma will return empty results if workspace doesn't exist
+    if (!workspaceId || workspaceId.trim() === '' || workspaceId === 'local-workspace') {
+      console.warn('⚠️ [COUNTS API] Using fallback workspaceId - queries may return empty results:', {
+        workspaceId,
+        userId,
+        hasContext: !!context
+      });
+      // Continue with query - Prisma will handle non-existent workspace gracefully
+    }
     
     // 🚀 PERFORMANCE: Check cache first (unless force refresh)
     const cacheKey = `counts-${workspaceId}-${userId}`;

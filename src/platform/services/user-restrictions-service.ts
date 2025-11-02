@@ -61,20 +61,20 @@ const USER_RESTRICTIONS: UserRestriction[] = [
       'notary everyday': {
         allowedApps: ['pipeline', 'monaco'],
         allowedSections: {
-          'pipeline': ['speedrun', 'leads', 'prospects', 'opportunities', 'clients', 'people', 'companies', 'partners'],
+          'pipeline': ['speedrun', 'leads', 'prospects', 'opportunities', 'clients', 'people', 'companies', 'partners', 'chronicle', 'metrics'],
           'monaco': ['companies', 'people', 'sellers', 'sequences', 'analytics']
         },
-        disabledFeatures: ['OASIS', 'STACKS', 'WORKSHOP', 'METRICS', 'CHRONICLE'],
-        sectionOrder: ['clients', 'people', 'companies', 'partners'] // Custom section ordering
+        disabledFeatures: ['OASIS', 'STACKS', 'WORKSHOP'],
+        sectionOrder: ['speedrun', 'leads', 'prospects', 'opportunities', 'clients', 'people', 'companies', 'partners', 'chronicle', 'metrics'] // Custom section ordering with all sections in specified order
       },
       'Notary Everyday': {
         allowedApps: ['pipeline', 'monaco'],
         allowedSections: {
-          'pipeline': ['speedrun', 'leads', 'prospects', 'opportunities', 'clients', 'people', 'companies', 'partners'],
+          'pipeline': ['speedrun', 'leads', 'prospects', 'opportunities', 'clients', 'people', 'companies', 'partners', 'chronicle', 'metrics'],
           'monaco': ['companies', 'people', 'sellers', 'sequences', 'analytics']
         },
-        disabledFeatures: ['OASIS', 'STACKS', 'WORKSHOP', 'METRICS', 'CHRONICLE'],
-        sectionOrder: ['clients', 'people', 'companies', 'partners'] // Custom section ordering
+        disabledFeatures: ['OASIS', 'STACKS', 'WORKSHOP'],
+        sectionOrder: ['speedrun', 'leads', 'prospects', 'opportunities', 'clients', 'people', 'companies', 'partners', 'chronicle', 'metrics'] // Custom section ordering with all sections in specified order
       }
     }
   }

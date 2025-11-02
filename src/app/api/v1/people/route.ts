@@ -8,9 +8,6 @@ import { findOrCreateCorePerson, mergeCorePersonWithWorkspace } from '@/platform
 import { addBusinessDays } from '@/platform/utils/actionUtils';
 
 // 🚀 PERFORMANCE: Enhanced caching with Redis
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
-
 const PEOPLE_CACHE_TTL = 2 * 60 * 1000; // 2 minutes for leads/prospects
 const SPEEDRUN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes for speedrun
 
@@ -69,7 +66,8 @@ export async function GET(request: NextRequest) {
       userEmail: context.user?.email || 'no email'
     });
     
-    // Validate workspaceId is not empty before building queries
+    // CRITICAL FIX: Log warning if using fallback workspaceId, but allow query to proceed
+    // secure-api-helper.ts now provides "local-workspace" fallback, so this should rarely be empty
     if (!context.workspaceId || context.workspaceId.trim() === '') {
       console.error('❌ [V1 PEOPLE API] Empty workspaceId in context:', {
         hasWorkspaceId: !!context.workspaceId,
@@ -82,6 +80,14 @@ export async function GET(request: NextRequest) {
         'WORKSPACE_ID_REQUIRED',
         400
       );
+    }
+    
+    // Log warning if using fallback workspaceId (will return empty results but won't error)
+    if (context.workspaceId === 'local-workspace') {
+      console.warn('⚠️ [V1 PEOPLE API] Using fallback workspaceId - queries may return empty results:', {
+        workspaceId: context.workspaceId,
+        userId: context.userId
+      });
     }
     
     const { searchParams } = new URL(request.url);
