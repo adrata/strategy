@@ -16,6 +16,8 @@ import { StacksLeftPanel } from './StacksLeftPanel';
 import { StacksMiddlePanel } from './StacksMiddlePanel';
 import { useRevenueOS } from '@/platform/ui/context/RevenueOSProvider';
 import { ProfilePopupProvider } from '@/platform/ui/components/ProfilePopupContext';
+import { ProfilePanel } from '@/platform/ui/components/ProfilePanel';
+import { useProfilePanel } from '@/platform/ui/components/ProfilePanelContext';
 
 interface StacksContentProps {
   section: string;
@@ -26,11 +28,25 @@ export function StacksContent({ section }: StacksContentProps) {
   const pathname = usePathname();
   const { user, workspace } = useUnifiedAuth();
   const { ui } = useRevenueOS();
+  const { isProfilePanelVisible, setIsProfilePanelVisible } = useProfilePanel();
   
   // State management
   const [activeSubSection, setActiveSubSection] = useState<string>('workstream');
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Get user data for profile panel
+  const stacksUser = user || { name: "User", email: "" };
+  const company = "Adrata";
+  const workspaceName = workspace?.name || ui.activeWorkspace?.name || "Adrata";
+  const username = user?.name ? `@${user.name.toLowerCase().replace(/\s+/g, "")}` : "@user";
+  
+  // Determine current app based on pathname
+  const getCurrentApp = () => {
+    if (pathname.includes('/stacks')) return 'stacks';
+    return 'revenueos';
+  };
+  const currentApp = getCurrentApp();
 
   // Determine active subsection from pathname
   useEffect(() => {
@@ -104,6 +120,21 @@ export function StacksContent({ section }: StacksContentProps) {
           leftPanel={leftPanel}
           middlePanel={middlePanel}
           rightPanel={rightPanel}
+          profilePanel={
+            <ProfilePanel
+              user={stacksUser}
+              company={company}
+              workspace={workspaceName}
+              isOpen={isProfilePanelVisible}
+              onClose={() => setIsProfilePanelVisible(false)}
+              username={username}
+              currentApp={currentApp}
+              userId={user?.id}
+              userEmail={user?.email}
+              onToggleLeftPanel={ui.toggleLeftPanel}
+            />
+          }
+          isProfilePanelVisible={isProfilePanelVisible}
           zoom={100}
           isLeftPanelVisible={ui.isLeftPanelVisible}
           isRightPanelVisible={ui.isRightPanelVisible}

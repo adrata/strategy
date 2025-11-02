@@ -18,6 +18,25 @@ import {
   ChevronDownIcon,
   PaperAirplaneIcon
 } from '@heroicons/react/24/outline';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { StacksContextMenu } from './StacksContextMenu';
 import { StacksFilters } from './StacksFilters';
 import { AddStacksModal } from './AddStacksModal';
@@ -65,40 +84,36 @@ const STATUS_ICONS = {
 };
 
 // Sortable Item Component with drag handle
-interface SortableItemProps {
+interface BacklogItemProps {
   item: BacklogItem;
   index: number;
   isUpNext?: boolean;
-  isDragging: boolean;
-  isOver: boolean;
   onItemClick?: (item: BacklogItem) => void;
   onContextMenu: (e: React.MouseEvent, itemId: string, isUpNext?: boolean) => void;
   isBug: (item: BacklogItem) => boolean;
 }
 
-function SortableItem({
+function BacklogItemComponent({
   item,
   index,
   isUpNext = false,
-  isDragging,
-  isOver,
   onItemClick,
   onContextMenu,
   isBug,
-}: SortableItemProps) {
+}: BacklogItemProps) {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-    isDragging: isSortableDragging,
+    isDragging,
   } = useSortable({ id: item.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isSortableDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
@@ -108,34 +123,15 @@ function SortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`group relative bg-[var(--background)] border rounded-lg p-3 hover:bg-[var(--hover)] transition-all duration-200 ${
-        isSortableDragging
-          ? 'opacity-50 scale-95 shadow-lg z-50'
-          : ''
-      } ${
-        isOver && !isSortableDragging
-          ? 'border-[var(--accent)] border-2 bg-[var(--accent)]/5'
-          : 'border-[var(--border)] hover:border-[var(--accent)]'
+      className={`group relative bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:bg-[var(--hover)] hover:border-[var(--accent)] transition-all duration-200 ${
+        isDragging ? 'opacity-50 shadow-lg z-50' : ''
       }`}
+      {...attributes}
+      {...listeners}
       onClick={() => onItemClick?.(item)}
       onContextMenu={(e) => onContextMenu(e, item.id, isUpNext)}
     >
-      {/* Drop indicator line - shows above item when dragging over */}
-      {isOver && !isSortableDragging && (
-        <div className="absolute -top-1 left-0 right-0 h-0.5 bg-[var(--accent)] rounded-full z-10" />
-      )}
-      
       <div className="flex items-start gap-3">
-        {/* Drag Handle */}
-        <div
-          {...attributes}
-          {...listeners}
-          className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-[var(--muted)] hover:text-[var(--foreground)] cursor-grab active:cursor-grabbing transition-colors opacity-0 group-hover:opacity-100"
-          title="Drag to reorder"
-        >
-          <Bars3Icon className="w-5 h-5" />
-        </div>
-
         {/* Item Number/Letter */}
         <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
           {isUpNext ? `1${String.fromCharCode(65 + index)}` : `B${index + 1}`}
@@ -181,7 +177,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [visibleColumns, setVisibleColumns] = useState(['rank', 'title', 'status', 'assignee', 'dueDate', 'workstream']);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [overId, setOverId] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     priority: 'all',
     status: 'all',
@@ -189,7 +184,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     assignee: 'all'
   });
 
-  // Configure dnd-kit sensors
+  // Configure dnd-kit sensors for simple drag and drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -526,25 +521,15 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     return items.find(item => item.id === activeId);
   }, [activeId, items]);
 
-  // dnd-kit drag handlers
+  // Simple drag handlers
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
-  };
-
-  const handleDragOver = (event: DragOverEvent) => {
-    setOverId(event.over?.id as string | null);
-  };
-
-  const handleDragCancel = () => {
-    setActiveId(null);
-    setOverId(null);
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     
     setActiveId(null);
-    setOverId(null);
 
     if (!over || active.id === over.id) {
       return;
@@ -571,7 +556,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
     const section = activeIsUpNext ? 'upNext' : 'backlog';
     
-    // Get current items in the section (from items array, not filtered)
+    // Get current items in the section
     const itemsToReorder = items.filter(item => 
       section === 'upNext' 
         ? (item.status === 'up-next' || item.status === 'todo')
@@ -627,7 +612,6 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
     // Update ranks via API
     try {
-      // Update all affected items in parallel
       const updatePromises = itemsWithNewRanks.map(item =>
         fetch(`/api/v1/stacks/stories/${item.id}`, {
           method: 'PATCH',
@@ -1084,14 +1068,12 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   </div>
                 </div>
                 
-                {/* Cards View with Drag and Drop */}
+                {/* Cards View with Simple Drag and Drop */}
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
                   onDragStart={handleDragStart}
-                  onDragOver={handleDragOver}
                   onDragEnd={handleDragEnd}
-                  onDragCancel={handleDragCancel}
                 >
                   <SortableContext
                     items={itemsToDisplay.upNextItems.map(item => item.id)}
@@ -1099,13 +1081,11 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   >
                     <div className="space-y-2 mb-6">
                       {itemsToDisplay.upNextItems.map((item, index) => (
-                        <SortableItem
+                        <BacklogItemComponent
                           key={item.id}
                           item={item}
                           index={index}
                           isUpNext={true}
-                          isDragging={activeId === item.id}
-                          isOver={overId === item.id}
                           onItemClick={onItemClick}
                           onContextMenu={handleContextMenu}
                           isBug={isBug}
@@ -1115,7 +1095,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   </SortableContext>
                   <DragOverlay>
                     {activeItem && (activeItem.status === 'up-next' || activeItem.status === 'todo') ? (
-                      <div className="bg-[var(--background)] border-2 border-[var(--accent)] rounded-lg p-3 shadow-xl opacity-90 rotate-2">
+                      <div className="bg-[var(--background)] border-2 border-[var(--accent)] rounded-lg p-3 shadow-xl opacity-90">
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
                             {String.fromCharCode(65 + itemsToDisplay.upNextItems.findIndex(i => i.id === activeItem.id))}
@@ -1153,14 +1133,12 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   <div className="text-xs text-[var(--muted)]">{itemsToDisplay.otherItems.length} items</div>
                 </div>
                 
-                {/* Cards View with Drag and Drop */}
+                {/* Cards View with Simple Drag and Drop */}
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
                   onDragStart={handleDragStart}
-                  onDragOver={handleDragOver}
                   onDragEnd={handleDragEnd}
-                  onDragCancel={handleDragCancel}
                 >
                   <SortableContext
                     items={itemsToDisplay.otherItems.map(item => item.id)}
@@ -1168,13 +1146,11 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   >
                     <div className="space-y-2">
                       {itemsToDisplay.otherItems.map((item, index) => (
-                        <SortableItem
+                        <BacklogItemComponent
                           key={item.id}
                           item={item}
                           index={index}
                           isUpNext={false}
-                          isDragging={activeId === item.id}
-                          isOver={overId === item.id}
                           onItemClick={onItemClick}
                           onContextMenu={handleContextMenu}
                           isBug={isBug}
@@ -1184,7 +1160,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   </SortableContext>
                   <DragOverlay>
                     {activeItem && activeItem.status !== 'up-next' && activeItem.status !== 'todo' ? (
-                      <div className="bg-[var(--background)] border-2 border-[var(--accent)] rounded-lg p-3 shadow-xl opacity-90 rotate-2">
+                      <div className="bg-[var(--background)] border-2 border-[var(--accent)] rounded-lg p-3 shadow-xl opacity-90">
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
                             B{itemsToDisplay.otherItems.findIndex(i => i.id === activeItem.id) + 1}

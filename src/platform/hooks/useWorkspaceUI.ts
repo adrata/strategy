@@ -145,8 +145,8 @@ export function useUI(): UseUIReturn {
       const currentPath = window.location.pathname;
       if (currentPath.includes('/aos/pipeline')) {
         return false; // Hide left panel for embedded Pipeline clean UI
-      } else if (currentPath.includes('/dashboard') || currentPath.includes('/leads') || currentPath.includes('/opportunities') || currentPath.includes('/companies') || currentPath.includes('/people') || currentPath.includes('/partners') || currentPath.includes('/prospects') || currentPath.includes('/sellers') || currentPath.includes('/clients') || currentPath.includes('/metrics') || currentPath.includes('/speedrun')) {
-        return true; // Show left panel for standalone Pipeline navigation
+      } else if (currentPath.includes('/dashboard') || currentPath.includes('/leads') || currentPath.includes('/opportunities') || currentPath.includes('/companies') || currentPath.includes('/people') || currentPath.includes('/partners') || currentPath.includes('/prospects') || currentPath.includes('/sellers') || currentPath.includes('/clients') || currentPath.includes('/metrics') || currentPath.includes('/speedrun') || currentPath.includes('/stacks')) {
+        return true; // Show left panel for standalone Pipeline navigation and Stacks
       }
     }
     return true; // Show for all other apps
@@ -276,9 +276,9 @@ export function useUI(): UseUIReturn {
   useEffect(() => {
     if (!isClient) return;
 
-    // Skip this effect for standalone pipeline routes - let URL-based logic handle it
-    if (isClient && (window.location.pathname.includes('/dashboard') || window.location.pathname.includes('/leads') || window.location.pathname.includes('/opportunities') || window.location.pathname.includes('/companies') || window.location.pathname.includes('/people') || window.location.pathname.includes('/partners') || window.location.pathname.includes('/prospects') || window.location.pathname.includes('/sellers') || window.location.pathname.includes('/clients') || window.location.pathname.includes('/metrics') || window.location.pathname.includes('/speedrun'))) {
-      debug("SKIPPING_INITIAL_PANEL_SETUP_FOR_STANDALONE_PIPELINE", { 
+    // Skip this effect for standalone pipeline routes and stacks - let URL-based logic handle it
+    if (isClient && (window.location.pathname.includes('/dashboard') || window.location.pathname.includes('/leads') || window.location.pathname.includes('/opportunities') || window.location.pathname.includes('/companies') || window.location.pathname.includes('/people') || window.location.pathname.includes('/partners') || window.location.pathname.includes('/prospects') || window.location.pathname.includes('/sellers') || window.location.pathname.includes('/clients') || window.location.pathname.includes('/metrics') || window.location.pathname.includes('/speedrun') || window.location.pathname.includes('/stacks'))) {
+      debug("SKIPPING_INITIAL_PANEL_SETUP_FOR_STANDALONE_PIPELINE_OR_STACKS", { 
         activeSubApp, 
         activeSection,
         pathname: window.location.pathname
