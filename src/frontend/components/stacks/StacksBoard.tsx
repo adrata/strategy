@@ -243,11 +243,25 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
             console.log('🎯 [StacksBoard] Filtered selling stories:', {
               original: data.stories.length,
               filtered: sellingStories.length,
-              stories: sellingStories
+              stories: sellingStories.map((s: any) => ({ id: s.id, title: s.title, status: s.status }))
             });
+            
+            // Log status distribution before conversion
+            const statusCounts = sellingStories.reduce((acc: any, story: any) => {
+              acc[story.status || 'null'] = (acc[story.status || 'null'] || 0) + 1;
+              return acc;
+            }, {});
+            console.log('📊 [StacksBoard] Status distribution:', statusCounts);
             
             const convertedCards = sellingStories.map(convertNotaryStoryToStackCard);
             console.log('🔄 [StacksBoard] Converted cards:', convertedCards.length, 'cards');
+            
+            // Log status distribution after conversion
+            const convertedStatusCounts = convertedCards.reduce((acc: any, card: StackCard) => {
+              acc[card.status] = (acc[card.status] || 0) + 1;
+              return acc;
+            }, {});
+            console.log('📊 [StacksBoard] Converted status distribution:', convertedStatusCounts);
             
             setCards(convertedCards);
           } else {
@@ -315,13 +329,31 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   // Helper function to convert Notary story to StackCard format
   const convertNotaryStoryToStackCard = (story: any): StackCard => {
     // Map status values to board column statuses
+    // Backlog items (todo) should NOT appear in workstream board - they belong in backlog view
+    // Only items that are actively being worked on or beyond should appear here
     let mappedStatus = story.status;
-    if (story.status === 'done') {
-      mappedStatus = 'built';
-    } else if (story.status === 'todo') {
+    
+    if (!story.status || story.status === 'todo') {
+      // Backlog items default to 'up-next' for board, but they should be filtered out
+      // This mapping is kept for backwards compatibility, but we'll filter them out below
       mappedStatus = 'up-next';
+    } else if (story.status === 'done') {
+      mappedStatus = 'built';
     } else if (story.status === 'up-next') {
-      // Ensure "up-next" maps correctly (should already be correct, but explicit is better)
+      mappedStatus = 'up-next';
+    } else if (story.status === 'in-progress') {
+      mappedStatus = 'in-progress';
+    } else if (story.status === 'built') {
+      mappedStatus = 'built';
+    } else if (story.status === 'qa1') {
+      mappedStatus = 'qa1';
+    } else if (story.status === 'qa2') {
+      mappedStatus = 'qa2';
+    } else if (story.status === 'shipped') {
+      mappedStatus = 'shipped';
+    } else {
+      // Unknown status - default to 'up-next' instead of passing through invalid status
+      console.warn(`⚠️ [StacksBoard] Unknown status "${story.status}" for story "${story.title}", defaulting to 'up-next'`);
       mappedStatus = 'up-next';
     }
     
