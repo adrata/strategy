@@ -31,8 +31,9 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    product: '' as '' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
+    product: '' as '' | 'Place' | 'RevenueOS' | 'Workshop' | 'Adrata' | 'Oasis' | 'Stacks',
     section: '',
+    status: 'up-next' as 'up-next' | 'todo' | 'in-progress' | 'built' | 'qa1' | 'qa2' | 'shipped',
     // Story-specific
     epicId: '',
     // Epic-specific
@@ -126,6 +127,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         description: '',
         product: '',
         section: '',
+        status: 'up-next',
         epicId: '',
         epochId: '',
         goal: '',
@@ -384,7 +386,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         const storyData: any = {
           title: formData.title,
           description: formData.description || undefined,
-          status: 'up-next'
+          status: formData.status
         };
 
         if (formData.product) {
@@ -426,7 +428,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
         const bugData: any = {
           title: formData.title,
           description: formData.description || undefined,
-          status: 'todo',
+          status: formData.status,
           type: 'bug',
           storyId: null
         };
@@ -601,6 +603,17 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
             <div className="flex gap-2 border-b border-[var(--border)]">
               <button
                 type="button"
+                onClick={() => setActiveWorkType('epic')}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeWorkType === 'epic'
+                    ? 'text-[var(--foreground)] border-b-2 border-[var(--accent)]'
+                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                }`}
+              >
+                Epic
+              </button>
+              <button
+                type="button"
                 onClick={() => setActiveWorkType('story')}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   activeWorkType === 'story'
@@ -620,17 +633,6 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                 }`}
               >
                 Bugs
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveWorkType('epic')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  activeWorkType === 'epic'
-                    ? 'text-[var(--foreground)] border-b-2 border-[var(--accent)]'
-                    : 'text-[var(--muted)] hover:text-[var(--foreground)]'
-                }`}
-              >
-                Epic
               </button>
               <button
                 type="button"
@@ -662,6 +664,7 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
               }}
               options={[
                 { value: '', label: 'Select a product...' },
+                { value: 'Place', label: 'Place' },
                 { value: 'RevenueOS', label: 'RevenueOS' },
                 { value: 'Workshop', label: 'Workshop' },
                 { value: 'Adrata', label: 'Adrata' },
@@ -669,6 +672,33 @@ export function AddStacksModal({ isOpen, onClose, onStacksAdded }: AddStacksModa
                 { value: 'Stacks', label: 'Stacks' }
               ]}
               placeholder="Select a product..."
+              className="w-full"
+            />
+          </div>
+
+          {/* Status/Column Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              Status
+            </label>
+            <Select
+              value={formData.status}
+              onChange={(newStatus) => {
+                setFormData(prev => ({ 
+                  ...prev, 
+                  status: newStatus as typeof formData.status
+                }));
+              }}
+              options={[
+                { value: 'up-next', label: 'Up Next' },
+                { value: 'todo', label: 'Todo/Backlog' },
+                { value: 'in-progress', label: 'In Progress' },
+                { value: 'built', label: 'Built' },
+                { value: 'qa1', label: 'QA1' },
+                { value: 'qa2', label: 'QA2' },
+                { value: 'shipped', label: 'Shipped' }
+              ]}
+              placeholder="Select status..."
               className="w-full"
             />
           </div>

@@ -1132,6 +1132,22 @@ export function PipelineLeftPanelStandalone({
         return;
       }
       
+      // Check if this is Dan user - allow ProfilePanel access on Adrata workspace
+      const isDan = authUser?.email?.toLowerCase() === 'dan@adrata.com' ||
+                   authUser?.id === '01K1VBYZMWTCT09FWEKBDMCXZM';
+      
+      // Check if this is Adrata workspace
+      const isAdrataWorkspace = workspace?.name?.toLowerCase() === 'adrata';
+      
+      // Allow Dan to access ProfilePanel on Adrata workspace
+      if (isDan && isAdrataWorkspace) {
+        console.log('🔘 Opening ProfilePanel for Dan on Adrata:', workspace?.name);
+        const newState = !isProfilePanelVisible;
+        console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
+        setIsProfilePanelVisible(newState);
+        return;
+      }
+      
       // Check user restrictions first - if user has restrictions, use ProfileBox popup (like TOP)
       const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
       const userRestrictions = authUser?.id && authUser?.email ? 
