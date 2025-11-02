@@ -1,18 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-
-// Required for static export (desktop build)
-export const dynamic = 'force-static';
+import { getSecureApiContext, createErrorResponse } from '@/platform/services/secure-api-helper';
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
+    // Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
+
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
     const { searchParams } = new URL(request.url);
     const chatId = searchParams.get('chatId');
 
     if (!chatId) {
       return NextResponse.json({ error: 'Chat ID is required' }, { status: 400 });
+    }
+
+    // Validate that the chat belongs to the authenticated user's workspace
+    const channel = await prisma.oasisChannel.findFirst({
+      where: { id: chatId, workspaceId: context.workspaceId }
+    });
+
+    const dm = await prisma.oasisDirectMessage.findFirst({
+      where: { id: chatId, workspaceId: context.workspaceId }
+    });
+
+    if (!channel && !dm) {
+      return NextResponse.json({ error: 'Chat not found or access denied' }, { status: 404 });
     }
 
     // Fetch messages for the chat (could be channel or DM)
@@ -65,24 +90,42 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { chatId, content, workspaceId, userId } = body;
-
-    if (!chatId || !content || !workspaceId || !userId) {
-      return NextResponse.json({ error: 'Chat ID, content, workspace ID, and user ID are required' }, { status: 400 });
-    }
-
-    // Determine if this is a channel or DM
-    const channel = await prisma.oasisChannel.findUnique({
-      where: { id: chatId }
+    // Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
     });
 
-    const dm = await prisma.oasisDirectMessage.findUnique({
-      where: { id: chatId }
+    if (response) {
+      return response; // Return error response if authentication failed
+    }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const body = await request.json();
+    const { chatId, content } = body;
+
+    if (!chatId || !content) {
+      return NextResponse.json({ error: 'Chat ID and content are required' }, { status: 400 });
+    }
+
+    // Use authenticated user ID and workspace
+    const userId = context.userId;
+    const workspaceId = context.workspaceId;
+
+    // Determine if this is a channel or DM and validate workspace access
+    const channel = await prisma.oasisChannel.findFirst({
+      where: { id: chatId, workspaceId: workspaceId }
+    });
+
+    const dm = await prisma.oasisDirectMessage.findFirst({
+      where: { id: chatId, workspaceId: workspaceId }
     });
 
     if (!channel && !dm) {
-      return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Chat not found or access denied' }, { status: 404 });
     }
 
     // Create message
@@ -123,22 +166,50 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { messageId, content, userId } = body;
+    // Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!messageId || !content || !userId) {
-      return NextResponse.json({ error: 'Message ID, content, and user ID are required' }, { status: 400 });
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const body = await request.json();
+    const { messageId, content } = body;
+
+    if (!messageId || !content) {
+      return NextResponse.json({ error: 'Message ID and content are required' }, { status: 400 });
+    }
+
+    const userId = context.userId;
+    const workspaceId = context.workspaceId;
 
     // Check if user owns the message
     const existingMessage = await prisma.oasisMessage.findUnique({
-      where: { id: messageId }
+      where: { id: messageId },
+      include: {
+        channel: { select: { workspaceId: true } },
+        dm: { select: { workspaceId: true } }
+      }
     });
 
     if (!existingMessage) {
       return NextResponse.json({ error: 'Message not found' }, { status: 404 });
     }
 
+    // Verify the message belongs to the user's workspace
+    const messageWorkspaceId = existingMessage.channel?.workspaceId || existingMessage.dm?.workspaceId;
+    if (messageWorkspaceId !== workspaceId) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+
+    // Verify the user owns the message
     if (existingMessage.senderId !== userId) {
       return NextResponse.json({ error: 'Unauthorized to edit this message' }, { status: 403 });
     }
@@ -177,22 +248,50 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { messageId, userId } = body;
+    // Authenticate and authorize user
+    const { context, response } = await getSecureApiContext(request, {
+      requireAuth: true,
+      requireWorkspaceAccess: true
+    });
 
-    if (!messageId || !userId) {
-      return NextResponse.json({ error: 'Message ID and user ID are required' }, { status: 400 });
+    if (response) {
+      return response; // Return error response if authentication failed
     }
+
+    if (!context) {
+      return createErrorResponse('Authentication required', 'AUTH_REQUIRED', 401);
+    }
+
+    const body = await request.json();
+    const { messageId } = body;
+
+    if (!messageId) {
+      return NextResponse.json({ error: 'Message ID is required' }, { status: 400 });
+    }
+
+    const userId = context.userId;
+    const workspaceId = context.workspaceId;
 
     // Check if user owns the message
     const existingMessage = await prisma.oasisMessage.findUnique({
-      where: { id: messageId }
+      where: { id: messageId },
+      include: {
+        channel: { select: { workspaceId: true } },
+        dm: { select: { workspaceId: true } }
+      }
     });
 
     if (!existingMessage) {
       return NextResponse.json({ error: 'Message not found' }, { status: 404 });
     }
 
+    // Verify the message belongs to the user's workspace
+    const messageWorkspaceId = existingMessage.channel?.workspaceId || existingMessage.dm?.workspaceId;
+    if (messageWorkspaceId !== workspaceId) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+
+    // Verify the user owns the message
     if (existingMessage.senderId !== userId) {
       return NextResponse.json({ error: 'Unauthorized to delete this message' }, { status: 403 });
     }

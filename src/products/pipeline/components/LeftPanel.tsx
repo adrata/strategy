@@ -1110,65 +1110,76 @@ export function PipelineLeftPanelStandalone({
 
   // Handle profile click - conditionally show ProfilePanel or ProfileBox based on workspace
   const handleProfileClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log('🔘 Profile button clicked!');
-    event.preventDefault();
-    event.stopPropagation();
-    
-    // Check if this is Leonardo user - allow ProfilePanel access on RevenueOS
-    const isLeonardo = authUser?.email?.toLowerCase() === 'leonardo@pinpoint-adrata.com' ||
-                      authUser?.id === '01K90EQX4S34RS0PFRWY0ATFS2';
-    
-    // Check if this is Pinpoint workspace (RevenueOS)
-    const isPinpointWorkspace = workspace?.name?.toLowerCase() === 'pinpoint' ||
-                               workspace?.name?.toLowerCase() === 'revenueos';
-    
-    // Allow Leonardo to access ProfilePanel on RevenueOS
-    if (isLeonardo && isPinpointWorkspace) {
-      console.log('🔘 Opening ProfilePanel for Leonardo on RevenueOS:', workspace?.name);
-      const newState = !isProfilePanelVisible;
-      console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
-      setIsProfilePanelVisible(newState);
-      return;
-    }
-    
-    // Check user restrictions first - if user has restrictions, use ProfileBox popup (like TOP)
-    const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
-    const userRestrictions = authUser?.id && authUser?.email ? 
-      getUserRestrictions(authUser.id, authUser.email, workspace?.name || '') : 
-      { hasRestrictions: false };
-
-    if (userRestrictions.hasRestrictions) {
-      // Use ProfileBox popup for restricted users (like TOP workspace)
-      console.log('🔘 Opening ProfileBox popup for restricted user:', workspace?.name);
-      if (isProfileOpen) {
-        setIsProfileOpen(false);
-      } else {
-        setProfileAnchor(event.currentTarget);
-        setIsProfileOpen(true);
+    try {
+      console.log('🔘 Profile button clicked!');
+      event.preventDefault();
+      event.stopPropagation();
+      
+      // Check if this is Leonardo user - allow ProfilePanel access on RevenueOS
+      const isLeonardo = authUser?.email?.toLowerCase() === 'leonardo@pinpoint-adrata.com' ||
+                        authUser?.id === '01K90EQX4S34RS0PFRWY0ATFS2';
+      
+      // Check if this is Pinpoint workspace (RevenueOS)
+      const isPinpointWorkspace = workspace?.name?.toLowerCase() === 'pinpoint' ||
+                                 workspace?.name?.toLowerCase() === 'revenueos';
+      
+      // Allow Leonardo to access ProfilePanel on RevenueOS
+      if (isLeonardo && isPinpointWorkspace) {
+        console.log('🔘 Opening ProfilePanel for Leonardo on RevenueOS:', workspace?.name);
+        const newState = !isProfilePanelVisible;
+        console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
+        setIsProfilePanelVisible(newState);
+        return;
       }
-      return;
-    }
+      
+      // Check user restrictions first - if user has restrictions, use ProfileBox popup (like TOP)
+      const { getUserRestrictions } = require('@/platform/services/user-restrictions-service');
+      const userRestrictions = authUser?.id && authUser?.email ? 
+        getUserRestrictions(authUser.id, authUser.email, workspace?.name || '') : 
+        { hasRestrictions: false };
 
-    // Check if this is Adrata or Notary Everyday workspace (for unrestricted users)
-    const isAdrataOrNotaryEveryday = workspace?.name?.toLowerCase() === 'adrata' || 
-                                    workspace?.name?.toLowerCase() === 'notary everyday' ||
-                                    workspace?.name?.toLowerCase() === 'notaryeveryday';
-    
-    if (isAdrataOrNotaryEveryday) {
-      // Show ProfilePanel for Adrata and Notary Everyday workspaces (unrestricted users)
-      console.log('🔘 Opening ProfilePanel for workspace:', workspace?.name);
-      const newState = !isProfilePanelVisible;
-      console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
-      setIsProfilePanelVisible(newState);
-    } else {
-      // Toggle ProfileBox popup for other workspaces
-      if (isProfileOpen) {
-        console.log('🔘 Closing ProfileBox popup for workspace:', workspace?.name);
-        setIsProfileOpen(false);
+      if (userRestrictions.hasRestrictions) {
+        // Use ProfileBox popup for restricted users (like TOP workspace)
+        console.log('🔘 Opening ProfileBox popup for restricted user:', workspace?.name);
+        if (isProfileOpen) {
+          setIsProfileOpen(false);
+        } else {
+          setProfileAnchor(event.currentTarget);
+          setIsProfileOpen(true);
+        }
+        return;
+      }
+
+      // Check if this is Adrata or Notary Everyday workspace (for unrestricted users)
+      const isAdrataOrNotaryEveryday = workspace?.name?.toLowerCase() === 'adrata' || 
+                                      workspace?.name?.toLowerCase() === 'notary everyday' ||
+                                      workspace?.name?.toLowerCase() === 'notaryeveryday';
+      
+      if (isAdrataOrNotaryEveryday) {
+        // Show ProfilePanel for Adrata and Notary Everyday workspaces (unrestricted users)
+        console.log('🔘 Opening ProfilePanel for workspace:', workspace?.name);
+        const newState = !isProfilePanelVisible;
+        console.log('🔄 Toggling profile panel state:', isProfilePanelVisible, '->', newState);
+        setIsProfilePanelVisible(newState);
       } else {
-        console.log('🔘 Opening ProfileBox popup for workspace:', workspace?.name);
+        // Toggle ProfileBox popup for other workspaces
+        if (isProfileOpen) {
+          console.log('🔘 Closing ProfileBox popup for workspace:', workspace?.name);
+          setIsProfileOpen(false);
+        } else {
+          console.log('🔘 Opening ProfileBox popup for workspace:', workspace?.name);
+          setProfileAnchor(event.currentTarget);
+          setIsProfileOpen(true);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error handling profile click:', error);
+      // Fallback: try to open ProfileBox popup
+      try {
         setProfileAnchor(event.currentTarget);
         setIsProfileOpen(true);
+      } catch (fallbackError) {
+        console.error('❌ Fallback profile open also failed:', fallbackError);
       }
     }
   };
@@ -1386,18 +1397,18 @@ export function PipelineLeftPanelStandalone({
           title="Profile"
         >
           <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
-            <span className="text-sm font-medium text-gray-700">{user.initial}</span>
+            <span className="text-sm font-medium text-gray-700">{user?.initial || (authUser?.name ? authUser.name.charAt(0).toUpperCase() : 'U')}</span>
           </div>
           <div className="flex-1 text-left">
             <div className="text-sm font-medium text-[var(--foreground)]">
-              {user.firstName && user.lastName && user.firstName.trim() && user.lastName.trim()
+              {user?.firstName && user?.lastName && user.firstName.trim() && user.lastName.trim()
                 ? `${user.firstName} ${user.lastName}` 
-                : user.firstName && user.firstName.trim()
+                : user?.firstName && user.firstName.trim()
                 ? user.firstName
-                : user.name ? (user.name.charAt(0).toUpperCase() + user.name.slice(1)) : 'User'}
+                : user?.name ? (user.name.charAt(0).toUpperCase() + user.name.slice(1)) : authUser?.name || 'User'}
             </div>
             <div className="text-xs text-[var(--muted)]">
-              {(workspace?.name || workspaceName || 'Adrata').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}
+              {(workspace?.name || authUser?.workspaces?.find(w => w['id'] === authUser.activeWorkspaceId)?.name || 'Adrata').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}
             </div>
           </div>
         </button>

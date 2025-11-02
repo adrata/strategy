@@ -655,19 +655,42 @@ export class SpeedrunDataService {
 
   /**
    * Legacy fallback method for loading production data
+   * Note: The legacy /api/data/opportunities endpoint no longer exists
+   * This fallback now uses the section API which returns opportunities as companies with OPPORTUNITY status
    */
   private async loadLegacyProductionData(context: any) {
-    const apiUrl = `/api/data/opportunities?workspaceId=${context.workspaceId}&userId=${context.userId}&includeClosed=true&t=${Date.now()}`;
-    console.log(`🌐 SpeedrunDataService: Calling legacy API: ${apiUrl}`);
-    
-    const data = await authFetch(apiUrl);
-    console.log(`📊 SpeedrunDataService: Legacy API response:`, data);
-    
-    if (data['success'] && data['opportunities'] && data.opportunities.length > 0) {
-      this['prospects'] = this.transformOpportunitiesToProspects(data.opportunities);
-      console.log(`✅ SpeedrunDataService: Loaded ${this.prospects.length} legacy opportunities`);
-      this.notifyListeners();
-    } else {
+    try {
+      // Use the section API which supports opportunities
+      const apiUrl = `/api/data/section?section=opportunities&workspaceId=${context.workspaceId}&userId=${context.userId}&limit=50&t=${Date.now()}`;
+      console.log(`🌐 SpeedrunDataService: Calling section API for opportunities: ${apiUrl}`);
+      
+      const data = await authFetch(apiUrl);
+      console.log(`📊 SpeedrunDataService: Section API response:`, data);
+      
+      // The section API returns { success: true, data: { data: [...], count, totalCount } }
+      // Handle both response formats: nested data.data.data or direct data.data
+      let opportunitiesData = null;
+      if (data['success'] && data.data) {
+        if (data.data.data && Array.isArray(data.data.data)) {
+          opportunitiesData = data.data.data;
+        } else if (Array.isArray(data.data)) {
+          opportunitiesData = data.data;
+        }
+      }
+      
+      if (opportunitiesData && opportunitiesData.length > 0) {
+        // Transform opportunities (companies) to prospects format
+        this['prospects'] = this.transformOpportunitiesToProspects(opportunitiesData);
+        console.log(`✅ SpeedrunDataService: Loaded ${this.prospects.length} opportunities from section API`);
+        this.notifyListeners();
+      } else {
+        console.log('📭 SpeedrunDataService: No opportunities found in section API');
+        this['prospects'] = [];
+        this.notifyListeners();
+      }
+    } catch (error) {
+      console.error('❌ SpeedrunDataService: Error loading opportunities from section API:', error);
+      // If fallback also fails, just return empty array
       this['prospects'] = [];
       this.notifyListeners();
     }

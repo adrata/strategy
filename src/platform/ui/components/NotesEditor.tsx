@@ -16,6 +16,7 @@ interface NotesEditorProps {
   onSave?: (value: string) => Promise<void>;
   debounceMs?: number;
   lastSavedAt?: Date | null;
+  showHeader?: boolean;
 }
 
 export function NotesEditor({
@@ -30,7 +31,8 @@ export function NotesEditor({
   saveStatus = 'idle',
   onSave,
   debounceMs = 1500,
-  lastSavedAt = null
+  lastSavedAt = null,
+  showHeader = true
 }: NotesEditorProps) {
   const [localValue, setLocalValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
@@ -322,24 +324,26 @@ export function NotesEditor({
   return (
     <div className={`relative h-full flex flex-col ${className}`}>
       {/* Header with Notes title and status indicator */}
-      <div className="flex items-center justify-between mb-4 px-1">
-        <h2 className="text-xl font-semibold text-[var(--foreground)]" style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
-          Notes
-        </h2>
-        <div className="flex items-center gap-2">
-          {(() => {
-            const status = getStatusDisplay();
-            return (
-              <>
-                {status.icon}
-                <span className={`text-sm font-medium ${status.color}`} style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
-                  {status.text}
-                </span>
-              </>
-            );
-          })()}
+      {showHeader && (
+        <div className="flex items-center justify-between mb-4 px-1">
+          <h2 className="text-xl font-semibold text-[var(--foreground)]" style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
+            Notes
+          </h2>
+          <div className="flex items-center gap-2">
+            {(() => {
+              const status = getStatusDisplay();
+              return (
+                <>
+                  {status.icon}
+                  <span className={`text-sm font-medium ${status.color}`} style={{ fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif' }}>
+                    {status.text}
+                  </span>
+                </>
+              );
+            })()}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Notes editor */}
       <div className="flex-1 relative">

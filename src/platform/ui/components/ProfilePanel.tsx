@@ -653,7 +653,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
       </div>
 
       {/* Header with navigation buttons */}
-      <div className="px-4 py-3 border-b border-[var(--border)]">
+      <div className="px-4 py-2 border-b border-[var(--border)]">
         <div className="flex items-center justify-between gap-2">
           {/* Left: Profile icon (clickable to close) */}
           <button
@@ -665,10 +665,10 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
               {(typeof workspace === 'string' ? workspace : workspace?.name || 'W').charAt(0).toUpperCase()}
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[var(--foreground)]">
+              <h3 className="text-sm font-semibold text-[var(--foreground)] m-0">
                 {typeof workspace === 'string' ? workspace : workspace?.name || 'Workspace'}
               </h3>
-              <p className="text-xs text-[var(--muted-foreground)]">
+              <p className="text-xs text-[var(--muted-foreground)] m-0">
                 Workspace
               </p>
             </div>
