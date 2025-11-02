@@ -184,16 +184,44 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
     }
   };
 
-  // Show different content based on active section
+  // Show skeleton loading state when no channel is selected
   if (!selectedChannel) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[var(--background)]">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <ChatBubbleLeftRightIcon className="w-8 h-8 text-white" />
+      <div className="flex-1 flex flex-col bg-[var(--background)] h-full">
+        {/* Header Skeleton */}
+        <div className="flex-shrink-0 p-4 border-b border-[var(--border)] bg-[var(--background)]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-5 bg-[var(--loading-bg)] rounded animate-pulse" />
+              <div className="space-y-2">
+                <div className="h-6 bg-[var(--loading-bg)] rounded w-32 animate-pulse" />
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-24 animate-pulse" />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse" />
+              <div className="h-8 bg-[var(--loading-bg)] rounded w-28 animate-pulse" />
+            </div>
           </div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Welcome to Oasis</h3>
-          <p className="text-[var(--muted)]">Select a conversation from the left panel to start chatting</p>
+        </div>
+        
+        {/* Messages Skeleton */}
+        <div className="flex-1 overflow-y-auto p-3 space-y-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex gap-3 px-2">
+              <div className="w-10 h-10 bg-[var(--loading-bg)] rounded animate-pulse" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-1/4 animate-pulse" />
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse" />
+                <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse" />
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Input Skeleton */}
+        <div className="flex-shrink-0 p-4 border-t border-[var(--border)]">
+          <div className="h-12 bg-[var(--loading-bg)] rounded-lg animate-pulse" />
         </div>
       </div>
     );

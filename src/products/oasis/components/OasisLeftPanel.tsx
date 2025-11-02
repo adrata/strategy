@@ -12,6 +12,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useUnifiedAuth } from "@/platform/auth";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
 import { useOasisLayout } from '@/app/[workspace]/(revenue-os)/layout';
+import { useOasis } from '@/products/oasis/context/OasisProvider';
 import { useOasisChannels } from '@/products/oasis/hooks/useOasisChannels';
 import { useOasisDMs } from '@/products/oasis/hooks/useOasisDMs';
 import { useOasisPresence } from '@/products/oasis/hooks/useOasisPresence';
@@ -63,10 +64,41 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     oasisContext = useOasis();
   } catch (error) {
     console.error('Failed to get Oasis context:', error);
+    // Show skeleton loading state instead of error message
     return (
       <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
-        <div className="p-4 text-center">
-          <div className="text-sm text-red-500">Error loading Oasis context</div>
+        {/* Header Skeleton */}
+        <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[var(--loading-bg)] rounded-xl animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-5 bg-[var(--loading-bg)] rounded w-20 animate-pulse" />
+              <div className="h-3 bg-[var(--loading-bg)] rounded w-32 animate-pulse" />
+            </div>
+          </div>
+        </div>
+        
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto p-2 space-y-4">
+          <div className="space-y-2">
+            <div className="h-3 bg-[var(--loading-bg)] rounded w-16 animate-pulse mb-2" />
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex gap-2 px-2 py-1.5">
+                <div className="h-4 bg-[var(--loading-bg)] rounded w-4 animate-pulse" />
+                <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse" />
+              </div>
+            ))}
+          </div>
+          
+          <div className="border-t border-[var(--border)] pt-2 space-y-2">
+            <div className="h-3 bg-[var(--loading-bg)] rounded w-24 animate-pulse mb-2" />
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="flex gap-2 px-2 py-1.5">
+                <div className="w-6 h-6 bg-[var(--loading-bg)] rounded-full animate-pulse" />
+                <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
