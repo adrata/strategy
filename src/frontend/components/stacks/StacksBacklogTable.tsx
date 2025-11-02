@@ -16,29 +16,8 @@ import {
   TagIcon,
   ChevronUpIcon,
   ChevronDownIcon,
-  PaperAirplaneIcon,
-  Bars3Icon
+  PaperAirplaneIcon
 } from '@heroicons/react/24/outline';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-  DragOverEvent,
-  DragOverlay,
-  DragStartEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { StacksContextMenu } from './StacksContextMenu';
 import { StacksFilters } from './StacksFilters';
 import { AddStacksModal } from './AddStacksModal';
