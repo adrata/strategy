@@ -75,13 +75,30 @@ export async function GET(request: NextRequest) {
       isMember: channel.members.some(member => member.userId === userId)
     }));
 
+    console.log(`📊 [OASIS CHANNELS API] Found ${channelsWithStats.length} channels for workspace ${workspaceId}`);
+    channelsWithStats.forEach(ch => {
+      console.log(`  - #${ch.name} (${ch.id}): ${ch.memberCount} members, user isMember: ${ch.isMember}`);
+    });
+
     // Custom sort order: general, sell, build, random, wins
     const customOrder = ['general', 'sell', 'build', 'random', 'wins'];
     const sortedChannels = channelsWithStats.sort((a, b) => {
       const aIndex = customOrder.indexOf(a.name);
       const bIndex = customOrder.indexOf(b.name);
-      return aIndex - bIndex;
+      // If both are in custom order, sort by order
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      // If only one is in custom order, prioritize it
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      // Otherwise alphabetical
+      return (a.name || '').localeCompare(b.name || '');
     });
+
+    if (sortedChannels.length === 0) {
+      console.warn(`⚠️ [OASIS CHANNELS API] No channels found for workspace ${workspaceId} - default channels may need to be seeded`);
+    }
 
     return NextResponse.json({ channels: sortedChannels });
 

@@ -46,7 +46,11 @@ export function useOasisChannels(workspaceId: string) {
       console.log('📦 [OASIS CHANNELS] Received data:', data);
       
       if (data.channels) {
+        console.log(`✅ [OASIS CHANNELS] Found ${data.channels.length} channels:`, data.channels.map((c: OasisChannel) => ({ id: c.id, name: c.name, isMember: c.isMember })));
         setChannels(data.channels);
+        if (data.channels.length === 0) {
+          console.warn('⚠️ [OASIS CHANNELS] Channels array is empty - workspace may need default channels seeded');
+        }
       } else {
         console.warn('⚠️ [OASIS CHANNELS] No channels in response:', data);
         setChannels([]);

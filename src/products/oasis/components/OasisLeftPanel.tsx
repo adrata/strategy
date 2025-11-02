@@ -303,6 +303,18 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     isWorkspaceMember: true
   }));
 
+  // Log channel conversion for debugging
+  useEffect(() => {
+    if (!channelsLoading) {
+      if (channels.length > 0) {
+        const channelNames = channels.map(c => `#${c.name}`).join(', ');
+        console.log(`🔄 [OASIS LEFT PANEL] Converted ${channels.length} channels: ${channelNames}`);
+      } else {
+        console.log('⚠️ [OASIS LEFT PANEL] No channels available to display');
+      }
+    }
+  }, [channels, channelsLoading]);
+
   // Get current workspace name for the "Me" pill
   const currentWorkspaceName = authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || '';
 
@@ -398,6 +410,10 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
                     <div className="h-4 bg-[var(--loading-bg)] rounded flex-1 animate-pulse"></div>
                   </div>
                 ))}
+              </div>
+            ) : channelConversations.length === 0 ? (
+              <div className="px-2 py-2 text-xs text-[var(--muted)] text-center">
+                No channels yet. Click + to create one.
               </div>
             ) : (
               channelConversations.map((channel) => (
