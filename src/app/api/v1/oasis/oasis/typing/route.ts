@@ -8,15 +8,14 @@ export const dynamic = 'force-static';
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getUnifiedAuthUser } from '@/platform/api-auth';
 import { OasisRealtimeService } from '@/platform/services/oasis-realtime-service';
 
 // POST /api/oasis/typing - Broadcast typing indicator
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const authUser = await getUnifiedAuthUser(request);
+    if (!authUser?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -30,12 +29,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userName = session.user.name || 'Unknown User';
+    const userName = authUser.name || 'Unknown User';
 
     if (isTyping) {
       await OasisRealtimeService.broadcastTyping(
         workspaceId,
-        session.user.id,
+        authUser.id,
         userName,
         channelId,
         dmId
@@ -43,7 +42,7 @@ export async function POST(request: NextRequest) {
     } else {
       await OasisRealtimeService.broadcastStopTyping(
         workspaceId,
-        session.user.id,
+        authUser.id,
         channelId,
         dmId
       );

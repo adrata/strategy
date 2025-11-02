@@ -251,9 +251,9 @@ export function DocumentViewer({ document, isEditMode, onBack, onToggleEditMode,
                 const workspaceMatch = currentPath.match(/^\/([^\/]+)\//);
                 if (workspaceMatch) {
                   const workspaceSlug = workspaceMatch[1];
-                  router.push(`/${workspaceSlug}/workshop`);
+                  router.push(`/${workspaceSlug}/workbench`);
                 } else {
-                  router.push('/workshop');
+                  router.push('/workbench');
                 }
               }}
               className="hover:text-[var(--foreground)] transition-colors"

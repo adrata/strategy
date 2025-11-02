@@ -11,7 +11,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   PlusIcon, 
   MagnifyingGlassIcon,
-  PaperAirplaneIcon,
   PaperClipIcon,
   FaceSmileIcon,
   EllipsisHorizontalIcon,
@@ -373,9 +372,11 @@ export function OasisMiddlePanel({
             <button
               type="submit"
               disabled={!messageInput.trim()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-2 py-1.5 bg-white border border-[var(--border)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
-              <PaperAirplaneIcon className="w-4 h-4" />
+              <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
             </button>
           </form>
         </div>
