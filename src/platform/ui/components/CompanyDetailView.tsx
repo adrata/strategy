@@ -97,7 +97,7 @@ export function CompanyDetailView({
       case "closed lost":
         return "bg-red-100 text-red-800 border-red-200";
       default:
-        return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
+        return "bg-hover text-gray-800 border-border";
     }
   };
 
@@ -114,16 +114,16 @@ export function CompanyDetailView({
       case "closed lost":
         return "bg-red-100 text-red-800";
       default:
-        return "bg-[var(--hover)] text-gray-800";
+        return "bg-hover text-gray-800";
     }
   };
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="flex items-center gap-3">
-          <div className="w-6 h-6 border-2 border-[var(--muted)] border-t-[#10B981] rounded-full animate-spin"></div>
-          <span className="text-[var(--muted)]">Loading company data...</span>
+          <div className="w-6 h-6 border-2 border-muted border-t-[#10B981] rounded-full animate-spin"></div>
+          <span className="text-muted">Loading company data...</span>
         </div>
       </div>
     );
@@ -131,13 +131,13 @@ export function CompanyDetailView({
 
   if (!companyData) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
+      <div className="h-full flex items-center justify-center bg-background">
         <div className="text-center">
-          <ExclamationTriangleIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+          <ExclamationTriangleIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-2">
             Company Not Found
           </h3>
-          <p className="text-[var(--muted)] mb-4">
+          <p className="text-muted mb-4">
             Could not find data for &ldquo;{companyName}&rdquo;
           </p>
           <button
@@ -152,15 +152,15 @@ export function CompanyDetailView({
   }
 
   return (
-    <div className="h-full bg-[var(--background)] overflow-auto">
+    <div className="h-full bg-background overflow-auto">
       {/* Header */}
-      <div className="sticky top-0 bg-[var(--background)] border-b border-[var(--border)] p-6 z-10">
+      <div className="sticky top-0 bg-background border-b border-border p-6 z-10">
         <div className="flex items-center gap-4 mb-4">
           <button
             onClick={onBack}
-            className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
           >
-            <ArrowLeftIcon className="w-5 h-5 text-[var(--muted)]" />
+            <ArrowLeftIcon className="w-5 h-5 text-muted" />
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
@@ -168,10 +168,10 @@ export function CompanyDetailView({
                 <BuildingOfficeIcon className="w-6 h-6 text-[#10B981]" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-[var(--foreground)]">
+                <h1 className="text-2xl font-bold text-foreground">
                   {companyData.name}
                 </h1>
-                <p className="text-[var(--muted)]">
+                <p className="text-muted">
                   {companyData.industry} • {companyData.size}
                 </p>
               </div>
@@ -180,20 +180,20 @@ export function CompanyDetailView({
             {/* Key Metrics */}
             <div className="flex items-center gap-6 text-sm">
               <div className="flex items-center gap-1">
-                <UsersIcon className="w-4 h-4 text-[var(--muted)]" />
-                <span className="text-[var(--muted)]">
+                <UsersIcon className="w-4 h-4 text-muted" />
+                <span className="text-muted">
                   {companyData.totalContacts} contacts
                 </span>
               </div>
               <div className="flex items-center gap-1">
-                <CurrencyDollarIcon className="w-4 h-4 text-[var(--muted)]" />
-                <span className="text-[var(--muted)]">
+                <CurrencyDollarIcon className="w-4 h-4 text-muted" />
+                <span className="text-muted">
                   {formatCurrency(companyData.totalOpportunityValue)} pipeline
                 </span>
               </div>
               <div className="flex items-center gap-1">
-                <ChartBarIcon className="w-4 h-4 text-[var(--muted)]" />
-                <span className="text-[var(--muted)]">
+                <ChartBarIcon className="w-4 h-4 text-muted" />
+                <span className="text-muted">
                   {companyData.winRate}% win rate
                 </span>
               </div>
@@ -207,14 +207,14 @@ export function CompanyDetailView({
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 border-b border-[var(--border)]">
+        <div className="flex gap-1 border-b border-border">
           {tabs.map((tab) => (
             <button
               key={tab}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab
                   ? "border-[#10B981] text-[#10B981]"
-                  : "border-transparent text-[var(--muted)] hover:text-[var(--foreground)]"
+                  : "border-transparent text-muted hover:text-foreground"
               }`}
               onClick={() => setActiveTab(tab)}
             >
@@ -246,38 +246,38 @@ export function CompanyDetailView({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Company Information */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+              <div className="bg-background dark:bg-foreground rounded-lg border border-border p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   Company Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
                     <div>
-                      <span className="text-sm font-medium text-[var(--muted)]">
+                      <span className="text-sm font-medium text-muted">
                         Industry
                       </span>
-                      <p className="text-[var(--foreground)]">
+                      <p className="text-foreground">
                         {companyData.industry}
                       </p>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-[var(--muted)]">
+                      <span className="text-sm font-medium text-muted">
                         Total Employees
                       </span>
-                      <p className="text-[var(--foreground)]">
+                      <p className="text-foreground">
                         {companyData.size}
                       </p>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-[var(--muted)]">
+                      <span className="text-sm font-medium text-muted">
                         Revenue
                       </span>
-                      <p className="text-[var(--foreground)]">
+                      <p className="text-foreground">
                         {companyData.revenue}
                       </p>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-[var(--muted)]">
+                      <span className="text-sm font-medium text-muted">
                         Website
                       </span>
                       <a
@@ -293,34 +293,34 @@ export function CompanyDetailView({
                   </div>
                   <div className="space-y-3">
                     <div>
-                      <span className="text-sm font-medium text-[var(--muted)]">
+                      <span className="text-sm font-medium text-muted">
                         HQ Location
                       </span>
-                      <p className="text-[var(--foreground)]">
+                      <p className="text-foreground">
                         {companyData.headquarters}
                       </p>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-[var(--muted)]">
+                      <span className="text-sm font-medium text-muted">
                         Founded
                       </span>
-                      <p className="text-[var(--foreground)]">
+                      <p className="text-foreground">
                         {companyData.foundedYear || "Unknown"}
                       </p>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-[var(--muted)]">
+                      <span className="text-sm font-medium text-muted">
                         Business Type
                       </span>
-                      <p className="text-[var(--foreground)]">
+                      <p className="text-foreground">
                         {companyData.businessType}
                       </p>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-[var(--muted)]">
+                      <span className="text-sm font-medium text-muted">
                         Market Segment
                       </span>
-                      <p className="text-[var(--foreground)]">
+                      <p className="text-foreground">
                         {companyData.marketSegment}
                       </p>
                     </div>
@@ -328,11 +328,11 @@ export function CompanyDetailView({
                 </div>
 
                 {companyData['description'] && (
-                  <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                    <span className="text-sm font-medium text-[var(--muted)]">
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <span className="text-sm font-medium text-muted">
                       Description
                     </span>
-                    <p className="text-[var(--foreground)] mt-1">
+                    <p className="text-foreground mt-1">
                       {companyData.description}
                     </p>
                   </div>
@@ -340,24 +340,24 @@ export function CompanyDetailView({
               </div>
 
               {/* Recent Activity */}
-              <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+              <div className="bg-background dark:bg-foreground rounded-lg border border-border p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   Recent Activity
                 </h3>
                 <div className="space-y-3">
                   {companyData.leads.slice(0, 3).map((lead: any) => (
                     <div
                       key={lead.id}
-                      className="flex items-center gap-3 p-3 bg-[var(--hover-bg)] rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-hover rounded-lg"
                     >
                       <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                         <UsersIcon className="w-4 h-4 text-blue-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-[var(--foreground)]">
+                        <p className="font-medium text-foreground">
                           {lead.name}
                         </p>
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           Lead • {formatDate(lead.createdAt)}
                         </p>
                       </div>
@@ -372,16 +372,16 @@ export function CompanyDetailView({
                   {companyData.opportunities.slice(0, 2).map((opp: any) => (
                     <div
                       key={opp.id}
-                      className="flex items-center gap-3 p-3 bg-[var(--hover-bg)] rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-hover rounded-lg"
                     >
                       <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
                         <CurrencyDollarIcon className="w-4 h-4 text-green-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-[var(--foreground)]">
+                        <p className="font-medium text-foreground">
                           {opp.name}
                         </p>
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           {formatCurrency(parseFloat(opp.amount || "0"))} •{" "}
                           {formatDate(opp.createdAt)}
                         </p>
@@ -400,33 +400,33 @@ export function CompanyDetailView({
             {/* Right Sidebar */}
             <div className="space-y-6">
               {/* Key Metrics */}
-              <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+              <div className="bg-background dark:bg-foreground rounded-lg border border-border p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   Key Metrics
                 </h3>
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-[var(--muted)]">Total Leads</span>
-                    <span className="font-semibold text-[var(--foreground)]">
+                    <span className="text-muted">Total Leads</span>
+                    <span className="font-semibold text-foreground">
                       {companyData.totalLeads}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[var(--muted)]">
+                    <span className="text-muted">
                       Active Opportunities
                     </span>
-                    <span className="font-semibold text-[var(--foreground)]">
+                    <span className="font-semibold text-foreground">
                       {companyData.activeOpportunities}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[var(--muted)]">Pipeline Value</span>
-                    <span className="font-semibold text-[var(--foreground)]">
+                    <span className="text-muted">Pipeline Value</span>
+                    <span className="font-semibold text-foreground">
                       {formatCurrency(companyData.totalOpportunityValue)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[var(--muted)]">Win Rate</span>
+                    <span className="text-muted">Win Rate</span>
                     <span className="font-semibold text-green-600">
                       {companyData.winRate}%
                     </span>
@@ -436,22 +436,22 @@ export function CompanyDetailView({
 
               {/* Primary Contact */}
               {companyData['primaryContact'] && (
-                <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                <div className="bg-background dark:bg-foreground rounded-lg border border-border p-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">
                     Primary Contact
                   </h3>
                   <div className="space-y-3">
                     <div>
-                      <h4 className="font-medium text-[var(--foreground)]">
+                      <h4 className="font-medium text-foreground">
                         {companyData.primaryContact.name}
                       </h4>
-                      <p className="text-[var(--muted)]">
+                      <p className="text-muted">
                         {companyData.primaryContact.title}
                       </p>
                     </div>
                     {companyData['primaryContact']['email'] && (
                       <div className="flex items-center gap-2">
-                        <EnvelopeIcon className="w-4 h-4 text-[var(--muted)]" />
+                        <EnvelopeIcon className="w-4 h-4 text-muted" />
                         <a
                           href={`mailto:${companyData.primaryContact.email}`}
                           className="text-[#10B981] hover:text-[#059669]"
@@ -462,7 +462,7 @@ export function CompanyDetailView({
                     )}
                     {companyData['primaryContact']['phone'] && (
                       <div className="flex items-center gap-2">
-                        <PhoneIcon className="w-4 h-4 text-[var(--muted)]" />
+                        <PhoneIcon className="w-4 h-4 text-muted" />
                         <a
                           href={`tel:${companyData.primaryContact.phone}`}
                           className="text-[#10B981] hover:text-[#059669]"
@@ -476,28 +476,28 @@ export function CompanyDetailView({
               )}
 
               {/* Engagement Timeline */}
-              <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+              <div className="bg-background dark:bg-foreground rounded-lg border border-border p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   Engagement Timeline
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-[var(--muted)]">
+                    <span className="text-muted">
                       First Engagement
                     </span>
-                    <span className="text-[var(--foreground)]">
+                    <span className="text-foreground">
                       {formatDate(companyData.firstEngagement)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[var(--muted)]">Last Activity</span>
-                    <span className="text-[var(--foreground)]">
+                    <span className="text-muted">Last Activity</span>
+                    <span className="text-foreground">
                       {formatDate(new Date(companyData.lastActivity))}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[var(--muted)]">Days Active</span>
-                    <span className="text-[var(--foreground)]">
+                    <span className="text-muted">Days Active</span>
+                    <span className="text-foreground">
                       {Math.floor(
                         (Date.now() -
                           new Date(
@@ -517,11 +517,11 @@ export function CompanyDetailView({
           <div className="space-y-6">
             {companyData['buyerGroups']['length'] === 0 ? (
               <div className="text-center py-12">
-                <UsersIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+                <UsersIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">
                   No Buyer Groups Found
                 </h3>
-                <p className="text-[var(--muted)]">
+                <p className="text-muted">
                   This company doesn&apos;t have any buyer groups configured
                   yet.
                 </p>
@@ -531,16 +531,16 @@ export function CompanyDetailView({
                 {companyData.buyerGroups.map((group: any) => (
                   <div
                     key={group.id}
-                    className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6 cursor-pointer hover:shadow-md transition-all"
+                    className="bg-background dark:bg-foreground rounded-lg border border-border p-6 cursor-pointer hover:shadow-md transition-all"
                     onClick={() => setSelectedBuyerGroup(group)}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                        <h3 className="text-lg font-semibold text-foreground">
                           {group.name}
                         </h3>
                         {group['description'] && (
-                          <p className="text-[var(--muted)] mt-1">
+                          <p className="text-muted mt-1">
                             {group.description}
                           </p>
                         )}
@@ -551,7 +551,7 @@ export function CompanyDetailView({
                     </div>
 
                     <div className="space-y-3">
-                      <h4 className="font-medium text-[var(--foreground)]">
+                      <h4 className="font-medium text-foreground">
                         Decision Makers
                       </h4>
                       {group.decisionMakers.slice(0, 3).map((dm: any) => (
@@ -562,10 +562,10 @@ export function CompanyDetailView({
                             </span>
                           </div>
                           <div>
-                            <p className="font-medium text-[var(--foreground)]">
+                            <p className="font-medium text-foreground">
                               {dm.person.name}
                             </p>
-                            <p className="text-sm text-[var(--muted)]">
+                            <p className="text-sm text-muted">
                               {dm.role}
                             </p>
                           </div>
@@ -573,7 +573,7 @@ export function CompanyDetailView({
                       ))}
 
                       {group.decisionMakers.length > 3 && (
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           +{group.decisionMakers.length - 3} more decision
                           makers
                         </p>
@@ -588,23 +588,23 @@ export function CompanyDetailView({
 
         {activeTab === "People" && (
           <div className="space-y-6">
-            <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] overflow-hidden">
+            <div className="bg-background dark:bg-foreground rounded-lg border border-border overflow-hidden">
               <table className="w-full">
-                <thead className="bg-[var(--hover-bg)]">
+                <thead className="bg-hover">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Title
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Contact
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">
                       Last Activity
                     </th>
                   </tr>
@@ -614,15 +614,15 @@ export function CompanyDetailView({
                     (person: any, index: number) => (
                       <tr
                         key={person.id}
-                        className="border-b border-[var(--border)] hover:bg-[var(--hover-bg)]"
+                        className="border-b border-border hover:bg-hover"
                       >
                         <td className="px-6 py-4">
-                          <div className="font-medium text-[var(--foreground)]">
+                          <div className="font-medium text-foreground">
                             {person.name}
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-[var(--foreground)]">
+                          <div className="text-foreground">
                             {person.title || "Unknown"}
                           </div>
                         </td>
@@ -654,7 +654,7 @@ export function CompanyDetailView({
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-[var(--foreground)]">
+                          <div className="text-foreground">
                             {formatDate(
                               person.lastActionDate || person.updatedAt,
                             )}
@@ -675,11 +675,11 @@ export function CompanyDetailView({
               {companyData.opportunities.map((opp: any) => (
                 <div
                   key={opp.id}
-                  className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6"
+                  className="bg-background dark:bg-foreground rounded-lg border border-border p-6"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="font-semibold text-[var(--foreground)]">
+                      <h3 className="font-semibold text-foreground">
                         {opp.name}
                       </h3>
                       <p className="text-2xl font-bold text-[#10B981] mt-2">
@@ -695,23 +695,23 @@ export function CompanyDetailView({
 
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">Probability</span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="text-muted">Probability</span>
+                      <span className="font-medium text-foreground">
                         {opp.probability}%
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--muted)]">
+                      <span className="text-muted">
                         Expected Close
                       </span>
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="font-medium text-foreground">
                         {formatDate(opp.expectedCloseDate)}
                       </span>
                     </div>
                     {opp['primaryContact'] && (
                       <div className="flex justify-between">
-                        <span className="text-[var(--muted)]">Contact</span>
-                        <span className="font-medium text-[var(--foreground)]">
+                        <span className="text-muted">Contact</span>
+                        <span className="font-medium text-foreground">
                           {opp.primaryContact.name}
                         </span>
                       </div>
@@ -725,8 +725,8 @@ export function CompanyDetailView({
 
         {activeTab === "Activity" && (
           <div className="space-y-6">
-            <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background dark:bg-foreground rounded-lg border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Recent Action Timeline
               </h3>
               <div className="space-y-4">
@@ -748,7 +748,7 @@ export function CompanyDetailView({
                     >
                       <div className="w-2 h-2 bg-[#10B981] rounded-full mt-2"></div>
                       <div className="flex-1">
-                        <p className="font-medium text-[var(--foreground)]">
+                        <p className="font-medium text-foreground">
                           {item.amount
                             ? "Opportunity"
                             : item.title
@@ -756,7 +756,7 @@ export function CompanyDetailView({
                               : "Lead"}
                           : {item.name}
                         </p>
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           {formatDate(item.updatedAt)} •
                           {item['amount'] &&
                             ` ${formatCurrency(parseFloat(item.amount))}`}
@@ -772,45 +772,45 @@ export function CompanyDetailView({
 
         {activeTab === "Intelligence" && (
           <div className="space-y-6">
-            <div className="bg-[var(--background)] dark:bg-[var(--foreground)] rounded-lg border border-[var(--border)] p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background dark:bg-foreground rounded-lg border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Company Intelligence
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-3">
+                  <h4 className="font-medium text-foreground mb-3">
                     Data Sources
                   </h4>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <CheckCircleIcon
-                        className={`w-4 h-4 ${companyData.hasAccount ? "text-green-500" : "text-[var(--muted)]"}`}
+                        className={`w-4 h-4 ${companyData.hasAccount ? "text-green-500" : "text-muted"}`}
                       />
-                      <span className="text-[var(--foreground)]">
+                      <span className="text-foreground">
                         Pipeline Account
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircleIcon
-                        className={`w-4 h-4 ${companyData.hasBuyerProfile ? "text-green-500" : "text-[var(--muted)]"}`}
+                        className={`w-4 h-4 ${companyData.hasBuyerProfile ? "text-green-500" : "text-muted"}`}
                       />
-                      <span className="text-[var(--foreground)]">
+                      <span className="text-foreground">
                         Buyer Profile
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircleIcon
-                        className={`w-4 h-4 ${companyData.hasLeads ? "text-green-500" : "text-[var(--muted)]"}`}
+                        className={`w-4 h-4 ${companyData.hasLeads ? "text-green-500" : "text-muted"}`}
                       />
-                      <span className="text-[var(--foreground)]">
+                      <span className="text-foreground">
                         Lead Data
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircleIcon
-                        className={`w-4 h-4 ${companyData.hasOpportunities ? "text-green-500" : "text-[var(--muted)]"}`}
+                        className={`w-4 h-4 ${companyData.hasOpportunities ? "text-green-500" : "text-muted"}`}
                       />
-                      <span className="text-[var(--foreground)]">
+                      <span className="text-foreground">
                         Opportunity Data
                       </span>
                     </div>
@@ -818,16 +818,16 @@ export function CompanyDetailView({
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-3">
+                  <h4 className="font-medium text-foreground mb-3">
                     Engagement Score
                   </h4>
                   <div className="space-y-4">
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-[var(--muted)]">
+                        <span className="text-muted">
                           Lead Quality
                         </span>
-                        <span className="text-[var(--foreground)]">
+                        <span className="text-foreground">
                           {Math.round(
                             (companyData.totalLeads /
                               Math.max(companyData.totalLeads, 10)) *
@@ -836,7 +836,7 @@ export function CompanyDetailView({
                           %
                         </span>
                       </div>
-                      <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+                      <div className="w-full bg-loading-bg rounded-full h-2">
                         <div
                           className="bg-[#10B981] h-2 rounded-full"
                           style={{
@@ -848,14 +848,14 @@ export function CompanyDetailView({
 
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-[var(--muted)]">
+                        <span className="text-muted">
                           Opportunity Strength
                         </span>
-                        <span className="text-[var(--foreground)]">
+                        <span className="text-foreground">
                           {companyData.winRate}%
                         </span>
                       </div>
-                      <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+                      <div className="w-full bg-loading-bg rounded-full h-2">
                         <div
                           className="bg-blue-500 h-2 rounded-full"
                           style={{ width: `${companyData.winRate}%` }}

@@ -25,7 +25,7 @@ export const PartnersList: React.FC<PartnersListProps> = ({
         .map((partner, index) => (
           <div
             key={partner.id}
-            className="border border-[var(--border)] rounded-xl p-6 bg-[var(--background)] hover:border-gray-400 transition-colors cursor-pointer"
+            className="border border-border rounded-xl p-6 bg-background hover:border-gray-400 transition-colors cursor-pointer"
             onClick={() => onPartnerClick(partner)}
             onMouseEnter={(e) => {
               e.currentTarget['style']['borderColor'] = "#9B59B6";
@@ -36,20 +36,20 @@ export const PartnersList: React.FC<PartnersListProps> = ({
           >
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-start gap-4 flex-1">
-                <div className="w-8 h-8 bg-[var(--hover-bg)] rounded-lg flex items-center justify-center text-[var(--foreground)] font-medium text-sm">
+                <div className="w-8 h-8 bg-hover rounded-lg flex items-center justify-center text-foreground font-medium text-sm">
                   {getRankNumber(partner)}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-1">
+                  <h3 className="text-lg font-semibold text-foreground mb-1">
                     {partner.name}
                   </h3>
-                  <p className="text-sm text-[var(--muted)] mb-2">
+                  <p className="text-sm text-muted mb-2">
                     {partner.domain}
                   </p>
-                  <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
+                  <div className="flex items-center gap-4 text-sm text-muted">
                     <span>
                       Type:{" "}
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="font-medium text-foreground">
                         {partner.partnershipType}
                       </span>
                     </span>
@@ -57,19 +57,19 @@ export const PartnersList: React.FC<PartnersListProps> = ({
                     <div className="flex items-center gap-1">
                       <span>Region:</span>
                       <CountryFlag location={partner.region} />
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="font-medium text-foreground">
                         {partner.region}
                       </span>
                     </div>
                     <span>•</span>
                     <span>
                       Revenue:{" "}
-                      <span className="font-medium text-[var(--foreground)]">
+                      <span className="font-medium text-foreground">
                         {partner.revenue}
                       </span>
                     </span>
                   </div>
-                  <p className="text-sm text-[var(--muted)] mt-2 italic">
+                  <p className="text-sm text-muted mt-2 italic">
                     {getRankingDescription(partner).split(": ")[1]}
                   </p>
                 </div>
@@ -82,7 +82,7 @@ export const PartnersList: React.FC<PartnersListProps> = ({
                 </span>
               </div>
             </div>
-            <div className="flex items-center justify-between text-sm text-[var(--muted)]">
+            <div className="flex items-center justify-between text-sm text-muted">
               <span>🤝 {partner.partnershipType}</span>
               <span>
                 Last contact:{" "}

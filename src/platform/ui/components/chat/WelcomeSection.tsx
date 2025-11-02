@@ -29,7 +29,7 @@ export function WelcomeSection({
 }: WelcomeSectionProps) {
   return (
     <div className="space-y-6" style={{ marginBottom: 0 }}>
-      <div className="bg-transparent px-0 py-0 text-base text-[var(--foreground)] w-fit max-w-full leading-snug">
+      <div className="bg-transparent px-0 py-0 text-base text-foreground w-fit max-w-full leading-snug">
         <div className="whitespace-pre-line">
           {getWelcomeMessage(activeSubApp)}
         </div>
@@ -46,7 +46,7 @@ export function WelcomeSection({
 
           {/* Quick actions */}
           <div className="space-y-3">
-            <div className="text-sm text-[var(--muted)]">
+            <div className="text-sm text-muted">
               Try these quick actions:
             </div>
             <div className="flex flex-wrap gap-2">
@@ -54,7 +54,7 @@ export function WelcomeSection({
                 <button
                   key={`${activeSubApp}-${action}-${index}`}
                   onClick={() => onQuickAction(action)}
-                  className="inline-flex items-center space-x-2 px-3 py-2 text-sm bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+                  className="inline-flex items-center space-x-2 px-3 py-2 text-sm bg-background text-foreground border border-border rounded-lg hover:bg-panel-background transition-colors"
                 >
                   <span>{action}</span>
                 </button>

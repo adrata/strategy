@@ -33,17 +33,17 @@ export function EditorTabs() {
   }
 
   return (
-    <div className="flex items-center bg-[var(--panel-background)] border-b border-[var(--border)] overflow-x-auto">
+    <div className="flex items-center bg-panel-background border-b border-border overflow-x-auto">
       {openFiles.map((file) => {
         const isActive = activeFile?.id === file.id;
         
         return (
           <div
             key={file.id}
-            className={`flex items-center gap-2 px-3 py-2 border-r border-[var(--border)] cursor-pointer min-w-0 group ${
+            className={`flex items-center gap-2 px-3 py-2 border-r border-border cursor-pointer min-w-0 group ${
               isActive 
-                ? 'bg-[var(--background)] text-[var(--foreground)]' 
-                : 'bg-[var(--panel-background)] text-[var(--muted)] hover:bg-[var(--hover)]'
+                ? 'bg-background text-foreground' 
+                : 'bg-panel-background text-muted hover:bg-hover'
             }`}
             onClick={() => handleTabClick(file)}
           >

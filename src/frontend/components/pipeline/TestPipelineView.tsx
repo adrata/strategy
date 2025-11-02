@@ -38,7 +38,7 @@ export function TestPipelineView({ section }: TestPipelineViewProps) {
   console.log(`🧪🧪🧪 [TEST VIEW] Loading: ${pipelineData.loading}`);
   
   return (
-    <div className="h-full bg-[var(--background)] flex items-center justify-center">
+    <div className="h-full bg-background flex items-center justify-center">
       <div className="text-center">
         <h1 className="text-2xl font-bold mb-4">🧪 Test View: {section}</h1>
         <p className="text-lg">Data Length: {pipelineData.data?.length || 0}</p>

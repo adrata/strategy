@@ -54,8 +54,8 @@ export function TableHeaderRefactored({
 
   // Get header classes
   const getHeaderClasses = (column: ColumnConfig) => {
-    const baseClasses = 'px-6 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider';
-    const sortableClasses = column.sortable ? 'cursor-pointer hover:bg-[var(--hover)]' : '';
+    const baseClasses = 'px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider';
+    const sortableClasses = column.sortable ? 'cursor-pointer hover:bg-hover' : '';
     const widthClasses = column.width ? `w-${column.width}` : '';
     
     return `${baseClasses} ${sortableClasses} ${widthClasses}`.trim();
@@ -67,9 +67,9 @@ export function TableHeaderRefactored({
     
     if (sortField === column.key) {
       if (sortDirection === 'asc') {
-        return <ChevronUpIcon className="h-4 w-4 text-[var(--muted)]" />;
+        return <ChevronUpIcon className="h-4 w-4 text-muted" />;
       } else if (sortDirection === 'desc') {
-        return <ChevronDownIcon className="h-4 w-4 text-[var(--muted)]" />;
+        return <ChevronDownIcon className="h-4 w-4 text-muted" />;
       } else {
         // Unsorted state - show neutral icon
         return <ChevronUpIcon className="h-4 w-4 text-gray-300" />;
@@ -85,7 +85,7 @@ export function TableHeaderRefactored({
   };
 
   return (
-    <thead className={`bg-[var(--panel-background)] ${className}`}>
+    <thead className={`bg-panel-background ${className}`}>
       <tr>
         {columns.map((column) => (
           <th

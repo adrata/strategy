@@ -82,13 +82,13 @@ export function StatsView() {
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+            <div key={i} className="bg-background border border-border rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="h-12 w-12 bg-[var(--loading-bg)] rounded-lg animate-pulse"></div>
+                <div className="h-12 w-12 bg-loading-bg rounded-lg animate-pulse"></div>
               </div>
               <div className="space-y-2">
-                <div className="h-8 w-16 bg-[var(--loading-bg)] rounded animate-pulse"></div>
-                <div className="h-4 w-24 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                <div className="h-8 w-16 bg-loading-bg rounded animate-pulse"></div>
+                <div className="h-4 w-24 bg-loading-bg rounded animate-pulse"></div>
               </div>
             </div>
           ))}
@@ -126,7 +126,7 @@ export function StatsView() {
           return (
             <div
               key={index}
-              className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-md transition-shadow"
+              className="bg-background border border-border rounded-lg p-6 hover:shadow-md transition-shadow"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className={`p-3 rounded-lg ${stat.color}`}>
@@ -134,10 +134,10 @@ export function StatsView() {
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-3xl font-bold text-[var(--foreground)]">
+                <p className="text-3xl font-bold text-foreground">
                   {stat.value.toLocaleString()}
                 </p>
-                <p className="text-sm text-[var(--muted)] font-medium">
+                <p className="text-sm text-muted font-medium">
                   {stat.label}
                 </p>
               </div>

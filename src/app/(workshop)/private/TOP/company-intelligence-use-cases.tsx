@@ -1,11 +1,11 @@
 export default function CompanyIntelligenceUseCases() {
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-[var(--background)]">
+    <div className="max-w-6xl mx-auto p-6 bg-background">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">
+        <h1 className="text-3xl font-bold text-foreground mb-2">
           Company Intelligence & Contact Validation Use Cases
         </h1>
-        <p className="text-[var(--muted)]">Comprehensive guide to company research and professional contact validation</p>
+        <p className="text-muted">Comprehensive guide to company research and professional contact validation</p>
       </div>
 
       <div className="space-y-8">
@@ -15,8 +15,8 @@ export default function CompanyIntelligenceUseCases() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Technology Intelligence */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center">
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-3 flex items-center">
                 <span className="text-2xl mr-2">💻</span>
                 Technology Stack
               </h3>
@@ -35,8 +35,8 @@ export default function CompanyIntelligenceUseCases() {
             </div>
 
             {/* Business Intelligence */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center">
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-3 flex items-center">
                 <span className="text-2xl mr-2">📊</span>
                 Business Intelligence
               </h3>
@@ -55,8 +55,8 @@ export default function CompanyIntelligenceUseCases() {
             </div>
 
             {/* Financial Intelligence */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center">
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-3 flex items-center">
                 <span className="text-2xl mr-2">💰</span>
                 Financial Intelligence
               </h3>
@@ -75,8 +75,8 @@ export default function CompanyIntelligenceUseCases() {
             </div>
 
             {/* Market Intelligence */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center">
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-3 flex items-center">
                 <span className="text-2xl mr-2">🎯</span>
                 Market Intelligence
               </h3>
@@ -95,8 +95,8 @@ export default function CompanyIntelligenceUseCases() {
             </div>
 
             {/* Operational Intelligence */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center">
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-3 flex items-center">
                 <span className="text-2xl mr-2">⚙️</span>
                 Operational Intelligence
               </h3>
@@ -115,8 +115,8 @@ export default function CompanyIntelligenceUseCases() {
             </div>
 
             {/* Buying Signals */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-3 flex items-center">
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-3 flex items-center">
                 <span className="text-2xl mr-2">🚀</span>
                 Buying Signals
               </h3>
@@ -142,7 +142,7 @@ export default function CompanyIntelligenceUseCases() {
           
           <div className="space-y-6">
             {/* Startup Workflow */}
-            <div className="bg-[var(--background)] border rounded p-4">
+            <div className="bg-background border rounded p-4">
               <h3 className="font-semibold text-green-900 mb-3 flex items-center">
                 <span className="text-2xl mr-2">🚀</span>
                 Startup Companies (1-50 employees)
@@ -150,7 +150,7 @@ export default function CompanyIntelligenceUseCases() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Research Focus:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Research Focus:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Funding stage & runway</li>
                     <li>• Investor backing & credibility</li>
@@ -161,7 +161,7 @@ export default function CompanyIntelligenceUseCases() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Engagement Strategy:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Engagement Strategy:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Fast decision cycles (2-4 weeks)</li>
                     <li>• Direct founder/C-suite access</li>
@@ -175,7 +175,7 @@ export default function CompanyIntelligenceUseCases() {
             </div>
 
             {/* Enterprise Workflow */}
-            <div className="bg-[var(--background)] border rounded p-4">
+            <div className="bg-background border rounded p-4">
               <h3 className="font-semibold text-green-900 mb-3 flex items-center">
                 <span className="text-2xl mr-2">🏢</span>
                 Enterprise Companies (1000+ employees)
@@ -183,7 +183,7 @@ export default function CompanyIntelligenceUseCases() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Research Focus:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Research Focus:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Existing vendor relationships</li>
                     <li>• IT governance & approval processes</li>
@@ -194,7 +194,7 @@ export default function CompanyIntelligenceUseCases() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Engagement Strategy:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Engagement Strategy:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Long sales cycles (6-18 months)</li>
                     <li>• Multiple stakeholder alignment</li>
@@ -208,7 +208,7 @@ export default function CompanyIntelligenceUseCases() {
             </div>
 
             {/* Government Workflow */}
-            <div className="bg-[var(--background)] border rounded p-4">
+            <div className="bg-background border rounded p-4">
               <h3 className="font-semibold text-green-900 mb-3 flex items-center">
                 <span className="text-2xl mr-2">🏛️</span>
                 Government Organizations
@@ -216,7 +216,7 @@ export default function CompanyIntelligenceUseCases() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Research Focus:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Research Focus:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Regulatory compliance requirements</li>
                     <li>• Security clearance needs</li>
@@ -227,7 +227,7 @@ export default function CompanyIntelligenceUseCases() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Engagement Strategy:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Engagement Strategy:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Very long cycles (12-36 months)</li>
                     <li>• RFP/RFQ formal processes</li>
@@ -248,7 +248,7 @@ export default function CompanyIntelligenceUseCases() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Email Validation */}
-            <div className="bg-[var(--background)] border rounded p-4">
+            <div className="bg-background border rounded p-4">
               <h3 className="font-semibold text-purple-900 mb-3 flex items-center">
                 <span className="text-2xl mr-2">📧</span>
                 Email Validation & Classification
@@ -256,7 +256,7 @@ export default function CompanyIntelligenceUseCases() {
               
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Validation Providers:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Validation Providers:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• <strong>DropContact:</strong> Business emails (≤$0.02/email)</li>
                     <li>• <strong>ZeroBounce:</strong> DPA compliant, enterprise-grade</li>
@@ -265,7 +265,7 @@ export default function CompanyIntelligenceUseCases() {
                 </div>
                 
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Email Types Detected:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Email Types Detected:</h4>
                   <div className="space-y-2">
                     <div className="flex items-center">
                       <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
@@ -287,7 +287,7 @@ export default function CompanyIntelligenceUseCases() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Domain Analysis:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Domain Analysis:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Business vs. generic domain detection</li>
                     <li>• Company name matching</li>
@@ -300,7 +300,7 @@ export default function CompanyIntelligenceUseCases() {
             </div>
 
             {/* Phone Validation */}
-            <div className="bg-[var(--background)] border rounded p-4">
+            <div className="bg-background border rounded p-4">
               <h3 className="font-semibold text-purple-900 mb-3 flex items-center">
                 <span className="text-2xl mr-2">📱</span>
                 Phone Validation & Classification
@@ -308,7 +308,7 @@ export default function CompanyIntelligenceUseCases() {
               
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Validation Provider:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Validation Provider:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• <strong>Twilio Lookup:</strong> Line type intelligence ($0.008/lookup)</li>
                     <li>• Carrier information & location</li>
@@ -318,7 +318,7 @@ export default function CompanyIntelligenceUseCases() {
                 </div>
                 
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Phone Types Detected:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Phone Types Detected:</h4>
                   <div className="space-y-2">
                     <div className="flex items-center">
                       <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
@@ -340,7 +340,7 @@ export default function CompanyIntelligenceUseCases() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Context Detection:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Context Detection:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Professional vs. personal context</li>
                     <li>• Company name matching</li>
@@ -360,11 +360,11 @@ export default function CompanyIntelligenceUseCases() {
           
           <div className="space-y-6">
             {/* Use Case 1 */}
-            <div className="bg-[var(--background)] border rounded p-4">
+            <div className="bg-background border rounded p-4">
               <h3 className="font-semibold text-orange-900 mb-3">Use Case 1: Utility Technology Modernization</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Company Intelligence Needed:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Company Intelligence Needed:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Current SCADA/communications systems</li>
                     <li>• Cybersecurity compliance requirements</li>
@@ -375,7 +375,7 @@ export default function CompanyIntelligenceUseCases() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Contact Validation Priority:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Contact Validation Priority:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Engineering managers (professional emails)</li>
                     <li>• IT directors (business phone lines)</li>
@@ -389,11 +389,11 @@ export default function CompanyIntelligenceUseCases() {
             </div>
 
             {/* Use Case 2 */}
-            <div className="bg-[var(--background)] border rounded p-4">
+            <div className="bg-background border rounded p-4">
               <h3 className="font-semibold text-orange-900 mb-3">Use Case 2: Competitive Displacement</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Intelligence Requirements:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Intelligence Requirements:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Current vendor contracts & expiration dates</li>
                     <li>• Technology pain points & limitations</li>
@@ -404,7 +404,7 @@ export default function CompanyIntelligenceUseCases() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Contact Strategy:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Contact Strategy:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Target decision influencers, not just users</li>
                     <li>• Professional communication channels only</li>
@@ -418,11 +418,11 @@ export default function CompanyIntelligenceUseCases() {
             </div>
 
             {/* Use Case 3 */}
-            <div className="bg-[var(--background)] border rounded p-4">
+            <div className="bg-background border rounded p-4">
               <h3 className="font-semibold text-orange-900 mb-3">Use Case 3: New Market Expansion</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Market Research Focus:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Market Research Focus:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Regional utility market characteristics</li>
                     <li>• Local regulatory requirements</li>
@@ -433,7 +433,7 @@ export default function CompanyIntelligenceUseCases() {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Contact Development:</h4>
+                  <h4 className="font-medium text-foreground mb-2">Contact Development:</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Industry conference attendee lists</li>
                     <li>• Professional association members</li>
@@ -449,12 +449,12 @@ export default function CompanyIntelligenceUseCases() {
         </div>
 
         {/* PROFESSIONAL STANDARDS */}
-        <div className="bg-[var(--hover)] border rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">✨ Professional Standards & Best Practices</h2>
+        <div className="bg-hover border rounded-lg p-6">
+          <h2 className="text-2xl font-bold text-foreground mb-4">✨ Professional Standards & Best Practices</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-3">📧 Email Best Practices</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-3">📧 Email Best Practices</h3>
               <ul className="text-sm text-gray-700 space-y-2">
                 <li>• <strong>Prefer:</strong> Professional business emails (95%+ confidence)</li>
                 <li>• <strong>Accept:</strong> Role-based emails for initial contact</li>
@@ -465,8 +465,8 @@ export default function CompanyIntelligenceUseCases() {
               </ul>
             </div>
             
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-3">📞 Phone Best Practices</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-3">📞 Phone Best Practices</h3>
               <ul className="text-sm text-gray-700 space-y-2">
                 <li>• <strong>Prefer:</strong> Business landlines (highest professionalism)</li>
                 <li>• <strong>Accept:</strong> Mobile numbers with business context</li>

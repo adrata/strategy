@@ -409,7 +409,7 @@ export default function SetupAccountPage() {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value.toLowerCase())}
-                  className="appearance-none block w-full px-3 py-3 sm:py-2 border border-[var(--border)] rounded-md placeholder-[var(--muted)] focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base min-h-[44px]"
+                  className="appearance-none block w-full px-3 py-3 sm:py-2 border border-border rounded-md placeholder-[var(--muted)] focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base min-h-[44px]"
                   placeholder="Enter your username"
                 />
               </div>
@@ -427,7 +427,7 @@ export default function SetupAccountPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-3 sm:py-2 border border-[var(--border)] rounded-md placeholder-[var(--muted)] focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base min-h-[44px]"
+                  className="appearance-none block w-full px-3 py-3 sm:py-2 border border-border rounded-md placeholder-[var(--muted)] focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base min-h-[44px]"
                   placeholder="Enter your email"
                 />
               </div>

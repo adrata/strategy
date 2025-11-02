@@ -199,7 +199,7 @@ export function EngagementGrid({
   const getLevelColor = (level: 0 | 1 | 2 | 3 | 4 | 5): string => {
     switch (level) {
       case 0:
-        return "bg-[var(--hover)]"; // No activity
+        return "bg-hover"; // No activity
       case 1:
         return "bg-blue-100 dark:bg-blue-900"; // Light
       case 2:
@@ -211,7 +211,7 @@ export function EngagementGrid({
       case 5:
         return "bg-gradient-to-r from-blue-800 to-purple-800 dark:from-blue-300 dark:to-purple-300"; // Power user!
       default:
-        return "bg-[var(--hover)]";
+        return "bg-hover";
     }
   };
 
@@ -230,13 +230,13 @@ export function EngagementGrid({
       {showStats && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-[var(--foreground)]">
+            <h3 className="text-lg font-semibold text-foreground">
               Platform Engagement
             </h3>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-              className="px-3 py-1 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)]"
+              className="px-3 py-1 border border-border rounded-lg bg-background text-foreground"
             >
               {[2024, 2023, 2022].map((year) => (
                 <option key={year} value={year}>
@@ -248,28 +248,28 @@ export function EngagementGrid({
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--foreground)]">
+              <div className="text-2xl font-bold text-foreground">
                 {stats.totalActivities}
               </div>
-              <div className="text-sm text-[var(--muted)]">Total Actions</div>
+              <div className="text-sm text-muted">Total Actions</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--foreground)]">
+              <div className="text-2xl font-bold text-foreground">
                 {stats.totalDays}
               </div>
-              <div className="text-sm text-[var(--muted)]">Active Days</div>
+              <div className="text-sm text-muted">Active Days</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--foreground)]">
+              <div className="text-2xl font-bold text-foreground">
                 {stats.currentStreak}
               </div>
-              <div className="text-sm text-[var(--muted)]">Current Streak</div>
+              <div className="text-sm text-muted">Current Streak</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--foreground)]">
+              <div className="text-2xl font-bold text-foreground">
                 {stats.longestStreak}
               </div>
-              <div className="text-sm text-[var(--muted)]">Longest Streak</div>
+              <div className="text-sm text-muted">Longest Streak</div>
             </div>
           </div>
         </div>
@@ -295,7 +295,7 @@ export function EngagementGrid({
           ].map((month, index) => (
             <div
               key={month}
-              className="flex-1 text-xs text-[var(--muted)] text-center"
+              className="flex-1 text-xs text-muted text-center"
             >
               {index % 2 === 0 ? month : ""}
             </div>
@@ -308,7 +308,7 @@ export function EngagementGrid({
             {["", "Mon", "", "Wed", "", "Fri", ""].map((day, index) => (
               <div
                 key={index}
-                className="h-3 text-xs text-[var(--muted)] leading-3"
+                className="h-3 text-xs text-muted leading-3"
               >
                 {day}
               </div>
@@ -343,7 +343,7 @@ export function EngagementGrid({
 
         {/* Legend */}
         <div className="flex items-center justify-between mt-4">
-          <div className="text-xs text-[var(--muted)]">Less</div>
+          <div className="text-xs text-muted">Less</div>
           <div className="flex gap-1">
             {[0, 1, 2, 3, 4, 5].map((level) => (
               <div
@@ -352,21 +352,21 @@ export function EngagementGrid({
               />
             ))}
           </div>
-          <div className="text-xs text-[var(--muted)]">More</div>
+          <div className="text-xs text-muted">More</div>
         </div>
       </div>
 
       {/* Tooltip */}
       {hoveredDay && (
-        <div className="mt-4 p-3 bg-[var(--hover-bg)] rounded-lg border border-[var(--border)]">
-          <div className="font-medium text-[var(--foreground)]">
+        <div className="mt-4 p-3 bg-hover rounded-lg border border-border">
+          <div className="font-medium text-foreground">
             {formatTooltipDate(hoveredDay.date)}
           </div>
-          <div className="text-sm text-[var(--muted)]">
+          <div className="text-sm text-muted">
             {hoveredDay.count} activities
           </div>
           {hoveredDay.activities.length > 0 && (
-            <div className="text-xs text-[var(--muted)] mt-1">
+            <div className="text-xs text-muted mt-1">
               {hoveredDay.activities.slice(0, 3).join(", ")}
               {hoveredDay.activities.length > 3 &&
                 ` +${hoveredDay.activities.length - 3} more`}

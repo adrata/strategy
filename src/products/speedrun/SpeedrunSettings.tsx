@@ -117,7 +117,7 @@ export function SpeedrunSettings({
       {/* Settings Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="w-6 h-6 bg-[var(--loading-bg)] text-[var(--muted)] dark:text-gray-300 rounded-md flex items-center justify-center text-xs font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        className="w-6 h-6 bg-loading-bg text-muted dark:text-gray-300 rounded-md flex items-center justify-center text-xs font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
         title="Speedrun Settings"
       >
         <Cog6ToothIcon className="w-4 h-4" />
@@ -126,14 +126,14 @@ export function SpeedrunSettings({
       {/* Settings Modal */}
       {isOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-[10000]">
-          <div className="bg-[var(--background)] rounded-lg p-6 w-96 max-w-[90vw] border border-[var(--border)] max-h-[80vh] overflow-y-auto">
+          <div className="bg-background rounded-lg p-6 w-96 max-w-[90vw] border border-border max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-foreground">
                 Speedrun Settings
               </h3>
               <button
                 onClick={handleCancel}
-                className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                className="text-muted hover:text-foreground transition-colors"
               >
                 <XMarkIcon className="w-5 h-5" />
               </button>
@@ -141,18 +141,18 @@ export function SpeedrunSettings({
 
             <div className="space-y-6">
               {/* Workspace Settings Section */}
-              <div className="border-t border-[var(--border)] pt-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+              <div className="border-t border-border pt-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   Workspace Settings
                 </h3>
-                <p className="text-sm text-[var(--muted)] mb-4">
+                <p className="text-sm text-muted mb-4">
                   Configure default targets for all users in this workspace
                 </p>
                 
                 <div className="grid grid-cols-2 gap-4">
                   {/* Daily Target */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                    <label className="block text-sm font-medium text-foreground mb-2">
                       Daily Target
                     </label>
                     <input
@@ -166,16 +166,16 @@ export function SpeedrunSettings({
                           dailyTarget: parseInt(e.target.value) || 50,
                         }))
                       }
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <p className="text-xs text-[var(--muted)] mt-1">
+                    <p className="text-xs text-muted mt-1">
                       Contacts per day
                     </p>
                   </div>
 
                   {/* Weekly Target */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                    <label className="block text-sm font-medium text-foreground mb-2">
                       Weekly Target
                     </label>
                     <input
@@ -189,9 +189,9 @@ export function SpeedrunSettings({
                           weeklyTarget: parseInt(e.target.value) || 250,
                         }))
                       }
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <p className="text-xs text-[var(--muted)] mt-1">
+                    <p className="text-xs text-muted mt-1">
                       Contacts per week
                     </p>
                   </div>
@@ -210,14 +210,14 @@ export function SpeedrunSettings({
               </div>
 
               {/* Personal Settings Section */}
-              <div className="border-t border-[var(--border)] pt-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+              <div className="border-t border-border pt-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   Personal Settings
                 </h3>
                 
                 {/* Weekly Target */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Weekly Contact Target
                   </label>
                   <input
@@ -231,9 +231,9 @@ export function SpeedrunSettings({
                         weeklyTarget: parseInt(e.target.value) || 20,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <p className="text-xs text-[var(--muted)] mt-1">
+                  <p className="text-xs text-muted mt-1">
                     How many contacts you want to reach out to each week
                   </p>
                 </div>
@@ -241,7 +241,7 @@ export function SpeedrunSettings({
 
               {/* Role */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Your Role
                 </label>
                 <select
@@ -252,7 +252,7 @@ export function SpeedrunSettings({
                       role: e.target.value as SpeedrunUserSettings["role"],
                     }))
                   }
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="AE">Account Executive (AE)</option>
                   <option value="SDR">Sales Development Rep (SDR)</option>
@@ -260,14 +260,14 @@ export function SpeedrunSettings({
                   <option value="VP">VP of Sales</option>
                   <option value="other">Other</option>
                 </select>
-                <p className="text-xs text-[var(--muted)] mt-1">
+                <p className="text-xs text-muted mt-1">
                   Helps determine optimal contact volume and focus
                 </p>
               </div>
 
               {/* Strategy */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Prioritization Strategy
                 </label>
                 <div className="space-y-3">
@@ -287,10 +287,10 @@ export function SpeedrunSettings({
                       className="mt-1"
                     />
                     <div>
-                      <div className="font-medium text-[var(--foreground)]">
+                      <div className="font-medium text-foreground">
                         Optimal (Recommended)
                       </div>
-                      <div className="text-xs text-[var(--muted)]">
+                      <div className="text-xs text-muted">
                         70% speed, 30% revenue - Balanced approach for hitting
                         quota
                       </div>
@@ -313,10 +313,10 @@ export function SpeedrunSettings({
                       className="mt-1"
                     />
                     <div>
-                      <div className="font-medium text-[var(--foreground)]">
+                      <div className="font-medium text-foreground">
                         Speed Focus
                       </div>
-                      <div className="text-xs text-[var(--muted)]">
+                      <div className="text-xs text-muted">
                         90% speed, 10% revenue - Prioritize quick wins and logo
                         velocity
                       </div>
@@ -339,10 +339,10 @@ export function SpeedrunSettings({
                       className="mt-1"
                     />
                     <div>
-                      <div className="font-medium text-[var(--foreground)]">
+                      <div className="font-medium text-foreground">
                         Revenue Focus
                       </div>
-                      <div className="text-xs text-[var(--muted)]">
+                      <div className="text-xs text-muted">
                         20% speed, 80% revenue - Prioritize high-value
                         enterprise deals
                       </div>
@@ -353,11 +353,11 @@ export function SpeedrunSettings({
 
               {/* Yearly Target */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Yearly Target
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2 text-[var(--muted)]">
+                  <span className="absolute left-3 top-2 text-muted">
                     $
                   </span>
                   <input
@@ -371,18 +371,18 @@ export function SpeedrunSettings({
                         quota: parseInt(e.target.value) || 0,
                       }))
                     }
-                    className="w-full pl-8 pr-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-8 pr-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="1000000"
                   />
                 </div>
-                <p className="text-xs text-[var(--muted)] mt-1">
+                <p className="text-xs text-muted mt-1">
                   Your yearly sales target (helps prioritize opportunities)
                 </p>
               </div>
 
               {/* Pipeline Health */}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Pipeline Health
                 </label>
                 <select
@@ -394,13 +394,13 @@ export function SpeedrunSettings({
                         .value as SpeedrunUserSettings["pipelineHealth"],
                     }))
                   }
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="ahead">Ahead of Goal</option>
                   <option value="healthy">On Track</option>
                   <option value="behind">Behind Goal</option>
                 </select>
-                <p className="text-xs text-[var(--muted)] mt-1">
+                <p className="text-xs text-muted mt-1">
                   Adjusts contact prioritization based on your current
                   performance
                 </p>
@@ -417,7 +417,7 @@ export function SpeedrunSettings({
               </button>
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors"
+                className="px-4 py-2 border border-border text-foreground rounded-lg font-medium hover:bg-hover transition-colors"
               >
                 Cancel
               </button>
@@ -432,11 +432,11 @@ export function SpeedrunSettings({
             </div>
 
             {/* Preview */}
-            <div className="mt-6 p-4 bg-[var(--hover-bg)] rounded-lg">
-              <h4 className="font-medium text-[var(--foreground)] mb-2">
+            <div className="mt-6 p-4 bg-hover rounded-lg">
+              <h4 className="font-medium text-foreground mb-2">
                 Preview
               </h4>
-              <div className="text-sm text-[var(--muted)] space-y-1">
+              <div className="text-sm text-muted space-y-1">
                 <div>
                   • Weekly target: {localSettings.weeklyTarget} contacts
                 </div>

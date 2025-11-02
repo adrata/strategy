@@ -51,16 +51,16 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
   // Prevent hydration mismatch by showing consistent state until mounted
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-[var(--panel-background)] flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-[var(--background)] rounded-lg shadow-lg p-8">
+      <div className="min-h-screen bg-panel-background flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-background rounded-lg shadow-lg p-8">
           <div className="text-center mb-8">
             <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">Absorb LMS Access</h1>
-            <p className="text-[var(--muted)]">Enter the access code to view the athenahealth Buyer Group Intelligence Report</p>
+            <h1 className="text-2xl font-bold text-foreground mb-2">Absorb LMS Access</h1>
+            <p className="text-muted">Enter the access code to view the athenahealth Buyer Group Intelligence Report</p>
           </div>
           <form className="space-y-6">
             <div>
@@ -70,7 +70,7 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
               <input
                 type="password"
                 id="password"
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
+                className="w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
                 placeholder="Enter access code"
                 disabled
               />
@@ -106,16 +106,16 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
   }
 
   return (
-    <div className="min-h-screen bg-[var(--panel-background)] flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-[var(--background)] rounded-lg shadow-lg p-8">
+    <div className="min-h-screen bg-panel-background flex items-center justify-center px-4">
+      <div className="max-w-md w-full bg-background rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
             <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">Absorb LMS Access</h1>
-          <p className="text-[var(--muted)]">Enter the access code to view the athenahealth Buyer Group Intelligence Report</p>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Absorb LMS Access</h1>
+          <p className="text-muted">Enter the access code to view the athenahealth Buyer Group Intelligence Report</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -128,7 +128,7 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
+              className="w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               placeholder="Enter access code"
               required
             />
@@ -149,7 +149,7 @@ export default function PasswordProtection({ children, correctPassword }: Passwo
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-xs text-[var(--muted)]">
+          <p className="text-xs text-muted">
             Absorb LMS - athenahealth Buyer Group Intelligence<br/>
             Confidential Report
           </p>

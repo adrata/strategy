@@ -41,14 +41,14 @@ export function SchemaVisualizer() {
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 mx-auto mb-4 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-          <p className="text-[var(--muted)]">Loading schema visualization...</p>
+          <p className="text-muted">Loading schema visualization...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Standardized Header */}
       <DatabaseHeader
           title="Schema Visualizer"
@@ -69,7 +69,7 @@ export function SchemaVisualizer() {
         <div className="max-w-6xl mx-auto">
           {/* Schema Overview */}
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">Database Schema Overview</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Database Schema Overview</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {tables.map((table) => (
                 <div
@@ -78,15 +78,15 @@ export function SchemaVisualizer() {
                   className={`p-4 border rounded-lg cursor-pointer transition-all ${
                     selectedTable === table.name
                       ? 'border-blue-300 bg-blue-50 shadow-md'
-                      : 'border-[var(--border)] hover:border-[var(--border)] hover:shadow-sm'
+                      : 'border-border hover:border-border hover:shadow-sm'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-[var(--foreground)]">{table.name}</h3>
-                    <span className="text-xs text-[var(--muted)] capitalize">{table.category}</span>
+                    <h3 className="font-medium text-foreground">{table.name}</h3>
+                    <span className="text-xs text-muted capitalize">{table.category}</span>
                   </div>
                   
-                  <div className="space-y-1 text-sm text-[var(--muted)]">
+                  <div className="space-y-1 text-sm text-muted">
                     <div className="flex justify-between">
                       <span>Columns:</span>
                       <span>{table.columns.length}</span>
@@ -103,18 +103,18 @@ export function SchemaVisualizer() {
 
                   {table.relationships.length > 0 && (
                     <div className="mt-3 pt-3 border-t border-gray-100">
-                      <div className="text-xs text-[var(--muted)] mb-1">Related to:</div>
+                      <div className="text-xs text-muted mb-1">Related to:</div>
                       <div className="flex flex-wrap gap-1">
                         {table.relationships.slice(0, 3).map((rel: any, index: number) => (
                           <span
                             key={index}
-                            className="px-2 py-1 text-xs bg-[var(--hover)] text-[var(--muted)] rounded"
+                            className="px-2 py-1 text-xs bg-hover text-muted rounded"
                           >
                             {rel.targetTable}
                           </span>
                         ))}
                         {table.relationships.length > 3 && (
-                          <span className="px-2 py-1 text-xs bg-[var(--hover)] text-[var(--muted)] rounded">
+                          <span className="px-2 py-1 text-xs bg-hover text-muted rounded">
                             +{table.relationships.length - 3} more
                           </span>
                         )}
@@ -128,8 +128,8 @@ export function SchemaVisualizer() {
 
           {/* Selected Table Details */}
           {selectedTable && (
-            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-panel-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Table Details: {selectedTable}
               </h3>
               
@@ -141,10 +141,10 @@ export function SchemaVisualizer() {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Columns */}
                     <div>
-                      <h4 className="font-medium text-[var(--foreground)] mb-3">Columns</h4>
+                      <h4 className="font-medium text-foreground mb-3">Columns</h4>
                       <div className="space-y-2">
                         {table.columns.map((column: any, index: number) => (
-                          <div key={index} className="flex items-center justify-between p-2 bg-[var(--background)] rounded border">
+                          <div key={index} className="flex items-center justify-between p-2 bg-background rounded border">
                             <div className="flex items-center gap-2">
                               <span className="font-mono text-sm">{column.name}</span>
                               {column.isPrimaryKey && (
@@ -158,7 +158,7 @@ export function SchemaVisualizer() {
                                 </span>
                               )}
                             </div>
-                            <span className="text-xs text-[var(--muted)]">{column.type}</span>
+                            <span className="text-xs text-muted">{column.type}</span>
                           </div>
                         ))}
                       </div>
@@ -166,11 +166,11 @@ export function SchemaVisualizer() {
 
                     {/* Relationships */}
                     <div>
-                      <h4 className="font-medium text-[var(--foreground)] mb-3">Relationships</h4>
+                      <h4 className="font-medium text-foreground mb-3">Relationships</h4>
                       {table.relationships.length > 0 ? (
                         <div className="space-y-2">
                           {table.relationships.map((rel: any, index: number) => (
-                            <div key={index} className="p-3 bg-[var(--background)] rounded border">
+                            <div key={index} className="p-3 bg-background rounded border">
                               <div className="flex items-center justify-between mb-1">
                                 <span className="font-medium text-sm">{rel.relationName}</span>
                                 <span className={`px-2 py-1 text-xs rounded ${
@@ -181,14 +181,14 @@ export function SchemaVisualizer() {
                                   {rel.type}
                                 </span>
                               </div>
-                              <div className="text-xs text-[var(--muted)]">
+                              <div className="text-xs text-muted">
                                 {table.name}.{rel.sourceColumn} → {rel.targetTable}.{rel.targetColumn}
                               </div>
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <div className="text-sm text-[var(--muted)] italic">
+                        <div className="text-sm text-muted italic">
                           No relationships defined
                         </div>
                       )}
@@ -200,14 +200,14 @@ export function SchemaVisualizer() {
           )}
 
           {/* Visual Diagram Placeholder */}
-          <div className="mt-8 bg-[var(--panel-background)] border-2 border-dashed border-[var(--border)] rounded-lg p-8 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-[var(--loading-bg)] rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mt-8 bg-panel-background border-2 border-dashed border-border rounded-lg p-8 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-loading-bg rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Interactive ER Diagram</h3>
-            <p className="text-[var(--muted)] mb-4">
+            <h3 className="text-lg font-medium text-foreground mb-2">Interactive ER Diagram</h3>
+            <p className="text-muted mb-4">
               A visual diagram showing all table relationships will be displayed here.
             </p>
             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">

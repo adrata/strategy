@@ -91,7 +91,7 @@ export function MetricsVisualizer({
           <select
             value={selectedMetricType}
             onChange={(e) => setSelectedMetricType(e.target.value)}
-            className="px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {getMetricTypeOptions().map(option => (
               <option key={option.value} value={option.value}>
@@ -103,7 +103,7 @@ export function MetricsVisualizer({
           <select
             value={timeRange}
             onChange={(e) => {/* Handle time range change */}}
-            className="px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="1h">Last Hour</option>
             <option value="24h">Last 24 Hours</option>
@@ -112,7 +112,7 @@ export function MetricsVisualizer({
           </select>
         </div>
         
-        <div className="text-sm text-[var(--muted-foreground)]">
+        <div className="text-sm text-muted">
           {filteredMetrics.length} data points
         </div>
       </div>
@@ -120,33 +120,33 @@ export function MetricsVisualizer({
       {/* Statistics */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="bg-[var(--card)] p-4 rounded-lg border border-[var(--border)]">
-            <div className="text-sm text-[var(--muted-foreground)]">Mean</div>
-            <div className="text-lg font-semibold text-[var(--foreground)]">
+          <div className="bg-[var(--card)] p-4 rounded-lg border border-border">
+            <div className="text-sm text-muted">Mean</div>
+            <div className="text-lg font-semibold text-foreground">
               {stats.mean.toFixed(2)}
             </div>
           </div>
-          <div className="bg-[var(--card)] p-4 rounded-lg border border-[var(--border)]">
-            <div className="text-sm text-[var(--muted-foreground)]">Median</div>
-            <div className="text-lg font-semibold text-[var(--foreground)]">
+          <div className="bg-[var(--card)] p-4 rounded-lg border border-border">
+            <div className="text-sm text-muted">Median</div>
+            <div className="text-lg font-semibold text-foreground">
               {stats.median.toFixed(2)}
             </div>
           </div>
-          <div className="bg-[var(--card)] p-4 rounded-lg border border-[var(--border)]">
-            <div className="text-sm text-[var(--muted-foreground)]">Min</div>
-            <div className="text-lg font-semibold text-[var(--foreground)]">
+          <div className="bg-[var(--card)] p-4 rounded-lg border border-border">
+            <div className="text-sm text-muted">Min</div>
+            <div className="text-lg font-semibold text-foreground">
               {stats.min.toFixed(2)}
             </div>
           </div>
-          <div className="bg-[var(--card)] p-4 rounded-lg border border-[var(--border)]">
-            <div className="text-sm text-[var(--muted-foreground)]">Max</div>
-            <div className="text-lg font-semibold text-[var(--foreground)]">
+          <div className="bg-[var(--card)] p-4 rounded-lg border border-border">
+            <div className="text-sm text-muted">Max</div>
+            <div className="text-lg font-semibold text-foreground">
               {stats.max.toFixed(2)}
             </div>
           </div>
-          <div className="bg-[var(--card)] p-4 rounded-lg border border-[var(--border)]">
-            <div className="text-sm text-[var(--muted-foreground)]">Count</div>
-            <div className="text-lg font-semibold text-[var(--foreground)]">
+          <div className="bg-[var(--card)] p-4 rounded-lg border border-border">
+            <div className="text-sm text-muted">Count</div>
+            <div className="text-lg font-semibold text-foreground">
               {stats.count}
             </div>
           </div>
@@ -154,8 +154,8 @@ export function MetricsVisualizer({
       )}
 
       {/* Simple Line Chart */}
-      <div className="bg-[var(--card)] p-6 rounded-lg border border-[var(--border)]">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+      <div className="bg-[var(--card)] p-6 rounded-lg border border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           {selectedMetricType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} Over Time
         </h3>
         
@@ -164,7 +164,7 @@ export function MetricsVisualizer({
             <SimpleLineChart data={chartData} />
           </div>
         ) : (
-          <div className="h-64 flex items-center justify-center text-[var(--muted-foreground)]">
+          <div className="h-64 flex items-center justify-center text-muted">
             No data available for the selected time range
           </div>
         )}
@@ -172,8 +172,8 @@ export function MetricsVisualizer({
 
       {/* Distribution Chart */}
       {chartData.length > 0 && (
-        <div className="bg-[var(--card)] p-6 rounded-lg border border-[var(--border)]">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+        <div className="bg-[var(--card)] p-6 rounded-lg border border-border">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Distribution
           </h3>
           <div className="h-48">

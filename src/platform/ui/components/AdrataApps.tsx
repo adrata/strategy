@@ -40,15 +40,15 @@ export const AdrataApps: React.FC<AdrataAppsProps> = ({
         {orderedApps.map((app) => {
           const isActive = currentApp === app.slug;
           const activeTextColor = isActive
-            ? "text-[var(--foreground)]"
+            ? "text-foreground"
             : "text-[var(--muted,#888)]";
           const activeBorderColor = isActive
-            ? "border-[var(--active-app-border)]"
-            : "border-[var(--border)]";
+            ? "border-active-app-border"
+            : "border-border";
           return (
             <div
               key={app.slug}
-              className={`flex items-center border rounded-2xl px-[18px] py-4 w-full mb-1 bg-[var(--background)] ${activeBorderColor} ${isActive ? "border-[1.2px]" : ""}`}
+              className={`flex items-center border rounded-2xl px-[18px] py-4 w-full mb-1 bg-background ${activeBorderColor} ${isActive ? "border-[1.2px]" : ""}`}
               style={{ minHeight: "52px", cursor: "pointer" }}
               onClick={() => {
                 onAppClick(app.slug);

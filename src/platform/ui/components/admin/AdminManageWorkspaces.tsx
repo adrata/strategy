@@ -220,15 +220,15 @@ export const AdminManageWorkspaces: React.FC = () => {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-[var(--border)]">
+      <div className="p-6 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <BuildingOfficeIcon className="h-6 w-6 text-blue-600 mr-3" />
             <div>
-              <h2 className="text-xl font-semibold text-[var(--foreground)]">
+              <h2 className="text-xl font-semibold text-foreground">
                 Manage Workspaces
               </h2>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Create and configure workspaces
               </p>
             </div>
@@ -268,15 +268,15 @@ export const AdminManageWorkspaces: React.FC = () => {
 
           {/* Create/Edit Form */}
           {showCreateForm && (
-            <div className="bg-white rounded-lg border border-[var(--border)] p-6">
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-4">
+            <div className="bg-white rounded-lg border border-border p-6">
+              <h3 className="text-lg font-medium text-foreground mb-4">
                 {editingWorkspace ? 'Edit Workspace' : 'Create New Workspace'}
               </h3>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                    <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">
                       Workspace Name *
                     </label>
                     <input
@@ -285,18 +285,18 @@ export const AdminManageWorkspaces: React.FC = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter workspace name"
                       required
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="slug" className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                    <label htmlFor="slug" className="block text-sm font-medium text-foreground mb-1">
                       Workspace Slug *
                     </label>
                     <div className="flex">
-                      <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-[var(--border)] bg-gray-50 text-gray-500 text-sm">
+                      <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-border bg-gray-50 text-gray-500 text-sm">
                         adrata.com/
                       </span>
                       <input
@@ -305,19 +305,19 @@ export const AdminManageWorkspaces: React.FC = () => {
                         name="slug"
                         value={formData.slug}
                         onChange={handleInputChange}
-                        className="flex-1 px-3 py-2 border border-[var(--border)] rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="flex-1 px-3 py-2 border border-border rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="workspace-slug"
                         required
                       />
                     </div>
-                    <p className="text-xs text-[var(--muted)] mt-1">
+                    <p className="text-xs text-muted mt-1">
                       Used in the workspace URL. Only lowercase letters, numbers, and hyphens allowed.
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-[var(--foreground)] mb-1">
+                  <label htmlFor="description" className="block text-sm font-medium text-foreground mb-1">
                     Description
                   </label>
                   <textarea
@@ -326,7 +326,7 @@ export const AdminManageWorkspaces: React.FC = () => {
                     value={formData.description}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Describe the purpose of this workspace"
                   />
                 </div>
@@ -359,9 +359,9 @@ export const AdminManageWorkspaces: React.FC = () => {
           )}
 
           {/* Workspaces List */}
-          <div className="bg-white rounded-lg border border-[var(--border)]">
-            <div className="p-4 border-b border-[var(--border)]">
-              <h3 className="text-sm font-medium text-[var(--foreground)]">
+          <div className="bg-white rounded-lg border border-border">
+            <div className="p-4 border-b border-border">
+              <h3 className="text-sm font-medium text-foreground">
                 Workspaces ({workspaces.length})
               </h3>
             </div>
@@ -370,12 +370,12 @@ export const AdminManageWorkspaces: React.FC = () => {
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="text-sm text-[var(--muted)] mt-2">Loading workspaces...</p>
+                  <p className="text-sm text-muted mt-2">Loading workspaces...</p>
                 </div>
               ) : workspaces.length === 0 ? (
                 <div className="text-center py-8">
-                  <BuildingOfficeIcon className="h-12 w-12 text-[var(--muted)] mx-auto mb-4" />
-                  <p className="text-sm text-[var(--muted)]">No workspaces found</p>
+                  <BuildingOfficeIcon className="h-12 w-12 text-muted mx-auto mb-4" />
+                  <p className="text-sm text-muted">No workspaces found</p>
                 </div>
               ) : (
                 workspaces.map((workspace) => (
@@ -389,7 +389,7 @@ export const AdminManageWorkspaces: React.FC = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2">
-                            <h4 className="text-lg font-medium text-[var(--foreground)]">
+                            <h4 className="text-lg font-medium text-foreground">
                               {workspace.name}
                             </h4>
                             <span
@@ -403,21 +403,21 @@ export const AdminManageWorkspaces: React.FC = () => {
                             </span>
                           </div>
                           <div className="flex items-center space-x-4 mt-1">
-                            <div className="flex items-center text-sm text-[var(--muted)]">
+                            <div className="flex items-center text-sm text-muted">
                               <GlobeAltIcon className="h-4 w-4 mr-1" />
                               adrata.com/{workspace.slug}
                             </div>
-                            <div className="flex items-center text-sm text-[var(--muted)]">
+                            <div className="flex items-center text-sm text-muted">
                               <UsersIcon className="h-4 w-4 mr-1" />
                               {workspace.userCount} users
                             </div>
-                            <div className="flex items-center text-sm text-[var(--muted)]">
+                            <div className="flex items-center text-sm text-muted">
                               <CalendarIcon className="h-4 w-4 mr-1" />
                               Created {new Date(workspace.createdAt).toLocaleDateString()}
                             </div>
                           </div>
                           {workspace.description && (
-                            <p className="text-sm text-[var(--muted)] mt-2">
+                            <p className="text-sm text-muted mt-2">
                               {workspace.description}
                             </p>
                           )}

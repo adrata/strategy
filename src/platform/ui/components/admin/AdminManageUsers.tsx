@@ -195,14 +195,14 @@ export const AdminManageUsers: React.FC = () => {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-[var(--border)]">
+      <div className="p-6 border-b border-border">
         <div className="flex items-center">
           <UsersIcon className="h-6 w-6 text-blue-600 mr-3" />
           <div>
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Manage Users
             </h2>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               View and manage existing users
             </p>
           </div>
@@ -212,17 +212,17 @@ export const AdminManageUsers: React.FC = () => {
       <div className="flex-1 overflow-auto">
         <div className="p-6 space-y-6">
           {/* Filters */}
-          <div className="bg-white rounded-lg border border-[var(--border)] p-4">
+          <div className="bg-white rounded-lg border border-border p-4">
             <div className="flex items-center mb-4">
-              <FunnelIcon className="h-5 w-5 text-[var(--muted)] mr-2" />
-              <h3 className="text-sm font-medium text-[var(--foreground)]">
+              <FunnelIcon className="h-5 w-5 text-muted mr-2" />
+              <h3 className="text-sm font-medium text-foreground">
                 Filters
               </h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-medium text-[var(--muted)] mb-1">
+                <label className="block text-xs font-medium text-muted mb-1">
                   Search
                 </label>
                 <div className="relative">
@@ -230,20 +230,20 @@ export const AdminManageUsers: React.FC = () => {
                     type="text"
                     value={filters.search}
                     onChange={(e) => handleFilterChange('search', e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Search users..."
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[var(--muted)] mb-1">
+                <label className="block text-xs font-medium text-muted mb-1">
                   Workspace
                 </label>
                 <select
                   value={filters.workspace}
                   onChange={(e) => handleFilterChange('workspace', e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Workspaces</option>
                   <option value="ws1">Acme Corp</option>
@@ -251,13 +251,13 @@ export const AdminManageUsers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[var(--muted)] mb-1">
+                <label className="block text-xs font-medium text-muted mb-1">
                   Role
                 </label>
                 <select
                   value={filters.role}
                   onChange={(e) => handleFilterChange('role', e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Roles</option>
                   <option value="WORKSPACE_ADMIN">Workspace Admin</option>
@@ -268,13 +268,13 @@ export const AdminManageUsers: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[var(--muted)] mb-1">
+                <label className="block text-xs font-medium text-muted mb-1">
                   Status
                 </label>
                 <select
                   value={filters.status}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Status</option>
                   <option value="active">Active</option>
@@ -285,10 +285,10 @@ export const AdminManageUsers: React.FC = () => {
           </div>
 
           {/* Users Table */}
-          <div className="bg-white rounded-lg border border-[var(--border)]">
-            <div className="p-4 border-b border-[var(--border)]">
+          <div className="bg-white rounded-lg border border-border">
+            <div className="p-4 border-b border-border">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-[var(--foreground)]">
+                <h3 className="text-sm font-medium text-foreground">
                   Users ({filteredUsers.length})
                 </h3>
               </div>
@@ -298,12 +298,12 @@ export const AdminManageUsers: React.FC = () => {
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="text-sm text-[var(--muted)] mt-2">Loading users...</p>
+                  <p className="text-sm text-muted mt-2">Loading users...</p>
                 </div>
               ) : filteredUsers.length === 0 ? (
                 <div className="text-center py-8">
-                  <UsersIcon className="h-12 w-12 text-[var(--muted)] mx-auto mb-4" />
-                  <p className="text-sm text-[var(--muted)]">
+                  <UsersIcon className="h-12 w-12 text-muted mx-auto mb-4" />
+                  <p className="text-sm text-muted">
                     {filters.search || filters.workspace || filters.role || filters.status
                       ? 'No users match your filters'
                       : 'No users found'}

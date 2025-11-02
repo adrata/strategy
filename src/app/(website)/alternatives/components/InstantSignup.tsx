@@ -97,9 +97,9 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
 
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[var(--foreground)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border)]">
+      <div className="bg-foreground rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-border">
         {/* Header */}
-        <div className="sticky top-0 bg-[var(--foreground)] border-b border-gray-800 p-6">
+        <div className="sticky top-0 bg-foreground border-b border-gray-800 p-6">
           <div className="flex justify-between items-center">
             <div>
               <h2 className="text-2xl font-bold text-white">
@@ -108,7 +108,7 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
                 {step === 3 && "What&apos;s Your Primary Goal?"}
                 {step === 4 && "Create Your Account"}
               </h2>
-              <p className="text-[var(--muted)] mt-1">
+              <p className="text-muted mt-1">
                 {step === 1 && "Get full access in under 3 minutes"}
                 {step === 2 && "Help us customize your experience"}
                 {step === 3 && "We&apos;ll optimize your setup"}
@@ -117,7 +117,7 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
             </div>
             <button
               onClick={onClose}
-              className="text-[var(--muted)] hover:text-white text-2xl w-8 h-8 flex items-center justify-center"
+              className="text-muted hover:text-white text-2xl w-8 h-8 flex items-center justify-center"
             >
               ×
             </button>
@@ -152,7 +152,7 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -167,7 +167,7 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500"
                   placeholder="your@company.com"
                 />
               </div>
@@ -210,7 +210,7 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
                   onChange={(e) =>
                     setFormData({ ...formData, company: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500"
                   placeholder="Your company name"
                 />
               </div>
@@ -226,7 +226,7 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
                       className={`block p-3 rounded-lg border cursor-pointer transition ${
                         formData['companySize'] === size.value
                           ? "border-blue-500 bg-blue-500/10"
-                          : "border-[var(--border)] hover:border-[var(--border)]"
+                          : "border-border hover:border-border"
                       }`}
                     >
                       <input
@@ -259,7 +259,7 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
                       className={`block p-3 rounded-lg border cursor-pointer transition ${
                         formData['role'] === role.value
                           ? "border-purple-500 bg-purple-500/10"
-                          : "border-[var(--border)] hover:border-[var(--border)]"
+                          : "border-border hover:border-border"
                       }`}
                     >
                       <input
@@ -307,7 +307,7 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
                       className={`block p-4 rounded-xl border cursor-pointer transition ${
                         formData['primaryGoal'] === goal.value
                           ? "border-green-500 bg-green-500/10"
-                          : "border-[var(--border)] hover:border-[var(--border)]"
+                          : "border-border hover:border-border"
                       }`}
                     >
                       <input
@@ -329,7 +329,7 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
                           <div className="font-semibold text-white">
                             {goal.label}
                           </div>
-                          <div className="text-sm text-[var(--muted)] mt-1">
+                          <div className="text-sm text-muted mt-1">
                             Recommended apps: {goal.apps.join(", ")}
                           </div>
                         </div>
@@ -381,10 +381,10 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-gray-800 border border-[var(--border)] rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-gray-800 border border-border rounded-lg text-white focus:outline-none focus:border-blue-500"
                   placeholder="Choose a secure password"
                 />
-                <div className="text-xs text-[var(--muted)] mt-1">
+                <div className="text-xs text-muted mt-1">
                   At least 8 characters with mix of letters, numbers & symbols
                 </div>
               </div>
@@ -437,7 +437,7 @@ export default function InstantSignup({ onClose, isOpen }: InstantSignupProps) {
                 )}
               </button>
 
-              <div className="text-center text-xs text-[var(--muted)]">
+              <div className="text-center text-xs text-muted">
                 By creating an account, you agree to our Terms of Service and
                 Privacy Policy.
                 <br />

@@ -65,10 +65,10 @@ interface StacksBacklogTableProps {
 
 
 const PRIORITY_COLORS = {
-  urgent: 'bg-[var(--priority-high-bg)] text-[var(--priority-high-text)]',
-  high: 'bg-[var(--priority-high-bg)] text-[var(--priority-high-text)]',
-  medium: 'bg-[var(--priority-medium-bg)] text-[var(--priority-medium-text)]',
-  low: 'bg-[var(--priority-low-bg)] text-[var(--priority-low-text)]',
+  urgent: 'bg-priority-high-bg text-priority-high-text',
+  high: 'bg-priority-high-bg text-priority-high-text',
+  medium: 'bg-priority-medium-bg text-priority-medium-text',
+  low: 'bg-priority-low-bg text-priority-low-text',
 };
 
 const STATUS_ICONS = {
@@ -123,7 +123,7 @@ function BacklogItemComponent({
     <div
       ref={setNodeRef}
       style={style}
-      className={`group relative bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:bg-[var(--hover)] hover:border-[var(--accent)] transition-all duration-200 ${
+      className={`group relative bg-background border border-border rounded-lg p-3 hover:bg-hover hover:border-primary transition-all duration-200 ${
         isDragging ? 'opacity-50 shadow-lg z-50' : ''
       }`}
       {...attributes}
@@ -133,7 +133,7 @@ function BacklogItemComponent({
     >
       <div className="flex items-start gap-3">
         {/* Item Number/Letter */}
-        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
+        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-panel-background text-foreground rounded text-xs font-semibold">
           {isUpNext ? `1${String.fromCharCode(65 + index)}` : `B${index + 1}`}
         </div>
 
@@ -145,19 +145,19 @@ function BacklogItemComponent({
                 bug
               </span>
             )}
-            <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
+            <h4 className="text-sm font-medium text-foreground truncate">
               {item.title}
             </h4>
           </div>
           {item.description && (
-            <p className="text-xs text-[var(--muted)] line-clamp-2 mb-2">
+            <p className="text-xs text-muted line-clamp-2 mb-2">
               {item.description}
             </p>
           )}
-          <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
+          <div className="flex items-center gap-3 text-xs text-muted">
             {item.assignee && <span>{item.assignee}</span>}
             {item.tags && item.tags.length > 0 && (
-              <span className="bg-[var(--panel-background)] px-2 py-0.5 rounded">
+              <span className="bg-panel-background px-2 py-0.5 rounded">
                 {item.tags[0]}
               </span>
             )}
@@ -1140,15 +1140,15 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">Backlog</h1>
-            <p className="text-sm text-[var(--muted)] mt-1">Prioritized work queue</p>
+            <h1 className="text-2xl font-bold text-foreground">Backlog</h1>
+            <p className="text-sm text-muted mt-1">Prioritized work queue</p>
           </div>
           <button 
             onClick={() => setShowAddStacksModal(true)}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-[var(--panel-background)] text-[var(--foreground)] border border-[var(--border)] rounded-md hover:bg-[var(--hover)] transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-panel-background text-foreground border border-border rounded-md hover:bg-hover transition-colors"
           >
             <PlusIcon className="h-4 w-4" />
             Add Stacks
@@ -1185,18 +1185,18 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             {/* Up Next Section Skeleton */}
             <div className="mb-6">
               <div className="mb-3">
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-16 animate-pulse mb-1"></div>
-                <div className="h-3 bg-[var(--loading-bg)] rounded w-12 animate-pulse"></div>
+                <div className="h-4 bg-loading-bg rounded w-16 animate-pulse mb-1"></div>
+                <div className="h-3 bg-loading-bg rounded w-12 animate-pulse"></div>
               </div>
               <div className="space-y-2">
                 {Array.from({ length: 2 }).map((_, i) => (
-                  <div key={i} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3">
+                  <div key={i} className="bg-background border border-border rounded-lg p-3">
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                      <div className="w-8 h-8 bg-loading-bg rounded animate-pulse"></div>
                       <div className="flex-1 space-y-2">
-                        <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse"></div>
-                        <div className="h-3 bg-[var(--loading-bg)] rounded w-full animate-pulse"></div>
-                        <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse"></div>
+                        <div className="h-4 bg-loading-bg rounded w-3/4 animate-pulse"></div>
+                        <div className="h-3 bg-loading-bg rounded w-full animate-pulse"></div>
+                        <div className="h-3 bg-loading-bg rounded w-1/2 animate-pulse"></div>
                       </div>
                     </div>
                   </div>
@@ -1206,18 +1206,18 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             {/* Backlog Section Skeleton */}
             <div className="mb-6">
               <div className="mb-3">
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-20 animate-pulse mb-1"></div>
-                <div className="h-3 bg-[var(--loading-bg)] rounded w-12 animate-pulse"></div>
+                <div className="h-4 bg-loading-bg rounded w-20 animate-pulse mb-1"></div>
+                <div className="h-3 bg-loading-bg rounded w-12 animate-pulse"></div>
               </div>
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3">
+                  <div key={i} className="bg-background border border-border rounded-lg p-3">
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                      <div className="w-8 h-8 bg-loading-bg rounded animate-pulse"></div>
                       <div className="flex-1 space-y-2">
-                        <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse"></div>
-                        <div className="h-3 bg-[var(--loading-bg)] rounded w-full animate-pulse"></div>
-                        <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse"></div>
+                        <div className="h-4 bg-loading-bg rounded w-3/4 animate-pulse"></div>
+                        <div className="h-3 bg-loading-bg rounded w-full animate-pulse"></div>
+                        <div className="h-3 bg-loading-bg rounded w-1/2 animate-pulse"></div>
                       </div>
                     </div>
                   </div>
@@ -1228,13 +1228,13 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
         ) : itemsToDisplay.upNextItems.length === 0 && itemsToDisplay.otherItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📋</div>
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               No backlog items found
             </h3>
-            <p className="text-[var(--muted)]">
+            <p className="text-muted">
               {searchQuery ? 'Try adjusting your search terms' : 'Create your first backlog item to get started'}
             </p>
-            <div className="mt-4 text-xs text-[var(--muted)]">
+            <div className="mt-4 text-xs text-muted">
               Total items: {items.length} | Filtered: {filteredItems.length}
             </div>
           </div>
@@ -1257,8 +1257,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   <>
                     <div className="mb-3">
                       <div className="flex items-end gap-2" style={{ paddingBottom: '2px' }}>
-                        <h3 className="text-sm font-semibold text-[var(--foreground)]">Up Next</h3>
-                        <span className="text-xs text-[var(--muted)]">
+                        <h3 className="text-sm font-semibold text-foreground">Up Next</h3>
+                        <span className="text-xs text-muted">
                           {itemsToDisplay.upNextItems.length} {itemsToDisplay.upNextItems.length === 1 ? 'item' : 'items'}
                         </span>
                       </div>
@@ -1284,10 +1284,10 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                 {itemsToDisplay.upNextItems.length > 0 && itemsToDisplay.otherItems.length > 0 && (
                   <div className="relative my-8">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-[var(--border)]"></div>
+                      <div className="w-full border-t border-border"></div>
                     </div>
                     <div className="relative flex justify-center">
-                      <span className="bg-[var(--background)] px-2 text-xs text-[var(--muted)]">Below the Line</span>
+                      <span className="bg-background px-2 text-xs text-muted">Below the Line</span>
                     </div>
                   </div>
                 )}
@@ -1296,8 +1296,8 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                 {itemsToDisplay.otherItems.length > 0 && (
                   <>
                     <div className="mb-3">
-                      <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Backlog</h3>
-                      <div className="text-xs text-[var(--muted)]">{itemsToDisplay.otherItems.length} items</div>
+                      <h3 className="text-sm font-semibold text-foreground mb-1">Backlog</h3>
+                      <div className="text-xs text-muted">{itemsToDisplay.otherItems.length} items</div>
                     </div>
                     
                     <div className="space-y-2">
@@ -1323,15 +1323,15 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
                   const activeItem = items.find(item => item.id === activeId);
                   if (!activeItem) return null;
                   return (
-                    <div className="bg-[var(--background)] border-2 border-[var(--accent)] rounded-lg p-3 shadow-xl opacity-90">
+                    <div className="bg-background border-2 border-primary rounded-lg p-3 shadow-xl opacity-90">
                       <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
+                        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-panel-background text-foreground rounded text-xs font-semibold">
                           {(activeItem.status === 'up-next' || activeItem.status === 'todo')
                             ? String.fromCharCode(65 + itemsToDisplay.upNextItems.findIndex(i => i.id === activeItem.id))
                             : `B${itemsToDisplay.otherItems.findIndex(i => i.id === activeItem.id) + 1}`}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
+                          <h4 className="text-sm font-medium text-foreground truncate">
                             {activeItem.title}
                           </h4>
                         </div>

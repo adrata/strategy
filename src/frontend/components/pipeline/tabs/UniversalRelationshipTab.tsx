@@ -9,80 +9,80 @@ export function UniversalRelationshipTab({ record, recordType, onSave }: Univers
     <div className="p-6 space-y-8">
       {/* Relationship Overview */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Relationship Intelligence</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Relationship Intelligence</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Relationship Strength</h4>
+            <h4 className="font-medium text-foreground mb-2">Relationship Strength</h4>
             <div className="text-2xl font-bold text-blue-600">
               {record?.relationshipStrength || '-'}
             </div>
-            <p className="text-sm text-[var(--muted)] mt-1">Current relationship level</p>
+            <p className="text-sm text-muted mt-1">Current relationship level</p>
           </div>
           
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Client Since</h4>
+            <h4 className="font-medium text-foreground mb-2">Client Since</h4>
             <div className="text-lg font-bold text-green-600">
               {record?.clientSince ? new Date(record.clientSince).toLocaleDateString() : record?.createdAt ? new Date(record.createdAt).toLocaleDateString() : '-'}
             </div>
-            <p className="text-sm text-[var(--muted)] mt-1">Relationship duration</p>
+            <p className="text-sm text-muted mt-1">Relationship duration</p>
           </div>
           
           <div className="bg-purple-50 rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-2">Satisfaction Score</h4>
+            <h4 className="font-medium text-foreground mb-2">Satisfaction Score</h4>
             <div className="text-2xl font-bold text-purple-600">
               {record?.satisfactionScore ? `${Math.round(record.satisfactionScore)}/10` : '-'}
             </div>
-            <p className="text-sm text-[var(--muted)] mt-1">Overall satisfaction</p>
+            <p className="text-sm text-muted mt-1">Overall satisfaction</p>
           </div>
         </div>
       </div>
 
       {/* Key Contacts */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Key Relationships</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Key Relationships</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Primary Contacts</h4>
+          <div className="bg-panel-background rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-3">Primary Contacts</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Primary Contact:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.primaryContact || '-'}</span>
+                <span className="text-muted">Primary Contact:</span>
+                <span className="font-medium text-foreground">{record?.primaryContact || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Account Manager:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.accountManager || '-'}</span>
+                <span className="text-muted">Account Manager:</span>
+                <span className="font-medium text-foreground">{record?.accountManager || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Success Manager:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.successManager || '-'}</span>
+                <span className="text-muted">Success Manager:</span>
+                <span className="font-medium text-foreground">{record?.successManager || '-'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Executive Sponsor:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.executiveSponsor || '-'}</span>
+                <span className="text-muted">Executive Sponsor:</span>
+                <span className="font-medium text-foreground">{record?.executiveSponsor || '-'}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-[var(--panel-background)] rounded-lg p-4">
-            <h4 className="font-medium text-[var(--foreground)] mb-3">Communication Preferences</h4>
+          <div className="bg-panel-background rounded-lg p-4">
+            <h4 className="font-medium text-foreground mb-3">Communication Preferences</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Preferred Channel:</span>
-                <span className="font-medium text-[var(--foreground)]">
+                <span className="text-muted">Preferred Channel:</span>
+                <span className="font-medium text-foreground">
                   {record?.email ? 'Email' : record?.phone ? 'Phone' : 'In-person'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Meeting Frequency:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.meetingFrequency || 'Monthly'}</span>
+                <span className="text-muted">Meeting Frequency:</span>
+                <span className="font-medium text-foreground">{record?.meetingFrequency || 'Monthly'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Communication Style:</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.communicationStyle || 'Professional'}</span>
+                <span className="text-muted">Communication Style:</span>
+                <span className="font-medium text-foreground">{record?.communicationStyle || 'Professional'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[var(--muted)]">Response Time:</span>
-                <span className="font-medium text-[var(--foreground)]">
+                <span className="text-muted">Response Time:</span>
+                <span className="font-medium text-foreground">
                   {record?.avgResponseTime ? `${Math.round(record.avgResponseTime)} hours` : 'Same day'}
                 </span>
               </div>
@@ -93,7 +93,7 @@ export function UniversalRelationshipTab({ record, recordType, onSave }: Univers
 
       {/* Relationship History */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Relationship Milestones</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Relationship Milestones</h3>
         <div className="space-y-3">
           <div className="bg-green-50 border border-green-200 rounded-lg p-3">
             <div className="flex justify-between items-start">
@@ -135,7 +135,7 @@ export function UniversalRelationshipTab({ record, recordType, onSave }: Univers
 
       {/* Trust & Advocacy */}
       <div>
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Trust & Advocacy</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">Trust & Advocacy</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Trust Indicators</label>
@@ -161,7 +161,7 @@ export function UniversalRelationshipTab({ record, recordType, onSave }: Univers
             <label className="block text-sm font-medium text-gray-700 mb-2">Advocacy Level</label>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[var(--muted)]">Net Promoter Score</span>
+                <span className="text-sm text-muted">Net Promoter Score</span>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
                   (record?.nps || 0) >= 9 ? 'bg-green-100 text-green-800' :
                   (record?.nps || 0) >= 7 ? 'bg-yellow-100 text-yellow-800' :
@@ -171,15 +171,15 @@ export function UniversalRelationshipTab({ record, recordType, onSave }: Univers
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[var(--muted)]">Referral Activity</span>
-                <span className="font-medium text-[var(--foreground)]">{record?.referralsProvided || 0} referrals</span>
+                <span className="text-sm text-muted">Referral Activity</span>
+                <span className="font-medium text-foreground">{record?.referralsProvided || 0} referrals</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[var(--muted)]">Case Study Participation</span>
+                <span className="text-sm text-muted">Case Study Participation</span>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
                   record?.caseStudyParticipation 
                     ? (recordType === 'speedrun' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800')
-                    : 'bg-[var(--hover)] text-[var(--muted)]'
+                    : 'bg-hover text-muted'
                 }`}>
                   {record?.caseStudyParticipation ? 'Yes' : 'Potential'}
                 </span>

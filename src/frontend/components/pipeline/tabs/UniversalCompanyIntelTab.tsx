@@ -192,7 +192,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
   if (!record) {
     return (
       <div className="p-6">
-        <div className="text-center text-[var(--muted)]">No record data available</div>
+        <div className="text-center text-muted">No record data available</div>
       </div>
     );
   }
@@ -203,7 +203,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
       <div className="p-6">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
+            <h3 className="text-lg font-semibold text-foreground">Intelligence Summary</h3>
           </div>
           <StrategySkeleton />
         </div>
@@ -216,7 +216,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
       <div className="space-y-6">
         {/* Intelligence Summary Header */}
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-[var(--foreground)]">Intelligence Summary</h3>
+          <h3 className="text-xl font-semibold text-foreground">Intelligence Summary</h3>
         </div>
         
         {/* Intelligence Summary Content */}
@@ -231,7 +231,7 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                   <span className="text-2xl">🧠</span>
                 </div>
                 <div className="flex-1">
-                  <div className="text-base text-[var(--foreground)] leading-relaxed mb-4">
+                  <div className="text-base text-foreground leading-relaxed mb-4">
                     {strategyData.strategySummary}
                   </div>
                   
@@ -241,11 +241,11 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
                       <span className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
                         {strategyData.archetypeName}
                       </span>
-                      <span className="text-sm text-[var(--muted)]">
+                      <span className="text-sm text-muted">
                         {strategyData.archetypeRole}
                       </span>
                       {strategyData.targetIndustry && (
-                        <span className="text-sm text-[var(--muted)]">
+                        <span className="text-sm text-muted">
                           • Serving {strategyData.targetIndustry}
                         </span>
                       )}
@@ -265,34 +265,34 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             {/* Three Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Situation */}
-              <div className="bg-white border border-[var(--border)] rounded-lg p-5">
+              <div className="bg-white border border-border rounded-lg p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Situation</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Situation</h4>
                 </div>
-                <div className="text-sm text-[var(--muted)] leading-relaxed">
+                <div className="text-sm text-muted leading-relaxed">
                   {strategyData.situation}
                 </div>
               </div>
               
               {/* Complication */}
-              <div className="bg-white border border-[var(--border)] rounded-lg p-5">
+              <div className="bg-white border border-border rounded-lg p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Complication</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Complication</h4>
                 </div>
-                <div className="text-sm text-[var(--muted)] leading-relaxed">
+                <div className="text-sm text-muted leading-relaxed">
                   {strategyData.complication}
                 </div>
               </div>
               
               {/* Future State */}
-              <div className="bg-white border border-[var(--border)] rounded-lg p-5">
+              <div className="bg-white border border-border rounded-lg p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Future State</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Future State</h4>
                 </div>
-                <div className="text-sm text-[var(--muted)] leading-relaxed">
+                <div className="text-sm text-muted leading-relaxed">
                   {strategyData.futureState}
                 </div>
               </div>
@@ -300,14 +300,14 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             
             {/* Strategic Recommendations */}
             {strategyData.strategicRecommendations && strategyData.strategicRecommendations.length > 0 && (
-              <div className="bg-white border border-[var(--border)] rounded-lg p-6">
+              <div className="bg-white border border-border rounded-lg p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Strategic Recommendations</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Strategic Recommendations</h4>
                 </div>
                 <ul className="space-y-3">
                   {strategyData.strategicRecommendations.map((recommendation, index) => (
-                    <li key={index} className="text-sm text-[var(--muted)] leading-relaxed flex items-start gap-3">
+                    <li key={index} className="text-sm text-muted leading-relaxed flex items-start gap-3">
                       <span className="text-purple-500 mt-1.5 font-bold">•</span>
                       <span>{recommendation}</span>
                     </li>
@@ -318,12 +318,12 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             
             {/* Competitive Positioning */}
             {strategyData.competitivePositioning && (
-              <div className="bg-white border border-[var(--border)] rounded-lg p-6">
+              <div className="bg-white border border-border rounded-lg p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
-                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Competitive Positioning</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Competitive Positioning</h4>
                 </div>
-                <div className="text-sm text-[var(--muted)] leading-relaxed">
+                <div className="text-sm text-muted leading-relaxed">
                   {strategyData.competitivePositioning}
                 </div>
               </div>
@@ -331,14 +331,14 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             
             {/* Success Metrics */}
             {strategyData.successMetrics && strategyData.successMetrics.length > 0 && (
-              <div className="bg-white border border-[var(--border)] rounded-lg p-6">
+              <div className="bg-white border border-border rounded-lg p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-                  <h4 className="text-sm font-semibold text-[var(--foreground)]">Success Metrics</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Success Metrics</h4>
                 </div>
                 <ul className="space-y-3">
                   {strategyData.successMetrics.map((metric, index) => (
-                    <li key={index} className="text-sm text-[var(--muted)] leading-relaxed flex items-start gap-3">
+                    <li key={index} className="text-sm text-muted leading-relaxed flex items-start gap-3">
                       <span className="text-emerald-500 mt-1.5 font-bold">•</span>
                       <span>{metric}</span>
                     </li>
@@ -348,20 +348,20 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             )}
           </div>
         ) : strategyError ? (
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] shadow-sm">
+          <div className="bg-background p-6 rounded-lg border border-border shadow-sm">
             <div className="text-center py-8">
               <div className="mb-4">
                 <div className="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center">
                   <span className="text-3xl">⚠️</span>
                 </div>
               </div>
-              <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+              <h4 className="text-lg font-semibold text-foreground mb-2">
                 Intelligence Generation Failed
               </h4>
               <div className="text-sm text-red-600 mb-4 max-w-md mx-auto">
                 {strategyError}
               </div>
-              <div className="text-xs text-[var(--muted)] mb-4">
+              <div className="text-xs text-muted mb-4">
                 {strategyError.includes('API key') ? 
                   'Claude AI API key is not configured. Please check your environment variables.' :
                   strategyError.includes('500') || strategyError.includes('Internal server error') ?
@@ -404,15 +404,15 @@ export function UniversalCompanyIntelTab({ record: recordProp, recordType, onSav
             </div>
           </div>
         ) : (
-          <div className="bg-white border border-[var(--border)] rounded-lg p-8">
+          <div className="bg-white border border-border rounded-lg p-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">🧠</span>
               </div>
-              <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+              <h4 className="text-lg font-semibold text-foreground mb-2">
                 No Intelligence Data
               </h4>
-              <p className="text-sm text-[var(--muted)] mb-6">
+              <p className="text-sm text-muted mb-6">
                 Intelligence data will be generated automatically when available.
               </p>
               <button 

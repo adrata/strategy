@@ -178,8 +178,15 @@ export function OasisProvider({ children }: OasisProviderProps) {
     return chat.name || 'Direct Message';
   };
 
-  const getMessageSenderDisplayName = (sender: { id: string; name: string | null; email: string }): string => {
-    return sender.name || sender.email.split('@')[0] || 'Unknown User';
+  const getMessageSenderDisplayName = (sender: { id: string; name: string | null; email: string; username?: string | null }): string => {
+    // Use name first, then username, then email prefix (never fallback to "User")
+    if (sender.name && sender.name.trim()) return sender.name;
+    if (sender.username && sender.username.trim()) return sender.username;
+    if (sender.email) {
+      const emailPrefix = sender.email.split('@')[0];
+      if (emailPrefix) return emailPrefix;
+    }
+    return '';
   };
 
   const isUserOnline = (userId: string): boolean => {

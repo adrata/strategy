@@ -63,10 +63,10 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
           <div key={stage.id} className="w-72 flex-shrink-0">
             {/* Stage Header */}
             <div className="flex items-center justify-between mb-4 w-72">
-              <h3 className="text-sm font-medium text-[var(--foreground)] truncate flex items-center gap-2">
+              <h3 className="text-sm font-medium text-foreground truncate flex items-center gap-2">
                 {stage.name}
               </h3>
-              <div className="flex items-center gap-2 text-xs text-[var(--muted)] flex-shrink-0">
+              <div className="flex items-center gap-2 text-xs text-muted flex-shrink-0">
                 {activeSection === 'opportunities' ? (
                   <>
                     <span>
@@ -87,18 +87,18 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
             </div>
 
             {/* Stage Content Area */}
-            <div className="min-h-[600px] bg-[var(--background)] rounded-lg p-4 border-2 border-dashed border-[var(--border)]">
+            <div className="min-h-[600px] bg-background rounded-lg p-4 border-2 border-dashed border-border">
               <div className="space-y-3 pb-4">
                 {stage['items'] && stage.items.length > 0 ? (
                   stage.items.map((item: any, index: number) => (
                     <div 
                       key={`${activeSection}_${stage.id}_${item.id || index}`}
-                      className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)] hover:border-[var(--border)] cursor-pointer shadow-sm hover:shadow-md transition-all duration-200"
+                      className="bg-background p-4 rounded-lg border border-border hover:border-border cursor-pointer shadow-sm hover:shadow-md transition-all duration-200"
                       onClick={() => ui.handleRecordClick?.(item, activeSection)}
                     >
                       <div className="space-y-2">
                         {/* Item Name */}
-                        <h4 className="text-sm font-semibold text-[var(--foreground)]">
+                        <h4 className="text-sm font-semibold text-foreground">
                           {activeSection === 'opportunities' ? item.name || item.companyName || item.company || 'Unknown Opportunity' :
                            activeSection === 'clients' ? item.company || item.name || 'Customer' :
                            activeSection === 'partners' ? item.name || item.partnerName || item.company || 'Unknown Partner' :
@@ -106,7 +106,7 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
                         </h4>
                         
                         {/* Owner */}
-                        <p className="text-xs text-[var(--muted)] font-medium">
+                        <p className="text-xs text-muted font-medium">
                           {item.assignedTo || item.owner || 'Unassigned'}
                         </p>
                         
@@ -114,7 +114,7 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
                         {((activeSection === 'opportunities' && (item.account?.name || item.accountName || item.company)) ||
                           (activeSection === 'clients' && item.company) ||
                           (activeSection === 'partners' && item.company)) && (
-                          <p className="text-xs text-[var(--muted)]">
+                          <p className="text-xs text-muted">
                             {activeSection === 'opportunities' ? (item.account?.name || item.accountName || item.company) :
                              activeSection === 'clients' ? item.company :
                              activeSection === 'partners' ? item.company : ''}
@@ -122,7 +122,7 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
                         )}
                         
                         {/* Amount */}
-                        <p className="text-xs text-[var(--muted)]">
+                        <p className="text-xs text-muted">
                           {activeSection === 'opportunities' ? (item.amount ? '$' + Number(item.amount).toLocaleString() : 'No amount') :
                            activeSection === 'clients' ? (item.contractValue ? '$' + Number(item.contractValue).toLocaleString() : '') :
                            activeSection === 'partners' ? (item.partnershipValue ? '$' + Number(item.partnershipValue).toLocaleString() : '') :
@@ -136,7 +136,7 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
                             const today = new Date();
                             const daysUntilClose = Math.ceil((closeDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
                             
-                            let dateColor = 'text-[var(--muted)]';
+                            let dateColor = 'text-muted';
                             if (daysUntilClose < 0) {
                               dateColor = 'text-red-500';
                             } else if (daysUntilClose <= 30) {
@@ -154,11 +154,11 @@ export function PipelineKanbanView({ activeSection }: PipelineKanbanViewProps) {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-12 text-[var(--muted)]">
+                  <div className="text-center py-12 text-muted">
                     <p className="text-sm">
                       No {activeSection} in {stage.name}
                     </p>
-                    <p className="text-xs mt-1 text-[var(--muted)]">
+                    <p className="text-xs mt-1 text-muted">
                       Drag and drop items here
                     </p>
                   </div>

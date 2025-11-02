@@ -546,8 +546,8 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
     <>
       {/* Main Modal - only show if no specialized modal is open */}
       {!hasSpecializedModalOpen && (
-        <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-background border border-border rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div 
@@ -617,19 +617,19 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
               )}
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--foreground)]">
+              <h2 className="text-xl font-bold text-foreground">
                 Add {getSectionTitle()}
               </h2>
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 Create a new {getSectionTitle().toLowerCase()} record
               </p>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+            className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-hover transition-colors"
           >
-            <XMarkIcon className="w-4.5 h-4.5 text-[var(--muted)]" />
+            <XMarkIcon className="w-4.5 h-4.5 text-muted" />
           </button>
         </div>
 
@@ -641,7 +641,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
             // Split name fields for people/leads
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   First Name *
                 </label>
                 <input
@@ -651,7 +651,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                     setFormData((prev: any) => ({ ...prev, firstName: e.target.value }))
                   }
                   placeholder="Enter first name"
-                  className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
+                  className="w-full border border-border rounded px-4 py-2 outline-none transition-colors"
                   onFocus={(e) => {
                     e.target.style.borderColor = categoryColors.primary;
                     e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -664,7 +664,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Last Name *
                 </label>
                 <input
@@ -674,7 +674,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                     setFormData((prev: any) => ({ ...prev, lastName: e.target.value }))
                   }
                   placeholder="Enter last name"
-                  className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
+                  className="w-full border border-border rounded px-4 py-2 outline-none transition-colors"
                   onFocus={(e) => {
                     e.target.style.borderColor = categoryColors.primary;
                     e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -690,7 +690,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
           ) : (
             // Single name field for other sections
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 {activeSection === "opportunities" 
                   ? "Opportunity Name" 
                   : "Name"}{" "}
@@ -707,7 +707,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                     ? "Enter opportunity name"
                     : `Enter ${getSectionTitle().toLowerCase()} name`
                 }
-                className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
+                className="w-full border border-border rounded px-4 py-2 outline-none transition-colors"
                 onFocus={(e) => {
                   e.target.style.borderColor = categoryColors.primary;
                   e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -724,7 +724,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
           {/* Status Field - Second for leads and people */}
           {(activeSection === "leads" || activeSection === "people") && (
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Status *
               </label>
               <Select
@@ -742,7 +742,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                 placeholder="Select status"
                 className="w-full"
               />
-              <p className="text-xs text-[var(--muted)] mt-1">
+              <p className="text-xs text-muted mt-1">
                 Press 1-5 to select, press same number to cycle through options
               </p>
             </div>
@@ -752,7 +752,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
           {(activeSection === "leads" || activeSection === "people") && (
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <label className="block text-sm font-medium text-[var(--foreground)]">
+                <label className="block text-sm font-medium text-foreground">
                   Company
                 </label>
                 <button
@@ -770,7 +770,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                     value={companySearchQuery}
                     onChange={(e) => setCompanySearchQuery(e.target.value)}
                     placeholder="Search for company"
-                    className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
+                    className="w-full border border-border rounded px-4 py-2 outline-none transition-colors"
                     onFocus={(e) => {
                       e.target.style.borderColor = categoryColors.primary;
                       e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -784,22 +784,22 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
 
                 {/* Search Results */}
                 {companySearchResults.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
                     {companySearchResults.map((company) => (
                       <div
                         key={company.id}
                         onClick={() => handleCompanySelect(company)}
-                        className="px-4 py-2 hover:bg-[var(--panel-background)] cursor-pointer border-b border-gray-100 last:border-b-0"
+                        className="px-4 py-2 hover:bg-panel-background cursor-pointer border-b border-gray-100 last:border-b-0"
                       >
-                        <div className="font-medium text-[var(--foreground)]">{company.name}</div>
+                        <div className="font-medium text-foreground">{company.name}</div>
                         {company.website && (
-                          <div className="text-sm text-[var(--muted)]">{company.website}</div>
+                          <div className="text-sm text-muted">{company.website}</div>
                         )}
                       </div>
                     ))}
                     <div
                       onClick={handleAddCompany}
-                      className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-blue-600 font-medium border-t border-[var(--border)]"
+                      className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-blue-600 font-medium border-t border-border"
                     >
                       + Add New Company
                     </div>
@@ -808,10 +808,10 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
 
                 {/* No results message */}
                 {companySearchQuery.length >= 2 && companySearchResults.length === 0 && !isSearchingCompanies && (
-                  <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
+                  <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg">
                     <div className="px-4 py-3 text-center">
-                      <div className="text-sm text-[var(--muted)] mb-2">No companies found matching "{companySearchQuery}"</div>
-                      <p className="text-xs text-[var(--muted)] mb-3">Try a different search term or add a new company</p>
+                      <div className="text-sm text-muted mb-2">No companies found matching "{companySearchQuery}"</div>
+                      <p className="text-xs text-muted mb-3">Try a different search term or add a new company</p>
                       <button
                         type="button"
                         onClick={handleAddCompany}
@@ -825,9 +825,9 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
 
                 {/* Loading state */}
                 {isSearchingCompanies && (
-                  <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg">
+                  <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg">
                     <div className="px-4 py-3 text-center">
-                      <div className="text-sm text-[var(--muted)]">Searching companies...</div>
+                      <div className="text-sm text-muted">Searching companies...</div>
                     </div>
                   </div>
                 )}
@@ -836,11 +836,11 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
               {/* Selected Company */}
               {selectedCompany && (
                 <div className="mt-3">
-                  <div className="flex items-center justify-between bg-[var(--panel-background)] rounded-lg px-3 py-2">
+                  <div className="flex items-center justify-between bg-panel-background rounded-lg px-3 py-2">
                     <div>
-                      <div className="font-medium text-[var(--foreground)]">{selectedCompany.name}</div>
+                      <div className="font-medium text-foreground">{selectedCompany.name}</div>
                       {selectedCompany.website && (
-                        <div className="text-sm text-[var(--muted)]">{selectedCompany.website}</div>
+                        <div className="text-sm text-muted">{selectedCompany.website}</div>
                       )}
                     </div>
                     <button
@@ -865,7 +865,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Amount */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Deal Amount ($)
                   </label>
                   <input
@@ -878,13 +878,13 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                       }))
                     }
                     placeholder="Enter deal amount"
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                   />
                 </div>
 
                 {/* Probability */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Win Probability (%)
                   </label>
                   <select
@@ -895,7 +895,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                         probability: e.target.value,
                       }))
                     }
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground hover:border-gray-400 transition-colors"
                   >
                     <option value="">Select probability</option>
                     <option value="10">10% - Early stage</option>
@@ -910,7 +910,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Stage */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Current Stage
                   </label>
                   <select
@@ -921,7 +921,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                         stage: e.target.value,
                       }))
                     }
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground hover:border-gray-400 transition-colors"
                   >
                     <option value="">Select stage</option>
                     <option value="Discovery">Discovery</option>
@@ -945,7 +945,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
 
                 {/* Expected Close Date */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Expected Close Date
                   </label>
                   <input
@@ -957,7 +957,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                         closeDate: e.target.value,
                       }))
                     }
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground hover:border-gray-400 transition-colors"
                   />
                 </div>
               </div>
@@ -971,7 +971,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Partner Type */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Partner Type
                   </label>
                   <select
@@ -982,7 +982,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                         partnerType: e.target.value,
                       }))
                     }
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground hover:border-gray-400 transition-colors"
                   >
                     <option value="">Select partner type</option>
                     <option value="VC">VC - Venture Capital</option>
@@ -995,7 +995,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
 
                 {/* Relationship Status */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Relationship Status
                   </label>
                   <select
@@ -1006,7 +1006,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                         relationshipStatus: e.target.value,
                       }))
                     }
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground hover:border-gray-400 transition-colors"
                   >
                     <option value="">Select relationship status</option>
                     <option value="Active">Active</option>
@@ -1019,7 +1019,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
               {/* Contact Person */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Contact Name
                   </label>
                   <input
@@ -1032,12 +1032,12 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                       }))
                     }
                     placeholder="Contact person name"
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Contact Title
                   </label>
                   <input
@@ -1050,7 +1050,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                       }))
                     }
                     placeholder="e.g., Partner, VP"
-                    className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+                    className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                   />
                 </div>
               </div>
@@ -1060,7 +1060,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
           {/* Account-specific fields */}
           {activeSection === "accounts" && (
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Website
               </label>
               <input
@@ -1070,14 +1070,14 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                   setFormData((prev: any) => ({ ...prev, website: e.target.value }))
                 }
                 placeholder="Enter company website"
-                className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+                className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
               />
             </div>
           )}
 
           {activeSection === "accounts" && (
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 LinkedIn
               </label>
               <input
@@ -1087,7 +1087,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                   setFormData((prev: any) => ({ ...prev, linkedin: e.target.value }))
                 }
                 placeholder="linkedin.com/company/example"
-                className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+                className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
               />
             </div>
           )}
@@ -1095,7 +1095,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
           {/* Account-specific fields */}
           {activeSection === "accounts" && (
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Industry
               </label>
               <input
@@ -1105,7 +1105,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                   setFormData((prev: any) => ({ ...prev, industry: e.target.value }))
                 }
                 placeholder="Enter industry"
-                className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+                className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
               />
             </div>
           )}
@@ -1115,7 +1115,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
             <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                    <label className="block text-sm font-medium text-foreground mb-2">
                       Contract Value
                     </label>
                     <input
@@ -1125,12 +1125,12 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                         setFormData((prev: any) => ({ ...prev, contractValue: e.target.value }))
                       }
                       placeholder="Enter contract value"
-                      className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+                      className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                    <label className="block text-sm font-medium text-foreground mb-2">
                       Renewal Date
                     </label>
                     <input
@@ -1139,14 +1139,14 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                       onChange={(e) =>
                         setFormData((prev: any) => ({ ...prev, renewalDate: e.target.value }))
                       }
-                      className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+                      className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
                     />
                   </div>
                 </div>
 
                 {/* Contact Search */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Contacts (Optional)
                   </label>
                   <div className="relative">
@@ -1156,23 +1156,23 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                         value={contactSearchQuery}
                         onChange={(e) => setContactSearchQuery(e.target.value)}
                         placeholder="Search contacts to add..."
-                        className="w-full pl-3 pr-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors relative z-0"
+                        className="w-full pl-3 pr-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 hover:border-gray-400 transition-colors relative z-0"
                       />
                     </div>
 
                     {/* Search Results */}
                     {contactSearchResults.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
                         {contactSearchResults.map((contact) => (
                           <div
                             key={contact.id}
                             onClick={() => handleContactSelect(contact)}
-                            className="px-4 py-2 hover:bg-[var(--panel-background)] cursor-pointer border-b border-gray-100 last:border-b-0"
+                            className="px-4 py-2 hover:bg-panel-background cursor-pointer border-b border-gray-100 last:border-b-0"
                           >
-                            <div className="font-medium text-[var(--foreground)]">{contact.name || contact.fullName}</div>
-                            <div className="text-sm text-[var(--muted)]">{contact.email}</div>
+                            <div className="font-medium text-foreground">{contact.name || contact.fullName}</div>
+                            <div className="text-sm text-muted">{contact.email}</div>
                             {contact.jobTitle && (
-                              <div className="text-sm text-[var(--muted)]">{contact.jobTitle}</div>
+                              <div className="text-sm text-muted">{contact.jobTitle}</div>
                             )}
                           </div>
                         ))}
@@ -1183,15 +1183,15 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                   {/* Selected Contacts */}
                   {selectedContacts.length > 0 && (
                     <div className="mt-3 space-y-2">
-                      <div className="text-sm font-medium text-[var(--foreground)]">Selected Contacts:</div>
+                      <div className="text-sm font-medium text-foreground">Selected Contacts:</div>
                       {selectedContacts.map((contact) => (
                         <div
                           key={contact.id}
-                          className="flex items-center justify-between bg-[var(--panel-background)] rounded-lg px-3 py-2"
+                          className="flex items-center justify-between bg-panel-background rounded-lg px-3 py-2"
                         >
                           <div>
-                            <div className="font-medium text-[var(--foreground)]">{contact.name || contact.fullName}</div>
-                            <div className="text-sm text-[var(--muted)]">{contact.email}</div>
+                            <div className="font-medium text-foreground">{contact.name || contact.fullName}</div>
+                            <div className="text-sm text-muted">{contact.email}</div>
                           </div>
                           <button
                             type="button"
@@ -1211,7 +1211,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
           {/* Title Field - Only show for partnerships (removed from opportunities) */}
           {activeSection === "partnerships" && (
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Title
               </label>
               <input
@@ -1221,7 +1221,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                   setFormData((prev: any) => ({ ...prev, title: e.target.value }))
                 }
                 placeholder="Enter job title"
-                className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
+                className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] hover:border-gray-400 transition-colors"
               />
             </div>
           )}
@@ -1230,7 +1230,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
           {activeSection === "accounts" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Company Size
                 </label>
                 <select
@@ -1238,7 +1238,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                   onChange={(e) =>
                     setFormData((prev: any) => ({ ...prev, size: e.target.value }))
                   }
-                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
+                  className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground hover:border-gray-400 transition-colors"
                 >
                   <option value="">Select company size</option>
                   <option value="1-10">1-10 employees</option>
@@ -1251,7 +1251,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Annual Revenue
                 </label>
                 <select
@@ -1259,7 +1259,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                   onChange={(e) =>
                     setFormData((prev: any) => ({ ...prev, revenue: e.target.value }))
                   }
-                  className="add-modal-input w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] hover:border-gray-400 transition-colors"
+                  className="add-modal-input w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground hover:border-gray-400 transition-colors"
                 >
                   <option value="">Select revenue range</option>
                   <option value="Under $1M">Under $1M</option>
@@ -1277,7 +1277,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
           {activeSection === "companies" && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Website
                 </label>
                 <input
@@ -1287,7 +1287,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                     setFormData((prev: any) => ({ ...prev, website: e.target.value }))
                   }
                   placeholder="https://example.com"
-                  className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
+                  className="w-full border border-border rounded px-4 py-2 outline-none transition-colors"
                   onFocus={(e) => {
                     e.target.style.borderColor = categoryColors.primary;
                     e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -1299,7 +1299,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   LinkedIn
                 </label>
                 <input
@@ -1309,7 +1309,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                     setFormData((prev: any) => ({ ...prev, linkedin: e.target.value }))
                   }
                   placeholder="linkedin.com/company/example"
-                  className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
+                  className="w-full border border-border rounded px-4 py-2 outline-none transition-colors"
                   onFocus={(e) => {
                     e.target.style.borderColor = categoryColors.primary;
                     e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -1321,7 +1321,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Notes
                 </label>
                 <textarea
@@ -1331,7 +1331,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                   }
                   placeholder="Additional notes about this company"
                   rows={3}
-                  className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
+                  className="w-full border border-border rounded px-4 py-2 outline-none transition-colors"
                   onFocus={(e) => {
                     e.target.style.borderColor = categoryColors.primary;
                     e.target.style.boxShadow = `0 0 0 1px ${categoryColors.primary}20`;
@@ -1352,7 +1352,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
+              className="flex-1 px-4 py-3 text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors font-medium text-sm"
             >
               Cancel
             </button>
@@ -1403,15 +1403,15 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
 
       {/* Add Company Modal */}
       {showAddCompanyModal && (
-        <div className="fixed inset-0 bg-[var(--foreground)]/20 backdrop-blur-sm flex items-center justify-center z-60">
-          <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-6 w-full max-w-lg">
+        <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-60">
+          <div className="bg-background border border-border rounded-xl p-6 w-full max-w-lg">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-[var(--foreground)]">
+              <h2 className="text-xl font-bold text-foreground">
                 Add Company
               </h2>
               <button
                 onClick={() => setShowAddCompanyModal(false)}
-                className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
+                className="text-muted hover:text-muted transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1555,7 +1555,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
             }}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Company Name *
                   </label>
                   <input
@@ -1564,7 +1564,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                     value={addCompanyFormData.name}
                     onChange={(e) => setAddCompanyFormData(prev => ({ ...prev, name: e.target.value }))}
                     required
-                    className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
+                    className="w-full border border-border rounded px-4 py-2 outline-none transition-colors"
                     onFocus={(e) => {
                       e.target.style.borderColor = getCategoryColors('companies').primary;
                       e.target.style.boxShadow = `0 0 0 1px ${getCategoryColors('companies').primary}20`;
@@ -1577,7 +1577,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Website
                   </label>
                   <input
@@ -1586,7 +1586,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                     value={addCompanyFormData.website}
                     onChange={(e) => setAddCompanyFormData(prev => ({ ...prev, website: e.target.value }))}
                     placeholder="example.com or https://example.com"
-                    className="w-full border border-[var(--border)] rounded px-4 py-2 outline-none transition-colors"
+                    className="w-full border border-border rounded px-4 py-2 outline-none transition-colors"
                     onFocus={(e) => {
                       e.target.style.borderColor = getCategoryColors('companies').primary;
                       e.target.style.boxShadow = `0 0 0 1px ${getCategoryColors('companies').primary}20`;
@@ -1604,7 +1604,7 @@ export const AddModal = React.memo(function AddModal({ refreshData }: AddModalPr
                 <button
                   type="button"
                   onClick={() => setShowAddCompanyModal(false)}
-                  className="flex-1 px-4 py-3 text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors font-medium text-sm"
+                  className="flex-1 px-4 py-3 text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors font-medium text-sm"
                 >
                   Cancel
                 </button>

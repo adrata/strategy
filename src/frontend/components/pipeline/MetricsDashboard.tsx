@@ -15,9 +15,9 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, subtitle, trend, trendValue, color = 'default' }: MetricCardProps) {
   const colorClasses = {
-    default: 'border-[var(--border)] bg-white',
+    default: 'border-border bg-white',
     success: 'border-green-500 bg-green-100',
-    warning: 'border-[var(--border)] bg-white',
+    warning: 'border-border bg-white',
     danger: 'border-red-500 bg-red-100'
   };
 
@@ -29,8 +29,8 @@ function MetricCard({ title, value, subtitle, trend, trendValue, color = 'defaul
 
   return (
     <div className={`p-6 rounded-lg border-2 ${colorClasses[color]} transition-all shadow-sm hover:shadow-md`}>
-      <div className="text-base font-semibold text-[var(--foreground)] mb-2">{title}</div>
-      <div className="text-3xl font-bold text-[var(--foreground)] mb-2">
+      <div className="text-base font-semibold text-foreground mb-2">{title}</div>
+      <div className="text-3xl font-bold text-foreground mb-2">
         {(() => {
           // Show dash for null, undefined, zero, or "No Data" values
           if (value === null || value === undefined || value === 0 || value === "0" || 
@@ -42,12 +42,12 @@ function MetricCard({ title, value, subtitle, trend, trendValue, color = 'defaul
         })()}
           </div>
           {subtitle && (
-        <div className="text-sm text-[var(--muted)] mb-2">{subtitle}</div>
+        <div className="text-sm text-muted mb-2">{subtitle}</div>
           )}
         {trend && trendValue && (
         <div className="flex items-center gap-1 text-sm">
-          <span className="text-[var(--muted)]">{trendIcons[trend]}</span>
-          <span className="text-[var(--muted)]">{trendValue}</span>
+          <span className="text-muted">{trendIcons[trend]}</span>
+          <span className="text-muted">{trendValue}</span>
           </div>
         )}
     </div>
@@ -130,16 +130,16 @@ export function MetricsDashboard() {
   if (loading) {
     return (
       <div className="h-full overflow-y-auto invisible-scrollbar">
-        <div className="p-8 bg-[var(--background)] min-h-full">
-          <div className="h-8 bg-[var(--loading-bg)] rounded w-64 animate-pulse mb-8"></div>
+        <div className="p-8 bg-background min-h-full">
+          <div className="h-8 bg-loading-bg rounded w-64 animate-pulse mb-8"></div>
           
           {/* Bento grid skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1200px]">
             {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-6 shadow-sm animate-pulse">
-                <div className="h-4 bg-[var(--muted)]/20 rounded mb-4 w-1/2"></div>
-                <div className="h-8 bg-[var(--muted)]/20 rounded mb-2 w-1/3"></div>
-                <div className="h-3 bg-[var(--muted)]/20 rounded w-2/3"></div>
+              <div key={i} className="rounded-xl border border-border bg-background p-6 shadow-sm animate-pulse">
+                <div className="h-4 bg-muted/20 rounded mb-4 w-1/2"></div>
+                <div className="h-8 bg-muted/20 rounded mb-2 w-1/3"></div>
+                <div className="h-3 bg-muted/20 rounded w-2/3"></div>
               </div>
             ))}
           </div>
@@ -151,8 +151,8 @@ export function MetricsDashboard() {
   if (error) {
     return (
       <div className="h-full overflow-y-auto invisible-scrollbar">
-        <div className="p-8 bg-[var(--background)] min-h-full">
-          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-8">
+        <div className="p-8 bg-background min-h-full">
+          <h1 className="text-2xl font-bold text-foreground mb-8">
             Sales Activity Dashboard
           </h1>
           <div className="text-red-500">Error: {error}</div>
@@ -164,11 +164,11 @@ export function MetricsDashboard() {
   if (!metrics) {
     return (
       <div className="h-full overflow-y-auto invisible-scrollbar">
-        <div className="p-8 bg-[var(--background)] min-h-full">
-          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-8">
+        <div className="p-8 bg-background min-h-full">
+          <h1 className="text-2xl font-bold text-foreground mb-8">
             Sales Activity Dashboard
           </h1>
-          <div className="text-[var(--muted)]">No metrics data available</div>
+          <div className="text-muted">No metrics data available</div>
         </div>
       </div>
     );
@@ -181,8 +181,8 @@ export function MetricsDashboard() {
 
   return (
     <div className="h-full overflow-y-auto invisible-scrollbar">
-      <div className="p-8 bg-[var(--background)] min-h-full">
-        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-8">
+      <div className="p-8 bg-background min-h-full">
+        <h1 className="text-2xl font-bold text-foreground mb-8">
           Sales Activity Dashboard
         </h1>
         

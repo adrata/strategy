@@ -24,7 +24,7 @@ export function OasisPageContent({ conversationType, conversationId }: OasisPage
   };
 
   return (
-    <div className="h-full bg-[var(--background)] relative">
+    <div className="h-full bg-background relative">
       {/* Video Call Panel - Shows when video call is active */}
       {isVideoCallActive && videoCallRoom ? (
         <VideoCallPanel

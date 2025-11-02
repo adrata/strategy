@@ -335,7 +335,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Success Message */}
       <SuccessMessage
         message={successMessage}
@@ -346,20 +346,20 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
 
       {/* Header */}
       {!hideHeader && (
-        <div className="bg-[var(--background)] border-b border-[var(--border)] px-6 py-4">
+        <div className="bg-background border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={onBack}
-                className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+                className="p-2 hover:bg-hover rounded-lg transition-colors"
               >
-                <ArrowLeftIcon className="w-5 h-5 text-[var(--muted)]" />
+                <ArrowLeftIcon className="w-5 h-5 text-muted" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-[var(--foreground)]">
+                <h1 className="text-2xl font-bold text-foreground">
                   {account.name}
                 </h1>
-                <div className="flex items-center gap-4 text-sm text-[var(--muted)] mt-1">
+                <div className="flex items-center gap-4 text-sm text-muted mt-1">
                   <span>{account.industry}</span>
                   <span>•</span>
                   <span>{account.employees} employees</span>
@@ -409,7 +409,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
       {!isLoading && (
         <>
           {/* Tabs */}
-          <div className="bg-[var(--background)] border-b border-[var(--border)] px-6">
+          <div className="bg-background border-b border-border px-6">
             <div className="flex space-x-8">
               {tabs.map((tab) => (
                 <button
@@ -418,7 +418,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                   className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab
                       ? "border-gray-400 text-gray-700"
-                      : "border-transparent text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border)]"
+                      : "border-transparent text-muted hover:text-foreground hover:border-border"
                   }`}
                 >
                   {tab}
@@ -432,20 +432,20 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
             {activeTab === "Overview" && (
               <>
                 <div className="mb-8">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                  <h2 className="text-xl font-semibold text-foreground mb-4">
                     At a Glance
                   </h2>
                   <div className="flex flex-wrap gap-4">
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                      <div className="font-semibold text-[var(--muted)] mb-1">
+                    <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                      <div className="font-semibold text-muted mb-1">
                         Tier
                       </div>
-                      <div className="text-lg text-[var(--foreground)]">
+                      <div className="text-lg text-foreground">
                         {account.tier}
                       </div>
                     </div>
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                      <div className="font-semibold text-[var(--muted)] mb-1">
+                    <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                      <div className="font-semibold text-muted mb-1">
                         Status
                       </div>
                       <span
@@ -460,8 +460,8 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                         {account.status}
                       </span>
                     </div>
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                      <div className="font-semibold text-[var(--muted)] mb-1">
+                    <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                      <div className="font-semibold text-muted mb-1">
                         Annual Revenue
                       </div>
                       <div className="text-lg font-bold text-green-600">
@@ -476,8 +476,8 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                                 : account.revenue}
                       </div>
                     </div>
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                      <div className="font-semibold text-[var(--muted)] mb-1">
+                    <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                      <div className="font-semibold text-muted mb-1">
                         Contract Value
                       </div>
                       <div className="text-lg font-bold text-blue-600">
@@ -493,15 +493,15 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Account Information
                     </h2>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Company Name
                         </label>
-                        <div className="mt-1 text-lg text-[var(--foreground)]">
+                        <div className="mt-1 text-lg text-foreground">
                           <InlineEditField
                             value={account.name}
                             field="name"
@@ -511,10 +511,10 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Industry
                         </label>
-                        <div className="mt-1 text-lg text-[var(--foreground)]">
+                        <div className="mt-1 text-lg text-foreground">
                           <InlineEditField
                             value={account.industry}
                             field="industry"
@@ -524,10 +524,10 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Total Employees
                         </label>
-                        <div className="mt-1 text-lg text-[var(--foreground)]">
+                        <div className="mt-1 text-lg text-foreground">
                           <InlineEditField
                             value={account.employees.toString()}
                             field="employees"
@@ -538,10 +538,10 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Account Owner
                         </label>
-                        <div className="mt-1 text-lg text-[var(--foreground)]">
+                        <div className="mt-1 text-lg text-foreground">
                           <InlineEditField
                             value={account.owner}
                             field="owner"
@@ -554,15 +554,15 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                   </div>
 
                   <div>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Engagement
                     </h2>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Last Action
                         </label>
-                        <div className="mt-1 text-lg text-[var(--foreground)]">
+                        <div className="mt-1 text-lg text-foreground">
                           <InlineEditField
                             value={account.lastAction}
                             field="lastAction"
@@ -570,15 +570,15 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                             placeholder="Enter last action"
                           />
                         </div>
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           {formatRelativeDate(account.lastActionDate)}
                         </p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Next Action
                         </label>
-                        <div className="mt-1 text-lg text-[var(--foreground)]">
+                        <div className="mt-1 text-lg text-foreground">
                           <InlineEditField
                             value={account.nextAction}
                             field="nextAction"
@@ -586,7 +586,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                             placeholder="Enter next action"
                           />
                         </div>
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           {formatRelativeDate(account.nextActionDate)}
                         </p>
                       </div>
@@ -595,10 +595,10 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                 </div>
 
                 <div className="mt-8">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                  <h2 className="text-xl font-semibold text-foreground mb-4">
                     Notes
                   </h2>
-                  <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+                  <div className="bg-background border border-border rounded-lg p-4">
                     <InlineEditField
                       value={account.notes || ""}
                       field="notes"
@@ -614,7 +614,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
             {activeTab === "People" && (
               <>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)]">
+                  <h2 className="text-xl font-semibold text-foreground">
                     Key People
                   </h2>
                   <button
@@ -639,8 +639,8 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                 
                 {contactsData['length'] === 0 ? (
                   <div className="text-center py-12">
-                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No people yet</h3>
-                    <p className="text-[var(--muted)]">Add people to track relationships</p>
+                    <h3 className="text-lg font-medium text-foreground mb-2">No people yet</h3>
+                    <p className="text-muted">Add people to track relationships</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -648,15 +648,15 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                       <div
                         key={idx}
                         onClick={() => handleContactClick(contact)}
-                        className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 cursor-pointer hover:bg-[var(--muted)]/10 hover:border-[var(--border)] transition-colors"
+                        className="bg-background border border-border rounded-lg p-4 cursor-pointer hover:bg-muted/10 hover:border-border transition-colors"
                       >
                         <div className="flex justify-between items-start">
                           <div>
-                            <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                            <h3 className="text-lg font-semibold text-foreground">
                               {contact.name}
                             </h3>
-                            <p className="text-[var(--muted)]">{contact.title}</p>
-                            <p className="text-sm text-[var(--muted)]">
+                            <p className="text-muted">{contact.title}</p>
+                            <p className="text-sm text-muted">
                               {contact.department}
                             </p>
                           </div>
@@ -682,7 +682,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
             {activeTab === "Opportunities" && (
               <>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)]">
+                  <h2 className="text-xl font-semibold text-foreground">
                     Active Opportunities
                   </h2>
                   <button
@@ -696,8 +696,8 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                 
                 {opportunitiesData['length'] === 0 ? (
                   <div className="text-center py-12">
-                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No opportunities yet</h3>
-                    <p className="text-[var(--muted)]">Add opportunities to track deals</p>
+                    <h3 className="text-lg font-medium text-foreground mb-2">No opportunities yet</h3>
+                    <p className="text-muted">Add opportunities to track deals</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -705,14 +705,14 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                       <div
                         key={idx}
                         onClick={() => handleOpportunityClick(opp)}
-                        className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 cursor-pointer hover:bg-[var(--muted)]/10 hover:border-[var(--border)] transition-colors"
+                        className="bg-background border border-border rounded-lg p-4 cursor-pointer hover:bg-muted/10 hover:border-border transition-colors"
                       >
                         <div className="flex justify-between items-start">
                           <div>
-                            <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                            <h3 className="text-lg font-semibold text-foreground">
                               {opp.name}
                             </h3>
-                            <p className="text-[var(--muted)]">
+                            <p className="text-muted">
                               Stage: {opp.stage}
                             </p>
                           </div>
@@ -720,7 +720,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                             <div className="text-lg font-bold text-green-600">
                               {opp.value}
                             </div>
-                            <div className="text-sm text-[var(--muted)]">
+                            <div className="text-sm text-muted">
                               {opp.probability}% probability
                             </div>
                           </div>
@@ -736,27 +736,27 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
             {activeTab === "Timeline" && (
               <>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)]">
+                  <h2 className="text-xl font-semibold text-foreground">
                     Action Timeline
                   </h2>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm text-muted">
                     {timelineData.length} events
                   </div>
                 </div>
                 {timelineData['length'] === 0 ? (
                   <div className="text-center py-12">
                     <div className="flex items-center justify-center mb-4">
-                      <svg className="w-8 h-8 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No timeline events yet</h3>
-                    <p className="text-[var(--muted)]">Activities, emails, meetings, and interactions will appear here</p>
+                    <h3 className="text-lg font-medium text-foreground mb-2">No timeline events yet</h3>
+                    <p className="text-muted">Activities, emails, meetings, and interactions will appear here</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {timelineData.map((event: any, idx: number) => (
-                      <div key={event.id || idx} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:shadow-sm transition-shadow">
+                      <div key={event.id || idx} className="bg-background border border-border rounded-lg p-4 hover:shadow-sm transition-shadow">
                         <div className="flex items-start gap-4">
                           <div className={`w-4 h-4 rounded-full mt-1 flex-shrink-0 ${
                             event['type'] === 'record_created' ? 'bg-gray-400' :
@@ -769,11 +769,11 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between mb-2">
                               <div className="flex-1">
-                                <h3 className="font-semibold text-[var(--foreground)] mb-1">{event.title}</h3>
+                                <h3 className="font-semibold text-foreground mb-1">{event.title}</h3>
                                 {event['description'] && (
-                                  <p className="text-sm text-[var(--muted)] mb-2">{event.description}</p>
+                                  <p className="text-sm text-muted mb-2">{event.description}</p>
                                 )}
-                                <div className="flex items-center gap-4 text-xs text-[var(--muted)]">
+                                <div className="flex items-center gap-4 text-xs text-muted">
                                   <span className="flex items-center gap-1">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -806,8 +806,8 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                             
                             {/* Show additional metadata for specific event types */}
                             {event['type'] === 'email' && event['metadata'] && (
-                              <div className="mt-3 p-3 bg-[var(--panel-background)] rounded-lg">
-                                <div className="text-xs text-[var(--muted)] space-y-1">
+                              <div className="mt-3 p-3 bg-panel-background rounded-lg">
+                                <div className="text-xs text-muted space-y-1">
                                   <div><strong>From:</strong> {event.metadata.from}</div>
                                   {event['metadata']['to'] && (
                                     <div><strong>To:</strong> {Array.isArray(event.metadata.to) ? event.metadata.to.join(', ') : event.metadata.to}</div>
@@ -820,8 +820,8 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                             )}
                             
                             {event['type'] === 'calendar_event' && event['metadata'] && (
-                              <div className="mt-3 p-3 bg-[var(--panel-background)] rounded-lg">
-                                <div className="text-xs text-[var(--muted)] space-y-1">
+                              <div className="mt-3 p-3 bg-panel-background rounded-lg">
+                                <div className="text-xs text-muted space-y-1">
                                   {event['metadata']['location'] && (
                                     <div><strong>Location:</strong> {event.metadata.location}</div>
                                   )}
@@ -850,53 +850,53 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
             {activeTab === "Notes" && (
               <>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)]">
+                  <h2 className="text-xl font-semibold text-foreground">
                     Notes & Observations
                   </h2>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm text-muted">
                     {notesData.length} notes
                   </div>
                 </div>
-                <p className="text-[var(--muted)] mb-6">Keep track of important information, meeting notes, and observations</p>
+                <p className="text-muted mb-6">Keep track of important information, meeting notes, and observations</p>
                 
                 <div className="mb-6">
                   <div className="flex gap-2">
                     <input
                       type="text"
                       placeholder="Add your thoughts, meeting notes, or observations..."
-                      className="flex-1 px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                       Add Note
                     </button>
                   </div>
-                  <p className="text-sm text-[var(--muted)] mt-2">Tip: Press Cmd/Ctrl + Enter to save quickly</p>
+                  <p className="text-sm text-muted mt-2">Tip: Press Cmd/Ctrl + Enter to save quickly</p>
                 </div>
 
                 {notesData['length'] === 0 ? (
                   <div className="text-center py-12">
                     <div className="flex items-center justify-center mb-4">
-                      <svg className="w-8 h-8 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No notes yet</h3>
-                    <p className="text-[var(--muted)]">Add your first note to track important information about this account</p>
+                    <h3 className="text-lg font-medium text-foreground mb-2">No notes yet</h3>
+                    <p className="text-muted">Add your first note to track important information about this account</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {notesData.map((note: any, idx: number) => (
-                      <div key={note.id || idx} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:shadow-sm transition-shadow">
+                      <div key={note.id || idx} className="bg-background border border-border rounded-lg p-4 hover:shadow-sm transition-shadow">
                         <div className="flex items-start gap-4">
                           <div className="w-4 h-4 rounded-full mt-1 flex-shrink-0 bg-yellow-500"></div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between mb-2">
                               <div className="flex-1">
-                                <h3 className="font-semibold text-[var(--foreground)] mb-1">
+                                <h3 className="font-semibold text-foreground mb-1">
                                   {note.title || 'Note'}
                                 </h3>
-                                <p className="text-sm text-[var(--muted)] mb-3">{note.description}</p>
-                                <div className="flex items-center gap-4 text-xs text-[var(--muted)]">
+                                <p className="text-sm text-muted mb-3">{note.description}</p>
+                                <div className="flex items-center gap-4 text-xs text-muted">
                                   <span className="flex items-center gap-1">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -924,7 +924,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                                 <span className={`text-xs px-2 py-1 rounded font-medium ${
                                   note['priority'] === 'high' ? 'bg-red-100 text-red-700' :
                                   note['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                  'bg-[var(--hover)] text-gray-700'
+                                  'bg-hover text-gray-700'
                                 }`}>
                                   {note.priority} priority
                                 </span>
@@ -933,7 +933,7 @@ export const CompanyDetails: React.FC<CompanyDetailsProps> = ({
                             
                             {/* Show note content if available */}
                             {note['metadata'] && note['metadata']['content'] && (
-                              <div className="mt-3 p-3 bg-[var(--panel-background)] rounded-lg">
+                              <div className="mt-3 p-3 bg-panel-background rounded-lg">
                                 <div className="text-sm text-gray-700">
                                   {note.metadata.content}
                                 </div>

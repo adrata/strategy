@@ -1,11 +1,11 @@
 export default function ComprehensiveSellerWorkflowReports() {
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-[var(--background)]">
+    <div className="max-w-6xl mx-auto p-6 bg-background">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">
+        <h1 className="text-3xl font-bold text-foreground mb-2">
           TOP Engineering Plus - Complete Seller Workflow Validation
         </h1>
-        <p className="text-[var(--muted)]">End-to-End Platform Testing with Real API Data</p>
+        <p className="text-muted">End-to-End Platform Testing with Real API Data</p>
       </div>
 
       <div className="space-y-8">
@@ -15,8 +15,8 @@ export default function ComprehensiveSellerWorkflowReports() {
           
           <div className="space-y-6">
             {/* Use Case 1: Company Discovery */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">1. Company Discovery & Analysis</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-2">1. Company Discovery & Analysis</h3>
               <div className="space-y-3">
                 <div className="bg-blue-100 p-3 rounded">
                   <p className="text-blue-800 italic">
@@ -37,7 +37,7 @@ export default function ComprehensiveSellerWorkflowReports() {
                   </ul>
                 </div>
                 
-                <div className="bg-[var(--hover)] p-3 rounded">
+                <div className="bg-hover p-3 rounded">
                   <p className="text-gray-700 font-medium">APIs Used:</p>
                   <div className="grid grid-cols-3 gap-2 mt-2 text-sm">
                     <span className="bg-green-200 px-2 py-1 rounded">✓ CoreSignal API</span>
@@ -49,8 +49,8 @@ export default function ComprehensiveSellerWorkflowReports() {
             </div>
 
             {/* Use Case 2: Market Research */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">2. Market Segment Analysis</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-2">2. Market Segment Analysis</h3>
               <div className="space-y-3">
                 <div className="bg-blue-100 p-3 rounded">
                   <p className="text-blue-800 italic">
@@ -74,8 +74,8 @@ export default function ComprehensiveSellerWorkflowReports() {
             </div>
 
             {/* Use Case 3: Competitive Intelligence */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">3. Deep Competitive Research</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-2">3. Deep Competitive Research</h3>
               <div className="space-y-3">
                 <div className="bg-blue-100 p-3 rounded">
                   <p className="text-blue-800 italic">
@@ -105,8 +105,8 @@ export default function ComprehensiveSellerWorkflowReports() {
           
           <div className="space-y-6">
             {/* Use Case 4: Decision Maker Discovery */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">4. Executive Decision Maker Discovery</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-2">4. Executive Decision Maker Discovery</h3>
               <div className="space-y-3">
                 <div className="bg-blue-100 p-3 rounded">
                   <p className="text-blue-800 italic">
@@ -130,8 +130,8 @@ export default function ComprehensiveSellerWorkflowReports() {
             </div>
 
             {/* Use Case 5: Complete Profile Enrichment */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">5. Complete Contact Intelligence</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-2">5. Complete Contact Intelligence</h3>
               <div className="space-y-3">
                 <div className="bg-blue-100 p-3 rounded">
                   <p className="text-blue-800 italic">
@@ -156,8 +156,8 @@ export default function ComprehensiveSellerWorkflowReports() {
             </div>
 
             {/* Use Case 6: Complete Buyer Group Mapping */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">6. Strategic Buyer Group Analysis</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-2">6. Strategic Buyer Group Analysis</h3>
               <div className="space-y-3">
                 <div className="bg-blue-100 p-3 rounded">
                   <p className="text-blue-800 italic">
@@ -169,19 +169,19 @@ export default function ComprehensiveSellerWorkflowReports() {
                 <div className="bg-green-100 p-3 rounded">
                   <p className="text-green-800 font-medium">System Response Preview:</p>
                   <div className="mt-2 space-y-2">
-                    <div className="bg-[var(--background)] border-l-4 border-blue-400 pl-3">
+                    <div className="bg-background border-l-4 border-blue-400 pl-3">
                       <p className="font-medium">Technical Decision Maker</p>
                       <p className="text-sm">Michael Torres - Chief Engineer (High influence, Technical approval)</p>
                     </div>
-                    <div className="bg-[var(--background)] border-l-4 border-green-400 pl-3">
+                    <div className="bg-background border-l-4 border-green-400 pl-3">
                       <p className="font-medium">Budget Authority</p>
                       <p className="text-sm">Lisa Chen - Engineering Manager ($2M approval authority)</p>
                     </div>
-                    <div className="bg-[var(--background)] border-l-4 border-yellow-400 pl-3">
+                    <div className="bg-background border-l-4 border-yellow-400 pl-3">
                       <p className="font-medium">End User Champion</p>
                       <p className="text-sm">Robert Kim - Operations Supervisor (Day-to-day user)</p>
                     </div>
-                    <div className="bg-[var(--background)] border-l-4 border-purple-400 pl-3">
+                    <div className="bg-background border-l-4 border-purple-400 pl-3">
                       <p className="font-medium">Procurement Influencer</p>
                       <p className="text-sm">Jennifer Walsh - Procurement Manager (Vendor selection)</p>
                     </div>
@@ -198,8 +198,8 @@ export default function ComprehensiveSellerWorkflowReports() {
           
           <div className="space-y-6">
             {/* Use Case 7: Technical Expert Discovery */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">7. Technical Expertise Matching</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-2">7. Technical Expertise Matching</h3>
               <div className="space-y-3">
                 <div className="bg-blue-100 p-3 rounded">
                   <p className="text-blue-800 italic">
@@ -223,8 +223,8 @@ export default function ComprehensiveSellerWorkflowReports() {
             </div>
 
             {/* Use Case 8: Procurement Contact Discovery */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">8. Procurement & Budget Authority</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-2">8. Procurement & Budget Authority</h3>
               <div className="space-y-3">
                 <div className="bg-blue-100 p-3 rounded">
                   <p className="text-blue-800 italic">
@@ -255,8 +255,8 @@ export default function ComprehensiveSellerWorkflowReports() {
           
           <div className="space-y-6">
             {/* Use Case 9: Personalized Outreach */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">9. AI-Generated Personalized Outreach</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-2">9. AI-Generated Personalized Outreach</h3>
               <div className="space-y-3">
                 <div className="bg-blue-100 p-3 rounded">
                   <p className="text-blue-800 italic">
@@ -267,7 +267,7 @@ export default function ComprehensiveSellerWorkflowReports() {
                 
                 <div className="bg-green-100 p-3 rounded">
                   <p className="text-green-800 font-medium">Generated Email Preview:</p>
-                  <div className="bg-[var(--background)] p-3 rounded border text-sm">
+                  <div className="bg-background p-3 rounded border text-sm">
                     <p><strong>Subject:</strong> Following up from UTC 9 - SCADA Cybersecurity Solutions for Idaho Power</p>
                     <br/>
                     <p>Hi Greg,</p>
@@ -280,8 +280,8 @@ export default function ComprehensiveSellerWorkflowReports() {
             </div>
 
             {/* Use Case 10: Proposal Intelligence */}
-            <div className="bg-[var(--background)] border rounded p-4">
-              <h3 className="font-semibold text-[var(--foreground)] mb-2">10. Strategic Proposal Development</h3>
+            <div className="bg-background border rounded p-4">
+              <h3 className="font-semibold text-foreground mb-2">10. Strategic Proposal Development</h3>
               <div className="space-y-3">
                 <div className="bg-blue-100 p-3 rounded">
                   <p className="text-blue-800 italic">
@@ -307,11 +307,11 @@ export default function ComprehensiveSellerWorkflowReports() {
         </div>
 
         {/* SYSTEM VALIDATION SUMMARY */}
-        <div className="bg-[var(--hover)] border rounded-lg p-6">
-          <h2 className="text-xl font-bold text-[var(--foreground)] mb-4">📊 END-TO-END SYSTEM VALIDATION</h2>
+        <div className="bg-hover border rounded-lg p-6">
+          <h2 className="text-xl font-bold text-foreground mb-4">📊 END-TO-END SYSTEM VALIDATION</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[var(--background)] p-4 rounded border">
+            <div className="bg-background p-4 rounded border">
               <h3 className="font-semibold text-green-700 mb-2">✅ API Integrations</h3>
               <ul className="text-sm space-y-1">
                 <li>• CoreSignal API: Contact discovery</li>
@@ -322,7 +322,7 @@ export default function ComprehensiveSellerWorkflowReports() {
               </ul>
             </div>
             
-            <div className="bg-[var(--background)] p-4 rounded border">
+            <div className="bg-background p-4 rounded border">
               <h3 className="font-semibold text-blue-700 mb-2">🎯 Data Quality</h3>
               <ul className="text-sm space-y-1">
                 <li>• Employment Status: 94% accuracy</li>
@@ -333,7 +333,7 @@ export default function ComprehensiveSellerWorkflowReports() {
               </ul>
             </div>
             
-            <div className="bg-[var(--background)] p-4 rounded border">
+            <div className="bg-background p-4 rounded border">
               <h3 className="font-semibold text-purple-700 mb-2">⚡ Performance</h3>
               <ul className="text-sm space-y-1">
                 <li>• Average Response: 3.2 seconds</li>

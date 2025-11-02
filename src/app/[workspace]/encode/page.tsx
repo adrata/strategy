@@ -136,16 +136,16 @@ export default function EncodePage() {
   }, [currentProject, createFolder]);
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Standardized Header */}
       <StandardHeader
         title="Encode"
         subtitle={
           <div className="flex items-center gap-2">
-            <span className="text-sm text-[var(--muted)]">Code Editor</span>
+            <span className="text-sm text-muted">Code Editor</span>
             {currentProject && (
               <>
-                <span className="text-[var(--muted)]">/</span>
+                <span className="text-muted">/</span>
                 <span className="text-sm text-gray-700">{currentProject.name}</span>
               </>
             )}
@@ -160,14 +160,14 @@ export default function EncodePage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsCreatingProject(true)}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
             >
               <PlusIcon className="w-4 h-4" />
               New Project
             </button>
             <button
               onClick={handleCreateFile}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
             >
               <DocumentTextIcon className="w-4 h-4" />
               New File
@@ -184,7 +184,7 @@ export default function EncodePage() {
       />
 
       {/* Sub-header with Search and Controls */}
-      <div className="flex items-center gap-4 py-2 w-full bg-[var(--background)] px-6">
+      <div className="flex items-center gap-4 py-2 w-full bg-background px-6">
         {/* Search */}
         <div className="relative flex-1">
           <input
@@ -192,7 +192,7 @@ export default function EncodePage() {
             placeholder="Search files..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-4 pr-10 py-2 border border-[var(--border)] rounded-lg text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors w-full bg-[var(--background)]"
+            className="pl-4 pr-10 py-2 border border-border rounded-lg text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors w-full bg-background"
           />
         </div>
 
@@ -201,10 +201,10 @@ export default function EncodePage() {
           <button
             type="button"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="relative w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+            className="relative w-full bg-background border border-border rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
           >
-            <FunnelIcon className="w-4 h-4 text-[var(--muted)]" />
-            <span className="block truncate text-[var(--foreground)]">Filter</span>
+            <FunnelIcon className="w-4 h-4 text-muted" />
+            <span className="block truncate text-foreground">Filter</span>
           </button>
         </div>
 
@@ -213,10 +213,10 @@ export default function EncodePage() {
           <button
             type="button"
             onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-            className="relative w-full bg-[var(--background)] border border-[var(--border)] rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
+            className="relative w-full bg-background border border-border rounded-lg px-3 py-2 text-left text-sm focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors flex items-center gap-2"
           >
-            <ArrowsUpDownIcon className="w-4 h-4 text-[var(--muted)]" />
-            <span className="block truncate text-[var(--foreground)]">Sort</span>
+            <ArrowsUpDownIcon className="w-4 h-4 text-muted" />
+            <span className="block truncate text-foreground">Sort</span>
           </button>
         </div>
 
@@ -226,7 +226,7 @@ export default function EncodePage() {
           className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
             showTerminal 
               ? 'bg-blue-100 text-blue-600' 
-              : 'bg-[var(--background)] border border-[var(--border)] text-gray-700 hover:bg-[var(--panel-background)]'
+              : 'bg-background border border-border text-gray-700 hover:bg-panel-background'
           }`}
         >
           <PlayIcon className="w-4 h-4" />
@@ -242,12 +242,12 @@ export default function EncodePage() {
       {/* Create Project Modal */}
       {isCreatingProject && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] w-96">
+          <div className="bg-background p-6 rounded-lg border border-border w-96">
             <h3 className="text-lg font-semibold mb-4">Create New Project</h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--muted)] mb-1">
+                <label className="block text-sm font-medium text-muted mb-1">
                   Project Name
                 </label>
                 <input
@@ -255,21 +255,21 @@ export default function EncodePage() {
                   placeholder="My Project"
                   value={newProjectName}
                   onChange={(e) => setNewProjectName(e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:border-gray-400"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-gray-400"
                   onKeyPress={(e) => e.key === 'Enter' && handleCreateProject()}
                   autoFocus
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-[var(--muted)] mb-1">
+                <label className="block text-sm font-medium text-muted mb-1">
                   Description (Optional)
                 </label>
                 <textarea
                   placeholder="A brief description of your project..."
                   value={newProjectDescription}
                   onChange={(e) => setNewProjectDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:border-gray-400"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-gray-400"
                   rows={3}
                 />
               </div>

@@ -11,9 +11,10 @@ import { InlineEditField } from '@/frontend/components/pipeline/InlineEditField'
 
 interface StoryMainViewProps {
   story: any;
+  onStoryUpdate?: (updatedStory: any) => void;
 }
 
-export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
+export function StoryMainView({ story: initialStory, onStoryUpdate }: StoryMainViewProps) {
   const [story, setStory] = useState(initialStory);
 
   // Update story when prop changes
@@ -36,13 +37,24 @@ export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
 
       if (response.ok) {
         const data = await response.json();
-        setStory(data.story);
+        const updatedStory = data.story;
+        
+        // Update local state
+        setStory(updatedStory);
+        
+        // Notify parent component of update
+        if (onStoryUpdate) {
+          onStoryUpdate(updatedStory);
+        }
+        
+        console.log('✅ [StoryMainView] Story updated successfully:', field, value);
       } else {
-        console.error('Failed to update story:', await response.text());
+        const errorText = await response.text();
+        console.error('❌ [StoryMainView] Failed to update story:', errorText);
         throw new Error('Failed to update story');
       }
     } catch (error) {
-      console.error('Error updating story:', error);
+      console.error('❌ [StoryMainView] Error updating story:', error);
       throw error;
     }
   };
@@ -60,14 +72,14 @@ export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
     <div className="h-full overflow-y-auto p-6">
       <div className="w-full space-y-6">
         {/* Overview Section */}
-        <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-6">
-          <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2 mb-4">Overview</h3>
+        <div className="bg-background rounded-lg border border-border p-6">
+          <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2 mb-4">Overview</h3>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column */}
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Title</label>
+                <label className="text-xs text-muted uppercase tracking-wide">Title</label>
                 <div className="mt-1">
                   <InlineEditField
                     value={story.title || ''}
@@ -76,13 +88,13 @@ export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
                     recordType="stacks"
                     placeholder="Enter title"
                     onSave={handleSave}
-                    className="text-sm font-medium text-[var(--foreground)]"
+                    className="text-sm font-medium text-foreground"
                   />
                 </div>
               </div>
               
               <div>
-                <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Status</label>
+                <label className="text-xs text-muted uppercase tracking-wide">Status</label>
                 <div className="mt-1">
                   <InlineEditField
                     value={story.status || ''}
@@ -105,7 +117,7 @@ export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
               </div>
               
               <div>
-                <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Priority</label>
+                <label className="text-xs text-muted uppercase tracking-wide">Priority</label>
                 <div className="mt-1">
                   <InlineEditField
                     value={story.priority || ''}
@@ -127,15 +139,15 @@ export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
 
               {story.product && (
                 <div>
-                  <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Product</label>
-                  <div className="text-sm text-[var(--foreground)] mt-1">{story.product}</div>
+                  <label className="text-xs text-muted uppercase tracking-wide">Product</label>
+                  <div className="text-sm text-foreground mt-1">{story.product}</div>
                 </div>
               )}
 
               {story.section && (
                 <div>
-                  <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Section</label>
-                  <div className="text-sm text-[var(--foreground)] mt-1">{story.section}</div>
+                  <label className="text-xs text-muted uppercase tracking-wide">Section</label>
+                  <div className="text-sm text-foreground mt-1">{story.section}</div>
                 </div>
               )}
             </div>
@@ -143,8 +155,8 @@ export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
             {/* Right Column */}
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Assignee</label>
-                <div className="text-sm text-[var(--foreground)] mt-1">
+                <label className="text-xs text-muted uppercase tracking-wide">Assignee</label>
+                <div className="text-sm text-foreground mt-1">
                   {story.assignee 
                     ? (typeof story.assignee === 'object' 
                       ? story.assignee.name || `${story.assignee.firstName || ''} ${story.assignee.lastName || ''}`.trim() || story.assignee.email
@@ -154,19 +166,19 @@ export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
               </div>
               
               <div>
-                <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Created</label>
-                <div className="text-sm text-[var(--foreground)] mt-1">{formatDate(story.createdAt)}</div>
+                <label className="text-xs text-muted uppercase tracking-wide">Created</label>
+                <div className="text-sm text-foreground mt-1">{formatDate(story.createdAt)}</div>
               </div>
               
               <div>
-                <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Last Updated</label>
-                <div className="text-sm text-[var(--foreground)] mt-1">{formatDate(story.updatedAt)}</div>
+                <label className="text-xs text-muted uppercase tracking-wide">Last Updated</label>
+                <div className="text-sm text-foreground mt-1">{formatDate(story.updatedAt)}</div>
               </div>
 
               {story.epic && (
                 <div>
-                  <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Epic</label>
-                  <div className="text-sm text-[var(--foreground)] mt-1">
+                  <label className="text-xs text-muted uppercase tracking-wide">Epic</label>
+                  <div className="text-sm text-foreground mt-1">
                     {typeof story.epic === 'object' ? story.epic.title : story.epic}
                   </div>
                 </div>
@@ -174,8 +186,8 @@ export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
 
               {story.project && (
                 <div>
-                  <label className="text-xs text-[var(--muted)] uppercase tracking-wide">Project</label>
-                  <div className="text-sm text-[var(--foreground)] mt-1">
+                  <label className="text-xs text-muted uppercase tracking-wide">Project</label>
+                  <div className="text-sm text-foreground mt-1">
                     {typeof story.project === 'object' ? story.project.name : story.project}
                   </div>
                 </div>
@@ -185,8 +197,8 @@ export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
         </div>
 
         {/* Description Section */}
-        <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] p-6">
-          <h3 className="text-sm font-medium text-[var(--foreground)] uppercase tracking-wide border-b border-[var(--border)] pb-2 mb-4">Description</h3>
+        <div className="bg-background rounded-lg border border-border p-6">
+          <h3 className="text-sm font-medium text-foreground uppercase tracking-wide border-b border-border pb-2 mb-4">Description</h3>
           <div className="mt-1">
             <InlineEditField
               value={story.description || ''}
@@ -196,7 +208,7 @@ export function StoryMainView({ story: initialStory }: StoryMainViewProps) {
               type="textarea"
               placeholder="Enter description"
               onSave={handleSave}
-              className="text-sm text-[var(--foreground)] whitespace-pre-wrap"
+              className="text-sm text-foreground whitespace-pre-wrap"
             />
           </div>
         </div>

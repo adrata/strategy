@@ -38,12 +38,12 @@ export function DebugPanel({ onForceRefresh }: DebugPanelProps) {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 shadow-lg z-50 max-w-sm">
+    <div className="fixed bottom-4 right-4 bg-background border border-border rounded-lg p-4 shadow-lg z-50 max-w-sm">
       <div className="flex justify-between items-center mb-2">
         <h3 className="font-semibold text-sm">Debug Panel</h3>
         <button
           onClick={() => setIsVisible(false)}
-          className="text-[var(--muted)] hover:text-gray-700"
+          className="text-muted hover:text-gray-700"
         >
           ×
         </button>

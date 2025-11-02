@@ -11,15 +11,15 @@ export function ResultsDashboard() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-[var(--foreground)] mb-4">
+        <h2 className="text-2xl font-bold text-foreground mb-4">
           Results Dashboard
         </h2>
-        <p className="text-[var(--muted-foreground)] mb-6">
+        <p className="text-muted mb-6">
           View comprehensive results and statistical analysis from your experiments. 
           Track performance metrics, confidence intervals, and statistical significance.
         </p>
         <div className="space-y-3">
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-muted">
             Select an experiment from the left panel to view detailed results
           </p>
         </div>

@@ -160,10 +160,10 @@ const mockFutures: StacksItem[] = [
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'todo': return 'bg-[var(--hover)] text-gray-800';
+    case 'todo': return 'bg-hover text-gray-800';
     case 'in-progress': return 'bg-blue-100 text-blue-800';
     case 'done': return 'bg-green-100 text-green-800';
-    default: return 'bg-[var(--hover)] text-gray-800';
+    default: return 'bg-hover text-gray-800';
   }
 };
 
@@ -172,7 +172,7 @@ const getPriorityColor = (priority: string) => {
     case 'low': return 'text-green-600';
     case 'medium': return 'text-yellow-600';
     case 'high': return 'text-red-600';
-    default: return 'text-[var(--muted)]';
+    default: return 'text-muted';
   }
 };
 
@@ -291,15 +291,15 @@ export function StacksMiddlePanel({
   // Handle special sections that don't use the item list interface
   if (activeSubSection === 'chronicle') {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         {/* Header */}
-        <div className="p-4 border-b border-[var(--border)]">
+        <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)] capitalize">
+              <h1 className="text-2xl font-bold text-foreground capitalize">
                 {activeSubSection}
               </h1>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Business intelligence reports and insights
               </p>
             </div>
@@ -311,10 +311,10 @@ export function StacksMiddlePanel({
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="text-6xl mb-4">📊</div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+              <h3 className="text-lg font-semibold text-foreground mb-2">
                 Chronicle Coming Soon
               </h3>
-              <p className="text-[var(--muted)] mb-4">
+              <p className="text-muted mb-4">
                 Business intelligence reports will be available here soon.
               </p>
             </div>
@@ -326,15 +326,15 @@ export function StacksMiddlePanel({
 
   if (activeSubSection === 'metrics') {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         {/* Header */}
-        <div className="p-4 border-b border-[var(--border)]">
+        <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)] capitalize">
+              <h1 className="text-2xl font-bold text-foreground capitalize">
                 {activeSubSection}
               </h1>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Product and engineering performance indicators
               </p>
             </div>
@@ -352,15 +352,15 @@ export function StacksMiddlePanel({
   // Handle item list sections (epics, stories, bugs, futures)
   if (['epics', 'stories', 'bugs', 'futures'].includes(activeSubSection)) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         {/* Header */}
-        <div className="p-4 border-b border-[var(--border)]">
+        <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)] capitalize">
+              <h1 className="text-2xl font-bold text-foreground capitalize">
                 {activeSubSection}
               </h1>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 Manage your {activeSubSection} items and projects
               </p>
             </div>
@@ -381,16 +381,16 @@ export function StacksMiddlePanel({
                 placeholder="Search stacks..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
               />
             </div>
             
             <div className="flex items-center gap-2">
-              <FunnelIcon className="h-4 w-4 text-[var(--muted)]" />
+              <FunnelIcon className="h-4 w-4 text-muted" />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
               >
                 <option value="all">All Status</option>
                 <option value="todo">To Do</option>
@@ -454,15 +454,15 @@ export function StacksMiddlePanel({
   // Handle stacks section (also handles workstream)
   if (activeSubSection === 'stacks' || activeSubSection === 'stacks-build' || activeSubSection === 'workstream') {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)]">
+      <div className="h-full flex flex-col bg-background">
         {/* Header */}
-        <div className="p-4 border-b border-[var(--border)]">
+        <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)]">
+              <h1 className="text-2xl font-bold text-foreground">
                 {headerInfo.title}
               </h1>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 {headerInfo.description}
               </p>
             </div>
@@ -530,15 +530,15 @@ export function StacksMiddlePanel({
 
   // Default fallback for other sections
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="p-4 border-b border-[var(--border)]">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)] capitalize">
+            <h1 className="text-2xl font-bold text-foreground capitalize">
               {activeSubSection}
             </h1>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <p className="text-sm text-muted mt-1">
               Manage your {activeSubSection} tasks and projects
             </p>
           </div>
@@ -559,20 +559,20 @@ export function StacksMiddlePanel({
               placeholder="Search stacks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+              className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
             />
           </div>
           
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] border border-[var(--border)] rounded-lg transition-colors">
+            <button className="flex items-center gap-2 px-3 py-2 text-sm text-muted hover:text-foreground hover:bg-hover border border-border rounded-lg transition-colors">
               <AdjustmentsHorizontalIcon className="h-4 w-4" />
               Sort
             </button>
-            <button className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] border border-[var(--border)] rounded-lg transition-colors">
+            <button className="flex items-center gap-2 px-3 py-2 text-sm text-muted hover:text-foreground hover:bg-hover border border-border rounded-lg transition-colors">
               <FunnelIcon className="h-4 w-4" />
               Filter
             </button>
-            <button className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover)] border border-[var(--border)] rounded-lg transition-colors">
+            <button className="flex items-center gap-2 px-3 py-2 text-sm text-muted hover:text-foreground hover:bg-hover border border-border rounded-lg transition-colors">
               <AdjustmentsHorizontalIcon className="h-4 w-4" />
               Columns
             </button>
@@ -590,10 +590,10 @@ export function StacksMiddlePanel({
           <div className="flex items-center justify-center h-full text-center">
             <div>
               <div className="text-6xl mb-4">📋</div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+              <h3 className="text-lg font-semibold text-foreground mb-2">
                 {activeSubSection} Coming Soon
               </h3>
-              <p className="text-[var(--muted)] mb-4">
+              <p className="text-muted mb-4">
                 This section is under development
               </p>
             </div>

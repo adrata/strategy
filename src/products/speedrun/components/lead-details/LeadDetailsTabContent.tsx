@@ -71,21 +71,21 @@ export function LeadDetailsTabContent({
         return (
           <div className="p-6">
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Actions
               </h3>
-              <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4">
-                <p className="text-[var(--muted)] mb-3">
+              <div className="bg-[var(--card)] border border-border rounded-lg p-4">
+                <p className="text-muted mb-3">
                   Timeline for {person.name} at {typeof person.company === 'object' ? person.company?.name || 'this company' : person.company || 'this company'}...
                 </p>
                 <div className="space-y-4">
                   <div className="flex items-start">
-                    <div className="w-3 h-3 bg-[var(--accent)] rounded-full mt-1 mr-3 flex-shrink-0"></div>
+                    <div className="w-3 h-3 bg-primary rounded-full mt-1 mr-3 flex-shrink-0"></div>
                     <div>
-                      <div className="font-semibold text-[var(--foreground)] text-sm">
+                      <div className="font-semibold text-foreground text-sm">
                         Contact Created
                       </div>
-                      <div className="text-[var(--muted)] text-sm">
+                      <div className="text-muted text-sm">
                         Added to speedrun pipeline
                       </div>
                     </div>
@@ -93,10 +93,10 @@ export function LeadDetailsTabContent({
                   <div className="flex items-start">
                     <div className="w-3 h-3 bg-gray-300 rounded-full mt-1 mr-3 flex-shrink-0"></div>
                     <div>
-                      <div className="font-semibold text-[var(--foreground)] text-sm">
+                      <div className="font-semibold text-foreground text-sm">
                         Next Action
                       </div>
-                      <div className="text-[var(--muted)] text-sm">
+                      <div className="text-muted text-sm">
                         {person.nextAction || 'No action planned'}
                       </div>
                     </div>
@@ -110,10 +110,10 @@ export function LeadDetailsTabContent({
       default:
         return (
           <div className="p-8 text-center">
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Tab Not Found
             </h3>
-            <p className="text-[var(--muted)]">
+            <p className="text-muted">
               The requested tab &quot;{activeTab}&quot; is not available.
             </p>
           </div>
@@ -122,7 +122,7 @@ export function LeadDetailsTabContent({
   };
 
   return (
-    <div className="bg-[var(--background)] rounded-b-xl border-b border-[var(--border)] shadow-sm pt-0 px-6 pb-12 w-full -mt-2">
+    <div className="bg-background rounded-b-xl border-b border-border shadow-sm pt-0 px-6 pb-12 w-full -mt-2">
       <div className="pt-6">{renderTabContent()}</div>
     </div>
   );

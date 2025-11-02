@@ -29,16 +29,17 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    if (!channelId && !dmId) {
+    // Validate required parameters upfront
+    if (!workspaceId) {
       return NextResponse.json(
-        { error: 'Channel ID or DM ID required' },
+        { error: 'Workspace ID required' },
         { status: 400 }
       );
     }
 
-    if (!workspaceId) {
+    if (!channelId && !dmId) {
       return NextResponse.json(
-        { error: 'Workspace ID required' },
+        { error: 'Channel ID or DM ID required' },
         { status: 400 }
       );
     }
@@ -83,12 +84,12 @@ export async function GET(request: NextRequest) {
       },
       include: {
         sender: {
-          select: { id: true, name: true, username: true }
+          select: { id: true, name: true, username: true, email: true }
         },
         reactions: {
           include: {
             user: {
-              select: { id: true, name: true, username: true }
+              select: { id: true, name: true, username: true, email: true }
             }
           }
         },
@@ -97,7 +98,7 @@ export async function GET(request: NextRequest) {
           orderBy: { createdAt: 'asc' },
           include: {
             sender: {
-              select: { id: true, name: true, username: true }
+              select: { id: true, name: true, username: true, email: true }
             }
           }
         }
@@ -114,7 +115,7 @@ export async function GET(request: NextRequest) {
       channelId: message.channelId,
       dmId: message.dmId,
       senderId: message.senderId,
-      senderName: message.sender.name,
+      senderName: message.sender.name || message.sender.username || message.sender.email?.split('@')[0] || '',
       senderUsername: message.sender.username,
       parentMessageId: message.parentMessageId,
       createdAt: message.createdAt,
@@ -123,16 +124,16 @@ export async function GET(request: NextRequest) {
         id: reaction.id,
         emoji: reaction.emoji,
         userId: reaction.userId,
-        userName: reaction.user.name,
+        userName: reaction.user.name || reaction.user.username || reaction.user.email?.split('@')[0] || '',
         createdAt: reaction.createdAt
       })),
       threadCount: message.threadMessages.length,
-      threadMessages: message.threadMessages.map(threadMessage => ({
-        id: threadMessage.id,
-        content: threadMessage.content,
-        senderId: threadMessage.senderId,
-        senderName: threadMessage.sender.name,
-        senderUsername: threadMessage.sender.username,
+        threadMessages: message.threadMessages.map(threadMessage => ({
+          id: threadMessage.id,
+          content: threadMessage.content,
+          senderId: threadMessage.senderId,
+          senderName: threadMessage.sender.name || threadMessage.sender.username || threadMessage.sender.email?.split('@')[0] || '',
+          senderUsername: threadMessage.sender.username,
         createdAt: threadMessage.createdAt
       }))
     }));

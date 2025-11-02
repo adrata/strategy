@@ -187,20 +187,20 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
   // Show skeleton loading state when no channel is selected
   if (!selectedChannel) {
     return (
-      <div className="flex-1 flex flex-col bg-[var(--background)] h-full">
+      <div className="flex-1 flex flex-col bg-background h-full">
         {/* Header Skeleton */}
-        <div className="flex-shrink-0 p-4 border-b border-[var(--border)] bg-[var(--background)]">
+        <div className="flex-shrink-0 p-4 border-b border-border bg-background">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-5 h-5 bg-[var(--loading-bg)] rounded animate-pulse" />
+              <div className="w-5 h-5 bg-loading-bg rounded animate-pulse" />
               <div className="space-y-2">
-                <div className="h-6 bg-[var(--loading-bg)] rounded w-32 animate-pulse" />
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-24 animate-pulse" />
+                <div className="h-6 bg-loading-bg rounded w-32 animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded w-24 animate-pulse" />
               </div>
             </div>
             <div className="flex gap-2">
-              <div className="h-8 bg-[var(--loading-bg)] rounded w-24 animate-pulse" />
-              <div className="h-8 bg-[var(--loading-bg)] rounded w-28 animate-pulse" />
+              <div className="h-8 bg-loading-bg rounded w-24 animate-pulse" />
+              <div className="h-8 bg-loading-bg rounded w-28 animate-pulse" />
             </div>
           </div>
         </div>
@@ -209,19 +209,19 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
         <div className="flex-1 overflow-y-auto p-3 space-y-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex gap-3 px-2">
-              <div className="w-10 h-10 bg-[var(--loading-bg)] rounded animate-pulse" />
+              <div className="w-10 h-10 bg-loading-bg rounded animate-pulse" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-1/4 animate-pulse" />
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse" />
-                <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded w-1/4 animate-pulse" />
+                <div className="h-4 bg-loading-bg rounded w-3/4 animate-pulse" />
+                <div className="h-3 bg-loading-bg rounded w-1/2 animate-pulse" />
               </div>
             </div>
           ))}
         </div>
         
         {/* Input Skeleton */}
-        <div className="flex-shrink-0 p-4 border-t border-[var(--border)]">
-          <div className="h-12 bg-[var(--loading-bg)] rounded-lg animate-pulse" />
+        <div className="flex-shrink-0 p-4 border-t border-border">
+          <div className="h-12 bg-loading-bg rounded-lg animate-pulse" />
         </div>
       </div>
     );
@@ -229,27 +229,27 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
 
   // Chat view with messages
   return (
-    <div className="flex-1 flex flex-col bg-[var(--background)] h-full">
+    <div className="flex-1 flex flex-col bg-background h-full">
       {/* Chat Header */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)] bg-[var(--background)]">
+      <div className="flex-shrink-0 p-4 border-b border-border bg-background">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {selectedChannel.type === 'channel' && (
-              <HashtagIcon className="w-5 h-5 text-[var(--muted)]" />
+              <HashtagIcon className="w-5 h-5 text-muted" />
             )}
             {selectedChannel.type === 'dm' && (
-              <div className="w-8 h-8 bg-white border border-[var(--border)] rounded flex items-center justify-center">
-                <span className="text-sm font-medium text-[var(--foreground)]">
+              <div className="w-8 h-8 bg-white border border-border rounded flex items-center justify-center">
+                <span className="text-sm font-medium text-foreground">
                   {selectedChannel.name.charAt(0).toUpperCase()}
                 </span>
               </div>
             )}
             <div>
-              <h2 className="text-lg font-semibold text-[var(--foreground)]">
+              <h2 className="text-lg font-semibold text-foreground">
                 {selectedChannel.type === 'channel' ? `#${selectedChannel.name}` : selectedChannel.name}
               </h2>
               {selectedChannel.type === 'dm' && selectedChannel.status && (
-                <p className="text-sm text-[var(--muted)]">
+                <p className="text-sm text-muted">
                   {selectedChannel.status === 'online' ? 'Online' : 
                    selectedChannel.status === 'away' ? 'Away' : 'Offline'}
                 </p>
@@ -262,7 +262,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             {/* Add Action Button */}
             <button
               onClick={() => setShowAddActionModal(true)}
-              className="flex items-center gap-2 px-3 py-1.5 bg-[var(--panel-background)] hover:bg-[var(--hover)] text-[var(--foreground)] rounded-md transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 bg-panel-background hover:bg-hover text-foreground rounded-md transition-colors"
             >
               <PlusIcon className="w-4 h-4" />
               <span className="text-sm font-medium">Add Action</span>
@@ -286,14 +286,29 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="flex gap-3 px-2">
-                <div className="w-10 h-10 bg-[var(--loading-bg)] rounded animate-pulse" />
+                <div className="w-10 h-10 bg-loading-bg rounded animate-pulse" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-[var(--loading-bg)] rounded w-1/4 animate-pulse" />
-                  <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse" />
-                  <div className="h-3 bg-[var(--loading-bg)] rounded w-1/2 animate-pulse" />
+                  <div className="h-4 bg-loading-bg rounded w-1/4 animate-pulse" />
+                  <div className="h-4 bg-loading-bg rounded w-3/4 animate-pulse" />
+                  <div className="h-3 bg-loading-bg rounded w-1/2 animate-pulse" />
                 </div>
               </div>
             ))}
+          </div>
+        ) : realMessages.length === 0 ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-center text-muted">
+              <p className="text-lg font-medium mb-2">
+                {selectedChannel.type === 'channel'
+                  ? 'Welcome to the channel!'
+                  : 'Start the conversation'}
+              </p>
+              <p className="text-sm">
+                {selectedChannel.type === 'channel'
+                  ? 'This is the beginning of your conversation in this channel.'
+                  : 'This is the beginning of your direct message conversation.'}
+              </p>
+            </div>
           </div>
         ) : (
           realMessages.map((message) => (
@@ -305,15 +320,19 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             onClick={() => onShowThread?.()}
           >
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-white border border-[var(--border)] rounded flex items-center justify-center">
-                <span className="text-base font-medium text-[var(--foreground)]">{message.senderName.charAt(0).toUpperCase()}</span>
+              <div className="w-10 h-10 bg-white border border-border rounded flex items-center justify-center">
+                <span className="text-base font-medium text-foreground">
+                  {message.senderName && message.senderName.length > 0 
+                    ? message.senderName.charAt(0).toUpperCase() 
+                    : '?'}
+                </span>
               </div>
             </div>
             
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-sm font-medium text-[var(--foreground)]">{message.senderName}</span>
-                <span className="text-sm text-[var(--muted)]">{new Date(message.createdAt).toLocaleTimeString()}</span>
+                <span className="text-sm font-medium text-foreground">{message.senderName || 'Unknown'}</span>
+                <span className="text-sm text-muted">{new Date(message.createdAt).toLocaleTimeString()}</span>
               </div>
               
               <p className="text-sm text-gray-700 mb-2">{message.content}</p>
@@ -324,10 +343,10 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
                   {message.reactions.map((reaction) => (
                     <button
                       key={reaction.id}
-                      className="flex items-center gap-1 px-2 py-1 bg-[var(--hover)] hover:bg-[var(--loading-bg)] rounded-full text-sm transition-colors"
+                      className="flex items-center gap-1 px-2 py-1 bg-hover hover:bg-loading-bg rounded-full text-sm transition-colors"
                     >
                       <span>{reaction.emoji}</span>
-                      <span className="text-[var(--muted)]">{reaction.userName}</span>
+                      <span className="text-muted">{reaction.userName}</span>
                     </button>
                   ))}
                 </div>
@@ -336,7 +355,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
               {/* Thread indicator */}
               {message.threadCount > 0 && (
                 <button 
-                  className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] flex items-center gap-1"
+                  className="text-sm text-muted hover:text-foreground flex items-center gap-1"
                   onClick={(e) => {
                     e.stopPropagation();
                     onShowThread?.();
@@ -355,8 +374,8 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
 
       {/* Typing Indicators */}
       {typingUsers.length > 0 && (
-        <div className="flex-shrink-0 px-4 py-2 border-t border-[var(--border)] bg-[var(--background)]">
-          <div className="text-sm text-[var(--muted)]">
+        <div className="flex-shrink-0 px-4 py-2 border-t border-border bg-background">
+          <div className="text-sm text-muted">
             {typingUsers.map((user, index) => (
               <span key={user.userId}>
                 {user.userName} is typing
@@ -368,7 +387,7 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
       )}
 
       {/* Message Input - Bottom Aligned */}
-      <div className="flex-shrink-0 p-4 border-t border-[var(--border)] bg-[var(--background)]">
+      <div className="flex-shrink-0 p-4 border-t border-border bg-background">
         <form onSubmit={handleSendMessage} className="relative">
           <input
             type="text"
@@ -383,15 +402,15 @@ export function OasisChatPanel({ onShowThread }: OasisChatPanelProps = {}) {
             }}
             onBlur={() => stopTyping()}
             placeholder={`Message ${selectedChannel.type === 'channel' ? `#${selectedChannel.name}` : selectedChannel.name}...`}
-            className="w-full px-4 py-8 pr-20 border border-[var(--border)] rounded-lg focus:outline-none focus:border-[var(--muted)] text-sm bg-white"
+            className="w-full px-4 py-8 pr-20 border border-border rounded-lg focus:outline-none focus:border-muted text-sm bg-white"
           />
           <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
             <button
               type="submit"
               disabled={!messageInput.trim()}
-              className="px-2 py-1.5 bg-white border border-[var(--border)] rounded-md hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+              className="px-2 py-1.5 bg-white border border-border rounded-md hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
-              <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>
             </button>

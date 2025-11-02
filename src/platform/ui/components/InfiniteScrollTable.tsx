@@ -71,13 +71,13 @@ export function InfiniteScrollTable({
     switch (section) {
       case 'leads':
         return (
-          <tr key={key} className="hover:bg-[var(--panel-background)] cursor-pointer">
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.company || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.fullName || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.title || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.email || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.status || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
+          <tr key={key} className="hover:bg-panel-background cursor-pointer">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.company || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{record.fullName || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.title || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.email || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.status || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
               <span className={`px-2 py-1 text-xs rounded-full ${
                 record['priority'] === 'high' ? 'bg-red-100 text-red-800' :
                 record['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-800' :
@@ -91,13 +91,13 @@ export function InfiniteScrollTable({
         
       case 'prospects':
         return (
-          <tr key={key} className="hover:bg-[var(--panel-background)] cursor-pointer">
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.company || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.fullName || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.jobTitle || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.email || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.status || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
+          <tr key={key} className="hover:bg-panel-background cursor-pointer">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.company || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{record.fullName || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.jobTitle || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.email || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.status || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
               <span className={`px-2 py-1 text-xs rounded-full ${
                 record['priority'] === 'high' ? 'bg-red-100 text-red-800' :
                 record['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-800' :
@@ -111,12 +111,12 @@ export function InfiniteScrollTable({
         
       case 'people':
         return (
-          <tr key={key} className="hover:bg-[var(--panel-background)] cursor-pointer">
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.fullName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.jobTitle || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.email || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.status || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
+          <tr key={key} className="hover:bg-panel-background cursor-pointer">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{record.fullName || `${record.firstName || ''} ${record.lastName || ''}`.trim() || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.jobTitle || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.email || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.status || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
               {new Date(record.updatedAt).toLocaleDateString()}
             </td>
           </tr>
@@ -124,14 +124,14 @@ export function InfiniteScrollTable({
         
       case 'companies':
         return (
-          <tr key={key} className="hover:bg-[var(--panel-background)] cursor-pointer">
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">{record.name || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.industry || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">{record.size || '-'}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
+          <tr key={key} className="hover:bg-panel-background cursor-pointer">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{record.name || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.industry || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{record.size || '-'}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
               {record.revenue ? `$${record.revenue.toLocaleString()}` : '-'}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--muted)]">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
               {new Date(record.updatedAt).toLocaleDateString()}
             </td>
           </tr>
@@ -139,8 +139,8 @@ export function InfiniteScrollTable({
         
       default:
         return (
-          <tr key={key} className="hover:bg-[var(--panel-background)] cursor-pointer">
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
+          <tr key={key} className="hover:bg-panel-background cursor-pointer">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
               {record.name || record.fullName || '-'}
             </td>
           </tr>
@@ -149,11 +149,11 @@ export function InfiniteScrollTable({
   };
 
   return (
-    <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] h-full flex flex-col mx-6 mb-8">
+    <div className="bg-background rounded-lg border border-border h-full flex flex-col mx-6 mb-8">
       {/* Header with search */}
-      <div className="px-6 py-4 border-b border-[var(--border)]">
+      <div className="px-6 py-4 border-b border-border">
         <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] capitalize">
+                      <h3 className="text-lg font-semibold text-foreground capitalize">
             {section} ({filteredRecords.length.toLocaleString()} {searchQuery ? 'filtered' : 'total'})
           </h3>
           <div className="flex items-center space-x-4">
@@ -162,12 +162,12 @@ export function InfiniteScrollTable({
               placeholder={searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-3 py-2 border border-[var(--border)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="text-[var(--muted)] hover:text-[var(--muted)]"
+                className="text-muted hover:text-muted"
               >
                 ✕
               </button>
@@ -180,19 +180,19 @@ export function InfiniteScrollTable({
       <div className="flex-1 overflow-hidden">
         <div className="h-full overflow-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-[var(--panel-background)] sticky top-0 z-10">
+            <thead className="bg-panel-background sticky top-0 z-10">
               <tr>
                 {columns.map((header) => (
                   <th 
                     key={header}
-                    className="px-6 py-4 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider"
+                    className="px-6 py-4 text-left text-xs font-medium text-muted uppercase tracking-wider"
                   >
                     {header}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-[var(--background)] divide-y divide-gray-200">
+            <tbody className="bg-background divide-y divide-gray-200">
               {filteredRecords.map(renderTableRow)}
             </tbody>
           </table>
@@ -200,12 +200,12 @@ export function InfiniteScrollTable({
           {/* Data summary */}
           <div className="flex justify-center py-4">
             {filteredRecords.length > 0 && (
-              <div className="text-center text-[var(--muted)] text-sm py-4">
+              <div className="text-center text-muted text-sm py-4">
                 Showing {filteredRecords.length.toLocaleString()} {section} {searchQuery ? '(filtered)' : ''}
               </div>
             )}
             {filteredRecords['length'] === 0 && allRecords.length > 0 && searchQuery && (
-              <div className="text-center text-[var(--muted)] text-sm py-4">
+              <div className="text-center text-muted text-sm py-4">
                 No {section} match "{searchQuery}" - try a different search
               </div>
             )}

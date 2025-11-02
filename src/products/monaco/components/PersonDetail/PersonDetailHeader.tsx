@@ -67,14 +67,14 @@ export function PersonDetailHeader({
     person.title.trim() !== '';
 
   return (
-    <div className="flex-none bg-[var(--background)] border-b border-[var(--border)] px-6 py-4">
+    <div className="flex-none bg-background border-b border-border px-6 py-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
-            className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
           >
-            <ChevronLeftIcon className="w-5 h-5 text-[var(--muted)]" />
+            <ChevronLeftIcon className="w-5 h-5 text-muted" />
           </button>
 
           {/* Speedrun Navigation */}
@@ -83,21 +83,21 @@ export function PersonDetailHeader({
               <button
                 onClick={onPrevious}
                 disabled={currentIndex === 0}
-                className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors disabled:opacity-50"
+                className="p-2 hover:bg-hover rounded-lg transition-colors disabled:opacity-50"
               >
-                <ChevronLeftIcon className="w-4 h-4 text-[var(--muted)]" />
+                <ChevronLeftIcon className="w-4 h-4 text-muted" />
               </button>
               
-              <span className="text-sm text-[var(--muted)]">
+              <span className="text-sm text-muted">
                 {currentIndex + 1} of {totalRecords}
               </span>
               
               <button
                 onClick={onNext}
                 disabled={currentIndex === totalRecords - 1}
-                className="p-2 hover:bg-[var(--hover-bg)] rounded-lg transition-colors disabled:opacity-50"
+                className="p-2 hover:bg-hover rounded-lg transition-colors disabled:opacity-50"
               >
-                <ChevronRightIcon className="w-4 h-4 text-[var(--muted)]" />
+                <ChevronRightIcon className="w-4 h-4 text-muted" />
               </button>
             </div>
           )}
@@ -132,18 +132,18 @@ export function PersonDetailHeader({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-[var(--foreground)] mb-1">
+              <h1 className="text-2xl font-bold text-foreground mb-1">
                 {person.name}
               </h1>
               
               {hasValidTitle && (
-                <p className="text-lg text-[var(--muted)] mb-2">
+                <p className="text-lg text-muted mb-2">
                   {person.title}
                 </p>
               )}
 
               {/* Contact Info with Company */}
-              <div className="flex items-center gap-4 text-sm text-[var(--muted)] mb-3">
+              <div className="flex items-center gap-4 text-sm text-muted mb-3">
                 {person.company && person.company !== "-" && person.company.trim() !== '' && (
                   <button
                     onClick={() => onCompanyClick?.(person.company || "")}
@@ -184,10 +184,10 @@ export function PersonDetailHeader({
 
               {/* Ranking */}
               <div className="text-right">
-                <div className="text-2xl font-bold text-[var(--foreground)]">
+                <div className="text-2xl font-bold text-foreground">
                   #{getRankNumber(person)}
                 </div>
-                <div className="text-sm text-[var(--muted)]">
+                <div className="text-sm text-muted">
                   {getRankingDescription(person)}
                 </div>
               </div>
@@ -195,7 +195,7 @@ export function PersonDetailHeader({
           </div>
 
           {/* Additional Info Row */}
-          <div className="flex items-center gap-6 mt-4 text-sm text-[var(--muted)]">
+          <div className="flex items-center gap-6 mt-4 text-sm text-muted">
             {person['department'] && (
               <div className="flex items-center gap-1">
                 <UsersIcon className="w-4 h-4" />

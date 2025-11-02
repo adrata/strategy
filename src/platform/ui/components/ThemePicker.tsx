@@ -76,8 +76,8 @@ export function ThemePicker() {
           onClick={() => setTab("auto")}
           className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
             tab === "auto"
-              ? "bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)]"
-              : "text-[var(--muted)] hover:text-[var(--foreground)] border border-transparent"
+              ? "bg-background text-foreground border border-border"
+              : "text-muted hover:text-foreground border border-transparent"
           }`}
         >
           Auto
@@ -86,8 +86,8 @@ export function ThemePicker() {
           onClick={() => setTab("light")}
           className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
             tab === "light"
-              ? "bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)]"
-              : "text-[var(--muted)] hover:text-[var(--foreground)] border border-transparent"
+              ? "bg-background text-foreground border border-border"
+              : "text-muted hover:text-foreground border border-transparent"
           }`}
         >
           Light
@@ -96,8 +96,8 @@ export function ThemePicker() {
           onClick={() => setTab("dark")}
           className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
             tab === "dark"
-              ? "bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)]"
-              : "text-[var(--muted)] hover:text-[var(--foreground)] border border-transparent"
+              ? "bg-background text-foreground border border-border"
+              : "text-muted hover:text-foreground border border-transparent"
           }`}
         >
           Dark
@@ -105,13 +105,13 @@ export function ThemePicker() {
       </div>
       {tab === "auto" && (
         <div className="flex flex-col gap-4">
-          <div className="mb-2 text-sm text-[var(--muted)]">
+          <div className="mb-2 text-sm text-muted">
             System theme:{" "}
-            <span className="font-semibold text-[var(--foreground)]">Auto</span>
+            <span className="font-semibold text-foreground">Auto</span>
           </div>
           {systemTheme === "dark" ? (
             <>
-              <div className="mb-1 font-semibold text-[var(--foreground)]">
+              <div className="mb-1 font-semibold text-foreground">
                 Dark Theme (for system dark mode)
               </div>
               <div className="grid grid-cols-3 gap-3 mb-4">
@@ -125,20 +125,20 @@ export function ThemePicker() {
                     }}
                     className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
                       selectedDark === themeOption.id && theme['themeMode'] === "auto"
-                        ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
-                        : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
+                        ? "bg-background text-foreground border-primary shadow"
+                        : "text-muted hover:text-foreground border-border"
                     }`}
                   >
                     {formatThemeName(themeOption.name)}
                     {selectedDark === themeOption.id && theme['themeMode'] === "auto" && (
-                      <span className="ml-2 text-xs text-[var(--accent)]">
+                      <span className="ml-2 text-xs text-primary">
                         (Active)
                       </span>
                     )}
                   </button>
                 ))}
               </div>
-              <div className="mb-1 font-semibold text-[var(--foreground)]">
+              <div className="mb-1 font-semibold text-foreground">
                 Light Theme (for system light mode)
               </div>
               <div className="grid grid-cols-3 gap-3">
@@ -152,13 +152,13 @@ export function ThemePicker() {
                     }}
                     className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
                       selectedLight === themeOption.id && theme['themeMode'] === "auto"
-                        ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
-                        : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
+                        ? "bg-background text-foreground border-primary shadow"
+                        : "text-muted hover:text-foreground border-border"
                     }`}
                   >
                     {formatThemeName(themeOption.name)}
                     {selectedLight === themeOption.id && theme['themeMode'] === "auto" && (
-                      <span className="ml-2 text-xs text-[var(--accent)]">
+                      <span className="ml-2 text-xs text-primary">
                         (Active)
                       </span>
                     )}
@@ -168,7 +168,7 @@ export function ThemePicker() {
             </>
           ) : (
             <>
-              <div className="mb-1 font-semibold text-[var(--foreground)]">
+              <div className="mb-1 font-semibold text-foreground">
                 Light Theme (for system light mode)
               </div>
               <div className="grid grid-cols-3 gap-3 mb-4">
@@ -182,20 +182,20 @@ export function ThemePicker() {
                     }}
                     className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
                       selectedLight === themeOption.id && theme['themeMode'] === "auto"
-                        ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
-                        : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
+                        ? "bg-background text-foreground border-primary shadow"
+                        : "text-muted hover:text-foreground border-border"
                     }`}
                   >
                     {formatThemeName(themeOption.name)}
                     {selectedLight === themeOption.id && theme['themeMode'] === "auto" && (
-                      <span className="ml-2 text-xs text-[var(--accent)]">
+                      <span className="ml-2 text-xs text-primary">
                         (Active)
                       </span>
                     )}
                   </button>
                 ))}
               </div>
-              <div className="mb-1 font-semibold text-[var(--foreground)]">
+              <div className="mb-1 font-semibold text-foreground">
                 Dark Theme (for system dark mode)
               </div>
               <div className="grid grid-cols-3 gap-3">
@@ -209,13 +209,13 @@ export function ThemePicker() {
                     }}
                     className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
                       selectedDark === themeOption.id && theme['themeMode'] === "auto"
-                        ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
-                        : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
+                        ? "bg-background text-foreground border-primary shadow"
+                        : "text-muted hover:text-foreground border-border"
                     }`}
                   >
                     {formatThemeName(themeOption.name)}
                     {selectedDark === themeOption.id && theme['themeMode'] === "auto" && (
-                      <span className="ml-2 text-xs text-[var(--accent)]">
+                      <span className="ml-2 text-xs text-primary">
                         (Active)
                       </span>
                     )}
@@ -228,7 +228,7 @@ export function ThemePicker() {
       )}
       {tab === "light" && (
         <div className="flex flex-col gap-4">
-          <div className="mb-1 font-semibold text-[var(--foreground)]">
+          <div className="mb-1 font-semibold text-foreground">
             Light Theme
           </div>
           <div className="grid grid-cols-3 gap-3">
@@ -242,8 +242,8 @@ export function ThemePicker() {
                 }}
                 className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
                   selectedLight === themeOption.id
-                    ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
+                    ? "bg-background text-foreground border-primary shadow"
+                    : "text-muted hover:text-foreground border-border"
                 }`}
               >
                 {formatThemeName(themeOption.name)}
@@ -254,7 +254,7 @@ export function ThemePicker() {
       )}
       {tab === "dark" && (
         <div className="flex flex-col gap-4">
-          <div className="mb-1 font-semibold text-[var(--foreground)]">
+          <div className="mb-1 font-semibold text-foreground">
             Dark Theme
           </div>
           <div className="grid grid-cols-3 gap-3">
@@ -268,8 +268,8 @@ export function ThemePicker() {
                 }}
                 className={`p-3 rounded-lg text-sm font-medium transition-colors border ${
                   selectedDark === themeOption.id
-                    ? "bg-[var(--background)] text-[var(--foreground)] border-[var(--accent)] shadow"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)] border-[var(--border)]"
+                    ? "bg-background text-foreground border-primary shadow"
+                    : "text-muted hover:text-foreground border-border"
                 }`}
               >
                 {formatThemeName(themeOption.name)}

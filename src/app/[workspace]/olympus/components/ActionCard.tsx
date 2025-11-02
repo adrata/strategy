@@ -75,32 +75,32 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full bg-white border border-[var(--border)] rounded-lg p-6 hover:bg-gray-50 cursor-pointer transition-all duration-200 shadow-sm text-left group ${
+      className={`w-full bg-white border border-border rounded-lg p-6 hover:bg-gray-50 cursor-pointer transition-all duration-200 shadow-sm text-left group ${
         isActive ? 'ring-2 ring-blue-500 bg-blue-50' : ''
       }`}
     >
       {/* Header with Icon */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--foreground)]">
+          <div className="w-8 h-8 bg-white border border-border rounded-lg flex items-center justify-center text-foreground">
             {icon}
           </div>
-          <h3 className="font-semibold text-[var(--foreground)] text-lg">{title}</h3>
+          <h3 className="font-semibold text-foreground text-lg">{title}</h3>
         </div>
       </div>
       
       {/* Description */}
       <div className="mb-4">
-        <p className="text-sm text-[var(--muted)] leading-relaxed">{description}</p>
+        <p className="text-sm text-muted leading-relaxed">{description}</p>
       </div>
 
       {/* Benefits List */}
       <div className="mb-4">
-        <div className="text-xs font-medium text-[var(--foreground)] mb-2">Key Benefits:</div>
+        <div className="text-xs font-medium text-foreground mb-2">Key Benefits:</div>
         <ul className="space-y-1">
           {benefits.map((benefit, index) => (
-            <li key={index} className="text-xs text-[var(--foreground)] flex items-center gap-2">
-              <span className="w-1 h-1 bg-[var(--foreground)] rounded-full"></span>
+            <li key={index} className="text-xs text-foreground flex items-center gap-2">
+              <span className="w-1 h-1 bg-foreground rounded-full"></span>
               {benefit}
             </li>
           ))}
@@ -108,12 +108,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       </div>
 
       {/* Action Type Badge */}
-      <div className="pt-3 border-t border-[var(--border)]">
+      <div className="pt-3 border-t border-border">
         <div className="flex items-center justify-between">
           <span className={`text-xs px-3 py-1 rounded-full font-medium ${actionType.bg} ${actionType.text}`}>
             {actionType.label}
           </span>
-          <div className="text-xs text-[var(--foreground)] group-hover:text-blue-600 transition-colors">
+          <div className="text-xs text-foreground group-hover:text-blue-600 transition-colors">
             Click to view →
           </div>
         </div>

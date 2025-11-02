@@ -42,25 +42,25 @@ export function RossWelcomeToast({ onGoToChat }: RossWelcomeToastProps) {
 
   return (
     <div className="fixed top-4 right-2 z-50 animate-in slide-in-from-top-2 duration-500">
-      <div className="bg-[var(--background)] rounded-lg shadow-lg border border-[var(--border)] dark:border-[var(--border)] max-w-sm overflow-hidden">
+      <div className="bg-background rounded-lg shadow-lg border border-border dark:border-border max-w-sm overflow-hidden">
         {/* Header */}
-        <div className="px-4 py-3 border-b border-[var(--border)] dark:border-[var(--border)] flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-border dark:border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
               R
             </div>
             <div>
-              <h3 className="font-semibold text-[var(--foreground)] dark:text-white">
+              <h3 className="font-semibold text-foreground dark:text-white">
                 Ross Sylvester
               </h3>
-              <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">
+              <p className="text-xs text-muted dark:text-muted">
                 Adrata Founder
               </p>
             </div>
           </div>
           <button
             onClick={handleDismiss}
-            className="text-[var(--muted)] hover:text-[var(--muted)] dark:hover:text-gray-300"
+            className="text-muted hover:text-muted dark:hover:text-gray-300"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
@@ -75,7 +75,7 @@ export function RossWelcomeToast({ onGoToChat }: RossWelcomeToastProps) {
         </div>
 
         {/* Actions */}
-        <div className="px-4 py-3 bg-[var(--panel-background)] dark:bg-gray-750 flex gap-2">
+        <div className="px-4 py-3 bg-panel-background dark:bg-gray-750 flex gap-2">
           <button
             onClick={handleGoToChat}
             className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
@@ -85,7 +85,7 @@ export function RossWelcomeToast({ onGoToChat }: RossWelcomeToastProps) {
           </button>
           <button
             onClick={handleDismiss}
-            className="px-3 py-2 text-[var(--muted)] dark:text-[var(--muted)] text-sm hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+            className="px-3 py-2 text-muted dark:text-muted text-sm hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
           >
             Later
           </button>

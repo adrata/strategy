@@ -53,10 +53,10 @@ export const CompanyList: React.FC<CompanyListProps> = ({
           return (
             <div
               key={company.id}
-              className={`border rounded-xl p-6 bg-[var(--background)] hover:border-gray-400 transition-all cursor-pointer ${
+              className={`border rounded-xl p-6 bg-background hover:border-gray-400 transition-all cursor-pointer ${
                 isHighlighted
                   ? "border-blue-400 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-200 dark:ring-blue-700"
-                  : "border-[var(--border)]"
+                  : "border-border"
               }`}
               onClick={handleClick}
               onMouseEnter={(e) => {
@@ -72,27 +72,27 @@ export const CompanyList: React.FC<CompanyListProps> = ({
             >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-start gap-4 flex-1">
-                  <div className="w-8 h-8 bg-[var(--hover-bg)] rounded-lg flex items-center justify-center text-[var(--foreground)] font-medium text-sm">
+                  <div className="w-8 h-8 bg-hover rounded-lg flex items-center justify-center text-foreground font-medium text-sm">
                     {getRankNumber(company)}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-[var(--foreground)] mb-1">
+                    <h3 className="text-lg font-semibold text-foreground mb-1">
                       {company.name}
                     </h3>
-                    <p className="text-sm text-[var(--muted)] mb-2">
+                    <p className="text-sm text-muted mb-2">
                       {company.domain}
                     </p>
-                    <div className="flex items-center gap-4 text-sm text-[var(--muted)]">
+                    <div className="flex items-center gap-4 text-sm text-muted">
                       <span>
                         Industry:{" "}
-                        <span className="font-medium text-[var(--foreground)]">
+                        <span className="font-medium text-foreground">
                           {company.industry}
                         </span>
                       </span>
                       <span>•</span>
                       <span>
                         Size:{" "}
-                        <span className="font-medium text-[var(--foreground)]">
+                        <span className="font-medium text-foreground">
                           {company.employeeCount} employees
                         </span>
                       </span>
@@ -100,19 +100,19 @@ export const CompanyList: React.FC<CompanyListProps> = ({
                       <span>•</span>
                       <span>
                         Revenue:{" "}
-                        <span className="font-medium text-[var(--foreground)]">
+                        <span className="font-medium text-foreground">
                           {company.revenue}
                         </span>
                       </span>
                     </div>
-                    <p className="text-sm text-[var(--muted)] mt-2 italic">
+                    <p className="text-sm text-muted mt-2 italic">
                       {getRankingDescription(company).split(": ")[1]}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm text-[var(--muted)]">
+                    <span className="text-sm text-muted">
                       ICP Score:
                     </span>
                     <span
@@ -128,7 +128,7 @@ export const CompanyList: React.FC<CompanyListProps> = ({
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-sm text-[var(--muted)]">
+              <div className="flex items-center justify-between text-sm text-muted">
                 <div className="flex items-center gap-1">
                   <span>📍</span>
                   <span>{company.location}</span>

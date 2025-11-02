@@ -470,16 +470,16 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       {loading && (
         <div className="space-y-4">
           <div className="animate-pulse">
-            <div className="h-4 bg-[var(--loading-bg)] rounded w-1/4 mb-4"></div>
+            <div className="h-4 bg-loading-bg rounded w-1/4 mb-4"></div>
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
-                  <div className="w-10 h-10 bg-[var(--loading-bg)] rounded-full"></div>
+                  <div className="w-10 h-10 bg-loading-bg rounded-full"></div>
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-[var(--loading-bg)] rounded w-1/3"></div>
-                    <div className="h-3 bg-[var(--loading-bg)] rounded w-1/4"></div>
+                    <div className="h-4 bg-loading-bg rounded w-1/3"></div>
+                    <div className="h-3 bg-loading-bg rounded w-1/4"></div>
                   </div>
-                  <div className="w-20 h-6 bg-[var(--loading-bg)] rounded"></div>
+                  <div className="w-20 h-6 bg-loading-bg rounded"></div>
                 </div>
               ))}
             </div>
@@ -490,11 +490,11 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       {/* Empty State */}
       {!loading && people.length === 0 && (
         <div className="text-center py-12">
-          <BuildingOfficeIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+          <BuildingOfficeIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-2">
             {['people', 'leads', 'prospects'].includes(recordType) ? 'No Co-Workers Found' : 'No People (Employees) Found'}
           </h3>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             {['people', 'leads', 'prospects'].includes(recordType) 
               ? 'This person doesn\'t have any co-workers at their company yet.'
               : 'This company does not have any associated employees yet.'
@@ -506,7 +506,7 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
       {/* People List */}
       {!loading && people.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-[var(--foreground)]">
+          <h3 className="text-lg font-semibold text-foreground">
             {['people', 'leads', 'prospects'].includes(recordType) ? 'Co-Workers' : 'People'}
           </h3>
           <div className="space-y-3">
@@ -514,17 +514,17 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
               const riskAssessment = riskAssessments[person.id] || calculatePersonRisk(person);
 
               return (
-                <div key={person.id || index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-[var(--panel-background)] cursor-pointer transition-colors" onClick={() => handlePersonClick(person)}>
+                <div key={person.id || index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-panel-background cursor-pointer transition-colors" onClick={() => handlePersonClick(person)}>
                   <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-[var(--loading-bg)] rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-[var(--muted)]">
+                    <div className="w-10 h-10 bg-loading-bg rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-muted">
                         {person.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                       </span>
                     </div>
                     <div>
-                      <div className="font-medium text-[var(--foreground)]">{person.name}</div>
-                      <div className="text-sm text-[var(--muted)]">{person.title}</div>
-                      <div className="text-xs text-[var(--muted)]">{person.email}</div>
+                      <div className="font-medium text-foreground">{person.name}</div>
+                      <div className="text-sm text-muted">{person.title}</div>
+                      <div className="text-xs text-muted">{person.email}</div>
                     </div>
                   </div>
                   
@@ -537,14 +537,14 @@ export function UniversalPeopleTab({ record, recordType, onSave }: UniversalPeop
                       person.role === 'Champion' ? 'bg-green-100 text-green-800' :
                       person.role === 'Blocker' ? 'bg-yellow-100 text-yellow-800' :
                       person.role === 'Stakeholder' ? 'bg-blue-100 text-blue-800' :
-                      'bg-[var(--hover)] text-gray-800'
+                      'bg-hover text-gray-800'
                     }`}>
                       {person.role}
                     </span>
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       person.influence === 'high' ? 'bg-purple-100 text-purple-800' :
                       person.influence === 'medium' ? 'bg-orange-100 text-orange-800' :
-                      'bg-[var(--hover)] text-gray-800'
+                      'bg-hover text-gray-800'
                     }`}>
                       {person.influence} influence
                     </span>

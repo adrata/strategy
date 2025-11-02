@@ -210,47 +210,47 @@ export function SignalSettings({ isVisible, onClose }: SignalSettingsProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+      <div className="bg-background rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)] dark:border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
               <BellIcon className="w-6 h-6 text-blue-500" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-[var(--foreground)] dark:text-white">
+              <h2 className="text-xl font-semibold text-foreground">
                 Signal Settings
               </h2>
-              <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 Configure your intelligence alerts and monitoring
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+            className="p-2 hover:bg-hover rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+            <XMarkIcon className="w-5 h-5 text-muted" />
           </button>
         </div>
 
         <div className="flex h-[calc(90vh-80px)]">
           {/* Sidebar */}
-          <div className="w-80 border-r border-[var(--border)] dark:border-[var(--border)] p-6">
+          <div className="w-80 border-r border-border p-6">
             <div className="space-y-4">
               {/* Add New Signal */}
               <div className="space-y-3">
                 <button
                   onClick={() => setShowAddRule(!showAddRule)}
-                  className="w-full flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                  className="w-full flex items-center gap-2 p-3 bg-info-bg text-info rounded-lg hover:bg-info-bg/80 transition-colors"
                 >
                   <PlusIcon className="w-5 h-5" />
                   Add New Signal
                 </button>
 
                 {showAddRule && (
-                  <div className="space-y-3 p-4 bg-[var(--panel-background)]/50 rounded-lg">
-                    <div className="flex items-center gap-2 text-sm text-[var(--muted)] dark:text-[var(--muted)]">
+                  <div className="space-y-3 p-4 bg-panel-background/50 rounded-lg">
+                    <div className="flex items-center gap-2 text-sm text-muted">
                       <SparklesIcon className="w-4 h-4" />
                       Describe what you want to monitor
                     </div>
@@ -258,7 +258,7 @@ export function SignalSettings({ isVisible, onClose }: SignalSettingsProps) {
                       value={newRuleInput}
                       onChange={(e) => setNewRuleInput(e.target.value)}
                       placeholder="e.g., Alert me when Nike hires a new CTO"
-                      className="w-full p-3 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] resize-none"
+                      className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] resize-none"
                       rows={3}
                     />
                     <div className="flex gap-2">
@@ -271,7 +271,7 @@ export function SignalSettings({ isVisible, onClose }: SignalSettingsProps) {
                       </button>
                       <button
                         onClick={() => setShowAddRule(false)}
-                        className="px-3 py-2 text-[var(--muted)] hover:text-gray-700 dark:text-[var(--muted)] dark:hover:text-gray-200 transition-colors text-sm"
+                        className="px-3 py-2 text-muted hover:text-foreground transition-colors text-sm"
                       >
                         Cancel
                       </button>
@@ -282,7 +282,7 @@ export function SignalSettings({ isVisible, onClose }: SignalSettingsProps) {
 
               {/* Templates */}
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <h3 className="text-sm font-medium text-foreground">
                   Quick Templates
                 </h3>
                 <div className="space-y-2">
@@ -290,12 +290,12 @@ export function SignalSettings({ isVisible, onClose }: SignalSettingsProps) {
                     <button
                       key={key}
                       onClick={() => createFromTemplate(key)}
-                      className="w-full text-left p-3 bg-[var(--panel-background)]/50 rounded-lg hover:bg-[var(--hover)] transition-colors"
+                      className="w-full text-left p-3 bg-panel-background/50 rounded-lg hover:bg-hover transition-colors"
                     >
-                      <div className="text-sm font-medium text-[var(--foreground)] dark:text-white">
+                      <div className="text-sm font-medium text-foreground">
                         {template.name}
                       </div>
-                      <div className="text-xs text-[var(--muted)] dark:text-[var(--muted)] mt-1">
+                      <div className="text-xs text-muted mt-1">
                         {template.description}
                       </div>
                     </button>
@@ -309,15 +309,15 @@ export function SignalSettings({ isVisible, onClose }: SignalSettingsProps) {
           <div className="flex-1 p-6 overflow-y-auto">
             {isLoading ? (
               <div className="flex items-center justify-center h-64">
-                <div className="text-[var(--muted)] dark:text-[var(--muted)]">Loading signal rules...</div>
+                <div className="text-muted dark:text-muted">Loading signal rules...</div>
               </div>
             ) : signalRules['length'] === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-center">
-                <BellIcon className="w-12 h-12 text-gray-300 dark:text-[var(--muted)] mb-4" />
-                <h3 className="text-lg font-medium text-[var(--foreground)] dark:text-white mb-2">
+                <BellIcon className="w-12 h-12 text-gray-300 dark:text-muted mb-4" />
+                <h3 className="text-lg font-medium text-foreground dark:text-white mb-2">
                   No Signal Rules Yet
                 </h3>
-                <p className="text-[var(--muted)] dark:text-[var(--muted)] mb-4">
+                <p className="text-muted dark:text-muted mb-4">
                   Create your first signal rule to start monitoring companies and opportunities
                 </p>
                 <button
@@ -330,10 +330,10 @@ export function SignalSettings({ isVisible, onClose }: SignalSettingsProps) {
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-[var(--foreground)] dark:text-white">
+                  <h3 className="text-lg font-medium text-foreground dark:text-white">
                     Active Signal Rules ({signalRules.filter(r => r.isActive).length})
                   </h3>
-                  <div className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
+                  <div className="text-sm text-muted dark:text-muted">
                     {signalRules.length} total rules
                   </div>
                 </div>
@@ -345,31 +345,31 @@ export function SignalSettings({ isVisible, onClose }: SignalSettingsProps) {
                       className={`p-4 border rounded-lg transition-colors ${
                         rule.isActive
                           ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/10'
-                          : 'border-[var(--border)] dark:border-[var(--border)] bg-[var(--panel-background)]/50'
+                          : 'border-border dark:border-border bg-panel-background/50'
                       }`}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h4 className="font-medium text-[var(--foreground)] dark:text-white">
+                            <h4 className="font-medium text-foreground dark:text-white">
                               {rule.name}
                             </h4>
                             <span
                               className={`px-2 py-1 text-xs rounded-full ${
                                 rule.isActive
                                   ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                                  : 'bg-[var(--hover)] text-[var(--muted)] dark:text-[var(--muted)]'
+                                  : 'bg-hover text-muted dark:text-muted'
                               }`}
                             >
                               {rule.isActive ? 'Active' : 'Inactive'}
                             </span>
                           </div>
                           
-                          <p className="text-sm text-[var(--muted)] dark:text-[var(--muted)] mb-3">
+                          <p className="text-sm text-muted dark:text-muted mb-3">
                             {rule.description}
                           </p>
 
-                          <div className="flex flex-wrap gap-4 text-xs text-[var(--muted)] dark:text-[var(--muted)]">
+                          <div className="flex flex-wrap gap-4 text-xs text-muted dark:text-muted">
                             {rule.config.companies.length > 0 && (
                               <div className="flex items-center gap-1">
                                 <BuildingOfficeIcon className="w-3 h-3" />
@@ -407,7 +407,7 @@ export function SignalSettings({ isVisible, onClose }: SignalSettingsProps) {
                           </button>
                           <button
                             onClick={() => deleteSignalRule(rule.id)}
-                            className="p-1 text-[var(--muted)] hover:text-red-500 transition-colors"
+                            className="p-1 text-muted hover:text-red-500 transition-colors"
                           >
                             <XMarkIcon className="w-4 h-4" />
                           </button>

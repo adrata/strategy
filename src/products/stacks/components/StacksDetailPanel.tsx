@@ -37,10 +37,10 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'todo': return 'bg-[var(--hover)] text-gray-800';
+      case 'todo': return 'bg-hover text-gray-800';
       case 'in-progress': return 'bg-blue-100 text-blue-800';
       case 'done': return 'bg-green-100 text-green-800';
-      default: return 'bg-[var(--hover)] text-gray-800';
+      default: return 'bg-hover text-gray-800';
     }
   };
 
@@ -49,22 +49,22 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
       case 'low': return 'text-green-600';
       case 'medium': return 'text-yellow-600';
       case 'high': return 'text-red-600';
-      default: return 'text-[var(--muted)]';
+      default: return 'text-muted';
     }
   };
 
   return (
-    <div className="h-full bg-[var(--background)] border-l border-[var(--border)] flex flex-col">
+    <div className="h-full bg-background border-l border-border flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-[var(--border)]">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-lg font-semibold text-[var(--foreground)]">
+          <h2 className="text-lg font-semibold text-foreground">
             {item?.type === 'epic' ? 'Epic' : item?.type === 'story' ? 'Story' : 'Task'} Details
           </h2>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsEditing(!isEditing)}
-              className="p-2 text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+              className="p-2 text-muted hover:text-foreground hover:bg-hover rounded-lg transition-colors"
             >
               <PencilIcon className="h-4 w-4" />
             </button>
@@ -83,13 +83,13 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
               type="text"
               value={editForm.title}
               onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="Title"
             />
             <textarea
               value={editForm.description}
               onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="Description"
               rows={3}
             />
@@ -97,7 +97,7 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
               <select
                 value={editForm.status}
                 onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                className="flex-1 px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="todo">To Do</option>
                 <option value="in-progress">In Progress</option>
@@ -106,7 +106,7 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
               <select
                 value={editForm.priority}
                 onChange={(e) => setEditForm({ ...editForm, priority: e.target.value })}
-                className="flex-1 px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -122,7 +122,7 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
               </button>
               <button
                 onClick={() => setIsEditing(false)}
-                className="flex-1 px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover-bg)] transition-colors"
+                className="flex-1 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-hover transition-colors"
               >
                 Cancel
               </button>
@@ -130,10 +130,10 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
           </div>
         ) : (
           <div>
-            <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+            <h3 className="text-lg font-medium text-foreground mb-2">
               {item?.title}
             </h3>
-            <p className="text-sm text-[var(--muted)] mb-4">
+            <p className="text-sm text-muted mb-4">
               {item?.description || "No description provided"}
             </p>
           </div>
@@ -144,9 +144,9 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
       <div className="flex-1 p-4 space-y-4">
         <div className="space-y-3">
           <div className="flex items-center gap-3">
-            <TagIcon className="h-4 w-4 text-[var(--muted)]" />
+            <TagIcon className="h-4 w-4 text-muted" />
             <div>
-              <div className="text-sm font-medium text-[var(--foreground)]">Status</div>
+              <div className="text-sm font-medium text-foreground">Status</div>
               <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(item?.status)}`}>
                 {item?.status?.replace('-', ' ')}
               </span>
@@ -154,9 +154,9 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            <FlagIcon className="h-4 w-4 text-[var(--muted)]" />
+            <FlagIcon className="h-4 w-4 text-muted" />
             <div>
-              <div className="text-sm font-medium text-[var(--foreground)]">Priority</div>
+              <div className="text-sm font-medium text-foreground">Priority</div>
               <span className={`text-sm font-medium ${getPriorityColor(item?.priority)}`}>
                 {item?.priority} priority
               </span>
@@ -165,19 +165,19 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
 
           {item?.assignee && (
             <div className="flex items-center gap-3">
-              <UserIcon className="h-4 w-4 text-[var(--muted)]" />
+              <UserIcon className="h-4 w-4 text-muted" />
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)]">Assignee</div>
-                <div className="text-sm text-[var(--muted)]">{item.assignee}</div>
+                <div className="text-sm font-medium text-foreground">Assignee</div>
+                <div className="text-sm text-muted">{item.assignee}</div>
               </div>
             </div>
           )}
 
           <div className="flex items-center gap-3">
-            <CalendarIcon className="h-4 w-4 text-[var(--muted)]" />
+            <CalendarIcon className="h-4 w-4 text-muted" />
             <div>
-              <div className="text-sm font-medium text-[var(--foreground)]">Created</div>
-              <div className="text-sm text-[var(--muted)]">
+              <div className="text-sm font-medium text-foreground">Created</div>
+              <div className="text-sm text-muted">
                 {item?.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Unknown'}
               </div>
             </div>
@@ -185,10 +185,10 @@ export function StacksDetailPanel({ item }: StacksDetailPanelProps) {
 
           {item?.updatedAt && (
             <div className="flex items-center gap-3">
-              <CalendarIcon className="h-4 w-4 text-[var(--muted)]" />
+              <CalendarIcon className="h-4 w-4 text-muted" />
               <div>
-                <div className="text-sm font-medium text-[var(--foreground)]">Last Updated</div>
-                <div className="text-sm text-[var(--muted)]">
+                <div className="text-sm font-medium text-foreground">Last Updated</div>
+                <div className="text-sm text-muted">
                   {new Date(item.updatedAt).toLocaleDateString()}
                 </div>
               </div>

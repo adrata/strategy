@@ -690,26 +690,26 @@ export class LeadDetailsReportService {
   ): React.ReactElement {
     return (
       <div className="h-full flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border)] bg-[var(--background)]">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-background">
           <div className="flex items-center gap-3">
             <button
               onClick={onReportBack}
-              className="text-[var(--muted)] hover:text-[var(--foreground)]"
+              className="text-muted hover:text-foreground"
             >
               ← Back to {person.name}
             </button>
           </div>
-          <div className="text-sm text-[var(--muted)]">
+          <div className="text-sm text-muted">
             {reportDisplayName} • {person.company}
           </div>
         </div>
-        <div className="flex-1 p-8 flex items-center justify-center bg-[var(--background)]">
+        <div className="flex-1 p-8 flex items-center justify-center bg-background">
           <div className="text-center max-w-md">
             <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Report Type Not Found
             </h3>
-            <p className="text-[var(--muted)] mb-4">
+            <p className="text-muted mb-4">
               Unable to load report component for: {activeReport}
             </p>
             <button
@@ -731,11 +731,11 @@ export class LeadDetailsReportService {
   ): React.ReactElement {
     return (
       <div className="h-full flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border)] bg-[var(--background)]">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-background">
           <div className="flex items-center gap-3">
             <button
               onClick={onReportBack}
-              className="text-[var(--muted)] hover:text-[var(--foreground)]"
+              className="text-muted hover:text-foreground"
             >
               ← Back to {person.name}
             </button>
@@ -744,10 +744,10 @@ export class LeadDetailsReportService {
         <div className="flex-1 p-4 flex items-center justify-center">
           <div className="text-center">
             <div className="text-4xl mb-4">⚠️</div>
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Report Loading Error
             </h3>
-            <p className="text-[var(--muted)] mb-4">
+            <p className="text-muted mb-4">
               There was an issue loading the report. Please try again.
             </p>
             <button

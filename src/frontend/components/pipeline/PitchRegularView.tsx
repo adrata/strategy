@@ -53,28 +53,28 @@ export function PitchRegularView({ slideData, onPresent, onBack, hideHeader = fa
   }, [onPresent]);
 
   return (
-    <div className="h-full w-full bg-[var(--background)]">
+    <div className="h-full w-full bg-background">
       {/* Breadcrumb Header - Sticky */}
       {!hideHeader && (
-        <div className="sticky top-0 z-10 px-6 py-4 border-b border-[var(--border)] bg-[var(--background)]">
+        <div className="sticky top-0 z-10 px-6 py-4 border-b border-border bg-background">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {onBack && (
                 <button
                   onClick={onBack}
-                  className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+                  className="p-2 hover:bg-hover rounded-lg transition-colors"
                 >
-                  <svg className="h-5 w-5 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
               )}
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-[var(--muted)]">Chronicle</span>
-                <svg className="h-4 w-4 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span className="text-muted">Chronicle</span>
+                <svg className="h-4 w-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-                <span className="text-[var(--foreground)] font-medium">October 2025 Progress Report</span>
+                <span className="text-foreground font-medium">October 2025 Progress Report</span>
               </div>
             </div>
             <div className="flex items-center gap-2">

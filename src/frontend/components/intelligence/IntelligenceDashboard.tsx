@@ -112,12 +112,12 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-[var(--overlay-bg)] bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50">
-        <div className="bg-[var(--background)] rounded-lg p-8 max-w-md w-full mx-4 border border-[var(--border)]">
+      <div className="fixed inset-0 bg-overlay-bg bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50">
+        <div className="bg-background rounded-lg p-8 max-w-md w-full mx-4 border border-border">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent)] mx-auto mb-4"></div>
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Loading Intelligence</h3>
-            <p className="text-[var(--muted)]">Analyzing data and generating insights...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">Loading Intelligence</h3>
+            <p className="text-muted">Analyzing data and generating insights...</p>
           </div>
         </div>
       </div>
@@ -126,23 +126,23 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
 
   if (error) {
     return (
-      <div className="fixed inset-0 bg-[var(--overlay-bg)] bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50">
-        <div className="bg-[var(--background)] rounded-lg p-8 max-w-md w-full mx-4 border border-[var(--border)]">
+      <div className="fixed inset-0 bg-overlay-bg bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50">
+        <div className="bg-background rounded-lg p-8 max-w-md w-full mx-4 border border-border">
           <div className="text-center">
-            <div className="text-[var(--error)] text-4xl mb-4">⚠️</div>
-            <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Error Loading Intelligence</h3>
-            <p className="text-[var(--muted)] mb-4">{error}</p>
+            <div className="text-error text-4xl mb-4">⚠️</div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">Error Loading Intelligence</h3>
+            <p className="text-muted mb-4">{error}</p>
             <div className="flex space-x-3">
               <button
                 onClick={loadIntelligenceData}
-                className="px-4 py-2 bg-[var(--button-background)] text-[var(--button-text)] rounded-lg hover:bg-[var(--button-hover)] transition-colors"
+                className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover transition-colors"
               >
                 Retry
               </button>
               {onClose && (
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 bg-[var(--panel-background)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover)] transition-colors border border-[var(--border)]"
+                  className="px-4 py-2 bg-panel-background text-foreground rounded-lg hover:bg-hover transition-colors border border-border"
                 >
                   Close
                 </button>
@@ -155,22 +155,22 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-[var(--overlay-bg)] bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--background)] rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden border border-[var(--border)]">
+    <div className="fixed inset-0 bg-overlay-bg bg-opacity-[var(--overlay-opacity)] flex items-center justify-center z-50 p-4">
+      <div className="bg-background rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden border border-border">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h2 className="text-2xl font-bold text-[var(--foreground)]">
+            <h2 className="text-2xl font-bold text-foreground">
               {recordType === 'person' ? 'Person Intelligence' : 'Company Intelligence'}
             </h2>
-            <p className="text-[var(--muted)]">
+            <p className="text-muted">
               AI-powered insights and recommendations
             </p>
           </div>
           <div className="flex items-center space-x-3">
             <button
               onClick={refreshIntelligence}
-              className="px-4 py-2 bg-[var(--button-background)] text-[var(--button-text)] rounded-lg hover:bg-[var(--button-hover)] flex items-center space-x-2 transition-colors"
+              className="px-4 py-2 bg-button-background text-button-text rounded-lg hover:bg-button-hover flex items-center space-x-2 transition-colors"
             >
               <span>🔄</span>
               <span>Refresh</span>
@@ -178,7 +178,7 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
             {onClose && (
               <button
                 onClick={onClose}
-                className="px-4 py-2 bg-[var(--panel-background)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover)] transition-colors border border-[var(--border)]"
+                className="px-4 py-2 bg-panel-background text-foreground rounded-lg hover:bg-hover transition-colors border border-border"
               >
                 ✕
               </button>
@@ -187,7 +187,7 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-[var(--border)]">
+        <div className="border-b border-border">
           <nav className="flex space-x-8 px-6">
             {[
               { id: 'overview', label: 'Overview', icon: '📊' },
@@ -200,8 +200,8 @@ export const IntelligenceDashboard: React.FC<IntelligenceDashboardProps> = ({
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
                   activeTab === tab.id
-                    ? 'border-[var(--accent)] text-[var(--accent)]'
-                    : 'border-transparent text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--border)]'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted hover:text-foreground hover:border-border'
                 }`}
               >
                 <span>{tab.icon}</span>
@@ -263,43 +263,43 @@ const OverviewTab: React.FC<{
   const intelligence = recordType === 'person' ? personIntelligence : companyIntelligence;
 
   if (!intelligence) {
-    return <div className="text-center text-[var(--muted)]">No intelligence data available</div>;
+    return <div className="text-center text-muted">No intelligence data available</div>;
   }
 
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[var(--info-bg)] rounded-lg p-6 border border-[var(--info-border)]">
+        <div className="bg-info-bg rounded-lg p-6 border border-info-border">
           <div className="flex items-center">
-            <div className="text-[var(--info)] text-2xl mr-3">🎯</div>
+            <div className="text-info text-2xl mr-3">🎯</div>
             <div>
-              <p className="text-sm font-medium text-[var(--info)]">Decision Power</p>
-              <p className="text-2xl font-bold text-[var(--info-text)]">
+              <p className="text-sm font-medium text-info">Decision Power</p>
+              <p className="text-2xl font-bold text-info-text">
                 {recordType === 'person' ? personIntelligence?.buyerProfile.decisionPower : 'N/A'}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-[var(--success-bg)] rounded-lg p-6 border border-[var(--success-border)]">
+        <div className="bg-success-bg rounded-lg p-6 border border-success-border">
           <div className="flex items-center">
-            <div className="text-[var(--success)] text-2xl mr-3">📈</div>
+            <div className="text-success text-2xl mr-3">📈</div>
             <div>
-              <p className="text-sm font-medium text-[var(--success)]">Confidence</p>
-              <p className="text-2xl font-bold text-[var(--success-text)]">
+              <p className="text-sm font-medium text-success">Confidence</p>
+              <p className="text-2xl font-bold text-success-text">
                 {Math.round(intelligence.confidence * 100)}%
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-[var(--panel-background)] rounded-lg p-6 border border-[var(--border)]">
+        <div className="bg-panel-background rounded-lg p-6 border border-border">
           <div className="flex items-center">
-            <div className="text-[var(--muted)] text-2xl mr-3">🔄</div>
+            <div className="text-muted text-2xl mr-3">🔄</div>
             <div>
-              <p className="text-sm font-medium text-[var(--muted)]">Last Updated</p>
-              <p className="text-sm font-bold text-[var(--foreground)]">
+              <p className="text-sm font-medium text-muted">Last Updated</p>
+              <p className="text-sm font-bold text-foreground">
                 {new Date(intelligence.lastUpdated).toLocaleDateString()}
               </p>
             </div>
@@ -308,16 +308,16 @@ const OverviewTab: React.FC<{
       </div>
 
       {/* Data Sources */}
-      <div className="bg-[var(--panel-background)] rounded-lg p-6 border border-[var(--border)]">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Data Sources</h3>
+      <div className="bg-panel-background rounded-lg p-6 border border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Data Sources</h3>
         <div className="flex items-center space-x-4">
-          <span className="px-3 py-1 bg-[var(--success-bg)] text-[var(--success-text)] rounded-full text-sm border border-[var(--success-border)]">
+          <span className="px-3 py-1 bg-success-bg text-success-text rounded-full text-sm border border-success-border">
             Database
           </span>
-          <span className="px-3 py-1 bg-[var(--info-bg)] text-[var(--info-text)] rounded-full text-sm border border-[var(--info-border)]">
+          <span className="px-3 py-1 bg-info-bg text-info-text rounded-full text-sm border border-info-border">
             Perplexity AI
           </span>
-          <span className="px-3 py-1 bg-[var(--panel-background)] text-[var(--foreground)] rounded-full text-sm border border-[var(--border)]">
+          <span className="px-3 py-1 bg-panel-background text-foreground rounded-full text-sm border border-border">
             Claude AI
           </span>
         </div>
@@ -327,32 +327,32 @@ const OverviewTab: React.FC<{
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {recordType === 'person' && personIntelligence && (
           <>
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h4 className="font-semibold text-[var(--foreground)] mb-3">Risk Assessment</h4>
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h4 className="font-semibold text-foreground mb-3">Risk Assessment</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-[var(--muted)]">Job Change Risk:</span>
+                  <span className="text-sm text-muted">Job Change Risk:</span>
                   <span className={`text-sm font-medium ${
-                    personIntelligence.buyerProfile.riskAssessment.jobChangeRisk === 'High' ? 'text-[var(--error)]' :
-                    personIntelligence.buyerProfile.riskAssessment.jobChangeRisk === 'Medium' ? 'text-[var(--warning)]' : 'text-[var(--success)]'
+                    personIntelligence.buyerProfile.riskAssessment.jobChangeRisk === 'High' ? 'text-error' :
+                    personIntelligence.buyerProfile.riskAssessment.jobChangeRisk === 'Medium' ? 'text-warning' : 'text-success'
                   }`}>
                     {personIntelligence.buyerProfile.riskAssessment.jobChangeRisk}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-[var(--muted)]">Buying Stage:</span>
-                  <span className="text-sm font-medium text-[var(--foreground)]">
+                  <span className="text-sm text-muted">Buying Stage:</span>
+                  <span className="text-sm font-medium text-foreground">
                     {personIntelligence.buyerProfile.riskAssessment.buyingCycleStage}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h4 className="font-semibold text-[var(--foreground)] mb-3">Best Channels</h4>
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h4 className="font-semibold text-foreground mb-3">Best Channels</h4>
               <div className="flex flex-wrap gap-2">
                 {personIntelligence.engagementStrategy.bestChannels.map((channel, index) => (
-                  <span key={index} className="px-2 py-1 bg-[var(--info-bg)] text-[var(--info-text)] rounded text-sm border border-[var(--info-border)]">
+                  <span key={index} className="px-2 py-1 bg-info-bg text-info-text rounded text-sm border border-info-border">
                     {channel}
                   </span>
                 ))}
@@ -363,26 +363,26 @@ const OverviewTab: React.FC<{
 
         {recordType === 'company' && companyIntelligence && (
           <>
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h4 className="font-semibold text-[var(--foreground)] mb-3">Market Position</h4>
-              <p className="text-sm text-[var(--muted)] mb-2">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h4 className="font-semibold text-foreground mb-3">Market Position</h4>
+              <p className="text-sm text-muted mb-2">
                 {companyIntelligence.marketPosition.competitivePosition}
               </p>
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 Growth: {companyIntelligence.marketPosition.growthTrajectory}
               </p>
             </div>
 
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h4 className="font-semibold text-[var(--foreground)] mb-3">Urgency Score</h4>
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h4 className="font-semibold text-foreground mb-3">Urgency Score</h4>
               <div className="flex items-center">
-                <div className="flex-1 bg-[var(--panel-background)] rounded-full h-2 mr-3">
+                <div className="flex-1 bg-panel-background rounded-full h-2 mr-3">
                   <div 
-                    className="bg-[var(--error)] h-2 rounded-full" 
+                    className="bg-error h-2 rounded-full" 
                     style={{ width: `${companyIntelligence.timing.urgency * 10}%` }}
                   ></div>
                 </div>
-                <span className="text-sm font-medium text-[var(--foreground)]">
+                <span className="text-sm font-medium text-foreground">
                   {companyIntelligence.timing.urgency}/10
                 </span>
               </div>

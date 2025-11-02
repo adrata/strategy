@@ -40,14 +40,14 @@ export function StrategySummaryCard({
   return (
     <div className="space-y-3 group">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
+        <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
           <div className={`w-2 h-2 ${colorClasses[color]} rounded-full`}></div>
           {title}
         </h4>
         <div className="opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={handleCopy}
-            className="p-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="p-1 text-muted hover:text-foreground transition-colors"
             title="Copy to clipboard"
           >
             {copied ? (
@@ -59,7 +59,7 @@ export function StrategySummaryCard({
         </div>
       </div>
       
-      <div className="text-sm text-[var(--muted)] leading-relaxed">
+      <div className="text-sm text-muted leading-relaxed">
         {content}
       </div>
     </div>

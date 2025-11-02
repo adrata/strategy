@@ -7,9 +7,9 @@ import Link from 'next/link';
 export default function TOPSummaryPage() {
   return (
     <PasswordProtection correctPassword="TOPEngineersPlus-2025">
-      <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
+      <div className="min-h-screen bg-background" style={{ overflowY: 'auto', height: '100vh' }}>
         {/* Header */}
-        <header className="border-b border-[var(--border)]">
+        <header className="border-b border-border">
           <div className="max-w-6xl mx-auto px-6 py-6">
             <div className="flex justify-between items-center">
               <h1 className="text-lg font-medium text-black">Adrata Intelligence</h1>
@@ -17,13 +17,13 @@ export default function TOPSummaryPage() {
               <div className="flex items-center space-x-4">
                 <Link 
                   href="/" 
-                  className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+                  className="text-sm text-muted hover:text-black transition-colors"
                 >
                   Home
                 </Link>
                 <Link 
                   href="/platform" 
-                  className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+                  className="text-sm text-muted hover:text-black transition-colors"
                 >
                   Platform
                 </Link>
@@ -45,7 +45,7 @@ export default function TOPSummaryPage() {
             <h1 className="text-4xl font-bold text-black mb-4 leading-tight">
               TOP Engineering Plus - Unified Enrichment System QA Summary
             </h1>
-            <p className="text-xl text-[var(--muted)] mb-8">
+            <p className="text-xl text-muted mb-8">
               Complete System Validation Report for Utility Communications Engineering Intelligence
             </p>
             
@@ -70,21 +70,21 @@ export default function TOPSummaryPage() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="text-center p-6 bg-[var(--panel-background)]">
+              <div className="text-center p-6 bg-panel-background">
                 <div className="text-3xl font-bold text-green-600">100%</div>
-                <div className="text-sm text-[var(--muted)]">Success Rate</div>
+                <div className="text-sm text-muted">Success Rate</div>
               </div>
-              <div className="text-center p-6 bg-[var(--panel-background)]">
+              <div className="text-center p-6 bg-panel-background">
                 <div className="text-3xl font-bold text-blue-600">95.75%</div>
-                <div className="text-sm text-[var(--muted)]">Avg Confidence</div>
+                <div className="text-sm text-muted">Avg Confidence</div>
               </div>
-              <div className="text-center p-6 bg-[var(--panel-background)]">
+              <div className="text-center p-6 bg-panel-background">
                 <div className="text-3xl font-bold text-purple-600">1,342</div>
-                <div className="text-sm text-[var(--muted)]">Real Contacts</div>
+                <div className="text-sm text-muted">Real Contacts</div>
               </div>
-              <div className="text-center p-6 bg-[var(--panel-background)]">
+              <div className="text-center p-6 bg-panel-background">
                 <div className="text-3xl font-bold text-orange-600">451</div>
-                <div className="text-sm text-[var(--muted)]">Companies</div>
+                <div className="text-sm text-muted">Companies</div>
               </div>
             </div>
           </section>
@@ -148,7 +148,7 @@ export default function TOPSummaryPage() {
           <section className="mb-16">
             <h2 className="text-2xl font-bold text-black mb-6">System Performance</h2>
             
-            <div className="bg-[var(--panel-background)] p-8">
+            <div className="bg-panel-background p-8">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                   <h3 className="text-lg font-bold text-black mb-4">Intelligence Quality</h3>
@@ -188,24 +188,24 @@ export default function TOPSummaryPage() {
             <h2 className="text-2xl font-bold text-black mb-6">Additional Intelligence Reports</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Link href="/private/TOP/genius-level-intelligence-report" className="block p-6 border border-[var(--border)] hover:border-blue-300 hover:shadow-lg transition-all">
+              <Link href="/private/TOP/genius-level-intelligence-report" className="block p-6 border border-border hover:border-blue-300 hover:shadow-lg transition-all">
                 <h3 className="text-lg font-bold text-black mb-2">🧠 Genius-Level Intelligence Report</h3>
-                <p className="text-[var(--muted)] text-sm">McKinsey Partner-level analysis capabilities and performance metrics</p>
+                <p className="text-muted text-sm">McKinsey Partner-level analysis capabilities and performance metrics</p>
               </Link>
               
-              <Link href="/private/TOP/production-readiness-report" className="block p-6 border border-[var(--border)] hover:border-blue-300 hover:shadow-lg transition-all">
+              <Link href="/private/TOP/production-readiness-report" className="block p-6 border border-border hover:border-blue-300 hover:shadow-lg transition-all">
                 <h3 className="text-lg font-bold text-black mb-2">🚀 Production Readiness Report</h3>
-                <p className="text-[var(--muted)] text-sm">Complete system consolidation and deployment status</p>
+                <p className="text-muted text-sm">Complete system consolidation and deployment status</p>
               </Link>
               
-              <Link href="/private/TOP/methodology-document" className="block p-6 border border-[var(--border)] hover:border-blue-300 hover:shadow-lg transition-all">
+              <Link href="/private/TOP/methodology-document" className="block p-6 border border-border hover:border-blue-300 hover:shadow-lg transition-all">
                 <h3 className="text-lg font-bold text-black mb-2">📋 Methodology Document</h3>
-                <p className="text-[var(--muted)] text-sm">Complete understanding of system architecture and processes</p>
+                <p className="text-muted text-sm">Complete understanding of system architecture and processes</p>
               </Link>
               
-              <Link href="/private/TOP/accuracy-validation-report" className="block p-6 border border-[var(--border)] hover:border-blue-300 hover:shadow-lg transition-all">
+              <Link href="/private/TOP/accuracy-validation-report" className="block p-6 border border-border hover:border-blue-300 hover:shadow-lg transition-all">
                 <h3 className="text-lg font-bold text-black mb-2">✅ Accuracy Validation Report</h3>
-                <p className="text-[var(--muted)] text-sm">Comprehensive verification of all data sources and outputs</p>
+                <p className="text-muted text-sm">Comprehensive verification of all data sources and outputs</p>
               </Link>
             </div>
           </section>

@@ -110,38 +110,38 @@ export function StacksContextMenu({
       label: 'Move to Top',
       icon: ArrowUpIcon,
       onClick: onMoveToTop,
-      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]'
+      className: 'text-foreground hover:bg-hover'
     },
     {
       label: 'Move Up',
       icon: ChevronUpIcon,
       onClick: onMoveUp,
-      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]'
+      className: 'text-foreground hover:bg-hover'
     },
     {
       label: 'Move Down',
       icon: ChevronDownIcon,
       onClick: onMoveDown,
-      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]'
+      className: 'text-foreground hover:bg-hover'
     },
     {
       label: 'Move to Bottom',
       icon: ArrowDownIcon,
       onClick: onMoveToBottom,
-      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]'
+      className: 'text-foreground hover:bg-hover'
     },
     ...(showMoveBelowTheLine && onMoveBelowTheLine ? [{
       label: 'Move Below the Line',
       icon: ArrowDownCircleIcon,
       onClick: onMoveBelowTheLine,
-      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]',
+      className: 'text-foreground hover:bg-hover',
       showDivider: true
     }] : []),
     ...(showMoveToDeepBacklog && onMoveToDeepBacklog ? [{
       label: 'Deep Backlog',
       icon: ArchiveBoxIcon,
       onClick: onMoveToDeepBacklog,
-      className: 'text-[var(--foreground)] hover:bg-[var(--hover)]',
+      className: 'text-foreground hover:bg-hover',
       showDivider: true
     }] : []),
     {
@@ -155,7 +155,7 @@ export function StacksContextMenu({
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[160px]"
+      className="fixed z-50 bg-background border border-border rounded-lg shadow-lg py-1 min-w-[160px]"
       style={{
         left: adjustedPosition.x,
         top: adjustedPosition.y,
@@ -167,7 +167,7 @@ export function StacksContextMenu({
         const showDivider = (item as any).showDivider || isLast;
         return (
           <React.Fragment key={index}>
-            {showDivider && <div className="border-t border-[var(--border)] my-1" />}
+            {showDivider && <div className="border-t border-border my-1" />}
             <button
               onClick={() => {
                 item.onClick();

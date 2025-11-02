@@ -44,12 +44,12 @@ export function ActivityTracker({ onActivityUpdate }: ActivityTrackerProps) {
   ];
 
   return (
-    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 mb-4">
+    <div className="bg-background border border-border rounded-lg p-4 mb-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
-          <h3 className="text-sm font-semibold text-[var(--foreground)]">Activity Tracker</h3>
-          <div className="text-xs text-[var(--muted)]">
+          <h3 className="text-sm font-semibold text-foreground">Activity Tracker</h3>
+          <div className="text-xs text-muted">
             {timeData.isBeforeWorkingHours ? (
               <>
                 Start time: {Math.round(timeData.hoursTillStart)}h
@@ -63,7 +63,7 @@ export function ActivityTracker({ onActivityUpdate }: ActivityTrackerProps) {
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-xs bg-[var(--hover)] text-[var(--muted)] px-2 py-1 rounded hover:bg-[var(--loading-bg)]"
+          className="text-xs bg-hover text-muted px-2 py-1 rounded hover:bg-loading-bg"
         >
           {isExpanded ? 'Collapse' : 'Expand'}
         </button>
@@ -72,16 +72,16 @@ export function ActivityTracker({ onActivityUpdate }: ActivityTrackerProps) {
       {/* Progress Summary */}
       <div className="grid grid-cols-2 gap-4 mb-3">
         <div className="text-center">
-          <div className="text-lg font-bold text-[var(--foreground)]">
+          <div className="text-lg font-bold text-foreground">
             {activityCount.total}/{timeData.todayTarget}
           </div>
-          <div className="text-xs text-[var(--muted)]">Today's Progress</div>
+          <div className="text-xs text-muted">Today's Progress</div>
         </div>
         <div className="text-center">
-          <div className="text-lg font-bold text-[var(--foreground)]">
+          <div className="text-lg font-bold text-foreground">
             {Math.round((activityCount.total / timeData.todayTarget) * 100)}%
           </div>
-          <div className="text-xs text-[var(--muted)]">Daily Goal</div>
+          <div className="text-xs text-muted">Daily Goal</div>
         </div>
       </div>
 
@@ -92,25 +92,25 @@ export function ActivityTracker({ onActivityUpdate }: ActivityTrackerProps) {
           <div className="grid grid-cols-4 gap-2 mb-4">
             <div className="text-center">
               <div className="text-lg font-bold text-blue-600">{activityCount.emails}</div>
-              <div className="text-xs text-[var(--muted)]">Emails</div>
+              <div className="text-xs text-muted">Emails</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-green-600">{activityCount.calls}</div>
-              <div className="text-xs text-[var(--muted)]">Calls</div>
+              <div className="text-xs text-muted">Calls</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-purple-600">{activityCount.meetings}</div>
-              <div className="text-xs text-[var(--muted)]">Meetings</div>
+              <div className="text-xs text-muted">Meetings</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-bold text-orange-600">{activityCount.tasks}</div>
-              <div className="text-xs text-[var(--muted)]">Tasks</div>
+              <div className="text-xs text-muted">Tasks</div>
             </div>
           </div>
 
           {/* Quick Action Buttons */}
           <div className="space-y-2">
-            <div className="text-xs text-[var(--muted)] font-medium">Quick Add:</div>
+            <div className="text-xs text-muted font-medium">Quick Add:</div>
             <div className="grid grid-cols-2 gap-2">
               {quickActions.map((action) => (
                 <button
@@ -126,20 +126,20 @@ export function ActivityTracker({ onActivityUpdate }: ActivityTrackerProps) {
           </div>
 
           {/* Bulk Actions */}
-          <div className="mt-3 pt-3 border-t border-[var(--border)]">
-            <div className="text-xs text-[var(--muted)] font-medium mb-2">Bulk Add:</div>
+          <div className="mt-3 pt-3 border-t border-border">
+            <div className="text-xs text-muted font-medium mb-2">Bulk Add:</div>
             <div className="grid grid-cols-4 gap-2">
               {quickActions.map((action) => (
                 <div key={`bulk-${action.type}`} className="flex items-center gap-1">
                   <button
                     onClick={() => handleActivityUpdate(action.type, 5)}
-                    className="text-xs bg-[var(--hover)] hover:bg-[var(--loading-bg)] px-2 py-1 rounded"
+                    className="text-xs bg-hover hover:bg-loading-bg px-2 py-1 rounded"
                   >
                     +5
                   </button>
                   <button
                     onClick={() => handleActivityUpdate(action.type, 10)}
-                    className="text-xs bg-[var(--hover)] hover:bg-[var(--loading-bg)] px-2 py-1 rounded"
+                    className="text-xs bg-hover hover:bg-loading-bg px-2 py-1 rounded"
                   >
                     +10
                   </button>
@@ -149,7 +149,7 @@ export function ActivityTracker({ onActivityUpdate }: ActivityTrackerProps) {
           </div>
 
           {/* Reset Button */}
-          <div className="mt-3 pt-3 border-t border-[var(--border)]">
+          <div className="mt-3 pt-3 border-t border-border">
             <button
               onClick={() => {
                 localStorage.removeItem('todayActivity');

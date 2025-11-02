@@ -77,7 +77,7 @@ export function InChatTodoList({
       case 'current':
         return <PlayIcon className="w-4 h-4 text-blue-500" />;
       default:
-        return <ClockIcon className="w-4 h-4 text-[var(--muted)]" />;
+        return <ClockIcon className="w-4 h-4 text-muted" />;
     }
   };
 
@@ -92,7 +92,7 @@ export function InChatTodoList({
       case 'current':
         return `${baseStyle} bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700`;
       default:
-        return `${baseStyle} bg-[var(--panel-background)] text-[var(--muted)] dark:text-[var(--muted)]`;
+        return `${baseStyle} bg-panel-background text-muted dark:text-muted`;
     }
   };
 
@@ -100,7 +100,7 @@ export function InChatTodoList({
   const progressPercentage = (completedCount / todos.length) * 100;
 
   return (
-    <div className={`bg-[var(--background)] dark:bg-[var(--foreground)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg p-4 my-3 ${className}`}>
+    <div className={`bg-background dark:bg-foreground border border-border dark:border-border rounded-lg p-4 my-3 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -109,14 +109,14 @@ export function InChatTodoList({
             Task Breakdown
           </span>
         </div>
-        <span className="text-xs text-[var(--muted)] dark:text-[var(--muted)]">
+        <span className="text-xs text-muted dark:text-muted">
           {completedCount}/{todos.length} completed
         </span>
       </div>
 
       {/* Progress Bar */}
       <div className="mb-4">
-        <div className="w-full bg-[var(--loading-bg)] rounded-full h-1.5">
+        <div className="w-full bg-loading-bg rounded-full h-1.5">
           <div 
             className="bg-blue-500 h-1.5 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progressPercentage}%` }}
@@ -153,7 +153,7 @@ export function InChatTodoList({
 
       {/* Footer Status */}
       {completedCount === todos['length'] && (
-        <div className="mt-3 pt-3 border-t border-[var(--border)] dark:border-[var(--border)]">
+        <div className="mt-3 pt-3 border-t border-border dark:border-border">
           <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
             <CheckIcon className="w-4 h-4" />
             <span className="text-sm font-medium">All tasks completed!</span>

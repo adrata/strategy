@@ -64,7 +64,7 @@ export function LeadDetailsHeader({
       <div className="flex items-center gap-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-3 py-2 bg-[var(--hover)] text-gray-700 rounded-lg hover:bg-[var(--loading-bg)] transition-colors"
+          className="flex items-center gap-2 px-3 py-2 bg-hover text-gray-700 rounded-lg hover:bg-loading-bg transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
@@ -75,13 +75,13 @@ export function LeadDetailsHeader({
           {(person as any).globalRank || (person as any).winningScore?.rank || personIndex}
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-[var(--foreground)]">
+          <h1 className="text-xl font-semibold text-foreground">
             {person.name}
           </h1>
           <div className="mt-1 space-y-0.5">
             <div className="flex items-center gap-2">
-              <BuildingOfficeIcon className="w-4 h-4 text-[var(--muted)]" />
-              <p className="text-sm text-[var(--muted)]">
+              <BuildingOfficeIcon className="w-4 h-4 text-muted" />
+              <p className="text-sm text-muted">
                 {typeof person.company === 'object' ? person.company?.name : person.company}
               </p>
             </div>
@@ -91,7 +91,7 @@ export function LeadDetailsHeader({
 
       <div className="flex gap-2 items-center">
         {/* Real-time Target Numbers */}
-        <div className="flex items-center gap-4 text-sm text-[var(--muted)] mr-4">
+        <div className="flex items-center gap-4 text-sm text-muted mr-4">
           <div className="text-center">
             <div className="font-semibold">
               <span className="text-red-600">{accurateTargets.completedToday}</span>
@@ -111,7 +111,7 @@ export function LeadDetailsHeader({
         {/* DIAL BUTTON TEMPORARILY HIDDEN
         <button
           onClick={onDial}
-          className="hidden md:flex items-center gap-2 px-4 py-2 border border-[var(--border)] bg-transparent text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--panel-background)] transition-colors"
+          className="hidden md:flex items-center gap-2 px-4 py-2 border border-border bg-transparent text-foreground rounded-lg font-medium hover:bg-panel-background transition-colors"
         >
           <span className="text-sm">⌘</span>
           <span className="text-sm">D</span>
@@ -133,7 +133,7 @@ export function LeadDetailsHeader({
         {onAddCompany && !person.companyId && (!person.company || (typeof person.company === 'string' && !person.company)) && (
           <button
             onClick={onAddCompany}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)] rounded-lg font-medium hover:bg-[var(--panel-background)] transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-background text-foreground border border-border rounded-lg font-medium hover:bg-panel-background transition-colors"
           >
             <BuildingOfficeIcon className="w-4 h-4" />
             Add Company
@@ -144,7 +144,7 @@ export function LeadDetailsHeader({
         <div className="relative">
           <button
             onClick={() => onMoreActions(!showMoreActions)}
-            className="flex items-center gap-2 px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--hover-bg)] transition-colors"
+            className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg font-medium hover:bg-hover transition-colors"
           >
             More
             <ChevronDownIcon className="w-4 h-4" />
@@ -156,7 +156,7 @@ export function LeadDetailsHeader({
                 className="fixed inset-0 z-10"
                 onClick={() => onMoreActions(false)}
               />
-              <div className="absolute right-0 top-12 w-48 bg-[var(--background)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg shadow-lg z-50">
+              <div className="absolute right-0 top-12 w-48 bg-background border border-border dark:border-border rounded-lg shadow-lg z-50">
                 <div className="py-1">
                   {/* Pulse button removed per user request */}
 
@@ -167,13 +167,13 @@ export function LeadDetailsHeader({
                       onDial();
                       onMoreActions(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-[var(--foreground)] hover:bg-[var(--hover-bg)] transition-colors flex items-center gap-2 md:hidden"
+                    className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-hover transition-colors flex items-center gap-2 md:hidden"
                   >
                     <span className="text-sm">⌘D</span>
                     Dial
                   </button>
 
-                  <div className="border-t border-[var(--border)] dark:border-[var(--border)] my-1 md:hidden"></div>
+                  <div className="border-t border-border dark:border-border my-1 md:hidden"></div>
                   */}
 
                   <button
@@ -181,14 +181,14 @@ export function LeadDetailsHeader({
                       onUpdate?.();
                       onMoreActions(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-[var(--muted)] hover:bg-[var(--panel-background)] dark:hover:bg-[var(--foreground)]/20 transition-colors flex items-center gap-2"
+                    className="w-full text-left px-4 py-2 text-sm text-muted hover:bg-panel-background dark:hover:bg-foreground/20 transition-colors flex items-center gap-2"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     Update
                   </button>
-                  <div className="border-t border-[var(--border)] dark:border-[var(--border)] my-1"></div>
+                  <div className="border-t border-border dark:border-border my-1"></div>
                   <button
                     onClick={() => {
                       onSnooze(person.id);
@@ -219,7 +219,7 @@ export function LeadDetailsHeader({
         <button
           onClick={onNavigatePrevious}
           disabled={!canNavigatePrevious()}
-          className="px-3 py-2 border border-[var(--border)] bg-transparent text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--panel-background)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 border border-border bg-transparent text-foreground rounded-lg font-medium hover:bg-panel-background transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ChevronLeftIcon className="w-4 h-4" />
         </button>
@@ -227,7 +227,7 @@ export function LeadDetailsHeader({
         <button
           onClick={onNavigateNext}
           disabled={!canNavigateNext()}
-          className="px-3 py-2 border border-[var(--border)] bg-transparent text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--panel-background)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 border border-border bg-transparent text-foreground rounded-lg font-medium hover:bg-panel-background transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ChevronRightIcon className="w-4 h-4" />
         </button>

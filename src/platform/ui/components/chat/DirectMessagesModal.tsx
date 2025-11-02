@@ -105,28 +105,28 @@ export function DirectMessagesModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div 
         ref={modalRef}
-        className="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-xl w-[400px] max-h-[600px] flex flex-col"
+        className="bg-background border border-border rounded-lg shadow-xl w-[400px] max-h-[600px] flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
-          <h2 className="text-lg font-semibold text-[var(--foreground)]">Direct Messages</h2>
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="text-lg font-semibold text-foreground">Direct Messages</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors flex items-center justify-center rounded-md hover:bg-[var(--panel-background)]"
+            className="w-8 h-8 text-muted hover:text-foreground transition-colors flex items-center justify-center rounded-md hover:bg-panel-background"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
         </div>
 
         {/* Search */}
-        <div className="p-4 border-b border-[var(--border)]">
+        <div className="p-4 border-b border-border">
           <div className="relative">
             <input
               type="text"
               placeholder="Search people..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 bg-[var(--panel-background)] border border-[var(--border)] rounded-md text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 bg-panel-background border border-border rounded-md text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -134,11 +134,11 @@ export function DirectMessagesModal({
         {/* DM List */}
         <div className="flex-1 overflow-y-auto">
           {loading ? (
-            <div className="p-4 text-center text-[var(--muted)]">
+            <div className="p-4 text-center text-muted">
               Loading conversations...
             </div>
           ) : filteredDMs.length === 0 ? (
-            <div className="p-4 text-center text-[var(--muted)]">
+            <div className="p-4 text-center text-muted">
               {searchQuery ? 'No people found' : 'No direct messages yet'}
             </div>
           ) : (
@@ -150,10 +150,10 @@ export function DirectMessagesModal({
                     onSelectDM(dm);
                     onClose();
                   }}
-                  className="w-full flex items-center p-3 rounded-md hover:bg-[var(--panel-background)] transition-colors text-left"
+                  className="w-full flex items-center p-3 rounded-md hover:bg-panel-background transition-colors text-left"
                 >
                   <div className="relative mr-3">
-                    <div className="w-10 h-10 bg-[var(--panel-background)] rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-panel-background rounded-full flex items-center justify-center">
                       {dm.avatar ? (
                         <img 
                           src={dm.avatar} 
@@ -161,27 +161,27 @@ export function DirectMessagesModal({
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       ) : (
-                        <UserCircleIcon className="w-8 h-8 text-[var(--muted)]" />
+                        <UserCircleIcon className="w-8 h-8 text-muted" />
                       )}
                     </div>
                     {dm.isOnline && (
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[var(--background)] rounded-full"></div>
+                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-background rounded-full"></div>
                     )}
                   </div>
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-medium text-[var(--foreground)] truncate">
+                      <h3 className="text-sm font-medium text-foreground truncate">
                         {dm.name}
                       </h3>
                       {dm.lastMessageTime && (
-                        <span className="text-xs text-[var(--muted)] ml-2">
+                        <span className="text-xs text-muted ml-2">
                           {formatTimeAgo(dm.lastMessageTime)}
                         </span>
                       )}
                     </div>
                     <div className="flex items-center justify-between mt-1">
-                      <p className="text-sm text-[var(--muted)] truncate flex-1">
+                      <p className="text-sm text-muted truncate flex-1">
                         {dm.lastMessage || 'No messages yet'}
                       </p>
                       {dm.unreadCount && dm.unreadCount > 0 && (
@@ -198,8 +198,8 @@ export function DirectMessagesModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-[var(--border)]">
-          <button className="w-full flex items-center justify-center px-4 py-2 bg-[var(--panel-background)] hover:bg-[var(--hover)] text-[var(--foreground)] rounded-md transition-colors">
+        <div className="p-4 border-t border-border">
+          <button className="w-full flex items-center justify-center px-4 py-2 bg-panel-background hover:bg-hover text-foreground rounded-md transition-colors">
             <PlusIcon className="w-4 h-4 mr-2" />
             Start New Conversation
           </button>

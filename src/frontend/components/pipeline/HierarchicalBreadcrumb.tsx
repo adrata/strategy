@@ -146,15 +146,15 @@ export function HierarchicalBreadcrumb({
       <div className="flex items-center gap-2">
         <button 
           onClick={onBack}
-          className="flex items-center gap-1 text-sm text-[var(--muted)] hover:text-gray-700 transition-colors capitalize"
+          className="flex items-center gap-1 text-sm text-muted hover:text-gray-700 transition-colors capitalize"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           All {recordType === 'people' ? 'People' : recordType}
         </button>
-        <span className="text-sm text-[var(--muted)]">/</span>
-        <span className="text-sm font-medium text-[var(--foreground)]">{getDisplayName()}</span>
+        <span className="text-sm text-muted">/</span>
+        <span className="text-sm font-medium text-foreground">{getDisplayName()}</span>
       </div>
     );
   }
@@ -166,15 +166,15 @@ export function HierarchicalBreadcrumb({
       <div className="flex items-center gap-2">
         <button 
           onClick={onBack}
-          className="flex items-center gap-1 text-sm text-[var(--muted)] hover:text-gray-700 transition-colors capitalize"
+          className="flex items-center gap-1 text-sm text-muted hover:text-gray-700 transition-colors capitalize"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           All {recordType}
         </button>
-        <span className="text-sm text-[var(--muted)]">/</span>
-        <span className="text-sm font-medium text-[var(--foreground)]">{getCompanyName()}</span>
+        <span className="text-sm text-muted">/</span>
+        <span className="text-sm font-medium text-foreground">{getCompanyName()}</span>
       </div>
     );
   }
@@ -184,29 +184,29 @@ export function HierarchicalBreadcrumb({
     <div className="flex items-center gap-2">
       <button 
         onClick={onBack}
-        className="flex items-center gap-1 text-sm text-[var(--muted)] hover:text-gray-700 transition-colors capitalize"
+        className="flex items-center gap-1 text-sm text-muted hover:text-gray-700 transition-colors capitalize"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
         All {recordType === 'people' ? 'People' : recordType}
       </button>
-      <span className="text-sm text-[var(--muted)]">/</span>
+      <span className="text-sm text-muted">/</span>
       
       {/* Company Link */}
       <button
         onClick={handleCompanyClick}
-        className="text-sm text-[var(--muted)] hover:text-gray-700 transition-colors"
+        className="text-sm text-muted hover:text-gray-700 transition-colors"
         title={`View ${getCompanyName()} company details`}
       >
         {getCompanyName()}
       </button>
-      <span className="text-sm text-[var(--muted)]">/</span>
+      <span className="text-sm text-muted">/</span>
       
       {/* Person Link */}
       <button
         onClick={handlePersonClick}
-        className="text-sm font-medium text-[var(--foreground)] hover:text-blue-600 transition-colors"
+        className="text-sm font-medium text-foreground hover:text-blue-600 transition-colors"
         title={`View ${getDisplayName()} details`}
       >
         {getDisplayName()}

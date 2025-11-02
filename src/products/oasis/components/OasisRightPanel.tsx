@@ -131,16 +131,16 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
   };
 
   return (
-    <div className="w-full h-full bg-[var(--background)] border-l border-[var(--border)] flex flex-col">
+    <div className="w-full h-full bg-background border-l border-border flex flex-col">
       {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
+      <div className="flex-shrink-0 p-4 border-b border-border">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-[var(--foreground)]">
+          <h2 className="text-lg font-semibold text-foreground">
             {selectedChannel ? `#${selectedChannel.name}` : 'Oasis'}
           </h2>
           <button
             onClick={onClose}
-            className="p-1 text-[var(--muted)] hover:text-[var(--muted)] hover:bg-[var(--hover)] rounded transition-colors"
+            className="p-1 text-muted hover:text-muted hover:bg-hover rounded transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -149,13 +149,13 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-1 bg-[var(--hover)] rounded-lg p-1">
+        <div className="flex space-x-1 bg-hover rounded-lg p-1">
           <button
             onClick={() => setActiveTab('members')}
             className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
               activeTab === 'members'
-                ? 'bg-[var(--background)] text-[var(--foreground)] shadow-sm'
-                : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted hover:text-foreground'
             }`}
           >
             <UsersIcon className="w-4 h-4" />
@@ -165,8 +165,8 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
             onClick={() => setActiveTab('info')}
             className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
               activeTab === 'info'
-                ? 'bg-[var(--background)] text-[var(--foreground)] shadow-sm'
-                : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted hover:text-foreground'
             }`}
           >
             <InformationCircleIcon className="w-4 h-4" />
@@ -176,8 +176,8 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
             onClick={() => setActiveTab('ai')}
             className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
               activeTab === 'ai'
-                ? 'bg-[var(--background)] text-[var(--foreground)] shadow-sm'
-                : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted hover:text-foreground'
             }`}
           >
             <SparklesIcon className="w-4 h-4" />
@@ -191,14 +191,14 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
         {activeTab === 'members' && (
           <div className="p-4">
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-[var(--foreground)] mb-2">
+              <h3 className="text-sm font-medium text-foreground mb-2">
                 {mockMembers.length} Members
               </h3>
             </div>
             
             <div className="space-y-3">
               {mockMembers.map((member) => (
-                <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--panel-background)] transition-colors">
+                <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-panel-background transition-colors">
                   <div className="relative">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
                       <span className="text-sm font-medium text-white">{member.avatar}</span>
@@ -208,14 +208,14 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-[var(--foreground)] truncate">{member.name}</span>
+                      <span className="font-medium text-foreground truncate">{member.name}</span>
                       {member.role === 'admin' && (
                         <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
                           Admin
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
+                    <div className="flex items-center gap-2 text-sm text-muted">
                       <span>{getStatusText(member.status)}</span>
                       <span>•</span>
                       <span>{member.lastSeen}</span>
@@ -232,20 +232,20 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
             <div className="space-y-6">
               {/* Channel Info */}
               <div>
-                <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Channel Details</h3>
+                <h3 className="text-sm font-medium text-foreground mb-3">Channel Details</h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Purpose</label>
+                    <label className="text-xs font-medium text-muted uppercase tracking-wide">Purpose</label>
                     <p className="text-sm text-gray-700 mt-1">
                       General team communication and project updates
                     </p>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Created</label>
+                    <label className="text-xs font-medium text-muted uppercase tracking-wide">Created</label>
                     <p className="text-sm text-gray-700 mt-1">January 15, 2024</p>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Topic</label>
+                    <label className="text-xs font-medium text-muted uppercase tracking-wide">Topic</label>
                     <p className="text-sm text-gray-700 mt-1">
                       🚀 Building the future of team collaboration
                     </p>
@@ -255,27 +255,27 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
 
               {/* Recent Activity */}
               <div>
-                <h3 className="text-sm font-medium text-[var(--foreground)] mb-3">Recent Activity</h3>
+                <h3 className="text-sm font-medium text-foreground mb-3">Recent Activity</h3>
                 <div className="space-y-2">
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm text-muted">
                     <span className="font-medium">Sarah Chen</span> joined the channel
-                    <span className="text-[var(--muted)] ml-2">2 hours ago</span>
+                    <span className="text-muted ml-2">2 hours ago</span>
                   </div>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm text-muted">
                     <span className="font-medium">Mike Johnson</span> updated the channel topic
-                    <span className="text-[var(--muted)] ml-2">1 day ago</span>
+                    <span className="text-muted ml-2">1 day ago</span>
                   </div>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm text-muted">
                     <span className="font-medium">Alex Rodriguez</span> shared a file
-                    <span className="text-[var(--muted)] ml-2">2 days ago</span>
+                    <span className="text-muted ml-2">2 days ago</span>
                   </div>
                 </div>
               </div>
 
               {/* Settings */}
               <div>
-                <button className="w-full flex items-center gap-3 p-3 text-left text-gray-700 hover:bg-[var(--panel-background)] rounded-lg transition-colors">
-                  <Cog6ToothIcon className="w-5 h-5 text-[var(--muted)]" />
+                <button className="w-full flex items-center gap-3 p-3 text-left text-gray-700 hover:bg-panel-background rounded-lg transition-colors">
+                  <Cog6ToothIcon className="w-5 h-5 text-muted" />
                   <span className="font-medium">Channel Settings</span>
                 </button>
               </div>
@@ -288,9 +288,9 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-2">
                 <SparklesIcon className="w-5 h-5 text-purple-600" />
-                <h3 className="text-sm font-medium text-[var(--foreground)]">AI Assistant</h3>
+                <h3 className="text-sm font-medium text-foreground">AI Assistant</h3>
               </div>
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 Get help with your team communication
               </p>
             </div>
@@ -302,14 +302,14 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
                   <button
                     key={action.id}
                     onClick={action.action}
-                    className="w-full flex items-start gap-3 p-3 text-left hover:bg-[var(--panel-background)] rounded-lg transition-colors border border-[var(--border)]"
+                    className="w-full flex items-start gap-3 p-3 text-left hover:bg-panel-background rounded-lg transition-colors border border-border"
                   >
                     <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
                       <Icon className="w-4 h-4 text-purple-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-[var(--foreground)] text-sm">{action.title}</div>
-                      <div className="text-xs text-[var(--muted)] mt-1">{action.description}</div>
+                      <div className="font-medium text-foreground text-sm">{action.title}</div>
+                      <div className="text-xs text-muted mt-1">{action.description}</div>
                     </div>
                   </button>
                 );
@@ -317,14 +317,14 @@ export function OasisRightPanel({ selectedChannel, onClose }: OasisRightPanelPro
             </div>
 
             {/* Quick Actions */}
-            <div className="mt-6 pt-4 border-t border-[var(--border)]">
-              <h4 className="text-sm font-medium text-[var(--foreground)] mb-3">Quick Actions</h4>
+            <div className="mt-6 pt-4 border-t border-border">
+              <h4 className="text-sm font-medium text-foreground mb-3">Quick Actions</h4>
               <div className="space-y-2">
-                <button className="w-full flex items-center gap-2 p-2 text-sm text-[var(--muted)] hover:bg-[var(--panel-background)] rounded transition-colors">
+                <button className="w-full flex items-center gap-2 p-2 text-sm text-muted hover:bg-panel-background rounded transition-colors">
                   <PaperAirplaneIcon className="w-4 h-4" />
                   Send AI Message
                 </button>
-                <button className="w-full flex items-center gap-2 p-2 text-sm text-[var(--muted)] hover:bg-[var(--panel-background)] rounded transition-colors">
+                <button className="w-full flex items-center gap-2 p-2 text-sm text-muted hover:bg-panel-background rounded transition-colors">
                   <DocumentTextIcon className="w-4 h-4" />
                   Generate Summary
                 </button>

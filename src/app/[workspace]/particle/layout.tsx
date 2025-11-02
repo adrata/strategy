@@ -129,15 +129,15 @@ function ParticleRightPanel() {
 
   if (selectedTestRun) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
-        <div className="p-4 border-b border-[var(--border)]">
-          <h3 className="font-semibold text-[var(--foreground)]">Test Run Details</h3>
-          <p className="text-sm text-[var(--muted-foreground)]">{selectedTestRun.id}</p>
+      <div className="h-full flex flex-col bg-background border-l border-border">
+        <div className="p-4 border-b border-border">
+          <h3 className="font-semibold text-foreground">Test Run Details</h3>
+          <p className="text-sm text-muted">{selectedTestRun.id}</p>
         </div>
         <div className="flex-1 p-4 overflow-y-auto">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Status</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Status</label>
               <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
                 selectedTestRun.status === 'completed' ? 'bg-green-100 text-green-800' :
                 selectedTestRun.status === 'running' ? 'bg-blue-100 text-blue-800' :
@@ -149,16 +149,16 @@ function ParticleRightPanel() {
             </div>
             {selectedTestRun.startTime && (
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Duration</label>
-                <p className="text-sm text-[var(--muted-foreground)]">
+                <label className="block text-sm font-medium text-foreground mb-1">Duration</label>
+                <p className="text-sm text-muted">
                   {selectedTestRun.duration ? `${selectedTestRun.duration}ms` : 'Calculating...'}
                 </p>
               </div>
             )}
             {selectedTestRun.sampleSize > 0 && (
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Sample Size</label>
-                <p className="text-sm text-[var(--muted-foreground)]">{selectedTestRun.sampleSize}</p>
+                <label className="block text-sm font-medium text-foreground mb-1">Sample Size</label>
+                <p className="text-sm text-muted">{selectedTestRun.sampleSize}</p>
               </div>
             )}
           </div>
@@ -169,15 +169,15 @@ function ParticleRightPanel() {
 
   if (selectedVariant) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
-        <div className="p-4 border-b border-[var(--border)]">
-          <h3 className="font-semibold text-[var(--foreground)]">Variant Details</h3>
-          <p className="text-sm text-[var(--muted-foreground)]">{selectedVariant.name}</p>
+      <div className="h-full flex flex-col bg-background border-l border-border">
+        <div className="p-4 border-b border-border">
+          <h3 className="font-semibold text-foreground">Variant Details</h3>
+          <p className="text-sm text-muted">{selectedVariant.name}</p>
         </div>
         <div className="flex-1 p-4 overflow-y-auto">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Type</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Type</label>
               <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
                 selectedVariant.isControl ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
               }`}>
@@ -185,13 +185,13 @@ function ParticleRightPanel() {
               </span>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Traffic Weight</label>
-              <p className="text-sm text-[var(--muted-foreground)]">{(selectedVariant.weight * 100).toFixed(1)}%</p>
+              <label className="block text-sm font-medium text-foreground mb-1">Traffic Weight</label>
+              <p className="text-sm text-muted">{(selectedVariant.weight * 100).toFixed(1)}%</p>
             </div>
             {selectedVariant.description && (
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Description</label>
-                <p className="text-sm text-[var(--muted-foreground)]">{selectedVariant.description}</p>
+                <label className="block text-sm font-medium text-foreground mb-1">Description</label>
+                <p className="text-sm text-muted">{selectedVariant.description}</p>
               </div>
             )}
           </div>
@@ -202,15 +202,15 @@ function ParticleRightPanel() {
 
   if (selectedExperiment) {
     return (
-      <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
-        <div className="p-4 border-b border-[var(--border)]">
-          <h3 className="font-semibold text-[var(--foreground)]">Experiment Details</h3>
-          <p className="text-sm text-[var(--muted-foreground)]">{selectedExperiment.name}</p>
+      <div className="h-full flex flex-col bg-background border-l border-border">
+        <div className="p-4 border-b border-border">
+          <h3 className="font-semibold text-foreground">Experiment Details</h3>
+          <p className="text-sm text-muted">{selectedExperiment.name}</p>
         </div>
         <div className="flex-1 p-4 overflow-y-auto">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Status</label>
+              <label className="block text-sm font-medium text-foreground mb-1">Status</label>
               <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
                 selectedExperiment.status === 'active' ? 'bg-green-100 text-green-800' :
                 selectedExperiment.status === 'completed' ? 'bg-blue-100 text-blue-800' :
@@ -221,17 +221,17 @@ function ParticleRightPanel() {
               </span>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Type</label>
-              <p className="text-sm text-[var(--muted-foreground)]">{selectedExperiment.experimentType}</p>
+              <label className="block text-sm font-medium text-foreground mb-1">Type</label>
+              <p className="text-sm text-muted">{selectedExperiment.experimentType}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Confidence Level</label>
-              <p className="text-sm text-[var(--muted-foreground)]">{(selectedExperiment.confidenceLevel * 100).toFixed(0)}%</p>
+              <label className="block text-sm font-medium text-foreground mb-1">Confidence Level</label>
+              <p className="text-sm text-muted">{(selectedExperiment.confidenceLevel * 100).toFixed(0)}%</p>
             </div>
             {selectedExperiment.hypothesis && (
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Hypothesis</label>
-                <p className="text-sm text-[var(--muted-foreground)]">{selectedExperiment.hypothesis}</p>
+                <label className="block text-sm font-medium text-foreground mb-1">Hypothesis</label>
+                <p className="text-sm text-muted">{selectedExperiment.hypothesis}</p>
               </div>
             )}
           </div>

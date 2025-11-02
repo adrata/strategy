@@ -172,14 +172,14 @@ hello()`;
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Toolbar */}
-      <div className="flex items-center gap-4 px-4 py-2 border-b border-[var(--border)] bg-[var(--panel-background)]">
+      <div className="flex items-center gap-4 px-4 py-2 border-b border-border bg-panel-background">
         {/* Language Selector */}
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="px-3 py-1 border border-[var(--border)] rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="px-3 py-1 border border-border rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
           {Object.entries(languageMap).map(([key, value]) => (
             <option key={key} value={value}>
@@ -192,7 +192,7 @@ hello()`;
         <select
           value={theme}
           onChange={(e) => setTheme(e.target.value as any)}
-          className="px-3 py-1 border border-[var(--border)] rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="px-3 py-1 border border-border rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
           <option value="vs-light">Light</option>
           <option value="vs-dark">Dark</option>
@@ -203,7 +203,7 @@ hello()`;
         <select
           value={fontSize}
           onChange={(e) => setFontSize(Number(e.target.value))}
-          className="px-3 py-1 border border-[var(--border)] rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="px-3 py-1 border border-border rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
           <option value={12}>12px</option>
           <option value={14}>14px</option>

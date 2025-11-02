@@ -96,7 +96,7 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
       <div className={`flex items-center gap-2 ${className}`}>
         <button
           onClick={onAddFiles}
-          className="relative flex items-center gap-2 bg-[var(--background)] text-[var(--muted)] rounded-lg px-3 py-1.5 text-sm border border-[var(--border)] hover:border-[var(--border)] hover:bg-[var(--panel-background)] transition-colors cursor-pointer"
+          className="relative flex items-center gap-2 bg-background text-muted rounded-lg px-3 py-1.5 text-sm border border-border hover:border-border hover:bg-panel-background transition-colors cursor-pointer"
         >
           {/* File icon */}
           <DocumentIcon className="w-4 h-4" />
@@ -118,8 +118,8 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
             key={file.id}
             className={`relative flex items-center gap-2 rounded-xl px-2 py-0.5 text-sm ${
               isData 
-                ? 'bg-[var(--foreground)] text-white border border-[var(--border)]' 
-                : 'bg-[var(--background)] text-black border border-[var(--border)]'
+                ? 'bg-foreground text-white border border-border' 
+                : 'bg-background text-black border border-border'
             }`}
             style={{
               borderRadius: '12px', // Squircle-like rounded corners
@@ -129,7 +129,7 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
             <div className={`flex items-center justify-center w-5 h-5 rounded-full text-xs font-medium ${
               isData 
                 ? 'bg-red-600 text-white' 
-                : 'bg-gray-300 text-[var(--muted)]'
+                : 'bg-gray-300 text-muted'
             }`}>
               {isData ? '@' : (index + 1)}
             </div>
@@ -151,7 +151,7 @@ export function ContextFiles({ files, onRemoveFile, onAddFiles, className = "" }
               className={`ml-1 p-0.5 rounded-full transition-colors ${
                 isData 
                   ? 'hover:bg-gray-800' 
-                  : 'hover:bg-[var(--hover)]'
+                  : 'hover:bg-hover'
               }`}
               aria-label={`Remove ${file.name}`}
             >

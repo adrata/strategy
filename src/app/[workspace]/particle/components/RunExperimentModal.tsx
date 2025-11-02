@@ -39,20 +39,20 @@ export function RunExperimentModal({ experiment, onClose }: RunExperimentModalPr
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[var(--background)] rounded-lg shadow-xl w-full max-w-lg">
-        <div className="p-6 border-b border-[var(--border)]">
+      <div className="bg-background rounded-lg shadow-xl w-full max-w-lg">
+        <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">Run Experiment</h2>
+            <h2 className="text-xl font-semibold text-foreground">Run Experiment</h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-[var(--hover)] rounded-lg transition-colors"
+              className="p-2 hover:bg-hover rounded-lg transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-          <p className="text-sm text-[var(--muted-foreground)] mt-2">
+          <p className="text-sm text-muted mt-2">
             Configure and start the experiment: <strong>{experiment.name}</strong>
           </p>
         </div>
@@ -61,38 +61,38 @@ export function RunExperimentModal({ experiment, onClose }: RunExperimentModalPr
           <div className="p-6 space-y-6">
             {/* Sample Size */}
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Sample Size
               </label>
               <input
                 type="number"
                 value={formData.sampleSize}
                 onChange={(e) => setFormData(prev => ({ ...prev, sampleSize: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                 min="100"
                 step="100"
                 required
               />
-              <p className="text-xs text-[var(--muted-foreground)] mt-1">
+              <p className="text-xs text-muted mt-1">
                 Number of test runs to execute per variant
               </p>
             </div>
 
             {/* Duration */}
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Maximum Duration (minutes)
               </label>
               <input
                 type="number"
                 value={formData.duration}
                 onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
                 min="5"
                 max="1440"
                 required
               />
-              <p className="text-xs text-[var(--muted-foreground)] mt-1">
+              <p className="text-xs text-muted mt-1">
                 Experiment will stop after this duration, even if sample size isn't reached
               </p>
             </div>
@@ -107,8 +107,8 @@ export function RunExperimentModal({ experiment, onClose }: RunExperimentModalPr
                   className="mr-3"
                 />
                 <div>
-                  <span className="text-sm font-medium text-[var(--foreground)]">Run variants in parallel</span>
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <span className="text-sm font-medium text-foreground">Run variants in parallel</span>
+                  <p className="text-xs text-muted">
                     Execute all variants simultaneously for faster results
                   </p>
                 </div>
@@ -116,20 +116,20 @@ export function RunExperimentModal({ experiment, onClose }: RunExperimentModalPr
             </div>
 
             {/* Experiment Info */}
-            <div className="bg-[var(--card)] p-4 rounded-lg border border-[var(--border)]">
-              <h3 className="font-medium text-[var(--foreground)] mb-2">Experiment Configuration</h3>
+            <div className="bg-[var(--card)] p-4 rounded-lg border border-border">
+              <h3 className="font-medium text-foreground mb-2">Experiment Configuration</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-[var(--muted-foreground)]">Type:</span>
-                  <span className="text-[var(--foreground)] capitalize">{experiment.experimentType.replace('_', ' ')}</span>
+                  <span className="text-muted">Type:</span>
+                  <span className="text-foreground capitalize">{experiment.experimentType.replace('_', ' ')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[var(--muted-foreground)]">Confidence Level:</span>
-                  <span className="text-[var(--foreground)]">{(experiment.confidenceLevel * 100).toFixed(0)}%</span>
+                  <span className="text-muted">Confidence Level:</span>
+                  <span className="text-foreground">{(experiment.confidenceLevel * 100).toFixed(0)}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[var(--muted-foreground)]">Variants:</span>
-                  <span className="text-[var(--foreground)]">2 (Control + Treatment)</span>
+                  <span className="text-muted">Variants:</span>
+                  <span className="text-foreground">2 (Control + Treatment)</span>
                 </div>
               </div>
             </div>
@@ -146,11 +146,11 @@ export function RunExperimentModal({ experiment, onClose }: RunExperimentModalPr
             </div>
           </div>
 
-          <div className="p-6 border-t border-[var(--border)] flex justify-end space-x-3">
+          <div className="p-6 border-t border-border flex justify-end space-x-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-[var(--border)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover)] transition-colors"
+              className="px-4 py-2 border border-border text-foreground rounded-lg hover:bg-hover transition-colors"
               disabled={isRunning}
             >
               Cancel

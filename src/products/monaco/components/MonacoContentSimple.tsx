@@ -55,14 +55,14 @@ function MonacoHeader({
   onSpeedrunModeToggle?: () => void;
 }) {
   return (
-    <div className="flex-shrink-0 bg-[var(--background)] border-b border-[var(--border)]">
+    <div className="flex-shrink-0 bg-background border-b border-border">
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)] tracking-tight">
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">
               Monaco Intelligence
             </h1>
-            <p className="text-[var(--muted)] text-sm">
+            <p className="text-muted text-sm">
               Strategic account research and buyer group intelligence
             </p>
           </div>
@@ -74,7 +74,7 @@ function MonacoHeader({
                 placeholder="Search companies, people..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             
@@ -104,7 +104,7 @@ function MonacoSectionTabs({
   onSectionChange: (section: string) => void;
 }) {
   return (
-    <div className="flex-shrink-0 bg-[var(--panel-background)] border-b border-[var(--border)]">
+    <div className="flex-shrink-0 bg-panel-background border-b border-border">
       <div className="px-6">
         <div className="flex space-x-8">
           {(allSections || []).map((section) => (
@@ -114,12 +114,12 @@ function MonacoSectionTabs({
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeSection === section.id
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-[var(--muted)] hover:text-gray-700 hover:border-[var(--border)]'
+                  : 'border-transparent text-muted hover:text-gray-700 hover:border-border'
               }`}
             >
               {section.name}
               {section['count'] && (
-                <span className="ml-2 bg-[var(--hover)] text-[var(--foreground)] py-0.5 px-2.5 rounded-full text-xs">
+                <span className="ml-2 bg-hover text-foreground py-0.5 px-2.5 rounded-full text-xs">
                   {section.count}
                 </span>
               )}
@@ -148,10 +148,10 @@ function MonacoContentGrid({
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4">🎯</div>
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">
+          <h3 className="text-lg font-medium text-foreground mb-2">
             No Data Available
           </h3>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             Load some demo data to see Monaco in action.
           </p>
         </div>
@@ -165,7 +165,7 @@ function MonacoContentGrid({
         {(icpLists || []).map((list) => (
           <div
             key={list.id}
-            className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 hover:shadow-md transition-shadow"
+            className="bg-background border border-border rounded-lg p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
@@ -175,8 +175,8 @@ function MonacoContentGrid({
                   </span>
                 </div>
                 <div>
-                  <h3 className="font-medium text-[var(--foreground)]">{list.name}</h3>
-                  <p className="text-sm text-[var(--muted)]">
+                  <h3 className="font-medium text-foreground">{list.name}</h3>
+                  <p className="text-sm text-muted">
                     {list.records?.length || 0} records
                   </p>
                 </div>
@@ -188,10 +188,10 @@ function MonacoContentGrid({
             </div>
             
             <div className="space-y-2 mb-4">
-              <div className="text-sm text-[var(--muted)]">
+              <div className="text-sm text-muted">
                 Progress: {Math.round(((list.records?.length || 0) / 100) * 100)}%
               </div>
-              <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+              <div className="w-full bg-loading-bg rounded-full h-2">
                 <div 
                   className="bg-blue-600 h-2 rounded-full" 
                   style={{ width: `${Math.min(((list.records?.length || 0) / 100) * 100, 100)}%` }}
@@ -202,7 +202,7 @@ function MonacoContentGrid({
             <button
               onClick={() => onTransferAll(list.id)}
               disabled={isTransferring}
-              className="w-full px-4 py-2 bg-[var(--foreground)] text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+              className="w-full px-4 py-2 bg-foreground text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
             >
               {isTransferring ? 'Processing...' : 'View Details'}
             </button>
@@ -253,7 +253,7 @@ export function MonacoContentSimple({
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--panel-background)]">
+    <div className="h-full flex flex-col bg-panel-background">
       <MonacoHeader
         activeSection={activeSection}
         searchQuery={searchQuery}

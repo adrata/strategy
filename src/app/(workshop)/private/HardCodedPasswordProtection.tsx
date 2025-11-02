@@ -61,11 +61,11 @@ export default function HardCodedPasswordProtection({
   // Prevent hydration mismatch by showing consistent state until mounted
   if (!mounted) {
     return (
-      <div className="h-screen bg-[var(--background)] flex items-center justify-center px-4" style={{ minHeight: '100vh' }}>
+      <div className="h-screen bg-background flex items-center justify-center px-4" style={{ minHeight: '100vh' }}>
         <div className="max-w-md w-full" style={{ marginTop: '-10vh' }}>
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-[var(--foreground)] mb-2">{title}</h1>
-            <p className="text-[var(--muted)]">{description}</p>
+            <h1 className="text-2xl font-semibold text-foreground mb-2">{title}</h1>
+            <p className="text-muted">{description}</p>
           </div>
           <form className="space-y-4">
             <div>
@@ -75,7 +75,7 @@ export default function HardCodedPasswordProtection({
               <input
                 type="password"
                 id="password"
-                className="w-full px-3 py-2 border border-[var(--border)] rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+                className="w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                 placeholder="Enter passcode"
                 disabled
               />
@@ -128,15 +128,15 @@ export default function HardCodedPasswordProtection({
     black: {
       button: 'bg-black hover:bg-gray-800',
       focus: 'focus:ring-gray-500 focus:border-gray-500',
-      icon: 'text-[var(--muted)]',
-      bg: 'bg-[var(--hover)]'
+      icon: 'text-muted',
+      bg: 'bg-hover'
     }
   };
 
   const colors = colorConfig[brandColor];
 
   return (
-    <div className="h-screen bg-[var(--background)] flex items-center justify-center px-4" style={{ minHeight: '100vh' }}>
+    <div className="h-screen bg-background flex items-center justify-center px-4" style={{ minHeight: '100vh' }}>
       <div className="max-w-md w-full" style={{ marginTop: '-10vh' }}>
         <div className="text-center mb-8">
           <div className={`mx-auto w-16 h-16 ${colors.bg} rounded-full flex items-center justify-center mb-4`}>
@@ -144,8 +144,8 @@ export default function HardCodedPasswordProtection({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold text-[var(--foreground)] mb-2">{title}</h1>
-          <p className="text-[var(--muted)]">{description}</p>
+          <h1 className="text-2xl font-semibold text-foreground mb-2">{title}</h1>
+          <p className="text-muted">{description}</p>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -158,7 +158,7 @@ export default function HardCodedPasswordProtection({
               id="password"
               value={password || ''}
               onChange={(e) => setPassword(e.target.value)}
-              className={`w-full px-3 py-2 border border-[var(--border)] rounded-md shadow-sm focus:outline-none focus:ring-1 ${colors.focus}`}
+              className={`w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-1 ${colors.focus}`}
               placeholder="Enter passcode"
               required
             />

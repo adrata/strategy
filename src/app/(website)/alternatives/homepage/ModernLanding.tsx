@@ -44,13 +44,13 @@ export default function ModernLanding() {
       </header>
 
       {/* Hero Section - Changed to white background */}
-      <main className="relative z-10 px-4 py-20 bg-[var(--background)]">
+      <main className="relative z-10 px-4 py-20 bg-background">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-[var(--foreground)] mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
             Find Your Buyer Group
             <span className="block text-blue-500">in Seconds</span>
           </h1>
-          <p className="text-xl text-[var(--muted)] mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-muted mb-8 max-w-3xl mx-auto">
             Stop guessing who makes the decisions. Enter any company name and instantly 
             discover the complete buyer group, decision-makers, and stakeholders for your next deal.
           </p>
@@ -58,7 +58,7 @@ export default function ModernLanding() {
             <Link href="/find-your-buyer-group" className="bg-black text-white px-8 py-3 rounded-md text-lg font-semibold hover:bg-gray-800 transition-colors">
               Find Your Buyer Group →
             </Link>
-            <Link href="/demo" className="border border-[var(--border)] text-gray-700 px-8 py-3 rounded-md text-lg font-semibold hover:bg-[var(--panel-background)] transition-colors">
+            <Link href="/demo" className="border border-border text-gray-700 px-8 py-3 rounded-md text-lg font-semibold hover:bg-panel-background transition-colors">
               Watch Demo
             </Link>
           </div>
@@ -66,7 +66,7 @@ export default function ModernLanding() {
       </main>
 
       {/* Features Section */}
-      <section className="relative z-10 px-4 py-20 bg-[var(--foreground)]/50">
+      <section className="relative z-10 px-4 py-20 bg-foreground/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -137,7 +137,7 @@ export default function ModernLanding() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 px-4 py-12 bg-[var(--foreground)]/80">
+      <footer className="relative z-10 px-4 py-12 bg-foreground/80">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
@@ -147,7 +147,7 @@ export default function ModernLanding() {
                 </div>
                 <span className="text-white text-xl font-bold">Adrata</span>
               </div>
-              <p className="text-[var(--muted)]">
+              <p className="text-muted">
                 The Leader in buyer group intelligence. Decode complex buyer dynamics in enterprise sales.
               </p>
             </div>
@@ -155,33 +155,33 @@ export default function ModernLanding() {
             <div>
               <h4 className="text-white font-semibold mb-4">Product</h4>
               <ul className="space-y-2">
-                <li><Link href="/platform" className="text-[var(--muted)] hover:text-white transition-colors">Platform</Link></li>
-                <li><Link href="/demo" className="text-[var(--muted)] hover:text-white transition-colors">Demo</Link></li>
-                <li><Link href="/pricing" className="text-[var(--muted)] hover:text-white transition-colors">Pricing</Link></li>
+                <li><Link href="/platform" className="text-muted hover:text-white transition-colors">Platform</Link></li>
+                <li><Link href="/demo" className="text-muted hover:text-white transition-colors">Demo</Link></li>
+                <li><Link href="/pricing" className="text-muted hover:text-white transition-colors">Pricing</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-white font-semibold mb-4">Company</h4>
               <ul className="space-y-2">
-                <li><Link href="/about" className="text-[var(--muted)] hover:text-white transition-colors">About</Link></li>
-                <li><Link href="/careers" className="text-[var(--muted)] hover:text-white transition-colors">Careers</Link></li>
-                <li><Link href="/contact" className="text-[var(--muted)] hover:text-white transition-colors">Contact</Link></li>
+                <li><Link href="/about" className="text-muted hover:text-white transition-colors">About</Link></li>
+                <li><Link href="/careers" className="text-muted hover:text-white transition-colors">Careers</Link></li>
+                <li><Link href="/contact" className="text-muted hover:text-white transition-colors">Contact</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-white font-semibold mb-4">Support</h4>
               <ul className="space-y-2">
-                <li><Link href="/help-center" className="text-[var(--muted)] hover:text-white transition-colors">Help Center</Link></li>
-                <li><Link href="/documentation" className="text-[var(--muted)] hover:text-white transition-colors">Documentation</Link></li>
-                <li><Link href="/support" className="text-[var(--muted)] hover:text-white transition-colors">Support</Link></li>
+                <li><Link href="/help-center" className="text-muted hover:text-white transition-colors">Help Center</Link></li>
+                <li><Link href="/documentation" className="text-muted hover:text-white transition-colors">Documentation</Link></li>
+                <li><Link href="/support" className="text-muted hover:text-white transition-colors">Support</Link></li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="text-[var(--muted)]">
+            <p className="text-muted">
               © 2025 Adrata Inc. All rights reserved.
             </p>
           </div>

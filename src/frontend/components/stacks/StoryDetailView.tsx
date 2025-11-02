@@ -71,9 +71,13 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
       if (!ui.activeWorkspace?.id) return;
 
       try {
+        // Add cache-busting to ensure fresh data
         const response = await fetch(
-          `/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}`,
-          { credentials: 'include' }
+          `/api/v1/stacks/stories?workspaceId=${ui.activeWorkspace.id}&t=${Date.now()}`,
+          { 
+            credentials: 'include',
+            cache: 'no-store'
+          }
         );
 
         if (response.ok) {
@@ -105,9 +109,13 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
         setLoading(true);
         console.log('🔍 [StoryDetailView] Fetching story:', storyId);
         
+        // Add cache-busting query parameter to ensure fresh data
         const response = await fetch(
-          `/api/v1/stacks/stories/${storyId}`,
-          { credentials: 'include' }
+          `/api/v1/stacks/stories/${storyId}?t=${Date.now()}`,
+          { 
+            credentials: 'include',
+            cache: 'no-store'
+          }
         );
 
         if (response.ok) {
@@ -181,10 +189,31 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   };
 
   const handleUpdate = async () => {
-    // This will trigger a save of any pending inline edits
-    // The inline edit fields handle their own saves, so this button
-    // could be used for manual save triggers or other update actions
-    console.log('Update clicked for story:', story?.id);
+    if (!story?.id || !ui.activeWorkspace?.id) return;
+    
+    try {
+      setIsUpdating(true);
+      
+      // Fetch fresh story data from API
+      const response = await fetch(
+        `/api/v1/stacks/stories/${story.id}?t=${Date.now()}`,
+        { credentials: 'include' }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.story) {
+          setStory(data.story);
+          console.log('✅ [StoryDetailView] Story data refreshed');
+        }
+      } else {
+        console.error('❌ [StoryDetailView] Failed to refresh story:', await response.text());
+      }
+    } catch (error) {
+      console.error('❌ [StoryDetailView] Error refreshing story:', error);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const handleAdvanceStatus = async () => {
@@ -261,16 +290,16 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-[var(--background)]">
-        <div className="animate-pulse text-[var(--muted)]">Loading story...</div>
+      <div className="h-full flex items-center justify-center bg-background">
+        <div className="animate-pulse text-muted">Loading story...</div>
       </div>
     );
   }
 
   if (!story) {
     return (
-      <div className="h-full flex flex-col items-center justify-center bg-[var(--background)]">
-        <p className="text-[var(--muted)] mb-4">Story not found</p>
+      <div className="h-full flex flex-col items-center justify-center bg-background">
+        <p className="text-muted mb-4">Story not found</p>
         <button
           onClick={handleBack}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -282,21 +311,21 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)]">
+    <div className="h-full flex flex-col bg-background">
       {/* Breadcrumb Header */}
-      <div className="flex-shrink-0 bg-[var(--background)] border-b border-[var(--border)] px-6 py-3">
+      <div className="flex-shrink-0 bg-background border-b border-border px-6 py-3">
         <div className="flex items-center justify-between">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm">
             <button
               onClick={handleBack}
-              className="flex items-center gap-1 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              className="flex items-center gap-1 text-muted hover:text-foreground transition-colors"
             >
               <ArrowLeftIcon className="h-4 w-4" />
               <span>All {getSectionName()}</span>
             </button>
-            <ChevronRightIcon className="h-4 w-4 text-[var(--muted)]" />
-            <span className="font-medium text-[var(--foreground)]">
+            <ChevronRightIcon className="h-4 w-4 text-muted" />
+            <span className="font-medium text-foreground">
               {story.title || 'Untitled Story'}
             </span>
           </div>
@@ -309,7 +338,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
               className={`p-2 rounded-md transition-all duration-200 ${
                 currentIndex === null || currentIndex <= 0 || !stories.length
                   ? 'text-gray-300 cursor-not-allowed'
-                  : 'text-[var(--foreground)] hover:text-blue-600 hover:bg-[var(--panel-background)]'
+                  : 'text-foreground hover:text-blue-600 hover:bg-panel-background'
               }`}
               title="Previous story"
             >
@@ -321,7 +350,7 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
               className={`p-2 rounded-md transition-all duration-200 ${
                 currentIndex === null || currentIndex >= stories.length - 1 || !stories.length
                   ? 'text-gray-300 cursor-not-allowed'
-                  : 'text-[var(--foreground)] hover:text-blue-600 hover:bg-[var(--panel-background)]'
+                  : 'text-foreground hover:text-blue-600 hover:bg-panel-background'
               }`}
               title="Next story"
             >
@@ -332,14 +361,14 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
       </div>
 
       {/* Main Header */}
-      <div className="flex-shrink-0 border-b border-[var(--border)] px-6 py-6">
+      <div className="flex-shrink-0 border-b border-border px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--foreground)]">
+              <h1 className="text-2xl font-bold text-foreground">
                 {story.title || 'Untitled Story'}
               </h1>
-              <p className="text-sm text-[var(--muted)] mt-1">
+              <p className="text-sm text-muted mt-1">
                 {story.status || 'No status'} • {story.priority || 'No priority'}
               </p>
             </div>
@@ -349,9 +378,10 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={handleUpdate}
-              className="px-4 py-2 text-sm font-medium text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--hover)] transition-colors"
+              disabled={isUpdating}
+              className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              Update
+              {isUpdating ? 'Refreshing...' : 'Update'}
             </button>
             {nextStatus && nextStatusLabel && (
               <button
@@ -368,7 +398,13 @@ export function StoryDetailView({ storyId, onClose }: StoryDetailViewProps) {
 
       {/* Content Area */}
       <div className="flex-1 overflow-hidden">
-        <StoryMainView story={story} />
+        <StoryMainView 
+          story={story} 
+          onStoryUpdate={(updatedStory) => {
+            // Update story state when child component saves
+            setStory(updatedStory);
+          }}
+        />
       </div>
     </div>
   );

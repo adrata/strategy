@@ -9,39 +9,39 @@ interface ProfileTabProps {
 export function ProfileTab({ person, profileData }: ProfileTabProps) {
   return (
     <>
-      <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+      <h2 className="text-xl font-semibold text-foreground mb-4">
         Personal Profile
       </h2>
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 mb-4">
+        <div className="bg-background border border-border rounded-lg p-4 mb-4">
           <div className="mb-2">
-            <span className="font-semibold text-[var(--foreground)]">
+            <span className="font-semibold text-foreground">
               Personality:
             </span>{" "}
             {profileData.personality}
           </div>
           <div className="mb-2">
-            <span className="font-semibold text-[var(--foreground)]">
+            <span className="font-semibold text-foreground">
               Communication Style:
             </span>{" "}
             {profileData.communication}
           </div>
           <div className="mb-2">
-            <span className="font-semibold text-[var(--foreground)]">
+            <span className="font-semibold text-foreground">
               Motivators:
             </span>{" "}
             {profileData.motivators}
           </div>
           <div>
-            <span className="font-semibold text-[var(--foreground)]">
+            <span className="font-semibold text-foreground">
               Values:
             </span>{" "}
             {profileData.values}
           </div>
         </div>
-        <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 mb-4">
+        <div className="bg-background border border-border rounded-lg p-4 mb-4">
           <div className="mb-2 flex items-center gap-2">
-            <span className="font-semibold text-[var(--foreground)]">
+            <span className="font-semibold text-foreground">
               Social:
             </span>
             {profileData.social ? (
@@ -63,34 +63,34 @@ export function ProfileTab({ person, profileData }: ProfileTabProps) {
                 })()}
               </a>
             ) : (
-              <span className="text-[var(--muted)]">-</span>
+              <span className="text-muted">-</span>
             )}
           </div>
           <div className="mb-2">
-            <span className="font-semibold text-[var(--foreground)]">
+            <span className="font-semibold text-foreground">
               Interests:
             </span>{" "}
             {profileData.interests}
           </div>
           <div className="mb-2">
-            <span className="font-semibold text-[var(--foreground)]">
+            <span className="font-semibold text-foreground">
               Role in Buying Process:
             </span>{" "}
             {profileData.role}
           </div>
           <div>
-            <span className="font-semibold text-[var(--foreground)]">
+            <span className="font-semibold text-foreground">
               Personal Context:
             </span>{" "}
             {profileData.context}
           </div>
         </div>
       </div>
-      <div className="mt-8 bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+      <div className="mt-8 bg-background border border-border rounded-lg p-4">
+        <h3 className="text-lg font-semibold text-foreground mb-2">
           How to Win with {person.name.split(" ")[0]}
         </h3>
-        <div className="text-[var(--foreground)]">{profileData.tips}</div>
+        <div className="text-foreground">{profileData.tips}</div>
       </div>
     </>
   );

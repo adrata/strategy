@@ -62,27 +62,27 @@ function ReportCard({ report, onClick }: ReportCardProps) {
   return (
     <div 
       onClick={onClick}
-      className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-[var(--accent)] hover:shadow-sm transition-all cursor-pointer group"
+      className="bg-background border border-border rounded-lg p-4 hover:border-primary hover:shadow-sm transition-all cursor-pointer group"
     >
       <div className="flex items-start gap-3">
-        <div className="p-2 bg-[var(--accent-bg)] text-[var(--accent)] rounded-lg group-hover:bg-[var(--accent)] group-hover:text-white transition-colors">
+        <div className="p-2 bg-[var(--accent-bg)] text-primary rounded-lg group-hover:bg-primary group-hover:text-white transition-colors">
           {getIcon()}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-medium text-[var(--foreground)] truncate">
+            <h3 className="font-medium text-foreground truncate">
               {report.title}
             </h3>
             {getStatusIcon()}
           </div>
-          <p className="text-sm text-[var(--muted)] mb-2 line-clamp-2">
+          <p className="text-sm text-muted mb-2 line-clamp-2">
             {report.description}
           </p>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-[var(--muted)] bg-[var(--panel-background)] px-2 py-1 rounded">
+            <span className="text-xs text-muted bg-panel-background px-2 py-1 rounded">
               {report.category}
             </span>
-            <span className="text-xs text-[var(--muted)]">
+            <span className="text-xs text-muted">
               {getStatusText()}
             </span>
           </div>
@@ -143,7 +143,7 @@ export function ValueTab({ record, recordType, onReportClick }: ValueTabProps) {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-[var(--muted)]">Generating deep value reports...</p>
+            <p className="text-muted">Generating deep value reports...</p>
           </div>
         </div>
       </div>
@@ -155,8 +155,8 @@ export function ValueTab({ record, recordType, onReportClick }: ValueTabProps) {
       <div className="p-6">
         <div className="text-center py-12">
           <ExclamationTriangleIcon className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Failed to Generate Reports</h3>
-          <p className="text-[var(--muted)] mb-4">{error}</p>
+          <h3 className="text-lg font-medium text-foreground mb-2">Failed to Generate Reports</h3>
+          <p className="text-muted mb-4">{error}</p>
           <button
             onClick={handleRegenerateAll}
             className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
@@ -181,16 +181,16 @@ export function ValueTab({ record, recordType, onReportClick }: ValueTabProps) {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-semibold text-[var(--foreground)] mb-1">
+          <h2 className="text-xl font-semibold text-foreground mb-1">
             Deep Value Reports
           </h2>
-          <p className="text-[var(--muted)]">
+          <p className="text-muted">
             AI-generated intelligence reports for {record.fullName || record.name || record.companyName || 'this record'}
           </p>
         </div>
         <button
           onClick={handleRegenerateAll}
-          className="px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-colors"
+          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent-hover transition-colors"
         >
           Regenerate All
         </button>
@@ -199,7 +199,7 @@ export function ValueTab({ record, recordType, onReportClick }: ValueTabProps) {
       <div className="space-y-8">
         {Object.entries(reportsByCategory).map(([category, categoryReports]) => (
           <div key={category}>
-            <h3 className="text-lg font-medium text-[var(--foreground)] mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-foreground mb-4 flex items-center gap-2">
               <DocumentTextIcon className="w-5 h-5" />
               {category}
             </h3>
@@ -218,9 +218,9 @@ export function ValueTab({ record, recordType, onReportClick }: ValueTabProps) {
 
       {reports.length === 0 && (
         <div className="text-center py-12">
-          <DocumentTextIcon className="w-12 h-12 text-[var(--muted)] mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No Reports Available</h3>
-          <p className="text-[var(--muted)] mb-4">
+          <DocumentTextIcon className="w-12 h-12 text-muted mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-2">No Reports Available</h3>
+          <p className="text-muted mb-4">
             We couldn't generate any reports for this record. Please try again.
           </p>
           <button

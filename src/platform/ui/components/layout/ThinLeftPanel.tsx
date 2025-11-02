@@ -535,17 +535,17 @@ function QuickAppSwitcher({
       className="fixed inset-0 z-50 bg-black/20 flex items-center justify-center"
       onClick={handleOverlayClick}
     >
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-2xl shadow-2xl w-96">
+      <div className="bg-background border border-border rounded-2xl shadow-2xl w-96">
         {/* Header */}
         <div className="flex items-center justify-between p-6 pb-4">
-          <h2 className="text-lg font-semibold text-[var(--foreground)]">
+          <h2 className="text-lg font-semibold text-foreground">
             Adrata Applications
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
+            className="p-1.5 hover:bg-hover rounded-lg transition-colors"
           >
-            <XMarkIcon className="w-5 h-5 text-[var(--muted)]" />
+            <XMarkIcon className="w-5 h-5 text-muted" />
           </button>
         </div>
 
@@ -561,8 +561,8 @@ function QuickAppSwitcher({
                   onClick={() => handleAppClick(app.slug)}
                   className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group text-left ${
                     isCurrentApp
-                      ? "bg-[var(--hover-bg)]"
-                      : "hover:bg-[var(--hover-bg)]"
+                      ? "bg-hover"
+                      : "hover:bg-hover"
                   }`}
                   style={
                     isCurrentApp
@@ -586,21 +586,21 @@ function QuickAppSwitcher({
                   {/* App Info */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <div className="text-base font-medium text-[var(--foreground)]">
+                      <div className="text-base font-medium text-foreground">
                         {app.name}
                       </div>
                       <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-blue-600">
                         Pro
                       </span>
                     </div>
-                    <div className="text-sm text-[var(--muted)] leading-tight">
+                    <div className="text-sm text-muted leading-tight">
                       {app.description}
                     </div>
                   </div>
 
                   {/* Keyboard Shortcut */}
                   <div className="flex items-center gap-1">
-                    <div className="text-xs font-medium text-[var(--muted)]">
+                    <div className="text-xs font-medium text-muted">
                       ⌘
                     </div>
                     <div
@@ -626,23 +626,23 @@ function QuickAppSwitcher({
             })}
 
             {/* All Apps Button */}
-            <div className="border-t border-[var(--border)] mt-2 pt-2">
+            <div className="border-t border-border mt-2 pt-2">
               <button
                 onClick={handleAllAppsClick}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--hover-bg)] transition-colors duration-200 text-left"
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-hover transition-colors duration-200 text-left"
               >
-                <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--hover-bg)]">
-                  <Squares2X2Icon className="w-5 h-5 text-[var(--muted)]" />
+                <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-hover">
+                  <Squares2X2Icon className="w-5 h-5 text-muted" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-base font-medium text-[var(--foreground)]">
+                  <div className="text-base font-medium text-foreground">
                     Adrata Store
                   </div>
-                  <div className="text-sm text-[var(--muted)] leading-tight">
+                  <div className="text-sm text-muted leading-tight">
                     View all Adrata applications
                   </div>
                 </div>
-                <div className="text-xs text-[var(--muted)] font-medium">
+                <div className="text-xs text-muted font-medium">
                   Tab
                 </div>
               </button>
@@ -750,27 +750,27 @@ function FullAppSwitcher({
       className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center"
       onClick={handleOverlayClick}
     >
-      <div className="bg-[var(--background)] border border-[var(--border)] rounded-3xl shadow-2xl w-full max-w-8xl max-h-[90vh] overflow-hidden">
+      <div className="bg-background border border-border rounded-3xl shadow-2xl w-full max-w-8xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-8 pb-6 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between p-8 pb-6 border-b border-border">
           <div>
-            <h2 className="text-3xl font-bold text-[var(--foreground)] mb-2">
+            <h2 className="text-3xl font-bold text-foreground mb-2">
               Adrata Store
             </h2>
-            <p className="text-[var(--muted)] text-lg">
+            <p className="text-muted text-lg">
               Discover and launch powerful applications
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-3 hover:bg-[var(--hover-bg)] rounded-xl transition-colors"
+            className="p-3 hover:bg-hover rounded-xl transition-colors"
           >
-            <XMarkIcon className="w-6 h-6 text-[var(--muted)]" />
+            <XMarkIcon className="w-6 h-6 text-muted" />
           </button>
         </div>
 
         {/* Search and Filters */}
-        <div className="px-8 py-6 bg-[var(--hover-bg)]/30 border-b border-[var(--border)]">
+        <div className="px-8 py-6 bg-hover/30 border-b border-border">
           <div className="flex gap-6 items-center">
             {/* Search */}
             <div className="flex-1 relative">
@@ -779,7 +779,7 @@ function FullAppSwitcher({
                 placeholder="Search applications..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded-xl text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all"
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all"
               />
             </div>
 
@@ -795,7 +795,7 @@ function FullAppSwitcher({
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                       isActive
                         ? "bg-blue-500 text-white shadow-lg"
-                        : "bg-[var(--background)] text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--hover-bg)]"
+                        : "bg-background text-muted hover:text-foreground hover:bg-hover"
                     }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -823,8 +823,8 @@ function FullAppSwitcher({
                   onMouseLeave={() => setHoveredApp(null)}
                   className={`relative flex flex-col items-center gap-4 p-6 rounded-2xl transition-all duration-300 group ${
                     isCurrentApp
-                      ? "bg-[var(--hover-bg)] ring-2 ring-blue-500/50"
-                      : "hover:bg-[var(--hover-bg)] hover:scale-105"
+                      ? "bg-hover ring-2 ring-blue-500/50"
+                      : "hover:bg-hover hover:scale-105"
                   }`}
                   style={
                     isCurrentApp
@@ -862,10 +862,10 @@ function FullAppSwitcher({
 
                   {/* App Info */}
                   <div className="text-center">
-                    <div className="text-lg font-semibold text-[var(--foreground)] mb-1">
+                    <div className="text-lg font-semibold text-foreground mb-1">
                       {app.name}
                     </div>
-                    <div className="text-sm text-[var(--muted)] leading-tight mb-2">
+                    <div className="text-sm text-muted leading-tight mb-2">
                       {app.description}
                     </div>
 
@@ -874,10 +874,10 @@ function FullAppSwitcher({
                       {Array.from({ length: 5 }).map((_, i) => (
                         <StarIcon
                           key={i}
-                          className={`w-3 h-3 ${i < Math.floor(app.rating) ? "text-yellow-400 fill-current" : "text-[var(--muted)]"}`}
+                          className={`w-3 h-3 ${i < Math.floor(app.rating) ? "text-yellow-400 fill-current" : "text-muted"}`}
                         />
                       ))}
-                      <span className="text-xs text-[var(--muted)] ml-1">
+                      <span className="text-xs text-muted ml-1">
                         {app.rating}
                       </span>
                     </div>
@@ -902,7 +902,7 @@ function FullAppSwitcher({
                   {/* Keyboard Shortcut */}
                   {app['shortcut'] && (
                     <div className="flex items-center gap-1 mt-2">
-                      <span className="text-[var(--muted)] text-xs">⌘</span>
+                      <span className="text-muted text-xs">⌘</span>
                       <span
                         className="w-6 h-6 flex items-center justify-center text-xs font-bold rounded-lg"
                         style={{
@@ -951,13 +951,13 @@ function FullAppSwitcher({
           {/* No Results */}
           {filteredApps['length'] === 0 && (
             <div className="text-center py-12">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[var(--hover-bg)] flex items-center justify-center">
-                <FunnelIcon className="w-8 h-8 text-[var(--muted)]" />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-hover flex items-center justify-center">
+                <FunnelIcon className="w-8 h-8 text-muted" />
               </div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+              <h3 className="text-lg font-semibold text-foreground mb-2">
                 No apps found
               </h3>
-              <p className="text-[var(--muted)]">
+              <p className="text-muted">
                 Try adjusting your search or filter criteria
               </p>
             </div>
@@ -1057,16 +1057,16 @@ export function ThinLeftPanel({
         ))}
       </div>
 
-      <div className="flex flex-col justify-start items-center h-full w-full py-4 bg-[var(--background)] border-r border-[var(--border)] relative">
+      <div className="flex flex-col justify-start items-center h-full w-full py-4 bg-background border-r border-border relative">
         <div className="flex flex-col items-center w-full mb-2">
           {/* Adrata branding */}
           <div className="flex items-center gap-1 mt-1 mb-1">
-            <span className="text-xl font-semibold text-[var(--foreground)]">Adrata</span>
-            <span className="bg-[var(--panel-background)]0 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+            <span className="text-xl font-semibold text-foreground">Adrata</span>
+            <span className="bg-panel-background0 text-white text-xs font-bold px-2 py-0.5 rounded-full">
               Pro
             </span>
           </div>
-          <div className="text-xs text-[var(--muted)] font-medium">Sales Acceleration</div>
+          <div className="text-xs text-muted font-medium">Sales Acceleration</div>
           
           <div
             className="w-8 h-px rounded-full mt-2 mb-3"
@@ -1082,8 +1082,8 @@ export function ThinLeftPanel({
                 key={app.slug}
                 className={`flex flex-col items-center transition-colors relative ${
                   isActive
-                    ? "text-[var(--foreground)]"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                    ? "text-foreground"
+                    : "text-muted hover:text-foreground"
                 }`}
                 style={{ gap: ".5px" }}
                 onClick={() => onAppClick(app.slug)}
@@ -1095,7 +1095,7 @@ export function ThinLeftPanel({
                   style={
                     isActive
                       ? {
-                          backgroundColor: "var(--hover-bg)",
+                          backgroundColor: "var(--hover)",
                           color: "var(--foreground)",
                         }
                       : {}
@@ -1112,7 +1112,7 @@ export function ThinLeftPanel({
                             : app.notificationCount}
                         </span>
                       ) : (
-                        <div className="w-2 h-2 bg-[var(--background)] rounded-full"></div>
+                        <div className="w-2 h-2 bg-background rounded-full"></div>
                       )}
                     </div>
                   )}
@@ -1131,7 +1131,7 @@ export function ThinLeftPanel({
         </div>
         <div className="flex-1" />
         <button
-          className={`w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-400 bg-[var(--background)] text-[var(--muted)] mb-2 absolute left-1/2 -translate-x-1/2 bottom-1 ${profileButtonClassName || ""}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-400 bg-background text-muted mb-2 absolute left-1/2 -translate-x-1/2 bottom-1 ${profileButtonClassName || ""}`}
           onClick={onProfileClick}
           aria-label="Profile"
           title={profile.name}

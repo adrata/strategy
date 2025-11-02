@@ -58,15 +58,15 @@ export function FormField({
   // Get input classes
   const getInputClasses = () => {
     const baseClasses = 'block w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors';
-    const errorClasses = error ? 'border-red-300 focus:ring-red-500' : 'border-[var(--border)]';
-    const disabledClasses = disabled ? 'bg-[var(--panel-background)] cursor-not-allowed' : 'bg-[var(--background)]';
+    const errorClasses = error ? 'border-red-300 focus:ring-red-500' : 'border-border';
+    const disabledClasses = disabled ? 'bg-panel-background cursor-not-allowed' : 'bg-background';
     
     return `${baseClasses} ${errorClasses} ${disabledClasses} ${inputClassName}`.trim();
   };
 
   // Get label classes
   const getLabelClasses = () => {
-    const baseClasses = 'block text-sm font-medium text-[var(--foreground)] mb-1';
+    const baseClasses = 'block text-sm font-medium text-foreground mb-1';
     const errorClasses = error ? 'text-red-700 dark:text-red-300' : '';
     
     return `${baseClasses} ${errorClasses} ${labelClassName}`.trim();
@@ -120,9 +120,9 @@ export function FormField({
               checked={Boolean(value)}
               onChange={handleChange}
               disabled={disabled}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-[var(--border)] rounded"
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-border rounded"
             />
-            <label htmlFor={name} className="ml-2 block text-sm text-[var(--foreground)]">
+            <label htmlFor={name} className="ml-2 block text-sm text-foreground">
               {label}
             </label>
           </div>
@@ -141,9 +141,9 @@ export function FormField({
                   checked={value === option.value}
                   onChange={handleChange}
                   disabled={disabled || option.disabled}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-[var(--border)]"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-border"
                 />
-                <label htmlFor={`${name}-${option.value}`} className="ml-2 block text-sm text-[var(--foreground)]">
+                <label htmlFor={`${name}-${option.value}`} className="ml-2 block text-sm text-foreground">
                   {option.label}
                 </label>
               </div>
@@ -182,7 +182,7 @@ export function FormField({
       )}
       
       {helpText && !error && (
-        <p className="text-sm text-[var(--muted)]">
+        <p className="text-sm text-muted">
           {helpText}
         </p>
       )}

@@ -2050,7 +2050,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
 
   if (viewMode === 'targets') {
     return (
-      <div className="bg-[var(--background)] flex flex-col" style={{ 
+      <div className="bg-background flex flex-col" style={{ 
         minWidth: '300px',
         height: '100vh',
         maxHeight: '100vh',
@@ -2078,47 +2078,47 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         
         <div className="flex-1 overflow-y-auto px-6 py-4">
           <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">50</div>
-              <div className="text-sm text-[var(--muted)]">Contacts</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">50</div>
+              <div className="text-sm text-muted">Contacts</div>
             </div>
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">4</div>
-              <div className="text-sm text-[var(--muted)]">Meetings</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">4</div>
+              <div className="text-sm text-muted">Meetings</div>
             </div>
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">25</div>
-              <div className="text-sm text-[var(--muted)]">Emails</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">25</div>
+              <div className="text-sm text-muted">Emails</div>
             </div>
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">15</div>
-              <div className="text-sm text-[var(--muted)]">Calls</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">15</div>
+              <div className="text-sm text-muted">Calls</div>
             </div>
           </div>
           
           <div className="space-y-3">
-            <div className="p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="font-medium text-[var(--foreground)] mb-1">Follow up on recent outreach</div>
-              <div className="text-sm text-[var(--muted)] mb-2">Check responses and prioritize hot leads</div>
+            <div className="p-4 bg-hover rounded-lg">
+              <div className="font-medium text-foreground mb-1">Follow up on recent outreach</div>
+              <div className="text-sm text-muted mb-2">Check responses and prioritize hot leads</div>
               <div className="flex justify-between items-center">
-                <span className="text-xs text-[var(--muted)]">High priority</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">30m</span>
+                <span className="text-xs text-muted">High priority</span>
+                <span className="text-sm font-medium text-foreground">30m</span>
               </div>
             </div>
-            <div className="p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="font-medium text-[var(--foreground)] mb-1">Book 4 more meetings</div>
-              <div className="text-sm text-[var(--muted)] mb-2">Convert warm leads into scheduled meetings</div>
+            <div className="p-4 bg-hover rounded-lg">
+              <div className="font-medium text-foreground mb-1">Book 4 more meetings</div>
+              <div className="text-sm text-muted mb-2">Convert warm leads into scheduled meetings</div>
               <div className="flex justify-between items-center">
-                <span className="text-xs text-[var(--muted)]">High priority</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">60m</span>
+                <span className="text-xs text-muted">High priority</span>
+                <span className="text-sm font-medium text-foreground">60m</span>
               </div>
             </div>
-            <div className="p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="font-medium text-[var(--foreground)] mb-1">Send LinkedIn connections</div>
-              <div className="text-sm text-[var(--muted)] mb-2">Connect with decision makers from target companies</div>
+            <div className="p-4 bg-hover rounded-lg">
+              <div className="font-medium text-foreground mb-1">Send LinkedIn connections</div>
+              <div className="text-sm text-muted mb-2">Connect with decision makers from target companies</div>
               <div className="flex justify-between items-center">
-                <span className="text-xs text-[var(--muted)]">Medium priority</span>
-                <span className="text-sm font-medium text-[var(--foreground)]">20m</span>
+                <span className="text-xs text-muted">Medium priority</span>
+                <span className="text-sm font-medium text-foreground">20m</span>
               </div>
             </div>
           </div>
@@ -2129,7 +2129,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
 
   if (viewMode === 'calendar') {
     return (
-      <div className="bg-[var(--background)] flex flex-col" style={{ 
+      <div className="bg-background flex flex-col" style={{ 
         minWidth: '300px',
         height: '100vh',
         maxHeight: '100vh',
@@ -2157,40 +2157,40 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         
         <div className="flex-1 overflow-y-auto px-6 py-4">
           <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">0</div>
-              <div className="text-sm text-[var(--muted)]">Meetings</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">0</div>
+              <div className="text-sm text-muted">Meetings</div>
             </div>
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">10h</div>
-              <div className="text-sm text-[var(--muted)]">Available</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">10h</div>
+              <div className="text-sm text-muted">Available</div>
             </div>
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">2</div>
-              <div className="text-sm text-[var(--muted)]">Focus Blocks</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">2</div>
+              <div className="text-sm text-muted">Focus Blocks</div>
             </div>
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">0h</div>
-              <div className="text-sm text-[var(--muted)]">In Meetings</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">0h</div>
+              <div className="text-sm text-muted">In Meetings</div>
             </div>
           </div>
           
           <div className="space-y-3">
-            <div className="p-4 bg-[var(--hover-bg)] rounded-lg">
+            <div className="p-4 bg-hover rounded-lg">
               <div className="flex items-center space-x-3 mb-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span className="font-medium text-[var(--foreground)]">9:00 AM - 11:00 AM</span>
+                <span className="font-medium text-foreground">9:00 AM - 11:00 AM</span>
               </div>
-              <div className="text-sm text-[var(--muted)] mb-1">Focus Block - Prospecting</div>
-              <div className="text-xs text-[var(--muted)]">Available</div>
+              <div className="text-sm text-muted mb-1">Focus Block - Prospecting</div>
+              <div className="text-xs text-muted">Available</div>
             </div>
-            <div className="p-4 bg-[var(--hover-bg)] rounded-lg">
+            <div className="p-4 bg-hover rounded-lg">
               <div className="flex items-center space-x-3 mb-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="font-medium text-[var(--foreground)]">2:00 PM - 4:00 PM</span>
+                <span className="font-medium text-foreground">2:00 PM - 4:00 PM</span>
               </div>
-              <div className="text-sm text-[var(--muted)] mb-1">Focus Block - Follow-ups</div>
-              <div className="text-xs text-[var(--muted)]">Available</div>
+              <div className="text-sm text-muted mb-1">Focus Block - Follow-ups</div>
+              <div className="text-xs text-muted">Available</div>
             </div>
           </div>
         </div>
@@ -2200,7 +2200,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
 
   if (viewMode === 'insights') {
     return (
-      <div className="bg-[var(--background)] flex flex-col" style={{ 
+      <div className="bg-background flex flex-col" style={{ 
         minWidth: '300px',
         height: '100vh',
         maxHeight: '100vh',
@@ -2228,39 +2228,39 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
         
         <div className="flex-1 overflow-y-auto px-6 py-4">
           <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">12</div>
-              <div className="text-sm text-[var(--muted)]">Fresh Insights</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">12</div>
+              <div className="text-sm text-muted">Fresh Insights</div>
             </div>
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">8</div>
-              <div className="text-sm text-[var(--muted)]">Industry Trends</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">8</div>
+              <div className="text-sm text-muted">Industry Trends</div>
             </div>
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">5</div>
-              <div className="text-sm text-[var(--muted)]">Competitive Intel</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">5</div>
+              <div className="text-sm text-muted">Competitive Intel</div>
             </div>
-            <div className="text-center p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="text-2xl font-semibold text-[var(--foreground)]">2h ago</div>
-              <div className="text-sm text-[var(--muted)]">Last Updated</div>
+            <div className="text-center p-4 bg-hover rounded-lg">
+              <div className="text-2xl font-semibold text-foreground">2h ago</div>
+              <div className="text-sm text-muted">Last Updated</div>
             </div>
           </div>
           
           <div className="space-y-3">
-            <div className="p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="font-medium text-[var(--foreground)] mb-1">Retail grocery sector showing strong growth</div>
-              <div className="text-sm text-[var(--muted)] mb-2">Companies like Dierbergs Markets expanding operations</div>
-              <div className="text-xs text-[var(--muted)]">2h ago</div>
+            <div className="p-4 bg-hover rounded-lg">
+              <div className="font-medium text-foreground mb-1">Retail grocery sector showing strong growth</div>
+              <div className="text-sm text-muted mb-2">Companies like Dierbergs Markets expanding operations</div>
+              <div className="text-xs text-muted">2h ago</div>
             </div>
-            <div className="p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="font-medium text-[var(--foreground)] mb-1">Technology adoption accelerating in food retail</div>
-              <div className="text-sm text-[var(--muted)] mb-2">Focus on digital transformation and automation</div>
-              <div className="text-xs text-[var(--muted)]">4h ago</div>
+            <div className="p-4 bg-hover rounded-lg">
+              <div className="font-medium text-foreground mb-1">Technology adoption accelerating in food retail</div>
+              <div className="text-sm text-muted mb-2">Focus on digital transformation and automation</div>
+              <div className="text-xs text-muted">4h ago</div>
             </div>
-            <div className="p-4 bg-[var(--hover-bg)] rounded-lg">
-              <div className="font-medium text-[var(--foreground)] mb-1">Supply chain optimization trending</div>
-              <div className="text-sm text-[var(--muted)] mb-2">Companies investing in logistics and efficiency</div>
-              <div className="text-xs text-[var(--muted)]">6h ago</div>
+            <div className="p-4 bg-hover rounded-lg">
+              <div className="font-medium text-foreground mb-1">Supply chain optimization trending</div>
+              <div className="text-sm text-muted mb-2">Companies investing in logistics and efficiency</div>
+              <div className="text-xs text-muted">6h ago</div>
             </div>
           </div>
         </div>
@@ -2302,7 +2302,7 @@ Make sure the file contains contact/lead data with headers like Name, Email, Com
           background: #d1d5db;
         }
       `}</style>
-      <div className="bg-[var(--background)] flex flex-col relative" style={{ 
+      <div className="bg-background flex flex-col relative" style={{ 
         minWidth: '300px',
         height: '100vh',
         maxHeight: '100vh',

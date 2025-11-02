@@ -12,14 +12,14 @@ export function StatusBar() {
 
   if (!activeFile) {
     return (
-      <div className="h-6 bg-[var(--panel-background)] border-t border-[var(--border)] flex items-center px-4 text-xs text-[var(--muted)]">
+      <div className="h-6 bg-panel-background border-t border-border flex items-center px-4 text-xs text-muted">
         <span>Ready</span>
       </div>
     );
   }
 
   return (
-    <div className="h-6 bg-[var(--panel-background)] border-t border-[var(--border)] flex items-center justify-between px-4 text-xs text-[var(--muted)]">
+    <div className="h-6 bg-panel-background border-t border-border flex items-center justify-between px-4 text-xs text-muted">
       <div className="flex items-center gap-4">
         <span>Ln 1, Col 1</span>
         <span>{language}</span>

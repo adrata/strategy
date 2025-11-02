@@ -98,7 +98,7 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
       case 'high': return 'bg-red-100 text-red-800 border-red-200';
       case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
+      default: return 'bg-hover text-gray-800 border-border';
     }
   };
   
@@ -115,11 +115,11 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-[var(--foreground)]">Intelligence & Insights</h3>
+      <h3 className="text-lg font-semibold text-foreground">Intelligence & Insights</h3>
       
       {/* AI-Generated Insights */}
       {insights.length > 0 && (
-        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
+        <div className="bg-background rounded-lg p-6 border border-border dark:border-border">
           <h4 className="text-md font-semibold mb-4">AI-Generated Insights</h4>
           <div className="space-y-4">
             {insights.map((insight, index) => (
@@ -142,25 +142,25 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
       
       {/* Strategic Intelligence */}
       {(situationAnalysis || complications || strategicIntelligence) && (
-        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
+        <div className="bg-background rounded-lg p-6 border border-border dark:border-border">
           <h4 className="text-md font-semibold mb-4">Strategic Intelligence</h4>
           <div className="space-y-4">
             {situationAnalysis && (
               <div>
                 <h5 className="font-medium text-gray-700 mb-2">Situation Analysis</h5>
-                <p className="text-sm text-[var(--muted)]">{situationAnalysis}</p>
+                <p className="text-sm text-muted">{situationAnalysis}</p>
               </div>
             )}
             {complications && (
               <div>
                 <h5 className="font-medium text-gray-700 mb-2">Complications</h5>
-                <p className="text-sm text-[var(--muted)]">{complications}</p>
+                <p className="text-sm text-muted">{complications}</p>
               </div>
             )}
             {strategicIntelligence && (
               <div>
                 <h5 className="font-medium text-gray-700 mb-2">Strategic Intelligence</h5>
-                <p className="text-sm text-[var(--muted)]">{strategicIntelligence}</p>
+                <p className="text-sm text-muted">{strategicIntelligence}</p>
               </div>
             )}
           </div>
@@ -169,7 +169,7 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
       
       {/* Pain Points & Goals */}
       {(painPoints.length > 0 || goals.length > 0) && (
-        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
+        <div className="bg-background rounded-lg p-6 border border-border dark:border-border">
           <h4 className="text-md font-semibold mb-4">Pain Points & Goals</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {painPoints.length > 0 && (
@@ -177,7 +177,7 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
                 <h5 className="font-medium text-red-700 mb-2">Pain Points</h5>
                 <ul className="space-y-1">
                   {painPoints.map((pain: string, index: number) => (
-                    <li key={index} className="text-sm text-[var(--muted)] flex items-start">
+                    <li key={index} className="text-sm text-muted flex items-start">
                       <span className="text-red-500 mr-2">•</span>
                       {pain}
                     </li>
@@ -190,7 +190,7 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
                 <h5 className="font-medium text-green-700 mb-2">Goals</h5>
                 <ul className="space-y-1">
                   {goals.map((goal: string, index: number) => (
-                    <li key={index} className="text-sm text-[var(--muted)] flex items-start">
+                    <li key={index} className="text-sm text-muted flex items-start">
                       <span className="text-green-500 mr-2">•</span>
                       {goal}
                     </li>
@@ -204,13 +204,13 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
       
       {/* Decision Factors */}
       {decisionFactors.length > 0 && (
-        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
+        <div className="bg-background rounded-lg p-6 border border-border dark:border-border">
           <h4 className="text-md font-semibold mb-4">Decision Factors</h4>
           <div className="space-y-2">
             {decisionFactors.map((factor: string, index: number) => (
               <div key={index} className="flex items-center space-x-2">
                 <span className="text-blue-500">✓</span>
-                <span className="text-sm text-[var(--muted)]">{factor}</span>
+                <span className="text-sm text-muted">{factor}</span>
               </div>
             ))}
           </div>
@@ -218,7 +218,7 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
       )}
       
       {/* Professional Background */}
-      <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
+      <div className="bg-background rounded-lg p-6 border border-border dark:border-border">
         <h4 className="text-md font-semibold mb-4">Professional Background</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -250,7 +250,7 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
       
       {/* Skills & Expertise */}
       {skills.length > 0 && (
-        <div className="bg-[var(--background)] rounded-lg p-6 border border-[var(--border)] dark:border-[var(--border)]">
+        <div className="bg-background rounded-lg p-6 border border-border dark:border-border">
           <h4 className="text-md font-semibold mb-4">Skills & Expertise</h4>
           <div className="flex flex-wrap gap-2">
             {skills.slice(0, 15).map((skill: string, index: number) => (
@@ -262,7 +262,7 @@ export function PersonDetailIntelligence({ person }: PersonDetailIntelligencePro
               </span>
             ))}
             {skills.length > 15 && (
-              <span className="px-3 py-1 bg-[var(--hover)] text-[var(--muted)] text-sm rounded-full">
+              <span className="px-3 py-1 bg-hover text-muted text-sm rounded-full">
                 +{skills.length - 15} more
               </span>
             )}

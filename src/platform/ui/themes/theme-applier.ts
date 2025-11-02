@@ -81,6 +81,9 @@ export class ThemeApplier {
         clearTimeout(this.transitionTimeout);
       }
 
+      // Set current theme before applying (needed for CSS variable conversion)
+      this.currentTheme = theme;
+
       // Apply theme with transitions
       if (opts.enableTransitions) {
         await this.applyThemeWithTransitions(theme, opts.transitionDuration);
@@ -93,8 +96,6 @@ export class ThemeApplier {
 
       // Update third-party components
       await this.updateThirdPartyComponents(theme, opts);
-
-      this.currentTheme = theme;
       this.isApplying = false;
 
       const endTime = performance.now();
@@ -164,14 +165,37 @@ export class ThemeApplier {
     const root = document.documentElement;
     
     // Apply all color variables
+    // Convert camelCase to kebab-case: badgeNewBg -> badge-new-bg
     Object.entries(colors).forEach(([key, value]) => {
-      const cssVarName = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+      // Insert dash before uppercase letters (except at start of string), then lowercase
+      // This correctly handles: badgeNewBg -> badge-New-Bg -> badge-new-bg
+      const kebabCase = key
+        .replace(/([A-Z])/g, (match, p1, offset) => offset > 0 ? '-' + match : match)
+        .toLowerCase();
+      const cssVarName = `--${kebabCase}`;
       root.style.setProperty(cssVarName, value);
     });
 
     // Update document class for theme-specific styling
     root.className = root.className.replace(/theme-\w+/g, '');
-    root.classList.add(`theme-${this.currentTheme?.id || 'default'}`);
+    if (this.currentTheme) {
+      root.classList.add(`theme-${this.currentTheme.id}`);
+      
+      // CRITICAL: Sync Tailwind dark mode with theme category
+      // This ensures Tailwind's dark: prefix works correctly
+      if (this.currentTheme.category === 'dark' || this.currentTheme.category === 'high-contrast') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+      
+      // Set data attribute for theme targeting
+      root.setAttribute('data-theme', this.currentTheme.id);
+      root.setAttribute('data-color-scheme', this.currentTheme.category);
+    } else {
+      root.classList.add('theme-default');
+      root.classList.remove('dark');
+    }
   }
 
   /**

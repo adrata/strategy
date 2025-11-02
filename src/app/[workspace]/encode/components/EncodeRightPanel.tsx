@@ -293,11 +293,11 @@ export function EncodeRightPanel() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--background)] border-l border-[var(--border)]">
+    <div className="h-full flex flex-col bg-background border-l border-border">
       {/* Header */}
-      <div className="flex-shrink-0 px-4 py-3 border-b border-[var(--border)] bg-[var(--panel-background)]">
-        <h3 className="text-sm font-semibold text-[var(--foreground)]">AI Coding Assistant</h3>
-        <p className="text-xs text-[var(--muted)] mt-1">
+      <div className="flex-shrink-0 px-4 py-3 border-b border-border bg-panel-background">
+        <h3 className="text-sm font-semibold text-foreground">AI Coding Assistant</h3>
+        <p className="text-xs text-muted mt-1">
           Powered by Daytona.ai for secure code execution
         </p>
       </div>
@@ -313,23 +313,23 @@ export function EncodeRightPanel() {
               className={`max-w-[80%] rounded-lg px-3 py-2 ${
                 message.type === 'user'
                   ? 'bg-blue-600 text-white'
-                  : 'bg-[var(--panel-background)] text-[var(--foreground)] border border-[var(--border)]'
+                  : 'bg-panel-background text-foreground border border-border'
               }`}
             >
               <div className="text-sm whitespace-pre-wrap">{message.content}</div>
               
               {message.hasCode && message.code && (
                 <div className="mt-3">
-                  <div className="bg-[var(--background)] border border-[var(--border)] rounded p-3">
+                  <div className="bg-background border border-border rounded p-3">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium text-[var(--muted)]">
+                      <span className="text-xs font-medium text-muted">
                         {message.language} Code
                       </span>
                       <div className="flex gap-1">
                         <button
                           onClick={() => handleExecuteCode(message.code!, message.language!)}
                           disabled={isExecuting}
-                          className="p-1 hover:bg-[var(--hover)] rounded transition-colors"
+                          className="p-1 hover:bg-hover rounded transition-colors"
                           title="Run in Sandbox"
                         >
                           {isExecuting ? (
@@ -340,14 +340,14 @@ export function EncodeRightPanel() {
                         </button>
                         <button
                           onClick={() => handleApplyCode(message.code!)}
-                          className="p-1 hover:bg-[var(--hover)] rounded transition-colors"
+                          className="p-1 hover:bg-hover rounded transition-colors"
                           title="Apply to File"
                         >
                           <DocumentPlusIcon className="w-3 h-3 text-blue-500" />
                         </button>
                       </div>
                     </div>
-                    <pre className="text-xs font-mono text-[var(--foreground)] overflow-x-auto">
+                    <pre className="text-xs font-mono text-foreground overflow-x-auto">
                       <code>{message.code}</code>
                     </pre>
                   </div>
@@ -359,10 +359,10 @@ export function EncodeRightPanel() {
         
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-[var(--panel-background)] border border-[var(--border)] rounded-lg px-3 py-2">
+            <div className="bg-panel-background border border-border rounded-lg px-3 py-2">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                <span className="text-sm text-[var(--muted)]">Thinking...</span>
+                <span className="text-sm text-muted">Thinking...</span>
               </div>
             </div>
           </div>
@@ -371,12 +371,12 @@ export function EncodeRightPanel() {
 
       {/* Execution Output */}
       {executionOutput && (
-        <div className="border-t border-[var(--border)] bg-[var(--panel-background)]">
-          <div className="px-4 py-2 border-b border-[var(--border)]">
-            <h4 className="text-xs font-medium text-[var(--foreground)]">Execution Output</h4>
+        <div className="border-t border-border bg-panel-background">
+          <div className="px-4 py-2 border-b border-border">
+            <h4 className="text-xs font-medium text-foreground">Execution Output</h4>
           </div>
           <div className="p-3">
-            <pre className="text-xs font-mono text-[var(--foreground)] whitespace-pre-wrap">
+            <pre className="text-xs font-mono text-foreground whitespace-pre-wrap">
               {executionOutput}
             </pre>
           </div>
@@ -384,7 +384,7 @@ export function EncodeRightPanel() {
       )}
 
       {/* Input */}
-      <div className="flex-shrink-0 p-4 border-t border-[var(--border)]">
+      <div className="flex-shrink-0 p-4 border-t border-border">
         <div className="flex gap-2">
           <input
             type="text"
@@ -392,7 +392,7 @@ export function EncodeRightPanel() {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="Ask me anything or use commands like /generate, /fix, /review..."
-            className="flex-1 px-3 py-2 text-sm border border-[var(--border)] rounded-lg focus:outline-none focus:border-gray-400 bg-[var(--background)] text-[var(--foreground)]"
+            className="flex-1 px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:border-gray-400 bg-background text-foreground"
             disabled={isLoading}
           />
           <button
@@ -410,7 +410,7 @@ export function EncodeRightPanel() {
             <button
               key={command}
               onClick={() => setInputValue(command + ' ')}
-              className="flex items-center gap-1 px-2 py-1 text-xs bg-[var(--hover)] hover:bg-[var(--panel-background)] rounded transition-colors"
+              className="flex items-center gap-1 px-2 py-1 text-xs bg-hover hover:bg-panel-background rounded transition-colors"
             >
               {getCommandIcon(command)}
               {command}

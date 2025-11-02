@@ -9,10 +9,10 @@ export default function PrivateSnykPage() {
 
   return (
     <PasswordProtection correctPassword="Fortune500Snyk!">
-      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
-          <h1 className="text-2xl font-semibold text-[var(--foreground)] mb-4">Private Message for Snyk</h1>
-          <p className="text-[var(--muted)] mb-8">Access granted. Redirecting you to your confidential business case...</p>
+          <h1 className="text-2xl font-semibold text-foreground mb-4">Private Message for Snyk</h1>
+          <p className="text-muted mb-8">Access granted. Redirecting you to your confidential business case...</p>
           <div className="space-y-4">
             <button
               onClick={() => router.push('/private/snyk/snyk-bgi-case')}

@@ -144,11 +144,11 @@ export function PipelineLeftPanelDebug({
   }, [workspaceId, userId, authUser, acquisitionData, apiResponse, counts]);
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-background text-foreground border-r border-border flex flex-col h-full">
       {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-[var(--border)]">
-        <h2 className="text-lg font-bold text-[var(--foreground)]">Debug Left Panel</h2>
-        <p className="text-xs text-[var(--muted)]">TOP Engineering Plus Counts</p>
+      <div className="flex-shrink-0 p-4 border-b border-border">
+        <h2 className="text-lg font-bold text-foreground">Debug Left Panel</h2>
+        <p className="text-xs text-muted">TOP Engineering Plus Counts</p>
       </div>
 
       {/* Debug Information */}
@@ -205,14 +205,14 @@ export function PipelineLeftPanelDebug({
         {/* Raw Debug Data */}
         <details className="text-xs">
           <summary className="cursor-pointer text-gray-700 font-medium">Raw Debug Data</summary>
-          <pre className="mt-2 p-2 bg-[var(--hover)] rounded text-xs overflow-auto max-h-64">
+          <pre className="mt-2 p-2 bg-hover rounded text-xs overflow-auto max-h-64">
             {JSON.stringify(debugInfo, null, 2)}
           </pre>
         </details>
       </div>
 
       {/* Actions */}
-      <div className="flex-shrink-0 p-4 border-t border-[var(--border)]">
+      <div className="flex-shrink-0 p-4 border-t border-border">
         <div className="space-y-2">
           <button
             onClick={() => window.location.reload()}

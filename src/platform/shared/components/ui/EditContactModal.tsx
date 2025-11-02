@@ -109,16 +109,16 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-[var(--background)] rounded-xl shadow-2xl border border-[var(--border)] w-full max-w-2xl max-h-[90vh] overflow-hidden">
+      <div className="bg-background rounded-xl shadow-2xl border border-border w-full max-w-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--border)]">
+        <div className="px-6 py-4 border-b border-border">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Edit Contact: {contact.name}
             </h2>
             <button
               onClick={onClose}
-              className="text-[var(--muted)] hover:text-[var(--muted)] transition-colors"
+              className="text-muted hover:text-muted transition-colors"
             >
               <svg
                 className="w-6 h-6"
@@ -138,7 +138,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-[var(--border)]">
+        <div className="border-b border-border">
           <div className="flex space-x-8 px-6">
             {tabs.map((tab) => (
               <button
@@ -147,7 +147,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                 className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-[var(--muted)] hover:text-gray-700"
+                    : "border-transparent text-muted hover:text-gray-700"
                 }`}
               >
                 {tab.label}
@@ -168,7 +168,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter full name"
                 />
               </div>
@@ -180,7 +180,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter email address"
                 />
               </div>
@@ -192,7 +192,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => handleInputChange("phone", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter phone number"
                 />
               </div>
@@ -203,7 +203,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                 <select
                   value={formData.status}
                   onChange={(e) => handleInputChange("status", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   {statuses.map((status) => (
                     <option key={status} value={status}>
@@ -225,7 +225,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="url"
                   value={formData.linkedin}
                   onChange={(e) => handleInputChange("linkedin", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="https://linkedin.com/in/username"
                 />
               </div>
@@ -237,7 +237,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="text"
                   value={formData.twitter}
                   onChange={(e) => handleInputChange("twitter", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="@username"
                 />
               </div>
@@ -248,7 +248,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                 <select
                   value={formData.source}
                   onChange={(e) => handleInputChange("source", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select source</option>
                   {sources.map((source) => (
@@ -266,7 +266,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="text"
                   value={formData.relationship}
                   onChange={(e) => handleInputChange("relationship", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g., Decision Maker, Influencer, Champion"
                 />
               </div>
@@ -283,7 +283,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="text"
                   value={formData.company}
                   onChange={(e) => handleInputChange("company", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter company name"
                 />
               </div>
@@ -295,7 +295,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="text"
                   value={formData.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter job title"
                 />
               </div>
@@ -307,7 +307,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="text"
                   value={formData.department}
                   onChange={(e) => handleInputChange("department", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter department"
                 />
               </div>
@@ -319,7 +319,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="text"
                   value={formData.location}
                   onChange={(e) => handleInputChange("location", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter location (city, state, country)"
                 />
               </div>
@@ -336,7 +336,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="text"
                   value={formData.lastContact}
                   onChange={(e) => handleInputChange("lastContact", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Describe last contact"
                 />
               </div>
@@ -348,7 +348,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   type="text"
                   value={formData.nextAction}
                   onChange={(e) => handleInputChange("nextAction", e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Describe next action needed"
                 />
               </div>
@@ -360,7 +360,7 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
                   value={formData.notes}
                   onChange={(e) => handleInputChange("notes", e.target.value)}
                   rows={4}
-                  className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Add detailed notes about this contact"
                 />
               </div>
@@ -369,11 +369,11 @@ export const EditContactModal: React.FC<EditContactModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[var(--border)] bg-[var(--panel-background)]">
+        <div className="px-6 py-4 border-t border-border bg-panel-background">
           <div className="flex justify-end space-x-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
             >
               Cancel
             </button>

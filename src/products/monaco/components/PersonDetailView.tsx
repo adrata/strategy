@@ -372,7 +372,7 @@ const generatePersonalNeeds = (person: Person): string => {
 
 // Get role color
 const getRoleColor = (role: string) => {
-  return "bg-[var(--hover)] text-gray-800 border-[var(--border)]";
+  return "bg-hover text-gray-800 border-border";
 };
 
 // Generate concise pain intelligence similar to directional intelligence format
@@ -479,22 +479,22 @@ const EmailInteractionItem: React.FC<EmailInteractionItemProps> = ({
       case 'sent': return 'bg-blue-100 text-blue-800';
       case 'replied': return 'bg-purple-100 text-purple-800';
       case 'bounced': return 'bg-red-100 text-red-800';
-      default: return 'bg-[var(--hover)] text-gray-800';
+      default: return 'bg-hover text-gray-800';
     }
   };
 
   return (
-    <div className="flex items-start gap-4 p-3 bg-[var(--hover-bg)] rounded-lg">
+    <div className="flex items-start gap-4 p-3 bg-hover rounded-lg">
       <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
         <EnvelopeIcon className="w-5 h-5 text-white" />
       </div>
       <div className="flex-1">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2">
-            <h4 className="font-medium text-[var(--foreground)]">{subject}</h4>
+            <h4 className="font-medium text-foreground">{subject}</h4>
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              className="text-muted hover:text-foreground transition-colors"
               title={isExpanded ? "Collapse email" : "Expand email"}
             >
               {isExpanded ? (
@@ -504,22 +504,22 @@ const EmailInteractionItem: React.FC<EmailInteractionItemProps> = ({
               )}
             </button>
           </div>
-          <span className="text-sm text-[var(--muted)]">
+          <span className="text-sm text-muted">
             {formatRelativeDate(date)}
           </span>
         </div>
         
         {/* Preview text */}
         {!isExpanded && (
-          <p className="text-sm text-[var(--muted)] mb-2">
+          <p className="text-sm text-muted mb-2">
             {preview}
           </p>
         )}
         
         {/* Full email content when expanded */}
         {isExpanded && (
-          <div className="mt-3 p-3 bg-[var(--background)] border border-[var(--border)] rounded-lg">
-            <div className="text-sm text-[var(--foreground)] whitespace-pre-line">
+          <div className="mt-3 p-3 bg-background border border-border rounded-lg">
+            <div className="text-sm text-foreground whitespace-pre-line">
               {fullContent}
             </div>
           </div>
@@ -932,9 +932,9 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
           <>
             {/* Dynamic Pipeline Progress */}
             <div className="mb-8">
-              <div className="bg-[var(--background)] p-4 rounded-lg border border-[var(--border)]">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">Pipeline Progress</h3>
-                <div className="text-sm text-[var(--muted)]">
+              <div className="bg-background p-4 rounded-lg border border-border">
+                <h3 className="text-lg font-semibold text-foreground mb-2">Pipeline Progress</h3>
+                <div className="text-sm text-muted">
                   Pipeline tracking temporarily unavailable
                 </div>
               </div>
@@ -942,25 +942,25 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
 
             {/* At a Glance */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+              <h2 className="text-xl font-semibold text-foreground mb-4">
                 At a Glance
               </h2>
               <div className="flex flex-wrap gap-4">
-                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                  <div className="font-semibold text-[var(--muted)] mb-1">Role</div>
+                <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                  <div className="font-semibold text-muted mb-1">Role</div>
                   <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getRoleColor(enhancedPerson.buyerGroupRole || "Stakeholder")}`}>
                     {enhancedPerson.buyerGroupRole || "Stakeholder"}
                   </span>
                 </div>
-                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                  <div className="font-semibold text-[var(--muted)] mb-1">Last Engagement</div>
-                  <div className="text-lg text-[var(--foreground)]">
+                <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                  <div className="font-semibold text-muted mb-1">Last Engagement</div>
+                  <div className="text-lg text-foreground">
                     {enhancedPerson.lastContact ? formatRelativeDate(enhancedPerson.lastContact.toISOString()) : "-"}
                   </div>
                 </div>
-                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                  <div className="font-semibold text-[var(--muted)] mb-1">Next Step</div>
-                  <div className="text-lg text-[var(--foreground)]">
+                <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                  <div className="font-semibold text-muted mb-1">Next Step</div>
+                  <div className="text-lg text-foreground">
                     {enhancedPerson.nextAction || "Schedule follow-up call"}
                   </div>
                 </div>
@@ -970,12 +970,12 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
             {/* Main info */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                <h2 className="text-xl font-semibold text-foreground mb-4">
                   Basic Information
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       Name
                     </label>
                     <div className="mt-1">
@@ -986,12 +986,12 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                         recordType="people"
                         placeholder="Enter full name"
                         onSave={handlePersonSave}
-                        className="text-lg text-[var(--foreground)]"
+                        className="text-lg text-foreground"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       Title
                     </label>
                     <div className="mt-1">
@@ -1002,12 +1002,12 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                         recordType="people"
                         placeholder="Enter job title"
                         onSave={handlePersonSave}
-                        className="text-lg text-[var(--foreground)]"
+                        className="text-lg text-foreground"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       Email
                     </label>
                     <div className="mt-1">
@@ -1019,12 +1019,12 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                         inputType="email"
                         placeholder="Enter email address"
                         onSave={handlePersonSave}
-                        className="text-lg text-[var(--foreground)]"
+                        className="text-lg text-foreground"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       Phone
                     </label>
                     <div className="mt-1">
@@ -1036,12 +1036,12 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                         inputType="tel"
                         placeholder="Enter phone number"
                         onSave={handlePersonSave}
-                        className="text-lg text-[var(--foreground)]"
+                        className="text-lg text-foreground"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       LinkedIn Profile
                     </label>
                     <div className="mt-1">
@@ -1052,12 +1052,12 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                         recordType="people"
                         placeholder="Enter LinkedIn URL"
                         onSave={handlePersonSave}
-                        className="text-lg text-[var(--foreground)]"
+                        className="text-lg text-foreground"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       LinkedIn Navigator
                     </label>
                     <div className="mt-1">
@@ -1068,12 +1068,12 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                         recordType="people"
                         placeholder="Enter LinkedIn Navigator URL"
                         onSave={handlePersonSave}
-                        className="text-lg text-[var(--foreground)]"
+                        className="text-lg text-foreground"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       LinkedIn Connection Date
                     </label>
                     <div className="mt-1">
@@ -1084,16 +1084,16 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                         recordType="people"
                         placeholder="YYYY-MM-DD"
                         onSave={handlePersonSave}
-                        className="text-lg text-[var(--foreground)]"
+                        className="text-lg text-foreground"
                         inputType="date"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       College
                     </label>
-                    <p className="mt-1 text-lg text-[var(--foreground)]">
+                    <p className="mt-1 text-lg text-foreground">
                       {person.department || "-"}
                     </p>
                   </div>
@@ -1101,12 +1101,12 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
               </div>
 
               <div>
-                <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                <h2 className="text-xl font-semibold text-foreground mb-4">
                   Lead Information
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       Status
                     </label>
                     <span
@@ -1124,15 +1124,15 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                     </span>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       Source
                     </label>
-                    <p className="mt-1 text-lg text-[var(--foreground)]">
+                    <p className="mt-1 text-lg text-foreground">
                       Monaco Intelligence
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       Company
                     </label>
                     <p 
@@ -1143,10 +1143,10 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--muted)]">
+                    <label className="block text-sm font-medium text-muted">
                       Created At
                     </label>
-                    <p className="mt-1 text-lg text-[var(--foreground)]">
+                    <p className="mt-1 text-lg text-foreground">
                       {person.lastContact ? formatRelativeDate(person.lastContact) : "-"}
                     </p>
                   </div>
@@ -1157,18 +1157,18 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
             {/* Wants and Needs */}
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
               <div className="space-y-2">
-                <div className="text-xl font-semibold text-[var(--foreground)] mb-1 flex items-center gap-2">
+                <div className="text-xl font-semibold text-foreground mb-1 flex items-center gap-2">
                   Wants
                 </div>
-                <div className="text-lg text-[var(--foreground)]">
+                <div className="text-lg text-foreground">
                   {generatePersonalWants(person)}
                 </div>
               </div>
               <div className="space-y-2">
-                <div className="text-xl font-semibold text-[var(--foreground)] mb-1 flex items-center gap-2">
+                <div className="text-xl font-semibold text-foreground mb-1 flex items-center gap-2">
                   Needs
                 </div>
-                <div className="text-lg text-[var(--foreground)]">
+                <div className="text-lg text-foreground">
                   {generatePersonalNeeds(person)}
                 </div>
               </div>
@@ -1176,13 +1176,13 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
 
             {/* Deep Value Reports */}
             <div className="mt-8">
-              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+              <h2 className="text-xl font-semibold text-foreground mb-4">
                 Deep Value Reports
               </h2>
               {isLoadingReports ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB]"></div>
-                  <span className="ml-2 text-[var(--muted)]">
+                  <span className="ml-2 text-muted">
                     Generating personalized reports...
                   </span>
                 </div>
@@ -1191,14 +1191,14 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                   {dynamicReports.map((idea, index) => (
                     <div
                       key={index}
-                      className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-[#2563EB] transition-all duration-200"
+                      className="bg-background border border-border rounded-lg p-4 hover:border-[#2563EB] transition-all duration-200"
                     >
                       <div className="flex items-start justify-between mb-2">
-                        <h3 className="text-lg font-semibold text-[var(--foreground)]">
+                        <h3 className="text-lg font-semibold text-foreground">
                           {idea.title}
                         </h3>
                       </div>
-                      <p className="text-sm text-[var(--muted)] mb-4">
+                      <p className="text-sm text-muted mb-4">
                         {idea.description}
                       </p>
                       <div className="flex gap-3">
@@ -1226,59 +1226,59 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
       case "Insights":
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Professional Insights
             </h2>
             
             {/* Decision Power and Influence */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+              <div className="bg-background border border-border rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-3">
                   Decision Power
                 </h3>
-                <div className="text-3xl font-bold text-[var(--foreground)] mb-2">
+                <div className="text-3xl font-bold text-foreground mb-2">
                   {person.decisionPower || 75}/100
                 </div>
-                <p className="text-sm text-[var(--muted)]">
+                <p className="text-sm text-muted">
                   Influence level in purchasing decisions
                 </p>
               </div>
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+              <div className="bg-background border border-border rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-3">
                   Influence Level
                 </h3>
-                <div className="text-2xl font-bold text-[var(--foreground)] mb-2">
+                <div className="text-2xl font-bold text-foreground mb-2">
                   {person.influenceLevel || "Medium"}
                 </div>
-                <p className="text-sm text-[var(--muted)]">
+                <p className="text-sm text-muted">
                   Organizational influence rating
                 </p>
               </div>
             </div>
 
             {/* Buyer Group Analysis */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Buyer Group Analysis
               </h3>
               <div className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Role in Buyer Group
                   </label>
-                  <p className="text-[var(--foreground)]">{enhancedPerson.buyerGroupRole || "Stakeholder"}</p>
+                  <p className="text-foreground">{enhancedPerson.buyerGroupRole || "Stakeholder"}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Active Buyer Groups
                   </label>
-                  <p className="text-[var(--foreground)]">{person.activeBuyerGroups || "1/1"}</p>
+                  <p className="text-foreground">{person.activeBuyerGroups || "1/1"}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Engagement Strategy
                   </label>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {enhancedPerson['buyerGroupRole'] === "Decision Maker" ? "Focus on executive-level value propositions and ROI demonstrations" : 
                      enhancedPerson['buyerGroupRole'] === "Champion" ? "Provide technical validation and implementation support" : 
                      enhancedPerson['buyerGroupRole'] === "Blocker" ? "Address concerns and focus on risk mitigation" : 
@@ -1289,8 +1289,8 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
             </div>
 
             {/* Persona Profile */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Persona Profile
               </h3>
               <div className="space-y-4">
@@ -1299,56 +1299,56 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                   {/* Direct (High) */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-[var(--foreground)]">Direct</span>
-                      <span className="text-sm font-bold text-[var(--foreground)]">85/100</span>
+                      <span className="text-sm font-medium text-foreground">Direct</span>
+                      <span className="text-sm font-bold text-foreground">85/100</span>
                     </div>
-                    <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+                    <div className="w-full bg-loading-bg rounded-full h-2">
                       <div className="bg-red-500 h-2 rounded-full" style={{ width: "85%" }}></div>
                     </div>
-                    <p className="text-xs text-[var(--muted)]">Efficiency-Driven Decision-Maker</p>
+                    <p className="text-xs text-muted">Efficiency-Driven Decision-Maker</p>
                   </div>
 
                   {/* Chatty (High) */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-[var(--foreground)]">Chatty</span>
-                      <span className="text-sm font-bold text-[var(--foreground)]">78/100</span>
+                      <span className="text-sm font-medium text-foreground">Chatty</span>
+                      <span className="text-sm font-bold text-foreground">78/100</span>
                     </div>
-                    <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+                    <div className="w-full bg-loading-bg rounded-full h-2">
                       <div className="bg-blue-500 h-2 rounded-full" style={{ width: "78%" }}></div>
                     </div>
-                    <p className="text-xs text-[var(--muted)]">Engaging Relationship-Builder</p>
+                    <p className="text-xs text-muted">Engaging Relationship-Builder</p>
                   </div>
 
                   {/* Rule-Follower (High) */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-[var(--foreground)]">Rule-Follower</span>
-                      <span className="text-sm font-bold text-[var(--foreground)]">82/100</span>
+                      <span className="text-sm font-medium text-foreground">Rule-Follower</span>
+                      <span className="text-sm font-bold text-foreground">82/100</span>
                     </div>
-                    <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+                    <div className="w-full bg-loading-bg rounded-full h-2">
                       <div className="bg-green-500 h-2 rounded-full" style={{ width: "82%" }}></div>
                     </div>
-                    <p className="text-xs text-[var(--muted)]">Process-Oriented Analyst</p>
+                    <p className="text-xs text-muted">Process-Oriented Analyst</p>
                   </div>
 
                   {/* Friendly (Low) */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-[var(--foreground)]">Friendly</span>
-                      <span className="text-sm font-bold text-[var(--foreground)]">35/100</span>
+                      <span className="text-sm font-medium text-foreground">Friendly</span>
+                      <span className="text-sm font-bold text-foreground">35/100</span>
                     </div>
-                    <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+                    <div className="w-full bg-loading-bg rounded-full h-2">
                       <div className="bg-purple-500 h-2 rounded-full" style={{ width: "35%" }}></div>
                     </div>
-                    <p className="text-xs text-[var(--muted)]">Collaborative and People-Oriented</p>
+                    <p className="text-xs text-muted">Collaborative and People-Oriented</p>
                   </div>
                 </div>
 
                 {/* Persona Summary */}
-                <div className="bg-[var(--panel-background)]/50 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-[var(--foreground)] mb-2">Persona Summary</h4>
-                  <p className="text-sm text-[var(--foreground)] leading-relaxed">
+                <div className="bg-panel-background/50 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-foreground mb-2">Persona Summary</h4>
+                  <p className="text-sm text-foreground leading-relaxed">
                     {enhancedPerson['buyerGroupRole'] === "Decision Maker" 
                       ? "Highly direct and process-oriented leader who values efficiency and structured communications. Prefers data-driven conversations with clear ROI metrics. Moderate relationship-building orientation."
                       : enhancedPerson['buyerGroupRole'] === "Champion"
@@ -1361,18 +1361,18 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
             </div>
 
             {/* Enhanced Communication Style */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Communication Style & Preferences
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   {/* Preferred Format */}
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Content Format
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {enhancedPerson['buyerGroupRole'] === "Decision Maker" 
                         ? "Bullet points with clear ROI metrics" 
                         : enhancedPerson['buyerGroupRole'] === "Champion"
@@ -1384,10 +1384,10 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
 
                   {/* Communication Tone */}
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Preferred Tone
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {enhancedPerson['buyerGroupRole'] === "Decision Maker"
                         ? "Direct, business-focused, results-oriented"
                         : enhancedPerson['buyerGroupRole'] === "Champion" 
@@ -1399,10 +1399,10 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
 
                   {/* Information Depth */}
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Information Depth
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {enhancedPerson['buyerGroupRole'] === "Decision Maker"
                         ? "Executive summary with key metrics"
                         : enhancedPerson['buyerGroupRole'] === "Champion"
@@ -1416,10 +1416,10 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                 <div className="space-y-4">
                   {/* Preferred Channel */}
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Preferred Channel
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {enhancedPerson['buyerGroupRole'] === "Decision Maker" ? "Phone calls for decisions, email for updates" : 
                        enhancedPerson['buyerGroupRole'] === "Champion" ? "Email with detailed attachments" : 
                        "LinkedIn messaging with follow-up emails"}
@@ -1428,10 +1428,10 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
 
                   {/* Decision Factors */}
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Key Decision Factors
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {enhancedPerson['buyerGroupRole'] === "Decision Maker"
                         ? "ROI, implementation timeline, risk mitigation"
                         : enhancedPerson['buyerGroupRole'] === "Champion"
@@ -1443,10 +1443,10 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
 
                   {/* Meeting Preferences */}
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Meeting Style
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {enhancedPerson['buyerGroupRole'] === "Decision Maker"
                         ? "Agenda-driven, time-boxed discussions"
                         : enhancedPerson['buyerGroupRole'] === "Champion"
@@ -1486,43 +1486,43 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
       case "Buyer Group":
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Buyer Group Overview
             </h2>
             
             {/* Buyer Group Status */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+            <div className="bg-background border border-border rounded-lg p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
                     Group Status
                   </h3>
-                  <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
+                  <div className="text-2xl font-bold text-foreground mb-1">
                     Active
                   </div>
-                  <p className="text-sm text-[var(--muted)]">
+                  <p className="text-sm text-muted">
                     Currently evaluating solutions
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
                     Stage
                   </h3>
-                  <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
+                  <div className="text-2xl font-bold text-foreground mb-1">
                     Technical Evaluation
                   </div>
-                  <p className="text-sm text-[var(--muted)]">
+                  <p className="text-sm text-muted">
                     Reviewing technical requirements
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
                     Members
                   </h3>
-                  <div className="text-2xl font-bold text-[var(--foreground)] mb-1">
+                  <div className="text-2xl font-bold text-foreground mb-1">
                     {person['company'] === "ADP" ? "7" : "5"} People
                   </div>
-                  <p className="text-sm text-[var(--muted)]">
+                  <p className="text-sm text-muted">
                     Stakeholders identified
                   </p>
                 </div>
@@ -1530,13 +1530,13 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
             </div>
 
             {/* Buyer Group Members */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Key Stakeholders
               </h3>
               {intelligenceLoading ? (
                 <div className="text-center py-4">
-                  <div className="text-sm text-[var(--muted)]">Loading stakeholder data...</div>
+                  <div className="text-sm text-muted">Loading stakeholder data...</div>
                 </div>
               ) : intelligenceError ? (
                 <div className="text-center py-4">
@@ -1547,7 +1547,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                   {intelligence.stakeholders.map((stakeholder, index) => (
                     <div
                       key={stakeholder.id || index}
-                      className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 cursor-pointer hover:border-gray-400 transition-colors"
+                      className="bg-background border border-border rounded-lg p-4 cursor-pointer hover:border-gray-400 transition-colors"
                       onClick={() => {
                         console.log(`Navigating to profile for ${stakeholder.name}`);
                         // This would navigate to the person's profile
@@ -1555,24 +1555,24 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
-                          <h4 className="text-lg font-semibold text-[var(--foreground)] mb-1">
+                          <h4 className="text-lg font-semibold text-foreground mb-1">
                             {stakeholder.name}
                           </h4>
-                          <p className="text-sm text-[var(--muted)] mb-2">
+                          <p className="text-sm text-muted mb-2">
                             {stakeholder.title}
                           </p>
                         </div>
                         <div className="text-right">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-hover text-gray-800">
                             {stakeholder.status}
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-[var(--hover)] text-gray-800">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-hover text-gray-800">
                           {stakeholder.role}
                         </span>
-                        <svg className="w-4 h-4 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </div>
@@ -1581,20 +1581,20 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                 </div>
               ) : (
                 <div className="text-center py-4">
-                  <div className="text-sm text-[var(--muted)]">No stakeholder data available</div>
+                  <div className="text-sm text-muted">No stakeholder data available</div>
                 </div>
               )}
             </div>
 
             {/* Engagement Strategy */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Engagement Strategy
               </h3>
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Next Steps</h4>
-                  <ul className="space-y-2 text-sm text-[var(--muted)]">
+                  <h4 className="font-medium text-foreground mb-2">Next Steps</h4>
+                  <ul className="space-y-2 text-sm text-muted">
                     <li>• Schedule technical demo with engineering team</li>
                     <li>• Address security concerns with infrastructure team</li>
                     <li>• Provide ROI analysis for executive stakeholders</li>
@@ -1602,15 +1602,15 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium text-[var(--foreground)] mb-2">Key Messages</h4>
+                  <h4 className="font-medium text-foreground mb-2">Key Messages</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <span className="font-medium text-sm">For Decision Makers:</span>
-                      <p className="text-sm text-[var(--muted)]">Focus on strategic value and competitive advantage</p>
+                      <p className="text-sm text-muted">Focus on strategic value and competitive advantage</p>
                     </div>
                     <div>
                       <span className="font-medium text-sm">For Champions:</span>
-                      <p className="text-sm text-[var(--muted)]">Emphasize technical capabilities and ease of implementation</p>
+                      <p className="text-sm text-muted">Emphasize technical capabilities and ease of implementation</p>
                     </div>
                   </div>
                 </div>
@@ -1622,78 +1622,78 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
       case "Profile":
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Professional Profile
             </h2>
             
             {/* Personal Information */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+            <div className="bg-background border border-border rounded-lg p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">
                     Personal Information
                   </h3>
                   <div className="space-y-3">
                     <div>
-                      <label className="text-sm font-medium text-[var(--muted)]">
+                      <label className="text-sm font-medium text-muted">
                         Full Name
                       </label>
-                      <p className="text-[var(--foreground)]">{enhancedPerson.fullName || enhancedPerson.name}</p>
+                      <p className="text-foreground">{enhancedPerson.fullName || enhancedPerson.name}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-[var(--muted)]">
+                      <label className="text-sm font-medium text-muted">
                         Job Title
                       </label>
-                      <p className="text-[var(--foreground)]">{enhancedPerson.jobTitle || enhancedPerson.title || "Technology Executive"}</p>
+                      <p className="text-foreground">{enhancedPerson.jobTitle || enhancedPerson.title || "Technology Executive"}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-[var(--muted)]">
+                      <label className="text-sm font-medium text-muted">
                         Email
                       </label>
-                      <p className="text-[var(--foreground)]">{enhancedPerson.workEmail || enhancedPerson.email || "-"}</p>
+                      <p className="text-foreground">{enhancedPerson.workEmail || enhancedPerson.email || "-"}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-[var(--muted)]">
+                      <label className="text-sm font-medium text-muted">
                         Phone
                       </label>
-                      <p className="text-[var(--foreground)]">{enhancedPerson.phone || "-"}</p>
+                      <p className="text-foreground">{enhancedPerson.phone || "-"}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-[var(--muted)]">
+                      <label className="text-sm font-medium text-muted">
                         Location
                       </label>
-                      <p className="text-[var(--foreground)]">{enhancedPerson['city'] && enhancedPerson.state ? `${enhancedPerson.city}, ${enhancedPerson.state}` : enhancedPerson.location || "-"}</p>
+                      <p className="text-foreground">{enhancedPerson['city'] && enhancedPerson.state ? `${enhancedPerson.city}, ${enhancedPerson.state}` : enhancedPerson.location || "-"}</p>
                     </div>
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">
                     Professional Details
                   </h3>
                   <div className="space-y-3">
                     <div>
-                      <label className="text-sm font-medium text-[var(--muted)]">
+                      <label className="text-sm font-medium text-muted">
                         Department
                       </label>
-                      <p className="text-[var(--foreground)]">{enhancedPerson.department || "Technology"}</p>
+                      <p className="text-foreground">{enhancedPerson.department || "Technology"}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-[var(--muted)]">
+                      <label className="text-sm font-medium text-muted">
                         Seniority Level
                       </label>
-                      <p className="text-[var(--foreground)]">{enhancedPerson.seniority || "Senior"}</p>
+                      <p className="text-foreground">{enhancedPerson.seniority || "Senior"}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-[var(--muted)]">
+                      <label className="text-sm font-medium text-muted">
                         Company
                       </label>
-                      <p className="text-[var(--foreground)]">{enhancedPerson.company || "-"}</p>
+                      <p className="text-foreground">{enhancedPerson.company || "-"}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-[var(--muted)] block mb-1">
+                      <label className="text-sm font-medium text-muted block mb-1">
                         Buyer Group Role
                       </label>
-                      <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-[var(--hover)] text-gray-800">
+                      <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-hover text-gray-800">
                         {enhancedPerson.buyerGroupRole || "Stakeholder"}
                       </span>
                     </div>
@@ -1703,13 +1703,13 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
             </div>
 
             {/* Social and Professional Links */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Online Presence
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     LinkedIn Profile
                   </label>
                   {enhancedPerson.linkedinUrl ? (
@@ -1717,16 +1717,16 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                       href={enhancedPerson.linkedinUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-[var(--muted)] hover:text-gray-700 hover:underline transition-colors"
+                      className="block text-muted hover:text-gray-700 hover:underline transition-colors"
                     >
                       View LinkedIn Profile
                     </a>
                   ) : (
-                    <p className="text-[var(--muted)]">-</p>
+                    <p className="text-muted">-</p>
                   )}
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     LinkedIn Navigator
                   </label>
                   {enhancedPerson.linkedinNavigatorUrl ? (
@@ -1734,19 +1734,19 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                       href={enhancedPerson.linkedinNavigatorUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-[var(--muted)] hover:text-gray-700 hover:underline transition-colors"
+                      className="block text-muted hover:text-gray-700 hover:underline transition-colors"
                     >
                       View LinkedIn Navigator
                     </a>
                   ) : (
-                    <p className="text-[var(--muted)]">-</p>
+                    <p className="text-muted">-</p>
                   )}
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     LinkedIn Connection Date
                   </label>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {enhancedPerson.linkedinConnectionDate ? 
                       new Date(enhancedPerson.linkedinConnectionDate).toLocaleDateString() : 
                       '-'
@@ -1754,39 +1754,39 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Professional Status
                   </label>
-                  <p className="text-[var(--foreground)]">{person.status || "Active"}</p>
+                  <p className="text-foreground">{person.status || "Active"}</p>
                 </div>
               </div>
             </div>
 
             {/* Engagement Summary */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Engagement Summary
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Last Contact
                   </label>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {person.lastContact ? formatRelativeDate(person.lastContact) : "No recent contact"}
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Active Buyer Groups
                   </label>
-                  <p className="text-[var(--foreground)]">{person.activeBuyerGroups || "1/1"}</p>
+                  <p className="text-foreground">{person.activeBuyerGroups || "1/1"}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Lead Source
                   </label>
-                  <p className="text-[var(--foreground)]">Monaco Intelligence</p>
+                  <p className="text-foreground">Monaco Intelligence</p>
                 </div>
               </div>
             </div>
@@ -1796,48 +1796,48 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
       case "Career":
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Career Intelligence
             </h2>
             
             {/* Current Position & Trajectory */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Current Position & Growth Trajectory
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Current Position
                     </label>
-                    <p className="text-lg text-[var(--foreground)]">
+                    <p className="text-lg text-foreground">
                       {enhancedPerson.jobTitle ? `${enhancedPerson.jobTitle} at ` : ''}{enhancedPerson.company || "ADP"}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Department
                     </label>
-                    <p className="text-lg text-[var(--foreground)]">
+                    <p className="text-lg text-foreground">
                       {enhancedPerson.department || "Technology"}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Seniority Level
                     </label>
-                    <p className="text-lg text-[var(--foreground)]">
+                    <p className="text-lg text-foreground">
                       {enhancedPerson.seniority || "Senior"}
                     </p>
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Career Stage
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {enhancedPerson['seniority'] === "C-Level" ? "Executive Leadership" : 
                        enhancedPerson['seniority'] === "VP" ? "Senior Management" : 
                        enhancedPerson['seniority'] === "Director" ? "Middle Management" : 
@@ -1846,10 +1846,10 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Promotion Potential
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {person['seniority'] === "C-Level" ? "Board/Advisory roles" : 
                        person['seniority'] === "VP" ? "C-Suite ready" : 
                        person['seniority'] === "Director" ? "VP track" : 
@@ -1857,26 +1857,26 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Estimated Tenure
                     </label>
-                    <p className="text-[var(--foreground)]">2-3 years</p>
+                    <p className="text-foreground">2-3 years</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Professional Achievements */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Professional Achievements & Motivations
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Key Achievements
                   </label>
-                  <ul className="text-[var(--foreground)] list-disc list-inside space-y-1">
+                  <ul className="text-foreground list-disc list-inside space-y-1">
                     {enhancedPerson['experience'] && enhancedPerson.experience.length > 0 ? (
                       enhancedPerson.experience.map((exp: any, index: number) => (
                         <li key={index}>{exp.achievement || exp.description || `${exp.title} at ${exp.company}`}</li>
@@ -1892,10 +1892,10 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                   </ul>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Career Motivations
                   </label>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {enhancedPerson['buyerGroupRole'] === "Decision Maker" ? "Strategic impact, organizational growth, innovation leadership" : 
                      enhancedPerson['buyerGroupRole'] === "Champion" ? "Technical excellence, process optimization, team empowerment" : 
                      enhancedPerson['buyerGroupRole'] === "Blocker" ? "Risk mitigation, compliance, organizational stability" : 
@@ -1906,49 +1906,49 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
             </div>
 
             {/* Professional Network & Influence */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Network & Industry Influence
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Industry Connections
                     </label>
-                    <p className="text-[var(--foreground)]">500+ LinkedIn connections</p>
+                    <p className="text-foreground">500+ LinkedIn connections</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Speaking Engagements
                     </label>
-                    <p className="text-[var(--foreground)]">2-3 conferences annually</p>
+                    <p className="text-foreground">2-3 conferences annually</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Publications
                     </label>
-                    <p className="text-[var(--foreground)]">Industry thought leadership</p>
+                    <p className="text-foreground">Industry thought leadership</p>
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Peer Recognition
                     </label>
-                    <p className="text-[var(--foreground)]">Industry awards recipient</p>
+                    <p className="text-foreground">Industry awards recipient</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Mentorship
                     </label>
-                    <p className="text-[var(--foreground)]">Mentors 3-5 junior professionals</p>
+                    <p className="text-foreground">Mentors 3-5 junior professionals</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Board Positions
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {enhancedPerson['seniority'] === "C-Level" ? "Multiple advisory roles" : "None currently"}
                     </p>
                   </div>
@@ -1957,36 +1957,36 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
             </div>
 
             {/* Career Transition Insights */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Career Transition Insights
               </h3>
               <div className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Job Change Likelihood
                   </label>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {enhancedPerson['seniority'] === "C-Level" ? "Low (focused on current role)" : 
                      enhancedPerson['seniority'] === "VP" ? "Medium (exploring opportunities)" : 
                      "High (career advancement focused)"}
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Decision Timeline
                   </label>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {enhancedPerson['buyerGroupRole'] === "Decision Maker" ? "3-6 months (strategic planning)" : 
                      enhancedPerson['buyerGroupRole'] === "Champion" ? "1-3 months (technical evaluation)" : 
                      "6-12 months (consensus building)"}
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[var(--muted)]">
+                  <label className="text-sm font-medium text-muted">
                     Budget Influence
                   </label>
-                  <p className="text-[var(--foreground)]">
+                  <p className="text-foreground">
                     {person['seniority'] === "C-Level" ? "Direct budget authority ($1M+)" : 
                      person['seniority'] === "VP" ? "Significant influence ($500K+)" : 
                      person['seniority'] === "Director" ? "Department budget ($100K+)" : 
@@ -2001,13 +2001,13 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
       case "Company":
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Company Information
             </h2>
             
             {companyLoading ? (
               <div className="text-center py-8">
-                <div className="text-sm text-[var(--muted)]">Loading company data...</div>
+                <div className="text-sm text-muted">Loading company data...</div>
               </div>
             ) : companyError ? (
               <div className="text-center py-8">
@@ -2015,57 +2015,57 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
               </div>
             ) : !companyData ? (
               <div className="text-center py-8">
-                <div className="text-sm text-[var(--muted)]">No company data available for "{enhancedPerson.company}"</div>
+                <div className="text-sm text-muted">No company data available for "{enhancedPerson.company}"</div>
               </div>
             ) : (
               <>
                 {/* Company Overview */}
-                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                <div className="bg-background border border-border rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">
                     Company Overview
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       <div>
-                        <label className="text-sm font-medium text-[var(--muted)]">
+                        <label className="text-sm font-medium text-muted">
                           Company Name
                         </label>
-                        <p className="text-lg text-[var(--foreground)]">
+                        <p className="text-lg text-foreground">
                           {companyData.name || enhancedPerson.company || "N/A"}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-[var(--muted)]">
+                        <label className="text-sm font-medium text-muted">
                           Industry
                         </label>
-                        <p className="text-lg text-[var(--foreground)]">
+                        <p className="text-lg text-foreground">
                           {companyData.industry || "N/A"}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-[var(--muted)]">
+                        <label className="text-sm font-medium text-muted">
                           Total Employees
                         </label>
-                        <p className="text-lg text-[var(--foreground)]">
+                        <p className="text-lg text-foreground">
                           {companyData.employeeCount ? `${companyData.employeeCount.toLocaleString()}+ employees` :
                            companyData.size || "N/A"}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-[var(--muted)]">
+                        <label className="text-sm font-medium text-muted">
                           Annual Revenue
                         </label>
-                        <p className="text-lg text-[var(--foreground)]">
+                        <p className="text-lg text-foreground">
                           {companyData.revenue || "N/A"}
                         </p>
                       </div>
                     </div>
                     <div className="space-y-3">
                       <div>
-                        <label className="text-sm font-medium text-[var(--muted)]">
+                        <label className="text-sm font-medium text-muted">
                           HQ Location
                         </label>
-                        <p className="text-lg text-[var(--foreground)]">
+                        <p className="text-lg text-foreground">
                           {companyData.hqLocation || 
                            (companyData.hqCity && companyData.hqState ? `${companyData.hqCity}, ${companyData.hqState}` : null) ||
                            companyData.hqCity || 
@@ -2073,26 +2073,26 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-[var(--muted)]">
+                        <label className="text-sm font-medium text-muted">
                           Founded
                         </label>
-                        <p className="text-lg text-[var(--foreground)]">
+                        <p className="text-lg text-foreground">
                           {companyData.foundedYear ? `${companyData.foundedYear} (${new Date().getFullYear() - companyData.foundedYear} years)` : "N/A"}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-[var(--muted)]">
+                        <label className="text-sm font-medium text-muted">
                           Stock Symbol
                         </label>
-                        <p className="text-lg text-[var(--foreground)]">
+                        <p className="text-lg text-foreground">
                           {companyData.stockSymbol || (companyData.isPublic ? "Public Company" : "Private Company")}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-[var(--muted)]">
+                        <label className="text-sm font-medium text-muted">
                           Website
                         </label>
-                        <p className="text-lg text-[var(--foreground)]">
+                        <p className="text-lg text-foreground">
                           {companyData.website ? (
                             <a 
                               href={companyData.website} 
@@ -2109,11 +2109,11 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                   </div>
                   
                   {companyData.description && (
-                    <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                      <label className="text-sm font-medium text-[var(--muted)]">
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <label className="text-sm font-medium text-muted">
                         Description
                       </label>
-                      <p className="text-[var(--foreground)] mt-1">
+                      <p className="text-foreground mt-1">
                         {companyData.description}
                       </p>
                     </div>
@@ -2122,15 +2122,15 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
 
                 {/* Technology Stack - Only show if we have data */}
                 {companyData.techStack && companyData.techStack.length > 0 && (
-                  <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                  <div className="bg-background border border-border rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-foreground mb-4">
                       Technology Stack
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {companyData.techStack.map((tech, index) => (
                         <span 
                           key={index}
-                          className="px-3 py-1 bg-[var(--hover)] text-[var(--foreground)] rounded-full text-sm"
+                          className="px-3 py-1 bg-hover text-foreground rounded-full text-sm"
                         >
                           {tech}
                         </span>
@@ -2144,8 +2144,8 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                  (companyData.businessPriorities && companyData.businessPriorities.length > 0) ||
                  (companyData.competitiveAdvantages && companyData.competitiveAdvantages.length > 0) ||
                  (companyData.growthOpportunities && companyData.growthOpportunities.length > 0) ? (
-                  <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+                  <div className="bg-background border border-border rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-foreground mb-4">
                       Business Intelligence
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2156,7 +2156,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                             {companyData.businessChallenges.map((challenge, index) => (
                               <div key={index} className="flex items-start gap-2">
                                 <div className="w-2 h-2 rounded-full bg-red-500 mt-2 flex-shrink-0"></div>
-                                <p className="text-sm text-[var(--foreground)]">{challenge}</p>
+                                <p className="text-sm text-foreground">{challenge}</p>
                               </div>
                             ))}
                           </div>
@@ -2170,7 +2170,7 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
                             {companyData.growthOpportunities.map((opportunity, index) => (
                               <div key={index} className="flex items-start gap-2">
                                 <div className="w-2 h-2 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
-                                <p className="text-sm text-[var(--foreground)]">{opportunity}</p>
+                                <p className="text-sm text-foreground">{opportunity}</p>
                               </div>
                             ))}
                           </div>
@@ -2190,40 +2190,40 @@ export const PersonDetailView: React.FC<PersonDetailViewProps> = ({
       case "History":
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Engagement Timeline
             </h2>
             
             {/* Engagement Overview */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Engagement Overview
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-[var(--foreground)]">
+                  <div className="text-2xl font-bold text-foreground">
                     {enhancedPerson.interactionHistory ? enhancedPerson.interactionHistory.length : (enhancedPerson.lastContact ? "5" : "0")}
                   </div>
-                  <p className="text-sm text-[var(--muted)]">Total Interactions</p>
+                  <p className="text-sm text-muted">Total Interactions</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-[var(--foreground)]">
+                  <div className="text-2xl font-bold text-foreground">
                     {enhancedPerson.lastContact ? formatRelativeDate(enhancedPerson.lastContact.toISOString()) : "Never"}
                   </div>
-                  <p className="text-sm text-[var(--muted)]">Last Contact</p>
+                  <p className="text-sm text-muted">Last Contact</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-[var(--foreground)]">
+                  <div className="text-2xl font-bold text-foreground">
                     {enhancedPerson['status'] === "qualified" ? "Hot" : enhancedPerson['status'] === "contacted" ? "Warm" : "Cold"}
                   </div>
-                  <p className="text-sm text-[var(--muted)]">Engagement Temperature</p>
+                  <p className="text-sm text-muted">Engagement Temperature</p>
                 </div>
               </div>
             </div>
 
             {/* Interaction Timeline */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Recent Interactions
               </h3>
               <div className="space-y-4">
@@ -2263,16 +2263,16 @@ Retail Product Solutions`}
                     />
                     
                     {/* LinkedIn Interaction */}
-                    <div className="flex items-start gap-4 p-3 bg-[var(--hover-bg)] rounded-lg">
+                    <div className="flex items-start gap-4 p-3 bg-hover rounded-lg">
                       <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
                         <UsersIcon className="w-5 h-5 text-white" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <h4 className="font-medium text-[var(--foreground)]">LinkedIn Connection</h4>
-                          <span className="text-sm text-[var(--muted)]">3 days ago</span>
+                          <h4 className="font-medium text-foreground">LinkedIn Connection</h4>
+                          <span className="text-sm text-muted">3 days ago</span>
                         </div>
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           Connected on LinkedIn with personalized message
                         </p>
                         <span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
@@ -2303,16 +2303,16 @@ Would next Tuesday or Wednesday work for a brief call?
 Best,
 Dan`}
                     />
-                    <div className="flex items-start gap-4 p-3 bg-[var(--hover-bg)] rounded-lg">
+                    <div className="flex items-start gap-4 p-3 bg-hover rounded-lg">
                       <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
                         <UsersIcon className="w-5 h-5 text-white" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <h4 className="font-medium text-[var(--foreground)]">LinkedIn Connection</h4>
-                          <span className="text-sm text-[var(--muted)]">3 days ago</span>
+                          <h4 className="font-medium text-foreground">LinkedIn Connection</h4>
+                          <span className="text-sm text-muted">3 days ago</span>
                         </div>
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           Connected on LinkedIn with personalized message
                         </p>
                         <span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
@@ -2320,16 +2320,16 @@ Dan`}
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-start gap-4 p-3 bg-[var(--hover-bg)] rounded-lg">
+                    <div className="flex items-start gap-4 p-3 bg-hover rounded-lg">
                       <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
                         <CalendarIcon className="w-5 h-5 text-white" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <h4 className="font-medium text-[var(--foreground)]">Meeting Scheduled</h4>
-                          <span className="text-sm text-[var(--muted)]">1 week ago</span>
+                          <h4 className="font-medium text-foreground">Meeting Scheduled</h4>
+                          <span className="text-sm text-muted">1 week ago</span>
                         </div>
-                        <p className="text-sm text-[var(--muted)]">
+                        <p className="text-sm text-muted">
                           Discovery call scheduled for next week
                         </p>
                         <span className="inline-block mt-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">
@@ -2340,7 +2340,7 @@ Dan`}
                   </>
                 ) : (
                   <div className="text-center py-8">
-                    <p className="text-[var(--muted)]">No interactions recorded yet</p>
+                    <p className="text-muted">No interactions recorded yet</p>
                     <button className="mt-4 px-4 py-2 bg-[#2563EB] text-white rounded-lg hover:bg-[#1d4ed8] transition-colors">
                       Log First Interaction
                     </button>
@@ -2350,35 +2350,35 @@ Dan`}
             </div>
 
             {/* Communication Preferences */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Communication Insights
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Response Rate
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {person.lastContact ? "75%" : "No data"}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Preferred Channel
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {enhancedPerson['buyerGroupRole'] === "Decision Maker" ? "Phone calls" : 
                        enhancedPerson['buyerGroupRole'] === "Champion" ? "Email" : 
                        "LinkedIn messaging"}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Best Time to Contact
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {person['seniority'] === "C-Level" ? "Early morning (8-9 AM)" : 
                        person['seniority'] === "VP" ? "Mid-morning (10-11 AM)" : 
                        "Afternoon (2-4 PM)"}
@@ -2387,30 +2387,30 @@ Dan`}
                 </div>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Average Response Time
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {person['seniority'] === "C-Level" ? "2-3 days" : 
                        person['seniority'] === "VP" ? "1-2 days" : 
                        "Same day"}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Meeting Preference
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {enhancedPerson['buyerGroupRole'] === "Decision Maker" ? "Executive briefing (30 min)" : 
                        enhancedPerson['buyerGroupRole'] === "Champion" ? "Technical demo (45 min)" : 
                        "Discovery call (15 min)"}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-[var(--muted)]">
+                    <label className="text-sm font-medium text-muted">
                       Follow-up Frequency
                     </label>
-                    <p className="text-[var(--foreground)]">
+                    <p className="text-foreground">
                       {person['seniority'] === "C-Level" ? "Monthly" : 
                        person['seniority'] === "VP" ? "Bi-weekly" : 
                        "Weekly"}
@@ -2421,8 +2421,8 @@ Dan`}
             </div>
 
             {/* Next Steps */}
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">
+            <div className="bg-background border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
                 Recommended Next Steps
               </h3>
               <div className="space-y-3">
@@ -2431,13 +2431,13 @@ Dan`}
                     1
                   </div>
                   <div>
-                    <h4 className="font-medium text-[var(--foreground)]">
+                    <h4 className="font-medium text-foreground">
                       {enhancedPerson['buyerGroupRole'] === "Decision Maker" ? "Schedule Executive Briefing" : 
                        enhancedPerson['buyerGroupRole'] === "Champion" ? "Provide Technical Demo" : 
                        enhancedPerson['buyerGroupRole'] === "Blocker" ? "Address Security Concerns" : 
                        "Discovery Call"}
                     </h4>
-                    <p className="text-sm text-[var(--muted)]">
+                    <p className="text-sm text-muted">
                       {enhancedPerson['buyerGroupRole'] === "Decision Maker" ? "Present strategic value and ROI" : 
                        enhancedPerson['buyerGroupRole'] === "Champion" ? "Show technical capabilities and integration" : 
                        enhancedPerson['buyerGroupRole'] === "Blocker" ? "Discuss compliance and risk mitigation" : 
@@ -2450,8 +2450,8 @@ Dan`}
                     2
                   </div>
                   <div>
-                    <h4 className="font-medium text-[var(--foreground)]">Connect with Key Stakeholders</h4>
-                    <p className="text-sm text-[var(--muted)]">
+                    <h4 className="font-medium text-foreground">Connect with Key Stakeholders</h4>
+                    <p className="text-sm text-muted">
                       Introduce other buyer group members to build consensus
                     </p>
                   </div>
@@ -2461,8 +2461,8 @@ Dan`}
                     3
                   </div>
                   <div>
-                    <h4 className="font-medium text-[var(--foreground)]">Proposal Development</h4>
-                    <p className="text-sm text-[var(--muted)]">
+                    <h4 className="font-medium text-foreground">Proposal Development</h4>
+                    <p className="text-sm text-muted">
                       Create customized proposal addressing their specific needs
                     </p>
                   </div>
@@ -2475,20 +2475,20 @@ Dan`}
       case "Notes":
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-[var(--foreground)]">
+            <h2 className="text-xl font-semibold text-foreground">
               Notes & Observations
             </h2>
-            <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-6">
+            <div className="bg-background border border-border rounded-lg p-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-2">
+                  <label className="block text-sm font-medium text-muted mb-2">
                     Add Note
                   </label>
                   <textarea
                     value={newNote}
                     onChange={(e) => setNewNote(e.target.value)}
                     placeholder="Enter your note here..."
-                    className="w-full p-3 border border-[var(--border)] rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
+                    className="w-full p-3 border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     rows={3}
                   />
                   <button
@@ -2499,17 +2499,17 @@ Dan`}
                   </button>
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-[var(--foreground)] mb-3">
+                  <h3 className="text-lg font-medium text-foreground mb-3">
                     Previous Notes
                   </h3>
                   {notes['length'] === 0 ? (
-                    <p className="text-[var(--muted)]">No notes yet.</p>
+                    <p className="text-muted">No notes yet.</p>
                   ) : (
                     <div className="space-y-2">
                       {notes.map((note, index) => (
-                        <div key={index} className="p-3 bg-[var(--hover-bg)] rounded-lg">
-                          <p className="text-[var(--foreground)]">{note}</p>
-                          <p className="text-xs text-[var(--muted)] mt-1">
+                        <div key={index} className="p-3 bg-hover rounded-lg">
+                          <p className="text-foreground">{note}</p>
+                          <p className="text-xs text-muted mt-1">
                             Just now
                           </p>
                         </div>
@@ -2537,18 +2537,18 @@ Dan`}
             <div className="animate-pulse">
               <div className="flex items-center justify-between mt-2 mb-8">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[var(--loading-bg)] rounded-full"></div>
+                  <div className="w-12 h-12 bg-loading-bg rounded-full"></div>
                   <div>
-                    <div className="h-6 bg-[var(--loading-bg)] rounded w-48 mb-2"></div>
-                    <div className="h-4 bg-[var(--loading-bg)] rounded w-32"></div>
+                    <div className="h-6 bg-loading-bg rounded w-48 mb-2"></div>
+                    <div className="h-4 bg-loading-bg rounded w-32"></div>
                   </div>
                 </div>
-                <div className="h-8 bg-[var(--loading-bg)] rounded w-20"></div>
+                <div className="h-8 bg-loading-bg rounded w-20"></div>
               </div>
               <div className="space-y-4">
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-full"></div>
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-3/4"></div>
-                <div className="h-4 bg-[var(--loading-bg)] rounded w-1/2"></div>
+                <div className="h-4 bg-loading-bg rounded w-full"></div>
+                <div className="h-4 bg-loading-bg rounded w-3/4"></div>
+                <div className="h-4 bg-loading-bg rounded w-1/2"></div>
               </div>
             </div>
           </div>
@@ -2566,21 +2566,21 @@ Dan`}
             <div className="flex items-center gap-4">
               <button
                 onClick={onBack}
-                className="flex items-center gap-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
               >
                 <ChevronLeftIcon className="w-4 h-4" />
                 Back
               </button>
-              <div className="h-6 w-px bg-[var(--border)]"></div>
+              <div className="h-6 w-px bg-border"></div>
               <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 bg-[var(--hover-bg)] rounded-lg flex items-center justify-center text-[var(--foreground)] font-semibold text-lg border border-[var(--border)]">
+                              <div className="w-12 h-12 bg-hover rounded-lg flex items-center justify-center text-foreground font-semibold text-lg border border-border">
                 {getInitials(person.name)}
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-[var(--foreground)]">
+                  <h1 className="text-3xl font-bold text-foreground">
                     {person.name}
                   </h1>
-                  <p className="text-[var(--muted)]">
+                  <p className="text-muted">
                     {person.title || ''}
                   </p>
                 </div>
@@ -2591,7 +2591,7 @@ Dan`}
             {sourceSection === "rtp" && currentIndex !== undefined && totalRecords !== undefined && (
               <div className="flex items-center gap-3">
                 {/* Record Counter */}
-                <span className="text-sm text-[var(--muted)]">
+                <span className="text-sm text-muted">
                   {currentIndex + 1} of {totalRecords}
                 </span>
                 
@@ -2602,8 +2602,8 @@ Dan`}
                     disabled={currentIndex === 0}
                     className={`px-3 py-2 rounded-lg border font-medium transition-colors ${
                       currentIndex === 0 
-                        ? 'bg-[var(--panel-background)] text-gray-300 border-[var(--border)] cursor-not-allowed' 
-                        : 'bg-[var(--hover)] text-gray-700 border-[var(--border)] hover:bg-[var(--loading-bg)] hover:text-[var(--foreground)]'
+                        ? 'bg-panel-background text-gray-300 border-border cursor-not-allowed' 
+                        : 'bg-hover text-gray-700 border-border hover:bg-loading-bg hover:text-foreground'
                     }`}
                     title="Previous record"
                   >
@@ -2614,8 +2614,8 @@ Dan`}
                     disabled={currentIndex === totalRecords - 1}
                     className={`px-3 py-2 rounded-lg border font-medium transition-colors ${
                       currentIndex === totalRecords - 1 
-                        ? 'bg-[var(--panel-background)] text-gray-300 border-[var(--border)] cursor-not-allowed' 
-                        : 'bg-[var(--hover)] text-gray-700 border-[var(--border)] hover:bg-[var(--loading-bg)] hover:text-[var(--foreground)]'
+                        ? 'bg-panel-background text-gray-300 border-border cursor-not-allowed' 
+                        : 'bg-hover text-gray-700 border-border hover:bg-loading-bg hover:text-foreground'
                     }`}
                     title="Next record"
                   >
@@ -2629,7 +2629,7 @@ Dan`}
                   className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                     isCompleted
                       ? 'bg-green-100 text-green-700 border-green-200'
-                      : 'bg-[var(--hover)] text-gray-700 border-[var(--border)] hover:bg-[var(--loading-bg)]'
+                      : 'bg-hover text-gray-700 border-border hover:bg-loading-bg'
                   }`}
                   title={isCompleted ? "Completed" : createTooltipWithShortcut("Mark as completed", ['⌘+Enter', 'Ctrl+Enter'])}
                 >
@@ -2646,7 +2646,7 @@ Dan`}
 
           {/* Tabs */}
           <div
-            className="flex gap-2 mb-0 pb-2 border-b border-[var(--border)]"
+            className="flex gap-2 mb-0 pb-2 border-b border-border"
             style={{
               borderColor: "var(--border)",
               marginTop: "-18px",
@@ -2659,8 +2659,8 @@ Dan`}
                 className={`px-5 py-2 text-base font-semibold rounded-t-lg transition-colors focus:outline-none
                   ${
                     activeTab === tab
-                      ? "bg-[var(--background)] border-x border-t border-[var(--border)] text-[var(--foreground)] z-10"
-                      : "text-[var(--muted)] dark:text-[var(--muted)] hover:text-blue-600 dark:hover:text-blue-400 border border-transparent"
+                      ? "bg-background border-x border-t border-border text-foreground z-10"
+                      : "text-muted dark:text-muted hover:text-blue-600 dark:hover:text-blue-400 border border-transparent"
                   }
                 `}
                 style={{
@@ -2678,7 +2678,7 @@ Dan`}
           </div>
 
           {/* Tab Content */}
-          <div className="bg-[var(--background)] rounded-b-xl border-b border-[var(--border)] shadow-sm pt-0 px-6 pb-6 w-full min-h-[400px] -mt-2">
+          <div className="bg-background rounded-b-xl border-b border-border shadow-sm pt-0 px-6 pb-6 w-full min-h-[400px] -mt-2">
             <div className="pt-6">{renderTabContent()}</div>
           </div>
         </div>

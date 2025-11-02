@@ -24,7 +24,7 @@ export function MonitoringCard({ card, onClick }: MonitoringCardProps) {
       case 'unhealthy':
         return 'bg-red-100 text-red-800 border-red-200';
       default:
-        return 'bg-[var(--hover)] text-gray-800 border-[var(--border)]';
+        return 'bg-hover text-gray-800 border-border';
     }
   };
 
@@ -61,26 +61,26 @@ export function MonitoringCard({ card, onClick }: MonitoringCardProps) {
       case 'down':
         return 'text-red-600';
       case 'stable':
-        return 'text-[var(--muted)]';
+        return 'text-muted';
       default:
-        return 'text-[var(--muted)]';
+        return 'text-muted';
     }
   };
 
   return (
     <div 
       className={`
-        p-4 rounded-lg border bg-[var(--background)] transition-all duration-200 hover:shadow-md cursor-pointer
-        ${onClick ? 'hover:border-[var(--border)]' : ''}
+        p-4 rounded-lg border bg-background transition-all duration-200 hover:shadow-md cursor-pointer
+        ${onClick ? 'hover:border-border' : ''}
       `}
       onClick={onClick}
     >
       {/* Header with status indicator */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <h3 className="text-sm font-medium text-[var(--foreground)] mb-1">{card.title}</h3>
+          <h3 className="text-sm font-medium text-foreground mb-1">{card.title}</h3>
           {card.subtitle && (
-            <p className="text-xs text-[var(--muted)]">{card.subtitle}</p>
+            <p className="text-xs text-muted">{card.subtitle}</p>
           )}
         </div>
         <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(card.status)}`}>
@@ -91,7 +91,7 @@ export function MonitoringCard({ card, onClick }: MonitoringCardProps) {
 
       {/* Main value */}
       <div className="mb-3">
-        <div className="text-2xl font-bold text-[var(--foreground)]">
+        <div className="text-2xl font-bold text-foreground">
           {typeof card.value === 'number' ? card.value.toLocaleString() : card.value}
         </div>
       </div>
@@ -106,7 +106,7 @@ export function MonitoringCard({ card, onClick }: MonitoringCardProps) {
 
       {/* Last updated */}
       <div className="mt-3 pt-3 border-t border-gray-100">
-        <p className="text-xs text-[var(--muted)]">
+        <p className="text-xs text-muted">
           Updated {new Date(card.lastUpdated).toLocaleTimeString()}
         </p>
       </div>

@@ -254,7 +254,7 @@ export function MetricsEnhanced() {
   if (error) {
     return (
       <div className="h-full overflow-y-auto invisible-scrollbar">
-        <div className="p-6 bg-[var(--background)] min-h-full">
+        <div className="p-6 bg-background min-h-full">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="text-red-500 text-lg font-medium mb-2">Failed to load metrics</div>
@@ -276,7 +276,7 @@ export function MetricsEnhanced() {
   if (loading || !metrics) {
     return (
       <div className="h-full overflow-y-auto invisible-scrollbar">
-        <div className="p-6 bg-[var(--background)] min-h-full">
+        <div className="p-6 bg-background min-h-full">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1600px]">
             {Array.from({ length: 16 }).map((_, i) => (
               <div key={i} className="p-6 rounded-xl border border-gray-200 bg-white shadow-sm animate-pulse">
@@ -310,7 +310,7 @@ export function MetricsEnhanced() {
   if (isNotaryEveryday && metrics && isNotaryEverydayMetrics(metrics)) {
     return (
       <div className="h-full overflow-y-auto invisible-scrollbar">
-        <div className="p-6 bg-[var(--background)] min-h-full">
+        <div className="p-6 bg-background min-h-full">
           {/* Client Metrics Section */}
           <div className="mb-4">
             <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 flex items-center gap-2">
@@ -492,7 +492,7 @@ export function MetricsEnhanced() {
   // Fallback to original metrics display for non-NE workspaces
   return (
     <div className="h-full overflow-y-auto invisible-scrollbar">
-      <div className="p-6 bg-[var(--background)] min-h-full">
+      <div className="p-6 bg-background min-h-full">
         <div className="text-center py-12">
           <div className="text-gray-400 text-6xl mb-4">📊</div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Metrics Not Available</h3>

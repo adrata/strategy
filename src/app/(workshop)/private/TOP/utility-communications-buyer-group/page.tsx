@@ -7,9 +7,9 @@ import Link from 'next/link';
 export default function UtilityCommunicationsBuyerGroupPage() {
   return (
     <PasswordProtection correctPassword="TOPEngineersPlus-2025">
-      <div className="min-h-screen bg-[var(--background)]" style={{ overflowY: 'auto', height: '100vh' }}>
+      <div className="min-h-screen bg-background" style={{ overflowY: 'auto', height: '100vh' }}>
         {/* Header */}
-        <header className="border-b border-[var(--border)]">
+        <header className="border-b border-border">
           <div className="max-w-6xl mx-auto px-6 py-6">
             <div className="flex justify-between items-center">
               <h1 className="text-lg font-medium text-black">Adrata Intelligence</h1>
@@ -17,13 +17,13 @@ export default function UtilityCommunicationsBuyerGroupPage() {
               <div className="flex items-center space-x-4">
                 <Link 
                   href="/private/TOP/summary" 
-                  className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+                  className="text-sm text-muted hover:text-black transition-colors"
                 >
                   ← Back to Summary
                 </Link>
                 <Link 
                   href="/" 
-                  className="text-sm text-[var(--muted)] hover:text-black transition-colors"
+                  className="text-sm text-muted hover:text-black transition-colors"
                 >
                   Home
                 </Link>
@@ -45,7 +45,7 @@ export default function UtilityCommunicationsBuyerGroupPage() {
             <h1 className="text-4xl font-bold text-black mb-4 leading-tight">
               Use Case #1: Utility Communications Buyer Group Research
             </h1>
-            <p className="text-xl text-[var(--muted)] mb-8">
+            <p className="text-xl text-muted mb-8">
               Strategic Analysis for Idaho Power Company: Communications Infrastructure Buyer Group Intelligence
             </p>
             
@@ -73,17 +73,17 @@ export default function UtilityCommunicationsBuyerGroupPage() {
             <h2 className="text-2xl font-bold text-black mb-6">Unified System Response</h2>
             
             <div className="space-y-8">
-              <div className="bg-[var(--panel-background)] p-6">
+              <div className="bg-panel-background p-6">
                 <h3 className="text-xl font-bold text-black mb-4">Company Context</h3>
                 <p className="text-gray-700 text-lg">
                   <strong>Idaho Power Company</strong> (P.O. Box 70, Boise, ID 83707) - Major utility serving Idaho and Oregon
                 </p>
-                <p className="text-sm text-[var(--muted)] mt-2">
+                <p className="text-sm text-muted mt-2">
                   <strong>Data Source:</strong> Production database - Real company verified ✅
                 </p>
               </div>
 
-              <div className="bg-[var(--panel-background)] p-6">
+              <div className="bg-panel-background p-6">
                 <h3 className="text-xl font-bold text-black mb-4">Existing Contacts Found</h3>
                 <div className="space-y-4">
                   <div className="border-l-4 border-green-500 pl-4">
@@ -95,25 +95,25 @@ export default function UtilityCommunicationsBuyerGroupPage() {
                     <p className="text-gray-700">gfrankamp@idahopower.com (✅ Verified in database, Phone: (208) 388-2120)</p>
                   </div>
                 </div>
-                <p className="text-sm text-[var(--muted)] mt-4">
+                <p className="text-sm text-muted mt-4">
                   <strong>Data Source:</strong> Production database query - Real TOP contacts confirmed
                 </p>
               </div>
 
-              <div className="bg-[var(--panel-background)] p-6">
+              <div className="bg-panel-background p-6">
                 <h3 className="text-xl font-bold text-black mb-4">Buyer Group Intelligence</h3>
-                <p className="text-[var(--muted)] mb-4">Generated using TOP's context model for utility communications:</p>
+                <p className="text-muted mb-4">Generated using TOP's context model for utility communications:</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-[var(--background)] p-4 border border-[var(--border)]">
+                  <div className="bg-background p-4 border border-border">
                     <h4 className="font-bold text-black mb-2">Technical Decision Maker</h4>
                     <p className="text-gray-700 text-sm">Communications Engineer or System Engineer</p>
                   </div>
-                  <div className="bg-[var(--background)] p-4 border border-[var(--border)]">
+                  <div className="bg-background p-4 border border-border">
                     <h4 className="font-bold text-black mb-2">Budget Authority</h4>
                     <p className="text-gray-700 text-sm">Engineering Manager or Operations Manager</p>
                   </div>
-                  <div className="bg-[var(--background)] p-4 border border-[var(--border)]">
+                  <div className="bg-background p-4 border border-border">
                     <h4 className="font-bold text-black mb-2">End User Champion</h4>
                     <p className="text-gray-700 text-sm">Field Operations or Maintenance Supervisor</p>
                   </div>
@@ -152,9 +152,9 @@ export default function UtilityCommunicationsBuyerGroupPage() {
           </section>
 
           {/* Footer */}
-          <footer className="border-t border-[var(--border)] pt-8">
+          <footer className="border-t border-border pt-8">
             <div className="flex justify-between items-center">
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-muted">
                 Report generated: December 19, 2024 | Data verified: Real TOP production database
               </p>
               <Link 

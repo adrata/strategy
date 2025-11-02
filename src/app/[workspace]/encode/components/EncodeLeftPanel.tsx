@@ -152,28 +152,28 @@ export function EncodeLeftPanel() {
   // Show loading state while auth is loading
   if (authLoading) {
     return (
-      <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+      <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">
         <div className="p-4 text-center">
-          <div className="text-sm text-[var(--muted)]">Loading Encode...</div>
+          <div className="text-sm text-muted">Loading Encode...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-[13.085rem] min-w-[13.085rem] max-w-[13.085rem] bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] flex flex-col h-full">
+    <div className="w-full h-full bg-background text-foreground border-r border-border flex flex-col">
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 pt-0 pr-2 pl-2">
         {/* Header - matching other apps style */}
         <div className="mx-2 mt-4 mb-2">
           {/* App Icon */}
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--background)] border border-[var(--border)] overflow-hidden" style={{ filter: 'none' }}>
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-background border border-border overflow-hidden" style={{ filter: 'none' }}>
               <span className="text-lg font-bold text-black">E</span>
             </div>
             <div>
-              <h2 className="text-base font-semibold text-[var(--foreground)]">Encode</h2>
-              <p className="text-xs text-[var(--muted)]">Code Editor</p>
+              <h2 className="text-base font-semibold text-foreground">Encode</h2>
+              <p className="text-xs text-muted">Code Editor</p>
             </div>
           </div>
         </div>
@@ -183,7 +183,7 @@ export function EncodeLeftPanel() {
           <select
             value={currentProject?.id || ''}
             onChange={(e) => handleProjectChange(e.target.value)}
-            className="w-full px-3 py-2 text-sm bg-[var(--background)] border border-[var(--border)] rounded-lg focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors"
+            className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:border-gray-400 hover:border-gray-400 transition-colors"
           >
             <option value="">Select Project</option>
             {isDesktop && (
@@ -199,22 +199,22 @@ export function EncodeLeftPanel() {
 
         {/* Project Stats Dashboard */}
         {currentProject && (
-          <div className="mx-2 mb-4 p-3 bg-[var(--hover)] rounded-lg border border-[var(--border)]">
+          <div className="mx-2 mb-4 p-3 bg-hover rounded-lg border border-border">
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-medium text-[var(--muted)]">Files</span>
+                <span className="text-xs font-medium text-muted">Files</span>
                 <span className="text-xs font-semibold text-black">
                   {projectStats.totalFiles}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-xs font-medium text-[var(--muted)]">Size</span>
+                <span className="text-xs font-medium text-muted">Size</span>
                 <span className="text-xs font-semibold text-black">
                   {projectStats.totalSize}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-xs font-medium text-[var(--muted)]">Modified</span>
+                <span className="text-xs font-medium text-muted">Modified</span>
                 <span className="text-xs font-semibold text-black">
                   {projectStats.lastModified.toLocaleDateString()}
                 </span>
@@ -227,14 +227,14 @@ export function EncodeLeftPanel() {
         <div className="mx-2 mb-4 space-y-2">
           <button
             onClick={() => setIsCreatingFile(true)}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
           >
             <DocumentPlusIcon className="w-4 h-4" />
             New File
           </button>
           <button
             onClick={() => setIsCreatingFolder(true)}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-[var(--background)] border border-[var(--border)] rounded-lg hover:bg-[var(--panel-background)] transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-background border border-border rounded-lg hover:bg-panel-background transition-colors"
           >
             <FolderIcon className="w-4 h-4" />
             New Folder
@@ -248,8 +248,8 @@ export function EncodeLeftPanel() {
           <FileTree />
         ) : (
           <div className="p-4 text-center">
-            <div className="text-sm text-[var(--muted)]">No project selected</div>
-            <div className="text-xs text-[var(--muted)] mt-1">
+            <div className="text-sm text-muted">No project selected</div>
+            <div className="text-xs text-muted mt-1">
               Create or select a project to start coding
             </div>
           </div>
@@ -259,19 +259,19 @@ export function EncodeLeftPanel() {
       {/* Fixed Bottom Section - Profile Button */}
       <div className="flex-shrink-0 p-2" style={{ paddingBottom: '15px' }}>
         <button
-          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--hover)] transition-colors"
+          className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-hover transition-colors"
           title="Profile"
         >
-          <div className="w-8 h-8 bg-[var(--loading-bg)] rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 bg-loading-bg rounded-xl flex items-center justify-center">
             <span className="text-sm font-medium text-gray-700">
               {authUser?.name?.charAt(0)?.toUpperCase() || 'U'}
             </span>
           </div>
           <div className="flex-1 text-left">
-            <div className="text-sm font-medium text-[var(--foreground)]">
+            <div className="text-sm font-medium text-foreground">
               {authUser?.name || 'User'}
             </div>
-            <div className="text-xs text-[var(--muted)]">
+            <div className="text-xs text-muted">
               {acquisitionData?.auth?.authUser?.activeWorkspaceName || 'Workspace'}
             </div>
           </div>
@@ -281,14 +281,14 @@ export function EncodeLeftPanel() {
       {/* Create File Modal */}
       {isCreatingFile && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] w-80">
+          <div className="bg-background p-6 rounded-lg border border-border w-80">
             <h3 className="text-lg font-semibold mb-4">Create New File</h3>
             <input
               type="text"
               placeholder="File name (e.g., index.js)"
               value={newFileName}
               onChange={(e) => setNewFileName(e.target.value)}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:border-gray-400 mb-4"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-gray-400 mb-4"
               onKeyPress={(e) => e.key === 'Enter' && handleCreateFile()}
               autoFocus
             />
@@ -316,14 +316,14 @@ export function EncodeLeftPanel() {
       {/* Create Folder Modal */}
       {isCreatingFolder && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--background)] p-6 rounded-lg border border-[var(--border)] w-80">
+          <div className="bg-background p-6 rounded-lg border border-border w-80">
             <h3 className="text-lg font-semibold mb-4">Create New Folder</h3>
             <input
               type="text"
               placeholder="Folder name"
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg focus:outline-none focus:border-gray-400 mb-4"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-gray-400 mb-4"
               onKeyPress={(e) => e.key === 'Enter' && handleCreateFolder()}
               autoFocus
             />

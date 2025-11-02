@@ -245,11 +245,11 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
             <div className="flex items-center gap-4">
             <button
               onClick={handleBackNavigation}
-              className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+              className="text-muted hover:text-foreground transition-colors"
             >
               ← Back
             </button>
-            <h1 className="text-3xl font-bold text-[var(--foreground)]">
+            <h1 className="text-3xl font-bold text-foreground">
               {displayContact.name || displayContact.email?.split('@')[0] || 'Contact Detail'}
             </h1>
           </div>
@@ -298,7 +298,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
 
         {/* Tabs */}
         <div
-          className="flex gap-2 mb-0 pb-2 border-b border-[var(--border)]"
+          className="flex gap-2 mb-0 pb-2 border-b border-border"
           style={{
             borderColor: "var(--border)",
             marginTop: "-18px",
@@ -311,8 +311,8 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
               className={`px-5 py-2 text-base font-semibold rounded-t-lg transition-colors focus:outline-none
                 ${
                   activeTab === tab
-                    ? "bg-[var(--background)] border-x border-t border-[var(--border)] text-[var(--foreground)] z-10"
-                    : "text-[var(--muted,#888)] hover:text-[var(--accent)] border border-transparent"
+                    ? "bg-background border-x border-t border-border text-foreground z-10"
+                    : "text-[var(--muted,#888)] hover:text-primary border border-transparent"
                 }
               `}
               onClick={() => setActiveTab(tab)}
@@ -323,33 +323,33 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
         </div>
 
         {/* Tab Content */}
-        <div className="bg-[var(--background)] rounded-b-xl border-b border-[var(--border)] shadow-sm pt-0 px-6 pb-6 w-full min-h-[400px] -mt-2">
+        <div className="bg-background rounded-b-xl border-b border-border shadow-sm pt-0 px-6 pb-6 w-full min-h-[400px] -mt-2">
           <div className="pt-6">
             {activeTab === "Overview" && (
               <>
                 <div className="mb-8">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                  <h2 className="text-xl font-semibold text-foreground mb-4">
                     At a Glance
                   </h2>
                   <div className="flex flex-wrap gap-4">
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                      <div className="font-semibold text-[var(--muted)] mb-1">
+                    <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                      <div className="font-semibold text-muted mb-1">
                         Role
                       </div>
-                      <div className="text-lg text-[var(--foreground)]">
+                      <div className="text-lg text-foreground">
                         {displayContact.role}
                       </div>
                     </div>
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                      <div className="font-semibold text-[var(--muted)] mb-1">
+                    <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                      <div className="font-semibold text-muted mb-1">
                         Department
                       </div>
-                      <div className="text-lg text-[var(--foreground)]">
+                      <div className="text-lg text-foreground">
                         {displayContact.department}
                       </div>
                     </div>
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 min-w-[180px]">
-                      <div className="font-semibold text-[var(--muted)] mb-1">
+                    <div className="bg-background border border-border rounded-lg p-4 min-w-[180px]">
+                      <div className="font-semibold text-muted mb-1">
                         Relationship
                       </div>
                       <span
@@ -369,15 +369,15 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Contact Information
                     </h2>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Name
                         </label>
-                        <div className="mt-1 text-lg text-[var(--foreground)]">
+                        <div className="mt-1 text-lg text-foreground">
                           <InlineEditField
                             value={displayContact.name}
                             field="name"
@@ -387,10 +387,10 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Title
                         </label>
-                        <div className="mt-1 text-lg text-[var(--foreground)]">
+                        <div className="mt-1 text-lg text-foreground">
                           <InlineEditField
                             value={displayContact.title}
                             field="title"
@@ -400,10 +400,10 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Email
                         </label>
-                        <div className="mt-1 text-lg text-[var(--foreground)]">
+                        <div className="mt-1 text-lg text-foreground">
                           <InlineEditField
                             value={displayContact.email}
                             field="email"
@@ -414,10 +414,10 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Phone
                         </label>
-                        <div className="mt-1 text-lg text-[var(--foreground)]">
+                        <div className="mt-1 text-lg text-foreground">
                           <InlineEditField
                             value={displayContact.phone}
                             field="phone"
@@ -429,12 +429,12 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                     </div>
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                    <h2 className="text-xl font-semibold text-foreground mb-4">
                       Role & Organization
                     </h2>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Company
                         </label>
                         <p
@@ -447,18 +447,18 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                         </p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Department
                         </label>
-                        <p className="mt-1 text-lg text-[var(--foreground)]">
+                        <p className="mt-1 text-lg text-foreground">
                           {displayContact.department}
                         </p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[var(--muted)]">
+                        <label className="block text-sm font-medium text-muted">
                           Influence
                         </label>
-                        <p className="mt-1 text-lg text-[var(--foreground)]">
+                        <p className="mt-1 text-lg text-foreground">
                           {displayContact.influence}
                         </p>
                       </div>
@@ -468,39 +468,39 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
 
                 <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                   <div className="space-y-2">
-                    <div className="text-xl font-semibold text-[var(--foreground)] mb-1">
+                    <div className="text-xl font-semibold text-foreground mb-1">
                       Last Action
                     </div>
-                    <div className="text-lg text-[var(--foreground)]">
+                    <div className="text-lg text-foreground">
                       {displayContact.lastAction}
                     </div>
-                    <div className="text-sm text-[var(--muted)]">
+                    <div className="text-sm text-muted">
                       {formatRelativeDate(displayContact.lastActionDate)}
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <div className="text-xl font-semibold text-[var(--foreground)] mb-1">
+                    <div className="text-xl font-semibold text-foreground mb-1">
                       Next Action
                     </div>
-                    <div className="text-lg text-[var(--foreground)]">
+                    <div className="text-lg text-foreground">
                       {displayContact.nextAction}
                     </div>
-                    <div className="text-sm text-[var(--muted)]">
+                    <div className="text-sm text-muted">
                       {formatRelativeDate(displayContact.nextActionDate)}
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-8">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)] mb-4">
+                  <h2 className="text-xl font-semibold text-foreground mb-4">
                     Value Intelligence
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                    <div className="bg-background border border-border rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
                         Role-Based Analysis
                       </h3>
-                      <p className="text-sm text-[var(--muted)] mb-4">
+                      <p className="text-sm text-muted mb-4">
                         Comprehensive analysis of their role and decision-making
                         power within the organization
                       </p>
@@ -519,11 +519,11 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                         </a>
                       </div>
                     </div>
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                    <div className="bg-background border border-border rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
                         Influence Mapping
                       </h3>
-                      <p className="text-sm text-[var(--muted)] mb-4">
+                      <p className="text-sm text-muted mb-4">
                         Strategic analysis of their influence network and key
                         relationships
                       </p>
@@ -542,11 +542,11 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                         </a>
                       </div>
                     </div>
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                    <div className="bg-background border border-border rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
                         Communication Strategy
                       </h3>
-                      <p className="text-sm text-[var(--muted)] mb-4">
+                      <p className="text-sm text-muted mb-4">
                         Personalized communication approach based on their
                         profile and preferences
                       </p>
@@ -565,11 +565,11 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                         </a>
                       </div>
                     </div>
-                    <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+                    <div className="bg-background border border-border rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
                         Engagement History
                       </h3>
-                      <p className="text-sm text-[var(--muted)] mb-4">
+                      <p className="text-sm text-muted mb-4">
                         Detailed analysis of past interactions and engagement
                         patterns
                       </p>
@@ -598,27 +598,27 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
             {activeTab === "Timeline" && (
               <>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)]">
+                  <h2 className="text-xl font-semibold text-foreground">
                   Action Timeline
                   </h2>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm text-muted">
                     {timelineData.length} events
                   </div>
                 </div>
                 {timelineData['length'] === 0 ? (
                   <div className="text-center py-12">
                     <div className="flex items-center justify-center mb-4">
-                      <svg className="w-8 h-8 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No timeline events yet</h3>
-                    <p className="text-[var(--muted)]">Activities, emails, meetings, and interactions will appear here</p>
+                    <h3 className="text-lg font-medium text-foreground mb-2">No timeline events yet</h3>
+                    <p className="text-muted">Activities, emails, meetings, and interactions will appear here</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {timelineData.map((event: any, idx: number) => (
-                      <div key={event.id || idx} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:shadow-sm transition-shadow">
+                      <div key={event.id || idx} className="bg-background border border-border rounded-lg p-4 hover:shadow-sm transition-shadow">
                         <div className="flex items-start gap-4">
                           <div className={`w-4 h-4 rounded-full mt-1 flex-shrink-0 ${
                             event['type'] === 'record_created' ? 'bg-gray-400' :
@@ -631,11 +631,11 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between mb-2">
                               <div className="flex-1">
-                                <h3 className="font-semibold text-[var(--foreground)] mb-1">{event.title}</h3>
+                                <h3 className="font-semibold text-foreground mb-1">{event.title}</h3>
                                 {event['description'] && (
-                                  <p className="text-sm text-[var(--muted)] mb-2">{event.description}</p>
+                                  <p className="text-sm text-muted mb-2">{event.description}</p>
                                 )}
-                                <div className="flex items-center gap-4 text-xs text-[var(--muted)]">
+                                <div className="flex items-center gap-4 text-xs text-muted">
                                   <span className="flex items-center gap-1">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -668,8 +668,8 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                             
                             {/* Show additional metadata for specific event types */}
                             {event['type'] === 'email' && event['metadata'] && (
-                              <div className="mt-3 p-3 bg-[var(--panel-background)] rounded-lg">
-                                <div className="text-xs text-[var(--muted)] space-y-1">
+                              <div className="mt-3 p-3 bg-panel-background rounded-lg">
+                                <div className="text-xs text-muted space-y-1">
                                   <div><strong>From:</strong> {event.metadata.from}</div>
                                   {event['metadata']['to'] && (
                                     <div><strong>To:</strong> {Array.isArray(event.metadata.to) ? event.metadata.to.join(', ') : event.metadata.to}</div>
@@ -682,8 +682,8 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                             )}
                             
                             {event['type'] === 'calendar_event' && event['metadata'] && (
-                              <div className="mt-3 p-3 bg-[var(--panel-background)] rounded-lg">
-                                <div className="text-xs text-[var(--muted)] space-y-1">
+                              <div className="mt-3 p-3 bg-panel-background rounded-lg">
+                                <div className="text-xs text-muted space-y-1">
                                   {event['metadata']['location'] && (
                                     <div><strong>Location:</strong> {event.metadata.location}</div>
                                   )}
@@ -713,53 +713,53 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
             {activeTab === "Notes" && (
               <>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-[var(--foreground)]">
+                  <h2 className="text-xl font-semibold text-foreground">
                     Notes & Observations
                   </h2>
-                  <div className="text-sm text-[var(--muted)]">
+                  <div className="text-sm text-muted">
                     {notesData.length} notes
                   </div>
                 </div>
-                <p className="text-[var(--muted)] mb-6">Keep track of important information, meeting notes, and observations</p>
+                <p className="text-muted mb-6">Keep track of important information, meeting notes, and observations</p>
                 
                 <div className="mb-6">
                   <div className="flex gap-2">
                     <input
                       type="text"
                       placeholder="Add your thoughts, meeting notes, or observations..."
-                      className="flex-1 px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                       Add Note
                     </button>
                   </div>
-                  <p className="text-sm text-[var(--muted)] mt-2">Tip: Press Cmd/Ctrl + Enter to save quickly</p>
+                  <p className="text-sm text-muted mt-2">Tip: Press Cmd/Ctrl + Enter to save quickly</p>
                 </div>
 
                 {notesData['length'] === 0 ? (
                   <div className="text-center py-12">
                     <div className="flex items-center justify-center mb-4">
-                      <svg className="w-8 h-8 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-8 h-8 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">No notes yet</h3>
-                    <p className="text-[var(--muted)]">Add your first note to track important information about this contact</p>
+                    <h3 className="text-lg font-medium text-foreground mb-2">No notes yet</h3>
+                    <p className="text-muted">Add your first note to track important information about this contact</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {notesData.map((note: any, idx: number) => (
-                      <div key={note.id || idx} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:shadow-sm transition-shadow">
+                      <div key={note.id || idx} className="bg-background border border-border rounded-lg p-4 hover:shadow-sm transition-shadow">
                         <div className="flex items-start gap-4">
                           <div className="w-4 h-4 rounded-full mt-1 flex-shrink-0 bg-yellow-500"></div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between mb-2">
                               <div className="flex-1">
-                                <h3 className="font-semibold text-[var(--foreground)] mb-1">
+                                <h3 className="font-semibold text-foreground mb-1">
                                   {note.title || 'Note'}
                                 </h3>
-                                <p className="text-sm text-[var(--muted)] mb-3">{note.description}</p>
-                                <div className="flex items-center gap-4 text-xs text-[var(--muted)]">
+                                <p className="text-sm text-muted mb-3">{note.description}</p>
+                                <div className="flex items-center gap-4 text-xs text-muted">
                                   <span className="flex items-center gap-1">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -787,7 +787,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                                 <span className={`text-xs px-2 py-1 rounded font-medium ${
                                   note['priority'] === 'high' ? 'bg-red-100 text-red-700' :
                                   note['priority'] === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                  'bg-[var(--hover)] text-gray-700'
+                                  'bg-hover text-gray-700'
                                 }`}>
                                   {note.priority} priority
                                 </span>
@@ -796,7 +796,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({
                             
                             {/* Show note content if available */}
                             {note['metadata'] && note['metadata']['content'] && (
-                              <div className="mt-3 p-3 bg-[var(--panel-background)] rounded-lg">
+                              <div className="mt-3 p-3 bg-panel-background rounded-lg">
                                 <div className="text-sm text-gray-700">
                                   {note.metadata.content}
                                 </div>

@@ -238,8 +238,8 @@ export function FileTree({ className = "" }: FileTreeProps) {
     return (
       <div key={node.id}>
         <div
-          className={`flex items-center gap-1 px-2 py-1 rounded cursor-pointer hover:bg-[var(--hover)] transition-colors ${
-            isSelected ? 'bg-[var(--hover)]' : ''
+          className={`flex items-center gap-1 px-2 py-1 rounded cursor-pointer hover:bg-hover transition-colors ${
+            isSelected ? 'bg-hover' : ''
           }`}
           style={{ paddingLeft: `${depth * 16 + 8}px` }}
           onClick={() => handleNodeClick(node)}
@@ -287,7 +287,7 @@ export function FileTree({ className = "" }: FileTreeProps) {
                 autoFocus
               />
             ) : (
-              <span className="text-sm text-[var(--foreground)] truncate">
+              <span className="text-sm text-foreground truncate">
                 {node.name}
               </span>
             )}
@@ -306,21 +306,21 @@ export function FileTree({ className = "" }: FileTreeProps) {
     <div className={`${className}`}>
       {/* Real Filesystem Breadcrumb */}
       {currentProject?.id === 'real-filesystem' && (
-        <div className="px-2 py-2 border-b border-[var(--border)]">
-          <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
+        <div className="px-2 py-2 border-b border-border">
+          <div className="flex items-center gap-1 text-xs text-muted">
             <button
               onClick={() => {
                 setCurrentRealPath('/');
                 loadRealFiles('/');
               }}
-              className="hover:text-[var(--foreground)] transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               🏠 Home
             </button>
             {currentRealPath !== '/' && (
               <>
                 <span>/</span>
-                <span className="text-[var(--foreground)]">{currentRealPath}</span>
+                <span className="text-foreground">{currentRealPath}</span>
               </>
             )}
           </div>
@@ -329,8 +329,8 @@ export function FileTree({ className = "" }: FileTreeProps) {
 
       {fileTree.length === 0 ? (
         <div className="p-4 text-center">
-          <div className="text-sm text-[var(--muted)]">No files</div>
-          <div className="text-xs text-[var(--muted)] mt-1">
+          <div className="text-sm text-muted">No files</div>
+          <div className="text-xs text-muted mt-1">
             {currentProject?.id === 'real-filesystem' 
               ? 'Navigate to a directory with files'
               : 'Create files and folders to get started'
@@ -351,7 +351,7 @@ export function FileTree({ className = "" }: FileTreeProps) {
             onClick={closeContextMenu}
           />
           <div
-            className="fixed z-50 bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-32"
+            className="fixed z-50 bg-background border border-border rounded-lg shadow-lg py-1 min-w-32"
             style={{
               left: contextMenu.x,
               top: contextMenu.y,
@@ -360,25 +360,25 @@ export function FileTree({ className = "" }: FileTreeProps) {
             {contextMenu.node.isDirectory ? (
               <>
                 <button
-                  className="w-full px-3 py-2 text-left text-sm hover:bg-[var(--hover)] flex items-center gap-2"
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-hover flex items-center gap-2"
                   onClick={handleCreateFile}
                 >
                   <DocumentPlusIcon className="w-4 h-4" />
                   New File
                 </button>
                 <button
-                  className="w-full px-3 py-2 text-left text-sm hover:bg-[var(--hover)] flex items-center gap-2"
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-hover flex items-center gap-2"
                   onClick={handleCreateFolder}
                 >
                   <FolderPlusIcon className="w-4 h-4" />
                   New Folder
                 </button>
-                <hr className="my-1 border-[var(--border)]" />
+                <hr className="my-1 border-border" />
               </>
             ) : null}
             
             <button
-              className="w-full px-3 py-2 text-left text-sm hover:bg-[var(--hover)] flex items-center gap-2"
+              className="w-full px-3 py-2 text-left text-sm hover:bg-hover flex items-center gap-2"
               onClick={() => {
                 setIsRenaming(contextMenu.node!.id);
                 setRenameValue(contextMenu.node!.name);
@@ -390,7 +390,7 @@ export function FileTree({ className = "" }: FileTreeProps) {
             </button>
             
             <button
-              className="w-full px-3 py-2 text-left text-sm hover:bg-[var(--hover)] flex items-center gap-2 text-red-600"
+              className="w-full px-3 py-2 text-left text-sm hover:bg-hover flex items-center gap-2 text-red-600"
               onClick={handleDelete}
             >
               <TrashIcon className="w-4 h-4" />

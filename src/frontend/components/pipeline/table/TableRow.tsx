@@ -164,8 +164,8 @@ export function TableRow({
     return (
       <tr key={record.id || index} className="h-table-row">
         <td colSpan={headers.length} className="px-6 py-4 text-center">
-          <span className="text-sm text-[var(--muted)]">
-            {record.name} <span className="font-bold text-[var(--foreground)] cursor-pointer hover:text-blue-600 transition-colors" onClick={() => onRecordClick(record)}>{(record as any).actionText}</span>
+          <span className="text-sm text-muted">
+            {record.name} <span className="font-bold text-foreground cursor-pointer hover:text-blue-600 transition-colors" onClick={() => onRecordClick(record)}>{(record as any).actionText}</span>
           </span>
         </td>
       </tr>
@@ -175,9 +175,9 @@ export function TableRow({
   const displayName = getCleanPersonName(record);
 
   const commonClasses = "px-6 py-3 whitespace-nowrap text-sm h-full";
-  const nameClasses = `${commonClasses} font-medium text-[var(--foreground)]`;
-  const textClasses = `${commonClasses} text-[var(--foreground)]`;
-  const mutedClasses = `${commonClasses} text-[var(--muted)]`;
+  const nameClasses = `${commonClasses} font-medium text-foreground`;
+  const textClasses = `${commonClasses} text-foreground`;
+  const mutedClasses = `${commonClasses} text-muted`;
 
   // Render based on section
   if (section === 'leads' || section === 'prospects') {
@@ -185,7 +185,7 @@ export function TableRow({
       <>
         <tr 
           key={record.id || index} 
-          className={`cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)] ${
+          className={`cursor-pointer transition-colors hover:bg-panel-background h-table-row border-b border-border ${
             isCompleted ? 'bg-green-50 border-green-200' : ''
           }`}
           onClick={handleRowClick}
@@ -319,7 +319,7 @@ export function TableRow({
                           {truncatedName}
                         </button>
                       ) : (
-                        <span className="text-[var(--muted)]">{truncatedName}</span>
+                        <span className="text-muted">{truncatedName}</span>
                       )}
                     </div>
                   </td>
@@ -390,7 +390,7 @@ export function TableRow({
                         (() => {
                           const nextAction = getLeadsNextAction(record, index);
                           return (
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                            <span className="text-sm text-muted font-normal truncate max-w-32">
                               {nextAction.action}
                             </span>
                           );
@@ -413,7 +413,7 @@ export function TableRow({
                           // API already calculated timing with meaningful action filtering
                           timing = { 
                             text: lastActionTime, 
-                            color: 'bg-[var(--hover)] text-gray-800' 
+                            color: 'bg-hover text-gray-800' 
                           };
                         } else {
                           // Fallback: calculate from date (legacy support)
@@ -442,7 +442,7 @@ export function TableRow({
                         }
                         
                         return (
-                          <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                          <span className="text-sm text-muted font-normal truncate max-w-32">
                             {displayText}
                           </span>
                         );
@@ -483,7 +483,7 @@ export function TableRow({
                           <span className="text-xs text-gray-400">NO DATA</span>
                         );
                       })()}
-                      <span className="text-sm text-[var(--foreground)] truncate max-w-24">
+                      <span className="text-sm text-foreground truncate max-w-24">
                         {record['mainSeller'] || record['owner'] || '-'}
                       </span>
                     </div>
@@ -525,7 +525,7 @@ export function TableRow({
                           <span className="text-xs text-gray-400">NO COS</span>
                         );
                       })()}
-                      <span className="text-sm text-[var(--foreground)] truncate max-w-24">
+                      <span className="text-sm text-foreground truncate max-w-24">
                         {record['coSellers'] && record['coSellers'] !== '-' ? record['coSellers'] : '-'}
                       </span>
                     </div>
@@ -557,7 +557,7 @@ export function TableRow({
       <>
         <tr 
           key={record.id || index} 
-          className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+          className="cursor-pointer transition-colors hover:bg-panel-background h-table-row border-b border-border"
           onClick={handleRowClick}
           onContextMenu={handleContextMenu}
         >
@@ -673,7 +673,7 @@ export function TableRow({
                         (() => {
                           const nextAction = getLeadsNextAction(record, index);
                           return (
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                            <span className="text-sm text-muted font-normal truncate max-w-32">
                               {nextAction.action}
                             </span>
                           );
@@ -696,7 +696,7 @@ export function TableRow({
                           // API already calculated timing with meaningful action filtering
                           timing = { 
                             text: lastActionTime, 
-                            color: 'bg-[var(--hover)] text-gray-800' 
+                            color: 'bg-hover text-gray-800' 
                           };
                         } else {
                           // Fallback: calculate from date (legacy support)
@@ -725,7 +725,7 @@ export function TableRow({
                         }
                         
                         return (
-                          <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                          <span className="text-sm text-muted font-normal truncate max-w-32">
                             {displayText}
                           </span>
                         );
@@ -759,7 +759,7 @@ export function TableRow({
       <>
         <tr 
           key={record.id || index} 
-          className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+          className="cursor-pointer transition-colors hover:bg-panel-background h-table-row border-b border-border"
           onClick={handleRowClick}
           onContextMenu={handleContextMenu}
         >
@@ -790,7 +790,7 @@ export function TableRow({
                     <div className="text-left font-medium">
                       <div className="text-sm font-semibold">{displayRank}</div>
                       {companyRank > 0 && (
-                        <div className="text-xs text-[var(--muted)]">
+                        <div className="text-xs text-muted">
                           Company #{companyRank}
                         </div>
                       )}
@@ -866,7 +866,7 @@ export function TableRow({
                         (() => {
                           const nextAction = getLeadsNextAction(record, index);
                           return (
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                            <span className="text-sm text-muted font-normal truncate max-w-32">
                               {nextAction.action}
                             </span>
                           );
@@ -889,7 +889,7 @@ export function TableRow({
                           // API already calculated timing with meaningful action filtering
                           timing = { 
                             text: lastActionTime, 
-                            color: 'bg-[var(--hover)] text-gray-800' 
+                            color: 'bg-hover text-gray-800' 
                           };
                         } else {
                           // Fallback: calculate from date (legacy support)
@@ -918,7 +918,7 @@ export function TableRow({
                         }
                         
                         return (
-                          <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                          <span className="text-sm text-muted font-normal truncate max-w-32">
                             {displayText}
                           </span>
                         );
@@ -952,7 +952,7 @@ export function TableRow({
       <>
         <tr 
           key={record.id || index} 
-          className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+          className="cursor-pointer transition-colors hover:bg-panel-background h-table-row border-b border-border"
           onClick={handleRowClick}
           onContextMenu={handleContextMenu}
         >
@@ -1040,7 +1040,7 @@ export function TableRow({
                         (() => {
                           const nextAction = getLeadsNextAction(record, index);
                           return (
-                            <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                            <span className="text-sm text-muted font-normal truncate max-w-32">
                               {nextAction.action}
                             </span>
                           );
@@ -1063,7 +1063,7 @@ export function TableRow({
                           // API already calculated timing with meaningful action filtering
                           timing = { 
                             text: lastActionTime, 
-                            color: 'bg-[var(--hover)] text-gray-800' 
+                            color: 'bg-hover text-gray-800' 
                           };
                         } else {
                           // Fallback: calculate from date (legacy support)
@@ -1092,7 +1092,7 @@ export function TableRow({
                         }
                         
                         return (
-                          <span className="text-sm text-[var(--muted)] font-normal truncate max-w-32">
+                          <span className="text-sm text-muted font-normal truncate max-w-32">
                             {displayText}
                           </span>
                         );
@@ -1124,7 +1124,7 @@ export function TableRow({
     return (
       <>
         <tr
-          className="cursor-pointer transition-colors hover:bg-[var(--panel-background)] h-table-row border-b border-[var(--border)]"
+          className="cursor-pointer transition-colors hover:bg-panel-background h-table-row border-b border-border"
           onClick={handleRowClick}
           onContextMenu={handleContextMenu}
         >

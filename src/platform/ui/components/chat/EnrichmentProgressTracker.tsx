@@ -55,7 +55,7 @@ export function EnrichmentProgressTracker({
       case 'failed':
         return <AlertCircle className="h-4 w-4 text-red-600" />;
       default:
-        return <div className="h-4 w-4 rounded-full border-2 border-[var(--border)]" />;
+        return <div className="h-4 w-4 rounded-full border-2 border-border" />;
     }
   };
   
@@ -68,32 +68,32 @@ export function EnrichmentProgressTracker({
       case 'failed':
         return 'text-red-700 bg-red-50 border-red-200';
       default:
-        return 'text-[var(--muted)] bg-[var(--panel-background)] border-[var(--border)]';
+        return 'text-muted bg-panel-background border-border';
     }
   };
   
   return (
-    <div className="bg-[var(--background)] rounded-lg border border-[var(--border)] dark:border-[var(--border)] p-4 mb-4">
+    <div className="bg-background rounded-lg border border-border dark:border-border p-4 mb-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <Database className="h-5 w-5 text-blue-600" />
-          <h3 className="font-medium text-[var(--foreground)] dark:text-[var(--foreground)]">
+          <h3 className="font-medium text-foreground dark:text-foreground">
             Data Enrichment in Progress
           </h3>
         </div>
-        <div className="text-sm text-[var(--muted)] dark:text-[var(--muted)]">
+        <div className="text-sm text-muted dark:text-muted">
           {currentRecord}/{totalRecords} records
         </div>
       </div>
       
       {/* Progress Bar */}
       <div className="mb-4">
-        <div className="flex justify-between text-sm text-[var(--muted)] dark:text-[var(--muted)] mb-1">
+        <div className="flex justify-between text-sm text-muted dark:text-muted mb-1">
           <span>Progress</span>
           <span>{Math.round(animatedProgress)}%</span>
         </div>
-        <div className="w-full bg-[var(--loading-bg)] rounded-full h-2">
+        <div className="w-full bg-loading-bg rounded-full h-2">
           <div 
             className="bg-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${animatedProgress}%` }}
@@ -123,7 +123,7 @@ export function EnrichmentProgressTracker({
                 )}
               </div>
               {step['details'] && (
-                <p className="text-xs text-[var(--muted)] dark:text-[var(--muted)] mt-1">
+                <p className="text-xs text-muted dark:text-muted mt-1">
                   {step.details}
                 </p>
               )}
