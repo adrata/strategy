@@ -643,24 +643,25 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
     // Update ranks via API
     try {
-      // Batch update all affected items
-      const response = await fetch(`/api/v1/stacks/stories/batch-update`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          workspaceId,
-          updates: itemsWithNewRanks.map(item => ({
-            id: item.id,
+      // Update all affected items in parallel
+      const updatePromises = itemsWithNewRanks.map(item =>
+        fetch(`/api/v1/stacks/stories/${item.id}`, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
             rank: item.rank
-          }))
+          })
         })
-      });
+      );
 
-      if (!response.ok) {
-        console.error('Failed to update story order:', await response.text());
+      const responses = await Promise.all(updatePromises);
+      const failedUpdates = responses.filter(r => !r.ok);
+
+      if (failedUpdates.length > 0) {
+        console.error(`Failed to update ${failedUpdates.length} story order(s)`);
         // Refresh to revert optimistic update
         const refreshResponse = await fetch(`/api/v1/stacks/stories?workspaceId=${workspaceId}`, {
           credentials: 'include',
