@@ -15,7 +15,7 @@ const { execSync } = require("child_process");
 console.log("🎨 Fixing DMG creation...");
 
 const PROJECT_ROOT = process.cwd();
-const BUNDLE_DIR = path.join(PROJECT_ROOT, "src-tauri/target/universal-apple-darwin/release/bundle");
+const BUNDLE_DIR = path.join(PROJECT_ROOT, "src-desktop/target/universal-apple-darwin/release/bundle");
 const DMG_DIR = path.join(BUNDLE_DIR, "dmg");
 const APP_NAME = "Adrata.app";
 
@@ -45,7 +45,7 @@ function createDMGBackground() {
   
   try {
     // Try to use Python script if available
-    const pythonScript = path.join(PROJECT_ROOT, "src-tauri/create-dmg-bg.py");
+    const pythonScript = path.join(PROJECT_ROOT, "src-desktop/create-dmg-bg.py");
     if (fs.existsSync(pythonScript)) {
       execSync(`python3 "${pythonScript}"`, { cwd: DMG_DIR });
       console.log("✅ DMG background created using Python script");
@@ -63,7 +63,7 @@ function createDMGBackground() {
     }
     
     // Final fallback: Copy from existing background if available
-    const existingBg = path.join(PROJECT_ROOT, "src-tauri/dmg-background.png");
+    const existingBg = path.join(PROJECT_ROOT, "src-desktop/dmg-background.png");
     if (fs.existsSync(existingBg)) {
       fs.copyFileSync(existingBg, backgroundPath);
       console.log("✅ Copied existing DMG background");

@@ -236,11 +236,57 @@ model reset_tokens {
   @@index([userId])
 }
 
+/// Core Companies - Global canonical company data (no workspaceId)
+model core_companies {
+  id                     String           @id @default(ulid()) @db.VarChar(30)
+  name                   String           @unique @db.VarChar(255)
+  normalizedName         String           @unique @db.VarChar(255)
+  legalName              String?          @db.VarChar(255)
+  tradingName            String?          @db.VarChar(255)
+  website                String?          @db.VarChar(500)
+  domain                 String?          @db.VarChar(255)
+  industry               String?          @db.VarChar(100)
+  sector                 String?          @db.VarChar(100)
+  size                   String?          @db.VarChar(100)
+  employeeCount          Int?
+  foundedYear            Int?
+  description            String?
+  city                   String?          @db.VarChar(100)
+  state                  String?          @db.VarChar(100)
+  country                String?          @db.VarChar(100)
+  hqCity                 String?          @db.VarChar(100)
+  hqState                String?          @db.VarChar(100)
+  hqCountryIso2          String?          @db.VarChar(2)
+  hqCountryIso3          String?          @db.VarChar(3)
+  linkedinUrl            String?          @db.VarChar(500)
+  linkedinFollowers      Int?
+  revenue                Decimal?         @db.Decimal(15, 2)
+  currency               String?          @default("USD") @db.VarChar(3)
+  stockSymbol            String?          @db.VarChar(20)
+  logoUrl                String?          @db.VarChar(500)
+  lastVerified           DateTime?
+  dataLastVerified       DateTime?
+  dataQualityScore       Float?           @default(0)
+  dataSources            String[]         @default([])
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  companies              companies[]
+
+  @@index([normalizedName])
+  @@index([domain])
+  @@index([lastVerified])
+  @@index([dataLastVerified])
+}
+
 /// Company/organization data
 model companies {
   id                     String           @id @default(ulid()) @db.VarChar(30)
   workspaceId            String           @db.VarChar(30)
+  coreCompanyId          String?          @db.VarChar(30)
   name                   String           @db.VarChar(255)
+  nameOverride           String?          @db.VarChar(255)
+  industryOverride       String?          @db.VarChar(100)
+  websiteOverride        String?          @db.VarChar(500)
   legalName              String?          @db.VarChar(255)
   tradingName            String?          @db.VarChar(255)
   localName              String?          @db.VarChar(255)
@@ -360,11 +406,13 @@ model companies {
   actions                actions[]
   mainSeller             users?           @relation("MainSellerCompanies", fields: [mainSellerId], references: [id])
   workspace              workspaces       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  coreCompany            core_companies?  @relation(fields: [coreCompanyId], references: [id], onDelete: SetNull)
   emails                 email_messages[]
   people                 people[]
   workshopDocuments        workshopDocument[]
 
   @@index([workspaceId])
+  @@index([coreCompanyId])
   @@index([mainSellerId])
   @@index([entityId])
   @@index([deletedAt])
@@ -386,14 +434,61 @@ model companies {
   @@index([dataSources], type: Gin)
 }
 
+/// Core People - Global canonical person data (no workspaceId)
+model core_people {
+  id                     String              @id @default(ulid()) @db.VarChar(30)
+  firstName              String              @db.VarChar(100)
+  lastName               String              @db.VarChar(100)
+  fullName               String              @db.VarChar(200)
+  normalizedFullName     String              @unique @db.VarChar(200)
+  email                  String?             @unique @db.VarChar(300)
+  workEmail              String?             @unique @db.VarChar(300)
+  personalEmail          String?             @unique @db.VarChar(300)
+  linkedinUrl            String?             @unique @db.VarChar(500)
+  jobTitle               String?             @db.VarChar(300)
+  department             String?             @db.VarChar(200)
+  companyName            String?             @db.VarChar(200)
+  currentCompany         String?             @db.VarChar(200)
+  currentRole            String?             @db.VarChar(200)
+  phone                  String?             @db.VarChar(50)
+  mobilePhone            String?             @db.VarChar(50)
+  workPhone              String?             @db.VarChar(50)
+  linkedinConnections    Int?
+  linkedinFollowers      Int?
+  profilePictureUrl      String?             @db.VarChar(500)
+  bio                    String?
+  city                   String?             @db.VarChar(100)
+  state                  String?             @db.VarChar(100)
+  country                String?             @db.VarChar(100)
+  lastVerified           DateTime?
+  dataLastVerified       DateTime?
+  dataQualityScore       Float?              @default(0)
+  dataSources            String[]             @default([])
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  people                 people[]
+
+  @@index([normalizedFullName])
+  @@index([email])
+  @@index([workEmail])
+  @@index([personalEmail])
+  @@index([linkedinUrl])
+  @@index([lastVerified])
+  @@index([dataLastVerified])
+}
+
 /// Contact/person records
 model people {
   id                     String              @id @default(ulid()) @db.VarChar(30)
   workspaceId            String              @db.VarChar(30)
+  corePersonId           String?             @db.VarChar(30)
   companyId              String?             @db.VarChar(30)
   firstName              String              @db.VarChar(100)
   lastName               String              @db.VarChar(100)
   fullName               String              @db.VarChar(200)
+  fullNameOverride       String?             @db.VarChar(200)
+  emailOverride          String?             @db.VarChar(300)
+  jobTitleOverride       String?             @db.VarChar(300)
   displayName            String?             @db.VarChar(200)
   salutation             String?             @db.VarChar(50)
   suffix                 String?             @db.VarChar(50)
@@ -518,9 +613,11 @@ model people {
   company                companies?          @relation(fields: [companyId], references: [id])
   mainSeller             users?              @relation("MainSellerPeople", fields: [mainSellerId], references: [id])
   workspace              workspaces          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  corePerson             core_people?        @relation(fields: [corePersonId], references: [id], onDelete: SetNull)
   coSellers              person_co_sellers[]
 
   @@index([workspaceId])
+  @@index([corePersonId])
   @@index([companyId])
   @@index([entityId])
   @@index([deletedAt])

@@ -13,7 +13,7 @@ console.log("🎯 VALIDATING DESKTOP LOGOUT FIX...\n");
 console.log("1️⃣ Checking Tauri updater configuration...");
 try {
   const tauriConfig = JSON.parse(
-    fs.readFileSync("src-tauri/tauri.conf.json", "utf8"),
+    fs.readFileSync("src-desktop/tauri.conf.json", "utf8"),
   );
   const updaterActive = tauriConfig.plugins?.updater?.active;
 

@@ -4,6 +4,7 @@ import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAnd
 import { cache } from '@/platform/services/unified-cache';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 import { findOrCreateCompany } from '@/platform/services/company-linking-service';
+import { findOrCreateCorePerson, mergeCorePersonWithWorkspace } from '@/platform/services/core-entity-service';
 import { addBusinessDays } from '@/platform/utils/actionUtils';
 
 // 🚀 PERFORMANCE: Enhanced caching with Redis
@@ -369,46 +370,8 @@ export async function GET(request: NextRequest) {
           },
           skip: offset,
           take: limit,
-          select: {
-            id: true,
-            fullName: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-            jobTitle: true,
-            title: true,
-            phone: true,
-            department: true,
-            status: true,
-            priority: true,
-            globalRank: true,
-            lastAction: true,
-            nextAction: true,
-            lastActionDate: true,
-            nextActionDate: true,
-            companyId: true,
-            mainSellerId: true,
-            vertical: true,
-            notes: true,
-            buyerGroupRole: true,
-            influenceLevel: true,
-            engagementStrategy: true,
-            buyerGroupStatus: true,
-            isBuyerGroupMember: true,
-            state: true,
-            linkedinUrl: true,
-            linkedinNavigatorUrl: true,
-            linkedinConnectionDate: true,
-            createdAt: true,
-            updatedAt: true,
-            personalEmail: true,
-            address: true,
-            postalCode: true,
-            bio: true,
-            gender: true,
-            dateOfBirth: true,
-            linkedinConnections: true,
-            linkedinFollowers: true,
+          include: {
+            corePerson: true,
             company: {
               select: {
                 id: true,
@@ -453,8 +416,13 @@ export async function GET(request: NextRequest) {
         } : null
       });
 
+      // 🚀 MERGE CORE DATA: Merge core person data with workspace data
+      const peopleWithCore = people.map(person => 
+        mergeCorePersonWithWorkspace(person, person.corePerson || null)
+      );
+
       // 🚀 COMPUTE LAST ACTION: Enrich with actual last action from actions table
-      const enrichedPeople = await Promise.all(people.map(async (person) => {
+      const enrichedPeople = await Promise.all(peopleWithCore.map(async (person) => {
         try {
           const lastAction = await prisma.actions.findFirst({
             where: { 
@@ -993,6 +961,25 @@ export async function POST(request: NextRequest) {
       console.log(`🎯 [V1 PEOPLE API] Auto-assigned globalRank: ${globalRank}`);
     }
 
+    // Link to core person entity (if enabled)
+    let corePersonId: string | null = null;
+    try {
+      const corePersonResult = await findOrCreateCorePerson(body.firstName, body.lastName, {
+        email: body.email,
+        workEmail: body.workEmail,
+        personalEmail: body.personalEmail,
+        linkedinUrl: body.linkedinUrl,
+        jobTitle: body.jobTitle,
+        companyName: body.company,
+        phone: body.phone || body.workPhone || body.mobilePhone
+      });
+      corePersonId = corePersonResult.id;
+      console.log(`🔗 [V1 PEOPLE API] Linked to core person: ${corePersonResult.fullName} (${corePersonResult.id})`);
+    } catch (coreError) {
+      console.warn('⚠️ [V1 PEOPLE API] Failed to link to core person (non-blocking):', coreError);
+      // Continue without core linking - person creation should still succeed
+    }
+
     // Create person and action in a transaction
     const result = await prisma.$transaction(async (tx) => {
       // Create person
@@ -1001,6 +988,7 @@ export async function POST(request: NextRequest) {
           firstName: body.firstName,
           lastName: body.lastName,
           fullName: fullName,
+          ...(corePersonId && { corePersonId: corePersonId }),
           displayName: body.displayName,
           salutation: body.salutation,
           suffix: body.suffix,

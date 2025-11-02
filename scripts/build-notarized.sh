@@ -91,9 +91,9 @@ sign_app() {
     # Find the app bundle
     APP_PATH=""
     if [[ "$DEMO_MODE" == "demo" ]]; then
-        APP_PATH=$(find src-tauri/target -name "*.app" -path "*/demo/*" | head -n 1)
+        APP_PATH=$(find src-desktop/target -name "*.app" -path "*/demo/*" | head -n 1)
     else
-        APP_PATH=$(find src-tauri/target -name "*.app" | head -n 1)
+        APP_PATH=$(find src-desktop/target -name "*.app" | head -n 1)
     fi
     
     if [[ -z "$APP_PATH" ]]; then
@@ -136,7 +136,7 @@ notarize_app() {
     echo "📋 Notarizing application..."
     
     # Find the DMG
-    DMG_PATH=$(find src-tauri/target -name "*.dmg" | head -n 1)
+    DMG_PATH=$(find src-desktop/target -name "*.dmg" | head -n 1)
     
     if [[ -z "$DMG_PATH" ]]; then
         echo "⚠️  DMG not found - skipping notarization"
@@ -180,7 +180,7 @@ validate_build() {
     echo "🔍 Validating final build..."
     
     # Find the final DMG
-    DMG_PATH=$(find src-tauri/target -name "*.dmg" | head -n 1)
+    DMG_PATH=$(find src-desktop/target -name "*.dmg" | head -n 1)
     
     if [[ -n "$DMG_PATH" ]]; then
         echo "✅ Final DMG: $DMG_PATH"

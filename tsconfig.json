@@ -47,7 +47,7 @@
   ],
   "exclude": [
     "node_modules",
-    "src-tauri/target",
+    "src-desktop/target",
     "src/__tests__/**/*",
     "tests/**/*",
     "out",

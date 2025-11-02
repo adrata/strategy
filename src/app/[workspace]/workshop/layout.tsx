@@ -179,6 +179,7 @@ function WorkshopLayoutContent({ children }: { children: React.ReactNode }) {
           onClose={() => setIsProfilePanelVisible(false)}
           username={username}
           currentApp="workshop"
+          onToggleLeftPanel={ui.toggleLeftPanel}
         />
       }
       isProfilePanelVisible={isProfilePanelVisible}

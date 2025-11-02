@@ -15,7 +15,7 @@ const { execSync } = require("child_process");
 console.log("🔧 Fixing DMG bundling...");
 
 const PROJECT_ROOT = process.cwd();
-const BUNDLE_DIR = path.join(PROJECT_ROOT, "src-tauri/target/universal-apple-darwin/release/bundle");
+const BUNDLE_DIR = path.join(PROJECT_ROOT, "src-desktop/target/universal-apple-darwin/release/bundle");
 const DMG_DIR = path.join(BUNDLE_DIR, "dmg");
 const MACOS_DIR = path.join(BUNDLE_DIR, "macos");
 const APP_NAME = "Adrata.app";
@@ -31,8 +31,8 @@ function checkMacOS() {
 function findAppBundle() {
   const possiblePaths = [
     path.join(MACOS_DIR, APP_NAME),
-    path.join(PROJECT_ROOT, "src-tauri/target/release/bundle/macos", APP_NAME),
-    path.join(PROJECT_ROOT, "src-tauri/target/universal-apple-darwin/release/bundle/macos", APP_NAME)
+    path.join(PROJECT_ROOT, "src-desktop/target/release/bundle/macos", APP_NAME),
+    path.join(PROJECT_ROOT, "src-desktop/target/universal-apple-darwin/release/bundle/macos", APP_NAME)
   ];
 
   for (const appPath of possiblePaths) {
@@ -105,8 +105,8 @@ function createFallbackDMG(appPath) {
 function checkExistingDMG() {
   const possibleDmgPaths = [
     path.join(DMG_DIR, "*.dmg"),
-    path.join(PROJECT_ROOT, "src-tauri/target/release/bundle/dmg/*.dmg"),
-    path.join(PROJECT_ROOT, "src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg")
+    path.join(PROJECT_ROOT, "src-desktop/target/release/bundle/dmg/*.dmg"),
+    path.join(PROJECT_ROOT, "src-desktop/target/universal-apple-darwin/release/bundle/dmg/*.dmg")
   ];
 
   for (const dmgPattern of possibleDmgPaths) {

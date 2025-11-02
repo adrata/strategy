@@ -44,8 +44,8 @@ async function runDiagnostics() {
     "src/hooks/useVoiceActivation.ts",
     "src/components/ai/UniversalAIAssistant.tsx",
     "src/app/debug-voice/page.tsx",
-    "src-tauri/src/lib.rs",
-    "src-tauri/capabilities/default.json",
+    "src-desktop/src/lib.rs",
+    "src-desktop/capabilities/default.json",
   ];
 
   voiceFiles.forEach((file) => {
@@ -84,12 +84,12 @@ async function runDiagnostics() {
   console.log("\n🔍 CHECKING TAURI VOICE COMMANDS...\n");
 
   const criticalFiles = [
-    "src-tauri/src/lib.rs",
-    "src-tauri/src/voice/mod.rs",
-    "src-tauri/src/database.rs",
-    "src-tauri/src/desktop_init.rs",
-    "src-tauri/Cargo.toml",
-    "src-tauri/tauri.conf.json",
+    "src-desktop/src/lib.rs",
+    "src-desktop/src/voice/mod.rs",
+    "src-desktop/src/database.rs",
+    "src-desktop/src/desktop_init.rs",
+    "src-desktop/Cargo.toml",
+    "src-desktop/tauri.conf.json",
   ];
 
   console.log("🔍 Checking critical Tauri files...");
@@ -106,8 +106,8 @@ async function runDiagnostics() {
   // Check modular structure for voice commands
   console.log("\n🎙️ Checking voice command structure...");
 
-  const libRsPath = "src-tauri/src/lib.rs";
-  const voiceModPath = "src-tauri/src/voice/mod.rs";
+  const libRsPath = "src-desktop/src/lib.rs";
+  const voiceModPath = "src-desktop/src/voice/mod.rs";
 
   if (fs.existsSync(libRsPath) && fs.existsSync(voiceModPath)) {
     const libContent = fs.readFileSync(libRsPath, "utf8");

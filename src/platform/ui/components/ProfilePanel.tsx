@@ -28,7 +28,7 @@ import {
   CalendarIcon,
   PuzzlePieceIcon
 } from "@heroicons/react/24/outline";
-import { Check, PanelLeft, Trash2, Pencil } from "lucide-react";
+import { Check, PanelLeft, Trash2, Pencil, Bars3Icon } from "lucide-react";
 import { WindowsIcon, AppleIcon, LinuxIcon } from "./OSIcons";
 import { CalendarView } from "./CalendarView";
 
@@ -40,6 +40,7 @@ interface ProfilePanelProps {
   onClose: () => void;
   username?: string;
   currentApp?: string;
+  onToggleLeftPanel?: () => void;
 }
 
 // Action List Item Component with animations
@@ -257,6 +258,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   onClose,
   username,
   currentApp: propCurrentApp = 'revenueos',
+  onToggleLeftPanel,
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -299,7 +301,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const currentApp = getCurrentAppFromPath();
   
   // State for view mode (main, action list, or calendar)
-  const [viewMode, setViewMode] = useState<'main' | 'actionList' | 'calendar'>('calendar');
+  const [viewMode, setViewMode] = useState<'main' | 'actionList' | 'calendar'>('actionList');
   const [previousViewMode, setPreviousViewMode] = useState<'main' | 'actionList'>('main');
   
   // State for action list input
@@ -339,6 +341,19 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
     // For Workshop and other apps, keep panel open
     
     router.push(fullPath);
+  };
+
+  const handleHomeClick = () => {
+    // Get current workspace from the URL
+    const currentPath = window.location.pathname;
+    const segments = currentPath.split('/').filter(Boolean);
+    const workspaceSlug = segments[0];
+    
+    // Navigate to workspace root
+    const homePath = workspaceSlug ? `/${workspaceSlug}` : '/';
+    console.log(`🏠 ProfilePanel: Navigating home to ${homePath}`);
+    router.push(homePath);
+    onClose();
   };
 
   const handleSignOutClick = () => {
@@ -568,62 +583,79 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-transparent group-hover:bg-slate-500/40 rounded-full transition-colors" />
       </div>
 
-      {/* Header with close button */}
-      <div className="p-4 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-[var(--accent)] rounded-full flex items-center justify-center text-white font-semibold text-sm">
-            {(typeof workspace === 'string' ? workspace : workspace?.name || 'W').charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold text-[var(--foreground)]">
-              {typeof workspace === 'string' ? workspace : workspace?.name || 'Workspace'}
-            </h3>
-            <p className="text-xs text-[var(--muted-foreground)]">
-              Workspace
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
+      {/* Header with navigation buttons */}
+      <div className="px-4 py-3 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between gap-2">
+          {/* Left: Profile icon (clickable to close) */}
           <button
             onClick={onClose}
-            className="p-1 hover:bg-[var(--hover-bg)] rounded-md transition-colors"
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity group"
             title="Close panel"
           >
-            <PanelLeft className="w-4 h-4 text-[var(--muted-foreground)]" />
+            <div className="w-8 h-8 bg-[var(--accent)] rounded-full flex items-center justify-center text-white font-semibold text-sm group-hover:bg-[var(--accent)]/90">
+              {(typeof workspace === 'string' ? workspace : workspace?.name || 'W').charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-[var(--foreground)]">
+                {typeof workspace === 'string' ? workspace : workspace?.name || 'Workspace'}
+              </h3>
+              <p className="text-xs text-[var(--muted-foreground)]">
+                Workspace
+              </p>
+            </div>
           </button>
-        </div>
-      </div>
 
-      {/* Calendar/Checklist Toggle */}
-      <div className="px-3 pt-3 pb-2 border-b border-[var(--border)]">
-        <div className="flex gap-2">
-          <button
-            onClick={() => {
-              setViewMode('calendar');
-            }}
-            className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-all ${
-              viewMode === 'calendar'
-                ? 'bg-[var(--accent)] text-white shadow-sm'
-                : 'bg-[var(--hover-bg)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
-            }`}
-          >
-            <CalendarIcon className="w-4 h-4 inline mr-2" />
-            Calendar
-          </button>
-          <button
-            onClick={() => {
-              setViewMode('actionList');
-              setTimeout(() => inputRef.current?.focus(), 100);
-            }}
-            className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-all ${
-              viewMode === 'actionList'
-                ? 'bg-[var(--accent)] text-white shadow-sm'
-                : 'bg-[var(--hover-bg)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--hover)]'
-            }`}
-          >
-            <ClipboardDocumentCheckIcon className="w-4 h-4 inline mr-2" />
-            Daily 100
-          </button>
+          {/* Right: Navigation buttons */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleHomeClick}
+              className="px-3 py-1.5 text-sm font-medium rounded-md hover:bg-[var(--hover-bg)] text-[var(--foreground)] transition-colors"
+              title="Home"
+              aria-label="Go to home"
+            >
+              <HomeIcon className="w-4 h-4 inline mr-1.5" />
+              Home
+            </button>
+            <button
+              onClick={() => {
+                setViewMode('calendar');
+              }}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                viewMode === 'calendar'
+                  ? 'bg-[var(--accent)] text-white shadow-sm'
+                  : 'hover:bg-[var(--hover-bg)] text-[var(--foreground)]'
+              }`}
+              title="Calendar"
+            >
+              <CalendarIcon className="w-4 h-4 inline mr-1.5" />
+              Calendar
+            </button>
+            <button
+              onClick={() => {
+                setViewMode('actionList');
+                setTimeout(() => inputRef.current?.focus(), 100);
+              }}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                viewMode === 'actionList'
+                  ? 'bg-[var(--accent)] text-white shadow-sm'
+                  : 'hover:bg-[var(--hover-bg)] text-[var(--foreground)]'
+              }`}
+              title="Daily 100 Checklist"
+            >
+              <ClipboardDocumentCheckIcon className="w-4 h-4 inline mr-1.5" />
+              Checklist
+            </button>
+            {onToggleLeftPanel && (
+              <button
+                onClick={onToggleLeftPanel}
+                className="px-3 py-1.5 text-sm font-medium rounded-md hover:bg-[var(--hover-bg)] text-[var(--foreground)] transition-colors"
+                title="Toggle left panel"
+              >
+                <Bars3Icon className="w-4 h-4 inline mr-1.5" />
+                Left panel
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -755,7 +787,7 @@ export const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <div className="flex items-center justify-between px-3">
               <div className="flex flex-col">
                 <h4 className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
-                  Daily 100
+                  Action List
                 </h4>
                 {currentPreset !== 'custom-only' && (() => {
                   const preset = getPresetTemplate(currentPreset);

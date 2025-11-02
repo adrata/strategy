@@ -15,7 +15,7 @@ function checkTauriConfig() {
   console.log("\n📋 1. Analyzing Tauri Configuration...");
 
   try {
-    const configPath = "src-tauri/tauri.conf.json";
+    const configPath = "src-desktop/tauri.conf.json";
     const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
 
     console.log(`   ✓ Tauri config found: ${configPath}`);
@@ -78,7 +78,7 @@ function checkCargoDependencies() {
   console.log("\n📦 2. Analyzing Rust Dependencies...");
 
   try {
-    const cargoTomlPath = "src-tauri/Cargo.toml";
+    const cargoTomlPath = "src-desktop/Cargo.toml";
     const cargoContent = fs.readFileSync(cargoTomlPath, "utf8");
 
     // Extract version numbers
@@ -198,7 +198,7 @@ function checkTauriRustCode() {
   console.log("\n🦀 5. Analyzing Rust Source Code...");
 
   try {
-    const mainRsPath = "src-tauri/src/main.rs";
+    const mainRsPath = "src-desktop/src/main.rs";
     const mainRsContent = fs.readFileSync(mainRsPath, "utf8");
 
     // Check for common issues
@@ -317,7 +317,7 @@ function generateV2Config() {
 
   // Write suggested config
   fs.writeFileSync(
-    "src-tauri/tauri.conf.v2.json",
+    "src-desktop/tauri.conf.v2.json",
     JSON.stringify(v2Config, null, 2),
   );
   console.log("   ✓ Saved suggested config to tauri.conf.v2.json");

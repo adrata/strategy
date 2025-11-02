@@ -21,10 +21,10 @@ find_app_bundle() {
     
     # Possible locations for the app bundle
     POSSIBLE_PATHS=(
-        "src-tauri/target/universal-apple-darwin/release/bundle/macos/Adrata.app"
-        "src-tauri/target/release/bundle/macos/Adrata.app"
-        "src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Adrata.app"
-        "src-tauri/target/x86_64-apple-darwin/release/bundle/macos/Adrata.app"
+        "src-desktop/target/universal-apple-darwin/release/bundle/macos/Adrata.app"
+        "src-desktop/target/release/bundle/macos/Adrata.app"
+        "src-desktop/target/aarch64-apple-darwin/release/bundle/macos/Adrata.app"
+        "src-desktop/target/x86_64-apple-darwin/release/bundle/macos/Adrata.app"
     )
     
     for path in "${POSSIBLE_PATHS[@]}"; do

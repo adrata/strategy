@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getV1AuthUser } from '../../auth';
 import { findOrCreateCompany } from '@/platform/services/company-linking-service';
+import { mergeCorePersonWithWorkspace } from '@/platform/services/core-entity-service';
 
 /**
 // Required for static export (desktop build)
@@ -40,6 +41,7 @@ export async function GET(
         workspaceId: authUser.workspaceId // Ensure person belongs to user's workspace
       },
       include: {
+        corePerson: true,
         company: {
           select: {
             id: true,
@@ -97,18 +99,21 @@ export async function GET(
       );
     }
 
+    // Merge core person data with workspace data
+    const mergedPerson = mergeCorePersonWithWorkspace(person, person.corePerson || null);
+
     // Transform to use mainSeller terminology like speedrun
     const transformedPerson = {
-      ...person,
-      mainSellerId: person.mainSellerId,
-      mainSeller: person.mainSeller 
-        ? (person.mainSeller.id === authUser.id
+      ...mergedPerson,
+      mainSellerId: mergedPerson.mainSellerId,
+      mainSeller: mergedPerson.mainSeller 
+        ? (mergedPerson.mainSeller.id === authUser.id
             ? 'Me'
-            : person.mainSeller.firstName && person.mainSeller.lastName 
-              ? `${person.mainSeller.firstName} ${person.mainSeller.lastName}`.trim()
-              : person.mainSeller.name || person.mainSeller.email || '-')
+            : mergedPerson.mainSeller.firstName && mergedPerson.mainSeller.lastName 
+              ? `${mergedPerson.mainSeller.firstName} ${mergedPerson.mainSeller.lastName}`.trim()
+              : mergedPerson.mainSeller.name || mergedPerson.mainSeller.email || '-')
         : '-',
-      mainSellerData: person.mainSeller
+      mainSellerData: mergedPerson.mainSeller
     };
 
     console.log(`🔍 [PEOPLE API GET] Returning person data:`, {

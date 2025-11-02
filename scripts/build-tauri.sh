@@ -73,7 +73,7 @@ install_dependencies() {
     npm ci
     
     # Install Rust dependencies
-    cd src-tauri
+    cd src-desktop
     cargo fetch
     cd ..
     
@@ -88,7 +88,7 @@ run_tests() {
     npm run test
     
     # Run Rust tests
-    cd src-tauri
+    cd src-desktop
     cargo test
     cd ..
     
@@ -110,7 +110,7 @@ build_tauri() {
     
     print_status "Building Tauri app for $platform..."
     
-    cd src-tauri
+    cd src-desktop
     
     case $platform in
         "linux")
@@ -148,7 +148,7 @@ create_release() {
     mkdir -p releases/$version
     
     # Copy built applications
-    cp -r src-tauri/target/release/bundle/* releases/$version/
+    cp -r src-desktop/target/release/bundle/* releases/$version/
     
     # Create checksums
     cd releases/$version
@@ -169,7 +169,7 @@ clean() {
     rm -rf out
     
     # Clean Rust
-    cd src-tauri
+    cd src-desktop
     cargo clean
     cd ..
     

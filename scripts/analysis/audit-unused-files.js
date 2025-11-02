@@ -32,7 +32,7 @@ const IGNORE_PATTERNS = [
   'prisma/',
   'public/',
   'capacitor.config.ts',
-  'src-tauri/',
+  'src-desktop/',
   '.cursorrules',
   '.gitignore',
   '.nvmrc',

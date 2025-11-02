@@ -57,16 +57,16 @@ function checkFileStructure() {
   log('\n📁 Checking File Structure...', 'cyan');
   
   const requiredFiles = [
-    'src-tauri/tauri.conf.json',
-    'src-tauri/Cargo.toml',
-    'src-tauri/src/main.rs',
-    'src-tauri/src/lib.rs',
-    'src-tauri/src/config.rs',
-    'src-tauri/src/database/models.rs',
-    'src-tauri/src/database/mod.rs',
-    'src-tauri/src/database/auth.rs',
-    'src-tauri/src/database/crm.rs',
-    'src-tauri/src/database/speedrun.rs',
+    'src-desktop/tauri.conf.json',
+    'src-desktop/Cargo.toml',
+    'src-desktop/src/main.rs',
+    'src-desktop/src/lib.rs',
+    'src-desktop/src/config.rs',
+    'src-desktop/src/database/models.rs',
+    'src-desktop/src/database/mod.rs',
+    'src-desktop/src/database/auth.rs',
+    'src-desktop/src/database/crm.rs',
+    'src-desktop/src/database/speedrun.rs',
     'package.json',
     'next.config.mjs',
     'prisma/schema-streamlined.prisma'
@@ -116,7 +116,7 @@ function checkRustSyntax() {
   
   try {
     // Try to check Rust syntax without full compilation
-    execSync('cargo check --manifest-path src-tauri/Cargo.toml', { 
+    execSync('cargo check --manifest-path src-desktop/Cargo.toml', { 
       encoding: 'utf8',
       stdio: 'pipe'
     });
@@ -168,7 +168,7 @@ function checkTauriCommands() {
   log('\n🎯 Checking Tauri Commands...', 'cyan');
   
   try {
-    const libRsPath = 'src-tauri/src/lib.rs';
+    const libRsPath = 'src-desktop/src/lib.rs';
     if (fs.existsSync(libRsPath)) {
       const content = fs.readFileSync(libRsPath, 'utf8');
       

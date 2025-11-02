@@ -83,7 +83,7 @@ if %errorlevel% neq 0 (
 )
 
 REM Install Rust dependencies
-cd src-tauri
+cd src-desktop
 cargo fetch
 if %errorlevel% neq 0 (
     call :print_error "Failed to fetch Rust dependencies."
@@ -106,7 +106,7 @@ if %errorlevel% neq 0 (
 )
 
 REM Run Rust tests
-cd src-tauri
+cd src-desktop
 cargo test
 if %errorlevel% neq 0 (
     call :print_error "Rust tests failed."
@@ -137,7 +137,7 @@ if "%platform%"=="" set "platform=windows"
 
 call :print_status "Building Tauri app for %platform%..."
 
-cd src-tauri
+cd src-desktop
 
 if "%platform%"=="windows" (
     cargo tauri build
@@ -175,7 +175,7 @@ REM Create release directory
 if not exist "releases\%version%" mkdir "releases\%version%"
 
 REM Copy built applications
-xcopy "src-tauri\target\release\bundle\*" "releases\%version%\" /E /I /Y
+xcopy "src-desktop\target\release\bundle\*" "releases\%version%\" /E /I /Y
 
 call :print_success "Release created successfully."
 goto :eof
@@ -189,7 +189,7 @@ if exist ".next" rmdir /s /q ".next"
 if exist "out" rmdir /s /q "out"
 
 REM Clean Rust
-cd src-tauri
+cd src-desktop
 cargo clean
 cd ..
 

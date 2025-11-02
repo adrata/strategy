@@ -8,7 +8,7 @@ echo "========================"
 echo ""
 
 PROJECT_ROOT="/Users/rosssylvester/Development/adrata"
-BUNDLE_DIR="$PROJECT_ROOT/src-tauri/target/universal-apple-darwin/release/bundle"
+BUNDLE_DIR="$PROJECT_ROOT/src-desktop/target/universal-apple-darwin/release/bundle"
 DMG_DIR="$BUNDLE_DIR/dmg"
 MACOS_DIR="$BUNDLE_DIR/macos"
 APP_NAME="Adrata.app"

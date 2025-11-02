@@ -196,11 +196,11 @@ test_build_preparation() {
     echo "----------------------------"
     
     # Check if Tauri is properly configured
-    if [[ -f "src-tauri/tauri.conf.json" ]]; then
+    if [[ -f "src-desktop/tauri.conf.json" ]]; then
         echo "✅ Tauri configuration found"
         
         # Check bundle identifier
-        BUNDLE_ID=$(grep -o '"identifier": "[^"]*"' src-tauri/tauri.conf.json | cut -d'"' -f4)
+        BUNDLE_ID=$(grep -o '"identifier": "[^"]*"' src-desktop/tauri.conf.json | cut -d'"' -f4)
         if [[ -n "$BUNDLE_ID" ]]; then
             echo "✅ Bundle identifier: $BUNDLE_ID"
         else
@@ -270,7 +270,7 @@ generate_report() {
         echo "⚠️  Environment: Needs Setup"
     fi
     
-    if [[ -f "src-tauri/tauri.conf.json" ]]; then
+    if [[ -f "src-desktop/tauri.conf.json" ]]; then
         echo "✅ Build Config: Ready"
     else
         echo "❌ Build Config: Missing"

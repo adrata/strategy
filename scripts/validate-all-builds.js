@@ -73,7 +73,7 @@ function validateDesktopBuild() {
   let issues = [];
   
   // Check Tauri configuration
-  const tauriConfigPath = './src-tauri/tauri.conf.json';
+  const tauriConfigPath = './src-desktop/tauri.conf.json';
   if (fs.existsSync(tauriConfigPath)) {
     console.log("✅ Tauri config found");
     
@@ -112,7 +112,7 @@ function validateDesktopBuild() {
   }
   
   // Check for Rust source
-  const rustMainPath = './src-tauri/src/main.rs';
+  const rustMainPath = './src-desktop/src/main.rs';
   if (fs.existsSync(rustMainPath)) {
     console.log("✅ Rust main.rs found");
   } else {
@@ -121,7 +121,7 @@ function validateDesktopBuild() {
   }
   
   // Check for Cargo.toml
-  const cargoPath = './src-tauri/Cargo.toml';
+  const cargoPath = './src-desktop/Cargo.toml';
   if (fs.existsSync(cargoPath)) {
     console.log("✅ Cargo.toml found");
   } else {
@@ -130,7 +130,7 @@ function validateDesktopBuild() {
   }
   
   // Check for built artifacts
-  const targetDir = './src-tauri/target';
+  const targetDir = './src-desktop/target';
   if (fs.existsSync(targetDir)) {
     console.log("✅ Rust target directory found");
     

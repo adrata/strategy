@@ -2,6 +2,9 @@
   "name": "adrata",
   "version": "1.0.2",
   "private": true,
+  "workspaces": [
+    "mobile"
+  ],
   "scripts": {
     "postinstall": "prisma generate --schema=prisma/schema-streamlined.prisma",
     "prebuild": "echo 'Starting build at' && echo %date% %time%",
@@ -50,7 +53,7 @@
     "desktop:dev": "cross-env NEXT_PUBLIC_IS_DESKTOP=true tauri dev",
     "desktop:build": "node scripts/cross-platform-build.js",
     "desktop:build:legacy": "npm run clean:full && npm run tauri:prep && node scripts/prepare-desktop-build.js && cross-env NODE_ENV=production NEXT_PUBLIC_IS_DESKTOP=true NEXT_PUBLIC_USE_STATIC_EXPORT=true TAURI_BUILD=true npm run build && npm run tauri:fix-paths && node scripts/restore-desktop-build.js && cross-env TAURI_BUILD=true tauri build && npm run tauri:restore && npm run postdesktop:build",
-    "desktop:build:demo": "npm run clean:full && npm run tauri:prep && node scripts/prepare-desktop-build.js && cross-env NODE_ENV=production NEXT_PUBLIC_IS_DESKTOP=true NEXT_PUBLIC_USE_STATIC_EXPORT=true TAURI_BUILD=true npm run build && npm run tauri:fix-paths && node scripts/restore-desktop-build.js && tauri build --config src-tauri/tauri.conf.demo.json && npm run tauri:restore && npm run postdesktop:build:demo",
+      "desktop:build:demo": "npm run clean:full && npm run tauri:prep && node scripts/prepare-desktop-build.js && cross-env NODE_ENV=production NEXT_PUBLIC_IS_DESKTOP=true NEXT_PUBLIC_USE_STATIC_EXPORT=true TAURI_BUILD=true npm run build && npm run tauri:fix-paths && node scripts/restore-desktop-build.js && tauri build --config src-desktop/tauri.conf.demo.json && npm run tauri:restore && npm run postdesktop:build:demo",
     "desktop:build:windows": "npm run clean:full && npm run tauri:prep && node scripts/prepare-desktop-build.js && cross-env NODE_ENV=production NEXT_PUBLIC_IS_DESKTOP=true NEXT_PUBLIC_USE_STATIC_EXPORT=true TAURI_BUILD=true npm run build && npm run tauri:fix-paths && node scripts/restore-desktop-build.js && tauri build --target x86_64-pc-windows-gnu && npm run tauri:restore",
     "desktop:build:notarized": "bash scripts/build-notarized.sh",
     "desktop:build:demo:notarized": "bash scripts/build-notarized.sh demo",
@@ -69,7 +72,7 @@
     "postdesktop:build:demo": "node scripts/post-desktop-build.js demo",
     "clean": "rm -rf .next out dist node_modules/.cache",
     "clean:full": "npm run clean && rm -rf node_modules && npm install",
-    "clean:tauri": "rm -rf src-tauri/target",
+    "clean:tauri": "rm -rf src-desktop/target",
     "test:coresignal": "jest --config tests/coresignal/jest.config.js",
     "test:voice": "playwright test tests/e2e/voice-integration.test.js",
     "test:voice:ui": "playwright test tests/e2e/voice-integration.test.js --ui",
@@ -89,7 +92,10 @@
     "deps:update": "npx npm-check-updates -u",
     "deps:check": "npx npm-check-updates",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "dev:mobile": "cd mobile && expo start",
+    "build:mobile:ios": "cd mobile && eas build --platform ios",
+    "build:mobile:android": "cd mobile && eas build --platform android"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.66",

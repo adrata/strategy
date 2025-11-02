@@ -29,7 +29,7 @@ const BACKUP_POSTCSS = 'postcss.config.mjs.backup';
 const API_DIR = 'src/app/api';
 const API_BACKUP_DIR = 'src/app/api.backup';
 const OUTPUT_DIR = 'out';
-const TAURI_DIR = 'src-tauri';
+const TAURI_DIR = 'src-desktop';
 const DESKTOP_PATH = '/Users/rosssylvester/Desktop';
 
 // Environment variables for desktop build

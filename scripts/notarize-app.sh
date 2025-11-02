@@ -25,10 +25,10 @@ find_artifact() {
     
     # Look for DMG first (preferred for notarization)
     DMG_PATHS=(
-        "src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg"
-        "src-tauri/target/release/bundle/dmg/*.dmg"
-        "src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg"
-        "src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg"
+        "src-desktop/target/universal-apple-darwin/release/bundle/dmg/*.dmg"
+        "src-desktop/target/release/bundle/dmg/*.dmg"
+        "src-desktop/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg"
+        "src-desktop/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg"
     )
     
     for pattern in "${DMG_PATHS[@]}"; do
@@ -44,10 +44,10 @@ find_artifact() {
     
     # Look for app bundle as fallback
     APP_PATHS=(
-        "src-tauri/target/universal-apple-darwin/release/bundle/macos/Adrata.app"
-        "src-tauri/target/release/bundle/macos/Adrata.app"
-        "src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Adrata.app"
-        "src-tauri/target/x86_64-apple-darwin/release/bundle/macos/Adrata.app"
+        "src-desktop/target/universal-apple-darwin/release/bundle/macos/Adrata.app"
+        "src-desktop/target/release/bundle/macos/Adrata.app"
+        "src-desktop/target/aarch64-apple-darwin/release/bundle/macos/Adrata.app"
+        "src-desktop/target/x86_64-apple-darwin/release/bundle/macos/Adrata.app"
     )
     
     for app in "${APP_PATHS[@]}"; do

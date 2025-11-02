@@ -1,0 +1,17 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": ["../src-mobile/*"]
+    },
+    "baseUrl": ".",
+    "rootDir": ".."
+  },
+  "include": [
+    "../src-mobile/**/*.ts",
+    "../src-mobile/**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
+}

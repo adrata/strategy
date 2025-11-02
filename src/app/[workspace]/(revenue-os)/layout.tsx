@@ -224,6 +224,7 @@ function PipelineLayoutInner({
             currentApp={currentApp}
             userId={authUser?.id}
             userEmail={authUser?.email}
+            onToggleLeftPanel={ui.toggleLeftPanel}
           />
         }
         isProfilePanelVisible={isProfilePanelVisible}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getSecureApiContext, createErrorResponse, createSuccessResponse, logAndCreateErrorResponse, SecureApiContext } from '@/platform/services/secure-api-helper';
+import { findOrCreateCoreCompany, mergeCoreCompanyWithWorkspace } from '@/platform/services/core-entity-service';
 import { IntelligentNextActionService } from '@/platform/services/IntelligentNextActionService';
 import { addBusinessDays } from '@/platform/utils/actionUtils';
 
@@ -306,102 +307,8 @@ export async function GET(request: NextRequest) {
           },
           skip: offset,
           take: limit,
-          select: {
-            id: true,
-            name: true,
-            legalName: true,
-            tradingName: true,
-            localName: true,
-            description: true,
-            website: true,
-            email: true,
-            phone: true,
-            fax: true,
-            address: true,
-            city: true,
-            state: true,
-            country: true,
-            postalCode: true,
-            status: true,
-            priority: true,
-            globalRank: true,
-            lastAction: true,
-            nextAction: true,
-            lastActionDate: true,
-            nextActionDate: true,
-            nextActionReasoning: true,
-            nextActionPriority: true,
-            nextActionType: true,
-            actionStatus: true,
-            industry: true,
-            sector: true,
-            size: true,
-            revenue: true,
-            currency: true,
-            employeeCount: true,
-            foundedYear: true,
-            domain: true,
-            logoUrl: true,
-            notes: true,
-            tags: true,
-            registrationNumber: true,
-            taxId: true,
-            vatNumber: true,
-            opportunityStage: true,
-            opportunityAmount: true,
-            opportunityProbability: true,
-            expectedCloseDate: true,
-            actualCloseDate: true,
-            acquisitionDate: true,
-            competitors: true,
-            businessChallenges: true,
-            businessPriorities: true,
-            competitiveAdvantages: true,
-            growthOpportunities: true,
-            strategicInitiatives: true,
-            successMetrics: true,
-            marketThreats: true,
-            keyInfluencers: true,
-            decisionTimeline: true,
-            marketPosition: true,
-            digitalMaturity: true,
-            techStack: true,
-            linkedinUrl: true,
-            linkedinNavigatorUrl: true,
-            linkedinFollowers: true,
-            twitterUrl: true,
-            twitterFollowers: true,
-            facebookUrl: true,
-            instagramUrl: true,
-            youtubeUrl: true,
-            githubUrl: true,
-            hqLocation: true,
-            hqFullAddress: true,
-            hqCity: true,
-            hqState: true,
-            hqStreet: true,
-            hqZipcode: true,
-            hqRegion: true,
-            hqCountryIso2: true,
-            hqCountryIso3: true,
-            lastFundingAmount: true,
-            lastFundingDate: true,
-            stockSymbol: true,
-            isPublic: true,
-            naicsCodes: true,
-            sicCodes: true,
-            activeJobPostings: true,
-            numTechnologiesUsed: true,
-            technologiesUsed: true,
-            confidence: true,
-            sources: true,
-            lastVerified: true,
-            parentCompanyName: true,
-            parentCompanyDomain: true,
-            entityId: true,
-            mainSellerId: true,
-            createdAt: true,
-            updatedAt: true,
+          include: {
+            coreCompany: true,
             _count: {
               select: {
                 actions: {
@@ -423,8 +330,13 @@ export async function GET(request: NextRequest) {
         queryTime: Date.now() - startTime
       });
 
+          // 🚀 MERGE CORE DATA: Merge core company data with workspace data
+      const companiesWithCore = companies.map(company => 
+        mergeCoreCompanyWithWorkspace(company, company.coreCompany || null)
+      );
+
       // 🚀 COMPUTE LAST ACTION: Enrich with actual last action from actions table
-      const enrichedCompanies = await Promise.all(companies.map(async (company) => {
+      const enrichedCompanies = await Promise.all(companiesWithCore.map(async (company) => {
         try {
           const lastAction = await prisma.actions.findFirst({
             where: { 
@@ -858,15 +770,35 @@ export async function POST(request: NextRequest) {
       console.log(`🎯 [V1 COMPANIES API] Auto-assigned globalRank: ${globalRank}`);
     }
 
+    // Link to core company entity (if enabled)
+    let coreCompanyId: string | null = null;
+    try {
+      const coreCompanyResult = await findOrCreateCoreCompany(companyName, {
+        website: body.website,
+        domain: body.domain,
+        industry: body.industry,
+        employeeCount: body.employeeCount,
+        foundedYear: body.foundedYear,
+        country: body.country,
+        city: body.city
+      });
+      coreCompanyId = coreCompanyResult.id;
+      console.log(`🔗 [V1 COMPANIES API] Linked to core company: ${coreCompanyResult.name} (${coreCompanyResult.id})`);
+    } catch (coreError) {
+      console.warn('⚠️ [V1 COMPANIES API] Failed to link to core company (non-blocking):', coreError);
+      // Continue without core linking - company creation should still succeed
+    }
+
     // Create company data object outside transaction scope for error handler access
-    const companyData = {
+    const companyData: any = {
       name: body.name,
       workspaceId: context.workspaceId,
       state: body.state || null,
       status: body.status || 'ACTIVE', // Use provided status or default to ACTIVE
       globalRank: globalRank,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      ...(coreCompanyId && { coreCompanyId: coreCompanyId })
     };
 
     // Always set mainSellerId to current user

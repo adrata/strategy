@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/platform/database/prisma-client';
 import { getV1AuthUser } from '../../auth';
+import { mergeCoreCompanyWithWorkspace } from '@/platform/services/core-entity-service';
 
 // Vercel runtime configuration for proper HTTP method handling
 export const runtime = 'nodejs';
@@ -66,6 +67,7 @@ export async function GET(
       },
       include: {
         // Relations
+        coreCompany: true,
         mainSeller: {
           select: {
             id: true,
@@ -128,9 +130,12 @@ export async function GET(
       );
     }
 
+    // Merge core company data with workspace data
+    const mergedCompany = mergeCoreCompanyWithWorkspace(company, company.coreCompany || null);
+
     return NextResponse.json({
       success: true,
-      data: company,
+      data: mergedCompany,
     });
 
   } catch (error) {

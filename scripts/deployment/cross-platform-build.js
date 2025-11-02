@@ -42,7 +42,7 @@ const BUILD_CONFIG = {
     },
     env: {
       // Windows-specific environment variables
-      CARGO_TARGET_DIR: path.join(process.cwd(), "src-tauri", "target"),
+      CARGO_TARGET_DIR: path.join(process.cwd(), "src-desktop", "target"),
     },
   },
 
@@ -221,17 +221,17 @@ async function build() {
 
     // Show build artifacts
     console.log("\n📦 Build artifacts:");
-    const targetDir = path.join("src-tauri", "target");
+    const targetDir = path.join("src-desktop", "target");
     if (fs.existsSync(targetDir)) {
       if (isWindows) {
-        console.log("🪟 Windows: Check src-tauri/target/release/bundle/msi/");
+        console.log("🪟 Windows: Check src-desktop/target/release/bundle/msi/");
       } else if (isMacOS) {
         console.log(
-          "🍎 macOS: Check src-tauri/target/universal-apple-darwin/release/bundle/dmg/",
+          "🍎 macOS: Check src-desktop/target/universal-apple-darwin/release/bundle/dmg/",
         );
       } else if (isLinux) {
         console.log(
-          "🐧 Linux: Check src-tauri/target/release/bundle/appimage/",
+          "🐧 Linux: Check src-desktop/target/release/bundle/appimage/",
         );
       }
     }
