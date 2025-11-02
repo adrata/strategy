@@ -85,6 +85,11 @@ export async function GET(request: NextRequest) {
     const filteredDMs = dms.filter(dm => {
       const otherParticipants = dm.participants.filter(p => p.userId !== userId);
       
+      // Include self-DMs (no other participants) in current workspace
+      if (otherParticipants.length === 0 && dm.workspaceId === workspaceId) {
+        return true;
+      }
+      
       // If DM is in current workspace, always include it
       if (dm.workspaceId === workspaceId) {
         return true;

@@ -236,46 +236,44 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     // Handle "Me" self-DM - create or find existing self-DM
     if (conversation.id === 'me-self-dm' && workspaceId && authUser?.id) {
       try {
-        // Check if self-DM already exists
+        // First check if self-DM already exists
         const response = await fetch(`/api/v1/oasis/oasis/dms?workspaceId=${workspaceId}`, {
           credentials: 'include'
         });
         
         if (response.ok) {
           const data = await response.json();
-          // Look for self-DM (DM with only current user as participant)
-          const selfDM = data.dms?.find((dm: any) => 
-            dm.participants.length === 0 || 
-            (dm.participants.length === 1 && dm.participants[0].id === authUser.id)
-          );
+          // Look for self-DM (DM with no other participants - only the current user)
+          const selfDM = data.dms?.find((dm: any) => dm.participants.length === 0);
           
           if (selfDM) {
             // Use existing self-DM
             const slug = `${generateSlug('me')}-${selfDM.id}`;
             router.push(`/${workspaceSlug}/oasis/${slug}`);
             return;
-          } else {
-            // Create new self-DM
-            const createResponse = await fetch('/api/v1/oasis/oasis/dms', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              body: JSON.stringify({
-                workspaceId: workspaceId,
-                participantIds: [] // Empty array creates a self-DM
-              })
-            });
-            
-            if (createResponse.ok) {
-              const newDM = await createResponse.json();
-              const slug = `${generateSlug('me')}-${newDM.dm.id}`;
-              router.push(`/${workspaceSlug}/oasis/${slug}`);
-              return;
-            }
           }
+        }
+        
+        // Create new self-DM if it doesn't exist
+        const createResponse = await fetch('/api/v1/oasis/oasis/dms', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            workspaceId: workspaceId,
+            participantIds: [] // Empty array creates a self-DM
+          })
+        });
+        
+        if (createResponse.ok) {
+          const newDM = await createResponse.json();
+          const slug = `${generateSlug('me')}-${newDM.dm.id}`;
+          router.push(`/${workspaceSlug}/oasis/${slug}`);
+          return;
         }
       } catch (error) {
         console.error('Failed to handle self-DM:', error);
+        // Fall through to regular navigation
       }
     }
     
