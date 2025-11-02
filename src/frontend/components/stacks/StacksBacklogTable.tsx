@@ -367,9 +367,20 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
     return item.tags.some(tag => tag.toLowerCase() === 'bug' || tag.toLowerCase().includes('bug'));
   };
 
-  // Separate items into "Up Next" (status='up-next') and other items
-  const upNextItems = filteredItems.filter(item => item.status === 'up-next');
-  const otherItems = filteredItems.filter(item => item.status !== 'up-next');
+  // Separate items into "Up Next" (status='up-next' or 'todo') and other items
+  // Map 'todo' to 'up-next' for display purposes
+  const upNextItems = filteredItems.filter(item => 
+    item.status === 'up-next' || item.status === 'todo'
+  );
+  const otherItems = filteredItems.filter(item => 
+    item.status !== 'up-next' && item.status !== 'todo'
+  );
+  
+  // Debug: If filtering removed everything, show all items for debugging
+  const itemsToDisplay = filteredItems.length > 0 ? { upNextItems, otherItems } : {
+    upNextItems: items.filter(item => item.status === 'up-next' || item.status === 'todo'),
+    otherItems: items.filter(item => item.status !== 'up-next' && item.status !== 'todo')
+  };
 
   const handleContextMenu = (e: React.MouseEvent, itemId: string) => {
     e.preventDefault();
@@ -519,7 +530,7 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
 
       {/* Table Content */}
       <div className="flex-1 overflow-y-auto invisible-scrollbar">
-        {upNextItems.length === 0 && otherItems.length === 0 ? (
+        {itemsToDisplay.upNextItems.length === 0 && itemsToDisplay.otherItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📋</div>
             <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
@@ -528,372 +539,148 @@ export function StacksBacklogTable({ onItemClick }: StacksBacklogTableProps) {
             <p className="text-[var(--muted)]">
               {searchQuery ? 'Try adjusting your search terms' : 'Create your first backlog item to get started'}
             </p>
+            <div className="mt-4 text-xs text-[var(--muted)]">
+              Total items: {items.length} | Filtered: {filteredItems.length}
+            </div>
           </div>
         ) : (
           <div className="p-4">
-            {/* Up Next Section Header */}
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-[var(--foreground)] mb-2">Up Next</h3>
-              <div className="text-xs text-[var(--muted)]">Backlog</div>
-            </div>
-
-            {/* Desktop Table View */}
-            <div className="hidden lg:block">
-              {/* Up Next Items Table */}
-              {upNextItems.length > 0 && (
-                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden mb-4">
-                  <table className="w-full">
-                    <thead className="bg-[var(--panel-background)] border-b border-[var(--border)]">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Rank
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Title
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Assignee
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Due Date
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Workstream
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[var(--border)]">
-                      {upNextItems.map((item, index) => {
-                      const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
-                      
-                      return (
-                        <React.Fragment key={item.id}>
-                          <tr 
-                            className="hover:bg-[var(--hover)] cursor-pointer"
-                            onClick={() => onItemClick?.(item)}
-                            onContextMenu={(e) => handleContextMenu(e, item.id)}
-                          >
-                            <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-[var(--foreground)]">
-                              #{item.rank || index + 1}
-                            </td>
-                            <td className="px-4 py-4">
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  {isBug(item) && (
-                                    <>
-                                      <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
-                                      <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
-                                        bug
-                                      </span>
-                                    </>
-                                  )}
-                                  <div className="text-sm font-medium text-[var(--foreground)]">
-                                    {item.title}
-                                  </div>
-                                </div>
-                                {item.description && (
-                                  <div className="text-sm text-[var(--muted)] mt-1">
-                                    {item.description}
-                                  </div>
-                                )}
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap">
-                              <div className="flex items-center gap-2">
-                                <StatusIcon className="h-4 w-4 text-[var(--muted)]" />
-                                <span className="text-sm text-[var(--foreground)] capitalize">
-                                  {item.status}
+            {/* Up Next Section */}
+            {itemsToDisplay.upNextItems.length > 0 && (
+              <>
+                <div className="mb-3">
+                  <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Up Next</h3>
+                  <div className="text-xs text-[var(--muted)]">{itemsToDisplay.upNextItems.length} items</div>
+                </div>
+                
+                {/* Simple List View - Jira Style */}
+                <div className="space-y-2 mb-6">
+                  {itemsToDisplay.upNextItems.map((item, index) => {
+                    const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
+                    
+                    return (
+                      <div
+                        key={item.id}
+                        className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:bg-[var(--hover)] hover:border-[var(--accent)] transition-colors cursor-pointer"
+                        onClick={() => onItemClick?.(item)}
+                        onContextMenu={(e) => handleContextMenu(e, item.id)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
+                            #{item.rank || index + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              {isBug(item) && (
+                                <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                                  bug
                                 </span>
+                              )}
+                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${PRIORITY_COLORS[item.priority] || PRIORITY_COLORS.medium}`}>
+                                {item.priority}
+                              </span>
+                              <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
+                                {item.title}
+                              </h4>
+                            </div>
+                            {item.description && (
+                              <p className="text-xs text-[var(--muted)] line-clamp-2 mb-2">
+                                {item.description}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
+                              <div className="flex items-center gap-1">
+                                <StatusIcon className="h-3 w-3" />
+                                <span className="capitalize">{item.status === 'todo' ? 'up-next' : item.status}</span>
                               </div>
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
-                              {item.assignee || '-'}
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
-                              {item.dueDate ? formatRelativeTime(item.dueDate) : '-'}
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap">
+                              {item.assignee && (
+                                <span>{item.assignee}</span>
+                              )}
                               {item.tags && item.tags.length > 0 && (
-                                <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
+                                <span className="bg-[var(--panel-background)] px-2 py-0.5 rounded">
                                   {item.tags[0]}
                                 </span>
                               )}
-                            </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <button className="p-1 hover:bg-[var(--hover)] rounded transition-colors">
-                                <EllipsisVerticalIcon className="h-4 w-4 text-[var(--muted)]" />
-                              </button>
-                            </td>
-                          </tr>
-                        </React.Fragment>
-                      );
-                      })}
-                    </tbody>
-                  </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
+              </>
+            )}
 
-              {/* Divider Line */}
-              {upNextItems.length > 0 && otherItems.length > 0 && (
-                <hr className="border-[var(--border)] my-4" />
-              )}
+            {/* Divider Line */}
+            {itemsToDisplay.upNextItems.length > 0 && itemsToDisplay.otherItems.length > 0 && (
+              <div className="border-t border-[var(--border)] my-6"></div>
+            )}
 
-              {/* Other Items Table */}
-              {otherItems.length > 0 && (
-                <div className="bg-[var(--background)] border border-[var(--border)] rounded-lg overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-[var(--panel-background)] border-b border-[var(--border)]">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Rank
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Title
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Assignee
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Due Date
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Workstream
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--muted)] uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[var(--border)]">
-                      {otherItems.map((item, index) => {
-                        const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
-                        
-                        return (
-                          <React.Fragment key={item.id}>
-                            <tr 
-                              className="hover:bg-[var(--hover)] cursor-pointer"
-                              onClick={() => onItemClick?.(item)}
-                              onContextMenu={(e) => handleContextMenu(e, item.id)}
-                            >
-                              <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-[var(--foreground)]">
-                                #{item.rank || index + 1}
-                              </td>
-                              <td className="px-4 py-4">
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    {isBug(item) && (
-                                      <>
-                                        <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
-                                        <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
-                                          bug
-                                        </span>
-                                      </>
-                                    )}
-                                    <div className="text-sm font-medium text-[var(--foreground)]">
-                                      {item.title}
-                                    </div>
-                                  </div>
-                                  {item.description && (
-                                    <div className="text-sm text-[var(--muted)] mt-1">
-                                      {item.description}
-                                    </div>
-                                  )}
-                                </div>
-                              </td>
-                              <td className="px-4 py-4 whitespace-nowrap">
-                                <div className="flex items-center gap-2">
-                                  <StatusIcon className="h-4 w-4 text-[var(--muted)]" />
-                                  <span className="text-sm text-[var(--foreground)] capitalize">
-                                    {item.status}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
-                                {item.assignee || '-'}
-                              </td>
-                              <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--foreground)]">
-                                {item.dueDate ? formatRelativeTime(item.dueDate) : '-'}
-                              </td>
-                              <td className="px-4 py-4 whitespace-nowrap">
-                                {item.tags && item.tags.length > 0 && (
-                                  <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
-                                    {item.tags[0]}
-                                  </span>
-                                )}
-                              </td>
-                              <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button className="p-1 hover:bg-[var(--hover)] rounded transition-colors">
-                                  <EllipsisVerticalIcon className="h-4 w-4 text-[var(--muted)]" />
-                                </button>
-                              </td>
-                            </tr>
-                          </React.Fragment>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+            {/* Backlog Section */}
+            {itemsToDisplay.otherItems.length > 0 && (
+              <>
+                <div className="mb-3">
+                  <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1">Backlog</h3>
+                  <div className="text-xs text-[var(--muted)]">{itemsToDisplay.otherItems.length} items</div>
                 </div>
-              )}
-            </div>
-
-            {/* Mobile/Tablet Card View */}
-            <div className="lg:hidden space-y-3">
-              {/* Up Next Items */}
-              {upNextItems.map((item, index) => {
-                const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
                 
-                return (
-                  <div
-                    key={item.id}
-                    className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-[var(--accent)] transition-colors cursor-pointer"
-                    onClick={() => onItemClick?.(item)}
-                    onContextMenu={(e) => handleContextMenu(e, item.id)}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="flex items-center justify-center w-6 h-6 bg-[var(--panel-background)] text-[var(--muted)] text-xs font-bold rounded-full">
-                            {item.rank || index + 1}
-                          </div>
-                          {isBug(item) && (
-                            <>
-                              <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
-                              <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
-                                bug
-                              </span>
-                            </>
-                          )}
-                        </div>
-                        <h3 className="text-sm font-medium text-[var(--foreground)] mb-1">
-                          {item.title}
-                        </h3>
-                        {item.description && (
-                          <p className="text-sm text-[var(--muted)] mb-2">
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-                      <button className="p-1 hover:bg-[var(--hover)] rounded transition-colors">
-                        <EllipsisVerticalIcon className="h-4 w-4 text-[var(--muted)]" />
-                      </button>
-                    </div>
+                {/* Simple List View - Jira Style */}
+                <div className="space-y-2">
+                  {itemsToDisplay.otherItems.map((item, index) => {
+                    const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
                     
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1">
-                          <StatusIcon className="h-4 w-4 text-[var(--muted)]" />
-                          <span className="text-[var(--muted)] capitalize">
-                            {item.status}
-                          </span>
-                        </div>
-                        {item.assignee && (
-                          <div className="flex items-center gap-1">
-                            <UserIcon className="h-4 w-4 text-[var(--muted)]" />
-                            <span className="text-[var(--muted)]">{item.assignee}</span>
+                    return (
+                      <div
+                        key={item.id}
+                        className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 hover:bg-[var(--hover)] hover:border-[var(--accent)] transition-colors cursor-pointer"
+                        onClick={() => onItemClick?.(item)}
+                        onContextMenu={(e) => handleContextMenu(e, item.id)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[var(--panel-background)] text-[var(--foreground)] rounded text-xs font-semibold">
+                            #{item.rank || (itemsToDisplay.upNextItems.length + index + 1)}
                           </div>
-                        )}
-                        {item.dueDate && (
-                          <div className="flex items-center gap-1">
-                            <CalendarIcon className="h-4 w-4 text-[var(--muted)]" />
-                            <span className="text-[var(--muted)]">{formatRelativeTime(item.dueDate)}</span>
-                          </div>
-                        )}
-                      </div>
-                      {item.tags && item.tags.length > 0 && (
-                        <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
-                          {item.tags[0]}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Divider Line */}
-              {upNextItems.length > 0 && otherItems.length > 0 && (
-                <hr className="border-[var(--border)] my-4" />
-              )}
-
-              {/* Other Items */}
-              {otherItems.map((item, index) => {
-                const StatusIcon = STATUS_ICONS[item.status] || ClockIcon;
-                
-                return (
-                  <div
-                    key={item.id}
-                    className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-[var(--accent)] transition-colors cursor-pointer"
-                    onClick={() => onItemClick?.(item)}
-                    onContextMenu={(e) => handleContextMenu(e, item.id)}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="flex items-center justify-center w-6 h-6 bg-[var(--panel-background)] text-[var(--muted)] text-xs font-bold rounded-full">
-                            {item.rank || index + 1}
-                          </div>
-                          {isBug(item) && (
-                            <>
-                              <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
-                              <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
-                                bug
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              {isBug(item) && (
+                                <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                                  bug
+                                </span>
+                              )}
+                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${PRIORITY_COLORS[item.priority] || PRIORITY_COLORS.medium}`}>
+                                {item.priority}
                               </span>
-                            </>
-                          )}
-                        </div>
-                        <h3 className="text-sm font-medium text-[var(--foreground)] mb-1">
-                          {item.title}
-                        </h3>
-                        {item.description && (
-                          <p className="text-sm text-[var(--muted)] mb-2">
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-                      <button className="p-1 hover:bg-[var(--hover)] rounded transition-colors">
-                        <EllipsisVerticalIcon className="h-4 w-4 text-[var(--muted)]" />
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1">
-                          <StatusIcon className="h-4 w-4 text-[var(--muted)]" />
-                          <span className="text-[var(--muted)] capitalize">
-                            {item.status}
-                          </span>
-                        </div>
-                        {item.assignee && (
-                          <div className="flex items-center gap-1">
-                            <UserIcon className="h-4 w-4 text-[var(--muted)]" />
-                            <span className="text-[var(--muted)]">{item.assignee}</span>
+                              <h4 className="text-sm font-medium text-[var(--foreground)] truncate">
+                                {item.title}
+                              </h4>
+                            </div>
+                            {item.description && (
+                              <p className="text-xs text-[var(--muted)] line-clamp-2 mb-2">
+                                {item.description}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-3 text-xs text-[var(--muted)]">
+                              <div className="flex items-center gap-1">
+                                <StatusIcon className="h-3 w-3" />
+                                <span className="capitalize">{item.status}</span>
+                              </div>
+                              {item.assignee && (
+                                <span>{item.assignee}</span>
+                              )}
+                              {item.tags && item.tags.length > 0 && (
+                                <span className="bg-[var(--panel-background)] px-2 py-0.5 rounded">
+                                  {item.tags[0]}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        )}
-                        {item.dueDate && (
-                          <div className="flex items-center gap-1">
-                            <CalendarIcon className="h-4 w-4 text-[var(--muted)]" />
-                            <span className="text-[var(--muted)]">{formatRelativeTime(item.dueDate)}</span>
-                          </div>
-                        )}
+                        </div>
                       </div>
-                      {item.tags && item.tags.length > 0 && (
-                        <span className="bg-[var(--panel-background)] text-[var(--foreground)] px-2 py-1 rounded text-xs font-medium">
-                          {item.tags[0]}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
