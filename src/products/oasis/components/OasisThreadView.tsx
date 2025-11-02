@@ -75,7 +75,7 @@ export function OasisThreadView({ isVisible, onClose, threadMessages = [], conve
         {messages.map((message) => (
           <div key={message.id} className="flex gap-3">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-white border border-border rounded flex items-center justify-center">
+              <div className="w-8 h-8 bg-background border border-border rounded flex items-center justify-center">
                 <span className="text-sm font-medium text-foreground">{message.author.avatar}</span>
               </div>
             </div>
@@ -89,7 +89,7 @@ export function OasisThreadView({ isVisible, onClose, threadMessages = [], conve
                 )}
               </div>
               
-              <p className="text-gray-700">{message.content}</p>
+              <p className="text-foreground">{message.content}</p>
             </div>
           </div>
         ))}
@@ -101,9 +101,9 @@ export function OasisThreadView({ isVisible, onClose, threadMessages = [], conve
           <input
             type="text"
             placeholder="Reply in thread..."
-            className="w-full px-4 py-3 pr-12 border border-border rounded-lg focus:outline-none focus:border-muted text-sm bg-white"
+            className="w-full px-4 py-3 pr-12 border border-border rounded-lg focus:outline-none focus:border-muted text-sm bg-background"
           />
-          <button className="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1.5 bg-white border border-border rounded-md hover:bg-hover transition-colors">
+          <button className="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1.5 bg-background border border-border rounded-md hover:bg-hover transition-colors">
             <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
             </svg>

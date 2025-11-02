@@ -205,10 +205,10 @@ export function OasisMiddlePanel({
   // Get status color
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'online': return 'bg-green-400';
-      case 'away': return 'bg-yellow-400';
-      case 'offline': return 'bg-gray-400';
-      default: return 'bg-gray-400';
+      case 'online': return 'bg-success';
+      case 'away': return 'bg-warning';
+      case 'offline': return 'bg-muted';
+      default: return 'bg-muted';
     }
   };
 
@@ -245,17 +245,17 @@ export function OasisMiddlePanel({
                 onClick={() => onChannelSelect(channel)}
                 className={`w-full p-4 rounded-lg border transition-colors text-left ${
                   selectedChannel?.id === channel.id
-                    ? 'border-blue-200 bg-blue-50'
+                    ? 'border-primary bg-primary/10'
                     : 'border-border hover:border-border hover:bg-panel-background'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
-                    <span className="text-blue-600 font-medium">#{channel.name}</span>
+                    <span className="text-primary font-medium">#{channel.name}</span>
                     <span className="text-sm text-muted">{channel.members} members</span>
                   </div>
                   {channel.unreadCount > 0 && (
-                    <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">
+                    <span className="px-2 py-1 bg-error/10 text-error text-xs font-medium rounded-full">
                       {channel.unreadCount}
                     </span>
                   )}
@@ -315,7 +315,7 @@ export function OasisMiddlePanel({
                   )}
                 </div>
                 
-                <p className="text-gray-700 mb-2">{message.content}</p>
+                <p className="text-foreground mb-2">{message.content}</p>
                 
                 {/* Reactions */}
                 {message.reactions && message.reactions.length > 0 && (
@@ -334,7 +334,7 @@ export function OasisMiddlePanel({
                 
                 {/* Thread indicator */}
                 {message.threadCount && (
-                  <button className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                  <button className="text-sm text-primary hover:text-primary/80 flex items-center gap-1">
                     <span>{message.threadCount} replies</span>
                   </button>
                 )}
@@ -372,7 +372,7 @@ export function OasisMiddlePanel({
             <button
               type="submit"
               disabled={!messageInput.trim()}
-              className="px-2 py-1.5 bg-white border border-border rounded-md hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+              className="px-2 py-1.5 bg-background border border-border rounded-md hover:bg-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
               <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
