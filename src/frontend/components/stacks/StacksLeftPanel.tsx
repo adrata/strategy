@@ -28,7 +28,7 @@ interface NavigationItem {
   label: string;
   icon: React.ComponentType<any>;
   description: string;
-  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number }) => number | React.ReactNode;
+  getCount?: (stats: { total: number; active: number; completed: number; upNextCount: number; backlogCount: number; workstreamCount: number }) => number | React.ReactNode;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -37,14 +37,14 @@ const navigationItems: NavigationItem[] = [
     label: 'Workstream',
     icon: QueueListIcon,
     description: 'Visual task management',
-    getCount: (stats) => stats.upNextCount // Workstream shows "Up Next" items
+    getCount: (stats) => stats.workstreamCount // Workstream shows only 'up-next' items (what the board displays)
   },
   {
     id: 'backlog',
     label: 'Backlog',
     icon: ClipboardDocumentListIcon,
     description: 'Prioritized work queue',
-    getCount: (stats) => stats.backlogCount // Backlog shows only backlog items (excludes up-next, done, shipped)
+    getCount: (stats) => stats.upNextCount + stats.backlogCount // Backlog shows both "Up Next" and "Backlog" items
   },
   {
     id: 'metrics',
@@ -71,7 +71,8 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
     active: 0,
     completed: 0,
     upNextCount: 0,
-    backlogCount: 0
+    backlogCount: 0,
+    workstreamCount: 0
   });
   const [statsLoading, setStatsLoading] = useState(true);
   
@@ -106,7 +107,7 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
   useEffect(() => {
     const fetchStacksCounts = async () => {
       if (!ui.activeWorkspace?.id) {
-        setStats({ total: 0, active: 0, completed: 0 });
+        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0 });
         setStatsLoading(false);
         return;
       }
@@ -173,6 +174,13 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           item.status === 'up-next' || item.status === 'todo'
         ).length;
 
+        // Workstream = items with status 'up-next' only
+        // The workstream board only displays items with status 'up-next' in the UP NEXT column
+        // All other statuses are shown in the backlog view
+        const workstreamCount = allItems.filter((item: any) => 
+          item.status === 'up-next'
+        ).length;
+
         // Backlog = items with other statuses (excluding 'done', 'shipped', 'up-next', and 'todo')
         const backlogCount = allItems.filter((item: any) => 
           item.status && 
@@ -182,13 +190,13 @@ export function StacksLeftPanel({ activeSubSection, onSubSectionChange }: Stacks
           item.status !== 'todo'
         ).length;
 
-        console.log('📊 [StacksLeftPanel] Counts:', { total, active, completed, upNextCount, backlogCount, stories: stories.length, tasks: tasks.length });
+        console.log('📊 [StacksLeftPanel] Counts:', { total, active, completed, upNextCount, workstreamCount, backlogCount, stories: stories.length, tasks: tasks.length });
 
-        setStats({ total, active, completed, upNextCount, backlogCount });
+        setStats({ total, active, completed, upNextCount, backlogCount, workstreamCount });
       } catch (error) {
         console.error('Failed to fetch story/task counts:', error);
         // Reset stats to 0 on error to show that data is unavailable
-        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0 });
+        setStats({ total: 0, active: 0, completed: 0, upNextCount: 0, backlogCount: 0, workstreamCount: 0 });
       } finally {
         setStatsLoading(false);
       }
