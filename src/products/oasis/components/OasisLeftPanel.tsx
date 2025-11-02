@@ -303,18 +303,22 @@ export const OasisLeftPanel = React.memo(function OasisLeftPanel() {
     isWorkspaceMember: true
   }));
 
+  // Get current workspace name for the "Me" pill
+  const currentWorkspaceName = authUser?.workspaces?.find(w => w['id'] === authUser?.activeWorkspaceId)?.name || '';
+
   const dmConversations: Conversation[] = [
-    // Add "Me (FirstName)" self-DM at the top
+    // Add "Me" self-DM at the top
     {
       id: 'me-self-dm',
-      name: `Me (${authUser?.firstName || authUser?.name?.split(' ')[0] || 'You'})`,
+      name: 'Me',
       type: 'dm' as const,
       unread: 0,
       isActive: selectedChannel?.id === 'me-self-dm',
       lastMessage: 'Personal notes and thoughts',
       lastMessageTime: 'now',
       status: 'online' as const,
-      isWorkspaceMember: true
+      isWorkspaceMember: true,
+      workspaceName: currentWorkspaceName // Add workspace name for pill display
     },
     // Add other DMs
     ...dms.map(dm => ({

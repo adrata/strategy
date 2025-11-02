@@ -37,7 +37,8 @@ function OasisRedirectContent() {
         const workspaceId = authUser?.activeWorkspaceId;
         if (!workspaceId) {
           console.error('No workspace ID available for channel fetching');
-          router.replace(`/${workspaceSlug}/oasis/general-default`);
+          // Redirect to base oasis path without specific channel
+          router.replace(`/${workspaceSlug}/oasis`);
           return;
         }
 
@@ -45,7 +46,8 @@ function OasisRedirectContent() {
         const response = await fetch(`/api/v1/oasis/oasis/channels?workspaceId=${workspaceId}`);
         if (!response.ok) {
           console.error('Failed to fetch channels:', response.status);
-          router.replace(`/${workspaceSlug}/oasis/general-default`);
+          // Redirect to base oasis path without specific channel
+          router.replace(`/${workspaceSlug}/oasis`);
           return;
         }
 
@@ -58,7 +60,8 @@ function OasisRedirectContent() {
         
         if (!targetChannel) {
           console.error('No channels available');
-          router.replace(`/${workspaceSlug}/oasis/general-default`);
+          // Redirect to base oasis path without specific channel
+          router.replace(`/${workspaceSlug}/oasis`);
           return;
         }
 
@@ -72,7 +75,8 @@ function OasisRedirectContent() {
         
       } catch (error) {
         console.error('Error during redirect:', error);
-        router.replace(`/${workspaceSlug}/oasis/general-default`);
+        // Redirect to base oasis path without specific channel
+        router.replace(`/${workspaceSlug}/oasis`);
       }
     };
 

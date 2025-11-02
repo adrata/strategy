@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
         participants: {
           include: {
             user: {
-              select: { id: true, name: true, username: true }
+              select: { id: true, name: true, username: true, email: true }
             }
           }
         },

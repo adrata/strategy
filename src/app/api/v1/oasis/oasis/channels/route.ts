@@ -8,22 +8,19 @@ export const dynamic = 'force-static';
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { OasisRealtimeService } from '@/platform/services/oasis-realtime-service';
+import { getUnifiedAuthUser } from '@/platform/api-auth';
 
 // GET /api/oasis/channels - List workspace channels
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Fix authentication - temporarily bypassing for development
-    // const session = await getServerSession(authOptions);
-    // if (!session?.user?.id) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    const authUser = await getUnifiedAuthUser(request);
+    if (!authUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     
-    // For now, use a hardcoded user ID for development
-    const userId = '01K7469230N74BVGK2PABPNNZ9'; // Ross Sylvester's ID
+    const userId = authUser.id;
 
     const { searchParams } = new URL(request.url);
     const workspaceId = searchParams.get('workspaceId');
@@ -100,10 +97,12 @@ export async function GET(request: NextRequest) {
 // POST /api/oasis/channels - Create new channel
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const authUser = await getUnifiedAuthUser(request);
+    if (!authUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const userId = authUser.id;
 
     const body = await request.json();
     const { workspaceId, name, description } = body;
@@ -156,7 +155,7 @@ export async function POST(request: NextRequest) {
     await prisma.oasisChannelMember.create({
       data: {
         channelId: channel.id,
-        userId: session.user.id
+        userId: userId
       }
     });
 
@@ -166,13 +165,13 @@ export async function POST(request: NextRequest) {
       content: `Channel #${channel.name} was created`,
       channelId: channel.id,
       dmId: null,
-      senderId: session.user.id,
+      senderId: userId,
       parentMessageId: null,
       createdAt: new Date(),
       updatedAt: new Date(),
       sender: {
-        name: session.user.name || 'Unknown User',
-        username: session.user.username
+        name: authUser.name || 'Unknown User',
+        username: authUser.username
       }
     });
 
