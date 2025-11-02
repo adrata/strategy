@@ -10,21 +10,23 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 interface AddChannelModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (name: string, description?: string) => void;
+  onConfirm: (name: string, description?: string, isPrivate?: boolean) => void;
 }
 
 export function AddChannelModal({ isOpen, onClose, onConfirm }: AddChannelModalProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onConfirm(name.trim(), description.trim() || undefined);
+      onConfirm(name.trim(), description.trim() || undefined, isPrivate);
       setName('');
       setDescription('');
+      setIsPrivate(false);
       onClose();
     }
   };
@@ -85,6 +87,36 @@ export function AddChannelModal({ isOpen, onClose, onConfirm }: AddChannelModalP
                 placeholder="What's this channel about?"
                 className="w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Channel Visibility
+              </label>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    value="public"
+                    checked={!isPrivate}
+                    onChange={() => setIsPrivate(false)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">Public - Anyone in the workspace can view</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    value="private"
+                    checked={isPrivate}
+                    onChange={() => setIsPrivate(true)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">Private - Only invited members can view</span>
+                </label>
+              </div>
             </div>
           </div>
 

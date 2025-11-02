@@ -7,6 +7,7 @@ import { WorkshopDocument } from "../types/document";
 import { generateSlug } from "@/platform/utils/url-utils";
 import { useUnifiedAuth } from "@/platform/auth";
 import { useRevenueOS } from "@/platform/ui/context/RevenueOSProvider";
+import { apiFetch } from "@/platform/api-fetch";
 import { 
   DocumentTextIcon,
   PresentationChartBarIcon,
@@ -87,16 +88,14 @@ export function DocumentGrid() {
         params.append('sortOrder', 'desc');
       }
 
-      const response = await fetch(`/api/v1/documents/documents?${params.toString()}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch documents');
-      }
-
-      const data = await response.json();
+      const data = await apiFetch<{
+        documents: WorkshopDocument[];
+        pagination?: { total: number };
+      }>(`/api/v1/documents/documents?${params.toString()}`);
       setDocuments(data.documents || []);
     } catch (err) {
-      setError('Failed to load documents');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load documents';
+      setError(errorMessage);
       console.error('Error loading documents:', err);
     } finally {
       setIsLoading(false);
@@ -140,25 +139,25 @@ export function DocumentGrid() {
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
   };
 
-  if (isLoading) {
+  if (isLoading || error) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <span className="text-[var(--muted)]">Loading documents...</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="text-red-600 mb-2">{error}</div>
-          <button
-            onClick={loadDocuments}
-            className="px-4 py-2 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
-          >
-            Retry
-          </button>
+      <div className="p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
+              <div className="space-y-3">
+                <div className="h-12 w-12 bg-[var(--loading-bg)] rounded-lg animate-pulse"></div>
+                <div className="space-y-2">
+                  <div className="h-4 bg-[var(--loading-bg)] rounded animate-pulse"></div>
+                  <div className="h-3 bg-[var(--loading-bg)] rounded w-3/4 animate-pulse"></div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="h-3 bg-[var(--loading-bg)] rounded w-16 animate-pulse"></div>
+                  <div className="h-3 bg-[var(--loading-bg)] rounded w-12 animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -194,7 +193,7 @@ export function DocumentGrid() {
               onClick={() => {
                 const slug = generateSlug(document.title, document.id);
                 const workspaceSlug = workspace?.slug || 'default';
-                router.push(`/${workspaceSlug}/workshop/${slug}`);
+                router.push(`/${workspaceSlug}/workbench/${slug}`);
               }}
               className="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
             >

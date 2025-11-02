@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
     const folderId = searchParams.get('folderId');
     const documentType = searchParams.get('type');
     const status = searchParams.get('status');
+    const ownerId = searchParams.get('ownerId');
     const isStarred = searchParams.get('starred');
     const search = searchParams.get('search');
     const page = parseInt(searchParams.get('page') || '1');
@@ -36,8 +37,17 @@ export async function GET(request: NextRequest) {
     // Build where clause
     const where: any = {
       workspaceId,
-      status: { not: 'deleted' }, // Exclude deleted documents
     };
+
+    // Handle status filtering - always exclude deleted unless explicitly requested
+    if (status === 'deleted') {
+      where.status = 'deleted';
+    } else if (status) {
+      // Filter by specified status (assumes status values are mutually exclusive)
+      where.status = status;
+    } else {
+      where.status = { not: 'deleted' }; // Exclude deleted documents by default
+    }
 
     if (folderId) {
       where.folderId = folderId;
@@ -47,8 +57,8 @@ export async function GET(request: NextRequest) {
       where.documentType = documentType;
     }
 
-    if (status) {
-      where.status = status;
+    if (ownerId) {
+      where.ownerId = ownerId;
     }
 
     if (isStarred === 'true') {

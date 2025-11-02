@@ -5,6 +5,8 @@ import { useWorkshop } from "./layout";
 import { DocumentGrid } from "./components/DocumentGrid";
 import { DocumentList } from "./components/DocumentList";
 import { DocumentViewer } from "./components/DocumentViewer";
+import { StatsView } from "./components/StatsView";
+import { DocumentExplorer } from "./components/DocumentExplorer";
 import { UploadModal } from "./components/UploadModal";
 import { DocumentTypeSelector } from "./components/DocumentTypeSelector";
 import { ShareModal } from "./components/ShareModal";
@@ -15,8 +17,6 @@ import {
   PlusIcon, 
   MagnifyingGlassIcon,
   FunnelIcon,
-  Squares2X2Icon,
-  ListBulletIcon,
   CloudArrowUpIcon,
   DocumentPlusIcon,
   ArrowsUpDownIcon,
@@ -56,7 +56,7 @@ export default function WorkshopPage() {
 
   // Set page title dynamically
   useEffect(() => {
-    document.title = "Workshop • Documents";
+    document.title = "Workbench • Documents";
   }, []);
 
   const handleCreateDocument = useCallback(async (documentType: string) => {
@@ -85,7 +85,7 @@ export default function WorkshopPage() {
       const workspaceSlug = workspace?.slug || 'default';
       
       // Navigate to the new document using slug-based URL
-      router.push(`/${workspaceSlug}/workshop/${slug}`);
+      router.push(`/${workspaceSlug}/workbench/${slug}`);
       
       setIsCreateModalOpen(false);
     } catch (error) {
@@ -129,7 +129,7 @@ export default function WorkshopPage() {
       {/* Standardized Header - Only show when not viewing a document */}
       {!viewingDocument && (
         <StandardHeader
-          title="Workshop"
+          title="Workbench"
           subtitle={
             <div className="flex items-center gap-2">
               <span className="text-sm text-[var(--muted)]">
@@ -138,6 +138,8 @@ export default function WorkshopPage() {
                 {activeTab === 'recent' && 'Recent'}
                 {activeTab === 'starred' && 'Starred'}
                 {activeTab === 'trash' && 'Trash'}
+                {activeTab === 'stats' && 'Stats'}
+                {activeTab === 'folders' && 'My Folders'}
               </span>
               {selectedFolder && (
                 <>
@@ -161,7 +163,7 @@ export default function WorkshopPage() {
                 className="flex items-center gap-2 px-3 py-2 text-sm font-medium bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
               >
                 <PlusIcon className="w-4 h-4" />
-                Start
+                New Workbench
               </button>
             </div>
           }
@@ -220,25 +222,6 @@ export default function WorkshopPage() {
           </button>
         </div>
 
-        {/* View Mode Toggle */}
-        <div className="flex items-center border border-[var(--border)] rounded-lg">
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-l-lg transition-colors ${
-              viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[var(--hover)]'
-            }`}
-          >
-            <Squares2X2Icon className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-r-lg transition-colors ${
-              viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'hover:bg-[var(--hover)]'
-            }`}
-          >
-            <ListBulletIcon className="w-4 h-4" />
-          </button>
-        </div>
       </div>
       )}
 
@@ -278,6 +261,10 @@ export default function WorkshopPage() {
             onToggleEditMode={handleToggleEditMode}
             onShare={handleShareDocument}
           />
+        ) : activeTab === 'stats' ? (
+          <StatsView />
+        ) : activeTab === 'folders' ? (
+          <DocumentExplorer />
         ) : (
           viewMode === 'grid' ? (
             <DocumentGrid />

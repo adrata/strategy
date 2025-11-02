@@ -73,49 +73,49 @@ model user_roles {
 
 /// Multi-tenant workspace management
 model workspaces {
-  id                        String                      @id @default(ulid())
-  name                      String
-  slug                      String                      @unique
-  timezone                  String                      @default("UTC") @db.VarChar(50)
-  description               String?
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @updatedAt
-  isActive                  Boolean                     @default(true)
-  deletedAt                 DateTime?
-  businessModel             String?                     @db.VarChar(100)
-  competitiveAdvantages     String[]                    @default([])
-  idealCustomerProfile      String?                     @db.VarChar(2000)
-  industry                  String?                     @db.VarChar(100)
-  productPortfolio          String[]                    @default([])
-  salesMethodology          String?                     @db.VarChar(200)
-  serviceOfferings          String[]                    @default([])
-  targetCompanySize         String[]                    @default([])
-  targetIndustries          String[]                    @default([])
-  valuePropositions         String[]                    @default([])
-  speedrunDailyTarget       Int?                        @default(50)
-  speedrunWeeklyTarget      Int?                        @default(250)
-  newsEnabled               Boolean?                    @default(false)
-  newsIndustries            String[]                    @default([])
-  newsSources               String[]                    @default([])
-  enabledFeatures           String[]                    @default([])
-  oasis_channels            OasisChannel[]
-  oasis_direct_messages     OasisDirectMessage[]
-  oasis_external_connections OasisExternalConnection[] @relation("OasisExternalConnections")
-  stacks_projects           StacksProject[]
-  actions                   actions[]
-  ai_conversations          ai_conversations[]
-  api_cost_tracking         api_cost_tracking[]
-  audit_logs                audit_logs[]
-  auth_sessions             auth_sessions[]
-  companies                 companies[]
-  email_messages            email_messages[]
-  grand_central_connections grand_central_connections[]
-  grand_central_workflows   grand_central_workflows[]
-  people                    people[]
-  research_data             research_data[]
-  user_roles                user_roles[]
-  users                     users[]
-  workspace_users           workspace_users[]
+  id                         String                      @id @default(ulid())
+  name                       String
+  slug                       String                      @unique
+  timezone                   String                      @default("UTC") @db.VarChar(50)
+  description                String?
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
+  isActive                   Boolean                     @default(true)
+  deletedAt                  DateTime?
+  businessModel              String?                     @db.VarChar(100)
+  competitiveAdvantages      String[]                    @default([])
+  idealCustomerProfile       String?                     @db.VarChar(2000)
+  industry                   String?                     @db.VarChar(100)
+  productPortfolio           String[]                    @default([])
+  salesMethodology           String?                     @db.VarChar(200)
+  serviceOfferings           String[]                    @default([])
+  targetCompanySize          String[]                    @default([])
+  targetIndustries           String[]                    @default([])
+  valuePropositions          String[]                    @default([])
+  speedrunDailyTarget        Int?                        @default(50)
+  speedrunWeeklyTarget       Int?                        @default(250)
+  newsEnabled                Boolean?                    @default(false)
+  newsIndustries             String[]                    @default([])
+  newsSources                String[]                    @default([])
+  enabledFeatures            String[]                    @default([])
+  oasis_channels             OasisChannel[]
+  oasis_direct_messages      OasisDirectMessage[]
+  oasis_external_connections OasisExternalConnection[]   @relation("OasisExternalConnections")
+  stacks_projects            StacksProject[]
+  actions                    actions[]
+  ai_conversations           ai_conversations[]
+  api_cost_tracking          api_cost_tracking[]
+  audit_logs                 audit_logs[]
+  auth_sessions              auth_sessions[]
+  companies                  companies[]
+  email_messages             email_messages[]
+  grand_central_connections  grand_central_connections[]
+  grand_central_workflows    grand_central_workflows[]
+  people                     people[]
+  research_data              research_data[]
+  user_roles                 user_roles[]
+  users                      users[]
+  workspace_users            workspace_users[]
 
   @@index([slug])
   @@index([isActive])
@@ -124,51 +124,52 @@ model workspaces {
 
 /// User accounts and authentication
 model users {
-  id                        String                      @id @default(ulid())
-  email                     String                      @unique
-  password                  String?
-  name                      String
-  firstName                 String?
-  lastName                  String?
-  timezone                  String?                     @db.VarChar(50)
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @updatedAt
-  lastLoginAt               DateTime?
-  isActive                  Boolean                     @default(true)
-  activeWorkspaceId         String?                     @db.VarChar(30)
-  username                  String?                     @unique @db.VarChar(50)
-  speedrunRankingMode       String?                     @db.VarChar(50)
-  title                     String?                     @db.VarChar(200)
-  department                String?                     @db.VarChar(100)
-  phoneNumber               String?                     @db.VarChar(50)
-  linkedinUrl               String?                     @db.VarChar(500)
-  communicationStyle        String?                     @db.VarChar(50)
-  preferredDetailLevel      String?                     @db.VarChar(50)
-  quota                     String?
-  territory                 String?                     @db.VarChar(200)
-  dashboardConfig           Json?
-  oasis_channel_members     OasisChannelMember[]
-  oasis_dm_participants     OasisDMParticipant[]
-  oasis_messages            OasisMessage[]
-  oasis_reactions           OasisReaction[]
-  oasis_external_connections OasisExternalConnection[] @relation("OasisExternalConnections")
-  oasis_external_connections_external OasisExternalConnection[] @relation("OasisExternalConnectionsExternal")
-  stacks_story_assignees    StacksStory[]
-  stacks_task_assignees     StacksTask[]
-  assigned_actions          actions[]                   @relation("AssignedActions")
-  ai_conversations          ai_conversations[]
-  api_cost_tracking         api_cost_tracking[]
-  audit_logs                audit_logs[]
-  auth_sessions             auth_sessions[]
-  main_seller_companies     companies[]                 @relation("MainSellerCompanies")
-  grand_central_connections grand_central_connections[]
-  grand_central_workflows   grand_central_workflows[]
-  main_seller_people        people[]                    @relation("MainSellerPeople")
-  person_co_sellers         person_co_sellers[]
-  reset_tokens              reset_tokens[]
-  user_roles                user_roles[]
-  workspaces                workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
-  workspace_users           workspace_users[]
+  id                                  String                      @id @default(ulid())
+  email                               String                      @unique
+  password                            String?
+  name                                String
+  firstName                           String?
+  lastName                            String?
+  timezone                            String?                     @db.VarChar(50)
+  createdAt                           DateTime                    @default(now())
+  updatedAt                           DateTime                    @updatedAt
+  lastLoginAt                         DateTime?
+  isActive                            Boolean                     @default(true)
+  activeWorkspaceId                   String?                     @db.VarChar(30)
+  username                            String?                     @unique @db.VarChar(50)
+  speedrunRankingMode                 String?                     @db.VarChar(50)
+  title                               String?                     @db.VarChar(200)
+  department                          String?                     @db.VarChar(100)
+  phoneNumber                         String?                     @db.VarChar(50)
+  linkedinUrl                         String?                     @db.VarChar(500)
+  communicationStyle                  String?                     @db.VarChar(50)
+  preferredDetailLevel                String?                     @db.VarChar(50)
+  quota                               String?
+  territory                           String?                     @db.VarChar(200)
+  dashboardConfig                     Json?
+  oasis_channel_members               OasisChannelMember[]
+  oasis_dm_participants               OasisDMParticipant[]
+  oasis_messages                      OasisMessage[]
+  oasis_reactions                     OasisReaction[]
+  oasis_read_receipts                 OasisReadReceipt[]
+  oasis_external_connections          OasisExternalConnection[]   @relation("OasisExternalConnections")
+  oasis_external_connections_external OasisExternalConnection[]   @relation("OasisExternalConnectionsExternal")
+  stacks_story_assignees              StacksStory[]
+  stacks_task_assignees               StacksTask[]
+  assigned_actions                    actions[]                   @relation("AssignedActions")
+  ai_conversations                    ai_conversations[]
+  api_cost_tracking                   api_cost_tracking[]
+  audit_logs                          audit_logs[]
+  auth_sessions                       auth_sessions[]
+  main_seller_companies               companies[]                 @relation("MainSellerCompanies")
+  grand_central_connections           grand_central_connections[]
+  grand_central_workflows             grand_central_workflows[]
+  main_seller_people                  people[]                    @relation("MainSellerPeople")
+  person_co_sellers                   person_co_sellers[]
+  reset_tokens                        reset_tokens[]
+  user_roles                          user_roles[]
+  workspaces                          workspaces?                 @relation(fields: [activeWorkspaceId], references: [id])
+  workspace_users                     workspace_users[]
 
   @@index([activeWorkspaceId])
   @@index([username])
@@ -692,6 +693,7 @@ model OasisChannel {
   workspaceId String               @db.VarChar(30)
   name        String               @db.VarChar(100)
   description String?              @db.VarChar(500)
+  isPrivate   Boolean              @default(false)
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
   workspace   workspaces           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -746,7 +748,7 @@ model OasisMessage {
   channelId       String?
   dmId            String?
   senderId        String              @db.VarChar(30)
-  parentMessageId String?             // For thread support
+  parentMessageId String? // For thread support
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
   channel         OasisChannel?       @relation(fields: [channelId], references: [id], onDelete: Cascade)
@@ -755,6 +757,7 @@ model OasisMessage {
   parentMessage   OasisMessage?       @relation("MessageThread", fields: [parentMessageId], references: [id], onDelete: Cascade)
   threadMessages  OasisMessage[]      @relation("MessageThread")
   reactions       OasisReaction[]
+  readReceipts    OasisReadReceipt[]
 
   @@index([channelId])
   @@index([dmId])
@@ -777,17 +780,31 @@ model OasisReaction {
   @@index([userId])
 }
 
+model OasisReadReceipt {
+  id        String       @id @default(cuid())
+  userId    String       @db.VarChar(30)
+  messageId String
+  readAt    DateTime     @default(now())
+  message   OasisMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, messageId])
+  @@index([userId])
+  @@index([messageId])
+  @@index([readAt])
+}
+
 model OasisExternalConnection {
-  id                String     @id @default(cuid())
-  userId            String     @db.VarChar(30)
-  externalUserId    String     @db.VarChar(30)
-  externalWorkspaceId String   @db.VarChar(30)
-  status            String     @default("pending") // pending, accepted, blocked
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-  user              users      @relation("OasisExternalConnections", fields: [userId], references: [id], onDelete: Cascade)
-  externalUser      users      @relation("OasisExternalConnectionsExternal", fields: [externalUserId], references: [id], onDelete: Cascade)
-  externalWorkspace workspaces @relation("OasisExternalConnections", fields: [externalWorkspaceId], references: [id], onDelete: Cascade)
+  id                  String     @id @default(cuid())
+  userId              String     @db.VarChar(30)
+  externalUserId      String     @db.VarChar(30)
+  externalWorkspaceId String     @db.VarChar(30)
+  status              String     @default("pending") // pending, accepted, blocked
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  user                users      @relation("OasisExternalConnections", fields: [userId], references: [id], onDelete: Cascade)
+  externalUser        users      @relation("OasisExternalConnectionsExternal", fields: [externalUserId], references: [id], onDelete: Cascade)
+  externalWorkspace   workspaces @relation("OasisExternalConnections", fields: [externalWorkspaceId], references: [id], onDelete: Cascade)
 
   @@unique([userId, externalUserId, externalWorkspaceId])
   @@index([userId])
@@ -882,23 +899,23 @@ model StacksTask {
 }
 
 model BuyerGroupMembers {
-  id             String         @id
-  buyerGroupId   String
-  name           String
-  title          String?
-  department     String?        // NEW: for filtering and coverage analysis
-  role           BuyerGroupRole
-  email          String?
-  phone          String?
-  linkedin       String?
-  confidence     Decimal?       @default(0) @db.Decimal(5, 2)
-  influenceScore Decimal?       @default(0) @db.Decimal(5, 2)
-  roleReasoning  String?        // NEW: critical for defending selection
-  connectionsCount Int?         @default(0) // NEW: network size metric
-  followersCount Int?           @default(0) // NEW: additional network metric
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime
-  BuyerGroups    BuyerGroups    @relation(fields: [buyerGroupId], references: [id], onDelete: Cascade)
+  id               String         @id
+  buyerGroupId     String
+  name             String
+  title            String?
+  department       String? // NEW: for filtering and coverage analysis
+  role             BuyerGroupRole
+  email            String?
+  phone            String?
+  linkedin         String?
+  confidence       Decimal?       @default(0) @db.Decimal(5, 2)
+  influenceScore   Decimal?       @default(0) @db.Decimal(5, 2)
+  roleReasoning    String? // NEW: critical for defending selection
+  connectionsCount Int?           @default(0) // NEW: network size metric
+  followersCount   Int?           @default(0) // NEW: additional network metric
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime
+  BuyerGroups      BuyerGroups    @relation(fields: [buyerGroupId], references: [id], onDelete: Cascade)
 
   @@index([buyerGroupId])
   @@index([role])
@@ -910,8 +927,8 @@ model BuyerGroups {
   website             String?
   industry            String?
   companySize         String?
-  companyTier         String?             // NEW: S1-S7, M1-M7, L1-L7 tier
-  dealSize            Decimal?            // NEW: deal size context
+  companyTier         String? // NEW: S1-S7, M1-M7, L1-L7 tier
+  dealSize            Decimal? // NEW: deal size context
   totalEmployeesFound Int?                @default(0) // NEW: research breadth
   totalCost           Decimal?            @default(0) @db.Decimal(10, 2) // NEW: cost tracking
   workspaceId         String?
