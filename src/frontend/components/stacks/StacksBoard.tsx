@@ -246,14 +246,27 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
               stories: sellingStories.map((s: any) => ({ id: s.id, title: s.title, status: s.status }))
             });
             
+            // Filter out backlog items (todo status) - they belong in backlog view, not workstream board
+            // Workstream board should only show items that are actively in progress or beyond
+            const workstreamStories = sellingStories.filter((story: any) => {
+              // Exclude 'todo' status items - they belong in backlog
+              return story.status !== 'todo' && story.status !== null && story.status !== undefined;
+            });
+            
+            console.log('🔍 [StacksBoard] After filtering backlog items (todo):', {
+              before: sellingStories.length,
+              after: workstreamStories.length,
+              removed: sellingStories.length - workstreamStories.length
+            });
+            
             // Log status distribution before conversion
-            const statusCounts = sellingStories.reduce((acc: any, story: any) => {
+            const statusCounts = workstreamStories.reduce((acc: any, story: any) => {
               acc[story.status || 'null'] = (acc[story.status || 'null'] || 0) + 1;
               return acc;
             }, {});
-            console.log('📊 [StacksBoard] Status distribution:', statusCounts);
+            console.log('📊 [StacksBoard] Status distribution (workstream only):', statusCounts);
             
-            const convertedCards = sellingStories.map(convertNotaryStoryToStackCard);
+            const convertedCards = workstreamStories.map(convertNotaryStoryToStackCard);
             console.log('🔄 [StacksBoard] Converted cards:', convertedCards.length, 'cards');
             
             // Log status distribution after conversion
@@ -329,15 +342,11 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
   // Helper function to convert Notary story to StackCard format
   const convertNotaryStoryToStackCard = (story: any): StackCard => {
     // Map status values to board column statuses
-    // Backlog items (todo) should NOT appear in workstream board - they belong in backlog view
-    // Only items that are actively being worked on or beyond should appear here
+    // Note: This function should only receive items that are NOT 'todo' status
+    // (they should be filtered out before this function is called)
     let mappedStatus = story.status;
     
-    if (!story.status || story.status === 'todo') {
-      // Backlog items default to 'up-next' for board, but they should be filtered out
-      // This mapping is kept for backwards compatibility, but we'll filter them out below
-      mappedStatus = 'up-next';
-    } else if (story.status === 'done') {
+    if (story.status === 'done') {
       mappedStatus = 'built';
     } else if (story.status === 'up-next') {
       mappedStatus = 'up-next';
@@ -351,6 +360,10 @@ export function StacksBoard({ onCardClick }: StacksBoardProps) {
       mappedStatus = 'qa2';
     } else if (story.status === 'shipped') {
       mappedStatus = 'shipped';
+    } else if (!story.status || story.status === 'todo') {
+      // Should not happen (filtered out above), but handle gracefully
+      console.warn(`⚠️ [StacksBoard] Received todo/null status story "${story.title}" in convert function - this should be filtered out`);
+      mappedStatus = 'up-next';
     } else {
       // Unknown status - default to 'up-next' instead of passing through invalid status
       console.warn(`⚠️ [StacksBoard] Unknown status "${story.status}" for story "${story.title}", defaulting to 'up-next'`);
